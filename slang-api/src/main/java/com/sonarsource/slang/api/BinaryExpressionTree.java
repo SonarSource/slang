@@ -1,0 +1,23 @@
+package com.sonarsource.slang.api;
+
+public interface BinaryExpressionTree extends Tree {
+
+  public enum Operator {
+    EQUAL_TO,
+    NOT_EQUAL_TO,
+    GREATER_THAN,
+    GREATER_THAN_OR_EQUAL_TO,
+    LESS_THAN,
+    LESS_THAN_OR_EQUAL_TO,
+
+    CONDITIONAL_AND,
+    CONDITIONAL_OR,
+  }
+
+  Operator operator();
+
+  Tree leftOperand();
+
+  Tree rightOperand();
+
+}
