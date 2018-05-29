@@ -23,24 +23,39 @@ import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
+import com.sonarsource.slang.api.NativeKind;
+import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.IdentifierImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.sonarsource.slang.impl.NativeTreeImpl;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TreeVisitorTest {
 
+  private class DummyNativeKind implements NativeKind {
+    public DummyNativeKind(){}
+  }
+
   private IdentifierTree var1 = new IdentifierImpl("var1");
   private LiteralTree number1 = new LiteralTreeImpl("1");
   private BinaryExpressionTree binary = new BinaryExpressionTreeImpl(Operator.PLUS, var1, number1);
+  private BinaryExpressionTree binminus = new BinaryExpressionTreeImpl(Operator.MINUS, var1, var1);
+
+  private DummyNativeKind nkind = new DummyNativeKind();
+  private List<Tree> nchildren = Arrays.asList(binary, binminus);
+  private NativeTree nativeNode = new NativeTreeImpl(nkind, nchildren);
   private TreeVisitor<TreeContext> visitor = new TreeVisitor<>();
+
 
   @Test
   public void visitSimpleTree() {
@@ -48,6 +63,14 @@ public class TreeVisitorTest {
     visitor.register(Tree.class, (ctx, tree) -> visited.add(tree));
     visitor.scan(new TreeContext(), binary);
     assertThat(visited).containsExactly(binary, var1, number1);
+  }
+
+  @Test
+  public void visitNativeTree() {
+    List<Tree> visited = new ArrayList<>();
+    visitor.register(Tree.class, (ctx, tree) -> visited.add(tree));
+    visitor.scan(new TreeContext(), nativeNode);
+    assertThat(visited).containsExactly(nativeNode, binary, var1, number1, binminus, var1, var1);
   }
 
   @Test

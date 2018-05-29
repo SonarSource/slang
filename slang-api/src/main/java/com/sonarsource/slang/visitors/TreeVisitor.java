@@ -39,7 +39,7 @@ public class TreeVisitor<C extends TreeContext> {
       visit(ctx, root);
     }
   }
-
+ 
   private void visit(C ctx, @Nullable Tree node) {
     if (node != null) {
       ctx.enter(node);
