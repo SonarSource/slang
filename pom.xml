@@ -41,6 +41,9 @@
   </ciManagement>
   -->
 
+  <properties>
+    <license.title>SonarSource SLang</license.title>
+  </properties>
 
   <dependencyManagement>
     <dependencies>
