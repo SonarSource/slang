@@ -5,7 +5,8 @@ slangFile
   ;
 
 typeDeclaration
-  :  methodDeclaration
+  :  methodDeclaration 
+  |  statementOrExpression
   ;
 
 methodDeclaration
@@ -13,26 +14,26 @@ methodDeclaration
   ;
 
 methodModifier
-  : 'public'
-  | 'private'
+  : PUBLIC  
+  | PRIVATE
   ;
 
 methodHeader
-  :  result methodDeclarator throws_?
+  :  result methodDeclarator 
   ;
 
 methodDeclarator
-  :  identifier LPAREN formalParameterList? RPAREN dims?
+  :  identifier LPAREN formalParameterList? RPAREN 
   ;
 
 formalParameterList
-  :  formalParameters ',' lastFormalParameter
+  :  formalParameters COMMA lastFormalParameter
   |  lastFormalParameter
   |  receiverParameter
   ;
 
 formalParameters
-  :  formalParameter (',' formalParameter)*
+  :  formalParameter (COMMA formalParameter)*
   ;
 
 formalParameter
@@ -40,37 +41,29 @@ formalParameter
   ;
 
 lastFormalParameter
-  :  simpleType '...' variableDeclaratorId
+  :  simpleType ELLIPSIS variableDeclaratorId
   |  formalParameter
-  ;
+  ; 
 
 receiverParameter
-  :  simpleType (identifier '.')? 'this'
+  :  simpleType (identifier DOT)? THIS 
   ;
 
 variableDeclaratorId
-  :  identifier dims?
-  ;
-
-dims
-  :  '[' ']' ('[' ']')*
+  :  identifier 
   ;
 
 methodBody
-  : block
-  | ';'
+  : block 
+  | SEMICOLON 
   ;
 
 block
-  :  LCURLY (statementOrExpression semi)* (statementOrExpression semi?)? RCURLY
-  ;
-
-statementOrExpressionBlock
-  :  statementOrExpression+
+  :  LCURLY (statementOrExpression semi)* (statementOrExpression semi?)? RCURLY 
   ;
 
 statementOrExpression
-  :  disjunction (assignmentOperator disjunction)* semi?
+  :  disjunction (assignmentOperator disjunction)* semi? 
   ;
 
 disjunction
@@ -98,13 +91,11 @@ multiplicativeExpression
   ;
 
 atomicExpression
-  :  parenthesizedExpression
-  |  nativeExpression
+  :  parenthesizedExpression 
+  |  nativeExpression 
   |  literal
-  |  conditional
   |  assignment
   |  methodInvocation
-  |  terminator
   |  expressionName
   ;
 
@@ -112,58 +103,39 @@ parenthesizedExpression
   :  LPAREN statementOrExpression RPAREN
   ;
 
-assignment
+assignment 
   :  leftHandSide assignmentOperator statementOrExpression
-  ;
+  ; 
 
 leftHandSide
   :  expressionName
   ;
 
 methodInvocation
-  :  methodName LPAREN argumentList? RPAREN
+  :  methodName LPAREN argumentList? RPAREN 
   ;
 
-methodName
+methodName 
   :  identifier
   ;
 
 argumentList
-  :  statementOrExpression (',' statementOrExpression)*
-  ;
+  :  statementOrExpression (COMMA statementOrExpression)*
+  ; 
 
 expressionName
   :  identifier
   ;
 
 nativeExpression
-  :  NATIVE LPAREN argumentList? RPAREN '{' nativeBlock '}'
-  ;
+  :  NATIVE LBRACK argumentList? RBRACK LCURLY nativeBlock* RCURLY 
+  ; 
 
 nativeBlock
-  :  '||' (statementOrExpression semi)* (statementOrExpression semi?)? '||'
+  :  LBRACK (statementOrExpression semi)* (statementOrExpression semi?)? RBRACK 
   ;
 
-terminator
-  :  'return' statementOrExpression
-  ;
-
-conditional
-  :  'if' LPAREN statementOrExpression RPAREN controlBlock ('else' controlBlock)?
-  |  'match' LPAREN statementOrExpression RPAREN LCURLY matchCase* RCURLY
-  ;
-
-matchCase
-  :  statementOrExpression '->' controlBlock semi
-  |  'else' '->' controlBlock semi
-  ;
-
-controlBlock
-  :  block
-  |  statementOrExpression
-  ;
-
-/* Operators */
+/* Operators */ 
 multiplicativeOperator
   :  '*' | '/' | '%'
   ;
@@ -179,15 +151,16 @@ comparisonOperator
 equalityOperator
   :  '!=' | '=='
   ;
-
+ 
 assignmentOperator
   :  '=' | '+=' | '-=' | '*=' | '%='
   ;
 
-/* Type Hierarchy */
+// Type Hierarchy 
+
 result
   :  simpleType
-  |  'void'
+  |  VOID 
   ;
 
 simpleType
@@ -197,7 +170,7 @@ simpleType
 
 simplePrimitiveType
   :  numericType
-  |  'boolean'
+  |  BOOLEAN
   ;
 
 referenceType
@@ -211,23 +184,22 @@ numericType
   ;
 
 integralType
-  :  'byte'
-  |  'short'
-  |  'int'
-  |  'long'
-  |  'char'
+  :  BYTE 
+  |  SHORT 
+  |  INT
+  |  LONG
+  |  CHAR
   ;
 
 floatingPointType
-  :  'float'
-  |  'double'
+  :  FLOAT
+  |  DOUBLE
   ;
 
 classOrInterfaceType
   :  classType
   |  interfaceType
   ;
-
 
 classType
   : identifier typeArguments?
@@ -242,51 +214,53 @@ typeVariable
   ;
 
 typeArguments
-  :  '<' typeArgumentList '>'
+  :  LT typeArgumentList GT
   ;
 
 typeArgumentList
-  :  typeArgument (',' typeArgument)*
+  :  typeArgument (COMMA typeArgument)*
   ;
 
 typeArgument
   :  referenceType
   ;
 
-// EXCEPTIONS
-throws_
-  :  'throws' exceptionTypeList
+literal
+  :  IntegerLiteral
+  |  BooleanLiteral
+  |  CharacterLiteral
+  |  StringLiteral
+  |  NullLiteral
   ;
 
-exceptionTypeList
-  :  exceptionType (',' exceptionType)*
-  ;
-
-exceptionType
-  :  classType
-  |  typeVariable
-  ;
-
-// LEXER
 semi
   :  NL+
   |  SEMICOLON
   |  SEMICOLON NL+
   ;
 
-identifier
-  : Identifier
-  ;
+// LEXER
 
-literal
-  :  IntegerLiteral
-  |  BooleanLiteral
-  |  NullLiteral
-  ;
+identifier : Identifier;
 
-SEMICOLON
-  :  ';'
-  ;
+// Keywords
+
+BOOLEAN : 'boolean';
+BYTE : 'byte';
+CHAR : 'char';
+DOUBLE : 'double';
+FLOAT : 'float';
+INT : 'int';
+LONG : 'long';
+NATIVE : 'native'; 
+PRIVATE : 'private';
+PUBLIC : 'public';
+SHORT : 'short';
+THIS : 'this';
+VOID : 'void';
+
+
+// Integer Literals
 
 IntegerLiteral
   :  DecimalIntegerLiteral
@@ -319,34 +293,82 @@ NonZeroDigit
   :  [1-9]
   ;
 
+// Boolean Literals
+
 BooleanLiteral
   :  'true'
   |  'false'
   ;
 
+// Character Literals
+
+CharacterLiteral
+  :  '\'' SingleCharacter '\''
+  ;
+
+fragment
+SingleCharacter
+  :  ~['\\\r\n]
+  ;
+
+// String Literals
+
+StringLiteral
+  :  '"' StringCharacters? '"'
+  ;
+
+fragment
+StringCharacters
+  :  StringCharacter+
+  ;
+
+fragment
+StringCharacter
+  :  ~["\\\r\n]
+  ;
+
+// The Null Literal
+
 NullLiteral
   :  'null'
   ;
 
-// IDENTIFIERS
+// Separators
+
+COMMA : ',' ;
+DOT : '.' ;
+ELLIPSIS : '...' ;
+LBRACK : '[' ;
+LCURLY : '{' ;
+LPAREN : '(' ;
+RBRACK : ']' ;
+RCURLY : '}' ;
+RPAREN : ')' ;
+SEMICOLON :  ';' ;
+
+// Operators
+GT : '>' ;
+LT : '<' ;
+
+// Identifiers 
 
 Identifier
-  :  JavaLetter JavaLetterOrDigit*
+  :  SLangLetter SLangLetterOrDigit*
   ;
 
-JavaLetter
-  :  [a-zA-Z$_]
+fragment
+SLangLetter
+  :  [a-zA-Z$_] 
   ;
 
-JavaLetterOrDigit
-  :  [a-zA-Z0-9$_]
+fragment
+SLangLetterOrDigit
+  :  [a-zA-Z0-9$_] 
   ;
 
-// BREAK
+// Whitespace and comments 
 
-// WHITESPACE
-
-WS
+WS  
   :  [ \t\r\n\u000C]+ -> skip
   ;
 
@@ -359,14 +381,7 @@ LINE_COMMENT
   :  '//' ~[\r\n]* -> channel(HIDDEN)
   ;
 
-NL
-  :  '\u000D'? '\u000A'
+NL  
+  :  '\u000D'? '\u000A' 
   ;
 
-LPAREN: '(' ;
-RPAREN: ')' ;
-
-LCURLY: '{' ;
-RCURLY: '}' ;
-
-NATIVE: 'native' ;

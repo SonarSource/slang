@@ -34,7 +34,7 @@ public class SLangParserTest {
 
   @Test
   public void testFile() throws IOException {
-    SLangLexer lexer = new SLangLexer(CharStreams.fromFileName("src/test/resources/test.slang"));
+    SLangLexer lexer = new SLangLexer(CharStreams.fromFileName("src/test/resources/binary.slang"));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     SLangParser parser = new SLangParser(tokens);
     SLangParser.SlangFileContext context = parser.slangFile();
