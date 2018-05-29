@@ -20,6 +20,9 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.LiteralTree;
+import com.sonarsource.slang.api.Tree;
+import java.util.Collections;
+import java.util.List;
 
 public class LiteralTreeImpl implements LiteralTree {
 
@@ -32,6 +35,11 @@ public class LiteralTreeImpl implements LiteralTree {
   @Override
   public String value() {
     return value;
+  }
+
+  @Override
+  public List<Tree> children() {
+    return Collections.emptyList();
   }
 
 }

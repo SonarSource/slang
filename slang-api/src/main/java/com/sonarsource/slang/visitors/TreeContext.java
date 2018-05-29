@@ -17,31 +17,40 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
+package com.sonarsource.slang.visitors;
 
-public interface BinaryExpressionTree extends Tree {
+import com.sonarsource.slang.api.Tree;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
-  public enum Operator {
-    PLUS,
-    MINUS,
-    TIMES,
-    DIVIDED_BY,
+public class TreeContext {
 
-    EQUAL_TO,
-    NOT_EQUAL_TO,
-    GREATER_THAN,
-    GREATER_THAN_OR_EQUAL_TO,
-    LESS_THAN,
-    LESS_THAN_OR_EQUAL_TO,
+  private final Deque<Tree> ancestors;
+  private Tree current;
 
-    CONDITIONAL_AND,
-    CONDITIONAL_OR,
+  public TreeContext() {
+    ancestors = new ArrayDeque<>();
   }
 
-  Operator operator();
+  public Deque<Tree> ancestors() {
+    return ancestors;
+  }
 
-  Tree leftOperand();
+  protected void before(Tree root) {
+    ancestors.clear();
+  }
 
-  Tree rightOperand();
+  public void enter(Tree node) {
+    if (current != null) {
+      ancestors.push(current);
+    }
+    current = node;
+  }
+
+  public void leave(Tree node) {
+    if (!ancestors.isEmpty()) {
+      current = ancestors.pop();
+    }
+  }
 
 }

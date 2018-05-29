@@ -21,6 +21,8 @@ package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.Tree;
+import java.util.Arrays;
+import java.util.List;
 
 public class BinaryExpressionTreeImpl implements BinaryExpressionTree {
 
@@ -47,5 +49,10 @@ public class BinaryExpressionTreeImpl implements BinaryExpressionTree {
   @Override
   public Tree rightOperand() {
     return rightOperand;
+  }
+
+  @Override
+  public List<Tree> children() {
+    return Arrays.asList(leftOperand, rightOperand);
   }
 }

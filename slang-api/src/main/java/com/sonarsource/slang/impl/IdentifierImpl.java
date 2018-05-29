@@ -20,6 +20,9 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.IdentifierTree;
+import com.sonarsource.slang.api.Tree;
+import java.util.Collections;
+import java.util.List;
 
 public class IdentifierImpl implements IdentifierTree {
 
@@ -31,5 +34,10 @@ public class IdentifierImpl implements IdentifierTree {
 
   public String name() {
     return name;
+  }
+
+  @Override
+  public List<Tree> children() {
+    return Collections.emptyList();
   }
 }

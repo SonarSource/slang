@@ -19,12 +19,8 @@
  */
 package com.sonarsource.slang.api;
 
-import java.util.List;
-
-public interface NativeTree {
+public interface NativeTree extends Tree {
 
   NativeKind nativeKind();
-
-  List<Tree> children();
 
 }

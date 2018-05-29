@@ -19,6 +19,10 @@
  */
 package com.sonarsource.slang.api;
 
+import java.util.List;
+
 public interface Tree {
+
+  List<Tree> children();
 
 }
