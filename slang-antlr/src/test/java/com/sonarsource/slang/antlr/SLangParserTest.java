@@ -19,11 +19,21 @@
  */
 package com.sonarsource.slang.antlr;
 
+import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.impl.NativeTreeImpl;
+import com.sonarsource.slang.parser.SLangBaseListener;
 import com.sonarsource.slang.parser.SLangLexer;
 import com.sonarsource.slang.parser.SLangParser;
 import java.io.IOException;
+
+import com.sun.istack.internal.NotNull;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,4 +50,20 @@ public class SLangParserTest {
     assertThat(context.children.isEmpty()).isFalse();
   }
 
+  @Test
+  public void testBinaryExpression() {
+    SLangLexer lexer = new SLangLexer(CharStreams.fromString("x = 1\n//comment\ny = 2 + \"1\""));
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    SLangParser parser = new SLangParser(tokens);
+    SLangParser.SlangFileContext tree = parser.slangFile();
+    ParseTreeWalker walker = new ParseTreeWalker();
+
+    for (Token token : tokens.getTokens()) {
+      System.out.println(token.getLine() + ": " + token.getText());
+    }
+
+    assertThat(tree.children, notNullValue());
+    assertThat(tree.children.isEmpty(), is(false));
+
+  }
 }
