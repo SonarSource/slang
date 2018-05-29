@@ -26,9 +26,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SLangParserTest {
 
@@ -38,8 +36,8 @@ public class SLangParserTest {
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     SLangParser parser = new SLangParser(tokens);
     SLangParser.SlangFileContext context = parser.slangFile();
-    assertThat(context.children, notNullValue());
-    assertThat(context.children.isEmpty(), is(false));
+    assertThat(context.children).isNotNull();
+    assertThat(context.children.isEmpty()).isFalse();
   }
 
 }
