@@ -21,6 +21,7 @@
   </licenses>
 
   <modules>
+    <module>slang-antlr</module>
     <module>slang-api</module>
   </modules>
 
