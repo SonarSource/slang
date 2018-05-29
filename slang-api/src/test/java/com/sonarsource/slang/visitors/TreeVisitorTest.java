@@ -42,20 +42,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TreeVisitorTest {
 
-  private class DummyNativeKind implements NativeKind {
-    public DummyNativeKind(){}
-  }
+  private class DummyNativeKind implements NativeKind {}
 
-  private IdentifierTree var1 = new IdentifierImpl("var1");
-  private LiteralTree number1 = new LiteralTreeImpl("1");
-  private BinaryExpressionTree binary = new BinaryExpressionTreeImpl(Operator.PLUS, var1, number1);
-  private BinaryExpressionTree binminus = new BinaryExpressionTreeImpl(Operator.MINUS, var1, var1);
+  private IdentifierTree var1 = new IdentifierImpl(null, "var1");
+  private LiteralTree number1 = new LiteralTreeImpl(null, "1");
+  private BinaryExpressionTree binary = new BinaryExpressionTreeImpl(null, Operator.PLUS, var1, number1);
+  private BinaryExpressionTree binminus = new BinaryExpressionTreeImpl(null, Operator.MINUS, var1, var1);
 
   private DummyNativeKind nkind = new DummyNativeKind();
-  private List<Tree> nchildren = Arrays.asList(binary, binminus);
-  private NativeTree nativeNode = new NativeTreeImpl(nkind, nchildren);
+  private NativeTree nativeNode = new NativeTreeImpl(null, nkind, Arrays.asList(binary, binminus));
+  
   private TreeVisitor<TreeContext> visitor = new TreeVisitor<>();
-
 
   @Test
   public void visitSimpleTree() {

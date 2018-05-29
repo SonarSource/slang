@@ -20,17 +20,19 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.BinaryExpressionTree;
+import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import java.util.Arrays;
 import java.util.List;
 
-public class BinaryExpressionTreeImpl implements BinaryExpressionTree {
+public class BinaryExpressionTreeImpl extends BaseTreeImpl implements BinaryExpressionTree {
 
   private final Operator operator;
   private final Tree leftOperand;
   private final Tree rightOperand;
 
-  public BinaryExpressionTreeImpl(Operator operator, Tree leftOperand, Tree rightOperand) {
+  public BinaryExpressionTreeImpl(TextRange textRange, Operator operator, Tree leftOperand, Tree rightOperand) {
+    super(textRange);
     this.operator = operator;
     this.leftOperand = leftOperand;
     this.rightOperand = rightOperand;

@@ -19,27 +19,27 @@
  */
 package com.sonarsource.slang.impl;
 
-import com.sonarsource.slang.api.IdentifierTree;
+import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
-import com.sonarsource.slang.api.Tree;
-import java.util.Collections;
-import java.util.List;
 
-public class IdentifierImpl extends BaseTreeImpl implements IdentifierTree {
+public class TextRangeImpl implements TextRange {
 
-  private final String name;
+  private final TextPointer start;
+  private final TextPointer end;
 
-  public IdentifierImpl(TextRange textRange, String name) {
-    super(textRange);
-    this.name = name;
-  }
-
-  public String name() {
-    return name;
+  public TextRangeImpl(TextPointer start, TextPointer end) {
+    this.start = start;
+    this.end = end;
   }
 
   @Override
-  public List<Tree> children() {
-    return Collections.emptyList();
+  public TextPointer start() {
+    return start;
   }
+
+  @Override
+  public TextPointer end() {
+    return end;
+  }
+
 }

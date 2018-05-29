@@ -21,15 +21,17 @@ package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.NativeKind;
 import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import java.util.List;
 
-public class NativeTreeImpl implements NativeTree {
+public class NativeTreeImpl extends BaseTreeImpl implements NativeTree {
 
   private final NativeKind nativeKind;
   private final List<Tree> children;
 
-  public NativeTreeImpl(NativeKind nativeKind, List<Tree> children) {
+  public NativeTreeImpl(TextRange textRange, NativeKind nativeKind, List<Tree> children) {
+    super(textRange);
     this.nativeKind = nativeKind;
     this.children = children;
   }

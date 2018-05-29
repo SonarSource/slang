@@ -17,29 +17,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.impl;
+package com.sonarsource.slang.api;
 
-import com.sonarsource.slang.api.IdentifierTree;
-import com.sonarsource.slang.api.TextRange;
-import com.sonarsource.slang.api.Tree;
-import java.util.Collections;
-import java.util.List;
+public interface TextRange {
 
-public class IdentifierImpl extends BaseTreeImpl implements IdentifierTree {
+  TextPointer start();
 
-  private final String name;
+  TextPointer end();
 
-  public IdentifierImpl(TextRange textRange, String name) {
-    super(textRange);
-    this.name = name;
-  }
-
-  public String name() {
-    return name;
-  }
-
-  @Override
-  public List<Tree> children() {
-    return Collections.emptyList();
-  }
 }
