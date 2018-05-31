@@ -24,6 +24,7 @@ import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
+import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
@@ -86,6 +87,24 @@ public class SLangConverterTest {
     assertThat(((IdentifierTree) binary.leftOperand()).name()).isEqualTo("x");
     assertThat(binary.rightOperand()).isInstanceOf(BinaryExpressionTree.class);
     assertThat(((BinaryExpressionTree) binary.rightOperand()).operator()).isEqualTo(Operator.MINUS);
+  }
+
+  @Test
+  public void text_ranges() {
+    BinaryExpressionTree binary = parseBinary("x + 1");
+    assertTextRange(binary.leftOperand(), 1, 0, 1, 1);
+    assertTextRange(binary.rightOperand(), 1, 4, 1, 5);
+    assertTextRange(binary, 1, 0, 1, 5);
+
+    assertTextRange(converter.parse("42;\n43"), 1, 0, 2, 2);
+  }
+
+  private void assertTextRange(Tree leftOperand, int startLine, int startLineOffset, int endLine, int endLineOffset) {
+    TextRange leftOperandRange = leftOperand.textRange();
+    assertThat(leftOperandRange.start().line()).isEqualTo(startLine);
+    assertThat(leftOperandRange.start().lineOffset()).isEqualTo(startLineOffset);
+    assertThat(leftOperandRange.end().line()).isEqualTo(endLine);
+    assertThat(leftOperandRange.end().lineOffset()).isEqualTo(endLineOffset);
   }
 
   private BinaryExpressionTree parseBinary(String code) {

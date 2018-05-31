@@ -21,11 +21,14 @@ package com.sonarsource.slang.parser;
 
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
+import com.sonarsource.slang.impl.TextPointerImpl;
+import com.sonarsource.slang.impl.TextRangeImpl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import static java.util.stream.Collectors.toList;
@@ -90,7 +94,7 @@ public class SLangConverter {
     @Override
     public Tree visitMethodBody(SLangParser.MethodBodyContext ctx) {
       if (ctx.SEMICOLON() != null) {
-        return new NativeTreeImpl(null, new SNativeKind(), new ArrayList<>());
+        return new NativeTreeImpl(textRange(ctx.start), new SNativeKind(), new ArrayList<>());
       }
       return visit(ctx.block());
     }
@@ -137,27 +141,37 @@ public class SLangConverter {
 
     @Override
     public Tree visitLiteral(SLangParser.LiteralContext ctx) {
-      return new LiteralTreeImpl(null, ctx.getText());
+      return new LiteralTreeImpl(textRange(ctx.getStart()), ctx.getText());
     }
 
     @Override
     public Tree visitIdentifier(SLangParser.IdentifierContext ctx) {
-      return new IdentifierTreeImpl(null, ctx.getText());
+      return new IdentifierTreeImpl(textRange(ctx.getStart()), ctx.getText());
     }
 
-    private NativeTree nativeTree(List<? extends org.antlr.v4.runtime.tree.ParseTree> children) {
-      List<Tree> convertedChildren = children
+    private TextRange textRange(Token token) {
+      return new TextRangeImpl(
+        new TextPointerImpl(token.getLine(), token.getCharPositionInLine()),
+        new TextPointerImpl(token.getLine(), token.getCharPositionInLine() + token.getText().length()));
+    }
+
+    private TextRange textRange(Tree first, Tree last) {
+      return new TextRangeImpl(first.textRange().start(), last.textRange().end());
+    }
+
+    private NativeTree nativeTree(List<? extends org.antlr.v4.runtime.tree.ParseTree> rawChildren) {
+      List<Tree> children = rawChildren
         .stream()
         .map(this::visit)
         .collect(toList());
-      return new NativeTreeImpl(null, new SNativeKind(), convertedChildren);
+      return new NativeTreeImpl(textRange(children.get(0), children.get(children.size() - 1)), new SNativeKind(), children);
     }
 
     private Tree binaryTree(Operator operator, List<? extends ParseTree> operands) {
       Tree result = visit(operands.get(operands.size() - 1));
       for (int i = operands.size() - 2; i >= 0; i--) {
         Tree left = visit(operands.get(i));
-        result = new BinaryExpressionTreeImpl(null, operator, left, result);
+        result = new BinaryExpressionTreeImpl(textRange(left, result), operator, left, result);
       }
       return result;
     }
@@ -166,7 +180,8 @@ public class SLangConverter {
       Tree result = visit(operands.get(operands.size() - 1));
       for (int i = operands.size() - 2; i >= 0; i--) {
         Tree left = visit(operands.get(i));
-        result = new BinaryExpressionTreeImpl(null, BINARY_OPERATOR_MAP.get(operators.get(i).getText()), left, result);
+        Operator operator = BINARY_OPERATOR_MAP.get(operators.get(i).getText());
+        result = new BinaryExpressionTreeImpl(textRange(left, result), operator, left, result);
       }
       return result;
     }

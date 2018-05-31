@@ -1,3 +1,3 @@
-x == 3;
+x;
 x == x; // Noncompliant
-x == x + 1;
+1;

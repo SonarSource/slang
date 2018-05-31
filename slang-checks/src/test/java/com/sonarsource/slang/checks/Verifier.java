@@ -92,7 +92,7 @@ public class Verifier {
     public void reportIssue(Tree tree, String message) {
       TextPointer start = tree.textRange().start();
       TextPointer end = tree.textRange().end();
-      verifier.reportIssue(message).onRange(start.line(), start.lineOffset(), end.line(), end.lineOffset());
+      verifier.reportIssue(message).onRange(start.line(), start.lineOffset() + 1, end.line(), end.lineOffset());
     }
 
   }
