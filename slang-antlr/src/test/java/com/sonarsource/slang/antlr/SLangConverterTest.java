@@ -21,7 +21,9 @@
 package com.sonarsource.slang.antlr;
 
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.IdentifierImpl;
+import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.parser.SLangConverter;
 import com.sonarsource.slang.visitors.TreeContext;
@@ -29,22 +31,31 @@ import com.sonarsource.slang.visitors.TreeVisitor;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class SLangConverterTest {
   @Test
-  public void testFile() throws IOException {
+  public void testConverter() throws IOException {
     SLangConverter converter = new SLangConverter();
     Tree tree = converter.parse("src/test/resources/binary.slang");
 
+    AtomicInteger numBinNodes = new AtomicInteger(0);
+    AtomicInteger numIdentifierNode = new AtomicInteger(0);
+    AtomicInteger numLiteralNode = new AtomicInteger(0);
+
     TreeVisitor<TreeContext> visitor = new TreeVisitor<>();
-    visitor.register(NativeTreeImpl.class, (ctx, nativeTree) -> System.out.println("Native"));
-    visitor.register(IdentifierImpl.class, (ctx, identifierTree) -> System.out.println(identifierTree.name()));
+
+    visitor.register(BinaryExpressionTreeImpl.class, (ctx, binaryExpressionTree) -> numBinNodes.getAndIncrement());
+    visitor.register(IdentifierImpl.class, (ctx, identifierTree) -> numIdentifierNode.getAndIncrement());
+    visitor.register(LiteralTreeImpl.class, (ctx, literalTree) -> numLiteralNode.getAndIncrement());
     visitor.scan(new TreeContext(), tree);
 
-    assertThat(true, is(true));
+    assertThat(numBinNodes.get(), is(6));
+    assertThat(numIdentifierNode.get(), is(7));
+    assertThat(numLiteralNode.get(), is(10));
 
   }
 }
