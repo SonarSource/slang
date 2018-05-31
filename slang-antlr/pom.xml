@@ -31,6 +31,10 @@
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.sonarsource.slang</groupId>
+      <artifactId>slang-api</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -39,6 +43,9 @@
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-maven-plugin</artifactId>
         <version>${antlr.version}</version>
+        <configuration>
+          <visitor>true</visitor>
+        </configuration>
         <executions>
           <execution>
             <goals>

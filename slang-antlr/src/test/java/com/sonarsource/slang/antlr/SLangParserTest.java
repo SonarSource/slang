@@ -37,7 +37,18 @@ public class SLangParserTest {
     SLangParser parser = new SLangParser(tokens);
     SLangParser.SlangFileContext context = parser.slangFile();
     assertThat(context.children).isNotNull();
-    assertThat(context.children.isEmpty()).isFalse();
+    assertThat(context.children).isNotEmpty();
   }
 
+  @Test
+  public void testBinaryExpression() {
+    SLangLexer lexer = new SLangLexer(CharStreams.fromString("x = 1\n//comment\ny = 2 + \"1\""));
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    SLangParser parser = new SLangParser(tokens);
+    SLangParser.SlangFileContext tree = parser.slangFile();
+
+    assertThat(tree.children).isNotNull();
+    assertThat(tree.children).isNotEmpty();
+
+  }
 }
