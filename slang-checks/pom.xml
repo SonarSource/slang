@@ -33,6 +33,10 @@
       <groupId>org.sonarsource.analyzer-commons</groupId>
       <artifactId>sonar-analyzer-test-commons</artifactId>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>slang-antlr</artifactId>
+    </dependency>
   </dependencies>
 
 </project>

@@ -26,8 +26,11 @@ import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.api.CheckContext;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
+import com.sonarsource.slang.parser.SLangConverter;
 import com.sonarsource.slang.visitors.TreeContext;
 import com.sonarsource.slang.visitors.TreeVisitor;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.BiConsumer;
@@ -47,7 +50,7 @@ public class Verifier {
     Path path = BASE_DIR.resolve(fileName);
     SingleFileVerifier verifier = SingleFileVerifier.create(path, UTF_8);
 
-    Tree root = null; // TODO parse
+    Tree root = new SLangConverter().parse(readFile(path));
 
     TestContext ctx = new TestContext(verifier);
     check.initialize(ctx);
@@ -56,6 +59,14 @@ public class Verifier {
     CommentParser commentParser = CommentParser.create().addSingleLineCommentSyntax("//");
     commentParser.parseInto(path, verifier);
     return verifier;
+  }
+
+  private static String readFile(Path path) {
+    try {
+      return new String(Files.readAllBytes(path), UTF_8);
+    } catch (IOException e) {
+      throw new IllegalStateException("Cannot read " + path, e);
+    }
   }
 
   private static class TestContext extends TreeContext implements InitContext, CheckContext {
