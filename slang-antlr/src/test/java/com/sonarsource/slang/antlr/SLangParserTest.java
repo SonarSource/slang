@@ -27,7 +27,6 @@ import com.sonarsource.slang.parser.SLangLexer;
 import com.sonarsource.slang.parser.SLangParser;
 import java.io.IOException;
 
-import com.sun.istack.internal.NotNull;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
