@@ -23,11 +23,19 @@ import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
 
+import static com.sonarsource.slang.checks.utils.SyntacticEquivalence.areEquivalent;
+
 public class IdenticalBinaryOperandCheck implements SlangCheck {
 
   @Override
   public void initialize(InitContext init) {
-    init.register(BinaryExpressionTree.class, (ctx, tree) -> ctx.reportIssue(tree, "Binary!"));
+    init.register(BinaryExpressionTree.class, (ctx, tree) -> {
+      if (tree.operator() != BinaryExpressionTree.Operator.PLUS
+        && tree.operator() != BinaryExpressionTree.Operator.TIMES
+        && areEquivalent(tree.leftOperand(), tree.rightOperand())) {
+        ctx.reportIssue(tree, "Correct one of the identical sub-expressions on both sides this operator");
+      }
+    });
   }
 
 }
