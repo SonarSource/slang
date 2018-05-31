@@ -25,6 +25,7 @@ import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.api.CheckContext;
 import com.sonarsource.slang.checks.api.InitContext;
+import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import com.sonarsource.slang.parser.SLangConverter;
 import com.sonarsource.slang.visitors.TreeContext;
@@ -33,6 +34,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiConsumer;
 import javax.annotation.Nullable;
 
@@ -90,9 +93,28 @@ public class Verifier {
 
     @Override
     public void reportIssue(Tree tree, String message) {
+      reportIssue(tree, message, Collections.emptyList());
+    }
+
+    @Override
+    public void reportIssue(Tree tree, String message, SecondaryLocation secondaryLocation) {
+      reportIssue(tree, message, Collections.singletonList(secondaryLocation));
+    }
+
+    @Override
+    public void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations) {
       TextPointer start = tree.textRange().start();
       TextPointer end = tree.textRange().end();
-      verifier.reportIssue(message).onRange(start.line(), start.lineOffset() + 1, end.line(), end.lineOffset());
+      SingleFileVerifier.Issue issue =
+        verifier.reportIssue(message).onRange(start.line(), start.lineOffset() + 1, end.line(), end.lineOffset());
+      secondaryLocations.forEach(secondary ->
+        issue.addSecondary(
+          secondary.textRange.start().line(),
+          secondary.textRange.start().lineOffset() + 1,
+          secondary.textRange.end().line(),
+          secondary.textRange.end().lineOffset(),
+          secondary.message));
+
     }
 
   }

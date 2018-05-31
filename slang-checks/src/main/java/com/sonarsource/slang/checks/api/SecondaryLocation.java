@@ -19,15 +19,24 @@
  */
 package com.sonarsource.slang.checks.api;
 
+import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
-import java.util.List;
+import javax.annotation.Nullable;
 
-public interface CheckContext {
+public class SecondaryLocation {
 
-  void reportIssue(Tree tree, String message);
+  public final TextRange textRange;
 
-  void reportIssue(Tree tree, String message, SecondaryLocation secondaryLocation);
+  @Nullable
+  public final String message;
 
-  void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations);
+  public SecondaryLocation(Tree tree) {
+    this(tree.textRange(), null);
+  }
+
+  public SecondaryLocation(TextRange textRange, @Nullable String message) {
+    this.textRange = textRange;
+    this.message = message;
+  }
 
 }
