@@ -25,7 +25,7 @@ import com.sonarsource.slang.api.NativeKind;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
-import com.sonarsource.slang.impl.IdentifierImpl;
+import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import java.util.AbstractMap.SimpleEntry;
@@ -89,7 +89,7 @@ class KotlinTreeVisitor extends KtTreeVisitorVoid {
       // child at index 1 is the KtOperationReferenceExpression
       return new BinaryExpressionTreeImpl(textRange, operator, children.get(0), children.get(2));
     } else if (element instanceof KtNameReferenceExpression) {
-      return new IdentifierImpl(textRange, element.getText());
+      return new IdentifierTreeImpl(textRange, element.getText());
     } else if (element instanceof KtConstantExpression) {
       return new LiteralTreeImpl(textRange, element.getText());
     } else {

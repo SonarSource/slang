@@ -24,6 +24,7 @@ import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
+import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
@@ -97,6 +98,17 @@ public class SLangConverterTest {
     assertTextRange(binary, 1, 0, 1, 5);
 
     assertTextRange(converter.parse("42;\n43"), 1, 0, 2, 2);
+  }
+
+  @Test
+  public void native_kind() {
+    Tree root = converter.parse("x == 1");
+    Tree root2 = converter.parse("x == 2");
+    Tree child = root.children().get(0);
+    assertThat(root).isInstanceOf(NativeTree.class);
+    assertThat(child).isInstanceOf(NativeTree.class);
+    assertThat(((NativeTree) root).nativeKind()).isNotEqualTo(((NativeTree) child).nativeKind());
+    assertThat(((NativeTree) root).nativeKind()).isEqualTo(((NativeTree) root2).nativeKind());
   }
 
   private void assertTextRange(Tree leftOperand, int startLine, int startLineOffset, int endLine, int endLineOffset) {

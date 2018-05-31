@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -52,9 +53,9 @@ public class SLangConverter {
     return slangVisitor.visit(parser.slangFile());
   }
 
-  private static final Map<String,Operator> BINARY_OPERATOR_MAP = binaryOperatorMap();
+  private static final Map<String, Operator> BINARY_OPERATOR_MAP = binaryOperatorMap();
 
-  private static Map<String,Operator> binaryOperatorMap() {
+  private static Map<String, Operator> binaryOperatorMap() {
     Map<String, Operator> map = new HashMap<>();
     map.put(">", Operator.GREATER_THAN);
     map.put(">=", Operator.GREATER_THAN_OR_EQUAL_TO);
@@ -73,17 +74,17 @@ public class SLangConverter {
 
     @Override
     public Tree visitSlangFile(SLangParser.SlangFileContext ctx) {
-      return nativeTree(ctx.typeDeclaration());
+      return nativeTree(ctx, ctx.typeDeclaration());
     }
 
     @Override
     public Tree visitNativeExpression(SLangParser.NativeExpressionContext ctx) {
-      return nativeTree(ctx.nativeBlock());
+      return nativeTree(ctx, ctx.nativeBlock());
     }
 
     @Override
     public Tree visitStatementOrExpression(SLangParser.StatementOrExpressionContext ctx) {
-      return nativeTree(ctx.disjunction());
+      return nativeTree(ctx, ctx.disjunction());
     }
 
     @Override
@@ -94,19 +95,19 @@ public class SLangConverter {
     @Override
     public Tree visitMethodBody(SLangParser.MethodBodyContext ctx) {
       if (ctx.SEMICOLON() != null) {
-        return new NativeTreeImpl(textRange(ctx.start), new SNativeKind(), new ArrayList<>());
+        return new NativeTreeImpl(textRange(ctx.start), new SNativeKind(ctx), new ArrayList<>());
       }
       return visit(ctx.block());
     }
 
     @Override
     public Tree visitBlock(SLangParser.BlockContext ctx) {
-      return nativeTree(ctx.statementOrExpression());
+      return nativeTree(ctx, ctx.statementOrExpression());
     }
 
     @Override
     public Tree visitNativeBlock(SLangParser.NativeBlockContext ctx) {
-      return nativeTree(ctx.statementOrExpression());
+      return nativeTree(ctx, ctx.statementOrExpression());
     }
 
     @Override
@@ -159,12 +160,12 @@ public class SLangConverter {
       return new TextRangeImpl(first.textRange().start(), last.textRange().end());
     }
 
-    private NativeTree nativeTree(List<? extends org.antlr.v4.runtime.tree.ParseTree> rawChildren) {
+    private NativeTree nativeTree(ParserRuleContext ctx, List<? extends ParseTree> rawChildren) {
       List<Tree> children = rawChildren
         .stream()
         .map(this::visit)
         .collect(toList());
-      return new NativeTreeImpl(textRange(children.get(0), children.get(children.size() - 1)), new SNativeKind(), children);
+      return new NativeTreeImpl(textRange(children.get(0), children.get(children.size() - 1)), new SNativeKind(ctx), children);
     }
 
     private Tree binaryTree(Operator operator, List<? extends ParseTree> operands) {
