@@ -24,6 +24,7 @@
     <module>slang-antlr</module>
     <module>slang-api</module>
     <module>slang-checks</module>
+    <module>slang-kotlin</module>
   </modules>
 
   <!--
