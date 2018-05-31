@@ -1,3 +1,22 @@
+/*
+ * SonarSource SLang
+ * Copyright (C) 2009-2018 SonarSource SA
+ * mailto:info AT sonarsource DOT com
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package com.sonarsource.slang.kotlin;
 
 import com.sonarsource.slang.api.Tree;
@@ -18,14 +37,15 @@ import org.jetbrains.kotlin.idea.KotlinLanguage;
 
 import static java.nio.file.Files.readAllBytes;
 
-public class ASTMapper {
+public class KotlinParser {
+  private static final PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(createKotlinCoreEnvironment());
 
   public static Tree fromFile(String fileName) throws IOException {
     return fromString(readFile(fileName));
   }
 
   public static Tree fromString(String content) {
-    PsiFile psiFile = compile(content);
+    PsiFile psiFile = psiFileFactory.createFileFromText(KotlinLanguage.INSTANCE, content);
     KotlinTreeVisitor kotlinTreeVisitor = new KotlinTreeVisitor();
     psiFile.accept(kotlinTreeVisitor);
     return kotlinTreeVisitor.getSLangAST();
@@ -37,11 +57,6 @@ public class ASTMapper {
     }
 
     return new String(readAllBytes(Paths.get(fileName)), Charset.forName("UTF-8"));
-  }
-
-  private static PsiFile compile(String content) {
-    PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(createKotlinCoreEnvironment());
-    return psiFileFactory.createFileFromText(KotlinLanguage.INSTANCE, content);
   }
 
   private static Project createKotlinCoreEnvironment() {
