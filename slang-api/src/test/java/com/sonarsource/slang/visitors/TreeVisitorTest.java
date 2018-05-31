@@ -27,7 +27,7 @@ import com.sonarsource.slang.api.NativeKind;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
-import com.sonarsource.slang.impl.IdentifierImpl;
+import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +44,7 @@ public class TreeVisitorTest {
 
   private class DummyNativeKind implements NativeKind {}
 
-  private IdentifierTree var1 = new IdentifierImpl(null, "var1");
+  private IdentifierTree var1 = new IdentifierTreeImpl(null, "var1");
   private LiteralTree number1 = new LiteralTreeImpl(null, "1");
   private BinaryExpressionTree binary = new BinaryExpressionTreeImpl(null, Operator.PLUS, var1, number1);
   private BinaryExpressionTree binminus = new BinaryExpressionTreeImpl(null, Operator.MINUS, var1, var1);

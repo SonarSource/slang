@@ -25,11 +25,11 @@ import com.sonarsource.slang.api.Tree;
 import java.util.Collections;
 import java.util.List;
 
-public class IdentifierImpl extends BaseTreeImpl implements IdentifierTree {
+public class IdentifierTreeImpl extends BaseTreeImpl implements IdentifierTree {
 
   private final String name;
 
-  public IdentifierImpl(TextRange textRange, String name) {
+  public IdentifierTreeImpl(TextRange textRange, String name) {
     super(textRange);
     this.name = name;
   }

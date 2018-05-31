@@ -23,10 +23,9 @@ import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
-import com.sonarsource.slang.impl.IdentifierImpl;
+import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,15 +33,14 @@ import java.util.List;
 import java.util.Map;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import static java.util.stream.Collectors.toList;
 
 public class SLangConverter {
 
-  public Tree parse(String slangFile) throws IOException {
-    SLangLexer lexer = new SLangLexer(CharStreams.fromFileName(slangFile));
+  public Tree parse(String slangCode) {
+    SLangLexer lexer = new SLangLexer(CharStreams.fromString(slangCode));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     SLangParser parser = new SLangParser(tokens);
 
@@ -109,32 +107,32 @@ public class SLangConverter {
 
     @Override
     public Tree visitDisjunction(SLangParser.DisjunctionContext ctx) {
-      return binaryTree(ctx, Operator.CONDITIONAL_OR, ctx.conjunction());
+      return binaryTree(Operator.CONDITIONAL_OR, ctx.conjunction());
     }
 
     @Override
     public Tree visitConjunction(SLangParser.ConjunctionContext ctx) {
-      return binaryTree(ctx, Operator.CONDITIONAL_AND, ctx.equalityComparison());
+      return binaryTree(Operator.CONDITIONAL_AND, ctx.equalityComparison());
     }
 
     @Override
     public Tree visitEqualityComparison(SLangParser.EqualityComparisonContext ctx) {
-      return binaryTree(ctx, ctx.comparison(), ctx.equalityOperator());
+      return binaryTree(ctx.comparison(), ctx.equalityOperator());
     }
 
     @Override
     public Tree visitComparison(SLangParser.ComparisonContext ctx) {
-      return binaryTree(ctx, ctx.additiveExpression(), ctx.comparisonOperator());
+      return binaryTree(ctx.additiveExpression(), ctx.comparisonOperator());
     }
 
     @Override
     public Tree visitAdditiveExpression(SLangParser.AdditiveExpressionContext ctx) {
-      return binaryTree(ctx, ctx.multiplicativeExpression(), ctx.additiveOperator());
+      return binaryTree(ctx.multiplicativeExpression(), ctx.additiveOperator());
     }
 
     @Override
     public Tree visitMultiplicativeExpression(SLangParser.MultiplicativeExpressionContext ctx) {
-      return binaryTree(ctx, ctx.atomicExpression(), ctx.multiplicativeOperator());
+      return binaryTree(ctx.atomicExpression(), ctx.multiplicativeOperator());
     }
 
     @Override
@@ -144,7 +142,7 @@ public class SLangConverter {
 
     @Override
     public Tree visitIdentifier(SLangParser.IdentifierContext ctx) {
-      return new IdentifierImpl(null, ctx.getText());
+      return new IdentifierTreeImpl(null, ctx.getText());
     }
 
     private NativeTree nativeTree(List<? extends org.antlr.v4.runtime.tree.ParseTree> children) {
@@ -155,33 +153,22 @@ public class SLangConverter {
       return new NativeTreeImpl(null, new SNativeKind(), convertedChildren);
     }
 
-    private Tree binaryTree(ParserRuleContext ctx, Operator operator, List<? extends ParseTree> operands) {
-      if (operands.size() > 1) {
-        if (operands.size() > 2) {
-          return nativeTree(operands);
-        }
-
-        Tree left = visit(operands.get(0));
-        Tree right = visit(operands.get(1));
-        return new BinaryExpressionTreeImpl(null, operator, left, right);
+    private Tree binaryTree(Operator operator, List<? extends ParseTree> operands) {
+      Tree result = visit(operands.get(operands.size() - 1));
+      for (int i = operands.size() - 2; i >= 0; i--) {
+        Tree left = visit(operands.get(i));
+        result = new BinaryExpressionTreeImpl(null, operator, left, result);
       }
-
-      return visitChildren(ctx);
+      return result;
     }
 
-    private Tree binaryTree(ParserRuleContext ctx, List<? extends ParseTree> operands, List<? extends ParseTree> operators) {
-      if (operands.size() > 1) {
-        if (operands.size() > 2) {
-          return nativeTree(operands);
-        }
-
-        Tree left = visit(operands.get(0));
-        Tree right = visit(operands.get(1));
-        return new BinaryExpressionTreeImpl(null, BINARY_OPERATOR_MAP.get(operators.get(0).getText()), left, right);
+    private Tree binaryTree(List<? extends ParseTree> operands, List<? extends ParseTree> operators) {
+      Tree result = visit(operands.get(operands.size() - 1));
+      for (int i = operands.size() - 2; i >= 0; i--) {
+        Tree left = visit(operands.get(i));
+        result = new BinaryExpressionTreeImpl(null, BINARY_OPERATOR_MAP.get(operators.get(i).getText()), left, result);
       }
-
-      return visitChildren(ctx);
+      return result;
     }
-
   }
 }
