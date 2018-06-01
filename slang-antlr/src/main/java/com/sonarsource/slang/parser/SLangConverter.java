@@ -20,11 +20,13 @@
 package com.sonarsource.slang.parser;
 
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
+import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
+import com.sonarsource.slang.impl.BlockTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
@@ -106,7 +108,7 @@ public class SLangConverter {
         convertedParameters.add(visit(formalParameterListContext.lastFormalParameter()));
       }
 
-      return new FunctionDeclarationTreeImpl(textRange, modifiers, returnType, name, convertedParameters, visit(ctx.methodBody()));
+      return new FunctionDeclarationTreeImpl(textRange, modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()));
     }
 
     @Override
@@ -129,7 +131,7 @@ public class SLangConverter {
 
     @Override
     public Tree visitBlock(SLangParser.BlockContext ctx) {
-      return nativeTree(ctx, ctx.statementOrExpression());
+      return new BlockTreeImpl(textRange(ctx.LCURLY().getSymbol(), ctx.RCURLY().getSymbol()), list(ctx.statementOrExpression()));
     }
 
     @Override
@@ -177,10 +179,14 @@ public class SLangConverter {
       return new IdentifierTreeImpl(textRange(ctx.getStart()), ctx.getText());
     }
 
-    private TextRange textRange(Token token) {
+    private TextRange textRange(Token firstToken, Token lastToken) {
       return new TextRangeImpl(
-        new TextPointerImpl(token.getLine(), token.getCharPositionInLine()),
-        new TextPointerImpl(token.getLine(), token.getCharPositionInLine() + token.getText().length()));
+        new TextPointerImpl(firstToken.getLine(), firstToken.getCharPositionInLine()),
+        new TextPointerImpl(lastToken.getLine(), lastToken.getCharPositionInLine() + lastToken.getText().length()));
+    }
+
+    private TextRange textRange(Token token) {
+      return textRange(token, token);
     }
 
     private TextRange textRange(Tree first, Tree last) {

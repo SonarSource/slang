@@ -34,6 +34,6 @@ public interface FunctionDeclarationTree extends Tree {
   List<Tree> formalParameters();
 
   @CheckForNull
-  Tree body();
+  BlockTree body();
 
 }

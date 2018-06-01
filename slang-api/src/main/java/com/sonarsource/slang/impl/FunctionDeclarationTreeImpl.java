@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.impl;
 
+import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.TextRange;
@@ -34,7 +35,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
   private final Tree returnType;
   private final IdentifierTree name;
   private final List<Tree> formalParameters;
-  private final Tree body;
+  private final BlockTree body;
   private final List<Tree> children = new ArrayList<>();
 
   public FunctionDeclarationTreeImpl(
@@ -43,7 +44,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
     @Nullable Tree returnType,
     IdentifierTree name,
     List<Tree> formalParameters,
-    @Nullable Tree body
+    @Nullable BlockTree body
   ) {
     super(textRange);
 
@@ -87,7 +88,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
 
   @CheckForNull
   @Override
-  public Tree body() {
+  public BlockTree body() {
     return body;
   }
 
