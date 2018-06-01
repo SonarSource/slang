@@ -97,7 +97,7 @@ atomicExpression
   |  conditional
   |  assignment
   |  methodInvocation
-  |  terminator
+  |  returnExpression
   |  expressionName
   ;
 
@@ -130,8 +130,16 @@ expressionName
   ;
 
 conditional
-  :  IF LPAREN statementOrExpression RPAREN controlBlock (ELSE controlBlock)?
-  |  MATCH LPAREN statementOrExpression RPAREN LCURLY matchCase* RCURLY
+  :  ifExpression
+  |  matchExpression
+  ;
+
+ifExpression
+  : IF LPAREN statementOrExpression RPAREN controlBlock (ELSE controlBlock)?
+  ;
+
+matchExpression
+  : MATCH LPAREN statementOrExpression RPAREN LCURLY matchCase* RCURLY
   ;
 
 matchCase
@@ -152,7 +160,7 @@ nativeBlock
   :  LBRACK (statementOrExpression semi)* (statementOrExpression semi?)? RBRACK 
   ;
 
-terminator
+returnExpression
   :  RETURN statementOrExpression
   ;
 
