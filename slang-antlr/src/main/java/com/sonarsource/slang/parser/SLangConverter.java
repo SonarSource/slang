@@ -22,6 +22,7 @@ package com.sonarsource.slang.parser;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
+import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
@@ -32,6 +33,8 @@ import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
+import com.sonarsource.slang.impl.MatchCaseTreeImpl;
+import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.TextPointerImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
@@ -156,6 +159,29 @@ public class SLangConverter {
       Tree thenBranch = visit(ctx.controlBlock(0));
       Tree lastTree = elseBranch == null ? thenBranch : elseBranch;
       return new IfTreeImpl(textRange(startOf(ctx.start), lastTree.textRange().end()), visit(ctx.statementOrExpression()), thenBranch, elseBranch);
+    }
+
+    @Override
+    public Tree visitMatchExpression(SLangParser.MatchExpressionContext ctx) {
+      List<MatchCaseTree> cases = new ArrayList<>();
+      for (SLangParser.MatchCaseContext matchCaseContext : ctx.matchCase()) {
+        cases.add((MatchCaseTree) visit(matchCaseContext));
+      }
+      return new MatchTreeImpl(textRange(ctx.start, ctx.RCURLY().getSymbol()), visit(ctx.statementOrExpression()), cases);
+    }
+
+    @Override
+    public Tree visitMatchCase(SLangParser.MatchCaseContext ctx) {
+      Tree expression = ctx.statementOrExpression() == null ? null : visit(ctx.statementOrExpression());
+      Tree body = visit(ctx.controlBlock());
+
+      TextRange textRange;
+      if(expression == null) {
+        textRange = textRange(startOf(ctx.ELSE().getSymbol()), body.textRange().end());
+      } else {
+        textRange = textRange(expression, body);
+      }
+      return new MatchCaseTreeImpl(textRange, expression, body);
     }
 
     @Override

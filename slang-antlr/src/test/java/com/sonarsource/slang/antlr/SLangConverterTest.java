@@ -27,6 +27,7 @@ import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.LiteralTree;
+import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
@@ -34,6 +35,7 @@ import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.parser.SLangConverter;
 import com.sonarsource.slang.visitors.TreeContext;
+import com.sonarsource.slang.visitors.TreePrinter;
 import com.sonarsource.slang.visitors.TreeVisitor;
 import java.io.IOException;
 import java.util.Objects;
@@ -137,6 +139,19 @@ public class SLangConverterTest {
     assertThat(tree).isInstanceOf(IfTree.class);
     IfTree ifTree = (IfTree) tree;
     assertTree(ifTree.elseBranch()).isInstanceOf(IfTree.class);
+  }
+
+  @Test
+  public void match() {
+    Tree tree = converter.parse("match(x) { 1 -> a; else -> b; }").children().get(0);
+    assertTree(tree).isInstanceOf(MatchTree.class).hasTextRange(1, 0, 1, 31);
+    MatchTree matchTree = (MatchTree) tree;
+    assertTree(matchTree.expression()).isIdentifier("x");
+    assertThat(matchTree.cases()).hasSize(2);
+    System.out.println(TreePrinter.tree2string(tree));
+    assertTree(matchTree.cases().get(0).expression()).isLiteral("1");
+    assertTree(matchTree.cases().get(1).expression()).isNull();
+    assertTree(matchTree.cases().get(1)).hasTextRange(1, 19, 1, 28);
   }
 
   private BinaryExpressionTree parseBinary(String code) {
