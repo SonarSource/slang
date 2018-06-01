@@ -94,8 +94,10 @@ atomicExpression
   :  parenthesizedExpression 
   |  nativeExpression 
   |  literal
+  |  conditional
   |  assignment
   |  methodInvocation
+  |  terminator
   |  expressionName
   ;
 
@@ -127,12 +129,31 @@ expressionName
   :  identifier
   ;
 
+conditional
+  :  IF LPAREN statementOrExpression RPAREN controlBlock (ELSE controlBlock)?
+  |  MATCH LPAREN statementOrExpression RPAREN LCURLY matchCase* RCURLY
+  ;
+
+matchCase
+  :  statementOrExpression ARROW controlBlock semi
+  |  ELSE ARROW controlBlock semi
+  ;
+
+controlBlock
+  :  block
+  |  statementOrExpression
+  ;
+
 nativeExpression
   :  NATIVE LBRACK argumentList? RBRACK LCURLY nativeBlock* RCURLY 
   ; 
 
 nativeBlock
   :  LBRACK (statementOrExpression semi)* (statementOrExpression semi?)? RBRACK 
+  ;
+
+terminator
+  :  RETURN statementOrExpression
   ;
 
 /* Operators */ 
@@ -249,12 +270,16 @@ BOOLEAN : 'boolean';
 BYTE : 'byte';
 CHAR : 'char';
 DOUBLE : 'double';
+ELSE : 'else';
 FLOAT : 'float';
+IF : 'if';
 INT : 'int';
 LONG : 'long';
+MATCH : 'match';
 NATIVE : 'native'; 
 PRIVATE : 'private';
 PUBLIC : 'public';
+RETURN : 'return';
 SHORT : 'short';
 THIS : 'this';
 VOID : 'void';
@@ -335,6 +360,7 @@ NullLiteral
 
 // Separators
 
+ARROW : '->' ;
 COMMA : ',' ;
 DOT : '.' ;
 ELLIPSIS : '...' ;
@@ -381,7 +407,7 @@ LINE_COMMENT
   :  '//' ~[\r\n]* -> channel(HIDDEN)
   ;
 
-NL  
-  :  '\u000D'? '\u000A' 
+NL
+  :  '\u000D'? '\u000A'
   ;
 
