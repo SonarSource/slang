@@ -30,14 +30,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SLangParserTest {
 
-  @Test
-  public void testFile() throws IOException {
-    SLangLexer lexer = new SLangLexer(CharStreams.fromFileName("src/test/resources/binary.slang"));
+  private void testFile(String file) throws IOException {
+    SLangLexer lexer = new SLangLexer(CharStreams.fromFileName(file));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     SLangParser parser = new SLangParser(tokens);
     SLangParser.SlangFileContext context = parser.slangFile();
     assertThat(context.children).isNotNull();
     assertThat(context.children).isNotEmpty();
+  }
+
+  @Test
+  public void testBinaryExpressionFile() throws IOException {
+    testFile("src/test/resources/binary.slang");
+  }
+
+  @Test
+  public void testConditionalFile() throws IOException {
+    testFile("src/test/resources/conditional.slang");
   }
 
   @Test
