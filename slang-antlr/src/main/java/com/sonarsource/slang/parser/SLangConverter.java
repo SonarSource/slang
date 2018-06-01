@@ -23,17 +23,20 @@ import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
+import com.sonarsource.slang.impl.IfTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.TextPointerImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +77,9 @@ public class SLangConverter {
     return Collections.unmodifiableMap(map);
   }
 
+  // FIXME
+  private static final TextRange FAKE_RANGE = new TextRangeImpl(new TextPointerImpl(-1, -1), new TextPointerImpl(-1, -1));
+
   private static class SLangParseTreeVisitor extends SLangBaseVisitor<Tree> {
 
     @Override
@@ -88,12 +94,14 @@ public class SLangConverter {
 
     @Override
     public Tree visitStatementOrExpression(SLangParser.StatementOrExpressionContext ctx) {
+      if (ctx.disjunction().size() == 1) {
+        return visit(ctx.disjunction(0));
+      }
       return nativeTree(ctx, ctx.disjunction());
     }
 
     @Override
     public Tree visitMethodDeclaration(SLangParser.MethodDeclarationContext ctx) {
-      TextRange textRange = new TextRangeImpl(new TextPointerImpl(-1, -1), new TextPointerImpl(-1, -1));
       List<Tree> modifiers = Collections.emptyList();
       Tree returnType = null; // FIXME
       IdentifierTree name = (IdentifierTree) visit(ctx.methodHeader().methodDeclarator().identifier());
@@ -108,7 +116,7 @@ public class SLangConverter {
         convertedParameters.add(visit(formalParameterListContext.lastFormalParameter()));
       }
 
-      return new FunctionDeclarationTreeImpl(textRange, modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()));
+      return new FunctionDeclarationTreeImpl(FAKE_RANGE, modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()));
     }
 
     @Override
@@ -135,8 +143,29 @@ public class SLangConverter {
     }
 
     @Override
+    public Tree visitConditional(SLangParser.ConditionalContext ctx) {
+      return visit(ctx.children.get(0));
+    }
+
+    @Override
+    public Tree visitIfExpression(SLangParser.IfExpressionContext ctx) {
+      Tree elseBranch = null;
+      if (ctx.controlBlock().size() > 1) {
+        elseBranch = visit(ctx.controlBlock(1));
+      }
+      Tree thenBranch = visit(ctx.controlBlock(0));
+      Tree lastTree = elseBranch == null ? thenBranch : elseBranch;
+      return new IfTreeImpl(textRange(startOf(ctx.start), lastTree.textRange().end()), visit(ctx.statementOrExpression()), thenBranch, elseBranch);
+    }
+
+    @Override
     public Tree visitNativeBlock(SLangParser.NativeBlockContext ctx) {
       return nativeTree(ctx, ctx.statementOrExpression());
+    }
+
+    @Override
+    public Tree visitAssignment(SLangParser.AssignmentContext ctx) {
+      return nativeTree(ctx, Arrays.asList(ctx.leftHandSide(), ctx.statementOrExpression()));
     }
 
     @Override
@@ -179,9 +208,13 @@ public class SLangConverter {
       return new IdentifierTreeImpl(textRange(ctx.getStart()), ctx.getText());
     }
 
+    private TextPointer startOf(Token token) {
+      return new TextPointerImpl(token.getLine(), token.getCharPositionInLine());
+    }
+
     private TextRange textRange(Token firstToken, Token lastToken) {
       return new TextRangeImpl(
-        new TextPointerImpl(firstToken.getLine(), firstToken.getCharPositionInLine()),
+        startOf(firstToken),
         new TextPointerImpl(lastToken.getLine(), lastToken.getCharPositionInLine() + lastToken.getText().length()));
     }
 
@@ -191,6 +224,10 @@ public class SLangConverter {
 
     private TextRange textRange(Tree first, Tree last) {
       return new TextRangeImpl(first.textRange().start(), last.textRange().end());
+    }
+
+    private TextRange textRange(TextPointer first, TextPointer last) {
+      return new TextRangeImpl(first, last);
     }
 
     private NativeTree nativeTree(ParserRuleContext ctx, List<? extends ParseTree> rawChildren) {

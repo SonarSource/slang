@@ -22,10 +22,11 @@ package com.sonarsource.slang.antlr;
 
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
+import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
+import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.LiteralTree;
-import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
@@ -63,7 +64,7 @@ public class SLangConverterTest {
     visitor.scan(new TreeContext(), tree);
 
     assertThat(numBinNodes.get()).isEqualTo(6);
-    assertThat(numIdentifierNode.get()).isEqualTo(8);
+    assertThat(numIdentifierNode.get()).isEqualTo(18);
     assertThat(numLiteralNode.get()).isEqualTo(10);
   }
 
@@ -110,14 +111,32 @@ public class SLangConverterTest {
   }
 
   @Test
-  public void native_kind() {
-    Tree root = converter.parse("x == 1");
-    Tree root2 = converter.parse("x == 2");
-    Tree child = root.children().get(0);
-    assertThat(root).isInstanceOf(NativeTree.class);
-    assertThat(child).isInstanceOf(NativeTree.class);
-    assertThat(((NativeTree) root).nativeKind()).isNotEqualTo(((NativeTree) child).nativeKind());
-    assertThat(((NativeTree) root).nativeKind()).isEqualTo(((NativeTree) root2).nativeKind());
+  public void if_without_else() {
+    Tree tree = converter.parse("if (x > 0) { x = 1; }").children().get(0);
+    assertThat(tree).isInstanceOf(IfTree.class);
+    IfTree ifTree = (IfTree) tree;
+    assertTree(ifTree).hasTextRange(1, 0, 1, 21);
+    assertTree(ifTree.condition()).isBinaryExpression(Operator.GREATER_THAN);
+    assertThat(ifTree.elseBranch()).isNull();
+  }
+
+  @Test
+  public void if_with_else() {
+    Tree tree = converter.parse("if (x > 0) { x == 1; } else { y }").children().get(0);
+    assertThat(tree).isInstanceOf(IfTree.class);
+    IfTree ifTree = (IfTree) tree;
+    assertTree(ifTree).hasTextRange(1, 0, 1, 33);
+    assertTree(ifTree.condition()).isBinaryExpression(Operator.GREATER_THAN);
+    assertTree(ifTree.thenBranch()).isBlock(BinaryExpressionTree.class);
+    assertTree(ifTree.elseBranch()).isBlock(IdentifierTree.class);
+  }
+
+  @Test
+  public void if_with_else_if() {
+    Tree tree = converter.parse("if (x > 0) { x == 1; } else if (x < 1) { y }").children().get(0);
+    assertThat(tree).isInstanceOf(IfTree.class);
+    IfTree ifTree = (IfTree) tree;
+    assertTree(ifTree.elseBranch()).isInstanceOf(IfTree.class);
   }
 
   private BinaryExpressionTree parseBinary(String code) {
@@ -126,7 +145,7 @@ public class SLangConverterTest {
 
   private Tree parseExpressionOrStatement(String code) {
     Tree tree = converter.parse(code);
-    return tree.children().get(0).children().get(0);
+    return tree.children().get(0);
   }
 
   private FunctionDeclarationTree parseFunction(String code) {
@@ -166,6 +185,22 @@ public class SLangConverterTest {
       BinaryExpressionTree actualBinary = (BinaryExpressionTree) actual;
       if (!Objects.equals(actualBinary.operator(), expectedOperator)) {
         failWithMessage("Expected operator to be <%s> but was <%s>", expectedOperator, actualBinary.operator());
+      }
+      return this;
+    }
+
+    public TreeAssert isBlock(Class... classes) {
+      isNotNull();
+      isInstanceOf(BlockTree.class);
+      BlockTree actualBlock = (BlockTree) actual;
+      if (actualBlock.statementOrExpressions().size() != classes.length) {
+        failWithMessage("Expected block with <%s> elements but found <%s>", classes.length, actualBlock.statementOrExpressions().size());
+      }
+      for (int i = 0; i < actualBlock.statementOrExpressions().size(); i++) {
+        Tree tree = actualBlock.statementOrExpressions().get(i);
+        if (!classes[i].isAssignableFrom(tree.getClass())) {
+          failWithMessage("Expected to find instance of <%s> but was <%s>", classes[i], tree.getClass());
+        }
       }
       return this;
     }
