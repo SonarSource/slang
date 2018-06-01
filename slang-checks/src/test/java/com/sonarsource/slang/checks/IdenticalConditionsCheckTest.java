@@ -17,20 +17,15 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.checks.api;
+package com.sonarsource.slang.checks;
 
-import com.sonarsource.slang.api.Tree;
-import java.util.Deque;
-import java.util.List;
+import org.junit.Test;
 
-public interface CheckContext {
+public class IdenticalConditionsCheckTest {
 
-  Deque<Tree> ancestors();
-
-  void reportIssue(Tree tree, String message);
-
-  void reportIssue(Tree tree, String message, SecondaryLocation secondaryLocation);
-
-  void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations);
+  @Test
+  public void test() {
+    Verifier.verify("IdenticalConditions.slang", new IdenticalConditionsCheck());
+  }
 
 }
