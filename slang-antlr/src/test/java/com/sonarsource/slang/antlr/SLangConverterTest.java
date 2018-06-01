@@ -22,6 +22,7 @@ package com.sonarsource.slang.antlr;
 
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
+import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.NativeTree;
@@ -34,15 +35,17 @@ import com.sonarsource.slang.parser.SLangConverter;
 import com.sonarsource.slang.visitors.TreeContext;
 import com.sonarsource.slang.visitors.TreeVisitor;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.antlr.v4.runtime.CharStreams;
+import org.assertj.core.api.AbstractAssert;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SLangConverterTest {
 
-  SLangConverter converter = new SLangConverter();
+  private SLangConverter converter = new SLangConverter();
 
   @Test
   public void testConverter() throws IOException {
@@ -60,44 +63,48 @@ public class SLangConverterTest {
     visitor.scan(new TreeContext(), tree);
 
     assertThat(numBinNodes.get()).isEqualTo(6);
-    assertThat(numIdentifierNode.get()).isEqualTo(7);
+    assertThat(numIdentifierNode.get()).isEqualTo(8);
     assertThat(numLiteralNode.get()).isEqualTo(10);
   }
 
   @Test
   public void simple_binary_expression() {
     BinaryExpressionTree binary = parseBinary("x + 1");
-    assertThat(binary.leftOperand()).isInstanceOf(IdentifierTree.class);
-    assertThat(binary.rightOperand()).isInstanceOf(LiteralTree.class);
+    assertTree(binary).isBinaryExpression(Operator.PLUS).hasTextRange(1, 0, 1, 5);
+    assertTree(binary.leftOperand()).isIdentifier("x").hasTextRange(1, 0, 1, 1);
+    assertTree(binary.rightOperand()).isLiteral("1").hasTextRange(1, 4, 1, 5);
   }
 
   @Test
   public void conditional_and_with_multiple_operands() {
     BinaryExpressionTree binary = parseBinary("x && y && z");
-    assertThat(binary.operator()).isEqualTo(Operator.CONDITIONAL_AND);
-    assertThat(binary.leftOperand()).isInstanceOf(IdentifierTree.class);
-    assertThat(((IdentifierTree) binary.leftOperand()).name()).isEqualTo("x");
-    assertThat(binary.rightOperand()).isInstanceOf(BinaryExpressionTree.class);
+    assertTree(binary).isBinaryExpression(Operator.CONDITIONAL_AND);
+    assertTree(binary.leftOperand()).isIdentifier("x");
+    assertTree(binary.rightOperand()).isBinaryExpression(Operator.CONDITIONAL_AND);
   }
 
   @Test
   public void additive_expression_with_multiple_operands() {
-    BinaryExpressionTree binary = parseBinary("x + y - z");
-    assertThat(binary.operator()).isEqualTo(Operator.PLUS);
-    assertThat(binary.leftOperand()).isInstanceOf(IdentifierTree.class);
-    assertThat(((IdentifierTree) binary.leftOperand()).name()).isEqualTo("x");
-    assertThat(binary.rightOperand()).isInstanceOf(BinaryExpressionTree.class);
-    assertThat(((BinaryExpressionTree) binary.rightOperand()).operator()).isEqualTo(Operator.MINUS);
+    BinaryExpressionTree binary = parseBinary("x + y\n- z");
+    assertTree(binary).isBinaryExpression(Operator.PLUS);
+    assertTree(binary.leftOperand()).isIdentifier("x");
+    assertTree(binary.rightOperand()).isBinaryExpression(Operator.MINUS).hasTextRange(1, 4, 2, 3);
   }
 
   @Test
-  public void text_ranges() {
-    BinaryExpressionTree binary = parseBinary("x + 1");
-    assertTextRange(binary.leftOperand(), 1, 0, 1, 1);
-    assertTextRange(binary.rightOperand(), 1, 4, 1, 5);
-    assertTextRange(binary, 1, 0, 1, 5);
+  public void function() {
+    FunctionDeclarationTree function = parseFunction("private int foo(x1, x2) { x1 + x2 }");
+    assertThat(function.name().name()).isEqualTo("foo");
+    //assertTree(function.returnType()).isIdentifier("boolean");
+    assertThat(function.formalParameters()).hasSize(2);
+    assertTree(function.formalParameters().get(0)).isIdentifier("x1");
+    assertThat(function.body()).isNotNull();
 
-    assertTextRange(converter.parse("42;\n43"), 1, 0, 2, 2);
+    assertThat(parseFunction("int foo(p1);").formalParameters()).hasSize(1);
+    assertTree(parseFunction("int foo(p1);").formalParameters().get(0)).isIdentifier("p1");
+
+    assertThat(parseFunction("int foo();").formalParameters()).isEmpty();
+    assertThat(parseFunction("int foo();").body()).isNull();
   }
 
   @Test
@@ -111,16 +118,69 @@ public class SLangConverterTest {
     assertThat(((NativeTree) root).nativeKind()).isEqualTo(((NativeTree) root2).nativeKind());
   }
 
-  private void assertTextRange(Tree leftOperand, int startLine, int startLineOffset, int endLine, int endLineOffset) {
-    TextRange leftOperandRange = leftOperand.textRange();
-    assertThat(leftOperandRange.start().line()).isEqualTo(startLine);
-    assertThat(leftOperandRange.start().lineOffset()).isEqualTo(startLineOffset);
-    assertThat(leftOperandRange.end().line()).isEqualTo(endLine);
-    assertThat(leftOperandRange.end().lineOffset()).isEqualTo(endLineOffset);
+  private BinaryExpressionTree parseBinary(String code) {
+    return (BinaryExpressionTree) parseExpressionOrStatement(code);
   }
 
-  private BinaryExpressionTree parseBinary(String code) {
+  private Tree parseExpressionOrStatement(String code) {
     Tree tree = converter.parse(code);
-    return (BinaryExpressionTree) tree.children().get(0).children().get(0);
+    return tree.children().get(0).children().get(0);
+  }
+
+  private FunctionDeclarationTree parseFunction(String code) {
+    return (FunctionDeclarationTree) converter.parse(code).children().get(0);
+  }
+
+
+  public static class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
+
+    public TreeAssert(Tree actual) {
+      super(actual, TreeAssert.class);
+    }
+
+    public TreeAssert isIdentifier(String expectedName) {
+      isNotNull();
+      isInstanceOf(IdentifierTree.class);
+      IdentifierTree actualIdentifier = (IdentifierTree) actual;
+      if (!Objects.equals(actualIdentifier.name(), expectedName)) {
+        failWithMessage("Expected identifier's name to be <%s> but was <%s>", expectedName, actualIdentifier.name());
+      }
+      return this;
+    }
+
+    public TreeAssert isLiteral(String expected) {
+      isNotNull();
+      isInstanceOf(LiteralTree.class);
+      LiteralTree actualLiteral = (LiteralTree) actual;
+      if (!Objects.equals(actualLiteral.value(), expected)) {
+        failWithMessage("Expected literal value to be <%s> but was <%s>", expected, actualLiteral.value());
+      }
+      return this;
+    }
+
+    public TreeAssert isBinaryExpression(Operator expectedOperator) {
+      isNotNull();
+      isInstanceOf(BinaryExpressionTree.class);
+      BinaryExpressionTree actualBinary = (BinaryExpressionTree) actual;
+      if (!Objects.equals(actualBinary.operator(), expectedOperator)) {
+        failWithMessage("Expected operator to be <%s> but was <%s>", expectedOperator, actualBinary.operator());
+      }
+      return this;
+    }
+
+    public TreeAssert hasTextRange(int startLine, int startLineOffset, int endLine, int endLineOffset) {
+      isNotNull();
+      TextRange range = actual.textRange();
+      assertThat(range.start().line()).isEqualTo(startLine);
+      assertThat(range.start().lineOffset()).isEqualTo(startLineOffset);
+      assertThat(range.end().line()).isEqualTo(endLine);
+      assertThat(range.end().lineOffset()).isEqualTo(endLineOffset);
+      return this;
+    }
+
+  }
+
+  public static TreeAssert assertTree(Tree actual) {
+    return new TreeAssert(actual);
   }
 }
