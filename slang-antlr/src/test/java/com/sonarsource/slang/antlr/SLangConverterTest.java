@@ -105,6 +105,8 @@ public class SLangConverterTest {
 
     assertThat(parseFunction("int foo();").formalParameters()).isEmpty();
     assertThat(parseFunction("int foo();").body()).isNull();
+
+    assertThat(parseFunction("int foo() {}").body().statementOrExpressions()).isEmpty();
   }
 
   @Test
