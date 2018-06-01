@@ -19,7 +19,7 @@ methodModifier
   ;
 
 methodHeader
-  :  result methodDeclarator 
+  :  result? methodDeclarator
   ;
 
 methodDeclarator
@@ -37,16 +37,16 @@ formalParameters
   ;
 
 formalParameter
-  :  simpleType variableDeclaratorId
+  :  simpleType? variableDeclaratorId
   ;
 
 lastFormalParameter
-  :  simpleType ELLIPSIS variableDeclaratorId
+  :  simpleType? ELLIPSIS variableDeclaratorId
   |  formalParameter
   ; 
 
 receiverParameter
-  :  simpleType (identifier DOT)? THIS 
+  :  simpleType? (identifier DOT)? THIS
   ;
 
 variableDeclaratorId
