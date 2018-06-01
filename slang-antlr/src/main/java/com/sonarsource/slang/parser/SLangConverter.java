@@ -20,10 +20,12 @@
 package com.sonarsource.slang.parser;
 
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
+import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
+import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
@@ -89,15 +91,40 @@ public class SLangConverter {
 
     @Override
     public Tree visitMethodDeclaration(SLangParser.MethodDeclarationContext ctx) {
-      return visit(ctx.methodBody());
+      TextRange textRange = new TextRangeImpl(new TextPointerImpl(-1, -1), new TextPointerImpl(-1, -1));
+      List<Tree> modifiers = Collections.emptyList();
+      Tree returnType = null; // FIXME
+      IdentifierTree name = (IdentifierTree) visit(ctx.methodHeader().methodDeclarator().identifier());
+
+      List<Tree> convertedParameters = new ArrayList<>();
+      SLangParser.FormalParameterListContext formalParameterListContext = ctx.methodHeader().methodDeclarator().formalParameterList();
+      if (formalParameterListContext != null) {
+        SLangParser.FormalParametersContext formalParameters = formalParameterListContext.formalParameters();
+        if (formalParameters != null) {
+          convertedParameters.addAll(list(formalParameters.formalParameter()));
+        }
+        convertedParameters.add(visit(formalParameterListContext.lastFormalParameter()));
+      }
+
+      return new FunctionDeclarationTreeImpl(textRange, modifiers, returnType, name, convertedParameters, visit(ctx.methodBody()));
     }
 
     @Override
     public Tree visitMethodBody(SLangParser.MethodBodyContext ctx) {
       if (ctx.SEMICOLON() != null) {
-        return new NativeTreeImpl(textRange(ctx.start), new SNativeKind(ctx), new ArrayList<>());
+        return null;
       }
       return visit(ctx.block());
+    }
+
+    @Override
+    public Tree visitFormalParameter(SLangParser.FormalParameterContext ctx) {
+      return visit(ctx.variableDeclaratorId().identifier());
+    }
+
+    @Override
+    public Tree visitLastFormalParameter(SLangParser.LastFormalParameterContext ctx) {
+      return visit(ctx.formalParameter());
     }
 
     @Override
@@ -161,11 +188,15 @@ public class SLangConverter {
     }
 
     private NativeTree nativeTree(ParserRuleContext ctx, List<? extends ParseTree> rawChildren) {
-      List<Tree> children = rawChildren
-        .stream()
-        .map(this::visit)
-        .collect(toList());
+      List<Tree> children = list(rawChildren);
       return new NativeTreeImpl(textRange(children.get(0), children.get(children.size() - 1)), new SNativeKind(ctx), children);
+    }
+
+    private List<Tree> list(List<? extends ParseTree> rawChildren) {
+      return rawChildren
+            .stream()
+            .map(this::visit)
+            .collect(toList());
     }
 
     private Tree binaryTree(Operator operator, List<? extends ParseTree> operands) {
