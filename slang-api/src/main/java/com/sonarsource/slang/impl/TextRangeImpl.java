@@ -27,6 +27,10 @@ public class TextRangeImpl implements TextRange {
   private final TextPointer start;
   private final TextPointer end;
 
+  public TextRangeImpl (int startLine, int startLineOffset, int endLine, int endLineOffset) {
+    this(new TextPointerImpl(startLine, startLineOffset), new TextPointerImpl(endLine, endLineOffset));
+  }
+
   public TextRangeImpl(TextPointer start, TextPointer end) {
     this.start = start;
     this.end = end;

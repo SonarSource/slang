@@ -20,8 +20,8 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.IdentifierTree;
-import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.TreeMetaData;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,8 +29,8 @@ public class IdentifierTreeImpl extends BaseTreeImpl implements IdentifierTree {
 
   private final String name;
 
-  public IdentifierTreeImpl(TextRange textRange, String name) {
-    super(textRange);
+  public IdentifierTreeImpl(TreeMetaData metaData, String name) {
+    super(metaData);
     this.name = name;
   }
 

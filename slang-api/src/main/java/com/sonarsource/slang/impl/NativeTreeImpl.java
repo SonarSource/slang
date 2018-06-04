@@ -21,8 +21,8 @@ package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.NativeKind;
 import com.sonarsource.slang.api.NativeTree;
-import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.TreeMetaData;
 import java.util.List;
 
 public class NativeTreeImpl extends BaseTreeImpl implements NativeTree {
@@ -30,8 +30,8 @@ public class NativeTreeImpl extends BaseTreeImpl implements NativeTree {
   private final NativeKind nativeKind;
   private final List<Tree> children;
 
-  public NativeTreeImpl(TextRange textRange, NativeKind nativeKind, List<Tree> children) {
-    super(textRange);
+  public NativeTreeImpl(TreeMetaData metaData, NativeKind nativeKind, List<Tree> children) {
+    super(metaData);
     this.nativeKind = nativeKind;
     this.children = children;
   }

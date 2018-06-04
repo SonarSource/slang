@@ -17,29 +17,21 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.impl;
+package com.sonarsource.slang.api;
 
-import com.sonarsource.slang.api.TopLevelTree;
-import com.sonarsource.slang.api.Tree;
-import com.sonarsource.slang.api.TreeMetaData;
-import java.util.List;
+import com.sonarsource.slang.impl.TextRangeImpl;
+import org.junit.Test;
 
-public class TopLevelTreeImpl extends BaseTreeImpl implements TopLevelTree {
+import static org.assertj.core.api.Assertions.assertThat;
 
-  private final List<Tree> declarations;
+public class TextRangeTest {
 
-  public TopLevelTreeImpl(TreeMetaData metaData, List<Tree> declarations) {
-    super(metaData);
-    this.declarations = declarations;
+  @Test
+  public void isInside() {
+    assertThat(new TextRangeImpl(1, 1, 1, 9).isInside(new TextRangeImpl(1, 1, 1, 5))).isFalse();
+    assertThat(new TextRangeImpl(1, 1, 1, 9).isInside(new TextRangeImpl(1, 1, 1, 9))).isTrue();
+    assertThat(new TextRangeImpl(1, 5, 1, 9).isInside(new TextRangeImpl(1, 1, 1, 9))).isTrue();
+    assertThat(new TextRangeImpl(1, 5, 1, 9).isInside(new TextRangeImpl(1, 6, 1, 9))).isFalse();
   }
 
-  @Override
-  public List<Tree> declarations() {
-    return declarations;
-  }
-
-  @Override
-  public List<Tree> children() {
-    return declarations();
-  }
 }

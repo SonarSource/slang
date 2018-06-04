@@ -22,6 +22,7 @@ package com.sonarsource.slang.checks;
 import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
+import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.api.CheckContext;
 import com.sonarsource.slang.checks.api.InitContext;
@@ -75,10 +76,13 @@ public class IdenticalConditionsCheck implements SlangCheck {
     for (List<Tree> group : SyntacticEquivalence.findDuplicatedGroups(conditions)) {
       Tree original = group.get(0);
       group.stream().skip(1)
-        .forEach(duplicated -> ctx.reportIssue(
-          duplicated,
-          "This condition duplicates the one on line " + original.textRange().start().line() + ".",
-          new SecondaryLocation(original.textRange(), "Original")));
+        .forEach(duplicated -> {
+          TextRange originalRange = original.metaData().textRange();
+          ctx.reportIssue(
+            duplicated,
+            "This condition duplicates the one on line " + originalRange.start().line() + ".",
+            new SecondaryLocation(originalRange, "Original"));
+        });
     }
   }
 }

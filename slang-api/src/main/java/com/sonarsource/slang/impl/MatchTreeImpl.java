@@ -21,8 +21,8 @@ package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
-import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.TreeMetaData;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +31,8 @@ public class MatchTreeImpl extends BaseTreeImpl implements MatchTree {
   private final Tree expression;
   private final List<MatchCaseTree> cases;
 
-  public MatchTreeImpl(TextRange textRange, Tree expression, List<MatchCaseTree> cases) {
-    super(textRange);
+  public MatchTreeImpl(TreeMetaData metaData, Tree expression, List<MatchCaseTree> cases) {
+    super(metaData);
     this.expression = expression;
     this.cases = cases;
   }

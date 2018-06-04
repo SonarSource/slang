@@ -19,20 +19,19 @@
  */
 package com.sonarsource.slang.impl;
 
-import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.TreeMetaData;
 
 public abstract class BaseTreeImpl implements Tree {
 
-  private final TextRange textRange;
+  private final TreeMetaData metaData;
 
-  protected BaseTreeImpl(TextRange textRange) {
-    this.textRange = textRange;
+  protected BaseTreeImpl(TreeMetaData metaData) {
+    this.metaData = metaData;
   }
 
   @Override
-  public TextRange textRange() {
-    return textRange;
+  public TreeMetaData metaData() {
+    return metaData;
   }
-
 }

@@ -20,8 +20,8 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.IfTree;
-import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.TreeMetaData;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.CheckForNull;
@@ -32,8 +32,8 @@ public class IfTreeImpl extends BaseTreeImpl implements IfTree {
   private final Tree thenBranch;
   private final Tree elseBranch;
 
-  public IfTreeImpl(TextRange textRange, Tree condition, Tree thenBranch, Tree elseBranch) {
-    super(textRange);
+  public IfTreeImpl(TreeMetaData metaData, Tree condition, Tree thenBranch, Tree elseBranch) {
+    super(metaData);
     this.condition = condition;
     this.thenBranch = thenBranch;
     this.elseBranch = elseBranch;

@@ -25,4 +25,8 @@ public interface TextRange {
 
   TextPointer end();
 
+  default boolean isInside(TextRange other) {
+    return this.start().compareTo(other.start()) >= 0 && this.end().compareTo(other.end()) <= 0;
+  }
+
 }

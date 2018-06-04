@@ -22,8 +22,8 @@ package com.sonarsource.slang.impl;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
-import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.TreeMetaData;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.CheckForNull;
@@ -39,14 +39,14 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
   private final List<Tree> children = new ArrayList<>();
 
   public FunctionDeclarationTreeImpl(
-    TextRange textRange,
+    TreeMetaData metaData,
     List<Tree> modifiers,
     @Nullable Tree returnType,
     IdentifierTree name,
     List<Tree> formalParameters,
     @Nullable BlockTree body
   ) {
-    super(textRange);
+    super(metaData);
 
     this.modifiers = modifiers;
     this.returnType = returnType;

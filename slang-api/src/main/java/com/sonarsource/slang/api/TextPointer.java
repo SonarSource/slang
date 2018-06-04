@@ -19,7 +19,7 @@
  */
 package com.sonarsource.slang.api;
 
-public interface TextPointer {
+public interface TextPointer extends Comparable<TextPointer> {
 
   /**
    * Starts at 1
@@ -30,5 +30,14 @@ public interface TextPointer {
    * Starts at 0
    */
   int lineOffset();
+
+  @Override
+  default int compareTo(TextPointer other) {
+    int lineCompare = Integer.compare(this.line(), other.line());
+    if (lineCompare != 0) {
+      return lineCompare;
+    }
+    return Integer.compare(this.lineOffset(), other.lineOffset());
+  }
 
 }

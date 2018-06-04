@@ -258,7 +258,7 @@ public class SLangConverterTest {
 
     public TreeAssert hasTextRange(int startLine, int startLineOffset, int endLine, int endLineOffset) {
       isNotNull();
-      TextRange range = actual.textRange();
+      TextRange range = actual.metaData().textRange();
       assertThat(range.start().line()).isEqualTo(startLine);
       assertThat(range.start().lineOffset()).isEqualTo(startLineOffset);
       assertThat(range.end().line()).isEqualTo(endLine);

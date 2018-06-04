@@ -17,29 +17,14 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.impl;
+package com.sonarsource.slang.api;
 
-import com.sonarsource.slang.api.TopLevelTree;
-import com.sonarsource.slang.api.Tree;
-import com.sonarsource.slang.api.TreeMetaData;
 import java.util.List;
 
-public class TopLevelTreeImpl extends BaseTreeImpl implements TopLevelTree {
+public interface TreeMetaData {
 
-  private final List<Tree> declarations;
+  TextRange textRange();
 
-  public TopLevelTreeImpl(TreeMetaData metaData, List<Tree> declarations) {
-    super(metaData);
-    this.declarations = declarations;
-  }
+  List<Comment> commentsInside();
 
-  @Override
-  public List<Tree> declarations() {
-    return declarations;
-  }
-
-  @Override
-  public List<Tree> children() {
-    return declarations();
-  }
 }

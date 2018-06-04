@@ -20,16 +20,16 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.BlockTree;
-import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.TreeMetaData;
 import java.util.List;
 
 public class BlockTreeImpl extends BaseTreeImpl implements BlockTree {
 
   private final List<Tree> statementOrExpressions;
 
-  public BlockTreeImpl(TextRange textRange, List<Tree> statementOrExpressions) {
-    super(textRange);
+  public BlockTreeImpl(TreeMetaData metaData, List<Tree> statementOrExpressions) {
+    super(metaData);
     this.statementOrExpressions = statementOrExpressions;
   }
 

@@ -20,8 +20,8 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.LiteralTree;
-import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.TreeMetaData;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,8 +29,8 @@ public class LiteralTreeImpl extends BaseTreeImpl implements LiteralTree {
 
   private final String value;
 
-  public LiteralTreeImpl(TextRange textRange, String value) {
-    super(textRange);
+  public LiteralTreeImpl(TreeMetaData metaData, String value) {
+    super(metaData);
     this.value = value;
   }
 
