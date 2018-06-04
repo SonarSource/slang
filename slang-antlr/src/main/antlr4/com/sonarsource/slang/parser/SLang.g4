@@ -408,11 +408,11 @@ WS
 
 // COMMENTS
 COMMENT
-  :  '/*' .*? '*/' -> channel(HIDDEN)
+  :  '/*' .*? '*/' -> channel(1)
   ;
 
 LINE_COMMENT
-  :  '//' ~[\r\n]* -> channel(HIDDEN)
+  :  '//' ~[\r\n]* -> channel(1)
   ;
 
 NL

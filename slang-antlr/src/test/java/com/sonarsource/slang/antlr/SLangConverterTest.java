@@ -23,6 +23,7 @@ package com.sonarsource.slang.antlr;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
+import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
@@ -37,9 +38,9 @@ import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.parser.SLangConverter;
 import com.sonarsource.slang.visitors.TreeContext;
-import com.sonarsource.slang.visitors.TreePrinter;
 import com.sonarsource.slang.visitors.TreeVisitor;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.antlr.v4.runtime.CharStreams;
@@ -170,15 +171,27 @@ public class SLangConverterTest {
     assertTree(tree1)
       .isInstanceOf(TopLevelTree.class)
       .hasChildren(FunctionDeclarationTree.class, BinaryExpressionTree.class)
-      .hasTextRange(1,0, 2, 7);
+      .hasTextRange(1, 0, 2, 7);
     assertTree(tree2)
       .isInstanceOf(TopLevelTree.class)
       .hasChildren(BinaryExpressionTree.class)
-      .hasTextRange(1,0, 3, 3);
+      .hasTextRange(1, 0, 3, 3);
     assertTree(emptyTree)
       .isInstanceOf(TopLevelTree.class)
       .hasChildren()
       .hasTextRange(1, 0, 1, 0);
+  }
+
+  @Test
+  public void comments() {
+    BinaryExpressionTree binary = parseBinary("/* comment1 */ x /* comment2 */ == // comment3\n1");
+    List<Comment> comments = binary.metaData().commentsInside();
+    assertThat(comments).hasSize(2);
+    Comment comment = comments.get(0);
+    assertThat(comment.textRange().start().lineOffset()).isEqualTo(17);
+    assertThat(comment.textWithDelimiters()).isEqualTo("/* comment2 */");
+    assertThat(comment.text()).isEqualTo(" comment2 ");
+    assertThat(comments.get(1).text()).isEqualTo(" comment3");
   }
 
   private BinaryExpressionTree parseBinary(String code) {

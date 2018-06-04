@@ -21,6 +21,7 @@ package com.sonarsource.slang.parser;
 
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
+import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.NativeTree;
@@ -30,6 +31,7 @@ import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
+import com.sonarsource.slang.impl.CommentImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
@@ -52,6 +54,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.sonarsource.analyzer.commons.TokenLocation;
 
 import static java.util.stream.Collectors.toList;
 
@@ -59,11 +62,31 @@ public class SLangConverter {
 
   public Tree parse(String slangCode) {
     SLangLexer lexer = new SLangLexer(CharStreams.fromString(slangCode));
+
+    List<Comment> comments = new ArrayList<>();
     CommonTokenStream tokens = new CommonTokenStream(lexer);
+    tokens.fill();
+
+    for (int index = 0; index < tokens.size(); index++) {
+      Token token = tokens.get(index);
+      if (token.getChannel() == 1) {
+        TokenLocation location = new TokenLocation(token.getLine(), token.getCharPositionInLine(), token.getText());
+        TextRange textRange = new TextRangeImpl(location.startLine(), location.startLineOffset(), location.endLine(), location.endLineOffset());
+        comments.add(new CommentImpl(commentContent(token.getText()), token.getText(), textRange));
+      }
+    }
+
     SLangParser parser = new SLangParser(tokens);
 
-    SLangParseTreeVisitor slangVisitor = new SLangParseTreeVisitor();
+    SLangParseTreeVisitor slangVisitor = new SLangParseTreeVisitor(comments);
     return slangVisitor.visit(parser.slangFile());
+  }
+
+  private String commentContent(String text) {
+    if (text.startsWith("//")) {
+      return text.substring(2);
+    }
+    return text.substring(2, text.length() -2);
   }
 
   private static final Map<String, Operator> BINARY_OPERATOR_MAP = binaryOperatorMap();
@@ -88,7 +111,11 @@ public class SLangConverter {
 
   private static class SLangParseTreeVisitor extends SLangBaseVisitor<Tree> {
 
-    private final TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(Collections.emptyList());
+    private final TreeMetaDataProvider metaDataProvider;
+
+    public SLangParseTreeVisitor(List<Comment> comments) {
+      metaDataProvider = new TreeMetaDataProvider(comments);
+    }
 
     @Override
     public Tree visitSlangFile(SLangParser.SlangFileContext ctx) {
