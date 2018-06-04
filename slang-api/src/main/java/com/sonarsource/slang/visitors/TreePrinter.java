@@ -22,6 +22,7 @@ package com.sonarsource.slang.visitors;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
+import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Tree;
 import java.util.stream.IntStream;
 
@@ -39,6 +40,8 @@ public class TreePrinter {
         sb.append(" ").append(((LiteralTree) t).value());
       } else if (t instanceof IdentifierTree) {
         sb.append(" ").append(((IdentifierTree) t).name());
+      } else if (t instanceof NativeTree) {
+        sb.append(" ").append(((NativeTree) t).nativeKind());
       }
       sb.append("\n");
     });

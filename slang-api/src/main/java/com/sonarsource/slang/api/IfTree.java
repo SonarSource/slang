@@ -17,36 +17,17 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.parser;
+package com.sonarsource.slang.api;
 
-import com.sonarsource.slang.api.NativeKind;
-import java.util.Objects;
-import org.antlr.v4.runtime.ParserRuleContext;
+import javax.annotation.CheckForNull;
 
-public class SNativeKind implements NativeKind {
-  private final Class<? extends ParserRuleContext> ctxClass;
+public interface IfTree extends Tree {
 
-  public SNativeKind(ParserRuleContext ctx) {
-    ctxClass = ctx.getClass();
-  }
+  Tree condition();
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    if (o == null || getClass() != o.getClass())
-      return false;
-    SNativeKind that = (SNativeKind) o;
-    return Objects.equals(ctxClass, that.ctxClass);
-  }
+  Tree thenBranch();
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(ctxClass);
-  }
+  @CheckForNull
+  Tree elseBranch();
 
-  @Override
-  public String toString() {
-    return ctxClass.getSimpleName();
-  }
 }

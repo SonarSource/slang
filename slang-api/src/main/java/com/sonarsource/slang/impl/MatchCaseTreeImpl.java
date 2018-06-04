@@ -17,36 +17,44 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.parser;
+package com.sonarsource.slang.impl;
 
-import com.sonarsource.slang.api.NativeKind;
-import java.util.Objects;
-import org.antlr.v4.runtime.ParserRuleContext;
+import com.sonarsource.slang.api.MatchCaseTree;
+import com.sonarsource.slang.api.TextRange;
+import com.sonarsource.slang.api.Tree;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.CheckForNull;
 
-public class SNativeKind implements NativeKind {
-  private final Class<? extends ParserRuleContext> ctxClass;
+public class MatchCaseTreeImpl extends BaseTreeImpl implements MatchCaseTree {
 
-  public SNativeKind(ParserRuleContext ctx) {
-    ctxClass = ctx.getClass();
+  private final Tree expression;
+  private final Tree body;
+
+  public MatchCaseTreeImpl(TextRange textRange, Tree expression, Tree body) {
+    super(textRange);
+    this.expression = expression;
+    this.body = body;
+  }
+
+  @CheckForNull
+  @Override
+  public Tree expression() {
+    return expression;
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    if (o == null || getClass() != o.getClass())
-      return false;
-    SNativeKind that = (SNativeKind) o;
-    return Objects.equals(ctxClass, that.ctxClass);
+  public Tree body() {
+    return body;
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(ctxClass);
-  }
-
-  @Override
-  public String toString() {
-    return ctxClass.getSimpleName();
+  public List<Tree> children() {
+    List<Tree> children = new ArrayList<>();
+    if (expression != null) {
+      children.add(expression);
+    }
+    children.add(body);
+    return children;
   }
 }

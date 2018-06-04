@@ -24,6 +24,11 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.visitors.TreePrinter;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 public class SyntacticEquivalence {
 
@@ -60,5 +65,46 @@ public class SyntacticEquivalence {
     }
 
     return true;
+  }
+
+  public static List<List<Tree>> findDuplicatedGroups(List<Tree> list) {
+    return list.stream()
+      .collect(Collectors.groupingBy(ComparableTree::new, LinkedHashMap::new, Collectors.toList()))
+      .values().stream()
+      .filter(group -> group.size() > 1)
+      .collect(Collectors.toList());
+  }
+
+  static class ComparableTree {
+
+    private final Tree tree;
+    private final int hash;
+
+    ComparableTree(Tree tree) {
+      this.tree = tree;
+      hash = computeHash(tree);
+    }
+
+    private static int computeHash(@Nullable Tree tree) {
+      if (tree == null) {
+        return 0;
+      }
+      return TreePrinter.tree2string(tree).hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+      if (!(other instanceof ComparableTree)) {
+        return false;
+      }
+      ComparableTree that = (ComparableTree) other;
+      return hash == that.hash && areEquivalent(tree, ((ComparableTree) other).tree);
+    }
+
+    @Override
+    public int hashCode() {
+      return hash;
+    }
+
   }
 }

@@ -22,18 +22,24 @@ package com.sonarsource.slang.parser;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
+import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
+import com.sonarsource.slang.impl.IfTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
+import com.sonarsource.slang.impl.MatchCaseTreeImpl;
+import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.TextPointerImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +80,9 @@ public class SLangConverter {
     return Collections.unmodifiableMap(map);
   }
 
+  // FIXME
+  private static final TextRange FAKE_RANGE = new TextRangeImpl(new TextPointerImpl(-1, -1), new TextPointerImpl(-1, -1));
+
   private static class SLangParseTreeVisitor extends SLangBaseVisitor<Tree> {
 
     @Override
@@ -88,12 +97,14 @@ public class SLangConverter {
 
     @Override
     public Tree visitStatementOrExpression(SLangParser.StatementOrExpressionContext ctx) {
+      if (ctx.disjunction().size() == 1) {
+        return visit(ctx.disjunction(0));
+      }
       return nativeTree(ctx, ctx.disjunction());
     }
 
     @Override
     public Tree visitMethodDeclaration(SLangParser.MethodDeclarationContext ctx) {
-      TextRange textRange = new TextRangeImpl(new TextPointerImpl(-1, -1), new TextPointerImpl(-1, -1));
       List<Tree> modifiers = Collections.emptyList();
       Tree returnType = null; // FIXME
       IdentifierTree name = (IdentifierTree) visit(ctx.methodHeader().methodDeclarator().identifier());
@@ -108,7 +119,7 @@ public class SLangConverter {
         convertedParameters.add(visit(formalParameterListContext.lastFormalParameter()));
       }
 
-      return new FunctionDeclarationTreeImpl(textRange, modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()));
+      return new FunctionDeclarationTreeImpl(FAKE_RANGE, modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()));
     }
 
     @Override
@@ -131,12 +142,43 @@ public class SLangConverter {
 
     @Override
     public Tree visitBlock(SLangParser.BlockContext ctx) {
-      return new BlockTreeImpl(textRange(ctx.LCURLY().getSymbol(), ctx.RCURLY().getSymbol()), list(ctx.statementOrExpression()));
+      return new BlockTreeImpl(textRange(ctx.start, ctx.stop), list(ctx.statementOrExpression()));
+    }
+
+    @Override
+    public Tree visitIfExpression(SLangParser.IfExpressionContext ctx) {
+      Tree elseBranch = null;
+      if (ctx.controlBlock().size() > 1) {
+        elseBranch = visit(ctx.controlBlock(1));
+      }
+      Tree thenBranch = visit(ctx.controlBlock(0));
+      return new IfTreeImpl(textRange(ctx.start, ctx.stop), visit(ctx.statementOrExpression()), thenBranch, elseBranch);
+    }
+
+    @Override
+    public Tree visitMatchExpression(SLangParser.MatchExpressionContext ctx) {
+      List<MatchCaseTree> cases = new ArrayList<>();
+      for (SLangParser.MatchCaseContext matchCaseContext : ctx.matchCase()) {
+        cases.add((MatchCaseTree) visit(matchCaseContext));
+      }
+      return new MatchTreeImpl(textRange(ctx.start, ctx.stop), visit(ctx.statementOrExpression()), cases);
+    }
+
+    @Override
+    public Tree visitMatchCase(SLangParser.MatchCaseContext ctx) {
+      Tree expression = ctx.statementOrExpression() == null ? null : visit(ctx.statementOrExpression());
+      Tree body = visit(ctx.controlBlock());
+      return new MatchCaseTreeImpl(textRange(ctx.start, ctx.stop), expression, body);
     }
 
     @Override
     public Tree visitNativeBlock(SLangParser.NativeBlockContext ctx) {
       return nativeTree(ctx, ctx.statementOrExpression());
+    }
+
+    @Override
+    public Tree visitAssignment(SLangParser.AssignmentContext ctx) {
+      return nativeTree(ctx, Arrays.asList(ctx.leftHandSide(), ctx.statementOrExpression()));
     }
 
     @Override
@@ -171,22 +213,22 @@ public class SLangConverter {
 
     @Override
     public Tree visitLiteral(SLangParser.LiteralContext ctx) {
-      return new LiteralTreeImpl(textRange(ctx.getStart()), ctx.getText());
+      return new LiteralTreeImpl(textRange(ctx.start, ctx.stop), ctx.getText());
     }
 
     @Override
     public Tree visitIdentifier(SLangParser.IdentifierContext ctx) {
-      return new IdentifierTreeImpl(textRange(ctx.getStart()), ctx.getText());
+      return new IdentifierTreeImpl(textRange(ctx.start, ctx.stop), ctx.getText());
+    }
+
+    private TextPointer startOf(Token token) {
+      return new TextPointerImpl(token.getLine(), token.getCharPositionInLine());
     }
 
     private TextRange textRange(Token firstToken, Token lastToken) {
       return new TextRangeImpl(
-        new TextPointerImpl(firstToken.getLine(), firstToken.getCharPositionInLine()),
+        startOf(firstToken),
         new TextPointerImpl(lastToken.getLine(), lastToken.getCharPositionInLine() + lastToken.getText().length()));
-    }
-
-    private TextRange textRange(Token token) {
-      return textRange(token, token);
     }
 
     private TextRange textRange(Tree first, Tree last) {
@@ -195,7 +237,7 @@ public class SLangConverter {
 
     private NativeTree nativeTree(ParserRuleContext ctx, List<? extends ParseTree> rawChildren) {
       List<Tree> children = list(rawChildren);
-      return new NativeTreeImpl(textRange(children.get(0), children.get(children.size() - 1)), new SNativeKind(ctx), children);
+      return new NativeTreeImpl(textRange(ctx.start, ctx.stop), new SNativeKind(ctx), children);
     }
 
     private List<Tree> list(List<? extends ParseTree> rawChildren) {
