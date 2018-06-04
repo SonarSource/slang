@@ -30,12 +30,14 @@ import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TextRange;
+import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.parser.SLangConverter;
 import com.sonarsource.slang.visitors.TreeContext;
+import com.sonarsource.slang.visitors.TreePrinter;
 import com.sonarsource.slang.visitors.TreeVisitor;
 import java.io.IOException;
 import java.util.Objects;
@@ -65,6 +67,7 @@ public class SLangConverterTest {
     visitor.register(LiteralTreeImpl.class, (ctx, literalTree) -> numLiteralNode.getAndIncrement());
     visitor.scan(new TreeContext(), tree);
 
+    assertTree(tree).isInstanceOf(TopLevelTree.class).hasChildren(9);
     assertThat(numBinNodes.get()).isEqualTo(6);
     assertThat(numIdentifierNode.get()).isEqualTo(18);
     assertThat(numLiteralNode.get()).isEqualTo(10);
@@ -159,6 +162,25 @@ public class SLangConverterTest {
     assertTree(tree).isInstanceOf(NativeTree.class).hasTextRange(1, 0, 1, 5);
   }
 
+  @Test
+  public void top_level_tree() {
+    Tree tree1 = converter.parse("int foo(p1);\nx == 3;");
+    Tree tree2 = converter.parse("x + y\n\n- z");
+    Tree emptyTree = converter.parse("");
+    assertTree(tree1)
+      .isInstanceOf(TopLevelTree.class)
+      .hasChildren(FunctionDeclarationTree.class, BinaryExpressionTree.class)
+      .hasTextRange(1,0, 2, 7);
+    assertTree(tree2)
+      .isInstanceOf(TopLevelTree.class)
+      .hasChildren(BinaryExpressionTree.class)
+      .hasTextRange(1,0, 3, 3);
+    assertTree(emptyTree)
+      .isInstanceOf(TopLevelTree.class)
+      .hasChildren()
+      .hasTextRange(1, 0, 1, 0);
+  }
+
   private BinaryExpressionTree parseBinary(String code) {
     return (BinaryExpressionTree) parseExpressionOrStatement(code);
   }
@@ -171,7 +193,6 @@ public class SLangConverterTest {
   private FunctionDeclarationTree parseFunction(String code) {
     return (FunctionDeclarationTree) converter.parse(code).children().get(0);
   }
-
 
   public static class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
 
@@ -212,15 +233,25 @@ public class SLangConverterTest {
     public TreeAssert isBlock(Class... classes) {
       isNotNull();
       isInstanceOf(BlockTree.class);
-      BlockTree actualBlock = (BlockTree) actual;
-      if (actualBlock.statementOrExpressions().size() != classes.length) {
-        failWithMessage("Expected block with <%s> elements but found <%s>", classes.length, actualBlock.statementOrExpressions().size());
-      }
-      for (int i = 0; i < actualBlock.statementOrExpressions().size(); i++) {
-        Tree tree = actualBlock.statementOrExpressions().get(i);
+      hasChildren(classes);
+      return this;
+    }
+
+    public TreeAssert hasChildren(Class... classes) {
+      hasChildren(classes.length);
+      for (int i = 0; i < actual.children().size(); i++) {
+        Tree tree = actual.children().get(i);
         if (!classes[i].isAssignableFrom(tree.getClass())) {
           failWithMessage("Expected to find instance of <%s> but was <%s>", classes[i], tree.getClass());
         }
+      }
+      return this;
+    }
+
+    public TreeAssert hasChildren(int count) {
+      isNotNull();
+      if (actual.children().size() != count) {
+        failWithMessage("Expected to have <%s> children elements but found <%s>", count, actual.children().size());
       }
       return this;
     }

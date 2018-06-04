@@ -38,6 +38,7 @@ import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.TextPointerImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
+import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -87,7 +88,9 @@ public class SLangConverter {
 
     @Override
     public Tree visitSlangFile(SLangParser.SlangFileContext ctx) {
-      return nativeTree(ctx, ctx.typeDeclaration());
+      // Special case for text range here, as last token is <EOF> which has length 5, so we only go up to the start of the <EOF> token
+      TextRangeImpl textRange = new TextRangeImpl(startOf(ctx.start), new TextPointerImpl(ctx.stop.getLine(), ctx.stop.getCharPositionInLine()));
+      return new TopLevelTreeImpl(textRange, list(ctx.typeDeclaration()));
     }
 
     @Override
