@@ -26,20 +26,20 @@ import java.util.List;
 
 public class TopLevelTreeImpl extends BaseTreeImpl implements TopLevelTree {
 
-  private final List<Tree> typeDeclarations;
+  private final List<Tree> declarations;
 
-  public TopLevelTreeImpl(TextRange textRange, List<Tree> typeDeclarations) {
+  public TopLevelTreeImpl(TextRange textRange, List<Tree> declarations) {
     super(textRange);
-    this.typeDeclarations = typeDeclarations;
+    this.declarations = declarations;
   }
 
   @Override
-  public List<Tree> typeDeclarations() {
-    return typeDeclarations;
+  public List<Tree> declarations() {
+    return declarations;
   }
 
   @Override
   public List<Tree> children() {
-    return typeDeclarations();
+    return declarations();
   }
 }
