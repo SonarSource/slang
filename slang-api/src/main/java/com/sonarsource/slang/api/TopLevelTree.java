@@ -25,4 +25,6 @@ public interface TopLevelTree extends Tree {
 
   List<Tree> declarations();
 
+  List<Comment> allComments();
+
 }

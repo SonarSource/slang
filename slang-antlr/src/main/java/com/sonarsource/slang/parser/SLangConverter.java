@@ -121,7 +121,7 @@ public class SLangConverter {
     public Tree visitSlangFile(SLangParser.SlangFileContext ctx) {
       // Special case for text range here, as last token is <EOF> which has length 5, so we only go up to the start of the <EOF> token
       TextRangeImpl textRange = new TextRangeImpl(startOf(ctx.start), new TextPointerImpl(ctx.stop.getLine(), ctx.stop.getCharPositionInLine()));
-      return new TopLevelTreeImpl(meta(textRange), list(ctx.typeDeclaration()));
+      return new TopLevelTreeImpl(meta(textRange), list(ctx.typeDeclaration()), metaDataProvider.allComments());
     }
 
     @Override

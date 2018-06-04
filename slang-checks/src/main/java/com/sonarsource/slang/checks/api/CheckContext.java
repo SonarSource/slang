@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.checks.api;
 
+import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import java.util.Deque;
 import java.util.List;
@@ -26,6 +27,8 @@ import java.util.List;
 public interface CheckContext {
 
   Deque<Tree> ancestors();
+
+  void reportIssue(TextRange textRange, String message);
 
   void reportIssue(Tree tree, String message);
 

@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.impl;
 
+import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
@@ -27,15 +28,22 @@ import java.util.List;
 public class TopLevelTreeImpl extends BaseTreeImpl implements TopLevelTree {
 
   private final List<Tree> declarations;
+  private final List<Comment> allComments;
 
-  public TopLevelTreeImpl(TreeMetaData metaData, List<Tree> declarations) {
+  public TopLevelTreeImpl(TreeMetaData metaData, List<Tree> declarations, List<Comment> allComments) {
     super(metaData);
     this.declarations = declarations;
+    this.allComments = allComments;
   }
 
   @Override
   public List<Tree> declarations() {
     return declarations;
+  }
+
+  @Override
+  public List<Comment> allComments() {
+    return allComments;
   }
 
   @Override
