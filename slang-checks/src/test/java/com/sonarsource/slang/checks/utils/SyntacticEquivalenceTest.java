@@ -21,9 +21,11 @@ package com.sonarsource.slang.checks.utils;
 
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.parser.SLangConverter;
+import java.util.Arrays;
 import org.junit.Test;
 
 import static com.sonarsource.slang.checks.utils.SyntacticEquivalence.areEquivalent;
+import static com.sonarsource.slang.checks.utils.SyntacticEquivalence.findDuplicatedGroups;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SyntacticEquivalenceTest {
@@ -40,6 +42,15 @@ public class SyntacticEquivalenceTest {
     assertThat(areEquivalent(parse("a == 1"), parse("a == 1"))).isTrue();
     assertThat(areEquivalent(parse("a == 1"), parse("a == 2"))).isFalse();
     assertThat(areEquivalent(parse("a == 1"), parse("a >= 1"))).isFalse();
+  }
+
+  @Test
+  public void duplicateGroups() {
+    Tree a1 = parse("a");
+    Tree a2 = parse("a");
+    Tree b1 = parse("b");
+    assertThat(findDuplicatedGroups(Arrays.asList(a1, b1, a2))).containsExactly(Arrays.asList(a1, a2));
+    assertThat(findDuplicatedGroups(Arrays.asList(a1, b1))).isEmpty();
   }
 
   private Tree parse(String code) {
