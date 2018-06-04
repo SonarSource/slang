@@ -17,34 +17,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.checks.api;
+package com.sonarsource.slang.checks;
 
-import com.sonarsource.slang.api.TextRange;
-import com.sonarsource.slang.api.Tree;
+import org.junit.Test;
 
-import javax.annotation.CheckForNull;
-import java.util.Deque;
-import java.util.List;
+public class EmptyBlockCheckTest {
 
-public interface CheckContext {
-
-  Deque<Tree> ancestors();
-
-  @CheckForNull
-  default Tree parent() {
-    if (this.ancestors().isEmpty()) {
-      return null;
-    } else {
-      return this.ancestors().peek();
-    }
-  }
-
-  void reportIssue(TextRange textRange, String message);
-
-  void reportIssue(Tree tree, String message);
-
-  void reportIssue(Tree tree, String message, SecondaryLocation secondaryLocation);
-
-  void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations);
+  @Test
+  public void test() { Verifier.verify("EmptyBlock.slang", new EmptyBlockCheck()); }
 
 }
