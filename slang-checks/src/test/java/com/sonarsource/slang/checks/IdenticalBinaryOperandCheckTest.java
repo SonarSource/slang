@@ -27,4 +27,5 @@ public class IdenticalBinaryOperandCheckTest {
   public void test() {
     Verifier.verify("IdenticalBinaryOperand.slang", new IdenticalBinaryOperandCheck());
   }
+
 }

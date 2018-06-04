@@ -22,6 +22,7 @@ package com.sonarsource.slang.checks;
 import com.sonarsource.checks.verifier.CommentParser;
 import com.sonarsource.checks.verifier.SingleFileVerifier;
 import com.sonarsource.slang.api.TextPointer;
+import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.api.CheckContext;
 import com.sonarsource.slang.checks.api.InitContext;
@@ -102,9 +103,18 @@ public class Verifier {
     }
 
     @Override
+    public void reportIssue(TextRange textRange, String message) {
+      reportIssue(textRange, message, Collections.emptyList());
+    }
+
+    @Override
     public void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations) {
-      TextPointer start = tree.metaData().textRange().start();
-      TextPointer end = tree.metaData().textRange().end();
+      reportIssue(tree.metaData().textRange(), message, secondaryLocations);
+    }
+
+    private void reportIssue(TextRange textRange, String message, List<SecondaryLocation> secondaryLocations) {
+      TextPointer start = textRange.start();
+      TextPointer end = textRange.end();
       SingleFileVerifier.Issue issue =
         verifier.reportIssue(message).onRange(start.line(), start.lineOffset() + 1, end.line(), end.lineOffset());
       secondaryLocations.forEach(secondary ->
@@ -114,7 +124,6 @@ public class Verifier {
           secondary.textRange.end().line(),
           secondary.textRange.end().lineOffset(),
           secondary.message));
-
     }
 
   }

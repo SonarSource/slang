@@ -33,6 +33,10 @@ public class TreeMetaDataProvider {
     this.comments = comments;
   }
 
+  public List<Comment> allComments() {
+    return comments;
+  }
+
   public TreeMetaData metaData(TextRange textRange) {
     return new TreeMetaDataImpl(textRange);
   }
