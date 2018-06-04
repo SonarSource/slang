@@ -41,19 +41,10 @@ public class IdenticalConditionsCheck implements SlangCheck {
   public void initialize(InitContext init) {
     init.register(MatchTree.class, (ctx, tree) -> checkConditions(ctx, collectConditions(tree)));
     init.register(IfTree.class, (ctx, tree) -> {
-      if (!(parent(ctx) instanceof IfTree)) {
+      if (!(ctx.parent() instanceof IfTree)) {
         checkConditions(ctx, collectConditions(tree, new ArrayList<>()));
       }
     });
-  }
-
-  @CheckForNull
-  private Tree parent(CheckContext ctx) {
-    if (ctx.ancestors().isEmpty()) {
-      return null;
-    } else {
-      return ctx.ancestors().peek();
-    }
   }
 
   private static List<Tree> collectConditions(MatchTree matchTree) {
