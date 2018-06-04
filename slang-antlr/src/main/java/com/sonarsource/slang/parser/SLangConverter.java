@@ -142,12 +142,7 @@ public class SLangConverter {
 
     @Override
     public Tree visitBlock(SLangParser.BlockContext ctx) {
-      return new BlockTreeImpl(textRange(ctx.LCURLY().getSymbol(), ctx.RCURLY().getSymbol()), list(ctx.statementOrExpression()));
-    }
-
-    @Override
-    public Tree visitConditional(SLangParser.ConditionalContext ctx) {
-      return visit(ctx.children.get(0));
+      return new BlockTreeImpl(textRange(ctx.start, ctx.stop), list(ctx.statementOrExpression()));
     }
 
     @Override
@@ -157,8 +152,7 @@ public class SLangConverter {
         elseBranch = visit(ctx.controlBlock(1));
       }
       Tree thenBranch = visit(ctx.controlBlock(0));
-      Tree lastTree = elseBranch == null ? thenBranch : elseBranch;
-      return new IfTreeImpl(textRange(startOf(ctx.start), lastTree.textRange().end()), visit(ctx.statementOrExpression()), thenBranch, elseBranch);
+      return new IfTreeImpl(textRange(ctx.start, ctx.stop), visit(ctx.statementOrExpression()), thenBranch, elseBranch);
     }
 
     @Override
@@ -167,21 +161,14 @@ public class SLangConverter {
       for (SLangParser.MatchCaseContext matchCaseContext : ctx.matchCase()) {
         cases.add((MatchCaseTree) visit(matchCaseContext));
       }
-      return new MatchTreeImpl(textRange(ctx.start, ctx.RCURLY().getSymbol()), visit(ctx.statementOrExpression()), cases);
+      return new MatchTreeImpl(textRange(ctx.start, ctx.stop), visit(ctx.statementOrExpression()), cases);
     }
 
     @Override
     public Tree visitMatchCase(SLangParser.MatchCaseContext ctx) {
       Tree expression = ctx.statementOrExpression() == null ? null : visit(ctx.statementOrExpression());
       Tree body = visit(ctx.controlBlock());
-
-      TextRange textRange;
-      if(expression == null) {
-        textRange = textRange(startOf(ctx.ELSE().getSymbol()), body.textRange().end());
-      } else {
-        textRange = textRange(expression, body);
-      }
-      return new MatchCaseTreeImpl(textRange, expression, body);
+      return new MatchCaseTreeImpl(textRange(ctx.start, ctx.stop), expression, body);
     }
 
     @Override
@@ -226,12 +213,12 @@ public class SLangConverter {
 
     @Override
     public Tree visitLiteral(SLangParser.LiteralContext ctx) {
-      return new LiteralTreeImpl(textRange(ctx.getStart()), ctx.getText());
+      return new LiteralTreeImpl(textRange(ctx.start, ctx.stop), ctx.getText());
     }
 
     @Override
     public Tree visitIdentifier(SLangParser.IdentifierContext ctx) {
-      return new IdentifierTreeImpl(textRange(ctx.getStart()), ctx.getText());
+      return new IdentifierTreeImpl(textRange(ctx.start, ctx.stop), ctx.getText());
     }
 
     private TextPointer startOf(Token token) {
@@ -244,21 +231,13 @@ public class SLangConverter {
         new TextPointerImpl(lastToken.getLine(), lastToken.getCharPositionInLine() + lastToken.getText().length()));
     }
 
-    private TextRange textRange(Token token) {
-      return textRange(token, token);
-    }
-
     private TextRange textRange(Tree first, Tree last) {
       return new TextRangeImpl(first.textRange().start(), last.textRange().end());
     }
 
-    private TextRange textRange(TextPointer first, TextPointer last) {
-      return new TextRangeImpl(first, last);
-    }
-
     private NativeTree nativeTree(ParserRuleContext ctx, List<? extends ParseTree> rawChildren) {
       List<Tree> children = list(rawChildren);
-      return new NativeTreeImpl(textRange(children.get(0), children.get(children.size() - 1)), new SNativeKind(ctx), children);
+      return new NativeTreeImpl(textRange(ctx.start, ctx.stop), new SNativeKind(ctx), children);
     }
 
     private List<Tree> list(List<? extends ParseTree> rawChildren) {
