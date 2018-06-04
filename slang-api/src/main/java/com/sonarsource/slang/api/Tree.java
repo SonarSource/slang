@@ -25,6 +25,6 @@ public interface Tree {
 
   List<Tree> children();
 
-  TextRange textRange();
+  TreeMetaData metaData();
 
 }

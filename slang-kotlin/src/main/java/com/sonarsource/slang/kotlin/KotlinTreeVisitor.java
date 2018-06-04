@@ -22,8 +22,8 @@ package com.sonarsource.slang.kotlin;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.NativeKind;
-import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
@@ -80,7 +80,7 @@ class KotlinTreeVisitor extends KtTreeVisitorVoid {
   }
 
   private static Tree createElement(PsiElement element, List<Tree> children) {
-    TextRange textRange = null;
+    TreeMetaData textRange = null;
     if (element instanceof PsiWhiteSpace || element instanceof LeafPsiElement) {
       // skip tokens and whitespaces nodes in kotlin AST
       return null;

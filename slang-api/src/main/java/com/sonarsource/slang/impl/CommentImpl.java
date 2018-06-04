@@ -19,42 +19,34 @@
  */
 package com.sonarsource.slang.impl;
 
-import com.sonarsource.slang.api.BinaryExpressionTree;
-import com.sonarsource.slang.api.Tree;
-import com.sonarsource.slang.api.TreeMetaData;
-import java.util.Arrays;
-import java.util.List;
+import com.sonarsource.slang.api.Comment;
+import com.sonarsource.slang.api.TextRange;
 
-public class BinaryExpressionTreeImpl extends BaseTreeImpl implements BinaryExpressionTree {
+public class CommentImpl implements Comment {
 
-  private final Operator operator;
-  private final Tree leftOperand;
-  private final Tree rightOperand;
+  private final String text;
+  private final String textWithDelimiters;
+  private final TextRange textRange;
 
-  public BinaryExpressionTreeImpl(TreeMetaData metaData, Operator operator, Tree leftOperand, Tree rightOperand) {
-    super(metaData);
-    this.operator = operator;
-    this.leftOperand = leftOperand;
-    this.rightOperand = rightOperand;
+  public CommentImpl(String text, String textWithDelimiters, TextRange textRange) {
+    this.text = text;
+    this.textWithDelimiters = textWithDelimiters;
+    this.textRange = textRange;
   }
 
   @Override
-  public Operator operator() {
-    return operator;
+  public String text() {
+    return text;
   }
 
   @Override
-  public Tree leftOperand() {
-    return leftOperand;
+  public String textWithDelimiters() {
+    return textWithDelimiters;
   }
 
   @Override
-  public Tree rightOperand() {
-    return rightOperand;
+  public TextRange textRange() {
+    return textRange;
   }
 
-  @Override
-  public List<Tree> children() {
-    return Arrays.asList(leftOperand, rightOperand);
-  }
 }

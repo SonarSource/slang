@@ -46,6 +46,7 @@
 
   <properties>
     <license.title>SonarSource SLang</license.title>
+    <analyzer.commons.version>1.7.0.243</analyzer.commons.version>
   </properties>
 
   <dependencyManagement>
@@ -81,8 +82,13 @@
       <dependency>
         <groupId>org.sonarsource.analyzer-commons</groupId>
         <artifactId>sonar-analyzer-test-commons</artifactId>
-        <version>1.7.0.243</version>
+        <version>${analyzer.commons.version}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.sonarsource.analyzer-commons</groupId>
+        <artifactId>sonar-analyzer-commons</artifactId>
+        <version>${analyzer.commons.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

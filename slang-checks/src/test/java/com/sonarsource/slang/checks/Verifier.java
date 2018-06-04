@@ -103,8 +103,8 @@ public class Verifier {
 
     @Override
     public void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations) {
-      TextPointer start = tree.textRange().start();
-      TextPointer end = tree.textRange().end();
+      TextPointer start = tree.metaData().textRange().start();
+      TextPointer end = tree.metaData().textRange().end();
       SingleFileVerifier.Issue issue =
         verifier.reportIssue(message).onRange(start.line(), start.lineOffset() + 1, end.line(), end.lineOffset());
       secondaryLocations.forEach(secondary ->

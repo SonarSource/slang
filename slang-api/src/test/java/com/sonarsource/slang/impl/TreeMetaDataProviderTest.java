@@ -19,27 +19,21 @@
  */
 package com.sonarsource.slang.impl;
 
-import com.sonarsource.slang.api.TopLevelTree;
-import com.sonarsource.slang.api.Tree;
-import com.sonarsource.slang.api.TreeMetaData;
-import java.util.List;
+import com.sonarsource.slang.api.Comment;
+import java.util.Collections;
+import org.junit.Test;
 
-public class TopLevelTreeImpl extends BaseTreeImpl implements TopLevelTree {
+import static org.assertj.core.api.Assertions.assertThat;
 
-  private final List<Tree> declarations;
+public class TreeMetaDataProviderTest {
 
-  public TopLevelTreeImpl(TreeMetaData metaData, List<Tree> declarations) {
-    super(metaData);
-    this.declarations = declarations;
+  @Test
+  public void commentsInside() {
+    Comment comment = new CommentImpl("comment1", "// comment1", new TextRangeImpl(2, 5, 2, 12));
+    TreeMetaDataProvider provider = new TreeMetaDataProvider(Collections.singletonList(comment));
+    assertThat(provider.metaData(new TextRangeImpl(1, 1, 1, 20)).commentsInside()).isEmpty();
+    assertThat(provider.metaData(new TextRangeImpl(2, 1, 2, 20)).commentsInside()).containsExactly(comment);
   }
 
-  @Override
-  public List<Tree> declarations() {
-    return declarations;
-  }
 
-  @Override
-  public List<Tree> children() {
-    return declarations();
-  }
 }

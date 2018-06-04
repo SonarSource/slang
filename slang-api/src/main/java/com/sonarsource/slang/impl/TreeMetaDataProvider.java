@@ -19,42 +19,43 @@
  */
 package com.sonarsource.slang.impl;
 
-import com.sonarsource.slang.api.BinaryExpressionTree;
-import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.Comment;
+import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.TreeMetaData;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class BinaryExpressionTreeImpl extends BaseTreeImpl implements BinaryExpressionTree {
+public class TreeMetaDataProvider {
 
-  private final Operator operator;
-  private final Tree leftOperand;
-  private final Tree rightOperand;
+  private final List<Comment> comments;
 
-  public BinaryExpressionTreeImpl(TreeMetaData metaData, Operator operator, Tree leftOperand, Tree rightOperand) {
-    super(metaData);
-    this.operator = operator;
-    this.leftOperand = leftOperand;
-    this.rightOperand = rightOperand;
+  public TreeMetaDataProvider(List<Comment> comments) {
+    this.comments = comments;
   }
 
-  @Override
-  public Operator operator() {
-    return operator;
+  public TreeMetaData metaData(TextRange textRange) {
+    return new TreeMetaDataImpl(textRange);
   }
 
-  @Override
-  public Tree leftOperand() {
-    return leftOperand;
-  }
+  private class TreeMetaDataImpl implements TreeMetaData {
 
-  @Override
-  public Tree rightOperand() {
-    return rightOperand;
-  }
+    private final TextRange textRange;
 
-  @Override
-  public List<Tree> children() {
-    return Arrays.asList(leftOperand, rightOperand);
+    private TreeMetaDataImpl(TextRange textRange) {
+      this.textRange = textRange;
+    }
+
+    @Override
+    public TextRange textRange() {
+      return textRange;
+    }
+
+    @Override
+    public List<Comment> commentsInside() {
+      // TODO improve performance by storing an ordered list of comments
+      return comments.stream()
+        .filter(comment -> comment.textRange().isInside(textRange))
+        .collect(Collectors.toList());
+    }
   }
 }
