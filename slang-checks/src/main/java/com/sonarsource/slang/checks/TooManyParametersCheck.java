@@ -25,7 +25,9 @@ import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.sonar.check.Rule;
 
+@Rule(key = "S107")
 public class TooManyParametersCheck implements SlangCheck {
 
   private int threshold = 7;

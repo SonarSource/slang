@@ -23,9 +23,11 @@ import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.checks.api.SlangCheck;
+import org.sonar.check.Rule;
 
 import static com.sonarsource.slang.checks.utils.SyntacticEquivalence.areEquivalent;
 
+@Rule(key = "S1764")
 public class IdenticalBinaryOperandCheck implements SlangCheck {
 
   @Override

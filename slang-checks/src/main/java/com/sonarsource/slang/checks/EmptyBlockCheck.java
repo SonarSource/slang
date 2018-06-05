@@ -26,7 +26,9 @@ import com.sonarsource.slang.checks.api.CheckContext;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
+import org.sonar.check.Rule;
 
+@Rule(key = "S108")
 public class EmptyBlockCheck implements SlangCheck {
 
   private static final String MESSAGE = "Either remove or fill this block of code.";
