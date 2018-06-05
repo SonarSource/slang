@@ -22,15 +22,12 @@ package com.sonarsource.slang.antlr;
 
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
-import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
-import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
-import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
@@ -41,12 +38,11 @@ import com.sonarsource.slang.visitors.TreeContext;
 import com.sonarsource.slang.visitors.TreeVisitor;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.antlr.v4.runtime.CharStreams;
-import org.assertj.core.api.AbstractAssert;
 import org.junit.Test;
 
+import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SLangConverterTest {
@@ -102,7 +98,7 @@ public class SLangConverterTest {
   public void function() {
     FunctionDeclarationTree function = parseFunction("private int foo(x1, x2) { x1 + x2 }");
     assertThat(function.name().name()).isEqualTo("foo");
-    //assertTree(function.returnType()).isIdentifier("boolean");
+    // assertTree(function.returnType()).isIdentifier("boolean");
     assertThat(function.formalParameters()).hasSize(2);
     assertTree(function.formalParameters().get(0)).isIdentifier("x1");
     assertThat(function.body()).isNotNull();
@@ -207,81 +203,4 @@ public class SLangConverterTest {
     return (FunctionDeclarationTree) converter.parse(code).children().get(0);
   }
 
-  public static class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
-
-    public TreeAssert(Tree actual) {
-      super(actual, TreeAssert.class);
-    }
-
-    public TreeAssert isIdentifier(String expectedName) {
-      isNotNull();
-      isInstanceOf(IdentifierTree.class);
-      IdentifierTree actualIdentifier = (IdentifierTree) actual;
-      if (!Objects.equals(actualIdentifier.name(), expectedName)) {
-        failWithMessage("Expected identifier's name to be <%s> but was <%s>", expectedName, actualIdentifier.name());
-      }
-      return this;
-    }
-
-    public TreeAssert isLiteral(String expected) {
-      isNotNull();
-      isInstanceOf(LiteralTree.class);
-      LiteralTree actualLiteral = (LiteralTree) actual;
-      if (!Objects.equals(actualLiteral.value(), expected)) {
-        failWithMessage("Expected literal value to be <%s> but was <%s>", expected, actualLiteral.value());
-      }
-      return this;
-    }
-
-    public TreeAssert isBinaryExpression(Operator expectedOperator) {
-      isNotNull();
-      isInstanceOf(BinaryExpressionTree.class);
-      BinaryExpressionTree actualBinary = (BinaryExpressionTree) actual;
-      if (!Objects.equals(actualBinary.operator(), expectedOperator)) {
-        failWithMessage("Expected operator to be <%s> but was <%s>", expectedOperator, actualBinary.operator());
-      }
-      return this;
-    }
-
-    public TreeAssert isBlock(Class... classes) {
-      isNotNull();
-      isInstanceOf(BlockTree.class);
-      hasChildren(classes);
-      return this;
-    }
-
-    public TreeAssert hasChildren(Class... classes) {
-      hasChildren(classes.length);
-      for (int i = 0; i < actual.children().size(); i++) {
-        Tree tree = actual.children().get(i);
-        if (!classes[i].isAssignableFrom(tree.getClass())) {
-          failWithMessage("Expected to find instance of <%s> but was <%s>", classes[i], tree.getClass());
-        }
-      }
-      return this;
-    }
-
-    public TreeAssert hasChildren(int count) {
-      isNotNull();
-      if (actual.children().size() != count) {
-        failWithMessage("Expected to have <%s> children elements but found <%s>", count, actual.children().size());
-      }
-      return this;
-    }
-
-    public TreeAssert hasTextRange(int startLine, int startLineOffset, int endLine, int endLineOffset) {
-      isNotNull();
-      TextRange range = actual.metaData().textRange();
-      assertThat(range.start().line()).isEqualTo(startLine);
-      assertThat(range.start().lineOffset()).isEqualTo(startLineOffset);
-      assertThat(range.end().line()).isEqualTo(endLine);
-      assertThat(range.end().lineOffset()).isEqualTo(endLineOffset);
-      return this;
-    }
-
-  }
-
-  public static TreeAssert assertTree(Tree actual) {
-    return new TreeAssert(actual);
-  }
 }

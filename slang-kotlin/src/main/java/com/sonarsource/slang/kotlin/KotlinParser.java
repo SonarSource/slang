@@ -47,7 +47,6 @@ public class KotlinParser {
   public static Tree fromString(String content) {
     PsiFile psiFile = psiFileFactory.createFileFromText(KotlinLanguage.INSTANCE, content);
     KotlinTreeVisitor kotlinTreeVisitor = new KotlinTreeVisitor(psiFile);
-    psiFile.accept(kotlinTreeVisitor);
     return kotlinTreeVisitor.getSLangAST();
   }
 

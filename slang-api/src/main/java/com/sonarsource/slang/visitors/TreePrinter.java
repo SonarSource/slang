@@ -24,9 +24,15 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Tree;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class TreePrinter {
+
+  public static String tree2string(List<Tree> trees) {
+    return trees.stream().map(TreePrinter::tree2string).collect(Collectors.joining("\n"));
+  }
 
   public static String tree2string(Tree tree) {
     StringBuilder sb = new StringBuilder();

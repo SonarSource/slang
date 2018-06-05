@@ -19,68 +19,127 @@
  */
 package com.sonarsource.slang.kotlin;
 
-import com.sonarsource.slang.api.BinaryExpressionTree;
-import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
-import com.sonarsource.slang.api.TextRange;
+import com.sonarsource.slang.api.FunctionDeclarationTree;
+import com.sonarsource.slang.api.LiteralTree;
+import com.sonarsource.slang.api.MatchCaseTree;
+import com.sonarsource.slang.api.MatchTree;
+import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
-import com.sonarsource.slang.visitors.TreeContext;
+import com.sonarsource.slang.parser.SLangConverter;
 import com.sonarsource.slang.visitors.TreePrinter;
-import com.sonarsource.slang.visitors.TreeVisitor;
-import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
+import org.assertj.core.api.AbstractAssert;
 import org.junit.Test;
 
+import static com.sonarsource.slang.checks.utils.SyntacticEquivalence.areEquivalent;
+import static com.sonarsource.slang.kotlin.KotlinParserTest.KotlinTreesAssert.assertTrees;
+import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class KotlinParserTest {
 
   @Test
-  public void testFile() throws IOException {
-    Tree tree = KotlinParser.fromFile("src/test/resources/test.kt");
-    assertThat(tree).isNotNull();
-  }
-
-  @Test
-  public void testString() {
-    Tree tree = KotlinParser.fromString("fun function1() = 2 >= 1");
-    assertThat(tree).isNotNull();
-  }
-
-  @Test
   public void testBinaryExpression() {
-    List<Tree> allNodes = new LinkedList<>();
-    TreeVisitor<TreeContext> visitor = new TreeVisitor<>();
-    visitor.register(Tree.class, (ctx, tree) -> allNodes.add(tree));
-    visitor.scan(new TreeContext(), KotlinParser.fromString("fun function1() = (1 + 2 * 3 * 4 / 5 - 6) == 32"));
-    assertHasXNodesOfOperatorType(allNodes, Operator.PLUS, 1);
-    assertHasXNodesOfOperatorType(allNodes, Operator.TIMES, 2);
-    assertHasXNodesOfOperatorType(allNodes, Operator.DIVIDED_BY, 1);
-    assertHasXNodesOfOperatorType(allNodes, Operator.MINUS, 1);
-    assertHasXNodesOfOperatorType(allNodes, Operator.EQUAL_TO, 1);
+    assertTrees(kotlinStatements("x + 2; x - 2; x * 2; x / 2; x == 2; x != 2; x > 2; x >= 2; x < 2; x <= 2; x && y; x || y;"))
+      .isEquivalentTo(slangStatements("x + 2; x - 2; x * 2; x / 2; x == 2; x != 2; x > 2; x >= 2; x < 2; x <= 2; x && y; x || y;"));
+  }
+
+  @Test
+  public void testFunctionDeclaration() {
+    FunctionDeclarationTree functionDeclarationTree = ((FunctionDeclarationTree) kotlin("fun function1(a: Int, b: String): Boolean { true; }"));
+    // FIXME test return type, parameter names, modifiers
+    assertTree(functionDeclarationTree.name()).isIdentifier("function1").hasTextRange(1, 4, 1, 13);
+    assertThat(functionDeclarationTree.formalParameters()).hasSize(2);
+    assertTree(functionDeclarationTree.body()).isBlock(LiteralTree.class);
+
+    assertTree(((FunctionDeclarationTree) kotlin("fun function1(a: Int, b: String): Boolean = true")).body()).isNotNull();
+  }
+
+  @Test
+  public void testLiterals() {
+    assertTrees(kotlinStatements("554; true; false; null; \"string\"; 'c';"))
+      .isEquivalentTo(slangStatements("554; true; false; null; \"string\"; 'c';"));
   }
 
   @Test
   public void testRange() {
-    Tree tree = KotlinParser.fromString("fun function1() =\n(1 + 2 * 3 * 4 / 5 - 6)\n == 32;");
-    assertRange(tree, 1, 0, 3, 7);
-    BinaryExpressionTree topMostBinaryExpression = ((BinaryExpressionTree) tree.children().get(2).children().get(1).children().get(0));
-    assertRange(topMostBinaryExpression, 2, 1, 2, 22);
-    assertRange(topMostBinaryExpression.leftOperand(), 2, 1, 2, 18);
+    FunctionDeclarationTree tree = ((FunctionDeclarationTree) kotlin("fun function1(a: Int, b: String): Boolean\n{ true; }"));
+    assertTree(tree).hasTextRange(1, 0, 2, 9);
   }
 
-  private static void assertHasXNodesOfOperatorType(List<Tree> nodes, Operator operator, int expectedNumber) {
-    assertThat(nodes)
-      .filteredOn(node -> node instanceof BinaryExpressionTree && ((BinaryExpressionTree) node).operator() == operator)
-      .hasSize(expectedNumber);
+  @Test
+  public void testIfExpressions() {
+    assertTrees(kotlinStatements("if (x == 0) { 3; x + 2;}"))
+      .isEquivalentTo(slangStatements("if (x == 0) { 3; x + 2;}"));
+
+    assertTrees(kotlinStatements("if (x) 1 else 4"))
+      .isEquivalentTo(slangStatements("if (x) 1 else 4"));
+
+    assertTrees(kotlinStatements("if (x) 1 else if (x > 2) 4"))
+      .isEquivalentTo(slangStatements("if (x) 1 else if (x > 2) 4;"));
   }
 
-  private static void assertRange(Tree tree, int startLine, int startLineOffset, int endLine, int endLineOffset) {
-    TextRange range = tree.metaData().textRange();
-    assertThat(range.start().line()).isEqualTo(startLine);
-    assertThat(range.start().lineOffset()).isEqualTo(startLineOffset);
-    assertThat(range.end().line()).isEqualTo(endLine);
-    assertThat(range.end().lineOffset()).isEqualTo(endLineOffset);
+  @Test
+  public void testMatchExpressions() {
+    Tree kotlinStatement = kotlinStatement("when (x) { 1 -> true; 1 -> false; 2 -> true; else -> true;}");
+    assertTree(kotlinStatement).isInstanceOf(MatchTree.class);
+    MatchTree matchTree = (MatchTree) kotlinStatement;
+    assertTree(matchTree.expression()).isIdentifier("x");
+    List<MatchCaseTree> cases = matchTree.cases();
+    assertThat(cases).hasSize(4);
+    assertThat(areEquivalent(getCondition(cases, 0), getCondition(cases, 1))).isTrue();
+    assertThat(areEquivalent(getCondition(cases, 0), getCondition(cases, 2))).isFalse();
+    assertThat(getCondition(cases, 3)).isNull();
+
+    // FIXME check more complex cases when(x) { in 1..10 -> ; 1,2 ->
   }
 
+  private static Tree getCondition(List<MatchCaseTree> cases, int i) {
+    return cases.get(i).expression();
+  }
+
+  private List<Tree> slangStatements(String innerCode) {
+    Tree tree = new SLangConverter().parse(innerCode);
+    assertThat(tree).isInstanceOf(TopLevelTree.class);
+    return tree.children();
+  }
+
+  private Tree kotlinStatement(String innerCode) {
+    List<Tree> kotlinStatements = kotlinStatements(innerCode);
+    assertThat(kotlinStatements).hasSize(1);
+    return kotlinStatements.get(0);
+  }
+
+  private Tree kotlin(String innerCode) {
+    Tree tree = KotlinParser.fromString(innerCode);
+    assertThat(tree).isInstanceOf(TopLevelTree.class);
+    assertThat(tree.children()).hasSize(3);
+    return tree.children().get(2);
+  }
+
+  private List<Tree> kotlinStatements(String innerCode) {
+    FunctionDeclarationTree functionDeclarationTree = (FunctionDeclarationTree) kotlin("fun function1() { " + innerCode + " }");
+    assertThat(functionDeclarationTree.body()).isNotNull();
+    return functionDeclarationTree.body().statementOrExpressions();
+  }
+
+  public static class KotlinTreesAssert extends AbstractAssert<KotlinTreesAssert, List<Tree>> {
+    public KotlinTreesAssert(List<Tree> actual) {
+      super(actual, KotlinTreesAssert.class);
+    }
+
+    public KotlinTreesAssert isEquivalentTo(List<Tree> expected) {
+      isNotNull();
+      boolean equivalent = areEquivalent(actual, expected);
+      if (!equivalent) {
+        assertThat(TreePrinter.tree2string(actual)).isEqualTo(TreePrinter.tree2string(expected));
+        failWithMessage("Expected tree: <%s>\nbut was: <%s>", TreePrinter.tree2string(expected), TreePrinter.tree2string(actual));
+      }
+      return this;
+    }
+
+    public static KotlinTreesAssert assertTrees(List<Tree> actual) {
+      return new KotlinTreesAssert(actual);
+    }
+  }
 }

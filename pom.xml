@@ -21,8 +21,9 @@
   </licenses>
 
   <modules>
-    <module>slang-antlr</module>
     <module>slang-api</module>
+    <module>slang-testing</module>
+    <module>slang-antlr</module>
     <module>slang-checks</module>
     <module>slang-kotlin</module>
   </modules>
@@ -58,7 +59,18 @@
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
+        <artifactId>slang-checks</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
         <artifactId>slang-antlr</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>slang-testing</artifactId>
         <version>${project.version}</version>
         <scope>test</scope>
       </dependency>
