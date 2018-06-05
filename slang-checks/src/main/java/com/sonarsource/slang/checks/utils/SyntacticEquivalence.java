@@ -35,6 +35,20 @@ public class SyntacticEquivalence {
   private SyntacticEquivalence() {
   }
 
+  public static boolean areEquivalent(List<Tree> first, List<Tree> second) {
+    if (first.size() != second.size()) {
+      return false;
+    }
+
+    for (int i = 0; i < first.size(); i++) {
+      if (!areEquivalent(first.get(i), second.get(i))) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   public static boolean areEquivalent(Tree first, Tree second) {
     if (!first.getClass().equals(second.getClass())) {
       return false;
@@ -54,17 +68,7 @@ public class SyntacticEquivalence {
       }
     }
 
-    if (first.children().size() != second.children().size()) {
-      return false;
-    }
-
-    for (int i = 0; i < first.children().size(); i++) {
-      if (!areEquivalent(first.children().get(i), second.children().get(i))) {
-        return false;
-      }
-    }
-
-    return true;
+    return areEquivalent(first.children(), second.children());
   }
 
   public static List<List<Tree>> findDuplicatedGroups(List<Tree> list) {
