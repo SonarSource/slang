@@ -22,12 +22,16 @@ package com.sonarsource.slang.kotlin;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.NativeKind;
+import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
+import com.sonarsource.slang.impl.TextPointerImpl;
+import com.sonarsource.slang.impl.TextRangeImpl;
+import com.sonarsource.slang.impl.TreeMetaDataProvider;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +41,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
+import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType;
@@ -67,6 +73,13 @@ class KotlinTreeVisitor extends KtTreeVisitorVoid {
     .collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue)));
 
   private List<Tree> currentChildren = new ArrayList<>();
+  private final TreeMetaDataProvider metaDataProvider;
+  private final Document psiDocument;
+
+  public KotlinTreeVisitor(PsiFile psiFile) {
+    this.psiDocument = psiFile.getViewProvider().getDocument();
+    this.metaDataProvider = new TreeMetaDataProvider(Collections.emptyList());
+  }
 
   public void visitElement(@NotNull PsiElement element) {
     List<Tree> siblings = currentChildren;
@@ -79,21 +92,21 @@ class KotlinTreeVisitor extends KtTreeVisitorVoid {
     }
   }
 
-  private static Tree createElement(PsiElement element, List<Tree> children) {
-    TreeMetaData textRange = null;
+  private Tree createElement(PsiElement element, List<Tree> children) {
+    TreeMetaData metaData = getTreeMetaData(element);
     if (element instanceof PsiWhiteSpace || element instanceof LeafPsiElement) {
       // skip tokens and whitespaces nodes in kotlin AST
       return null;
     } else if (element instanceof KtBinaryExpression) {
       BinaryExpressionTree.Operator operator = mapBinaryExpression(((KtBinaryExpression) element).getOperationToken());
       // child at index 1 is the KtOperationReferenceExpression
-      return new BinaryExpressionTreeImpl(textRange, operator, children.get(0), children.get(2));
+      return new BinaryExpressionTreeImpl(metaData, operator, children.get(0), children.get(2));
     } else if (element instanceof KtNameReferenceExpression) {
-      return new IdentifierTreeImpl(textRange, element.getText());
+      return new IdentifierTreeImpl(metaData, element.getText());
     } else if (element instanceof KtConstantExpression) {
-      return new LiteralTreeImpl(textRange, element.getText());
+      return new LiteralTreeImpl(metaData, element.getText());
     } else {
-      return new NativeTreeImpl(textRange, GENERIC_NATIVE_KIND, children);
+      return new NativeTreeImpl(metaData, GENERIC_NATIVE_KIND, children);
     }
   }
 
@@ -103,6 +116,21 @@ class KotlinTreeVisitor extends KtTreeVisitorVoid {
       throw new IllegalStateException("Binary operation type not supported: " + operationTokenType);
     }
     return operator;
+  }
+
+  private TreeMetaData getTreeMetaData(@NotNull PsiElement element) {
+    TextPointerImpl startPointer = textPointerAtOffset(psiDocument, element.getTextRange().getStartOffset());
+    TextPointerImpl endPointer = textPointerAtOffset(psiDocument, element.getTextRange().getEndOffset());
+    TextRange textRange = new TextRangeImpl(startPointer, endPointer);
+    return metaDataProvider.metaData(textRange);
+  }
+
+  @NotNull
+  private static TextPointerImpl textPointerAtOffset(Document psiDocument, int startOffset) {
+    int startLineNumber = psiDocument.getLineNumber(startOffset);
+    int startLineNumberOffset = psiDocument.getLineStartOffset(startLineNumber);
+    int startLineOffset = startOffset - startLineNumberOffset;
+    return new TextPointerImpl(startLineNumber + 1, startLineOffset);
   }
 
   Tree getSLangAST() {
