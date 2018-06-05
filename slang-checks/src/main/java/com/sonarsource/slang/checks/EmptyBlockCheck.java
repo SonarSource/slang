@@ -21,6 +21,8 @@ package com.sonarsource.slang.checks;
 
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.MatchTree;
+import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.checks.api.CheckContext;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
@@ -33,21 +35,22 @@ public class EmptyBlockCheck implements SlangCheck {
   public void initialize(InitContext init) {
     init.register(BlockTree.class, (ctx, blockTree) -> {
       if (!(ctx.parent() instanceof FunctionDeclarationTreeImpl)) {
-        boolean noStatementsOrExpressions = blockTree.statementOrExpressions().isEmpty();
-        boolean noComments = blockTree.metaData().commentsInside().isEmpty();
-
-        if (noStatementsOrExpressions && noComments) {
-          ctx.reportIssue(blockTree, MESSAGE);
+        if (blockTree.statementOrExpressions().isEmpty()) {
+          checkComments(ctx, blockTree);
         }
       }
     });
 
     init.register(MatchTree.class, (ctx, matchTree) -> {
-      boolean noCases = matchTree.cases().isEmpty();
-      boolean noComments = matchTree.metaData().commentsInside().isEmpty();
-      if (noCases && noComments) {
-        ctx.reportIssue(matchTree, MESSAGE);
+      if (matchTree.cases().isEmpty()) {
+        checkComments(ctx, matchTree);
       }
     });
+  }
+
+  private static void checkComments(CheckContext ctx, Tree tree) {
+    if (tree.metaData().commentsInside().isEmpty()) {
+      ctx.reportIssue(tree, MESSAGE);
+    }
   }
 }
