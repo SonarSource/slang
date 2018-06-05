@@ -10,6 +10,7 @@
   </parent>
 
   <artifactId>slang-kotlin</artifactId>
+  <packaging>sonar-plugin</packaging>
 
   <name>SLang :: KOTLIN</name>
 
@@ -29,6 +30,15 @@
     <dependency>
       <groupId>org.sonarsource.slang</groupId>
       <artifactId>slang-antlr</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.sonarsource.sonarqube</groupId>
+      <artifactId>sonar-plugin-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.sonarsource.analyzer-commons</groupId>
+      <artifactId>sonar-analyzer-commons</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
@@ -53,5 +63,42 @@
       <artifactId>slang-testing</artifactId>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
+        <artifactId>sonar-packaging-maven-plugin</artifactId>
+        <configuration>
+          <!-- This value shows up in the SonarQube GUI -->
+          <pluginName>SonarKotlin</pluginName>
+          <pluginClass>com.sonarsource.slang.kotlin.KotlinPlugin</pluginClass>
+          <!--<skipDependenciesPackaging>true</skipDependenciesPackaging>-->
+          <sonarLintSupported>true</sonarLintSupported>
+          <addMavenDescriptor>false</addMavenDescriptor>
+          <sonarQubeMinVersion>6.7</sonarQubeMinVersion>
+        </configuration>
+      </plugin>
+      <!--
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <shadedArtifactAttached>false</shadedArtifactAttached>
+              <minimizeJar>true</minimizeJar>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      -->
+    </plugins>
+  </build>
+
   
 </project>

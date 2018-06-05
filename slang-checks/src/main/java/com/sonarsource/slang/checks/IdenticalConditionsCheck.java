@@ -34,7 +34,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.annotation.CheckForNull;
+import org.sonar.check.Rule;
 
+@Rule(key = "S1862")
 public class IdenticalConditionsCheck implements SlangCheck {
 
   @Override

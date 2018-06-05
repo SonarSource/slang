@@ -48,6 +48,7 @@
   <properties>
     <license.title>SonarSource SLang</license.title>
     <analyzer.commons.version>1.7.0.243</analyzer.commons.version>
+    <sonarqube.version>6.7</sonarqube.version>
   </properties>
 
   <dependencyManagement>
@@ -73,6 +74,11 @@
         <artifactId>slang-testing</artifactId>
         <version>${project.version}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.sonarsource.sonarqube</groupId>
+        <artifactId>sonar-plugin-api</artifactId>
+        <version>${sonarqube.version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.code.findbugs</groupId>

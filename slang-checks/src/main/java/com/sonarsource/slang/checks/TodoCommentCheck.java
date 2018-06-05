@@ -28,8 +28,10 @@ import com.sonarsource.slang.impl.TextPointerImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.sonar.check.Rule;
 import org.sonarsource.analyzer.commons.TokenLocation;
 
+@Rule(key = "S1135")
 public class TodoCommentCheck implements SlangCheck {
 
   private final Pattern todoPattern = Pattern.compile("(?i)(^|[^\\p{L}])(todo)");
