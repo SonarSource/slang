@@ -19,7 +19,6 @@
  */
 package com.sonarsource.slang.kotlin;
 
-import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
@@ -56,7 +55,6 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement;
-import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType;
 import org.jetbrains.kotlin.lexer.KtSingleValueToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
@@ -179,17 +177,16 @@ class KotlinTreeVisitor {
 
   @NotNull
   private Tree createBinaryExpression(@NotNull KtBinaryExpression element, TreeMetaData metaData) {
-    KtBinaryExpression binaryExpression = element;
-    Tree leftOperand = createElement(binaryExpression.getLeft());
-    Tree rightOperand = createElement(binaryExpression.getRight());
-    try {
-      Operator operator = mapBinaryExpression(binaryExpression.getOperationToken());
+    Tree leftOperand = createElement(element.getLeft());
+    Tree rightOperand = createElement(element.getRight());
+    Operator operator = TOKENS_OPERATOR_MAP.get(element.getOperationToken());
+    if (operator != null) {
       return new BinaryExpressionTreeImpl(metaData, operator, leftOperand, rightOperand);
-    } catch (IllegalStateException e) {
+    } else {
       // FIXME ensure they are all supported. Ex: Add EQ for assignments
       return new NativeTreeImpl(
         metaData,
-        new KotlinNativeKind(element, binaryExpression.getOperationToken()),
+        new KotlinNativeKind(element, element.getOperationReference().getReferencedNameElement().getText()),
         Arrays.asList(leftOperand, rightOperand));
     }
   }
@@ -213,14 +210,6 @@ class KotlinTreeVisitor {
     int startLineNumberOffset = psiDocument.getLineStartOffset(startLineNumber);
     int startLineOffset = startOffset - startLineNumberOffset;
     return new TextPointerImpl(startLineNumber + 1, startLineOffset);
-  }
-
-  private static BinaryExpressionTree.Operator mapBinaryExpression(IElementType operationTokenType) {
-    Operator operator = TOKENS_OPERATOR_MAP.get(operationTokenType);
-    if (operator == null) {
-      throw new IllegalStateException("Binary operation type not supported: " + operationTokenType);
-    }
-    return operator;
   }
 
   Tree getSLangAST() {

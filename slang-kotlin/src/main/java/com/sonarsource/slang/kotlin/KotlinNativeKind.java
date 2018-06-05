@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
 public class KotlinNativeKind implements NativeKind {
 
   private final Class<? extends PsiElement> psiElementClass;
-  private final List<Class<?>> differentiators;
+  private final List<Object> differentiators;
 
   public KotlinNativeKind(PsiElement element) {
     this.psiElementClass = element.getClass();
@@ -44,7 +44,7 @@ public class KotlinNativeKind implements NativeKind {
 
   public KotlinNativeKind(PsiElement element, Object... differentiatorObjs) {
     this.psiElementClass = element.getClass();
-    this.differentiators = Arrays.stream(differentiatorObjs).map(Object::getClass).collect(Collectors.toList());
+    this.differentiators = Arrays.asList(differentiatorObjs);
   }
 
   @Override
@@ -69,7 +69,7 @@ public class KotlinNativeKind implements NativeKind {
       return psiElementClass.getSimpleName();
     } else {
       return psiElementClass.getSimpleName()
-        + differentiators.stream().map(Class::getSimpleName).collect(Collectors.joining(", ", "[", "]"));
+        + differentiators.stream().map(Object::toString).collect(Collectors.joining(", ", "[", "]"));
     }
   }
 

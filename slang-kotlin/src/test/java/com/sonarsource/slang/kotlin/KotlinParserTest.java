@@ -23,6 +23,7 @@ import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
+import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.parser.SLangConverter;
@@ -42,6 +43,17 @@ public class KotlinParserTest {
   public void testBinaryExpression() {
     assertTrees(kotlinStatements("x + 2; x - 2; x * 2; x / 2; x == 2; x != 2; x > 2; x >= 2; x < 2; x <= 2; x && y; x || y;"))
       .isEquivalentTo(slangStatements("x + 2; x - 2; x * 2; x / 2; x == 2; x != 2; x > 2; x >= 2; x < 2; x <= 2; x && y; x || y;"));
+  }
+
+  @Test
+  public void testUnmappedBinaryExpression() {
+    Tree or3 = kotlinStatement("x or 3");
+    Tree or3b = kotlinStatement("x or 3");
+    Tree and3 = kotlinStatement("x and 3");
+    assertTree(or3).isInstanceOf(NativeTree.class);
+    assertTree(and3).isInstanceOf(NativeTree.class);
+    assertThat(areEquivalent(or3, or3b)).isTrue();
+    assertThat(areEquivalent(or3, and3)).isFalse();
   }
 
   @Test
