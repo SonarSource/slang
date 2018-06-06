@@ -125,7 +125,10 @@ class KotlinTreeVisitor {
       // FIXME modifiers and return type
       Tree returnType = null;
       PsiElement nameIdentifier = functionElement.getNameIdentifier();
-      IdentifierTree identifierTree = new IdentifierTreeImpl(getTreeMetaData(nameIdentifier), functionElement.getName());
+      IdentifierTree identifierTree = null;
+      if (nameIdentifier != null) {
+        identifierTree = new IdentifierTreeImpl(getTreeMetaData(nameIdentifier), functionElement.getName());
+      }
       List<Tree> parametersList = functionElement.getValueParameters().stream()
         .map(this::createElement)
         .collect(Collectors.toList());
@@ -133,6 +136,9 @@ class KotlinTreeVisitor {
       if (bodyTree != null && !(bodyTree instanceof BlockTree)) {
         // FIXME are we sure we want body of function as block tree ?
         bodyTree = new BlockTreeImpl(bodyTree.metaData(), Collections.singletonList(bodyTree));
+      }
+      if (bodyTree != null && bodyTree.children().isEmpty()) {
+        bodyTree = null;
       }
       return new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, identifierTree, parametersList, (BlockTree) bodyTree);
     } else if (element instanceof KtIfExpression) {
