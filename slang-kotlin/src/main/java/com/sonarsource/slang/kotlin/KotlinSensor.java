@@ -66,9 +66,9 @@ public class KotlinSensor implements Sensor {
       try {
         analyseFile(sensorContext, inputFile, visitors);
       } catch (IllegalStateException e) {
-        // FIXME TBD
+        // FIXME Assert errors from kotlin parser
       } catch (Throwable e) {
-        // FIXME TBD
+        // FIXME Assert errors from kotlin parser
       }
 
     }

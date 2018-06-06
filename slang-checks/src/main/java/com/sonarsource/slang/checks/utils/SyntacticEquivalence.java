@@ -40,11 +40,7 @@ public class SyntacticEquivalence {
       return true;
     }
 
-    if (first == null || second == null) {
-      return false;
-    }
-
-    if (first.size() != second.size()) {
+    if (first == null || second == null || first.size() != second.size()) {
       return false;
     }
 
@@ -62,11 +58,7 @@ public class SyntacticEquivalence {
       return true;
     }
 
-    if (first == null || second == null) {
-      return false;
-    }
-
-    if (!first.getClass().equals(second.getClass())) {
+    if (first == null || second == null || !first.getClass().equals(second.getClass())) {
       return false;
     }
 

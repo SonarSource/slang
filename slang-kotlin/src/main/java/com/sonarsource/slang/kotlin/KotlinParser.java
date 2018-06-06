@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector;
