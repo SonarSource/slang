@@ -1,0 +1,7 @@
+fun testStrings(s: String) {
+    "\\"
+    "\'"
+    "\""
+    "\\"
+    " "
+}

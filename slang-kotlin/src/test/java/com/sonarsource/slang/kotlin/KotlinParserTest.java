@@ -29,6 +29,9 @@ import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.parser.SLangConverter;
 import com.sonarsource.slang.visitors.TreePrinter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.assertj.core.api.AbstractAssert;
@@ -38,6 +41,7 @@ import static com.sonarsource.slang.checks.utils.SyntacticEquivalence.areEquival
 import static com.sonarsource.slang.kotlin.KotlinParserTest.KotlinTreesAssert.assertTrees;
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class KotlinParserTest {
@@ -74,6 +78,20 @@ public class KotlinParserTest {
   public void testLiterals() {
     assertTrees(kotlinStatements("554; true; false; null; \"string\"; 'c';"))
       .isEquivalentTo(slangStatements("554; true; false; null; \"string\"; 'c';"));
+  }
+
+  @Test
+  public void testEscapedStringLiterals() throws IOException {
+    String content = new String(Files.readAllBytes(Paths.get("src/test/resources/strings.kt")), UTF_8);
+    FunctionDeclarationTree functionDeclarationTree = (FunctionDeclarationTree) kotlin(content);
+    assertThat(functionDeclarationTree.body()).isNotNull();
+    List<Tree> trees = functionDeclarationTree.body().children();
+    assertTree(trees.get(0)).isLiteral("\"\\\\\"");
+    assertThat(areEquivalent(trees.get(0), trees.get(1))).isFalse();
+    assertThat(areEquivalent(trees.get(0), trees.get(2))).isFalse();
+    assertThat(areEquivalent(trees.get(0), trees.get(3))).isTrue();
+    assertThat(areEquivalent(trees.get(0), trees.get(4))).isFalse();
+    assertThat(areEquivalent(trees.get(1), trees.get(2))).isFalse();
   }
 
   @Test

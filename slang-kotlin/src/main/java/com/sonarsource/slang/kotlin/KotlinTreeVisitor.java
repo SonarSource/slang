@@ -68,9 +68,7 @@ import org.jetbrains.kotlin.psi.KtConstantExpression;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.KtIfExpression;
-import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
-import org.jetbrains.kotlin.psi.KtStringTemplateEntry;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
 import org.jetbrains.kotlin.psi.KtWhenEntry;
@@ -187,13 +185,8 @@ class KotlinTreeVisitor {
       }
       return new MatchCaseTreeImpl(getTreeMetaData(whenElement), conditions, body);
     } else if (element instanceof KtStringTemplateExpression) {
-      KtStringTemplateEntry[] entries = ((KtStringTemplateExpression) element).getEntries();
-      if (entries.length == 1 && entries[0] instanceof KtLiteralStringTemplateEntry) {
-        // Non-template strings, ie. not in the form "string ${1 + 1}"
-        return new LiteralTreeImpl(metaData, '\"' + entries[0].getText() + '\"');
-      } else {
-        return new NativeTreeImpl(metaData, new KotlinNativeKind(element), list(Arrays.stream(element.getChildren())));
-      }
+      // Do not differentiate between template and non-template strings for now
+      return new LiteralTreeImpl(metaData, element.getText());
     } else {
       return new NativeTreeImpl(metaData, new KotlinNativeKind(element), list(Arrays.stream(element.getChildren())));
     }
