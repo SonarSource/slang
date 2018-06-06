@@ -151,6 +151,12 @@ public class KotlinParserTest {
     assertThat(kotlinTree.allComments()).extracting(Comment::textWithDelimiters).isEqualTo(slangCommentsWithDelimiters);
   }
 
+  @Test
+  public void testAssignments() {
+    assertTrees(kotlinStatements("x = 3\nx -= y + 3\n"))
+      .isEquivalentTo(slangStatements("x = 3; x -= y + 3"));
+  }
+
   private static Tree getCondition(List<MatchCaseTree> cases, int i) {
     return cases.get(i).expression();
   }

@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.kotlin;
 
+import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
@@ -27,6 +28,7 @@ import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
+import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
@@ -57,7 +59,8 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiErrorElement;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement;
-import org.jetbrains.kotlin.lexer.KtSingleValueToken;
+import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType;
+import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
 import org.jetbrains.kotlin.psi.KtBlockExpression;
@@ -74,7 +77,7 @@ import org.jetbrains.kotlin.psi.KtWhenEntry;
 import org.jetbrains.kotlin.psi.KtWhenExpression;
 
 class KotlinTreeVisitor {
-  private static final Map<KtSingleValueToken, Operator> TOKENS_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
+  private static final Map<KtToken, Operator> TOKENS_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
     new SimpleEntry<>(KtTokens.EQEQ, Operator.EQUAL_TO),
     new SimpleEntry<>(KtTokens.EXCLEQ, Operator.NOT_EQUAL_TO),
     new SimpleEntry<>(KtTokens.LT, Operator.LESS_THAN),
@@ -87,6 +90,15 @@ class KotlinTreeVisitor {
     new SimpleEntry<>(KtTokens.MINUS, Operator.MINUS),
     new SimpleEntry<>(KtTokens.MUL, Operator.TIMES),
     new SimpleEntry<>(KtTokens.DIV, Operator.DIVIDED_BY))
+    .collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue)));
+
+  private static final Map<KtToken, AssignmentExpressionTree.Operator> ASSIGNMENTS_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
+    new SimpleEntry<>(KtTokens.EQ, AssignmentExpressionTree.Operator.EQUAL),
+    new SimpleEntry<>(KtTokens.PLUSEQ, AssignmentExpressionTree.Operator.PLUS_EQUAL),
+    new SimpleEntry<>(KtTokens.MINUSEQ, AssignmentExpressionTree.Operator.MINUS_EQUAL),
+    new SimpleEntry<>(KtTokens.MULTEQ, AssignmentExpressionTree.Operator.TIMES_EQUAL),
+    new SimpleEntry<>(KtTokens.PERCEQ, AssignmentExpressionTree.Operator.MODULO_EQUAL))
+    // FIXME missing '/=' operator in grammar
     .collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue)));
 
   private final Document psiDocument;
@@ -191,11 +203,15 @@ class KotlinTreeVisitor {
   private Tree createBinaryExpression(@NotNull KtBinaryExpression element, TreeMetaData metaData) {
     Tree leftOperand = createElement(element.getLeft());
     Tree rightOperand = createElement(element.getRight());
-    Operator operator = TOKENS_OPERATOR_MAP.get(element.getOperationToken());
+    IElementType operationToken = element.getOperationToken();
+    Operator operator = TOKENS_OPERATOR_MAP.get(operationToken);
+    AssignmentExpressionTree.Operator assignmentOperator = ASSIGNMENTS_OPERATOR_MAP.get(operationToken);
     if (operator != null) {
       return new BinaryExpressionTreeImpl(metaData, operator, leftOperand, rightOperand);
+    } else if (assignmentOperator != null) {
+      return new AssignmentExpressionTreeImpl(metaData, assignmentOperator, leftOperand, rightOperand);
     } else {
-      // FIXME ensure they are all supported. Ex: Add EQ for assignments
+      // FIXME ensure they are all supported. Ex: Add '/=' for assignments
       return new NativeTreeImpl(
         metaData,
         new KotlinNativeKind(element, element.getOperationReference().getReferencedNameElement().getText()),
