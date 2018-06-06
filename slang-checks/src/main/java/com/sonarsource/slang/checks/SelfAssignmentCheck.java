@@ -19,19 +19,23 @@
  */
 package com.sonarsource.slang.checks;
 
-import java.util.Arrays;
-import java.util.List;
+import com.sonarsource.slang.api.AssignmentExpressionTree;
+import com.sonarsource.slang.checks.api.InitContext;
+import com.sonarsource.slang.checks.api.SlangCheck;
+import org.sonar.check.Rule;
 
-public class CommonCheckList {
+import static com.sonarsource.slang.checks.utils.SyntacticEquivalence.areEquivalent;
 
-  public static List<Class> checks() {
-    return Arrays.asList(
-      EmptyBlockCheck.class,
-      IdenticalBinaryOperandCheck.class,
-      IdenticalConditionsCheck.class,
-      SelfAssignmentCheck.class,
-      TodoCommentCheck.class,
-      TooManyParametersCheck.class);
+@Rule(key = "S1656")
+public class SelfAssignmentCheck implements SlangCheck {
+
+  @Override
+  public void initialize(InitContext init) {
+    init.register(AssignmentExpressionTree.class, (ctx, tree) -> {
+      if (tree.operator() == AssignmentExpressionTree.Operator.EQUAL && areEquivalent(tree.leftHandSide(), tree.statementOrExpression())) {
+        ctx.reportIssue(tree, "Remove or correct this useless self-assignment.");
+      }
+    });
   }
 
 }
