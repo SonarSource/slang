@@ -20,15 +20,13 @@
 package com.sonarsource.slang.kotlin;
 
 import com.sonarsource.slang.api.Tree;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Paths;
-
+import com.sonarsource.slang.impl.TreeMetaDataProvider;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project;
 import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
@@ -36,27 +34,19 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 
-import static java.nio.file.Files.readAllBytes;
-
 public class KotlinParser {
   private static final PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(createKotlinCoreEnvironment());
 
-  public static Tree fromFile(String fileName) throws IOException {
-    return fromString(readFile(fileName));
-  }
-
   public static Tree fromString(String content) {
     PsiFile psiFile = psiFileFactory.createFileFromText(KotlinLanguage.INSTANCE, content);
-    KotlinTreeVisitor kotlinTreeVisitor = new KotlinTreeVisitor(psiFile);
-    return kotlinTreeVisitor.getSLangAST();
-  }
-
-  private static String readFile(String fileName) throws IOException {
-    if (!fileName.endsWith(".kt")) {
-      throw new IllegalArgumentException("Trying to parse file with unknown extension");
+    Document document = psiFile.getViewProvider().getDocument();
+    if (document == null) {
+      throw new IllegalStateException("Cannot correctly map AST with a null Document object");
     }
-
-    return new String(readAllBytes(Paths.get(fileName)), Charset.forName("UTF-8"));
+    CommentVisitor commentVisitor = new CommentVisitor(document);
+    psiFile.accept(commentVisitor);
+    KotlinTreeVisitor kotlinTreeVisitor = new KotlinTreeVisitor(psiFile, new TreeMetaDataProvider(commentVisitor.getAllComments()));
+    return kotlinTreeVisitor.getSLangAST();
   }
 
   private static Project createKotlinCoreEnvironment() {
