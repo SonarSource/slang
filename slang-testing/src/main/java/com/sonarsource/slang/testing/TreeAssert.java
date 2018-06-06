@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.testing;
 
+import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
@@ -61,6 +62,16 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
     BinaryExpressionTree actualBinary = (BinaryExpressionTree) actual;
     if (!Objects.equals(actualBinary.operator(), expectedOperator)) {
       failWithMessage("Expected operator to be <%s> but was <%s>", expectedOperator, actualBinary.operator());
+    }
+    return this;
+  }
+
+  public TreeAssert isAssignmentExpression(AssignmentExpressionTree.Operator expectedOperator) {
+    isNotNull();
+    isInstanceOf(AssignmentExpressionTree.class);
+    AssignmentExpressionTree actualBinary = (AssignmentExpressionTree) actual;
+    if (!Objects.equals(actualBinary.operator(), expectedOperator)) {
+      failWithMessage("Expected assignment operator to be <%s> but was <%s>", expectedOperator, actualBinary.operator());
     }
     return this;
   }

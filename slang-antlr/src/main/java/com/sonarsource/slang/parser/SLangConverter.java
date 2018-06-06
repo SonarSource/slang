@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.parser;
 
+import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.Comment;
@@ -29,6 +30,7 @@ import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
+import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
 import com.sonarsource.slang.impl.CommentImpl;
@@ -44,7 +46,6 @@ import com.sonarsource.slang.impl.TextRangeImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -86,10 +87,11 @@ public class SLangConverter {
     if (text.startsWith("//")) {
       return text.substring(2);
     }
-    return text.substring(2, text.length() -2);
+    return text.substring(2, text.length() - 2);
   }
 
   private static final Map<String, Operator> BINARY_OPERATOR_MAP = binaryOperatorMap();
+  private static final Map<String, AssignmentExpressionTree.Operator> ASSIGNMENT_OPERATOR_MAP = assignmentOperatorMap();
 
   private static Map<String, Operator> binaryOperatorMap() {
     Map<String, Operator> map = new HashMap<>();
@@ -103,6 +105,16 @@ public class SLangConverter {
     map.put("-", Operator.MINUS);
     map.put("*", Operator.TIMES);
     map.put("/", Operator.DIVIDED_BY);
+    return Collections.unmodifiableMap(map);
+  }
+
+  private static Map<String, AssignmentExpressionTree.Operator> assignmentOperatorMap() {
+    Map<String, AssignmentExpressionTree.Operator> map = new HashMap<>();
+    map.put("=", AssignmentExpressionTree.Operator.EQUAL);
+    map.put("+=", AssignmentExpressionTree.Operator.PLUS_EQUAL);
+    map.put("-=", AssignmentExpressionTree.Operator.MINUS_EQUAL);
+    map.put("*=", AssignmentExpressionTree.Operator.TIMES_EQUAL);
+    map.put("%=", AssignmentExpressionTree.Operator.MODULO_EQUAL);
     return Collections.unmodifiableMap(map);
   }
 
@@ -131,10 +143,7 @@ public class SLangConverter {
 
     @Override
     public Tree visitStatementOrExpression(SLangParser.StatementOrExpressionContext ctx) {
-      if (ctx.disjunction().size() == 1) {
-        return visit(ctx.disjunction(0));
-      }
-      return nativeTree(ctx, ctx.disjunction());
+      return assignmentTree(ctx.disjunction(), ctx.assignmentOperator());
     }
 
     @Override
@@ -212,7 +221,10 @@ public class SLangConverter {
 
     @Override
     public Tree visitAssignment(SLangParser.AssignmentContext ctx) {
-      return nativeTree(ctx, Arrays.asList(ctx.leftHandSide(), ctx.statementOrExpression()));
+      Tree leftHandSide = visit(ctx.leftHandSide());
+      Tree statementOrExpression = visit(ctx.statementOrExpression());
+      AssignmentExpressionTree.Operator operator = ASSIGNMENT_OPERATOR_MAP.get(ctx.assignmentOperator().getText());
+      return new AssignmentExpressionTreeImpl(meta(ctx.start, ctx.stop), operator, leftHandSide, statementOrExpression);
     }
 
     @Override
@@ -280,9 +292,9 @@ public class SLangConverter {
 
     private List<Tree> list(List<? extends ParseTree> rawChildren) {
       return rawChildren
-            .stream()
-            .map(this::visit)
-            .collect(toList());
+        .stream()
+        .map(this::visit)
+        .collect(toList());
     }
 
     private Tree binaryTree(Operator operator, List<? extends ParseTree> operands) {
@@ -300,6 +312,16 @@ public class SLangConverter {
         Tree left = visit(operands.get(i));
         Operator operator = BINARY_OPERATOR_MAP.get(operators.get(i).getText());
         result = new BinaryExpressionTreeImpl(meta(left, result), operator, left, result);
+      }
+      return result;
+    }
+
+    private Tree assignmentTree(List<? extends ParseTree> expressions, List<? extends ParseTree> operators) {
+      Tree result = visit(expressions.get(expressions.size() - 1));
+      for (int i = expressions.size() - 2; i >= 0; i--) {
+        Tree left = visit(expressions.get(i));
+        AssignmentExpressionTree.Operator operator = ASSIGNMENT_OPERATOR_MAP.get(operators.get(i).getText());
+        result = new AssignmentExpressionTreeImpl(meta(left, result), operator, left, result);
       }
       return result;
     }

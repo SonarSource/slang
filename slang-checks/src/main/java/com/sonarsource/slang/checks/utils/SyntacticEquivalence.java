@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.checks.utils;
 
+import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
@@ -72,6 +73,10 @@ public class SyntacticEquivalence {
       }
     } else if (first instanceof BinaryExpressionTree) {
       if (((BinaryExpressionTree) first).operator() != ((BinaryExpressionTree) second).operator()) {
+        return false;
+      }
+    } else if (first instanceof AssignmentExpressionTree) {
+      if (((AssignmentExpressionTree) first).operator() != ((AssignmentExpressionTree) second).operator()) {
         return false;
       }
     }

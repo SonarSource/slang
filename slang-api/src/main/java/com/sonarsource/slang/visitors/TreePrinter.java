@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.visitors;
 
+import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
@@ -42,6 +43,8 @@ public class TreePrinter {
       sb.append(t.getClass().getSimpleName());
       if (t instanceof BinaryExpressionTree) {
         sb.append(" ").append(((BinaryExpressionTree) t).operator().name());
+      } else if (t instanceof AssignmentExpressionTree) {
+        sb.append(" ").append(((AssignmentExpressionTree) t).operator().name());
       } else if (t instanceof LiteralTree) {
         sb.append(" ").append(((LiteralTree) t).value());
       } else if (t instanceof IdentifierTree) {

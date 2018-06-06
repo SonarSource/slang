@@ -20,6 +20,7 @@
 
 package com.sonarsource.slang.antlr;
 
+import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.Comment;
@@ -155,8 +156,28 @@ public class SLangConverterTest {
 
   @Test
   public void natives() {
+    Tree tree = converter.parse("native [] {}").children().get(0);
+    assertTree(tree).isInstanceOf(NativeTree.class).hasTextRange(1, 0, 1, 12);
+
+    tree = converter.parse("native [] { [x] } = x").children().get(0);
+    assertTree(tree).isAssignmentExpression(AssignmentExpressionTree.Operator.EQUAL);
+    AssignmentExpressionTree assignment = (AssignmentExpressionTree) tree;
+    assertTree(assignment.leftHandSide()).isInstanceOf(NativeTree.class).hasTextRange(1, 0, 1, 17);
+  }
+
+  @Test
+  public void simple_assignment() {
     Tree tree = converter.parse("x = 1").children().get(0);
-    assertTree(tree).isInstanceOf(NativeTree.class).hasTextRange(1, 0, 1, 5);
+    assertTree(tree).isAssignmentExpression(AssignmentExpressionTree.Operator.EQUAL).hasTextRange(1, 0, 1, 5);
+  }
+
+  @Test
+  public void nested_assignments() {
+    Tree tree = converter.parse("x -= y += 2").children().get(0);
+    assertTree(tree).isAssignmentExpression(AssignmentExpressionTree.Operator.MINUS_EQUAL).hasTextRange(1, 0, 1, 11);
+    AssignmentExpressionTree assignment = (AssignmentExpressionTree) tree;
+    assertTree(assignment.leftHandSide()).isIdentifier("x");
+    assertTree(assignment.statementOrExpression()).isAssignmentExpression(AssignmentExpressionTree.Operator.PLUS_EQUAL).hasTextRange(1, 5, 1, 11);
   }
 
   @Test

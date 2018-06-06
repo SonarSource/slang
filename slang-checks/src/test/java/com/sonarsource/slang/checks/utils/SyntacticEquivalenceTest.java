@@ -42,6 +42,9 @@ public class SyntacticEquivalenceTest {
     assertThat(areEquivalent(parse("a == 1"), parse("a == 1"))).isTrue();
     assertThat(areEquivalent(parse("a == 1"), parse("a == 2"))).isFalse();
     assertThat(areEquivalent(parse("a == 1"), parse("a >= 1"))).isFalse();
+    assertThat(areEquivalent(parse("a += 1"), parse("a += 1"))).isTrue();
+    assertThat(areEquivalent(parse("a += 1"), parse("a += 2"))).isFalse();
+    assertThat(areEquivalent(parse("a += 1"), parse("a *= 1"))).isFalse();
   }
 
   @Test
