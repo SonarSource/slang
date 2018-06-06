@@ -39,7 +39,7 @@ public class KotlinTextRanges {
   }
 
   @NotNull
-  public static TextPointer textPointerAtOffset(Document psiDocument, int startOffset) {
+  public static TextPointer textPointerAtOffset(@NotNull Document psiDocument, int startOffset) {
     int startLineNumber = psiDocument.getLineNumber(startOffset);
     int startLineNumberOffset = psiDocument.getLineStartOffset(startLineNumber);
     int startLineOffset = startOffset - startLineNumberOffset;

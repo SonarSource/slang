@@ -28,8 +28,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.psi.PsiComment;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
-import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType;
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid;
+
+import static org.jetbrains.kotlin.lexer.KtTokens.BLOCK_COMMENT;
+import static org.jetbrains.kotlin.lexer.KtTokens.DOC_COMMENT;
+import static org.jetbrains.kotlin.lexer.KtTokens.EOL_COMMENT;
+import static org.jetbrains.kotlin.lexer.KtTokens.SHEBANG_COMMENT;
 
 public class CommentVisitor extends KtTreeVisitorVoid {
 
@@ -48,7 +53,7 @@ public class CommentVisitor extends KtTreeVisitorVoid {
     super.visitElement(element);
   }
 
-  private Comment createComment(PsiComment element) {
+  private Comment createComment(@NotNull PsiComment element) {
     String textWithDelimiters = element.getText();
     return new CommentImpl(
       commentContent(element, textWithDelimiters),
@@ -56,15 +61,20 @@ public class CommentVisitor extends KtTreeVisitorVoid {
       KotlinTextRanges.textRange(psiDocument, element));
   }
 
-  private static String commentContent(PsiComment element, String textWithDelimiters) {
-    if (KtTokens.BLOCK_COMMENT.equals(element.getTokenType())) {
-      return textWithDelimiters.substring(2, textWithDelimiters.length() - 2);
-    } else if (KtTokens.DOC_COMMENT.equals(element.getTokenType())) {
-      return textWithDelimiters.substring(3, textWithDelimiters.length() - 2);
-    }
+  private static String commentContent(@NotNull PsiComment element, @NotNull String textWithDelimiters) {
+    IElementType tokenType = element.getTokenType();
+    int length = textWithDelimiters.length();
 
-    // KtTokens.EOL_COMMENT and KtTokens.SHEBANG_COMMENT
-    return textWithDelimiters.substring(2);
+    if (BLOCK_COMMENT.equals(tokenType)) {
+      return textWithDelimiters.substring(2, length - 2);
+    } else if (DOC_COMMENT.equals(tokenType)) {
+      return textWithDelimiters.substring(3, length - 2);
+    } else if (EOL_COMMENT.equals(tokenType) || SHEBANG_COMMENT.equals(tokenType)) {
+      return textWithDelimiters.substring(2);
+    } else {
+      // FIXME error message: unknown comment type
+      return textWithDelimiters;
+    }
   }
 
   public List<Comment> getAllComments() {

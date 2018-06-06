@@ -30,6 +30,7 @@ import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.parser.SLangConverter;
 import com.sonarsource.slang.visitors.TreePrinter;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.assertj.core.api.AbstractAssert;
 import org.junit.Test;
 
@@ -129,6 +130,25 @@ public class KotlinParserTest {
     comment = commentsInsideFunction.get(2);
     assertRange(comment.textRange()).hasRange(4, 63, 4, 77);
     assertThat(comment.textWithDelimiters()).isEqualTo("// EOL comment");
+  }
+
+  @Test
+  public void testEquivalenceWithComments() {
+    assertTrees(kotlinStatements("x + 2; // EOL comment"))
+      .isEquivalentTo(slangStatements("x + 2"));
+  }
+
+  @Test
+  public void testMappedComments() {
+    TopLevelTree kotlinTree = (TopLevelTree) KotlinParser
+      .fromString("/** 1st comment */\n// comment 2\nfun function() = /* Block comment */ 3;");
+    TopLevelTree slangTree = (TopLevelTree) new SLangConverter()
+      .parse("/** 1st comment */\n// comment 2\nvoid function() { /* Block comment */ 3; }");
+
+    assertThat(kotlinTree.allComments()).hasSize(3);
+    assertThat(kotlinTree.allComments()).isNotEqualTo(slangTree.allComments()); // Kotlin considers the '/**' delimiter as separate comments
+    List<String> slangCommentsWithDelimiters = slangTree.allComments().stream().map(Comment::textWithDelimiters).collect(Collectors.toList());
+    assertThat(kotlinTree.allComments()).extracting(Comment::textWithDelimiters).isEqualTo(slangCommentsWithDelimiters);
   }
 
   private static Tree getCondition(List<MatchCaseTree> cases, int i) {
