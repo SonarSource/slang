@@ -44,7 +44,12 @@ public class TooManyParametersCheck implements SlangCheck {
           .skip(threshold)
           .map(SecondaryLocation::new)
           .collect(Collectors.toList());
-        ctx.reportIssue(tree.name(), message, secondaryLocations);
+
+        if (tree.name() == null) {
+          ctx.reportIssue(tree, message, secondaryLocations);
+        } else {
+          ctx.reportIssue(tree.name(), message, secondaryLocations);
+        }
       }
     });
   }
