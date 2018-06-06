@@ -52,6 +52,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
+import org.jetbrains.kotlin.com.intellij.psi.PsiErrorElement;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement;
@@ -105,7 +106,9 @@ class KotlinTreeVisitor {
 
     TreeMetaData metaData = getTreeMetaData(element);
 
-    if (element instanceof PsiWhiteSpace || element instanceof LeafPsiElement) {
+    if (element instanceof PsiErrorElement) {
+      throw new IllegalStateException("Cannot createElement for a PsiErrorElement");
+    } else if (element instanceof PsiWhiteSpace || element instanceof LeafPsiElement) {
       // skip tokens and whitespaces nodes in kotlin AST
       return null;
     } else if (element instanceof KtBinaryExpression) {
