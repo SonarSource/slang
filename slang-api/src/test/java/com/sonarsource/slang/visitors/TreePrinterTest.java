@@ -19,8 +19,10 @@
  */
 package com.sonarsource.slang.visitors;
 
+import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
@@ -30,13 +32,17 @@ import org.junit.Test;
 public class TreePrinterTest {
 
   @Test
-  public void simple_binary() { ;
+  public void simple_binary() {
+    Tree x1 = new IdentifierTreeImpl(null, "x1");
     Tree var1 = new IdentifierTreeImpl(null, "var1");
     Tree literal1 = new LiteralTreeImpl(null, "42");
-    BinaryExpressionTreeImpl binaryExp = new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, var1, literal1);
-    Assertions.assertThat(TreePrinter.tree2string(binaryExp)).isEqualTo(
-      "BinaryExpressionTreeImpl PLUS\n" +
-        "  IdentifierTreeImpl var1\n" +
-        "  LiteralTreeImpl 42\n");
+    Tree binaryExp = new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, var1, literal1);
+    Tree assignExp = new AssignmentExpressionTreeImpl(null, AssignmentExpressionTree.Operator.EQUAL, x1, binaryExp);
+    Assertions.assertThat(TreePrinter.tree2string(assignExp)).isEqualTo(
+      "AssignmentExpressionTreeImpl EQUAL\n" +
+        "  IdentifierTreeImpl x1\n" +
+        "  BinaryExpressionTreeImpl PLUS\n" +
+        "    IdentifierTreeImpl var1\n" +
+        "    LiteralTreeImpl 42\n");
   }
 }
