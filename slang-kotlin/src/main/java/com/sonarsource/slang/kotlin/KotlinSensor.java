@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.kotlin;
 
+import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.CommonCheckList;
 import com.sonarsource.slang.checks.api.SlangCheck;
@@ -71,8 +72,8 @@ public class KotlinSensor implements Sensor {
       try {
         analyseFile(inputFileContext, inputFile, visitors);
       } catch (ParseException e) {
-        LOG.error("Parsing exception: " + e.getMessage());
-        inputFileContext.reportError("Cannot parse file " + inputFile, e.getPosition());
+        logParsingError(inputFile, e);
+        inputFileContext.reportError("Unable to parse file: " + inputFile, e.getPosition());
       }
     }
   }
@@ -89,6 +90,16 @@ public class KotlinSensor implements Sensor {
     for (TreeVisitor<InputFileContext> visitor : visitors) {
       visitor.scan(inputFileContext, tree);
     }
+  }
+
+  private static void logParsingError(InputFile inputFile, ParseException e) {
+    TextPointer position = e.getPosition();
+    String positionMessage = "";
+    if (position != null) {
+      positionMessage = String.format("Parse error at position %s:%s", position.line(), position.lineOffset());
+    }
+    LOG.error(String.format("Unable to parse file: %s. %s", inputFile.uri(), positionMessage));
+    LOG.error(e.getMessage());
   }
 
 }

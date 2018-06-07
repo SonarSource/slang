@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
@@ -37,6 +38,7 @@ import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.batch.sensor.issue.IssueLocation;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.utils.log.LogTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
@@ -46,6 +48,9 @@ public class KotlinSensorTest {
 
   private File baseDir = new File("src/test/resources/sensor");
   private SensorContextTester context;
+
+  @Rule
+  public LogTester logTester = new LogTester();
 
   @Before
   public void setup() {
@@ -81,8 +86,10 @@ public class KotlinSensorTest {
     assertThat(analysisErrors).hasSize(1);
     AnalysisError analysisError = analysisErrors.iterator().next();
     assertThat(analysisError.inputFile()).isEqualTo(spyInputFile);
-    assertThat(analysisError.message()).isEqualTo("Cannot parse file fakeFile.kt");
+    assertThat(analysisError.message()).isEqualTo("Unable to parse file: fakeFile.kt");
     assertThat(analysisError.location()).isNull();
+
+    assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. ", inputFile.uri()));
   }
 
   @Test
@@ -96,11 +103,13 @@ public class KotlinSensorTest {
     assertThat(analysisErrors).hasSize(1);
     AnalysisError analysisError = analysisErrors.iterator().next();
     assertThat(analysisError.inputFile()).isEqualTo(inputFile);
-    assertThat(analysisError.message()).isEqualTo("Cannot parse file file1.kt");
+    assertThat(analysisError.message()).isEqualTo("Unable to parse file: file1.kt");
     TextPointer textPointer = analysisError.location();
     assertThat(textPointer).isNotNull();
     assertThat(textPointer.line()).isEqualTo(1);
     assertThat(textPointer.lineOffset()).isEqualTo(14);
+
+    assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. Parse error at position 1:14", inputFile.uri()));
   }
 
   private void assertTextRange(TextRange textRange, int startLine, int startLineOffset, int endLine, int endLineOffset) {
