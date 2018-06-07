@@ -38,7 +38,8 @@ public class AllBranchesIdenticalCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(IfTree.class, (ctx, tree) -> {
-      if (!(ctx.parent() instanceof IfTree)) {
+      Tree parent = ctx.parent();
+      if (!(parent instanceof IfTree) || tree == ((IfTree) parent).thenBranch()) {
         checkConditionalStructure(ctx, tree, new ConditionalStructure(tree));
       }
     });
@@ -85,10 +86,9 @@ public class AllBranchesIdenticalCheck implements SlangCheck {
     }
 
     private boolean allBranchesAreIdentical() {
-      Tree first = branches.get(0);
       return branches.stream()
         .skip(1)
-        .allMatch(branch -> areEquivalent(first, branch));
+        .allMatch(branch -> areEquivalent(branches.get(0), branch));
     }
   }
 
