@@ -68,21 +68,16 @@ public class InputFileContext extends TreeContext {
     issue.save();
   }
 
-  public void reportError(String message) {
-    reportError(message, null);
-  }
-
   public void reportError(String message, @Nullable com.sonarsource.slang.api.TextPointer location) {
-    TextPointer pointerLocation = null;
-    if (location != null) {
-      pointerLocation = inputFile.newPointer(location.line(), location.lineOffset());
-    }
-
     NewAnalysisError error = sensorContext.newAnalysisError();
     error
       .message(message)
-      .onFile(inputFile)
-      .at(pointerLocation);
+      .onFile(inputFile);
+
+    if (location != null) {
+      TextPointer pointerLocation = inputFile.newPointer(location.line(), location.lineOffset());
+      error.at(pointerLocation);
+    }
 
     error.save();
   }

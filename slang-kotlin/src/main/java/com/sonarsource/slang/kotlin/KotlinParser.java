@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.idea.KotlinLanguage;
 public class KotlinParser {
   private static final PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(createKotlinCoreEnvironment());
 
-  @CheckForNull
   public static Tree fromString(String content) {
     PsiFile psiFile = psiFileFactory.createFileFromText(KotlinLanguage.INSTANCE, content);
     Document document;

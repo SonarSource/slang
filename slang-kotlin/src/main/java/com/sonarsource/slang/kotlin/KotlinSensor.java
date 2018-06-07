@@ -34,8 +34,12 @@ import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 public class KotlinSensor implements Sensor {
+
+  private static final Logger LOG = Loggers.get(KotlinSensor.class);
 
   private final Checks<SlangCheck> checks;
 
@@ -66,9 +70,8 @@ public class KotlinSensor implements Sensor {
       InputFileContext inputFileContext = new InputFileContext(sensorContext, inputFile);
       try {
         analyseFile(inputFileContext, inputFile, visitors);
-      } catch (IllegalStateException e) {
-        inputFileContext.reportError("Cannot parse file " + inputFile);
       } catch (ParseException e) {
+        LOG.error("Parsing exception: " + e.getMessage());
         inputFileContext.reportError("Cannot parse file " + inputFile, e.getPosition());
       }
     }
@@ -79,14 +82,13 @@ public class KotlinSensor implements Sensor {
     try {
       content = inputFile.contents();
     } catch (IOException e) {
-      throw new IllegalStateException("Cannot read " + inputFile);
+      throw new ParseException("Cannot read " + inputFile);
     }
 
     Tree tree = KotlinParser.fromString(content);
     for (TreeVisitor<InputFileContext> visitor : visitors) {
       visitor.scan(inputFileContext, tree);
     }
-
   }
 
 }

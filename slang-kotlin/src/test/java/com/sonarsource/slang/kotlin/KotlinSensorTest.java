@@ -20,36 +20,43 @@
 package com.sonarsource.slang.kotlin;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import org.junit.Rule;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.fs.TextPointer;
 import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
+import org.sonar.api.batch.sensor.error.AnalysisError;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.batch.sensor.issue.IssueLocation;
 import org.sonar.api.rule.RuleKey;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 public class KotlinSensorTest {
 
   private File baseDir = new File("src/test/resources/sensor");
-  private SensorContextTester context = SensorContextTester.create(baseDir);
+  private SensorContextTester context;
 
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  @Before
+  public void setup() {
+    context = SensorContextTester.create(baseDir);
+  }
 
   @Test
-  public void test_one_rule() throws Exception {
-    InputFile inputFile = addInputFile("file1.kt", "" +
+  public void test_one_rule() {
+    InputFile inputFile = createInputFile("file1.kt", "" +
       "fun main(args: Array<String>) {\nprint (1 == 1);}");
+    context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("S1764");
     sensor(checkFactory).execute(context);
     Collection<Issue> issues = context.allIssues();
@@ -62,6 +69,40 @@ public class KotlinSensorTest {
     assertTextRange(location.textRange(), 2, 12, 2, 13);
   }
 
+  @Test
+  public void test_fail_input() throws IOException {
+    InputFile inputFile = createInputFile("fakeFile.kt", "");
+    InputFile spyInputFile = spy(inputFile);
+    when(spyInputFile.contents()).thenThrow(IOException.class);
+    context.fileSystem().add(spyInputFile);
+    CheckFactory checkFactory = checkFactory("S1764");
+    sensor(checkFactory).execute(context);
+    Collection<AnalysisError> analysisErrors = context.allAnalysisErrors();
+    assertThat(analysisErrors).hasSize(1);
+    AnalysisError analysisError = analysisErrors.iterator().next();
+    assertThat(analysisError.inputFile()).isEqualTo(spyInputFile);
+    assertThat(analysisError.message()).isEqualTo("Cannot parse file fakeFile.kt");
+    assertThat(analysisError.location()).isNull();
+  }
+
+  @Test
+  public void test_fail_parsing() {
+    InputFile inputFile = createInputFile("file1.kt", "" +
+      "enum class A { <!REDECLARATION!>FOO<!>,<!REDECLARATION!>FOO<!> }");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S1764");
+    sensor(checkFactory).execute(context);
+    Collection<AnalysisError> analysisErrors = context.allAnalysisErrors();
+    assertThat(analysisErrors).hasSize(1);
+    AnalysisError analysisError = analysisErrors.iterator().next();
+    assertThat(analysisError.inputFile()).isEqualTo(inputFile);
+    assertThat(analysisError.message()).isEqualTo("Cannot parse file file1.kt");
+    TextPointer textPointer = analysisError.location();
+    assertThat(textPointer).isNotNull();
+    assertThat(textPointer.line()).isEqualTo(1);
+    assertThat(textPointer.lineOffset()).isEqualTo(14);
+  }
+
   private void assertTextRange(TextRange textRange, int startLine, int startLineOffset, int endLine, int endLineOffset) {
     assertThat(textRange.start().line()).isEqualTo(startLine);
     assertThat(textRange.start().lineOffset()).isEqualTo(startLineOffset);
@@ -69,7 +110,7 @@ public class KotlinSensorTest {
     assertThat(textRange.end().lineOffset()).isEqualTo(endLineOffset);
   }
 
-  private InputFile addInputFile(String relativePath, String content) {
+  private InputFile createInputFile(String relativePath, String content) {
     DefaultInputFile inputFile = new TestInputFileBuilder("moduleKey", relativePath)
       .setModuleBaseDir(baseDir.toPath())
       .setType(InputFile.Type.MAIN)
@@ -77,8 +118,6 @@ public class KotlinSensorTest {
       .setCharset(StandardCharsets.UTF_8)
       .setContents(content)
       .build();
-
-    context.fileSystem().add(inputFile);
 
     return inputFile;
   }
