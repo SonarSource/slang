@@ -307,12 +307,7 @@ DecimalIntegerLiteral
 fragment
 DecimalNumeral
   :  '0'
-  |  NonZeroDigit Digits?
-  ;
-
-fragment
-Digits
-  :  Digit Digit?
+  |  NonZeroDigit Digit*
   ;
 
 fragment

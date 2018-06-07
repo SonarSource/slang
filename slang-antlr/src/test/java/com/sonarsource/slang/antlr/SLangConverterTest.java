@@ -34,6 +34,7 @@ import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
+import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.parser.SLangConverter;
 import com.sonarsource.slang.visitors.TreeContext;
 import com.sonarsource.slang.visitors.TreeVisitor;
@@ -209,6 +210,21 @@ public class SLangConverterTest {
     assertThat(comment.textWithDelimiters()).isEqualTo("/* comment2 */");
     assertThat(comment.text()).isEqualTo(" comment2 ");
     assertThat(comments.get(1).text()).isEqualTo(" comment3");
+  }
+
+  @Test
+  public void decimalLiterals() {
+    Tree tree = converter.parse("0; 5; 10; 123; 1010; 5554; 12345567;");
+    String[] values = {"0", "5", "10", "123", "1010", "5554", "12345567"};
+
+    assertTree(tree).isNotNull();
+    assertTree(tree).isInstanceOf(TopLevelTree.class);
+    TopLevelTree topLevelTree = (TopLevelTree) tree;
+    assertThat(topLevelTree.declarations()).hasSize(7);
+
+    for (int i = 0; i < topLevelTree.declarations().size(); i++) {
+      assertTree(topLevelTree.declarations().get(i)).isLiteral(values[i]);
+    }
   }
 
   private BinaryExpressionTree parseBinary(String code) {
