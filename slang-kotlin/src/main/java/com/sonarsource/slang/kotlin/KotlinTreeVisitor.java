@@ -71,6 +71,7 @@ import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.KtIfExpression;
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
+import org.jetbrains.kotlin.psi.KtOperationExpression;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
 import org.jetbrains.kotlin.psi.KtWhenEntry;
@@ -189,6 +190,8 @@ class KotlinTreeVisitor {
     } else if (element instanceof KtLiteralStringTemplateEntry || element instanceof KtEscapeStringTemplateEntry
       || (element instanceof KtStringTemplateExpression && !((KtStringTemplateExpression) element).hasInterpolation())) {
       return new LiteralTreeImpl(metaData, element.getText());
+    } else if (element instanceof KtOperationExpression) {
+      return createOperationExpression(element, metaData);
     } else {
       return new NativeTreeImpl(metaData, new KotlinNativeKind(element), list(Arrays.stream(element.getChildren())));
     }
@@ -207,11 +210,16 @@ class KotlinTreeVisitor {
       return new AssignmentExpressionTreeImpl(metaData, assignmentOperator, leftOperand, rightOperand);
     } else {
       // FIXME ensure they are all supported. Ex: Add '/=' for assignments
-      return new NativeTreeImpl(
-        metaData,
-        new KotlinNativeKind(element, element.getOperationReference().getReferencedNameElement().getText()),
-        Arrays.asList(leftOperand, rightOperand));
+      return createOperationExpression(element, metaData);
     }
+  }
+
+  @NotNull
+  private Tree createOperationExpression(@NotNull PsiElement element, TreeMetaData metaData) {
+    KtOperationExpression operationExpression = (KtOperationExpression) element;
+    KotlinNativeKind nativeKind =
+      new KotlinNativeKind(element, operationExpression.getOperationReference().getReferencedNameElement().getText());
+    return new NativeTreeImpl(metaData, nativeKind, list(Arrays.stream(element.getChildren())));
   }
 
   private TreeMetaData getTreeMetaData(@NotNull PsiElement element) {
