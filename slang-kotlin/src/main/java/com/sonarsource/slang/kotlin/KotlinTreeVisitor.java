@@ -52,6 +52,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
+import org.jetbrains.kotlin.com.intellij.psi.PsiErrorElement;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement;
@@ -105,7 +106,9 @@ class KotlinTreeVisitor {
 
     TreeMetaData metaData = getTreeMetaData(element);
 
-    if (element instanceof PsiWhiteSpace || element instanceof LeafPsiElement) {
+    if (element instanceof PsiErrorElement) {
+      throw new IllegalStateException("Cannot convert file due to syntactic errors");
+    } else if (element instanceof PsiWhiteSpace || element instanceof LeafPsiElement) {
       // skip tokens and whitespaces nodes in kotlin AST
       return null;
     } else if (element instanceof KtBinaryExpression) {
@@ -125,14 +128,24 @@ class KotlinTreeVisitor {
       // FIXME modifiers and return type
       Tree returnType = null;
       PsiElement nameIdentifier = functionElement.getNameIdentifier();
-      IdentifierTree identifierTree = new IdentifierTreeImpl(getTreeMetaData(nameIdentifier), functionElement.getName());
+      IdentifierTree identifierTree = null;
+      if (nameIdentifier != null) {
+        identifierTree = new IdentifierTreeImpl(getTreeMetaData(nameIdentifier), functionElement.getName());
+      }
       List<Tree> parametersList = functionElement.getValueParameters().stream()
         .map(this::createElement)
         .collect(Collectors.toList());
       Tree bodyTree = createElement(functionElement.getBodyExpression());
-      if (bodyTree != null && !(bodyTree instanceof BlockTree)) {
+      if (bodyTree != null) {
         // FIXME are we sure we want body of function as block tree ?
-        bodyTree = new BlockTreeImpl(bodyTree.metaData(), Collections.singletonList(bodyTree));
+        if (!(bodyTree instanceof BlockTree)) {
+          bodyTree = new BlockTreeImpl(bodyTree.metaData(), Collections.singletonList(bodyTree));
+        }
+
+        // Set bodyTree to null for empty lambda functions
+        if (bodyTree.children().isEmpty()) {
+          bodyTree = null;
+        }
       }
       return new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, identifierTree, parametersList, (BlockTree) bodyTree);
     } else if (element instanceof KtIfExpression) {

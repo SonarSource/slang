@@ -36,7 +36,11 @@ public class SyntacticEquivalence {
   }
 
   public static boolean areEquivalent(List<Tree> first, List<Tree> second) {
-    if (first.size() != second.size()) {
+    if (first == second) {
+      return true;
+    }
+
+    if (first == null || second == null || first.size() != second.size()) {
       return false;
     }
 
@@ -50,7 +54,11 @@ public class SyntacticEquivalence {
   }
 
   public static boolean areEquivalent(Tree first, Tree second) {
-    if (!first.getClass().equals(second.getClass())) {
+    if (first == second) {
+      return true;
+    }
+
+    if (first == null || second == null || !first.getClass().equals(second.getClass())) {
       return false;
     }
 

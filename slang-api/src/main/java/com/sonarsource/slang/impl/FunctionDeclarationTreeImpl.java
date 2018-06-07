@@ -42,7 +42,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
     TreeMetaData metaData,
     List<Tree> modifiers,
     @Nullable Tree returnType,
-    IdentifierTree name,
+    @Nullable IdentifierTree name,
     List<Tree> formalParameters,
     @Nullable BlockTree body
   ) {
@@ -76,6 +76,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
     return returnType;
   }
 
+  @CheckForNull
   @Override
   public IdentifierTree name() {
     return name;
