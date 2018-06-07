@@ -211,6 +211,21 @@ public class SLangConverterTest {
     assertThat(comments.get(1).text()).isEqualTo(" comment3");
   }
 
+  @Test
+  public void decimalLiterals() {
+    Tree tree = converter.parse("0; 5; 10; 123; 1010; 5554; 12345567;");
+    String[] values = {"0", "5", "10", "123", "1010", "5554", "12345567"};
+
+    assertTree(tree).isNotNull();
+    assertTree(tree).isInstanceOf(TopLevelTree.class);
+    TopLevelTree topLevelTree = (TopLevelTree) tree;
+    assertThat(topLevelTree.declarations()).hasSize(7);
+
+    for (int i = 0; i < topLevelTree.declarations().size(); i++) {
+      assertTree(topLevelTree.declarations().get(i)).isLiteral(values[i]);
+    }
+  }
+
   private BinaryExpressionTree parseBinary(String code) {
     return (BinaryExpressionTree) parseExpressionOrStatement(code);
   }
