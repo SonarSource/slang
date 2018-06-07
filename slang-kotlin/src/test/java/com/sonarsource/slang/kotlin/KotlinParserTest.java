@@ -83,11 +83,10 @@ public class KotlinParserTest {
     String escapedSingleQuote = createEscapedString('\'');
     String escapedDoubleQuote = createEscapedString('\"');
     String emptyString = createString("");
-    List<Tree> literals = kotlinStatements(escapedBackslash + ";" + escapedSingleQuote + ";" + escapedDoubleQuote + ";" + emptyString + ";");
-    Tree escapedBackslashLiteral = literals.get(0);
-    Tree escapedSingleQuoteLiteral = literals.get(1);
-    Tree escapedDoubleQuoteLiteral = literals.get(2);
-    Tree emptyStringLiteral = literals.get(3);
+    Tree escapedBackslashLiteral = kotlinStatement(escapedBackslash);
+    Tree escapedSingleQuoteLiteral = kotlinStatement(escapedSingleQuote);
+    Tree escapedDoubleQuoteLiteral = kotlinStatement(escapedDoubleQuote);
+    Tree emptyStringLiteral = kotlinStatement(emptyString);
     assertTree(escapedBackslashLiteral).isLiteral(escapedBackslash);
     assertTree(escapedSingleQuoteLiteral).isLiteral(escapedSingleQuote);
     assertTree(escapedDoubleQuoteLiteral).isLiteral(escapedDoubleQuote);
@@ -95,23 +94,32 @@ public class KotlinParserTest {
   }
 
   @Test
-  public void testComplexStringLiterals() {
-    List<Tree> complexStrings = kotlinStatements("\"identifier ${x}\"; \"block ${1 == 1}\"");
-    Tree stringWithIdentifier = complexStrings.get(0);
-    Tree identifierExpressionContainer = stringWithIdentifier.children().get(1);
+  public void testStringWithIdentifier() {
+    Tree stringWithIdentifier = kotlinStatement("\"identifier ${x}\"");
     assertTree(stringWithIdentifier).isInstanceOf(NativeTree.class);
     assertTree(stringWithIdentifier.children().get(0)).isLiteral("identifier ");
+    Tree identifierExpressionContainer = stringWithIdentifier.children().get(1);
     assertTree(identifierExpressionContainer).isInstanceOf(NativeTree.class);
     assertThat(identifierExpressionContainer.children()).hasSize(1);
     assertTree(identifierExpressionContainer.children().get(0)).isIdentifier("x");
+  }
 
-    Tree stringWithBlock = complexStrings.get(1);
-    Tree blockExpressionContainer = stringWithBlock.children().get(1);
+  @Test
+  public void testStringWithBlock() {
+    Tree stringWithBlock = kotlinStatement("\"block ${1 == 1}\"");
     assertTree(stringWithBlock).isInstanceOf(NativeTree.class);
     assertTree(stringWithBlock.children().get(0)).isLiteral("block ");
+    Tree blockExpressionContainer = stringWithBlock.children().get(1);
     assertTree(blockExpressionContainer).isInstanceOf(NativeTree.class);
     assertThat(blockExpressionContainer.children()).hasSize(1);
     assertTree(blockExpressionContainer.children().get(0)).isBinaryExpression(BinaryExpressionTree.Operator.EQUAL_TO);
+  }
+
+  @Test
+  public void testMultilineString() {
+    String stringValue = "\"\"\"first line\nsecond line\"\"\"";
+    Tree multilineString = kotlinStatement(stringValue);
+    assertTree(multilineString).isLiteral(stringValue);
   }
 
   @Test
