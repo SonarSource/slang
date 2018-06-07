@@ -63,18 +63,18 @@ public class KotlinSensor implements Sensor {
 
   private void analyseFiles(SensorContext sensorContext, Iterable<InputFile> inputFiles, List<TreeVisitor<InputFileContext>> visitors) {
     for (InputFile inputFile : inputFiles) {
+      InputFileContext inputFileContext = new InputFileContext(sensorContext, inputFile);
       try {
-        analyseFile(sensorContext, inputFile, visitors);
+        analyseFile(inputFileContext, inputFile, visitors);
       } catch (IllegalStateException e) {
-        // FIXME Assert errors from kotlin parser
-      } catch (Throwable e) {
-        // FIXME Assert errors from kotlin parser
+        inputFileContext.reportError("Cannot parse file " + inputFile);
+      } catch (ParseException e) {
+        inputFileContext.reportError("Cannot parse file " + inputFile, e.getPosition());
       }
-
     }
   }
 
-  private void analyseFile(SensorContext sensorContext, InputFile inputFile, List<TreeVisitor<InputFileContext>> visitors) {
+  private void analyseFile(InputFileContext inputFileContext, InputFile inputFile, List<TreeVisitor<InputFileContext>> visitors) {
     String content;
     try {
       content = inputFile.contents();
@@ -83,9 +83,8 @@ public class KotlinSensor implements Sensor {
     }
 
     Tree tree = KotlinParser.fromString(content);
-    InputFileContext visitorContext = new InputFileContext(sensorContext, inputFile);
     for (TreeVisitor<InputFileContext> visitor : visitors) {
-      visitor.scan(visitorContext, tree);
+      visitor.scan(inputFileContext, tree);
     }
 
   }

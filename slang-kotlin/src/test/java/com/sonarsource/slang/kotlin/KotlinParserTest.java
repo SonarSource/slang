@@ -32,7 +32,9 @@ import com.sonarsource.slang.visitors.TreePrinter;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.assertj.core.api.AbstractAssert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static com.sonarsource.slang.checks.utils.SyntacticEquivalence.areEquivalent;
 import static com.sonarsource.slang.kotlin.KotlinParserTest.KotlinTreesAssert.assertTrees;
@@ -41,6 +43,16 @@ import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class KotlinParserTest {
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  @Test
+  public void testParseException() {
+    thrown.expect(ParseException.class);
+    thrown.expectMessage("Cannot convert file due to syntactic errors");
+    KotlinParser.fromString("enum class A {\n<!REDECLARATION!>FOO<!>,<!REDECLARATION!>FOO<!>}");
+  }
 
   @Test
   public void testBinaryExpression() {
