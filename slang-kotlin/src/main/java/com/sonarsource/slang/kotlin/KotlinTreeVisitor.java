@@ -65,10 +65,14 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
 import org.jetbrains.kotlin.psi.KtBlockExpression;
 import org.jetbrains.kotlin.psi.KtConstantExpression;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.KtIfExpression;
+import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
+import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
 import org.jetbrains.kotlin.psi.KtWhenEntry;
@@ -185,8 +189,20 @@ class KotlinTreeVisitor {
       }
       return new MatchCaseTreeImpl(getTreeMetaData(whenElement), conditions, body);
     } else if (element instanceof KtStringTemplateExpression) {
-      // Do not differentiate between template and non-template strings for now
+      boolean complexString = Arrays.stream(((KtStringTemplateExpression) element).getEntries())
+        .anyMatch(KtStringTemplateEntryWithExpression.class::isInstance);
+      if (complexString) {
+        return new NativeTreeImpl(metaData, new KotlinNativeKind(element), list(Arrays.stream(((KtStringTemplateExpression) element).getEntries())));
+      } else {
+        String fullString = Arrays.stream(((KtStringTemplateExpression) element).getEntries())
+          .map(KtElement::getText).collect(Collectors.joining("", "\"", "\""));
+        return new LiteralTreeImpl(metaData, fullString);
+      }
+    } else if (element instanceof KtLiteralStringTemplateEntry || element instanceof KtEscapeStringTemplateEntry) {
       return new LiteralTreeImpl(metaData, element.getText());
+    } else if (element instanceof KtStringTemplateEntryWithExpression) {
+      // Covers both KtBlockStringTemplateEntry and KtSimpleNameStringTemplateEntry
+      return new NativeTreeImpl(metaData, new KotlinNativeKind(element), list(Arrays.stream(element.getChildren())));
     } else {
       return new NativeTreeImpl(metaData, new KotlinNativeKind(element), list(Arrays.stream(element.getChildren())));
     }

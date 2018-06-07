@@ -1,7 +1,0 @@
-fun testStrings(s: String) {
-    "\\"
-    "\'"
-    "\""
-    "\\"
-    " "
-}
