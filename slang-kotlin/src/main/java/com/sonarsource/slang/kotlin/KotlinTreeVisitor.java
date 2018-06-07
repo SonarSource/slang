@@ -36,15 +36,16 @@ import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
 import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
-import com.sonarsource.slang.impl.TextPointerImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
+import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
@@ -92,9 +93,9 @@ class KotlinTreeVisitor {
   private final TreeMetaDataProvider metaDataProvider;
   private final Tree sLangAST;
 
-  public KotlinTreeVisitor(PsiFile psiFile) {
+  public KotlinTreeVisitor(PsiFile psiFile, TreeMetaDataProvider metaDataProvider) {
     this.psiDocument = psiFile.getViewProvider().getDocument();
-    metaDataProvider = new TreeMetaDataProvider(Collections.emptyList());
+    this.metaDataProvider = metaDataProvider;
     this.sLangAST = createElement(psiFile);
   }
 
@@ -118,10 +119,10 @@ class KotlinTreeVisitor {
     } else if (element instanceof KtConstantExpression) {
       return new LiteralTreeImpl(metaData, element.getText());
     } else if (element instanceof KtBlockExpression) {
-      List<Tree> statementOrExpressions = ((KtBlockExpression) element).getStatements().stream().map(this::createElement).collect(Collectors.toList());
+      List<Tree> statementOrExpressions = list(((KtBlockExpression) element).getStatements().stream());
       return new BlockTreeImpl(metaData, statementOrExpressions);
     } else if (element instanceof KtFile) {
-      return new TopLevelTreeImpl(metaData, getChildrenTree(element), Collections.emptyList());
+      return new TopLevelTreeImpl(metaData, list(Arrays.stream(element.getChildren())), metaDataProvider.allComments());
     } else if (element instanceof KtFunction) {
       KtFunction functionElement = (KtFunction) element;
       List<Tree> modifiers = Collections.emptyList();
@@ -132,9 +133,7 @@ class KotlinTreeVisitor {
       if (nameIdentifier != null) {
         identifierTree = new IdentifierTreeImpl(getTreeMetaData(nameIdentifier), functionElement.getName());
       }
-      List<Tree> parametersList = functionElement.getValueParameters().stream()
-        .map(this::createElement)
-        .collect(Collectors.toList());
+      List<Tree> parametersList = list(functionElement.getValueParameters().stream());
       Tree bodyTree = createElement(functionElement.getBodyExpression());
       if (bodyTree != null) {
         // FIXME are we sure we want body of function as block tree ?
@@ -156,9 +155,9 @@ class KotlinTreeVisitor {
       return new IfTreeImpl(metaData, condition, thenBranch, elseBranch);
     } else if (element instanceof KtWhenExpression) {
       KtWhenExpression whenElement = (KtWhenExpression) element;
+      // FIXME subjectExpression could be null
       Tree subjectExpression = createElement(whenElement.getSubjectExpression());
-      List<MatchCaseTree> whenExpressions = whenElement.getEntries().stream()
-        .map(this::createElement)
+      List<MatchCaseTree> whenExpressions = list(whenElement.getEntries().stream()).stream()
         .map(MatchCaseTree.class::cast)
         .collect(Collectors.toList());
       return new MatchTreeImpl(metaData, subjectExpression, whenExpressions);
@@ -167,7 +166,7 @@ class KotlinTreeVisitor {
       Tree conditions = null;
       Tree body = createElement(whenElement.getExpression());
       if (!whenElement.isElse()) {
-        List<Tree> conditionsList = Arrays.stream(whenElement.getConditions()).map(this::createElement).collect(Collectors.toList());
+        List<Tree> conditionsList = list(Arrays.stream(whenElement.getConditions()));
         TextPointer startPointer = conditionsList.get(0).metaData().textRange().start();
         TextPointer endPointer = conditionsList.get(conditionsList.size() - 1).metaData().textRange().end();
         TextRange textRange = new TextRangeImpl(startPointer, endPointer);
@@ -181,10 +180,10 @@ class KotlinTreeVisitor {
         // Non-template strings, ie. not in the form "string ${1 + 1}"
         return new LiteralTreeImpl(metaData, '\"' + entries[0].getText() + '\"');
       } else {
-        return new NativeTreeImpl(metaData, new KotlinNativeKind(element), getChildrenTree(element));
+        return new NativeTreeImpl(metaData, new KotlinNativeKind(element), list(Arrays.stream(element.getChildren())));
       }
     } else {
-      return new NativeTreeImpl(metaData, new KotlinNativeKind(element), getChildrenTree(element));
+      return new NativeTreeImpl(metaData, new KotlinNativeKind(element), list(Arrays.stream(element.getChildren())));
     }
   }
 
@@ -205,24 +204,15 @@ class KotlinTreeVisitor {
   }
 
   private TreeMetaData getTreeMetaData(@NotNull PsiElement element) {
-    TextPointerImpl startPointer = textPointerAtOffset(psiDocument, element.getTextRange().getStartOffset());
-    TextPointerImpl endPointer = textPointerAtOffset(psiDocument, element.getTextRange().getEndOffset());
-    TextRange textRange = new TextRangeImpl(startPointer, endPointer);
-    return metaDataProvider.metaData(textRange);
+    return metaDataProvider.metaData(KotlinTextRanges.textRange(psiDocument, element));
   }
 
-  private List<Tree> getChildrenTree(@NotNull PsiElement element) {
-    return Arrays.stream(element.getChildren())
+  private List<Tree> list(Stream<? extends PsiElement> stream) {
+    // Filtering out null elements as they can appear in the AST in cases of comments or other leaf elements
+    return stream
       .map(this::createElement)
+      .filter(Objects::nonNull)
       .collect(Collectors.toList());
-  }
-
-  @NotNull
-  private static TextPointerImpl textPointerAtOffset(Document psiDocument, int startOffset) {
-    int startLineNumber = psiDocument.getLineNumber(startOffset);
-    int startLineNumberOffset = psiDocument.getLineStartOffset(startLineNumber);
-    int startLineOffset = startOffset - startLineNumberOffset;
-    return new TextPointerImpl(startLineNumber + 1, startLineOffset);
   }
 
   Tree getSLangAST() {

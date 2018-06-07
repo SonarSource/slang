@@ -23,12 +23,11 @@ import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
-import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import java.util.Objects;
 import org.assertj.core.api.AbstractAssert;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 
 public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
 
@@ -94,11 +93,7 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
 
   public TreeAssert hasTextRange(int startLine, int startLineOffset, int endLine, int endLineOffset) {
     isNotNull();
-    TextRange range = actual.metaData().textRange();
-    assertThat(range.start().line()).isEqualTo(startLine);
-    assertThat(range.start().lineOffset()).isEqualTo(startLineOffset);
-    assertThat(range.end().line()).isEqualTo(endLine);
-    assertThat(range.end().lineOffset()).isEqualTo(endLineOffset);
+    assertRange(actual.metaData().textRange()).hasRange(startLine, startLineOffset, endLine, endLineOffset);
     return this;
   }
 

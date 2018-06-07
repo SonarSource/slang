@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.kotlin;
 
+import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.MatchCaseTree;
@@ -29,11 +30,13 @@ import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.parser.SLangConverter;
 import com.sonarsource.slang.visitors.TreePrinter;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.assertj.core.api.AbstractAssert;
 import org.junit.Test;
 
 import static com.sonarsource.slang.checks.utils.SyntacticEquivalence.areEquivalent;
 import static com.sonarsource.slang.kotlin.KotlinParserTest.KotlinTreesAssert.assertTrees;
+import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -104,6 +107,48 @@ public class KotlinParserTest {
     assertThat(getCondition(cases, 3)).isNull();
 
     // FIXME check more complex cases when(x) { in 1..10 -> ; 1,2 ->
+  }
+
+  @Test
+  public void testComments() {
+    Tree parent = KotlinParser.fromString("#! Shebang comment\n/** Doc comment \n*/\nfun function1(a: /* Block comment */Int, b: String): Boolean { // EOL comment\n true; }");
+    assertTree(parent).isInstanceOf(TopLevelTree.class);
+    assertThat(parent.children()).hasSize(3);
+
+    TopLevelTree topLevelTree = (TopLevelTree) parent;
+    List<Comment> comments = topLevelTree.allComments();
+    assertThat(comments).hasSize(4);
+    Comment comment = comments.get(1);
+    assertRange(comment.textRange()).hasRange(2, 0, 3, 2);
+    assertThat(comment.text()).isEqualTo(" Doc comment \n");
+    assertThat(comment.textWithDelimiters()).isEqualTo("/** Doc comment \n*/");
+
+    FunctionDeclarationTree tree = (FunctionDeclarationTree) topLevelTree.declarations().get(2);
+    List<Comment> commentsInsideFunction = tree.metaData().commentsInside();
+    // Kotlin doc is considered part of the function
+    assertThat(commentsInsideFunction).hasSize(3);
+    comment = commentsInsideFunction.get(2);
+    assertRange(comment.textRange()).hasRange(4, 63, 4, 77);
+    assertThat(comment.textWithDelimiters()).isEqualTo("// EOL comment");
+  }
+
+  @Test
+  public void testEquivalenceWithComments() {
+    assertTrees(kotlinStatements("x + 2; // EOL comment"))
+      .isEquivalentTo(slangStatements("x + 2"));
+  }
+
+  @Test
+  public void testMappedComments() {
+    TopLevelTree kotlinTree = (TopLevelTree) KotlinParser
+      .fromString("/** 1st comment */\n// comment 2\nfun function() = /* Block comment */ 3;");
+    TopLevelTree slangTree = (TopLevelTree) new SLangConverter()
+      .parse("/** 1st comment */\n// comment 2\nvoid function() { /* Block comment */ 3; }");
+
+    assertThat(kotlinTree.allComments()).hasSize(3);
+    assertThat(kotlinTree.allComments()).isNotEqualTo(slangTree.allComments()); // Kotlin considers the '/**' delimiter as separate comments
+    List<String> slangCommentsWithDelimiters = slangTree.allComments().stream().map(Comment::textWithDelimiters).collect(Collectors.toList());
+    assertThat(kotlinTree.allComments()).extracting(Comment::textWithDelimiters).isEqualTo(slangCommentsWithDelimiters);
   }
 
   private static Tree getCondition(List<MatchCaseTree> cases, int i) {
