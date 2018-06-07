@@ -21,6 +21,7 @@ package com.sonarsource.slang.kotlin;
 
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
+import javax.annotation.CheckForNull;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector;
@@ -39,10 +40,14 @@ public class KotlinParser {
 
   public static Tree fromString(String content) {
     PsiFile psiFile = psiFileFactory.createFileFromText(KotlinLanguage.INSTANCE, content);
-    Document document = psiFile.getViewProvider().getDocument();
-    if (document == null) {
-      throw new IllegalStateException("Cannot correctly map AST with a null Document object");
+    Document document;
+    try {
+      document = psiFile.getViewProvider().getDocument();
+    } catch (AssertionError e) {
+      // A KotlinLexerException may occur when attempting to read invalid files
+      throw new ParseException("Cannot correctly map AST with a null Document object");
     }
+
     CommentVisitor commentVisitor = new CommentVisitor(document);
     psiFile.accept(commentVisitor);
     KotlinTreeVisitor kotlinTreeVisitor = new KotlinTreeVisitor(psiFile, new TreeMetaDataProvider(commentVisitor.getAllComments()));

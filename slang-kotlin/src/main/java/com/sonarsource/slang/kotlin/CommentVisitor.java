@@ -37,6 +37,14 @@ import static org.jetbrains.kotlin.lexer.KtTokens.EOL_COMMENT;
 import static org.jetbrains.kotlin.lexer.KtTokens.SHEBANG_COMMENT;
 
 public class CommentVisitor extends KtTreeVisitorVoid {
+  private static final int MIN_BLOCK_COMMENT_LENGTH = 4;
+  private static final int MIN_DOC_COMMENT_LENGTH = 5;
+  private static final int MIN_LINE_COMMENT_LENGTH = 2;
+  private static final int BLOCK_COMMENT_PREFIX_LENGTH = 2;
+  private static final int BLOCK_COMMENT_SUFFIX_LENGTH = 2;
+  private static final int DOC_COMMENT_PREFIX_LENGTH = 3;
+  private static final int DOC_COMMENT_SUFFIX_LENGTH = 2;
+  private static final int LINE_COMMENT_PREFIX_LENGTH = 2;
 
   private final Document psiDocument;
   private final List<Comment> allComments;
@@ -65,12 +73,12 @@ public class CommentVisitor extends KtTreeVisitorVoid {
     IElementType tokenType = element.getTokenType();
     int length = textWithDelimiters.length();
 
-    if (BLOCK_COMMENT.equals(tokenType)) {
-      return textWithDelimiters.substring(2, length - 2);
-    } else if (DOC_COMMENT.equals(tokenType)) {
-      return textWithDelimiters.substring(3, length - 2);
-    } else if (EOL_COMMENT.equals(tokenType) || SHEBANG_COMMENT.equals(tokenType)) {
-      return textWithDelimiters.substring(2);
+    if (BLOCK_COMMENT.equals(tokenType) && length >= MIN_BLOCK_COMMENT_LENGTH) {
+      return textWithDelimiters.substring(BLOCK_COMMENT_PREFIX_LENGTH, length - BLOCK_COMMENT_SUFFIX_LENGTH);
+    } else if (DOC_COMMENT.equals(tokenType) && length >= MIN_DOC_COMMENT_LENGTH) {
+      return textWithDelimiters.substring(DOC_COMMENT_PREFIX_LENGTH, length - DOC_COMMENT_SUFFIX_LENGTH);
+    } else if ((EOL_COMMENT.equals(tokenType) || SHEBANG_COMMENT.equals(tokenType)) && length >= MIN_LINE_COMMENT_LENGTH) {
+      return textWithDelimiters.substring(LINE_COMMENT_PREFIX_LENGTH);
     } else {
       // FIXME error message: unknown comment type
       return textWithDelimiters;

@@ -120,7 +120,7 @@ class KotlinTreeVisitor {
     TreeMetaData metaData = getTreeMetaData(element);
 
     if (element instanceof PsiErrorElement) {
-      throw new IllegalStateException("Cannot convert file due to syntactic errors");
+      throw new ParseException("Cannot convert file due to syntactic errors", metaData.textRange().start());
     } else if (element instanceof PsiWhiteSpace || element instanceof LeafPsiElement) {
       // skip tokens and whitespaces nodes in kotlin AST
       return null;

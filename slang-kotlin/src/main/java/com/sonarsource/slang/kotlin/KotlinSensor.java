@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.kotlin;
 
+import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.CommonCheckList;
 import com.sonarsource.slang.checks.api.SlangCheck;
@@ -34,8 +35,12 @@ import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 public class KotlinSensor implements Sensor {
+
+  private static final Logger LOG = Loggers.get(KotlinSensor.class);
 
   private final Checks<SlangCheck> checks;
 
@@ -63,31 +68,38 @@ public class KotlinSensor implements Sensor {
 
   private void analyseFiles(SensorContext sensorContext, Iterable<InputFile> inputFiles, List<TreeVisitor<InputFileContext>> visitors) {
     for (InputFile inputFile : inputFiles) {
+      InputFileContext inputFileContext = new InputFileContext(sensorContext, inputFile);
       try {
-        analyseFile(sensorContext, inputFile, visitors);
-      } catch (IllegalStateException e) {
-        // FIXME Assert errors from kotlin parser
-      } catch (Throwable e) {
-        // FIXME Assert errors from kotlin parser
+        analyseFile(inputFileContext, inputFile, visitors);
+      } catch (ParseException e) {
+        logParsingError(inputFile, e);
+        inputFileContext.reportError("Unable to parse file: " + inputFile, e.getPosition());
       }
-
     }
   }
 
-  private void analyseFile(SensorContext sensorContext, InputFile inputFile, List<TreeVisitor<InputFileContext>> visitors) {
+  private void analyseFile(InputFileContext inputFileContext, InputFile inputFile, List<TreeVisitor<InputFileContext>> visitors) {
     String content;
     try {
       content = inputFile.contents();
     } catch (IOException e) {
-      throw new IllegalStateException("Cannot read " + inputFile);
+      throw new ParseException("Cannot read " + inputFile);
     }
 
     Tree tree = KotlinParser.fromString(content);
-    InputFileContext visitorContext = new InputFileContext(sensorContext, inputFile);
     for (TreeVisitor<InputFileContext> visitor : visitors) {
-      visitor.scan(visitorContext, tree);
+      visitor.scan(inputFileContext, tree);
     }
+  }
 
+  private static void logParsingError(InputFile inputFile, ParseException e) {
+    TextPointer position = e.getPosition();
+    String positionMessage = "";
+    if (position != null) {
+      positionMessage = String.format("Parse error at position %s:%s", position.line(), position.lineOffset());
+    }
+    LOG.error(String.format("Unable to parse file: %s. %s", inputFile.uri(), positionMessage));
+    LOG.error(e.getMessage());
   }
 
 }

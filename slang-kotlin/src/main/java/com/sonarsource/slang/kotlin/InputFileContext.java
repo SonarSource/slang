@@ -22,9 +22,12 @@ package com.sonarsource.slang.kotlin;
 import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.visitors.TreeContext;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.fs.TextPointer;
 import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.sensor.SensorContext;
+import org.sonar.api.batch.sensor.error.NewAnalysisError;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.rule.RuleKey;
 
@@ -63,6 +66,20 @@ public class InputFileContext extends TreeContext {
         .message(secondary.message == null ? "" : secondary.message)));
 
     issue.save();
+  }
+
+  public void reportError(String message, @Nullable com.sonarsource.slang.api.TextPointer location) {
+    NewAnalysisError error = sensorContext.newAnalysisError();
+    error
+      .message(message)
+      .onFile(inputFile);
+
+    if (location != null) {
+      TextPointer pointerLocation = inputFile.newPointer(location.line(), location.lineOffset());
+      error.at(pointerLocation);
+    }
+
+    error.save();
   }
 
 }
