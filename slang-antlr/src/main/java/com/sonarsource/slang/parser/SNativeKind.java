@@ -32,10 +32,12 @@ public class SNativeKind implements NativeKind {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o)
+    if (this == o) {
       return true;
-    if (o == null || getClass() != o.getClass())
+    }
+    if (o == null || getClass() != o.getClass()) {
       return false;
+    }
     SNativeKind that = (SNativeKind) o;
     return Objects.equals(ctxClass, that.ctxClass);
   }

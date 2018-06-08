@@ -49,10 +49,12 @@ public class KotlinNativeKind implements NativeKind {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o)
+    if (this == o) {
       return true;
-    if (o == null || getClass() != o.getClass())
+    }
+    if (o == null || getClass() != o.getClass()) {
       return false;
+    }
     KotlinNativeKind that = (KotlinNativeKind) o;
     return Objects.equals(psiElementClass, that.psiElementClass) &&
       Objects.equals(differentiators, that.differentiators);
