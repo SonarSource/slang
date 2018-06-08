@@ -75,10 +75,9 @@ public class SyntacticEquivalence {
       if (((BinaryExpressionTree) first).operator() != ((BinaryExpressionTree) second).operator()) {
         return false;
       }
-    } else if (first instanceof AssignmentExpressionTree) {
-      if (((AssignmentExpressionTree) first).operator() != ((AssignmentExpressionTree) second).operator()) {
-        return false;
-      }
+    } else if (first instanceof AssignmentExpressionTree
+      && (((AssignmentExpressionTree) first).operator() != ((AssignmentExpressionTree) second).operator())) {
+      return false;
     }
 
     return areEquivalent(first.children(), second.children());
