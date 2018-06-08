@@ -36,7 +36,7 @@ public class SyntacticEquivalence {
   private SyntacticEquivalence() {
   }
 
-  public static boolean areEquivalent(List<Tree> first, List<Tree> second) {
+  public static boolean areEquivalent(@Nullable List<Tree> first, @Nullable List<Tree> second) {
     if (first == second) {
       return true;
     }
@@ -54,7 +54,7 @@ public class SyntacticEquivalence {
     return true;
   }
 
-  public static boolean areEquivalent(Tree first, Tree second) {
+  public static boolean areEquivalent(@Nullable Tree first, @Nullable Tree second) {
     if (first == second) {
       return true;
     }
