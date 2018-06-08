@@ -31,6 +31,9 @@ import java.util.stream.IntStream;
 
 public class TreePrinter {
 
+  private TreePrinter() {
+  }
+
   public static String tree2string(List<Tree> trees) {
     return trees.stream().map(TreePrinter::tree2string).collect(Collectors.joining("\n"));
   }

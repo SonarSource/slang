@@ -24,6 +24,9 @@ import java.util.List;
 
 public class CommonCheckList {
 
+  private CommonCheckList() {
+  }
+
   public static List<Class> checks() {
     return Arrays.asList(
       AllBranchesIdenticalCheck.class,

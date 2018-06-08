@@ -21,7 +21,6 @@ package com.sonarsource.slang.kotlin;
 
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
-import javax.annotation.CheckForNull;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector;
@@ -37,6 +36,9 @@ import org.jetbrains.kotlin.idea.KotlinLanguage;
 
 public class KotlinParser {
   private static final PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(createKotlinCoreEnvironment());
+
+  private KotlinParser() {
+  }
 
   public static Tree fromString(String content) {
     PsiFile psiFile = psiFileFactory.createFileFromText(KotlinLanguage.INSTANCE, content);
