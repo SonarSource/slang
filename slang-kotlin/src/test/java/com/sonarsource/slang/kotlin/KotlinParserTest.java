@@ -73,6 +73,21 @@ public class KotlinParserTest {
   }
 
   @Test
+  public void unaryExpressions() {
+    assertThat(areEquivalent(kotlinStatement("+1"), kotlinStatement("+1"))).isTrue();
+    assertThat(areEquivalent(kotlinStatement("+1"), kotlinStatement("+2"))).isFalse();
+    assertThat(areEquivalent(kotlinStatement("+1"), kotlinStatement("-1"))).isFalse();
+  }
+
+  @Test
+  public void isExpressions() {
+    assertThat(areEquivalent(kotlinStatement("a is b"), kotlinStatement("a is b"))).isTrue();
+    assertThat(areEquivalent(kotlinStatement("a !is b"), kotlinStatement("a !is b"))).isTrue();
+    assertThat(areEquivalent(kotlinStatement("a !is b"), kotlinStatement("a is b"))).isFalse();
+    assertThat(areEquivalent(kotlinStatement("a is b"), kotlinStatement("a is c"))).isFalse();
+  }
+
+  @Test
   public void testFunctionDeclaration() {
     FunctionDeclarationTree functionDeclarationTree = ((FunctionDeclarationTree) kotlin("fun function1(a: Int, b: String): Boolean { true; }"));
     // FIXME test return type, parameter names, modifiers
