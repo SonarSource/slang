@@ -219,7 +219,7 @@ class KotlinTreeVisitor {
     }
 
     return Arrays.stream(KtTokens.MODIFIER_KEYWORDS_ARRAY)
-      .map(modifier -> modifierList.getModifier(modifier))
+      .map(modifierList::getModifier)
       .filter(Objects::nonNull)
       .map(element -> {
         NativeKind modifierKind = new KotlinNativeKind(element, element.getText());
