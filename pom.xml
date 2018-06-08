@@ -49,6 +49,10 @@
     <license.title>SonarSource SLang</license.title>
     <analyzer.commons.version>1.7.0.243</analyzer.commons.version>
     <sonarqube.version>6.7</sonarqube.version>
+    <!-- used for deployment to SonarSource Artifactory -->
+    <gitRepositoryName>slang</gitRepositoryName>
+    <!-- Release: enable publication to Bintray -->
+    <artifactsToPublish>${project.groupId}:sonar-slang-plugin:jar</artifactsToPublish>
   </properties>
 
   <dependencyManagement>
