@@ -118,9 +118,6 @@ public class SLangConverter {
     return Collections.unmodifiableMap(map);
   }
 
-  // FIXME
-  private static final TextRange FAKE_RANGE = new TextRangeImpl(new TextPointerImpl(-1, -1), new TextPointerImpl(-1, -1));
-
   private static class SLangParseTreeVisitor extends SLangBaseVisitor<Tree> {
 
     private final TreeMetaDataProvider metaDataProvider;
@@ -148,12 +145,17 @@ public class SLangConverter {
 
     @Override
     public Tree visitMethodDeclaration(SLangParser.MethodDeclarationContext ctx) {
-      List<Tree> modifiers = Collections.emptyList();
-      Tree returnType = null; // FIXME
-      IdentifierTree name = (IdentifierTree) visit(ctx.methodHeader().methodDeclarator().identifier());
+      List<Tree> modifiers = list(ctx.methodModifier());
+      Tree returnType = null;
+      SLangParser.MethodHeaderContext methodHeaderContext = ctx.methodHeader();
+      SLangParser.ResultContext resultContext = methodHeaderContext.result();
+      if (resultContext != null) {
+        returnType = new IdentifierTreeImpl(meta(resultContext), resultContext.getText());
+      }
+      IdentifierTree name = (IdentifierTree) visit(methodHeaderContext.methodDeclarator().identifier());
 
       List<Tree> convertedParameters = new ArrayList<>();
-      SLangParser.FormalParameterListContext formalParameterListContext = ctx.methodHeader().methodDeclarator().formalParameterList();
+      SLangParser.FormalParameterListContext formalParameterListContext = methodHeaderContext.methodDeclarator().formalParameterList();
       if (formalParameterListContext != null) {
         SLangParser.FormalParametersContext formalParameters = formalParameterListContext.formalParameters();
         if (formalParameters != null) {
@@ -162,7 +164,12 @@ public class SLangConverter {
         convertedParameters.add(visit(formalParameterListContext.lastFormalParameter()));
       }
 
-      return new FunctionDeclarationTreeImpl(meta(FAKE_RANGE), modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()));
+      return new FunctionDeclarationTreeImpl(meta(ctx), modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()));
+    }
+
+    @Override
+    public Tree visitMethodModifier(SLangParser.MethodModifierContext ctx) {
+      return simpleNativeTree(ctx);
     }
 
     @Override
@@ -185,7 +192,7 @@ public class SLangConverter {
 
     @Override
     public Tree visitBlock(SLangParser.BlockContext ctx) {
-      return new BlockTreeImpl(meta(ctx.start, ctx.stop), list(ctx.statementOrExpression()));
+      return new BlockTreeImpl(meta(ctx), list(ctx.statementOrExpression()));
     }
 
     @Override
@@ -195,7 +202,7 @@ public class SLangConverter {
         elseBranch = visit(ctx.controlBlock(1));
       }
       Tree thenBranch = visit(ctx.controlBlock(0));
-      return new IfTreeImpl(meta(ctx.start, ctx.stop), visit(ctx.statementOrExpression()), thenBranch, elseBranch);
+      return new IfTreeImpl(meta(ctx), visit(ctx.statementOrExpression()), thenBranch, elseBranch);
     }
 
     @Override
@@ -204,14 +211,14 @@ public class SLangConverter {
       for (SLangParser.MatchCaseContext matchCaseContext : ctx.matchCase()) {
         cases.add((MatchCaseTree) visit(matchCaseContext));
       }
-      return new MatchTreeImpl(meta(ctx.start, ctx.stop), visit(ctx.statementOrExpression()), cases);
+      return new MatchTreeImpl(meta(ctx), visit(ctx.statementOrExpression()), cases);
     }
 
     @Override
     public Tree visitMatchCase(SLangParser.MatchCaseContext ctx) {
       Tree expression = ctx.statementOrExpression() == null ? null : visit(ctx.statementOrExpression());
       Tree body = visit(ctx.controlBlock());
-      return new MatchCaseTreeImpl(meta(ctx.start, ctx.stop), expression, body);
+      return new MatchCaseTreeImpl(meta(ctx), expression, body);
     }
 
     @Override
@@ -224,7 +231,7 @@ public class SLangConverter {
       Tree leftHandSide = visit(ctx.leftHandSide());
       Tree statementOrExpression = visit(ctx.statementOrExpression());
       AssignmentExpressionTree.Operator operator = ASSIGNMENT_OPERATOR_MAP.get(ctx.assignmentOperator().getText());
-      return new AssignmentExpressionTreeImpl(meta(ctx.start, ctx.stop), operator, leftHandSide, statementOrExpression);
+      return new AssignmentExpressionTreeImpl(meta(ctx), operator, leftHandSide, statementOrExpression);
     }
 
     @Override
@@ -259,19 +266,21 @@ public class SLangConverter {
 
     @Override
     public Tree visitLiteral(SLangParser.LiteralContext ctx) {
-      return new LiteralTreeImpl(meta(ctx.start, ctx.stop), ctx.getText());
+      return new LiteralTreeImpl(meta(ctx), ctx.getText());
     }
 
     @Override
     public Tree visitIdentifier(SLangParser.IdentifierContext ctx) {
-      return new IdentifierTreeImpl(meta(ctx.start, ctx.stop), ctx.getText());
+      return new IdentifierTreeImpl(meta(ctx), ctx.getText());
     }
 
     private static TextPointer startOf(Token token) {
       return new TextPointerImpl(token.getLine(), token.getCharPositionInLine());
     }
 
-    private TreeMetaData meta(Token firstToken, Token lastToken) {
+    private TreeMetaData meta(ParserRuleContext ctx) {
+      Token firstToken = ctx.start;
+      Token lastToken = ctx.stop;
       return meta(new TextRangeImpl(
         startOf(firstToken),
         new TextPointerImpl(lastToken.getLine(), lastToken.getCharPositionInLine() + lastToken.getText().length())));
@@ -287,7 +296,11 @@ public class SLangConverter {
 
     private NativeTree nativeTree(ParserRuleContext ctx, List<? extends ParseTree> rawChildren) {
       List<Tree> children = list(rawChildren);
-      return new NativeTreeImpl(meta(ctx.start, ctx.stop), new SNativeKind(ctx), children);
+      return new NativeTreeImpl(meta(ctx), new SNativeKind(ctx), children);
+    }
+
+    private NativeTree simpleNativeTree(ParserRuleContext ctx) {
+      return new NativeTreeImpl(meta(ctx), new SNativeKind(ctx, ctx.getText()), Collections.emptyList());
     }
 
     private List<Tree> list(List<? extends ParseTree> rawChildren) {

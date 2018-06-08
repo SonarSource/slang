@@ -31,45 +31,17 @@ import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
-import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
-import com.sonarsource.slang.impl.IdentifierTreeImpl;
-import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.parser.SLangConverter;
-import com.sonarsource.slang.visitors.TreeContext;
-import com.sonarsource.slang.visitors.TreeVisitor;
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import org.antlr.v4.runtime.CharStreams;
 import org.junit.Test;
 
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
+import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SLangConverterTest {
 
   private SLangConverter converter = new SLangConverter();
-
-  @Test
-  public void testConverter() throws IOException {
-    Tree tree = converter.parse(CharStreams.fromFileName("src/test/resources/binary.slang").toString());
-
-    AtomicInteger numBinNodes = new AtomicInteger(0);
-    AtomicInteger numIdentifierNode = new AtomicInteger(0);
-    AtomicInteger numLiteralNode = new AtomicInteger(0);
-
-    TreeVisitor<TreeContext> visitor = new TreeVisitor<>();
-
-    visitor.register(BinaryExpressionTreeImpl.class, (ctx, binaryExpressionTree) -> numBinNodes.getAndIncrement());
-    visitor.register(IdentifierTreeImpl.class, (ctx, identifierTree) -> numIdentifierNode.getAndIncrement());
-    visitor.register(LiteralTreeImpl.class, (ctx, literalTree) -> numLiteralNode.getAndIncrement());
-    visitor.scan(new TreeContext(), tree);
-
-    assertTree(tree).isInstanceOf(TopLevelTree.class).hasChildren(9);
-    assertThat(numBinNodes.get()).isEqualTo(6);
-    assertThat(numIdentifierNode.get()).isEqualTo(18);
-    assertThat(numLiteralNode.get()).isEqualTo(10);
-  }
 
   @Test
   public void simple_binary_expression() {
@@ -99,18 +71,30 @@ public class SLangConverterTest {
   public void function() {
     FunctionDeclarationTree function = parseFunction("private int foo(x1, x2) { x1 + x2 }");
     assertThat(function.name().name()).isEqualTo("foo");
-    // assertTree(function.returnType()).isIdentifier("boolean");
+    assertThat(function.modifiers()).hasSize(1);
+    assertTree(function.returnType()).isIdentifier("int");
     assertThat(function.formalParameters()).hasSize(2);
     assertTree(function.formalParameters().get(0)).isIdentifier("x1");
     assertThat(function.body()).isNotNull();
 
-    assertThat(parseFunction("int foo(p1);").formalParameters()).hasSize(1);
-    assertTree(parseFunction("int foo(p1);").formalParameters().get(0)).isIdentifier("p1");
+    FunctionDeclarationTree publicFunction = parseFunction("public int foo(p1);");
+    assertThat(publicFunction.formalParameters()).hasSize(1);
+    assertTree(publicFunction.formalParameters().get(0)).isIdentifier("p1");
 
-    assertThat(parseFunction("int foo();").formalParameters()).isEmpty();
-    assertThat(parseFunction("int foo();").body()).isNull();
+    FunctionDeclarationTree emptyParamFunction = parseFunction("private int foo();");
+    assertThat(emptyParamFunction.formalParameters()).isEmpty();
+    assertThat(emptyParamFunction.body()).isNull();
 
-    assertThat(parseFunction("int foo() {}").body().statementOrExpressions()).isEmpty();
+    Tree privateModifier1 = function.modifiers().get(0);
+    Tree publicModifier1 = publicFunction.modifiers().get(0);
+    Tree privateModifier2 = emptyParamFunction.modifiers().get(0);
+    assertThat(areEquivalent(privateModifier1, publicModifier1)).isFalse();
+    assertThat(areEquivalent(privateModifier1, privateModifier2)).isTrue();
+
+    FunctionDeclarationTree simpleFunction = parseFunction("foo() {}");
+    assertThat(simpleFunction.modifiers()).isEmpty();
+    assertThat(simpleFunction.returnType()).isNull();
+    assertThat(simpleFunction.body().statementOrExpressions()).isEmpty();
   }
 
   @Test
