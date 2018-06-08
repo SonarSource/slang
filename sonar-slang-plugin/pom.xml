@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>slang-plugin</artifactId>
+  <artifactId>sonar-slang-plugin</artifactId>
   <packaging>sonar-plugin</packaging>
 
   <name>SLang :: PLUGIN</name>
