@@ -9,10 +9,10 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>slang-kotlin</artifactId>
+  <artifactId>sonar-slang-plugin</artifactId>
   <packaging>sonar-plugin</packaging>
 
-  <name>SLang :: KOTLIN</name>
+  <name>SLang :: PLUGIN</name>
 
   <properties>
     <kotlin.version>1.2.41</kotlin.version>
@@ -75,7 +75,7 @@
         <artifactId>sonar-packaging-maven-plugin</artifactId>
         <configuration>
           <!-- This value shows up in the SonarQube GUI -->
-          <pluginName>SonarKotlin</pluginName>
+          <pluginName>SonarSlang</pluginName>
           <pluginClass>com.sonarsource.slang.kotlin.KotlinPlugin</pluginClass>
           <sonarLintSupported>true</sonarLintSupported>
           <addMavenDescriptor>false</addMavenDescriptor>

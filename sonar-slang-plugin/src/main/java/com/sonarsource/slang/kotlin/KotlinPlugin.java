@@ -27,10 +27,10 @@ public class KotlinPlugin implements Plugin {
 
   // Subcategories
   private static final String GENERAL = "General";
-  private static final String KOTLIN_CATEGORY = "Kotlin";
+  private static final String KOTLIN_CATEGORY = "Slang";
 
   // Global constants
-  private static final String PLUGIN_KEY = "kotlin";
+  private static final String PLUGIN_KEY = "slang";
   public static final String LANGUAGE_KEY = "kotlin";
   public static final String LANGUAGE_NAME = "Kotlin";
   public static final String REPOSITORY_KEY = "kotlin";
