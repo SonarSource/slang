@@ -191,7 +191,7 @@ class KotlinTreeVisitor {
       || (element instanceof KtStringTemplateExpression && !((KtStringTemplateExpression) element).hasInterpolation())) {
       return new LiteralTreeImpl(metaData, element.getText());
     } else if (element instanceof KtOperationExpression) {
-      return createOperationExpression(element, metaData);
+      return createOperationExpression((KtOperationExpression) element, metaData);
     } else {
       return new NativeTreeImpl(metaData, new KotlinNativeKind(element), list(Arrays.stream(element.getChildren())));
     }
@@ -215,11 +215,10 @@ class KotlinTreeVisitor {
   }
 
   @NotNull
-  private Tree createOperationExpression(@NotNull PsiElement element, TreeMetaData metaData) {
-    KtOperationExpression operationExpression = (KtOperationExpression) element;
+  private Tree createOperationExpression(@NotNull KtOperationExpression operationExpression, TreeMetaData metaData) {
     KotlinNativeKind nativeKind =
-      new KotlinNativeKind(element, operationExpression.getOperationReference().getReferencedNameElement().getText());
-    return new NativeTreeImpl(metaData, nativeKind, list(Arrays.stream(element.getChildren())));
+      new KotlinNativeKind(operationExpression, operationExpression.getOperationReference().getReferencedNameElement().getText());
+    return new NativeTreeImpl(metaData, nativeKind, list(Arrays.stream(operationExpression.getChildren())));
   }
 
   private TreeMetaData getTreeMetaData(@NotNull PsiElement element) {
