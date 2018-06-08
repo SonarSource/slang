@@ -83,7 +83,7 @@ public class SLangConverter {
     return slangVisitor.visit(parser.slangFile());
   }
 
-  private String commentContent(String text) {
+  private static String commentContent(String text) {
     if (text.startsWith("//")) {
       return text.substring(2);
     }
@@ -267,7 +267,7 @@ public class SLangConverter {
       return new IdentifierTreeImpl(meta(ctx.start, ctx.stop), ctx.getText());
     }
 
-    private TextPointer startOf(Token token) {
+    private static TextPointer startOf(Token token) {
       return new TextPointerImpl(token.getLine(), token.getCharPositionInLine());
     }
 

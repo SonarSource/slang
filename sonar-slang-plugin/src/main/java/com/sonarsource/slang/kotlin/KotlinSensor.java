@@ -66,7 +66,7 @@ public class KotlinSensor implements Sensor {
     analyseFiles(sensorContext, inputFiles, Collections.singletonList(new ChecksVisitor(checks)));
   }
 
-  private void analyseFiles(SensorContext sensorContext, Iterable<InputFile> inputFiles, List<TreeVisitor<InputFileContext>> visitors) {
+  private static void analyseFiles(SensorContext sensorContext, Iterable<InputFile> inputFiles, List<TreeVisitor<InputFileContext>> visitors) {
     for (InputFile inputFile : inputFiles) {
       InputFileContext inputFileContext = new InputFileContext(sensorContext, inputFile);
       try {
@@ -78,7 +78,7 @@ public class KotlinSensor implements Sensor {
     }
   }
 
-  private void analyseFile(InputFileContext inputFileContext, InputFile inputFile, List<TreeVisitor<InputFileContext>> visitors) {
+  private static void analyseFile(InputFileContext inputFileContext, InputFile inputFile, List<TreeVisitor<InputFileContext>> visitors) {
     String content;
     try {
       content = inputFile.contents();
