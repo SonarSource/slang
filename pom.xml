@@ -26,6 +26,7 @@
     <module>slang-antlr</module>
     <module>slang-checks</module>
     <module>sonar-slang-plugin</module>
+    <module>its</module>
   </modules>
 
   <!--
@@ -53,6 +54,7 @@
     <gitRepositoryName>slang</gitRepositoryName>
     <!-- Release: enable publication to Bintray -->
     <artifactsToPublish>${project.groupId}:sonar-slang-plugin:jar</artifactsToPublish>
+    <orchestrator.version>3.14.0.887</orchestrator.version>
   </properties>
 
   <dependencyManagement>
