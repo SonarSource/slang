@@ -25,6 +25,7 @@ import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
+import com.sonarsource.slang.api.NativeKind;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
@@ -33,6 +34,7 @@ import com.sonarsource.slang.visitors.TreePrinter;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.assertj.core.api.AbstractAssert;
+import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -90,12 +92,20 @@ public class KotlinParserTest {
   @Test
   public void testFunctionDeclaration() {
     FunctionDeclarationTree functionDeclarationTree = ((FunctionDeclarationTree) kotlin("fun function1(a: Int, b: String): Boolean { true; }"));
-    // FIXME test return type, parameter names, modifiers
     assertTree(functionDeclarationTree.name()).isIdentifier("function1").hasTextRange(1, 4, 1, 13);
+    assertTree(functionDeclarationTree.returnType()).isIdentifier("Boolean");
     assertThat(functionDeclarationTree.formalParameters()).hasSize(2);
+    assertTree(functionDeclarationTree.formalParameters().get(1)).isIdentifier("b");
     assertTree(functionDeclarationTree.body()).isBlock(LiteralTree.class);
+    assertThat(functionDeclarationTree.modifiers()).isEmpty();
 
-    assertTree(((FunctionDeclarationTree) kotlin("fun function1(a: Int, b: String): Boolean = true")).body()).isNotNull();
+    FunctionDeclarationTree functionWithModifier = (FunctionDeclarationTree) kotlin("internal fun function1(a: Int, b: String): Boolean = true");
+    assertTree(functionWithModifier.body()).isNotNull();
+    NativeKind expectedModifierKind = new KotlinNativeKind(LeafPsiElement.class, "internal");
+    assertThat(functionWithModifier.modifiers()).hasSize(1);
+    Tree modifierTree = functionWithModifier.modifiers().get(0);
+    assertTree(modifierTree).isInstanceOf(NativeTree.class);
+    assertThat(((NativeTree) modifierTree).nativeKind()).isEqualTo(expectedModifierKind);
   }
 
   @Test

@@ -24,6 +24,7 @@ import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
+import com.sonarsource.slang.api.NativeKind;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
@@ -70,9 +71,12 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.KtIfExpression;
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
+import org.jetbrains.kotlin.psi.KtModifierList;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.KtOperationExpression;
+import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
+import org.jetbrains.kotlin.psi.KtTypeElement;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
 import org.jetbrains.kotlin.psi.KtWhenEntry;
 import org.jetbrains.kotlin.psi.KtWhenExpression;
@@ -137,29 +141,7 @@ class KotlinTreeVisitor {
     } else if (element instanceof KtFile) {
       return new TopLevelTreeImpl(metaData, list(Arrays.stream(element.getChildren())), metaDataProvider.allComments());
     } else if (element instanceof KtFunction) {
-      KtFunction functionElement = (KtFunction) element;
-      List<Tree> modifiers = Collections.emptyList();
-      // FIXME modifiers and return type
-      Tree returnType = null;
-      PsiElement nameIdentifier = functionElement.getNameIdentifier();
-      IdentifierTree identifierTree = null;
-      if (nameIdentifier != null) {
-        identifierTree = new IdentifierTreeImpl(getTreeMetaData(nameIdentifier), functionElement.getName());
-      }
-      List<Tree> parametersList = list(functionElement.getValueParameters().stream());
-      Tree bodyTree = createElement(functionElement.getBodyExpression());
-      if (bodyTree != null) {
-        // FIXME are we sure we want body of function as block tree ?
-        if (!(bodyTree instanceof BlockTree)) {
-          bodyTree = new BlockTreeImpl(bodyTree.metaData(), Collections.singletonList(bodyTree));
-        }
-
-        // Set bodyTree to null for empty lambda functions
-        if (bodyTree.children().isEmpty()) {
-          bodyTree = null;
-        }
-      }
-      return new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, identifierTree, parametersList, (BlockTree) bodyTree);
+      return createFunctionDeclarationTree((KtFunction) element, metaData);
     } else if (element instanceof KtIfExpression) {
       KtIfExpression ifElement = (KtIfExpression) element;
       Tree condition = createElement(ifElement.getCondition());
@@ -192,9 +174,58 @@ class KotlinTreeVisitor {
       return new LiteralTreeImpl(metaData, element.getText());
     } else if (element instanceof KtOperationExpression) {
       return createOperationExpression((KtOperationExpression) element, metaData);
+    } else if (element instanceof KtParameter) {
+      return new IdentifierTreeImpl(metaData, ((KtParameter) element).getName());
     } else {
       return new NativeTreeImpl(metaData, new KotlinNativeKind(element), list(Arrays.stream(element.getChildren())));
     }
+  }
+
+  @NotNull
+  private Tree createFunctionDeclarationTree(@NotNull KtFunction functionElement, TreeMetaData metaData) {
+    List<Tree> modifiers = getModifierList(functionElement.getModifierList());
+    PsiElement nameIdentifier = functionElement.getNameIdentifier();
+    Tree returnType = null;
+    IdentifierTree identifierTree = null;
+    List<Tree> parametersList = list(functionElement.getValueParameters().stream());
+    Tree bodyTree = createElement(functionElement.getBodyExpression());
+    KtTypeElement typeElement = functionElement.getTypeReference() != null ? functionElement.getTypeReference().getTypeElement() : null;
+
+    if (functionElement.hasDeclaredReturnType() && typeElement != null) {
+      returnType = new IdentifierTreeImpl(getTreeMetaData(typeElement), typeElement.getText());
+    }
+    if (nameIdentifier != null) {
+      identifierTree = new IdentifierTreeImpl(getTreeMetaData(nameIdentifier), functionElement.getName());
+    }
+    if (bodyTree != null) {
+      // FIXME are we sure we want body of function as block tree ?
+      if (!(bodyTree instanceof BlockTree)) {
+        bodyTree = new BlockTreeImpl(bodyTree.metaData(), Collections.singletonList(bodyTree));
+      }
+
+      // Set bodyTree to null for empty lambda functions
+      if (bodyTree.children().isEmpty()) {
+        bodyTree = null;
+      }
+    }
+
+    return new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, identifierTree, parametersList, (BlockTree) bodyTree);
+  }
+
+  @Nullable
+  private List<Tree> getModifierList(KtModifierList modifierList) {
+    if (modifierList == null) {
+      return Collections.emptyList();
+    }
+
+    return Arrays.stream(KtTokens.MODIFIER_KEYWORDS_ARRAY)
+      .map(modifier -> modifierList.getModifier(modifier))
+      .filter(Objects::nonNull)
+      .map(element -> {
+        NativeKind modifierKind = new KotlinNativeKind(element, element.getText());
+        return new NativeTreeImpl(getTreeMetaData(element), modifierKind, Collections.emptyList());
+      })
+      .collect(Collectors.toList());
   }
 
   @NotNull
@@ -216,8 +247,7 @@ class KotlinTreeVisitor {
 
   @NotNull
   private Tree createOperationExpression(@NotNull KtOperationExpression operationExpression, TreeMetaData metaData) {
-    KotlinNativeKind nativeKind =
-      new KotlinNativeKind(operationExpression, operationExpression.getOperationReference().getReferencedNameElement().getText());
+    KotlinNativeKind nativeKind = new KotlinNativeKind(operationExpression, operationExpression.getOperationReference().getReferencedNameElement().getText());
     return new NativeTreeImpl(metaData, nativeKind, list(Arrays.stream(operationExpression.getChildren())));
   }
 
