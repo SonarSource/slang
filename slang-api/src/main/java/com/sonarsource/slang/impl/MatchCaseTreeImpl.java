@@ -25,13 +25,14 @@ import com.sonarsource.slang.api.TreeMetaData;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 
 public class MatchCaseTreeImpl extends BaseTreeImpl implements MatchCaseTree {
 
   private final Tree expression;
   private final Tree body;
 
-  public MatchCaseTreeImpl(TreeMetaData metaData, Tree expression, Tree body) {
+  public MatchCaseTreeImpl(TreeMetaData metaData, @Nullable Tree expression, Tree body) {
     super(metaData);
     this.expression = expression;
     this.body = body;

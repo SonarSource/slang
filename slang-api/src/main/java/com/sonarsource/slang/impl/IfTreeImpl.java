@@ -25,6 +25,7 @@ import com.sonarsource.slang.api.TreeMetaData;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 
 public class IfTreeImpl extends BaseTreeImpl implements IfTree {
 
@@ -32,7 +33,7 @@ public class IfTreeImpl extends BaseTreeImpl implements IfTree {
   private final Tree thenBranch;
   private final Tree elseBranch;
 
-  public IfTreeImpl(TreeMetaData metaData, Tree condition, Tree thenBranch, Tree elseBranch) {
+  public IfTreeImpl(TreeMetaData metaData, Tree condition, Tree thenBranch, @Nullable Tree elseBranch) {
     super(metaData);
     this.condition = condition;
     this.thenBranch = thenBranch;
