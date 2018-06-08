@@ -168,7 +168,7 @@ public class KotlinParserTest {
   }
 
   @Test
-  public void testMatchExpressions() {
+  public void testSimpleMatchExpression() {
     Tree kotlinStatement = kotlinStatement("when (x) { 1 -> true; 1 -> false; 2 -> true; else -> true;}");
     assertTree(kotlinStatement).isInstanceOf(MatchTree.class);
     MatchTree matchTree = (MatchTree) kotlinStatement;
@@ -178,8 +178,23 @@ public class KotlinParserTest {
     assertThat(areEquivalent(getCondition(cases, 0), getCondition(cases, 1))).isTrue();
     assertThat(areEquivalent(getCondition(cases, 0), getCondition(cases, 2))).isFalse();
     assertThat(getCondition(cases, 3)).isNull();
+  }
 
-    // FIXME check more complex cases when(x) { in 1..10 -> ; 1,2 ->
+  @Test
+  public void testSComplexMatchExpression() {
+    MatchTree complexWhen = (MatchTree) kotlinStatement("" +
+      "when (x) { isBig() -> 1;1,2 -> x; in 5..10 -> y; !in 10..20 -> z; is String -> x; 1,2 -> y; }");
+    List<MatchCaseTree> cases = complexWhen.cases();
+    assertThat(cases).hasSize(6);
+    assertThat(areEquivalent(getCondition(cases, 0), getCondition(cases, 1))).isFalse();
+    assertThat(areEquivalent(getCondition(cases, 0), getCondition(cases, 2))).isFalse();
+    assertThat(areEquivalent(getCondition(cases, 0), getCondition(cases, 3))).isFalse();
+    assertThat(areEquivalent(getCondition(cases, 0), getCondition(cases, 4))).isFalse();
+    assertThat(areEquivalent(getCondition(cases, 1), getCondition(cases, 5))).isTrue();
+
+    MatchTree emptyWhen = (MatchTree) kotlinStatement("when {}");
+    assertThat(emptyWhen.expression()).isNull();
+    assertThat(emptyWhen.cases()).hasSize(0);
   }
 
   @Test
