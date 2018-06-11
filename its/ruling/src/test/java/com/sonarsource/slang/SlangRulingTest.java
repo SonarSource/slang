@@ -64,7 +64,7 @@ public class SlangRulingTest {
         .setLanguage("kotlin")
         .setSourceDirs("./")
         .setSourceEncoding("utf-8")
-//      .setProperty("sonar.analysis.mode", "preview")
+        .setProperty("sonar.analysis.mode", "preview")
         .setProperty("dump.old", FileLocation.of("src/test/resources/expected").getFile().getAbsolutePath())
         .setProperty("dump.new", FileLocation.of("target/kotlin/actual").getFile().getAbsolutePath())
         .setProperty("lits.differences", litsDifferencesFile.getAbsolutePath())
