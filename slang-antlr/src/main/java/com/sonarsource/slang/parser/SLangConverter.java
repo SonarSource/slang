@@ -160,14 +160,14 @@ public class SLangConverter implements ASTConverter {
         name = (IdentifierTree) visit(identifier);
       }
 
-      List<Tree> convertedParameters = new ArrayList<>();
+      List<IdentifierTree> convertedParameters = new ArrayList<>();
       SLangParser.FormalParameterListContext formalParameterListContext = methodHeaderContext.methodDeclarator().formalParameterList();
       if (formalParameterListContext != null) {
         SLangParser.FormalParametersContext formalParameters = formalParameterListContext.formalParameters();
         if (formalParameters != null) {
           convertedParameters.addAll(list(formalParameters.formalParameter()));
         }
-        convertedParameters.add(visit(formalParameterListContext.lastFormalParameter()));
+        convertedParameters.add((IdentifierTree) visit(formalParameterListContext.lastFormalParameter()));
       }
 
       return new FunctionDeclarationTreeImpl(meta(ctx), modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()));
@@ -309,7 +309,7 @@ public class SLangConverter implements ASTConverter {
       return new NativeTreeImpl(meta(ctx), new SNativeKind(ctx, ctx.getText()), Collections.emptyList());
     }
 
-    private List<Tree> list(List<? extends ParseTree> rawChildren) {
+    private List list(List<? extends ParseTree> rawChildren) {
       return rawChildren
         .stream()
         .map(this::visit)

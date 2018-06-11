@@ -34,7 +34,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
   private final List<Tree> modifiers;
   private final Tree returnType;
   private final IdentifierTree name;
-  private final List<Tree> formalParameters;
+  private final List<IdentifierTree> formalParameters;
   private final BlockTree body;
   private final List<Tree> children = new ArrayList<>();
 
@@ -43,7 +43,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
     List<Tree> modifiers,
     @Nullable Tree returnType,
     @Nullable IdentifierTree name,
-    List<Tree> formalParameters,
+    List<IdentifierTree> formalParameters,
     @Nullable BlockTree body
   ) {
     super(metaData);
@@ -85,7 +85,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
   }
 
   @Override
-  public List<Tree> formalParameters() {
+  public List<IdentifierTree> formalParameters() {
     return formalParameters;
   }
 

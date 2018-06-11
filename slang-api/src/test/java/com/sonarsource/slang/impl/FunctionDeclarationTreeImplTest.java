@@ -38,7 +38,7 @@ public class FunctionDeclarationTreeImplTest {
     List<Tree> modifiers = singletonList(new IdentifierTreeImpl(meta, "public"));
     Tree returnType = new IdentifierTreeImpl(meta, "int");
     IdentifierTree name = new IdentifierTreeImpl(meta, "foo");
-    List<Tree> params = singletonList(new IdentifierTreeImpl(meta, "p1"));
+    List<IdentifierTree> params = singletonList(new IdentifierTreeImpl(meta, "p1"));
     BlockTree body = new BlockTreeImpl(meta, emptyList());
 
     FunctionDeclarationTreeImpl tree = new FunctionDeclarationTreeImpl(meta, modifiers, returnType, name, params, body);

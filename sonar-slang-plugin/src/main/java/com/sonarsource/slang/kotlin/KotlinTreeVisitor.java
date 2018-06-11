@@ -176,7 +176,7 @@ class KotlinTreeVisitor {
     PsiElement nameIdentifier = functionElement.getNameIdentifier();
     Tree returnType = null;
     IdentifierTree identifierTree = null;
-    List<Tree> parametersList = list(functionElement.getValueParameters().stream());
+    List<IdentifierTree> parametersList = (List<IdentifierTree>)(List<?>)list(functionElement.getValueParameters().stream());
     Tree bodyTree = createElement(functionElement.getBodyExpression());
     KtTypeElement typeElement = functionElement.getTypeReference() != null ? functionElement.getTypeReference().getTypeElement() : null;
     String name = functionElement.getName();
