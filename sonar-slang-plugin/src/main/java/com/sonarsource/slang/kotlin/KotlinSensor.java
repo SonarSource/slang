@@ -103,7 +103,12 @@ public class KotlinSensor implements Sensor {
 
     Tree tree = converter.parse(content);
     for (TreeVisitor<InputFileContext> visitor : visitors) {
-      visitor.scan(inputFileContext, tree);
+      try {
+        visitor.scan(inputFileContext, tree);
+      } catch (RuntimeException e) {
+        inputFileContext.reportError(e.getMessage(), null);
+        LOG.error("Cannot analyse " + inputFile, e);
+      }
     }
   }
 
