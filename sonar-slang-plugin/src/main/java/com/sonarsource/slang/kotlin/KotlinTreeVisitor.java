@@ -213,7 +213,7 @@ class KotlinTreeVisitor {
   }
 
   @Nullable
-  private List<Tree> getModifierList(KtModifierList modifierList) {
+  private List<Tree> getModifierList(@Nullable KtModifierList modifierList) {
     if (modifierList == null) {
       return Collections.emptyList();
     }
