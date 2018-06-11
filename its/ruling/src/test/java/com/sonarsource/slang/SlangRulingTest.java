@@ -23,14 +23,14 @@ import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.OrchestratorBuilder;
 import com.sonar.orchestrator.build.SonarScanner;
 import com.sonar.orchestrator.locator.FileLocation;
+import java.io.File;
+import java.nio.file.Files;
+import java.util.Collections;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sonarsource.analyzer.commons.ProfileGenerator;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SlangRulingTest {
@@ -39,10 +39,10 @@ public class SlangRulingTest {
   @BeforeClass
   public static void setUp() {
     OrchestratorBuilder builder = Orchestrator.builderEnv()
-        .setOrchestratorProperty("litsVersion", "0.6")
-        .addPlugin("lits");
+      .setOrchestratorProperty("litsVersion", "0.6")
+      .addPlugin("lits");
 
-    builder.addPlugin(FileLocation.byWildcardMavenFilename(new File("../../slang-kotlin/target"), "slang-kotlin-*.jar"));
+    builder.addPlugin(FileLocation.byWildcardMavenFilename(new File("../../sonar-slang-plugin/target"), "sonar-slang-plugin-*.jar"));
 
     orchestrator = builder.build();
     orchestrator.start();
@@ -56,21 +56,22 @@ public class SlangRulingTest {
     orchestrator.getServer().provisionProject("kotlin-project", "kotlin-project");
     orchestrator.getServer().associateProjectToQualityProfile("kotlin-project", "kotlin", "rules");
 
-    File litsDifferencesFile = FileLocation.of("target/kotlin/differences").getFile();
-    SonarScanner build = SonarScanner.create(FileLocation.of("../sources").getFile())
-        .setProjectKey("kotlin-project")
-        .setProjectName("kotlin-project")
-        .setProjectVersion("1")
-        .setLanguage("kotlin")
-        .setSourceDirs("./")
-        .setSourceEncoding("utf-8")
-        .setProperty("sonar.analysis.mode", "preview")
-        .setProperty("dump.old", FileLocation.of("src/test/resources/expected").getFile().getAbsolutePath())
-        .setProperty("dump.new", FileLocation.of("target/kotlin/actual").getFile().getAbsolutePath())
-        .setProperty("lits.differences", litsDifferencesFile.getAbsolutePath())
-        .setProperty("sonar.cpd.skip", "true")
-        .setProperty("sonar.scm.disabled", "true")
-        .setEnvironmentVariable("SONAR_RUNNER_OPTS", "-Xmx1024m");
+    File litsDifferencesFile = FileLocation.of("target/differences").getFile();
+    SonarScanner build = SonarScanner.create(FileLocation.of("../sources/kotlin").getFile())
+      .setProjectKey("kotlin-project")
+      .setProjectName("kotlin-project")
+      .setProjectVersion("1")
+      .setSourceDirs("./")
+      .setSourceEncoding("utf-8")
+      .setProperty("sonar.inclusions", "**/*.kt")
+      .setProperty("sonar.exclusions", "**/testData/**/*")
+      .setProperty("sonar.analysis.mode", "preview")
+      .setProperty("dump.old", FileLocation.of("src/test/resources/expected").getFile().getAbsolutePath())
+      .setProperty("dump.new", FileLocation.of("target/actual").getFile().getAbsolutePath())
+      .setProperty("lits.differences", litsDifferencesFile.getAbsolutePath())
+      .setProperty("sonar.cpd.skip", "true")
+      .setProperty("sonar.scm.disabled", "true")
+      .setEnvironmentVariable("SONAR_RUNNER_OPTS", "-Xmx1024m");
 
     orchestrator.executeBuild(build);
 
