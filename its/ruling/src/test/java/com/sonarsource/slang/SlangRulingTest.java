@@ -42,7 +42,7 @@ public class SlangRulingTest {
         .setOrchestratorProperty("litsVersion", "0.6")
         .addPlugin("lits");
 
-    builder.addPlugin(FileLocation.byWildcardMavenFilename(new File("../slang-kotlin/target"), "slang-kotlin-*.jar"));
+    builder.addPlugin(FileLocation.byWildcardMavenFilename(new File("../../slang-kotlin/target"), "slang-kotlin-*.jar"));
 
     orchestrator = builder.build();
     orchestrator.start();
@@ -56,8 +56,8 @@ public class SlangRulingTest {
     orchestrator.getServer().provisionProject("kotlin-project", "kotlin-project");
     orchestrator.getServer().associateProjectToQualityProfile("kotlin-project", "kotlin", "rules");
 
-    File litsDifferencesFile = FileLocation.of("build/differences").getFile();
-    SonarScanner build = SonarScanner.create(FileLocation.of("sources").getFile())
+    File litsDifferencesFile = FileLocation.of("target/kotlin/differences").getFile();
+    SonarScanner build = SonarScanner.create(FileLocation.of("../sources").getFile())
         .setProjectKey("kotlin-project")
         .setProjectName("kotlin-project")
         .setProjectVersion("1")
@@ -65,10 +65,11 @@ public class SlangRulingTest {
         .setSourceDirs("./")
         .setSourceEncoding("utf-8")
 //      .setProperty("sonar.analysis.mode", "preview")
-        .setProperty("dump.old", FileLocation.of("src/test/expected").getFile().getAbsolutePath())
-        .setProperty("dump.new", FileLocation.of("build/actual").getFile().getAbsolutePath())
+        .setProperty("dump.old", FileLocation.of("src/test/resources/expected").getFile().getAbsolutePath())
+        .setProperty("dump.new", FileLocation.of("target/kotlin/actual").getFile().getAbsolutePath())
         .setProperty("lits.differences", litsDifferencesFile.getAbsolutePath())
         .setProperty("sonar.cpd.skip", "true")
+        .setProperty("sonar.scm.disabled", "true")
         .setEnvironmentVariable("SONAR_RUNNER_OPTS", "-Xmx1024m");
 
     orchestrator.executeBuild(build);
