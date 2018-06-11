@@ -143,6 +143,26 @@ public class TreeAssertTest {
     assertTree(new IdentifierTreeImpl(meta(new TextRangeImpl(1, 2, 3, 4)), "a")).hasTextRange(1, 2, 3, 42);
   }
 
+  @Test
+  public void equivalent_ok() {
+    assertTree(LITERAL_42).isEquivalentTo(new LiteralTreeImpl(null, "42"));
+  }
+
+  @Test(expected = AssertionError.class)
+  public void equivalent_failure() {
+    assertTree(LITERAL_42).isEquivalentTo(new LiteralTreeImpl(null, "43"));
+  }
+
+  @Test
+  public void notequivalent_ok() {
+    assertTree(LITERAL_42).isNotEquivalentTo(new LiteralTreeImpl(null, "43"));
+  }
+
+  @Test(expected = AssertionError.class)
+  public void notequivalent_failure() {
+    assertTree(LITERAL_42).isNotEquivalentTo(new LiteralTreeImpl(null, "42"));
+  }
+
   private TreeMetaData meta(TextRange textRange) {
     return new TreeMetaData() {
       @Override
