@@ -191,7 +191,7 @@ class KotlinTreeVisitor {
     Tree bodyTree = createElement(functionElement.getBodyExpression());
     KtTypeElement typeElement = functionElement.getTypeReference() != null ? functionElement.getTypeReference().getTypeElement() : null;
 
-    if (functionElement.hasDeclaredReturnType() && typeElement != null) {
+    if (typeElement != null) {
       returnType = new IdentifierTreeImpl(getTreeMetaData(typeElement), typeElement.getText());
     }
     if (nameIdentifier != null) {
