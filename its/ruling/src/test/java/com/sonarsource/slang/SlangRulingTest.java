@@ -23,7 +23,6 @@ import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.OrchestratorBuilder;
 import com.sonar.orchestrator.build.SonarScanner;
 import com.sonar.orchestrator.locator.FileLocation;
-import com.sonar.orchestrator.locator.MavenLocation;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,8 +41,6 @@ public class SlangRulingTest {
     OrchestratorBuilder builder = Orchestrator.builderEnv()
         .setOrchestratorProperty("litsVersion", "0.6")
         .addPlugin("lits");
-        //.addPlugin(MavenLocation.of("org.sonarsource.sonar-lits-plugin", "sonar-lits-plugin", "0.7.0.961"));
-    //org.sonarsource.sonar-lits-plugin:sonar-lits-plugin:0.7.0.961
 
     builder.addPlugin(FileLocation.byWildcardMavenFilename(new File("../slang-kotlin/target"), "slang-kotlin-*.jar"));
 
