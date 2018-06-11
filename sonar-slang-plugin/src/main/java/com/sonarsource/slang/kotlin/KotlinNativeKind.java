@@ -33,8 +33,7 @@ public class KotlinNativeKind implements NativeKind {
   private final List<Object> differentiators;
 
   public KotlinNativeKind(PsiElement element) {
-    this.psiElementClass = element.getClass();
-    this.differentiators = Collections.emptyList();
+    this(element.getClass());
   }
 
   public KotlinNativeKind(Class<? extends PsiElement> psiElementClass) {
@@ -43,7 +42,11 @@ public class KotlinNativeKind implements NativeKind {
   }
 
   public KotlinNativeKind(PsiElement element, Object... differentiatorObjs) {
-    this.psiElementClass = element.getClass();
+    this(element.getClass(), differentiatorObjs);
+  }
+
+  public KotlinNativeKind(Class<? extends PsiElement> psiElementClass, Object... differentiatorObjs) {
+    this.psiElementClass = psiElementClass;
     this.differentiators = Arrays.asList(differentiatorObjs);
   }
 

@@ -89,13 +89,38 @@ public class KotlinParserTest {
 
   @Test
   public void testFunctionDeclaration() {
-    FunctionDeclarationTree functionDeclarationTree = ((FunctionDeclarationTree) kotlin("fun function1(a: Int, b: String): Boolean { true; }"));
-    // FIXME test return type, parameter names, modifiers
-    assertTree(functionDeclarationTree.name()).isIdentifier("function1").hasTextRange(1, 4, 1, 13);
+    FunctionDeclarationTree functionDeclarationTree = ((FunctionDeclarationTree) kotlin("private fun function1(a: Int, b: String): Boolean { true; }"));
+    assertTree(functionDeclarationTree.name()).isIdentifier("function1").hasTextRange(1, 12, 1, 21);
+    assertThat(functionDeclarationTree.modifiers()).hasSize(1);
+    assertTree(functionDeclarationTree.returnType()).isIdentifier("Boolean");
     assertThat(functionDeclarationTree.formalParameters()).hasSize(2);
+    assertTree(functionDeclarationTree.formalParameters().get(1)).isIdentifier("b");
     assertTree(functionDeclarationTree.body()).isBlock(LiteralTree.class);
 
-    assertTree(((FunctionDeclarationTree) kotlin("fun function1(a: Int, b: String): Boolean = true")).body()).isNotNull();
+    FunctionDeclarationTree functionWithInternalModifier = (FunctionDeclarationTree) kotlin("internal fun function1(a: Int, b: String): Boolean = true");
+    assertTree(functionWithInternalModifier.body()).isNotNull();
+    assertThat(functionWithInternalModifier.modifiers()).hasSize(1);
+
+    FunctionDeclarationTree functionWithPrivate = (FunctionDeclarationTree) kotlin("private fun function2() {}");
+    Tree privateModifier1 = functionDeclarationTree.modifiers().get(0);
+    Tree internalModifier = functionWithInternalModifier.modifiers().get(0);
+    Tree privateModifier2 = functionWithPrivate.modifiers().get(0);
+    assertThat(areEquivalent(privateModifier1, internalModifier)).isFalse();
+    assertThat(areEquivalent(privateModifier1, privateModifier2)).isTrue();
+
+    FunctionDeclarationTree constructorFunction = ((FunctionDeclarationTree) kotlin("class classC(a: String, b: Int) {}").children().get(0));
+    assertTree(constructorFunction.name()).isNull();
+    assertThat(constructorFunction.modifiers()).isEmpty();
+    assertTree(constructorFunction.returnType()).isNull();
+    assertThat(constructorFunction.formalParameters()).hasSize(2);
+    assertTree(constructorFunction.body()).isNull();
+
+    FunctionDeclarationTree emptyLambdaFunction = (FunctionDeclarationTree) kotlin("{ }");
+    assertTree(emptyLambdaFunction.name()).isNull();
+    assertThat(emptyLambdaFunction.modifiers()).isEmpty();
+    assertTree(emptyLambdaFunction.returnType()).isNull();
+    assertThat(emptyLambdaFunction.formalParameters()).isEmpty();
+    assertTree(emptyLambdaFunction.body()).isNull();
   }
 
   @Test
