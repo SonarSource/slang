@@ -47,4 +47,14 @@ public class TreesAssert extends AbstractAssert<TreesAssert, List<Tree>> {
     return this;
   }
 
+  public TreesAssert isNotEquivalentTo(List<Tree> expected) {
+    isNotNull();
+    boolean equivalent = SyntacticEquivalence.areEquivalent(actual, expected);
+    if (equivalent) {
+      assertThat(tree2string(actual)).isNotEqualTo(tree2string(expected));
+      failWithMessage("Expected <%s> to not be equivalent to <%s>", actual, expected);
+    }
+    return this;
+  }
+
 }

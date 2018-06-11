@@ -52,7 +52,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
@@ -60,7 +59,6 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiErrorElement;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement;
-import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
@@ -82,6 +80,8 @@ import org.jetbrains.kotlin.psi.KtWhenEntry;
 import org.jetbrains.kotlin.psi.KtWhenExpression;
 
 class KotlinTreeVisitor {
+  // Native kind for trees that can be null in kotlin, but not in Slang
+  private static final NativeKind NULL_NATIVE_KIND = new KotlinNativeKind(PsiElement.class, "NULL_NATIVE");
   private static final Map<KtToken, Operator> TOKENS_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
     new SimpleEntry<>(KtTokens.EQEQ, Operator.EQUAL_TO),
     new SimpleEntry<>(KtTokens.EXCLEQ, Operator.NOT_EQUAL_TO),
@@ -114,75 +114,52 @@ class KotlinTreeVisitor {
     this.psiDocument = psiFile.getViewProvider().getDocument();
     this.metaDataProvider = metaDataProvider;
     this.sLangAST = createElement(psiFile);
+    if (this.sLangAST == null) {
+      throw new ParseException("Slang AST should never be null");
+    }
   }
 
   @CheckForNull
   private Tree createElement(@Nullable PsiElement element) {
-    if (element == null) {
-      return null;
-    }
-
-    TreeMetaData metaData = getTreeMetaData(element);
-
-    if (element instanceof PsiErrorElement) {
-      throw new ParseException("Cannot convert file due to syntactic errors", metaData.textRange().start());
-    } else if (element instanceof PsiWhiteSpace || element instanceof LeafPsiElement) {
+    if (element == null || shouldSkipElement(element)) {
       // skip tokens and whitespaces nodes in kotlin AST
       return null;
+    }
+    return convertElementToSlangAST(element, getTreeMetaData(element));
+  }
+
+  private Tree convertElementToSlangAST(PsiElement element, TreeMetaData metaData) {
+    if (isError(element)) {
+      throw new ParseException("Cannot convert file due to syntactic errors", metaData.textRange().start());
     } else if (element instanceof KtBinaryExpression) {
-      return createBinaryExpression((KtBinaryExpression) element, metaData);
+      return createBinaryExpression(metaData, (KtBinaryExpression) element);
     } else if (element instanceof KtNameReferenceExpression) {
-      return new IdentifierTreeImpl(metaData, element.getText());
-    } else if (element instanceof KtConstantExpression) {
-      return new LiteralTreeImpl(metaData, element.getText());
+      return createIdentifierTree(metaData, element.getText());
     } else if (element instanceof KtBlockExpression) {
       List<Tree> statementOrExpressions = list(((KtBlockExpression) element).getStatements().stream());
       return new BlockTreeImpl(metaData, statementOrExpressions);
     } else if (element instanceof KtFile) {
       return new TopLevelTreeImpl(metaData, list(Arrays.stream(element.getChildren())), metaDataProvider.allComments());
     } else if (element instanceof KtFunction) {
-      return createFunctionDeclarationTree((KtFunction) element, metaData);
+      return createFunctionDeclarationTree(metaData, (KtFunction) element);
     } else if (element instanceof KtIfExpression) {
-      KtIfExpression ifElement = (KtIfExpression) element;
-      Tree condition = createElement(ifElement.getCondition());
-      Tree thenBranch = createElement(ifElement.getThen());
-      Tree elseBranch = createElement(ifElement.getElse());
-      return new IfTreeImpl(metaData, condition, thenBranch, elseBranch);
+      return createIfTree(metaData, (KtIfExpression) element);
     } else if (element instanceof KtWhenExpression) {
-      KtWhenExpression whenElement = (KtWhenExpression) element;
-      // FIXME subjectExpression could be null
-      Tree subjectExpression = createElement(whenElement.getSubjectExpression());
-      List<MatchCaseTree> whenExpressions = list(whenElement.getEntries().stream()).stream()
-        .map(MatchCaseTree.class::cast)
-        .collect(Collectors.toList());
-      return new MatchTreeImpl(metaData, subjectExpression, whenExpressions);
+      return createMatchTree(metaData, (KtWhenExpression) element);
     } else if (element instanceof KtWhenEntry) {
-      KtWhenEntry whenElement = (KtWhenEntry) element;
-      Tree conditions = null;
-      Tree body = createElement(whenElement.getExpression());
-      if (!whenElement.isElse()) {
-        List<Tree> conditionsList = list(Arrays.stream(whenElement.getConditions()));
-        TextPointer startPointer = conditionsList.get(0).metaData().textRange().start();
-        TextPointer endPointer = conditionsList.get(conditionsList.size() - 1).metaData().textRange().end();
-        TextRange textRange = new TextRangeImpl(startPointer, endPointer);
-        TreeMetaData treeMetaData = metaDataProvider.metaData(textRange);
-        conditions = new NativeTreeImpl(treeMetaData, new KotlinNativeKind(KtWhenCondition.class), conditionsList);
-      }
-      return new MatchCaseTreeImpl(getTreeMetaData(whenElement), conditions, body);
-    } else if (element instanceof KtLiteralStringTemplateEntry || element instanceof KtEscapeStringTemplateEntry
-      || (element instanceof KtStringTemplateExpression && !((KtStringTemplateExpression) element).hasInterpolation())) {
+      return createMatchCase(metaData, (KtWhenEntry) element);
+    } else if (isLiteral(element)) {
       return new LiteralTreeImpl(metaData, element.getText());
     } else if (element instanceof KtOperationExpression) {
-      return createOperationExpression((KtOperationExpression) element, metaData);
-    } else if (element instanceof KtParameter) {
-      return new IdentifierTreeImpl(metaData, ((KtParameter) element).getName());
+      return createOperationExpression(metaData, (KtOperationExpression) element);
+    } else if (element instanceof KtParameter && ((KtParameter) element).getName() != null) {
+      return createIdentifierTree(metaData, ((KtParameter) element).getName());
     } else {
       return new NativeTreeImpl(metaData, new KotlinNativeKind(element), list(Arrays.stream(element.getChildren())));
     }
   }
 
-  @NotNull
-  private Tree createFunctionDeclarationTree(@NotNull KtFunction functionElement, TreeMetaData metaData) {
+  private Tree createFunctionDeclarationTree(TreeMetaData metaData, KtFunction functionElement) {
     List<Tree> modifiers = getModifierList(functionElement.getModifierList());
     PsiElement nameIdentifier = functionElement.getNameIdentifier();
     Tree returnType = null;
@@ -190,12 +167,13 @@ class KotlinTreeVisitor {
     List<Tree> parametersList = list(functionElement.getValueParameters().stream());
     Tree bodyTree = createElement(functionElement.getBodyExpression());
     KtTypeElement typeElement = functionElement.getTypeReference() != null ? functionElement.getTypeReference().getTypeElement() : null;
+    String name = functionElement.getName();
 
     if (typeElement != null) {
       returnType = new IdentifierTreeImpl(getTreeMetaData(typeElement), typeElement.getText());
     }
-    if (nameIdentifier != null) {
-      identifierTree = new IdentifierTreeImpl(getTreeMetaData(nameIdentifier), functionElement.getName());
+    if (nameIdentifier != null && name != null) {
+      identifierTree = new IdentifierTreeImpl(getTreeMetaData(nameIdentifier), name);
     }
     if (bodyTree != null) {
       // FIXME are we sure we want body of function as block tree ?
@@ -212,12 +190,10 @@ class KotlinTreeVisitor {
     return new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, identifierTree, parametersList, (BlockTree) bodyTree);
   }
 
-  @Nullable
   private List<Tree> getModifierList(@Nullable KtModifierList modifierList) {
     if (modifierList == null) {
       return Collections.emptyList();
     }
-
     return Arrays.stream(KtTokens.MODIFIER_KEYWORDS_ARRAY)
       .map(modifierList::getModifier)
       .filter(Objects::nonNull)
@@ -228,11 +204,71 @@ class KotlinTreeVisitor {
       .collect(Collectors.toList());
   }
 
-  @NotNull
-  private Tree createBinaryExpression(@NotNull KtBinaryExpression element, TreeMetaData metaData) {
+  private Tree createIfTree(TreeMetaData metaData, KtIfExpression element) {
+    Tree condition = createElement(element.getCondition());
+    Tree thenBranch = createElement(element.getThen());
+    Tree elseBranch = createElement(element.getElse());
+    if (condition == null) {
+      throw new ParseException("Invalid 'If' structure. 'condition' cannot be null", metaData.textRange().start());
+    }
+
+    if (thenBranch == null) {
+      // Kotlin allows for a null then branch, which we match to a native since this is not allowed in Slang
+      thenBranch = nullNative(condition.metaData());
+    }
+    return new IfTreeImpl(metaData, condition, thenBranch, elseBranch);
+  }
+
+  private static Tree createIdentifierTree(TreeMetaData metaData, @Nullable String name) {
+    if (name == null) {
+      throw new ParseException("Identifier name cannot be null", metaData.textRange().start());
+    }
+    return new IdentifierTreeImpl(metaData, name);
+  }
+
+  private static Tree nullNative(TreeMetaData metaData) {
+    // We use the metadata of the parent here, as a NULL kind has no range itself
+    return new NativeTreeImpl(metaData, NULL_NATIVE_KIND, Collections.emptyList());
+  }
+
+  private Tree createMatchTree(TreeMetaData metaData, KtWhenExpression element) {
+    Tree subjectExpression = createElement(element.getSubjectExpression());
+    if (subjectExpression == null) {
+      subjectExpression = nullNative(metaData);
+    }
+    List<MatchCaseTree> whenExpressions = list(element.getEntries().stream()).stream()
+      .map(MatchCaseTree.class::cast)
+      .collect(Collectors.toList());
+    return new MatchTreeImpl(metaData, subjectExpression, whenExpressions);
+  }
+
+  private Tree createMatchCase(TreeMetaData metaData, KtWhenEntry element) {
+    Tree body = createElement(element.getExpression());
+    if (body == null) {
+      throw new ParseException("invalid 'when' structure. 'condition' in 'when' entries cannot be null", metaData.textRange().start());
+    }
+    Tree conditionExpression = null;
+    if (!element.isElse()) {
+      List<Tree> conditionsList = list(Arrays.stream(element.getConditions()));
+      TextPointer startPointer = conditionsList.get(0).metaData().textRange().start();
+      TextPointer endPointer = conditionsList.get(conditionsList.size() - 1).metaData().textRange().end();
+      TextRange textRange = new TextRangeImpl(startPointer, endPointer);
+      TreeMetaData treeMetaData = metaDataProvider.metaData(textRange);
+      conditionExpression = new NativeTreeImpl(treeMetaData, new KotlinNativeKind(KtWhenCondition.class), conditionsList);
+    }
+    return new MatchCaseTreeImpl(metaData, conditionExpression, body);
+  }
+
+  private Tree createBinaryExpression(TreeMetaData metaData, KtBinaryExpression element) {
     Tree leftOperand = createElement(element.getLeft());
     Tree rightOperand = createElement(element.getRight());
-    IElementType operationToken = element.getOperationToken();
+    if (leftOperand == null) {
+      leftOperand = nullNative(metaData);
+    }
+    if (rightOperand == null) {
+      rightOperand = nullNative(metaData);
+    }
+    KtToken operationToken = element.getOperationReference().getOperationSignTokenType();
     Operator operator = TOKENS_OPERATOR_MAP.get(operationToken);
     AssignmentExpressionTree.Operator assignmentOperator = ASSIGNMENTS_OPERATOR_MAP.get(operationToken);
     if (operator != null) {
@@ -241,17 +277,16 @@ class KotlinTreeVisitor {
       return new AssignmentExpressionTreeImpl(metaData, assignmentOperator, leftOperand, rightOperand);
     } else {
       // FIXME ensure they are all supported. Ex: Add '/=' for assignments
-      return createOperationExpression(element, metaData);
+      return createOperationExpression(metaData, element);
     }
   }
 
-  @NotNull
-  private Tree createOperationExpression(@NotNull KtOperationExpression operationExpression, TreeMetaData metaData) {
+  private Tree createOperationExpression(TreeMetaData metaData, KtOperationExpression operationExpression) {
     KotlinNativeKind nativeKind = new KotlinNativeKind(operationExpression, operationExpression.getOperationReference().getReferencedNameElement().getText());
     return new NativeTreeImpl(metaData, nativeKind, list(Arrays.stream(operationExpression.getChildren())));
   }
 
-  private TreeMetaData getTreeMetaData(@NotNull PsiElement element) {
+  private TreeMetaData getTreeMetaData(PsiElement element) {
     return metaDataProvider.metaData(KotlinTextRanges.textRange(psiDocument, element));
   }
 
@@ -265,5 +300,20 @@ class KotlinTreeVisitor {
 
   Tree getSLangAST() {
     return sLangAST;
+  }
+
+  private static boolean shouldSkipElement(PsiElement element) {
+    return element instanceof PsiWhiteSpace || element instanceof LeafPsiElement;
+  }
+
+  private static boolean isError(PsiElement element) {
+    return element instanceof PsiErrorElement;
+  }
+
+  private static boolean isLiteral(PsiElement element) {
+    return element instanceof KtConstantExpression
+      || element instanceof KtLiteralStringTemplateEntry
+      || element instanceof KtEscapeStringTemplateEntry
+      || (element instanceof KtStringTemplateExpression && !((KtStringTemplateExpression) element).hasInterpolation());
   }
 }

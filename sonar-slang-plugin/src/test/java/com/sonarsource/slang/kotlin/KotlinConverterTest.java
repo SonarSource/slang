@@ -22,6 +22,8 @@ package com.sonarsource.slang.kotlin;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
+import com.sonarsource.slang.api.IdentifierTree;
+import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
@@ -29,6 +31,7 @@ import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.parser.SLangConverter;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Rule;
@@ -187,6 +190,12 @@ public class KotlinConverterTest {
 
     assertTrees(kotlinStatements("if (x) 1 else if (x > 2) 4"))
       .isEquivalentTo(slangStatements("if (x) 1 else if (x > 2) 4;"));
+
+    // In kotlin a null 'then' branch is valid code, so it is mapped to a native tree as it is not valid in Slang AST
+    IfTree ifStatementWithNullThenBranch = (IfTree) kotlinStatement("if (x) else 4");
+    assertTrees(Collections.singletonList(ifStatementWithNullThenBranch))
+      .isNotEquivalentTo(slangStatements("if (x) { } else 4"));
+    assertTree(ifStatementWithNullThenBranch).hasChildren(IdentifierTree.class, NativeTree.class, LiteralTree.class);
   }
 
   @Test
@@ -203,7 +212,7 @@ public class KotlinConverterTest {
   }
 
   @Test
-  public void testSComplexMatchExpression() {
+  public void testComplexMatchExpression() {
     MatchTree complexWhen = (MatchTree) kotlinStatement("" +
       "when (x) { isBig() -> 1;1,2 -> x; in 5..10 -> y; !in 10..20 -> z; is String -> x; 1,2 -> y; }");
     List<MatchCaseTree> cases = complexWhen.cases();
@@ -215,8 +224,11 @@ public class KotlinConverterTest {
     assertTree(getCondition(cases, 1)).isEquivalentTo(getCondition(cases, 5));
 
     MatchTree emptyWhen = (MatchTree) kotlinStatement("when {}");
-    assertThat(emptyWhen.expression()).isNull();
-    assertThat(emptyWhen.cases()).hasSize(0);
+    assertTree(emptyWhen.expression()).isNotNull();
+    assertThat(emptyWhen.cases()).isEmpty();
+    assertTree(emptyWhen).hasChildren(NativeTree.class);
+    assertTree(emptyWhen).isEquivalentTo(kotlinStatement("when {}"));
+    assertTree(emptyWhen).isNotEquivalentTo(kotlinStatement("when (x) {}"));
   }
 
   @Test
