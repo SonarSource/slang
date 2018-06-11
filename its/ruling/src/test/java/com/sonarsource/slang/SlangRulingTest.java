@@ -79,11 +79,4 @@ public class SlangRulingTest {
     assertThat(litsDifference).isEmpty();
   }
 
-  @AfterClass
-  public static void tearDown() {
-    if (orchestrator != null) {
-      orchestrator.stop();
-    }
-  }
-
 }
