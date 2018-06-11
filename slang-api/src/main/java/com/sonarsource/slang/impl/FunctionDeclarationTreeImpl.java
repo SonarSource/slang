@@ -58,7 +58,9 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
     if (returnType != null) {
       this.children.add(returnType);
     }
-    this.children.add(name);
+    if (name != null) {
+      this.children.add(name);
+    }
     this.children.addAll(formalParameters);
     if (body != null) {
       this.children.add(body);
