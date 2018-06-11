@@ -24,8 +24,11 @@ import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.visitors.TreePrinter;
+
+import java.lang.reflect.Parameter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,6 +70,8 @@ public class SyntacticEquivalence {
       return ((IdentifierTree) first).name().equals(((IdentifierTree) second).name());
     } else if (first instanceof LiteralTree) {
       return ((LiteralTree) first).value().equals(((LiteralTree) second).value());
+    } else if (first instanceof ParameterTree) {
+      return ((ParameterTree) first).equals((ParameterTree) (second));
     } else if (first instanceof NativeTree) {
       if (!((NativeTree) first).nativeKind().equals(((NativeTree) second).nativeKind())) {
         return false;
