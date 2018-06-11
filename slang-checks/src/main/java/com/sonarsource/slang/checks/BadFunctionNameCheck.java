@@ -38,15 +38,13 @@ public class BadFunctionNameCheck implements SlangCheck {
   )
   public String format = DEFAULT_FORMAT;
 
-  private Pattern pattern = null;
-
   private String message(String name) {
     return "Rename function " + name + " to match the regular expression " + format;
   }
 
   @Override
   public void initialize(InitContext init) {
-    pattern = Pattern.compile(format);
+    Pattern pattern = Pattern.compile(format);
     init.register(FunctionDeclarationTree.class, (ctx, fnDeclarationTree) -> {
       String name = fnDeclarationTree.name().name();
       if (!pattern.matcher(name).matches()) {
