@@ -128,7 +128,7 @@ public class KotlinConverterTest {
     assertTree(emptyLambdaFunction.returnType()).isNull();
     assertThat(emptyLambdaFunction.formalParameters()).isEmpty();
     assertTree(emptyLambdaFunction.body()).isNull();
-
+    
     Tree aIntParam1 = functionDeclarationTree.formalParameters().get(0);
     Tree bStringParam = functionDeclarationTree.formalParameters().get(1);
     Tree aIntParam2 = functionWithInternalModifier.formalParameters().get(0);
