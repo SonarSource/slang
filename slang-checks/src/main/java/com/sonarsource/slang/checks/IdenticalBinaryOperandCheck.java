@@ -25,7 +25,7 @@ import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import org.sonar.check.Rule;
 
-import static com.sonarsource.slang.checks.utils.SyntacticEquivalence.areEquivalent;
+import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 
 @Rule(key = "S1764")
 public class IdenticalBinaryOperandCheck implements SlangCheck {
