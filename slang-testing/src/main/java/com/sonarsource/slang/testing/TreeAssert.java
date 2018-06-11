@@ -25,10 +25,13 @@ import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.utils.SyntacticEquivalence;
 import java.util.Objects;
 import org.assertj.core.api.AbstractAssert;
 
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
+import static com.sonarsource.slang.visitors.TreePrinter.tree2string;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
 
@@ -105,6 +108,25 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
   public TreeAssert hasTextRange(int startLine, int startLineOffset, int endLine, int endLineOffset) {
     isNotNull();
     assertRange(actual.metaData().textRange()).hasRange(startLine, startLineOffset, endLine, endLineOffset);
+    return this;
+  }
+
+  public TreeAssert isEquivalentTo(Tree expected) {
+    isNotNull();
+    boolean equivalent = SyntacticEquivalence.areEquivalent(actual, expected);
+    if (!equivalent) {
+      assertThat(tree2string(actual)).isEqualTo(tree2string(expected));
+      failWithMessage("Expected tree: <%s>\nbut was: <%s>", tree2string(expected), tree2string(actual));
+    }
+    return this;
+  }
+
+  public TreeAssert isNotEquivalentTo(Tree expected) {
+    isNotNull();
+    boolean equivalent = SyntacticEquivalence.areEquivalent(actual, expected);
+    if (equivalent) {
+      failWithMessage("Expected <%s> to not be equivalent to <%s>", actual, expected);
+    }
     return this;
   }
 

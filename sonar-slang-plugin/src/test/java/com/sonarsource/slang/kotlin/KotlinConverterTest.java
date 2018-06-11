@@ -29,18 +29,15 @@ import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.parser.SLangConverter;
-import com.sonarsource.slang.visitors.TreePrinter;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.assertj.core.api.AbstractAssert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static com.sonarsource.slang.kotlin.KotlinConverterTest.KotlinTreesAssert.assertTrees;
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
-import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
+import static com.sonarsource.slang.testing.TreesAssert.assertTrees;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class KotlinConverterTest {
@@ -70,23 +67,23 @@ public class KotlinConverterTest {
     Tree and3 = kotlinStatement("x and 3");
     assertTree(or3).isInstanceOf(NativeTree.class);
     assertTree(and3).isInstanceOf(NativeTree.class);
-    assertThat(areEquivalent(or3, or3b)).isTrue();
-    assertThat(areEquivalent(or3, and3)).isFalse();
+    assertTree(or3).isEquivalentTo(or3b);
+    assertTree(or3).isNotEquivalentTo(and3);
   }
 
   @Test
   public void unaryExpressions() {
-    assertThat(areEquivalent(kotlinStatement("+1"), kotlinStatement("+1"))).isTrue();
-    assertThat(areEquivalent(kotlinStatement("+1"), kotlinStatement("+2"))).isFalse();
-    assertThat(areEquivalent(kotlinStatement("+1"), kotlinStatement("-1"))).isFalse();
+    assertTree(kotlinStatement("+1")).isEquivalentTo(kotlinStatement("+1"));
+    assertTree(kotlinStatement("+1")).isNotEquivalentTo(kotlinStatement("+2"));
+    assertTree(kotlinStatement("+1")).isNotEquivalentTo(kotlinStatement("-1"));
   }
 
   @Test
   public void isExpressions() {
-    assertThat(areEquivalent(kotlinStatement("a is b"), kotlinStatement("a is b"))).isTrue();
-    assertThat(areEquivalent(kotlinStatement("a !is b"), kotlinStatement("a !is b"))).isTrue();
-    assertThat(areEquivalent(kotlinStatement("a !is b"), kotlinStatement("a is b"))).isFalse();
-    assertThat(areEquivalent(kotlinStatement("a is b"), kotlinStatement("a is c"))).isFalse();
+    assertTree(kotlinStatement("a is b")).isEquivalentTo(kotlinStatement("a is b"));
+    assertTree(kotlinStatement("a !is b")).isEquivalentTo(kotlinStatement("a !is b"));
+    assertTree(kotlinStatement("a !is b")).isNotEquivalentTo(kotlinStatement("a is b"));
+    assertTree(kotlinStatement("a is b")).isNotEquivalentTo(kotlinStatement("a is c"));
   }
 
   @Test
@@ -104,11 +101,9 @@ public class KotlinConverterTest {
     assertThat(functionWithInternalModifier.modifiers()).hasSize(1);
 
     FunctionDeclarationTree functionWithPrivate = (FunctionDeclarationTree) kotlin("private fun function2() {}");
-    Tree privateModifier1 = functionDeclarationTree.modifiers().get(0);
-    Tree internalModifier = functionWithInternalModifier.modifiers().get(0);
-    Tree privateModifier2 = functionWithPrivate.modifiers().get(0);
-    assertThat(areEquivalent(privateModifier1, internalModifier)).isFalse();
-    assertThat(areEquivalent(privateModifier1, privateModifier2)).isTrue();
+    Tree privateModifier = functionDeclarationTree.modifiers().get(0);
+    assertTree(privateModifier).isNotEquivalentTo(functionWithInternalModifier.modifiers().get(0));
+    assertTree(privateModifier).isEquivalentTo(functionWithPrivate.modifiers().get(0));
 
     FunctionDeclarationTree constructorFunction = ((FunctionDeclarationTree) kotlin("class classC(a: String, b: Int) {}").children().get(0));
     assertTree(constructorFunction.name()).isNull();
@@ -202,8 +197,8 @@ public class KotlinConverterTest {
     assertTree(matchTree.expression()).isIdentifier("x");
     List<MatchCaseTree> cases = matchTree.cases();
     assertThat(cases).hasSize(4);
-    assertThat(areEquivalent(getCondition(cases, 0), getCondition(cases, 1))).isTrue();
-    assertThat(areEquivalent(getCondition(cases, 0), getCondition(cases, 2))).isFalse();
+    assertTree(getCondition(cases, 0)).isEquivalentTo(getCondition(cases, 1));
+    assertTree(getCondition(cases, 0)).isNotEquivalentTo(getCondition(cases, 2));
     assertThat(getCondition(cases, 3)).isNull();
   }
 
@@ -213,11 +208,11 @@ public class KotlinConverterTest {
       "when (x) { isBig() -> 1;1,2 -> x; in 5..10 -> y; !in 10..20 -> z; is String -> x; 1,2 -> y; }");
     List<MatchCaseTree> cases = complexWhen.cases();
     assertThat(cases).hasSize(6);
-    assertThat(areEquivalent(getCondition(cases, 0), getCondition(cases, 1))).isFalse();
-    assertThat(areEquivalent(getCondition(cases, 0), getCondition(cases, 2))).isFalse();
-    assertThat(areEquivalent(getCondition(cases, 0), getCondition(cases, 3))).isFalse();
-    assertThat(areEquivalent(getCondition(cases, 0), getCondition(cases, 4))).isFalse();
-    assertThat(areEquivalent(getCondition(cases, 1), getCondition(cases, 5))).isTrue();
+    assertTree(getCondition(cases, 0)).isNotEquivalentTo(getCondition(cases, 1));
+    assertTree(getCondition(cases, 0)).isNotEquivalentTo(getCondition(cases, 2));
+    assertTree(getCondition(cases, 0)).isNotEquivalentTo(getCondition(cases, 3));
+    assertTree(getCondition(cases, 0)).isNotEquivalentTo(getCondition(cases, 4));
+    assertTree(getCondition(cases, 1)).isEquivalentTo(getCondition(cases, 5));
 
     MatchTree emptyWhen = (MatchTree) kotlinStatement("when {}");
     assertThat(emptyWhen.expression()).isNull();
@@ -309,23 +304,4 @@ public class KotlinConverterTest {
     return functionDeclarationTree.body().statementOrExpressions();
   }
 
-  public static class KotlinTreesAssert extends AbstractAssert<KotlinTreesAssert, List<Tree>> {
-    public KotlinTreesAssert(List<Tree> actual) {
-      super(actual, KotlinTreesAssert.class);
-    }
-
-    public KotlinTreesAssert isEquivalentTo(List<Tree> expected) {
-      isNotNull();
-      boolean equivalent = areEquivalent(actual, expected);
-      if (!equivalent) {
-        assertThat(TreePrinter.tree2string(actual)).isEqualTo(TreePrinter.tree2string(expected));
-        failWithMessage("Expected tree: <%s>\nbut was: <%s>", TreePrinter.tree2string(expected), TreePrinter.tree2string(actual));
-      }
-      return this;
-    }
-
-    public static KotlinTreesAssert assertTrees(List<Tree> actual) {
-      return new KotlinTreesAssert(actual);
-    }
-  }
 }

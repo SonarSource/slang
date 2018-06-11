@@ -36,7 +36,6 @@ import java.util.List;
 import org.junit.Test;
 
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
-import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SLangConverterTest {
@@ -88,8 +87,8 @@ public class SLangConverterTest {
     Tree privateModifier1 = function.modifiers().get(0);
     Tree publicModifier1 = publicFunction.modifiers().get(0);
     Tree privateModifier2 = emptyParamFunction.modifiers().get(0);
-    assertThat(areEquivalent(privateModifier1, publicModifier1)).isFalse();
-    assertThat(areEquivalent(privateModifier1, privateModifier2)).isTrue();
+    assertTree(privateModifier1).isNotEquivalentTo(publicModifier1);
+    assertTree(privateModifier1).isEquivalentTo(privateModifier2);
 
     FunctionDeclarationTree simpleFunction = parseFunction("foo() {}");
     assertThat(simpleFunction.modifiers()).isEmpty();
