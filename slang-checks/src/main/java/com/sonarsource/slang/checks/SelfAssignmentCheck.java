@@ -24,7 +24,7 @@ import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import org.sonar.check.Rule;
 
-import static com.sonarsource.slang.checks.utils.SyntacticEquivalence.areEquivalent;
+import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 
 @Rule(key = "S1656")
 public class SelfAssignmentCheck implements SlangCheck {

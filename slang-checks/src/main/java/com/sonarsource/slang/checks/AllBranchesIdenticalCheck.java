@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.sonar.check.Rule;
 
-import static com.sonarsource.slang.checks.utils.SyntacticEquivalence.areEquivalent;
+import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 
 @Rule(key = "S3923")
 public class AllBranchesIdenticalCheck implements SlangCheck {
