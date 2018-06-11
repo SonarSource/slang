@@ -26,6 +26,7 @@ import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.ASTConverter;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
@@ -59,8 +60,9 @@ import org.sonarsource.analyzer.commons.TokenLocation;
 
 import static java.util.stream.Collectors.toList;
 
-public class SLangConverter {
+public class SLangConverter implements ASTConverter {
 
+  @Override
   public Tree parse(String slangCode) {
     SLangLexer lexer = new SLangLexer(CharStreams.fromString(slangCode));
 
