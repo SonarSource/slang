@@ -37,13 +37,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
-import static com.sonarsource.slang.kotlin.KotlinParserTest.KotlinTreesAssert.assertTrees;
+import static com.sonarsource.slang.kotlin.KotlinConverterTest.KotlinTreesAssert.assertTrees;
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
+import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class KotlinParserTest {
+public class KotlinConverterTest {
+
+  private KotlinConverter converter = new KotlinConverter();
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
@@ -52,7 +54,7 @@ public class KotlinParserTest {
   public void testParseException() {
     thrown.expect(ParseException.class);
     thrown.expectMessage("Cannot convert file due to syntactic errors");
-    KotlinParser.fromString("enum class A {\n<!REDECLARATION!>FOO<!>,<!REDECLARATION!>FOO<!>}");
+    converter.parse("enum class A {\n<!REDECLARATION!>FOO<!>,<!REDECLARATION!>FOO<!>}");
   }
 
   @Test
@@ -224,7 +226,7 @@ public class KotlinParserTest {
 
   @Test
   public void testComments() {
-    Tree parent = KotlinParser.fromString("#! Shebang comment\n/** Doc comment \n*/\nfun function1(a: /* Block comment */Int, b: String): Boolean { // EOL comment\n true; }");
+    Tree parent = converter.parse("#! Shebang comment\n/** Doc comment \n*/\nfun function1(a: /* Block comment */Int, b: String): Boolean { // EOL comment\n true; }");
     assertTree(parent).isInstanceOf(TopLevelTree.class);
     assertThat(parent.children()).hasSize(3);
 
@@ -253,8 +255,8 @@ public class KotlinParserTest {
 
   @Test
   public void testMappedComments() {
-    TopLevelTree kotlinTree = (TopLevelTree) KotlinParser
-      .fromString("/** 1st comment */\n// comment 2\nfun function() = /* Block comment */ 3;");
+    TopLevelTree kotlinTree = (TopLevelTree) converter
+      .parse("/** 1st comment */\n// comment 2\nfun function() = /* Block comment */ 3;");
     TopLevelTree slangTree = (TopLevelTree) new SLangConverter()
       .parse("/** 1st comment */\n// comment 2\nvoid function() { /* Block comment */ 3; }");
 
@@ -295,7 +297,7 @@ public class KotlinParserTest {
   }
 
   private Tree kotlin(String innerCode) {
-    Tree tree = KotlinParser.fromString(innerCode);
+    Tree tree = converter.parse(innerCode);
     assertThat(tree).isInstanceOf(TopLevelTree.class);
     assertThat(tree.children()).hasSize(3);
     return tree.children().get(2);

@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.kotlin;
 
+import com.sonarsource.slang.api.ASTConverter;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.CommonCheckList;
@@ -67,10 +68,11 @@ public class KotlinSensor implements Sensor {
   }
 
   private static void analyseFiles(SensorContext sensorContext, Iterable<InputFile> inputFiles, List<TreeVisitor<InputFileContext>> visitors) {
+    ASTConverter converter = new KotlinConverter();
     for (InputFile inputFile : inputFiles) {
       InputFileContext inputFileContext = new InputFileContext(sensorContext, inputFile);
       try {
-        analyseFile(inputFileContext, inputFile, visitors);
+        analyseFile(converter, inputFileContext, inputFile, visitors);
       } catch (ParseException e) {
         logParsingError(inputFile, e);
         inputFileContext.reportError("Unable to parse file: " + inputFile, e.getPosition());
@@ -78,7 +80,7 @@ public class KotlinSensor implements Sensor {
     }
   }
 
-  private static void analyseFile(InputFileContext inputFileContext, InputFile inputFile, List<TreeVisitor<InputFileContext>> visitors) {
+  private static void analyseFile(ASTConverter converter, InputFileContext inputFileContext, InputFile inputFile, List<TreeVisitor<InputFileContext>> visitors) {
     String content;
     try {
       content = inputFile.contents();
@@ -86,7 +88,7 @@ public class KotlinSensor implements Sensor {
       throw new ParseException("Cannot read " + inputFile);
     }
 
-    Tree tree = KotlinParser.fromString(content);
+    Tree tree = converter.parse(content);
     for (TreeVisitor<InputFileContext> visitor : visitors) {
       visitor.scan(inputFileContext, tree);
     }

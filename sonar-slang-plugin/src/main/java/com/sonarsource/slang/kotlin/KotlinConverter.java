@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.kotlin;
 
+import com.sonarsource.slang.api.ASTConverter;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
@@ -34,13 +35,11 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 
-public class KotlinParser {
+public class KotlinConverter implements ASTConverter {
   private static final PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(createKotlinCoreEnvironment());
 
-  private KotlinParser() {
-  }
-
-  public static Tree fromString(String content) {
+  @Override
+  public Tree parse(String content) {
     PsiFile psiFile = psiFileFactory.createFileFromText(KotlinLanguage.INSTANCE, content);
     Document document;
     try {
