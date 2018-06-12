@@ -112,7 +112,7 @@ public class SLangConverter implements ASTConverter {
     map.put("/", Operator.DIVIDED_BY);
     return Collections.unmodifiableMap(map);
   }
-  
+
   private static Map<String, AssignmentExpressionTree.Operator> assignmentOperatorMap() {
     Map<String, AssignmentExpressionTree.Operator> map = new HashMap<>();
     map.put("=", AssignmentExpressionTree.Operator.EQUAL);
