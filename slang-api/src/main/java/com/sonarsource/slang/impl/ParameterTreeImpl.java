@@ -27,6 +27,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class ParameterTreeImpl extends BaseTreeImpl implements ParameterTree {
 
@@ -40,11 +41,15 @@ public class ParameterTreeImpl extends BaseTreeImpl implements ParameterTree {
   }
 
   @Override
-  public String name() { return name; }
+  public String name() {
+    return name;
+  }
 
   @CheckForNull
   @Override
-  public Tree type() { return type; }
+  public Tree type() {
+    return type;
+  }
 
   @Override
   public List<Tree> children() {
@@ -74,5 +79,10 @@ public class ParameterTreeImpl extends BaseTreeImpl implements ParameterTree {
     }
 
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, type);
   }
 }

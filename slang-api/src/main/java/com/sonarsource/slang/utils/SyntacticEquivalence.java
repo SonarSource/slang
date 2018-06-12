@@ -28,7 +28,6 @@ import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.visitors.TreePrinter;
 
-import java.lang.reflect.Parameter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
