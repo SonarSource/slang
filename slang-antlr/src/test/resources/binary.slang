@@ -14,7 +14,7 @@ native ["DEFER"] {
   ]
 }
 
-public fun int test()
+public int fun test()
 {
   e = a / c;
 }

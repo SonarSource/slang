@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.parser;
 
+import com.sonarsource.slang.api.ASTConverter;
 import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
@@ -26,7 +27,6 @@ import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.NativeTree;
-import com.sonarsource.slang.api.ASTConverter;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
@@ -149,12 +149,16 @@ public class SLangConverter implements ASTConverter {
     public Tree visitMethodDeclaration(SLangParser.MethodDeclarationContext ctx) {
       List<Tree> modifiers = list(ctx.methodModifier());
       Tree returnType = null;
+      IdentifierTree name = null;
       SLangParser.MethodHeaderContext methodHeaderContext = ctx.methodHeader();
       SLangParser.ResultContext resultContext = methodHeaderContext.result();
+      SLangParser.IdentifierContext identifier = methodHeaderContext.methodDeclarator().identifier();
       if (resultContext != null) {
         returnType = new IdentifierTreeImpl(meta(resultContext), resultContext.getText());
       }
-      IdentifierTree name = (IdentifierTree) visit(methodHeaderContext.methodDeclarator().identifier());
+      if (identifier != null) {
+        name = (IdentifierTree) visit(identifier);
+      }
 
       List<Tree> convertedParameters = new ArrayList<>();
       SLangParser.FormalParameterListContext formalParameterListContext = methodHeaderContext.methodDeclarator().formalParameterList();
