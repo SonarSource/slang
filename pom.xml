@@ -53,7 +53,7 @@
     <gitRepositoryName>slang</gitRepositoryName>
     <!-- Release: enable publication to Bintray -->
     <artifactsToPublish>${project.groupId}:sonar-slang-plugin:jar</artifactsToPublish>
-    <orchestrator.version>3.14.0.887</orchestrator.version>
+    <orchestrator.version>3.19.0.1641</orchestrator.version>
   </properties>
 
   <dependencyManagement>
