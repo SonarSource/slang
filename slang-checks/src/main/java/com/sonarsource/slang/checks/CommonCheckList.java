@@ -30,14 +30,14 @@ public class CommonCheckList {
   public static List<Class> checks() {
     return Arrays.asList(
       AllBranchesIdenticalCheck.class,
+      BadFunctionNameCheck.class,
       CollapsibleIfStatementsCheck.class,
       EmptyBlockCheck.class,
       IdenticalBinaryOperandCheck.class,
       IdenticalConditionsCheck.class,
       SelfAssignmentCheck.class,
       TodoCommentCheck.class,
-      TooManyParametersCheck.class,
-      BadFunctionNameCheck.class);
+      TooManyParametersCheck.class);
   }
 
 }

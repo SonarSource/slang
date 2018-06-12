@@ -20,6 +20,7 @@
 package com.sonarsource.slang.checks;
 
 import com.sonarsource.slang.api.FunctionDeclarationTree;
+import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import java.util.regex.Pattern;
@@ -46,9 +47,9 @@ public class BadFunctionNameCheck implements SlangCheck {
   public void initialize(InitContext init) {
     Pattern pattern = Pattern.compile(format);
     init.register(FunctionDeclarationTree.class, (ctx, fnDeclarationTree) -> {
-      String name = fnDeclarationTree.name().name();
-      if (!pattern.matcher(name).matches()) {
-        ctx.reportIssue(fnDeclarationTree.name(), message(name));
+      IdentifierTree name = fnDeclarationTree.name();
+      if (name != null && !pattern.matcher(name.name()).matches()) {
+        ctx.reportIssue(fnDeclarationTree.name(), message(name.name()));
       }
     });
   }
