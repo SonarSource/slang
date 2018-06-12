@@ -167,6 +167,10 @@ class KotlinTreeVisitor {
   }
 
   private Tree createFunctionDeclarationTree(TreeMetaData metaData, KtFunction functionElement) {
+    if (functionElement.getReceiverTypeReference() != null) {
+      // Extension function. For now they are considered as native elements instead of function declaration to avoid FP
+      return createNativeTree(metaData, new KotlinNativeKind(functionElement), functionElement);
+    }
     List<Tree> modifiers = getModifierList(functionElement.getModifierList());
     PsiElement nameIdentifier = functionElement.getNameIdentifier();
     Tree returnType = null;

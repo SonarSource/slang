@@ -527,10 +527,6 @@
 'kotlin-project:kotlin/idea/ide-common/src/org/jetbrains/kotlin/caches/resolve/JsAnalyzerFacade.kt':[
 42,
 ],
-'kotlin-project:kotlin/idea/ide-common/src/org/jetbrains/kotlin/idea/analysis/AnalyzerUtil.kt':[
-39,
-53,
-],
 'kotlin-project:kotlin/idea/ide-common/src/org/jetbrains/kotlin/idea/codeInsight/ReferenceVariantsHelper.kt':[
 70,
 ],
@@ -576,12 +572,6 @@
 ],
 'kotlin-project:kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/introduce/extractionEngine/ExtractableCodeDescriptor.kt':[
 348,
-],
-'kotlin-project:kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/introduce/extractionEngine/extractableAnalysisUtil.kt':[
-225,
-],
-'kotlin-project:kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/introduce/extractionEngine/inferParameterInfo.kt':[
-151,
 ],
 'kotlin-project:kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/introduce/introduceParameter/KotlinIntroduceParameterHandler.kt':[
 68,
@@ -738,12 +728,6 @@
 'kotlin-project:kotlin/plugins/kapt3/kapt3-compiler/src/org/jetbrains/kotlin/kapt3/KaptContext.kt':[
 37,
 ],
-'kotlin-project:kotlin/plugins/kapt3/kapt3-compiler/src/org/jetbrains/kotlin/kapt3/annotationProcessing.kt':[
-37,
-],
-'kotlin-project:kotlin/plugins/kapt3/kapt3-compiler/src/org/jetbrains/kotlin/kapt3/stubs/SignatureParserVisitor.kt':[
-294,
-],
 'kotlin-project:ktor/ktor-features/ktor-auth/src/io/ktor/auth/DigestAuth.kt':[
 84,
 ],
@@ -774,10 +758,6 @@
 ],
 'kotlin-project:ktor/ktor-network-tls/src/io/ktor/network/tls/CipherSuites.kt':[
 11,
-],
-'kotlin-project:ktor/ktor-network-tls/src/io/ktor/network/tls/certificates/Certificates.kt':[
-81,
-181,
 ],
 'kotlin-project:ktor/ktor-server/ktor-server-core/src/io/ktor/response/ResponseCookies.kt':[
 16,

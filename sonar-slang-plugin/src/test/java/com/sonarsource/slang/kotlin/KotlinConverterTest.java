@@ -140,6 +140,18 @@ public class KotlinConverterTest {
   }
 
   @Test
+  public void testExtensionFunction() {
+    assertTree(kotlin("fun A.fun1() {}"))
+      .isNotEquivalentTo(kotlin("fun B.fun1() {}"));
+    assertTree(kotlin("fun A.fun1() {}"))
+      .isNotEquivalentTo(kotlin("fun fun1() {}"));
+    assertTree(kotlin("fun A.fun1() {}"))
+      .isEquivalentTo(kotlin("fun A.fun1() {}"));
+    assertTree(kotlin("fun A.fun1() {}"))
+      .isNotEquivalentTo(kotlin("class A { fun fun1() {} }"));
+  }
+
+  @Test
   public void testLiterals() {
     assertTrees(kotlinStatements("554; true; false; null; \"string\"; 'c';"))
       .isEquivalentTo(slangStatements("554; true; false; null; \"string\"; 'c';"));
