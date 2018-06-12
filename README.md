@@ -16,4 +16,4 @@ If you want to run them, you need first to retrieve the related projects which a
 Then run the ITs
 
     cd its
-    mvn clean install
+    mvn clean install -Dsonar.runtimeVersion=7.1

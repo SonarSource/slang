@@ -23,14 +23,15 @@ import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.OrchestratorBuilder;
 import com.sonar.orchestrator.build.SonarScanner;
 import com.sonar.orchestrator.locator.FileLocation;
+import com.sonar.orchestrator.locator.MavenLocation;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Collections;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sonarsource.analyzer.commons.ProfileGenerator;
 
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SlangRulingTest {
@@ -39,10 +40,9 @@ public class SlangRulingTest {
   @BeforeClass
   public static void setUp() {
     OrchestratorBuilder builder = Orchestrator.builderEnv()
-      .setOrchestratorProperty("litsVersion", "0.6")
-      .addPlugin("lits");
-
-    builder.addPlugin(FileLocation.byWildcardMavenFilename(new File("../../sonar-slang-plugin/target"), "sonar-slang-plugin-*.jar"));
+      .setSonarVersion(requireNonNull(System.getProperty("sonar.runtimeVersion"), "Please set system property sonar.runtimeVersion"))
+      .addPlugin(MavenLocation.of("org.sonarsource.sonar-lits-plugin","sonar-lits-plugin", "0.6"))
+      .addPlugin(FileLocation.byWildcardMavenFilename(new File("../../sonar-slang-plugin/target"), "sonar-slang-plugin-*.jar"));
 
     orchestrator = builder.build();
     orchestrator.start();
