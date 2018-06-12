@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
 import org.jetbrains.kotlin.psi.KtBlockExpression;
 import org.jetbrains.kotlin.psi.KtConstantExpression;
+import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry;
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunction;
@@ -80,8 +81,6 @@ import org.jetbrains.kotlin.psi.KtWhenEntry;
 import org.jetbrains.kotlin.psi.KtWhenExpression;
 
 class KotlinTreeVisitor {
-  // Native kind for trees that can be null in kotlin, but not in Slang
-  private static final NativeKind NULL_NATIVE_KIND = new KotlinNativeKind(PsiElement.class, "NULL_NATIVE");
   private static final Map<KtToken, Operator> TOKENS_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
     new SimpleEntry<>(KtTokens.EQEQ, Operator.EQUAL_TO),
     new SimpleEntry<>(KtTokens.EXCLEQ, Operator.NOT_EQUAL_TO),
@@ -152,10 +151,12 @@ class KotlinTreeVisitor {
       return new LiteralTreeImpl(metaData, element.getText());
     } else if (element instanceof KtOperationExpression) {
       return createOperationExpression(metaData, (KtOperationExpression) element);
-    } else if (element instanceof KtParameter && ((KtParameter) element).getName() != null) {
-      return createIdentifierTree(metaData, ((KtParameter) element).getName());
+    } else if (element instanceof KtDestructuringDeclarationEntry) {
+      return createNativeTree(metaData, new KotlinNativeKind(element, element.getText()), element);
+    } else if (element instanceof KtParameter) {
+      return createParameter(metaData, element);
     } else {
-      return new NativeTreeImpl(metaData, new KotlinNativeKind(element), list(Arrays.stream(element.getChildren())));
+      return createNativeTree(metaData, new KotlinNativeKind(element), element);
     }
   }
 
@@ -199,7 +200,7 @@ class KotlinTreeVisitor {
       .filter(Objects::nonNull)
       .map(element -> {
         NativeKind modifierKind = new KotlinNativeKind(element, element.getText());
-        return new NativeTreeImpl(getTreeMetaData(element), modifierKind, Collections.emptyList());
+        return createNativeTree(getTreeMetaData(element), modifierKind, Collections.emptyList());
       })
       .collect(Collectors.toList());
   }
@@ -214,32 +215,47 @@ class KotlinTreeVisitor {
 
     if (thenBranch == null) {
       // Kotlin allows for a null then branch, which we match to a native since this is not allowed in Slang
-      thenBranch = nullNative(condition.metaData());
+      List<Tree> children = elseBranch != null ? Arrays.asList(condition, elseBranch) : Collections.emptyList();
+      return createNativeTree(metaData, new KotlinNativeKind(element), children);
     }
     return new IfTreeImpl(metaData, condition, thenBranch, elseBranch);
   }
 
-  private static Tree createIdentifierTree(TreeMetaData metaData, @Nullable String name) {
-    if (name == null) {
-      throw new ParseException("Identifier name cannot be null", metaData.textRange().start());
+  private Tree createParameter(TreeMetaData metaData, PsiElement element) {
+    String name = ((KtParameter) element).getName();
+    NativeKind kind;
+    // For some reason the Identifier is not among the Parameter children array, so for now we add this information to the native kind
+    if (name != null) {
+      kind = new KotlinNativeKind(element, name);
+    } else {
+      kind = new KotlinNativeKind(element);
     }
-    return new IdentifierTreeImpl(metaData, name);
+    return createNativeTree(metaData, kind, element);
   }
 
-  private static Tree nullNative(TreeMetaData metaData) {
-    // We use the metadata of the parent here, as a NULL kind has no range itself
-    return new NativeTreeImpl(metaData, NULL_NATIVE_KIND, Collections.emptyList());
+  private Tree createNativeTree(TreeMetaData metaData, NativeKind kind, PsiElement element) {
+    return createNativeTree(metaData, kind, list(Arrays.stream(element.getChildren())));
+  }
+
+  private static Tree createNativeTree(TreeMetaData metaData, NativeKind kind, List<Tree> children) {
+    return new NativeTreeImpl(metaData, kind, children);
+  }
+
+  private static Tree createIdentifierTree(TreeMetaData metaData, String name) {
+    return new IdentifierTreeImpl(metaData, name);
   }
 
   private Tree createMatchTree(TreeMetaData metaData, KtWhenExpression element) {
     Tree subjectExpression = createElement(element.getSubjectExpression());
+    List<Tree> whenExpressions = list(element.getEntries().stream());
     if (subjectExpression == null) {
-      subjectExpression = nullNative(metaData);
+      return createNativeTree(metaData, new KotlinNativeKind(element), whenExpressions);
     }
-    List<MatchCaseTree> whenExpressions = list(element.getEntries().stream()).stream()
-      .map(MatchCaseTree.class::cast)
-      .collect(Collectors.toList());
-    return new MatchTreeImpl(metaData, subjectExpression, whenExpressions);
+    return new MatchTreeImpl(metaData,
+      subjectExpression,
+      whenExpressions.stream()
+        .map(MatchCaseTree.class::cast)
+        .collect(Collectors.toList()));
   }
 
   private Tree createMatchCase(TreeMetaData metaData, KtWhenEntry element) {
@@ -254,7 +270,7 @@ class KotlinTreeVisitor {
       TextPointer endPointer = conditionsList.get(conditionsList.size() - 1).metaData().textRange().end();
       TextRange textRange = new TextRangeImpl(startPointer, endPointer);
       TreeMetaData treeMetaData = metaDataProvider.metaData(textRange);
-      conditionExpression = new NativeTreeImpl(treeMetaData, new KotlinNativeKind(KtWhenCondition.class), conditionsList);
+      conditionExpression = createNativeTree(treeMetaData, new KotlinNativeKind(KtWhenCondition.class), conditionsList);
     }
     return new MatchCaseTreeImpl(metaData, conditionExpression, body);
   }
@@ -262,13 +278,15 @@ class KotlinTreeVisitor {
   private Tree createBinaryExpression(TreeMetaData metaData, KtBinaryExpression element) {
     Tree leftOperand = createElement(element.getLeft());
     Tree rightOperand = createElement(element.getRight());
-    if (leftOperand == null) {
-      leftOperand = nullNative(metaData);
-    }
-    if (rightOperand == null) {
-      rightOperand = nullNative(metaData);
-    }
     KtToken operationToken = element.getOperationReference().getOperationSignTokenType();
+    if (leftOperand == null || rightOperand == null) {
+      // Binary expression with a single or no operand, which cannot exist in Slang AST
+      List<Tree> children = Stream.of(leftOperand, rightOperand)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+      return createNativeTree(metaData, new KotlinNativeKind(element, operationToken), children);
+    }
+
     Operator operator = TOKENS_OPERATOR_MAP.get(operationToken);
     AssignmentExpressionTree.Operator assignmentOperator = ASSIGNMENTS_OPERATOR_MAP.get(operationToken);
     if (operator != null) {
@@ -282,8 +300,8 @@ class KotlinTreeVisitor {
   }
 
   private Tree createOperationExpression(TreeMetaData metaData, KtOperationExpression operationExpression) {
-    KotlinNativeKind nativeKind = new KotlinNativeKind(operationExpression, operationExpression.getOperationReference().getReferencedNameElement().getText());
-    return new NativeTreeImpl(metaData, nativeKind, list(Arrays.stream(operationExpression.getChildren())));
+    NativeKind nativeKind = new KotlinNativeKind(operationExpression, operationExpression.getOperationReference().getReferencedNameElement().getText());
+    return createNativeTree(metaData, nativeKind, operationExpression);
   }
 
   private TreeMetaData getTreeMetaData(PsiElement element) {

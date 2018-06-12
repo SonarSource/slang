@@ -23,7 +23,6 @@ import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
-import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
@@ -90,13 +89,21 @@ public class KotlinConverterTest {
   }
 
   @Test
+  public void testNullParameterNames() {
+    // In the following case, the '(a, b)' part is not a parameter with a name, but a 'KtDestructuringDeclaration'
+    assertTree(kotlinStatement("for ((a, b) in container) {a}"))
+      .isNotEquivalentTo(kotlinStatement("for ((b, a) in container) {a}"));
+    assertTree(kotlinStatement("for ((a, b) in container) {a}"))
+      .isEquivalentTo(kotlinStatement("for ((a, b) in container) {a}"));
+  }
+
+  @Test
   public void testFunctionDeclaration() {
     FunctionDeclarationTree functionDeclarationTree = ((FunctionDeclarationTree) kotlin("private fun function1(a: Int, b: String): Boolean { true; }"));
     assertTree(functionDeclarationTree.name()).isIdentifier("function1").hasTextRange(1, 12, 1, 21);
     assertThat(functionDeclarationTree.modifiers()).hasSize(1);
     assertTree(functionDeclarationTree.returnType()).isIdentifier("Boolean");
     assertThat(functionDeclarationTree.formalParameters()).hasSize(2);
-    assertTree(functionDeclarationTree.formalParameters().get(1)).isIdentifier("b");
     assertTree(functionDeclarationTree.body()).isBlock(LiteralTree.class);
 
     FunctionDeclarationTree functionWithInternalModifier = (FunctionDeclarationTree) kotlin("internal fun function1(a: Int, b: String): Boolean = true");
@@ -121,6 +128,15 @@ public class KotlinConverterTest {
     assertTree(emptyLambdaFunction.returnType()).isNull();
     assertThat(emptyLambdaFunction.formalParameters()).isEmpty();
     assertTree(emptyLambdaFunction.body()).isNull();
+
+    Tree aIntParam1 = functionDeclarationTree.formalParameters().get(0);
+    Tree bStringParam = functionDeclarationTree.formalParameters().get(1);
+    Tree aIntParam2 = functionWithInternalModifier.formalParameters().get(0);
+    Tree aStringParam = constructorFunction.formalParameters().get(1);
+    assertTree(aIntParam1).isNotEquivalentTo(bStringParam);
+    assertTree(aIntParam1).isEquivalentTo(aIntParam2);
+    assertTree(aIntParam1).isNotEquivalentTo(aStringParam);
+    assertTree(aStringParam).isNotEquivalentTo(bStringParam);
   }
 
   @Test
@@ -191,11 +207,11 @@ public class KotlinConverterTest {
     assertTrees(kotlinStatements("if (x) 1 else if (x > 2) 4"))
       .isEquivalentTo(slangStatements("if (x) 1 else if (x > 2) 4;"));
 
-    // In kotlin a null 'then' branch is valid code, so it is mapped to a native tree as it is not valid in Slang AST
-    IfTree ifStatementWithNullThenBranch = (IfTree) kotlinStatement("if (x) else 4");
+    // In kotlin a null 'then' branch is valid code, so this if will be mapped to a native tree as it is not valid in Slang AST
+    NativeTree ifStatementWithNullThenBranch = (NativeTree) kotlinStatement("if (x) else 4");
     assertTrees(Collections.singletonList(ifStatementWithNullThenBranch))
       .isNotEquivalentTo(slangStatements("if (x) { } else 4"));
-    assertTree(ifStatementWithNullThenBranch).hasChildren(IdentifierTree.class, NativeTree.class, LiteralTree.class);
+    assertTree(ifStatementWithNullThenBranch).hasChildren(IdentifierTree.class, LiteralTree.class);
   }
 
   @Test
@@ -223,10 +239,8 @@ public class KotlinConverterTest {
     assertTree(getCondition(cases, 0)).isNotEquivalentTo(getCondition(cases, 4));
     assertTree(getCondition(cases, 1)).isEquivalentTo(getCondition(cases, 5));
 
-    MatchTree emptyWhen = (MatchTree) kotlinStatement("when {}");
-    assertTree(emptyWhen.expression()).isNotNull();
-    assertThat(emptyWhen.cases()).isEmpty();
-    assertTree(emptyWhen).hasChildren(NativeTree.class);
+    NativeTree emptyWhen = (NativeTree) kotlinStatement("when {}");
+    assertTree(emptyWhen).hasChildren(0);
     assertTree(emptyWhen).isEquivalentTo(kotlinStatement("when {}"));
     assertTree(emptyWhen).isNotEquivalentTo(kotlinStatement("when (x) {}"));
   }
