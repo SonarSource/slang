@@ -19,77 +19,22 @@
  */
 package com.sonarsource.slang.checks;
 
-import com.sonarsource.slang.api.IfTree;
-import com.sonarsource.slang.api.MatchCaseTree;
-import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.api.CheckContext;
-import com.sonarsource.slang.checks.api.InitContext;
-import com.sonarsource.slang.checks.api.SlangCheck;
-import java.util.ArrayList;
 import java.util.List;
 import org.sonar.check.Rule;
 
-import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
-
 @Rule(key = "S3923")
-public class AllBranchesIdenticalCheck implements SlangCheck {
+public class AllBranchesIdenticalCheck extends AbstractBranchDuplicationCheck {
 
   @Override
-  public void initialize(InitContext init) {
-    init.register(IfTree.class, (ctx, tree) -> {
-      Tree parent = ctx.parent();
-      if (!(parent instanceof IfTree) || tree == ((IfTree) parent).thenBranch()) {
-        checkConditionalStructure(ctx, tree, new ConditionalStructure(tree));
-      }
-    });
-    init.register(MatchTree.class, (ctx, tree) ->
-      checkConditionalStructure(ctx, tree, new ConditionalStructure(tree))
-    );
+  protected void checkDuplicatedBranches(CheckContext ctx, List<Tree> branches) {
+    // handled by S1871
   }
 
-  private static void checkConditionalStructure(CheckContext ctx, Tree tree, ConditionalStructure conditional) {
-    if (conditional.allBranchesArePresent && conditional.allBranchesAreIdentical()) {
-      ctx.reportIssue(tree, "Remove this conditional structure or edit its code blocks so that they're not all the same.");
-    }
-  }
-
-  private static class ConditionalStructure {
-
-    boolean allBranchesArePresent = false;
-
-    private final List<Tree> branches = new ArrayList<>();
-
-    private ConditionalStructure(IfTree ifTree) {
-      branches.add(ifTree.thenBranch());
-      Tree elseBranch = ifTree.elseBranch();
-      while (elseBranch != null) {
-        if (elseBranch instanceof IfTree) {
-          IfTree elseIf = (IfTree) elseBranch;
-          branches.add(elseIf.thenBranch());
-          elseBranch = elseIf.elseBranch();
-        } else {
-          branches.add(elseBranch);
-          allBranchesArePresent = true;
-          elseBranch = null;
-        }
-      }
-    }
-
-    private ConditionalStructure(MatchTree tree) {
-      for (MatchCaseTree caseTree : tree.cases()) {
-        branches.add(caseTree.body());
-        if (caseTree.expression() == null) {
-          allBranchesArePresent = true;
-        }
-      }
-    }
-
-    private boolean allBranchesAreIdentical() {
-      return branches.stream()
-        .skip(1)
-        .allMatch(branch -> areEquivalent(branches.get(0), branch));
-    }
+  @Override
+  protected void onAllIdenticalBranches(CheckContext ctx, Tree tree) {
+    ctx.reportIssue(tree, "Remove this conditional structure or edit its code blocks so that they're not all the same.");
   }
 
 }

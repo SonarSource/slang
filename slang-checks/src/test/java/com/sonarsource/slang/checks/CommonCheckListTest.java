@@ -20,7 +20,6 @@
 package com.sonarsource.slang.checks;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -28,13 +27,9 @@ public class CommonCheckListTest {
 
   @Test
   public void all_checks_should_be_present() {
-    File dir = new File("src/main/java/com/sonarsource/slang/checks");
-    File[] checkFiles = dir.listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(File dir, String name) {
-        return name.endsWith("Check.java");
-      }
-    });
+    File directory = new File("src/main/java/com/sonarsource/slang/checks");
+    File[] checkFiles = directory.listFiles((dir, name) ->
+        name.endsWith("Check.java") && !name.startsWith("Abstract"));
     Assertions.assertThat(CommonCheckList.checks().size()).isEqualTo(checkFiles.length);
   }
 
