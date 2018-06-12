@@ -25,6 +25,7 @@ import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.utils.SyntacticEquivalence;
 import java.util.Objects;
 import org.assertj.core.api.AbstractAssert;
@@ -55,6 +56,16 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
     LiteralTree actualLiteral = (LiteralTree) actual;
     if (!Objects.equals(actualLiteral.value(), expected)) {
       failWithMessage("Expected literal value to be <%s> but was <%s>", expected, actualLiteral.value());
+    }
+    return this;
+  }
+
+  public TreeAssert isUnaryExpression(UnaryExpressionTree.Operator expectedOperator) {
+    isNotNull();
+    isInstanceOf(UnaryExpressionTree.class);
+    UnaryExpressionTree actualUnary = (UnaryExpressionTree) actual;
+    if (!Objects.equals(actualUnary.operator(), expectedOperator)) {
+      failWithMessage("Expected operator to be <%s> but was <%s>", expectedOperator, actualUnary.operator());
     }
     return this;
   }

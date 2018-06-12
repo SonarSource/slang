@@ -87,7 +87,12 @@ additiveExpression
   ;
 
 multiplicativeExpression
-  :  atomicExpression (multiplicativeOperator atomicExpression)*
+  :  unaryExpression (multiplicativeOperator unaryExpression)*
+  ;
+
+unaryExpression
+  :  unaryOperator atomicExpression
+  |  atomicExpression
   ;
 
 atomicExpression
@@ -183,6 +188,10 @@ equalityOperator
  
 assignmentOperator
   :  '=' | '+=' | '-=' | '*=' | '%='
+  ;
+
+unaryOperator
+  :  '!'
   ;
 
 // Type Hierarchy 

@@ -25,6 +25,7 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.visitors.TreePrinter;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -69,6 +70,10 @@ public class SyntacticEquivalence {
       return ((LiteralTree) first).value().equals(((LiteralTree) second).value());
     } else if (first instanceof NativeTree) {
       if (!((NativeTree) first).nativeKind().equals(((NativeTree) second).nativeKind())) {
+        return false;
+      }
+    } else if (first instanceof UnaryExpressionTree) {
+      if (((UnaryExpressionTree) first).operator() != ((UnaryExpressionTree) second).operator()) {
         return false;
       }
     } else if (first instanceof BinaryExpressionTree) {
