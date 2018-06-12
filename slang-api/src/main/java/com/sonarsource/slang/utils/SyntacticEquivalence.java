@@ -73,7 +73,7 @@ public class SyntacticEquivalence {
     } else if ((first instanceof UnaryExpressionTree) && ((UnaryExpressionTree) first).operator() != ((UnaryExpressionTree) second).operator()) {
       return false;
     } else if ((first instanceof BinaryExpressionTree) && (((BinaryExpressionTree) first).operator() != ((BinaryExpressionTree) second).operator())) {
-        return false;
+      return false;
     } else if ((first instanceof AssignmentExpressionTree) && (((AssignmentExpressionTree) first).operator() != ((AssignmentExpressionTree) second).operator())) {
       return false;
     }
