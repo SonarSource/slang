@@ -19,30 +19,30 @@
  */
 package com.sonarsource.slang.impl;
 
+import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class ParameterTreeImpl extends BaseTreeImpl implements ParameterTree {
 
-  private final String name;
+  private final IdentifierTree identifier;
   private final Tree type;
 
-  public ParameterTreeImpl(TreeMetaData metaData, String name, @Nullable Tree type) {
+  public ParameterTreeImpl(TreeMetaData metaData, IdentifierTree identifier, @Nullable Tree type) {
     super(metaData);
-    this.name = name;
+    this.identifier = identifier;
     this.type = type;
   }
 
   @Override
-  public String name() {
-    return name;
+  public IdentifierTree identifier() {
+    return identifier;
   }
 
   @CheckForNull
@@ -53,36 +53,7 @@ public class ParameterTreeImpl extends BaseTreeImpl implements ParameterTree {
 
   @Override
   public List<Tree> children() {
-    return Collections.emptyList();
+    return Arrays.asList(identifier, type);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-
-    if (obj == null) {
-      return false;
-    }
-
-    if (obj instanceof ParameterTreeImpl) {
-      ParameterTreeImpl other = (ParameterTreeImpl) obj;
-
-      if (this.name.equals(other.name())) {
-        if (this.type != null) {
-          return this.type.equals(other.type());
-        }
-
-        return (other.type() == null);
-      }
-    }
-
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(name, type);
-  }
 }

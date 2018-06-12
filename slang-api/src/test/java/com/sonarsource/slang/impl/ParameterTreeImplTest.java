@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.impl;
 
+import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.NativeKind;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
@@ -35,13 +36,15 @@ public class ParameterTreeImplTest {
   public void test() {
     TreeMetaData meta = null;
     Tree parameterType = new NativeTreeImpl(meta, new TypeNativeKind(), null);
-    ParameterTreeImpl parameterTreeX = new ParameterTreeImpl(meta, "x", null);
-    ParameterTreeImpl parameterTreeXTyped = new ParameterTreeImpl(meta, "x", parameterType);
-    ParameterTreeImpl parameterTreeY = new ParameterTreeImpl(meta, "y", parameterType);
+    IdentifierTree identifierTreeX = new IdentifierTreeImpl(meta, "x");
+    IdentifierTree identifierTreeY = new IdentifierTreeImpl(meta, "y");
+    ParameterTreeImpl parameterTreeX = new ParameterTreeImpl(meta, identifierTreeX, null);
+    ParameterTreeImpl parameterTreeXTyped = new ParameterTreeImpl(meta, identifierTreeX, parameterType);
+    ParameterTreeImpl parameterTreeY = new ParameterTreeImpl(meta, identifierTreeY, parameterType);
 
-    assertThat(parameterTreeX.children()).isEmpty();
+    assertThat(parameterTreeX.children()).hasSize(2);
     assertThat(parameterTreeX.type()).isNull();
-    assertThat(parameterTreeX.name()).isEqualTo("x");
+    assertThat(parameterTreeX.identifier()).isEqualTo(identifierTreeX);
     assertThat(areEquivalent(parameterTreeX, parameterTreeX)).isTrue();
     assertThat(areEquivalent(parameterTreeX, parameterTreeXTyped)).isFalse();
     assertThat(areEquivalent(parameterTreeX, parameterTreeY)).isFalse();

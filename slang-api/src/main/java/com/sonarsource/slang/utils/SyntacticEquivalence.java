@@ -69,8 +69,6 @@ public class SyntacticEquivalence {
       return ((IdentifierTree) first).name().equals(((IdentifierTree) second).name());
     } else if (first instanceof LiteralTree) {
       return ((LiteralTree) first).value().equals(((LiteralTree) second).value());
-    } else if (first instanceof ParameterTree) {
-      return ((ParameterTree) first).equals((ParameterTree) (second));
     } else if (first instanceof NativeTree) {
       if (!((NativeTree) first).nativeKind().equals(((NativeTree) second).nativeKind())) {
         return false;

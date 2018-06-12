@@ -23,7 +23,7 @@ import javax.annotation.CheckForNull;
 
 public interface ParameterTree extends Tree {
 
-  String name();
+  IdentifierTree identifier();
 
   @CheckForNull
   Tree type();

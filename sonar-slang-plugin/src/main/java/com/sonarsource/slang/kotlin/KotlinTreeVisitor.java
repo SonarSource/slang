@@ -40,6 +40,7 @@ import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
 import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
+import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
@@ -75,6 +76,7 @@ import org.jetbrains.kotlin.psi.KtModifierList;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.KtOperationExpression;
 import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.psi.KtParameterList;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtTypeElement;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
@@ -161,8 +163,6 @@ class KotlinTreeVisitor {
     } else if (element instanceof KtDestructuringDeclarationEntry || isSimpleStringLiteralEntry(element)) {
       // To differentiate between the native trees of complex string template entries, we add the string value to the native kind
       return createNativeTree(metaData, new KotlinNativeKind(element, element.getText()), element);
-    } else if (element instanceof KtParameter) {
-      return createParameter(metaData, element);
     } else {
       return createNativeTree(metaData, new KotlinNativeKind(element), element);
     }
@@ -177,7 +177,7 @@ class KotlinTreeVisitor {
     PsiElement nameIdentifier = functionElement.getNameIdentifier();
     Tree returnType = null;
     IdentifierTree identifierTree = null;
-    List<ParameterTree> parametersList = (List<ParameterTree>)(List<?>)list(functionElement.getValueParameters().stream());
+    List<ParameterTree> parametersList = createParameterList(functionElement.getValueParameters().stream());
     Tree bodyTree = createElement(functionElement.getBodyExpression());
     KtTypeElement typeElement = functionElement.getTypeReference() != null ? functionElement.getTypeReference().getTypeElement() : null;
     String name = functionElement.getName();
@@ -230,16 +230,25 @@ class KotlinTreeVisitor {
     return new IfTreeImpl(metaData, condition, thenBranch, elseBranch);
   }
 
-  private Tree createParameter(TreeMetaData metaData, PsiElement element) {
-    String name = ((KtParameter) element).getName();
-    NativeKind kind;
+  private List<ParameterTree> createParameterList(Stream<? extends KtParameter> stream) {
+    return stream
+        .map(this::createParameter)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+  }
+
+  private ParameterTree createParameter(KtParameter ktParameter) {
+    TreeMetaData metaData = getTreeMetaData(ktParameter);
+    Tree type = createElement(ktParameter.getTypeReference());
+    String name = ktParameter.getName();
+
     // For some reason the Identifier is not among the Parameter children array, so for now we add this information to the native kind
-    if (name != null) {
-      kind = new KotlinNativeKind(element, name);
-    } else {
-      kind = new KotlinNativeKind(element);
+    if (name == null) {
+      throw new ParseException("Method parameter without a name");
     }
-    return createNativeTree(metaData, kind, element);
+
+    IdentifierTree identifier = new IdentifierTreeImpl(metaData, name);
+    return new ParameterTreeImpl(metaData, identifier, type);
   }
 
   private Tree createNativeTree(TreeMetaData metaData, NativeKind kind, PsiElement element) {

@@ -50,13 +50,11 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
     return this;
   }
 
-  public TreeAssert isParameter(String expectedName) {
+  public TreeAssert hasParameterName(String expectedIdentifierName) {
     isNotNull();
     isInstanceOf(ParameterTree.class);
     ParameterTree actualParameter = (ParameterTree) actual;
-    if (!Objects.equals(actualParameter.name(), expectedName)) {
-      failWithMessage("Expected parameter's name to be <%s> but was <%s>", expectedName, actualParameter.name());
-    }
+    assertTree(actualParameter.identifier()).isIdentifier(expectedIdentifierName);
     return this;
   }
 
