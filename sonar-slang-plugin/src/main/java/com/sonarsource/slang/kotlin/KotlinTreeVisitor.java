@@ -112,10 +112,16 @@ class KotlinTreeVisitor {
   public KotlinTreeVisitor(PsiFile psiFile, TreeMetaDataProvider metaDataProvider) {
     this.psiDocument = psiFile.getViewProvider().getDocument();
     this.metaDataProvider = metaDataProvider;
-    this.sLangAST = createElement(psiFile);
-    if (this.sLangAST == null) {
-      throw new ParseException("Slang AST should never be null");
+    this.sLangAST = createMandatoryElement(psiFile);
+  }
+
+  private Tree createMandatoryElement(@Nullable PsiElement psiElement) {
+    Tree element = createElement(psiElement);
+    if (element == null) {
+      TextPointer errorLocation = psiElement != null ? getTreeMetaData(psiElement).textRange().start() : null;
+      throw new ParseException("A mandatory AST element is missing from the grammar", errorLocation);
     }
+    return element;
   }
 
   @CheckForNull
@@ -206,16 +212,13 @@ class KotlinTreeVisitor {
   }
 
   private Tree createIfTree(TreeMetaData metaData, KtIfExpression element) {
-    Tree condition = createElement(element.getCondition());
+    Tree condition = createMandatoryElement(element.getCondition());
     Tree thenBranch = createElement(element.getThen());
     Tree elseBranch = createElement(element.getElse());
-    if (condition == null) {
-      throw new ParseException("Invalid 'If' structure. 'condition' cannot be null", metaData.textRange().start());
-    }
 
     if (thenBranch == null) {
       // Kotlin allows for a null then branch, which we match to a native since this is not allowed in Slang
-      List<Tree> children = elseBranch != null ? Arrays.asList(condition, elseBranch) : Collections.emptyList();
+      List<Tree> children = elseBranch != null ? Arrays.asList(condition, elseBranch) : Collections.singletonList(condition);
       return createNativeTree(metaData, new KotlinNativeKind(element), children);
     }
     return new IfTreeImpl(metaData, condition, thenBranch, elseBranch);
@@ -259,10 +262,7 @@ class KotlinTreeVisitor {
   }
 
   private Tree createMatchCase(TreeMetaData metaData, KtWhenEntry element) {
-    Tree body = createElement(element.getExpression());
-    if (body == null) {
-      throw new ParseException("invalid 'when' structure. 'condition' in 'when' entries cannot be null", metaData.textRange().start());
-    }
+    Tree body = createMandatoryElement(element.getExpression());
     Tree conditionExpression = null;
     if (!element.isElse()) {
       List<Tree> conditionsList = list(Arrays.stream(element.getConditions()));

@@ -212,6 +212,11 @@ public class KotlinConverterTest {
     assertTrees(Collections.singletonList(ifStatementWithNullThenBranch))
       .isNotEquivalentTo(slangStatements("if (x) { } else 4"));
     assertTree(ifStatementWithNullThenBranch).hasChildren(IdentifierTree.class, LiteralTree.class);
+
+    NativeTree ifStatementWithNullBranches = (NativeTree) kotlinStatement("if (x) else;");
+    assertTrees(Collections.singletonList(ifStatementWithNullBranches))
+      .isNotEquivalentTo(slangStatements("if (x) { } else { }"));
+    assertTree(ifStatementWithNullBranches).hasChildren(IdentifierTree.class);
   }
 
   @Test
