@@ -25,6 +25,7 @@ import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.NativeKind;
+import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
@@ -176,7 +177,7 @@ class KotlinTreeVisitor {
     PsiElement nameIdentifier = functionElement.getNameIdentifier();
     Tree returnType = null;
     IdentifierTree identifierTree = null;
-    List<IdentifierTree> parametersList = (List<IdentifierTree>)(List<?>)list(functionElement.getValueParameters().stream());
+    List<ParameterTree> parametersList = (List<ParameterTree>)(List<?>)list(functionElement.getValueParameters().stream());
     Tree bodyTree = createElement(functionElement.getBodyExpression());
     KtTypeElement typeElement = functionElement.getTypeReference() != null ? functionElement.getTypeReference().getTypeElement() : null;
     String name = functionElement.getName();

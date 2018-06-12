@@ -27,6 +27,7 @@ import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
@@ -42,6 +43,7 @@ import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
 import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
+import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.TextPointerImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
@@ -160,14 +162,14 @@ public class SLangConverter implements ASTConverter {
         name = (IdentifierTree) visit(identifier);
       }
 
-      List<IdentifierTree> convertedParameters = new ArrayList<>();
+      List<ParameterTree> convertedParameters = new ArrayList<>();
       SLangParser.FormalParameterListContext formalParameterListContext = methodHeaderContext.methodDeclarator().formalParameterList();
       if (formalParameterListContext != null) {
         SLangParser.FormalParametersContext formalParameters = formalParameterListContext.formalParameters();
         if (formalParameters != null) {
           convertedParameters.addAll(list(formalParameters.formalParameter()));
         }
-        convertedParameters.add((IdentifierTree) visit(formalParameterListContext.lastFormalParameter()));
+        convertedParameters.add((ParameterTree) visit(formalParameterListContext.lastFormalParameter()));
       }
 
       return new FunctionDeclarationTreeImpl(meta(ctx), modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()));
@@ -188,7 +190,8 @@ public class SLangConverter implements ASTConverter {
 
     @Override
     public Tree visitFormalParameter(SLangParser.FormalParameterContext ctx) {
-      return visit(ctx.variableDeclaratorId().identifier());
+      IdentifierTree tree = (IdentifierTree) visit(ctx.variableDeclaratorId().identifier());
+      return new ParameterTreeImpl(meta(ctx), tree.name(), null);
     }
 
     @Override

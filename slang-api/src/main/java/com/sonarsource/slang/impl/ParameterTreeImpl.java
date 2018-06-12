@@ -61,14 +61,16 @@ public class ParameterTreeImpl extends BaseTreeImpl implements ParameterTree {
       return false;
     }
 
-    ParameterTreeImpl other = (ParameterTreeImpl) obj;
+    if (obj instanceof ParameterTreeImpl) {
+      ParameterTreeImpl other = (ParameterTreeImpl) obj;
 
-    if (this.name.equals(other.name())) {
-      if (this.type != null) {
-        return this.type.equals(other.type());
+      if (this.name.equals(other.name())) {
+        if (this.type != null) {
+          return this.type.equals(other.type());
+        }
+
+        return (other.type() == null);
       }
-
-      return (other.type() == null);
     }
 
     return false;

@@ -31,7 +31,7 @@ public interface FunctionDeclarationTree extends Tree {
 
   IdentifierTree name();
 
-  List<IdentifierTree> formalParameters();
+  List<ParameterTree> formalParameters();
 
   @CheckForNull
   BlockTree body();

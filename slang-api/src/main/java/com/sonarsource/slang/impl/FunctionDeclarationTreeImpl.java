@@ -22,6 +22,7 @@ package com.sonarsource.slang.impl;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
+import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
   private final List<Tree> modifiers;
   private final Tree returnType;
   private final IdentifierTree name;
-  private final List<IdentifierTree> formalParameters;
+  private final List<ParameterTree> formalParameters;
   private final BlockTree body;
   private final List<Tree> children = new ArrayList<>();
 
@@ -43,7 +44,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
     List<Tree> modifiers,
     @Nullable Tree returnType,
     @Nullable IdentifierTree name,
-    List<IdentifierTree> formalParameters,
+    List<ParameterTree> formalParameters,
     @Nullable BlockTree body
   ) {
     super(metaData);
@@ -85,7 +86,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
   }
 
   @Override
-  public List<IdentifierTree> formalParameters() {
+  public List<ParameterTree> formalParameters() {
     return formalParameters;
   }
 

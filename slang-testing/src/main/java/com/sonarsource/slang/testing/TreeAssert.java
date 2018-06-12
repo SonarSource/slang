@@ -24,6 +24,7 @@ import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
+import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.utils.SyntacticEquivalence;
 import java.util.Objects;
@@ -45,6 +46,16 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
     IdentifierTree actualIdentifier = (IdentifierTree) actual;
     if (!Objects.equals(actualIdentifier.name(), expectedName)) {
       failWithMessage("Expected identifier's name to be <%s> but was <%s>", expectedName, actualIdentifier.name());
+    }
+    return this;
+  }
+
+  public TreeAssert isParameter(String expectedName) {
+    isNotNull();
+    isInstanceOf(ParameterTree.class);
+    ParameterTree actualParameter = (ParameterTree) actual;
+    if (!Objects.equals(actualParameter.name(), expectedName)) {
+      failWithMessage("Expected parameter's name to be <%s> but was <%s>", expectedName, actualParameter.name());
     }
     return this;
   }

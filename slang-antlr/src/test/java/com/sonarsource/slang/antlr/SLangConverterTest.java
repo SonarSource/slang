@@ -73,12 +73,12 @@ public class SLangConverterTest {
     assertThat(function.modifiers()).hasSize(1);
     assertTree(function.returnType()).isIdentifier("int");
     assertThat(function.formalParameters()).hasSize(2);
-    assertTree(function.formalParameters().get(0)).isIdentifier("x1");
+    assertTree(function.formalParameters().get(0)).isParameter("x1");
     assertThat(function.body()).isNotNull();
 
     FunctionDeclarationTree publicFunction = parseFunction("public int fun foo(p1);");
     assertThat(publicFunction.formalParameters()).hasSize(1);
-    assertTree(publicFunction.formalParameters().get(0)).isIdentifier("p1");
+    assertTree(publicFunction.formalParameters().get(0)).isParameter("p1");
 
     FunctionDeclarationTree emptyParamFunction = parseFunction("private int fun foo();");
     assertThat(emptyParamFunction.formalParameters()).isEmpty();
