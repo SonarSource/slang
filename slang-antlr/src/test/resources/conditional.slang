@@ -1,4 +1,4 @@
-public int test(int a){
+public fun int test(int a){
   if (a > 0) {
      return 0;
   };

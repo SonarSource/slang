@@ -1,10 +1,10 @@
-void a() {}
+fun void a() {}
 
-void b() {
+fun void b() {
   // comment
 }
 
-void c(int x) {
+fun void c(int x) {
   // Noncompliant@+1
   if (x > 0) { };
 

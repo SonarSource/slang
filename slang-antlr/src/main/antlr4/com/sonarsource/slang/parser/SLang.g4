@@ -10,7 +10,7 @@ typeDeclaration
   ;
 
 methodDeclaration
-  :  methodModifier* methodHeader methodBody
+  :  methodModifier* FUN methodHeader methodBody
   ;
 
 methodModifier
@@ -280,6 +280,7 @@ CHAR : 'char';
 DOUBLE : 'double';
 ELSE : 'else';
 FLOAT : 'float';
+FUN: 'fun';
 IF : 'if';
 INT : 'int';
 LONG : 'long';
