@@ -140,6 +140,20 @@ public class KotlinConverterTest {
   }
 
   @Test
+  public void testExtensionFunction() {
+    Tree extensionFunction1 = kotlin("fun A.fun1() {}");
+    Tree extensionFunction2 = kotlin("fun B.fun1() {}");
+    Tree normalFunction = kotlin("fun fun1() {}");
+    Tree extensionFunction3 = kotlin("fun A.fun1() {}");
+    Tree memberFunction = kotlin("class A { fun fun1() {} }");
+
+    assertTree(extensionFunction1).isNotEquivalentTo(extensionFunction2);
+    assertTree(extensionFunction1).isNotEquivalentTo(normalFunction);
+    assertTree(extensionFunction1).isEquivalentTo(extensionFunction3);
+    assertTree(extensionFunction1).isNotEquivalentTo(memberFunction);
+  }
+
+  @Test
   public void testLiterals() {
     assertTrees(kotlinStatements("554; true; false; null; \"string\"; 'c';"))
       .isEquivalentTo(slangStatements("554; true; false; null; \"string\"; 'c';"));
