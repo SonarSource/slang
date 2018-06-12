@@ -16,4 +16,27 @@
   <modules>
     <module>ruling</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>qa</id>
+      <activation>
+        <property>
+          <name>env.SONARSOURCE_QA</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>-DslangVersion=${project.version}</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
