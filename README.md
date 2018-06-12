@@ -13,6 +13,7 @@ If you want to run them, you need first to retrieve the related projects which a
 
     git submodule update --init
 
-Then run the ITs, by simply forcing the tests
+Then run the ITs
 
-    mvn clean install -DskipTests=False
+    cd its
+    mvn clean install
