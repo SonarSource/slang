@@ -68,7 +68,7 @@ public class SLangConverterTest {
 
   @Test
   public void function() {
-    FunctionDeclarationTree function = parseFunction("private int foo(x1, x2) { x1 + x2 }");
+    FunctionDeclarationTree function = parseFunction("private fun int foo(x1, x2) { x1 + x2 }");
     assertThat(function.name().name()).isEqualTo("foo");
     assertThat(function.modifiers()).hasSize(1);
     assertTree(function.returnType()).isIdentifier("int");
@@ -76,11 +76,11 @@ public class SLangConverterTest {
     assertTree(function.formalParameters().get(0)).isIdentifier("x1");
     assertThat(function.body()).isNotNull();
 
-    FunctionDeclarationTree publicFunction = parseFunction("public int foo(p1);");
+    FunctionDeclarationTree publicFunction = parseFunction("public fun int foo(p1);");
     assertThat(publicFunction.formalParameters()).hasSize(1);
     assertTree(publicFunction.formalParameters().get(0)).isIdentifier("p1");
 
-    FunctionDeclarationTree emptyParamFunction = parseFunction("private int foo();");
+    FunctionDeclarationTree emptyParamFunction = parseFunction("private fun int foo();");
     assertThat(emptyParamFunction.formalParameters()).isEmpty();
     assertThat(emptyParamFunction.body()).isNull();
 
@@ -90,7 +90,7 @@ public class SLangConverterTest {
     assertTree(privateModifier1).isNotEquivalentTo(publicModifier1);
     assertTree(privateModifier1).isEquivalentTo(privateModifier2);
 
-    FunctionDeclarationTree simpleFunction = parseFunction("foo() {}");
+    FunctionDeclarationTree simpleFunction = parseFunction("fun foo() {}");
     assertThat(simpleFunction.modifiers()).isEmpty();
     assertThat(simpleFunction.returnType()).isNull();
     assertThat(simpleFunction.body().statementOrExpressions()).isEmpty();
@@ -165,7 +165,7 @@ public class SLangConverterTest {
 
   @Test
   public void top_level_tree() {
-    Tree tree1 = converter.parse("int foo(p1);\nx == 3;");
+    Tree tree1 = converter.parse("fun int foo(p1);\nx == 3;");
     Tree tree2 = converter.parse("x + y\n\n- z");
     Tree emptyTree = converter.parse("");
     assertTree(tree1)
