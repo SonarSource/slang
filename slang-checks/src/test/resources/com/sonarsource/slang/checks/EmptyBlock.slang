@@ -1,10 +1,19 @@
-fun void a() {}
+void fun a() {}
 
-fun void b() {
+void fun b() {
   // comment
 }
 
-fun void c(int x) {
+fun () {
+  // comment
+}
+
+fun () {
+  // Noncompliant@+1
+  if (x > 0) { };
+}
+
+void fun c(int x) {
   // Noncompliant@+1
   if (x > 0) { };
 

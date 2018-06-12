@@ -10,7 +10,7 @@ typeDeclaration
   ;
 
 methodDeclaration
-  :  methodModifier* FUN methodHeader methodBody
+  :  methodModifier* methodHeader methodBody
   ;
 
 methodModifier
@@ -19,11 +19,11 @@ methodModifier
   ;
 
 methodHeader
-  :  result? methodDeclarator
+  :  result? FUN methodDeclarator
   ;
 
 methodDeclarator
-  :  identifier LPAREN formalParameterList? RPAREN 
+  :  identifier? LPAREN formalParameterList? RPAREN
   ;
 
 formalParameterList
