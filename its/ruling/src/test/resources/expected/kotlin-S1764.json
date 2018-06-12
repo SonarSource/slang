@@ -1,0 +1,16 @@
+{
+'kotlin-project:kotlin/libraries/stdlib/js/src/kotlin/numbers.kt':[
+12,
+18,
+],
+'kotlin-project:kotlin/libraries/stdlib/test/ranges/RangeTest.kt':[
+291,
+],
+'kotlin-project:kotlin/libraries/tools/kotlin-gradle-plugin/src/test/kotlin/org/jetbrains/kotlin/gradle/utils/GradleVersionTest.kt':[
+37,
+],
+'kotlin-project:okio/okio/jvm/src/test/java/okio/TestUtil.kt':[
+116,
+153,
+],
+}

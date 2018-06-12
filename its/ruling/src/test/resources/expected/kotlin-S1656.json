@@ -1,0 +1,12 @@
+{
+'kotlin-project:kotlin/idea/idea-completion/src/org/jetbrains/kotlin/idea/completion/KotlinCompletionContributor.kt':[
+71,
+],
+'kotlin-project:kotlin/plugins/kapt3/kapt3-compiler/src/org/jetbrains/kotlin/kapt3/stubs/ClassFileToSourceStubConverter.kt':[
+171,
+],
+'kotlin-project:ktor/ktor-features/ktor-auth-jwt/test/io/ktor/auth/jwt/JWTAuthTest.kt':[
+283,
+297,
+],
+}
