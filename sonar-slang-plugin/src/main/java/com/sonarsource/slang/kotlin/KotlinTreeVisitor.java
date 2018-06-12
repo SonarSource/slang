@@ -157,7 +157,8 @@ class KotlinTreeVisitor {
       return new LiteralTreeImpl(metaData, element.getText());
     } else if (element instanceof KtOperationExpression) {
       return createOperationExpression(metaData, (KtOperationExpression) element);
-    } else if (element instanceof KtDestructuringDeclarationEntry) {
+    } else if (element instanceof KtDestructuringDeclarationEntry || isSimpleStringLiteralEntry(element)) {
+      // To differentiate between the native trees of complex string template entries, we add the string value to the native kind
       return createNativeTree(metaData, new KotlinNativeKind(element, element.getText()), element);
     } else if (element instanceof KtParameter) {
       return createParameter(metaData, element);
@@ -334,8 +335,18 @@ class KotlinTreeVisitor {
 
   private static boolean isLiteral(PsiElement element) {
     return element instanceof KtConstantExpression
-      || element instanceof KtLiteralStringTemplateEntry
+      || isSimpleStringLiteral(element);
+  }
+
+  private static boolean isSimpleStringLiteral(PsiElement element) {
+    return element instanceof KtStringTemplateExpression
+      && Stream.of(((KtStringTemplateExpression) element).getEntries()).allMatch(KotlinTreeVisitor::isSimpleStringLiteralEntry);
+  }
+
+  private static boolean isSimpleStringLiteralEntry(PsiElement element) {
+    return element instanceof KtLiteralStringTemplateEntry
       || element instanceof KtEscapeStringTemplateEntry
       || (element instanceof KtStringTemplateExpression && !((KtStringTemplateExpression) element).hasInterpolation());
   }
+
 }
