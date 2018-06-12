@@ -20,12 +20,14 @@
 package com.sonarsource.slang.kotlin;
 
 import com.sonarsource.slang.api.TextPointer;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 
 public class ParseException extends RuntimeException {
 
   private final TextPointer position;
 
-  public ParseException(String message, TextPointer position) {
+  public ParseException(String message, @Nullable TextPointer position) {
     super(message);
     this.position = position;
   }
@@ -35,6 +37,7 @@ public class ParseException extends RuntimeException {
     this.position = null;
   }
 
+  @CheckForNull
   public TextPointer getPosition() {
     return position;
   }

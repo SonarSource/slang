@@ -39,5 +39,14 @@ public class TreesAssertTest {
     assertTrees(singletonList(LITERAL_42)).isEquivalentTo(singletonList(new LiteralTreeImpl(null, "43")));
   }
 
+  @Test
+  public void notequivalent_ok() {
+    assertTrees(singletonList(LITERAL_42)).isNotEquivalentTo(singletonList(new LiteralTreeImpl(null, "43")));
+  }
+
+  @Test(expected = AssertionError.class)
+  public void notequivalent_failure() {
+    assertTrees(singletonList(LITERAL_42)).isNotEquivalentTo(singletonList(new LiteralTreeImpl(null, "42")));
+  }
 
 }
