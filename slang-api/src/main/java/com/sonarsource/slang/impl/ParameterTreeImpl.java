@@ -23,11 +23,11 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
-
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
 
 public class ParameterTreeImpl extends BaseTreeImpl implements ParameterTree {
 
@@ -53,7 +53,11 @@ public class ParameterTreeImpl extends BaseTreeImpl implements ParameterTree {
 
   @Override
   public List<Tree> children() {
-    return Arrays.asList(identifier, type);
+    if (type != null) {
+      return Arrays.asList(identifier, type);
+    } else {
+      return Collections.singletonList(identifier);
+    }
   }
 
 }

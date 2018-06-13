@@ -43,7 +43,8 @@ public class ParameterTreeImplTest {
     ParameterTreeImpl parameterTreeXTyped = new ParameterTreeImpl(meta, identifierTreeX, parameterType);
     ParameterTreeImpl parameterTreeY = new ParameterTreeImpl(meta, identifierTreeY, parameterType);
 
-    assertThat(parameterTreeX.children()).hasSize(2);
+    assertThat(parameterTreeXTyped.children()).hasSize(2);
+    assertThat(parameterTreeX.children()).hasSize(1);
     assertThat(parameterTreeX.type()).isNull();
     assertThat(parameterTreeX.identifier()).isEqualTo(identifierTreeX);
     assertThat(areEquivalent(parameterTreeX, parameterTreeXCopy)).isTrue();

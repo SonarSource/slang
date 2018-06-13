@@ -37,16 +37,25 @@ import com.sonarsource.slang.impl.BlockTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
+import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
 import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.ParameterTreeImpl;
+import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
-import com.sonarsource.slang.impl.LiteralTreeImpl;
-import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.annotation.CheckForNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
@@ -74,16 +83,6 @@ import org.jetbrains.kotlin.psi.KtTypeElement;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
 import org.jetbrains.kotlin.psi.KtWhenEntry;
 import org.jetbrains.kotlin.psi.KtWhenExpression;
-
-import javax.annotation.CheckForNull;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 class KotlinTreeVisitor {
   private static final Map<KtToken, Operator> TOKENS_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
@@ -158,16 +157,14 @@ class KotlinTreeVisitor {
       return createMatchTree(metaData, (KtWhenExpression) element);
     } else if (element instanceof KtWhenEntry) {
       return createMatchCase(metaData, (KtWhenEntry) element);
-    } else if (element instanceof KtConstantExpression) {
-      return new LiteralTreeImpl(metaData, element.getText());
-    } else if (isSimpleStringLiteral(element)) {
-      return new StringLiteralTreeImpl(metaData, element.getText());
+    } else if (isLiteral(element)) {
+      return createLiteral(metaData, element);
     } else if (element instanceof KtOperationExpression) {
       return createOperationExpression(metaData, (KtOperationExpression) element);
     } else if (element instanceof KtDestructuringDeclarationEntry || isSimpleStringLiteralEntry(element)) {
       // To differentiate between the native trees of complex string template entries, we add the string value to the native kind
       return createNativeTree(metaData, new KotlinNativeKind(element, element.getText()), element);
-    } else if (element instanceof KtParameter){
+    } else if (element instanceof KtParameter) {
       return createParameter((KtParameter) element);
     } else {
       return createNativeTree(metaData, new KotlinNativeKind(element), element);
@@ -318,6 +315,13 @@ class KotlinTreeVisitor {
     }
   }
 
+  private static Tree createLiteral(TreeMetaData metaData, PsiElement element) {
+    if (isSimpleStringLiteral(element)) {
+      return new StringLiteralTreeImpl(metaData, element.getText());
+    }
+    return new LiteralTreeImpl(metaData, element.getText());
+  }
+
   private Tree createOperationExpression(TreeMetaData metaData, KtOperationExpression operationExpression) {
     NativeKind nativeKind = new KotlinNativeKind(operationExpression, operationExpression.getOperationReference().getReferencedNameElement().getText());
     return createNativeTree(metaData, nativeKind, operationExpression);
@@ -345,6 +349,11 @@ class KotlinTreeVisitor {
 
   private static boolean isError(PsiElement element) {
     return element instanceof PsiErrorElement;
+  }
+
+  private static boolean isLiteral(PsiElement element) {
+    return element instanceof KtConstantExpression
+      || isSimpleStringLiteral(element);
   }
 
   private static boolean isSimpleStringLiteral(PsiElement element) {
