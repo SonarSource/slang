@@ -37,6 +37,7 @@ public class CommonCheckList {
       IdenticalBinaryOperandCheck.class,
       IdenticalConditionsCheck.class,
       SelfAssignmentCheck.class,
+      StringLiteralDuplicatedCheck.class,
       TodoCommentCheck.class,
       TooManyParametersCheck.class);
   }
