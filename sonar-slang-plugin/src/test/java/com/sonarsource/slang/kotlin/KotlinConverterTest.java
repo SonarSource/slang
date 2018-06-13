@@ -175,24 +175,28 @@ public class KotlinConverterTest {
 
   @Test
   public void testStringWithIdentifier() {
-    Tree stringWithIdentifier = kotlinStatement("\"identifier ${x}\"");
-    assertTree(stringWithIdentifier).isInstanceOf(NativeTree.class);
-    assertTree(stringWithIdentifier.children().get(0)).isLiteral("identifier ");
-    Tree identifierExpressionContainer = stringWithIdentifier.children().get(1);
-    assertTree(identifierExpressionContainer).isInstanceOf(NativeTree.class);
-    assertThat(identifierExpressionContainer.children()).hasSize(1);
-    assertTree(identifierExpressionContainer.children().get(0)).isIdentifier("x");
+    assertTree(kotlinStatement("\"identifier ${x}\"")).isInstanceOf(NativeTree.class).hasChildren(NativeTree.class, NativeTree.class);
+    assertTree(kotlinStatement("\"identifier ${x}\"")).isEquivalentTo(kotlinStatement("\"identifier ${x}\""));
+    assertTree(kotlinStatement("\"identifier ${x}\"")).isNotEquivalentTo(kotlinStatement("\"identifier ${y}\""));
+    assertTree(kotlinStatement("\"identifier ${x}\"")).isNotEquivalentTo(kotlinStatement("\"id ${x}\""));
+    assertTree(kotlinStatement("\"identifier ${x}\"")).isNotEquivalentTo(kotlinStatement("\"identifier \""));
+    assertTree(kotlinStatement("\"identifier ${x}\"").children().get(0)).isNotEquivalentTo(kotlinStatement("\"identifier \""));
   }
 
   @Test
   public void testStringWithBlock() {
     Tree stringWithBlock = kotlinStatement("\"block ${1 == 1}\"");
-    assertTree(stringWithBlock).isInstanceOf(NativeTree.class);
-    assertTree(stringWithBlock.children().get(0)).isLiteral("block ");
+    assertTree(stringWithBlock).isInstanceOf(NativeTree.class).hasChildren(NativeTree.class, NativeTree.class);
     Tree blockExpressionContainer = stringWithBlock.children().get(1);
     assertTree(blockExpressionContainer).isInstanceOf(NativeTree.class);
     assertThat(blockExpressionContainer.children()).hasSize(1);
     assertTree(blockExpressionContainer.children().get(0)).isBinaryExpression(BinaryExpressionTree.Operator.EQUAL_TO);
+
+    assertTree(kotlinStatement("\"block ${1 == 1}\"")).isEquivalentTo(kotlinStatement("\"block ${1 == 1}\""));
+    assertTree(kotlinStatement("\"block ${1 == 1}\"")).isNotEquivalentTo(kotlinStatement("\"block ${1 == 0}\""));
+    assertTree(kotlinStatement("\"block ${1 == 1}\"")).isNotEquivalentTo(kotlinStatement("\"B ${1 == 1}\""));
+    assertTree(kotlinStatement("\"block ${1 == 1}\"")).isNotEquivalentTo(kotlinStatement("\"block \""));
+    assertTree(kotlinStatement("\"block ${1 == 1}\"").children().get(0)).isNotEquivalentTo(kotlinStatement("\"block \""));
   }
 
   @Test
