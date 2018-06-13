@@ -19,24 +19,9 @@
  */
 package com.sonarsource.slang.checks;
 
-import java.util.Arrays;
-import java.util.List;
+import org.junit.Test;
 
-public class CommonCheckList {
-
-  private CommonCheckList() {
-  }
-
-  public static List<Class> checks() {
-    return Arrays.asList(
-      AllBranchesIdenticalCheck.class,
-      CollapsibleIfStatementsCheck.class,
-      EmptyBlockCheck.class,
-      IdenticalBinaryOperandCheck.class,
-      IdenticalConditionsCheck.class,
-      SelfAssignmentCheck.class,
-      TodoCommentCheck.class,
-      TooManyParametersCheck.class);
-  }
-
+public class CollapsibleIfStatementsCheckTest {
+  @Test
+  public void test() { Verifier.verify("CollapsibleIfStatements.slang", new CollapsibleIfStatementsCheck()); }
 }
