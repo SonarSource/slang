@@ -22,6 +22,7 @@ package com.sonarsource.slang.impl;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
+import com.sonarsource.slang.impl.BaseTreeImpl;
 import java.util.Collections;
 import java.util.List;
 

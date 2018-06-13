@@ -37,7 +37,6 @@ import com.sonarsource.slang.impl.BlockTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
-import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
 import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
@@ -45,6 +44,8 @@ import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
+import com.sonarsource.slang.impl.LiteralTreeImpl;
+import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
@@ -157,8 +158,10 @@ class KotlinTreeVisitor {
       return createMatchTree(metaData, (KtWhenExpression) element);
     } else if (element instanceof KtWhenEntry) {
       return createMatchCase(metaData, (KtWhenEntry) element);
-    } else if (isLiteral(element)) {
+    } else if (element instanceof KtConstantExpression) {
       return new LiteralTreeImpl(metaData, element.getText());
+    } else if (isSimpleStringLiteral(element)) {
+      return new StringLiteralTreeImpl(metaData, element.getText());
     } else if (element instanceof KtOperationExpression) {
       return createOperationExpression(metaData, (KtOperationExpression) element);
     } else if (element instanceof KtDestructuringDeclarationEntry || isSimpleStringLiteralEntry(element)) {
@@ -342,11 +345,6 @@ class KotlinTreeVisitor {
 
   private static boolean isError(PsiElement element) {
     return element instanceof PsiErrorElement;
-  }
-
-  private static boolean isLiteral(PsiElement element) {
-    return element instanceof KtConstantExpression
-      || isSimpleStringLiteral(element);
   }
 
   private static boolean isSimpleStringLiteral(PsiElement element) {

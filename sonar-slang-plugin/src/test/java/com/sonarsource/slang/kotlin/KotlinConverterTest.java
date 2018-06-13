@@ -23,12 +23,12 @@ import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
-import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.parser.SLangConverter;
 import org.junit.Rule;
 import org.junit.Test;
@@ -164,18 +164,10 @@ public class KotlinConverterTest {
 
   @Test
   public void testSimpleStringLiterals() {
-    String escapedBackslash = createEscapedString('\\');
-    String escapedSingleQuote = createEscapedString('\'');
-    String escapedDoubleQuote = createEscapedString('\"');
-    String emptyString = createString("");
-    Tree escapedBackslashLiteral = kotlinStatement(escapedBackslash);
-    Tree escapedSingleQuoteLiteral = kotlinStatement(escapedSingleQuote);
-    Tree escapedDoubleQuoteLiteral = kotlinStatement(escapedDoubleQuote);
-    Tree emptyStringLiteral = kotlinStatement(emptyString);
-    assertTree(escapedBackslashLiteral).isLiteral(escapedBackslash);
-    assertTree(escapedSingleQuoteLiteral).isLiteral(escapedSingleQuote);
-    assertTree(escapedDoubleQuoteLiteral).isLiteral(escapedDoubleQuote);
-    assertTree(emptyStringLiteral).isLiteral(emptyString);
+    assertTree(kotlinStatement(createEscapedString('\\'))).isStringLiteral(createEscaped('\\'));
+    assertTree(kotlinStatement(createEscapedString('\''))).isStringLiteral(createEscaped('\''));
+    assertTree(kotlinStatement(createEscapedString('\"'))).isStringLiteral(createEscaped('\"'));
+    assertTree(kotlinStatement(createString(""))).isStringLiteral("");
   }
 
   @Test
@@ -206,9 +198,7 @@ public class KotlinConverterTest {
 
   @Test
   public void testMultilineString() {
-    String stringValue = "\"\"\"first line\nsecond line\"\"\"";
-    Tree multilineString = kotlinStatement(stringValue);
-    assertTree(multilineString).isLiteral(stringValue);
+    assertTree(kotlinStatement("\"\"\"first\nsecond line\"\"\"")).isStringLiteral("\"\"first\nsecond line\"\"");
   }
 
   @Test
@@ -331,8 +321,12 @@ public class KotlinConverterTest {
     return "\"" + s + "\"";
   }
 
+  private static String createEscaped(char s) {
+    return "\\" + s;
+  }
+
   private static String createEscapedString(char s) {
-    return createString("\\" + s);
+    return createString(createEscaped(s));
   }
 
   private static Tree getCondition(List<MatchCaseTree> cases, int i) {

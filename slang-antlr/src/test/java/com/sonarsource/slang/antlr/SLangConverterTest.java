@@ -33,7 +33,9 @@ import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.parser.SLangConverter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Test;
 
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
@@ -226,6 +228,25 @@ public class SLangConverterTest {
 
     for (int i = 0; i < topLevelTree.declarations().size(); i++) {
       assertTree(topLevelTree.declarations().get(i)).isLiteral(values[i]);
+    }
+  }
+
+  @Test
+  public void stringLiterals() {
+    List<String> values = Arrays.asList("\"a\"", "\"string\"", "\"string with spaces\"");
+    List<String> content = Arrays.asList("a", "string", "string with spaces");
+
+    String slangCode = values.stream().collect(Collectors.joining(";"));
+    Tree tree = converter.parse(slangCode);
+
+    assertTree(tree).isNotNull();
+    assertTree(tree).isInstanceOf(TopLevelTree.class);
+    TopLevelTree topLevelTree = (TopLevelTree) tree;
+    assertThat(topLevelTree.declarations()).hasSize(3);
+
+    for (int i = 0; i < topLevelTree.declarations().size(); i++) {
+      assertTree(topLevelTree.declarations().get(i)).isLiteral(values.get(i));
+      assertTree(topLevelTree.declarations().get(i)).isStringLiteral(content.get(i));
     }
   }
 

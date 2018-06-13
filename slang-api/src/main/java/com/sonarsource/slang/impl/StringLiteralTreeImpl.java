@@ -17,12 +17,24 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
+package com.sonarsource.slang.impl;
 
-import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.TreeMetaData;
+import com.sonarsource.slang.api.StringLiteralTree;
+import com.sonarsource.slang.impl.LiteralTreeImpl;
 
-public interface LiteralTree extends Tree {
+public class StringLiteralTreeImpl extends LiteralTreeImpl implements StringLiteralTree {
 
-  String value();
+  public StringLiteralTreeImpl(TreeMetaData metaData, String value) {
+    super(metaData, value);
+    if (value.length() < 2 || value.charAt(0) != '"' || value.charAt(value.length() - 1) != '"') {
+      throw new IllegalArgumentException("Invalid string format: expected \"XXX\"");
+    }
+  }
+
+  @Override
+  public String content() {
+    return value().substring(1, value().length() - 1);
+  }
 
 }

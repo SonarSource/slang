@@ -17,12 +17,26 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
+package com.sonarsource.slang.impl.literal;
 
-import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.impl.StringLiteralTreeImpl;
+import org.junit.Test;
 
-public interface LiteralTree extends Tree {
+import static org.assertj.core.api.Assertions.assertThat;
 
-  String value();
+public class StringLiteralTreeImplTest {
+
+  @Test
+  public void test() {
+    StringLiteralTreeImpl stringLiteral = new StringLiteralTreeImpl(null, "\"abc\"");
+    assertThat(stringLiteral.value()).isEqualTo("\"abc\"");
+    assertThat(stringLiteral.content()).isEqualTo("abc");
+    assertThat(stringLiteral.children()).isEmpty();
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void test_failure() {
+    new StringLiteralTreeImpl(null, "abc");
+  }
 
 }
