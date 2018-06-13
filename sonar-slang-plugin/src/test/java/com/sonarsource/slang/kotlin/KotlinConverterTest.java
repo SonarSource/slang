@@ -296,7 +296,7 @@ public class KotlinConverterTest {
     TopLevelTree kotlinTree = (TopLevelTree) converter
       .parse("/** 1st comment */\n// comment 2\nfun function() = /* Block comment */ 3;");
     TopLevelTree slangTree = (TopLevelTree) new SLangConverter()
-      .parse("/** 1st comment */\n// comment 2\nvoid function() { /* Block comment */ 3; }");
+      .parse("/** 1st comment */\n// comment 2\nvoid fun function() { /* Block comment */ 3; }");
 
     assertThat(kotlinTree.allComments()).hasSize(3);
     assertThat(kotlinTree.allComments()).isNotEqualTo(slangTree.allComments()); // Kotlin considers the '/**' delimiter as separate comments
