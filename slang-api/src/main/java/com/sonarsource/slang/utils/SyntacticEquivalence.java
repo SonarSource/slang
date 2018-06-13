@@ -24,7 +24,6 @@ import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.NativeTree;
-import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.visitors.TreePrinter;
 
