@@ -339,14 +339,11 @@ class KotlinTreeVisitor {
   }
 
   private static boolean isSimpleStringLiteral(PsiElement element) {
-    return element instanceof KtStringTemplateExpression
-      && Stream.of(((KtStringTemplateExpression) element).getEntries()).allMatch(KotlinTreeVisitor::isSimpleStringLiteralEntry);
+    return element instanceof KtStringTemplateExpression && !((KtStringTemplateExpression) element).hasInterpolation();
   }
 
   private static boolean isSimpleStringLiteralEntry(PsiElement element) {
-    return element instanceof KtLiteralStringTemplateEntry
-      || element instanceof KtEscapeStringTemplateEntry
-      || (element instanceof KtStringTemplateExpression && !((KtStringTemplateExpression) element).hasInterpolation());
+    return element instanceof KtLiteralStringTemplateEntry || element instanceof KtEscapeStringTemplateEntry;
   }
 
 }
