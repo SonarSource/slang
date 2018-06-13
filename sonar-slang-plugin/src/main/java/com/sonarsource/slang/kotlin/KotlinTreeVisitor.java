@@ -249,7 +249,7 @@ class KotlinTreeVisitor {
     if (name == null) {
       return createNativeTree(metaData, new KotlinNativeKind(ktParameter), ktParameter);
     }
-ktParameter.getDestructuringDeclaration()
+
     IdentifierTree identifier = new IdentifierTreeImpl(metaData, name);
     return new ParameterTreeImpl(metaData, identifier, type);
   }

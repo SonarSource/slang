@@ -310,6 +310,14 @@ public class KotlinConverterTest {
   }
 
   @Test
+  public void testLambdas() {
+    Tree lambdaWithDestructor = kotlinStatement("{ (a, b) -> a.length < b.length }");
+    Tree lambdaWithoutDestructor = kotlinStatement("{ a, b -> a.length < b.length }");
+    assertTree(lambdaWithDestructor).hasChildren(NativeTree.class);
+    assertTree(lambdaWithoutDestructor).hasChildren(FunctionDeclarationTree.class);
+  }
+
+  @Test
   public void testEquivalenceWithComments() {
     assertTrees(kotlinStatements("x + 2; // EOL comment"))
       .isEquivalentTo(slangStatements("x + 2"));
