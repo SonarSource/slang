@@ -33,12 +33,12 @@ import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.ParameterTreeImpl;
+import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.junit.Test;
 
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static java.util.Collections.singletonList;
@@ -46,16 +46,13 @@ import static java.util.Collections.singletonList;
 public class TreeAssertTest {
 
   private static final IdentifierTreeImpl IDENTIFIER_ABC = new IdentifierTreeImpl(null, "abc");
+  private static final StringLiteralTreeImpl STRING_LITERAL_STR = new StringLiteralTreeImpl(null, "\"str\"");
   private static final LiteralTreeImpl LITERAL_42 = new LiteralTreeImpl(null, "42");
-  public static final AssignmentExpressionTreeImpl ASSIGN_42_TO_ABC =
-    new AssignmentExpressionTreeImpl(null, AssignmentExpressionTree.Operator.EQUAL, IDENTIFIER_ABC, LITERAL_42);
-  private static final BinaryExpressionTreeImpl ABC_PLUS_42 =
-    new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, IDENTIFIER_ABC, LITERAL_42);
-  private static final BinaryExpressionTreeImpl ABC_PLUS_ABC_PLUS_42 =
-    new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, IDENTIFIER_ABC, ABC_PLUS_42);
+  public static final AssignmentExpressionTreeImpl ASSIGN_42_TO_ABC = new AssignmentExpressionTreeImpl(null, AssignmentExpressionTree.Operator.EQUAL, IDENTIFIER_ABC, LITERAL_42);
+  private static final BinaryExpressionTreeImpl ABC_PLUS_42 = new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, IDENTIFIER_ABC, LITERAL_42);
+  private static final BinaryExpressionTreeImpl ABC_PLUS_ABC_PLUS_42 = new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, IDENTIFIER_ABC, ABC_PLUS_42);
   private static final ParameterTreeImpl PARAMETER_ABC = new ParameterTreeImpl(null, IDENTIFIER_ABC, null);
-  private static final FunctionDeclarationTreeImpl FUNCTION_ABC = new
-      FunctionDeclarationTreeImpl(null, Collections.emptyList(), null, null, Arrays.asList(PARAMETER_ABC),null);
+  private static final FunctionDeclarationTreeImpl FUNCTION_ABC = new FunctionDeclarationTreeImpl(null, Collections.emptyList(), null, null, Arrays.asList(PARAMETER_ABC), null);
 
   @Test
   public void identifier_ok() {
@@ -89,7 +86,7 @@ public class TreeAssertTest {
 
   @Test(expected = AssertionError.class)
   public void function_does_not_have_two_parameters() {
-    assertTree(FUNCTION_ABC).hasParameterNames("abc","xxx");
+    assertTree(FUNCTION_ABC).hasParameterNames("abc", "xxx");
   }
 
   @Test(expected = AssertionError.class)
@@ -110,6 +107,21 @@ public class TreeAssertTest {
   @Test(expected = AssertionError.class)
   public void not_a_literal() {
     assertTree(new LiteralTreeImpl(null, "42")).isLiteral("123");
+  }
+
+  @Test
+  public void string_literal_ok() {
+    assertTree(STRING_LITERAL_STR).isStringLiteral("str");
+  }
+
+  @Test(expected = AssertionError.class)
+  public void string_literal_failure() {
+    assertTree(STRING_LITERAL_STR).isStringLiteral("abc");
+  }
+
+  @Test(expected = AssertionError.class)
+  public void not_a_string_literal() {
+    assertTree(IDENTIFIER_ABC).isStringLiteral("abc");
   }
 
   @Test
@@ -223,6 +235,7 @@ public class TreeAssertTest {
       public TextRange textRange() {
         return textRange;
       }
+
       @Override
       public List<Comment> commentsInside() {
         return null;

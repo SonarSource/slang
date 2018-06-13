@@ -19,10 +19,10 @@
  */
 package com.sonarsource.slang.api;
 
-import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.LiteralTree;
 
-public interface LiteralTree extends Tree {
+public interface StringLiteralTree extends LiteralTree {
 
-  String value();
+  String content();
 
 }

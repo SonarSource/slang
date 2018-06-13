@@ -40,7 +40,6 @@ import com.sonarsource.slang.impl.CommentImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
-import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
 import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
@@ -49,6 +48,8 @@ import com.sonarsource.slang.impl.TextPointerImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
+import com.sonarsource.slang.impl.LiteralTreeImpl;
+import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -297,7 +298,11 @@ public class SLangConverter implements ASTConverter {
 
     @Override
     public Tree visitLiteral(SLangParser.LiteralContext ctx) {
-      return new LiteralTreeImpl(meta(ctx), ctx.getText());
+      if (ctx.StringLiteral() != null) {
+        return new StringLiteralTreeImpl(meta(ctx), ctx.getText());
+      } else {
+        return new LiteralTreeImpl(meta(ctx), ctx.getText());
+      }
     }
 
     @Override

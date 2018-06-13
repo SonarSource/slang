@@ -26,13 +26,13 @@ import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.ParameterTree;
+import com.sonarsource.slang.api.StringLiteralTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.utils.SyntacticEquivalence;
-import org.assertj.core.api.AbstractAssert;
-
 import java.util.List;
 import java.util.Objects;
+import org.assertj.core.api.AbstractAssert;
 
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.visitors.TreePrinter.tree2string;
@@ -93,6 +93,16 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
     UnaryExpressionTree actualUnary = (UnaryExpressionTree) actual;
     if (!Objects.equals(actualUnary.operator(), expectedOperator)) {
       failWithMessage("Expected operator to be <%s> but was <%s>", expectedOperator, actualUnary.operator());
+    }
+    return this;
+  }
+
+  public TreeAssert isStringLiteral(String expected) {
+    isNotNull();
+    isInstanceOf(StringLiteralTree.class);
+    StringLiteralTree actualLiteral = (StringLiteralTree) actual;
+    if (!Objects.equals(actualLiteral.content(), expected)) {
+      failWithMessage("Expected string content to be <%s> but was <%s>", expected, actualLiteral.content());
     }
     return this;
   }
