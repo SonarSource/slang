@@ -17,16 +17,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
+package com.sonarsource.slang.checks;
 
-import java.util.List;
+import org.junit.Test;
 
-public interface MatchTree extends Tree {
-
-  Tree expression();
-
-  List<MatchCaseTree> cases();
-
-  Token keyword();
-
+public class NestedMatchCheckTest {
+  @Test
+  public void test() {
+    Verifier.verify("NestedMatch.slang", new NestedMatchCheck());
+  }
 }

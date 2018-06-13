@@ -244,6 +244,7 @@ public class KotlinConverterTest {
     assertTree(getCondition(cases, 0)).isEquivalentTo(getCondition(cases, 1));
     assertTree(getCondition(cases, 0)).isNotEquivalentTo(getCondition(cases, 2));
     assertThat(getCondition(cases, 3)).isNull();
+    assertThat(matchTree.keyword().text()).isEqualTo("when");
   }
 
   @Test

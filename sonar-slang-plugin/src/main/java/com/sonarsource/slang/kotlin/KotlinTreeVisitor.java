@@ -29,6 +29,7 @@ import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
@@ -53,9 +54,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
@@ -273,7 +276,17 @@ class KotlinTreeVisitor {
       subjectExpression,
       whenExpressions.stream()
         .map(MatchCaseTree.class::cast)
-        .collect(Collectors.toList()));
+        .collect(Collectors.toList()),
+      getKeyword(metaData.tokens(), "when"));
+  }
+
+  @NotNull
+  private static Token getKeyword(List<Token> tokens, String keyword) {
+    Supplier<IllegalArgumentException> keywordNotFound = () -> new IllegalArgumentException("MatchExpression must contain \"" + keyword + "\" keyword");
+    return tokens.stream()
+      .filter(token -> token.isKeyword() && token.text().equals(keyword))
+      .findFirst()
+      .orElseThrow(keywordNotFound);
   }
 
   private Tree createMatchCase(TreeMetaData metaData, KtWhenEntry element) {
