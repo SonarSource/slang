@@ -36,13 +36,15 @@ public class CollapsibleIfStatementsCheck implements SlangCheck {
 
   @Override
   public void initialize(InitContext init) {
-    init.register(IfTree.class, (ctx, ifTreeStatement) -> Optional.of(ifTreeStatement)
-      .filter(ifTree -> ifTree.elseBranch() == null)
-      .flatMap(ifTree -> getCollapsibleIfStatement(ifTree.thenBranch()))
-      .ifPresent(innerIfStatement -> {
-        TextRange innerIfRange = innerIfStatement.metaData().textRange();
-        ctx.reportIssue(ifTreeStatement, MESSAGE, new SecondaryLocation(innerIfRange, SECONDARY_MESSAGE));
-      }));
+    init.register(IfTree.class, (ctx, ifTreeStatement) -> {
+      if (ifTreeStatement.elseBranch() == null) {
+        getCollapsibleIfStatement(ifTreeStatement.thenBranch())
+          .ifPresent(innerIfStatement -> {
+            TextRange innerIfRange = innerIfStatement.metaData().textRange();
+            ctx.reportIssue(ifTreeStatement, MESSAGE, new SecondaryLocation(innerIfRange, SECONDARY_MESSAGE));
+          });
+      }
+    });
   }
 
   private static Optional<IfTree> getCollapsibleIfStatement(Tree tree) {
