@@ -25,6 +25,7 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.visitors.TreePrinter;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -67,20 +68,19 @@ public class SyntacticEquivalence {
       return ((IdentifierTree) first).name().equals(((IdentifierTree) second).name());
     } else if (first instanceof LiteralTree) {
       return ((LiteralTree) first).value().equals(((LiteralTree) second).value());
-    } else if (first instanceof NativeTree) {
-      if (!((NativeTree) first).nativeKind().equals(((NativeTree) second).nativeKind())) {
-        return false;
-      }
-    } else if (first instanceof BinaryExpressionTree) {
-      if (((BinaryExpressionTree) first).operator() != ((BinaryExpressionTree) second).operator()) {
-        return false;
-      }
-    } else if (first instanceof AssignmentExpressionTree
-      && (((AssignmentExpressionTree) first).operator() != ((AssignmentExpressionTree) second).operator())) {
+    } else if (hasDifferentFields(first, second)) {
       return false;
     }
 
     return areEquivalent(first.children(), second.children());
+  }
+
+  private static boolean hasDifferentFields(Tree first, Tree second) {
+    boolean nativeTreeCheck = (first instanceof NativeTree) && (!((NativeTree) first).nativeKind().equals(((NativeTree) second).nativeKind()));
+    boolean unaryTreeCheck = (first instanceof UnaryExpressionTree) && ((UnaryExpressionTree) first).operator() != ((UnaryExpressionTree) second).operator();
+    boolean binaryTreeCheck = (first instanceof BinaryExpressionTree) && (((BinaryExpressionTree) first).operator() != ((BinaryExpressionTree) second).operator());
+    boolean assignTreeCheck = (first instanceof AssignmentExpressionTree) && (((AssignmentExpressionTree) first).operator() != ((AssignmentExpressionTree) second).operator());
+    return nativeTreeCheck || unaryTreeCheck || binaryTreeCheck || assignTreeCheck;
   }
 
   public static List<List<Tree>> findDuplicatedGroups(List<Tree> list) {

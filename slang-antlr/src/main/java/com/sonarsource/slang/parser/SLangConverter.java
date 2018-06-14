@@ -31,6 +31,7 @@ import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
+import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
@@ -51,6 +52,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.sonarsource.slang.impl.UnaryExpressionTreeImpl;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -138,6 +141,11 @@ public class SLangConverter implements ASTConverter {
     @Override
     public Tree visitNativeExpression(SLangParser.NativeExpressionContext ctx) {
       return nativeTree(ctx, ctx.nativeBlock());
+    }
+
+    @Override
+    public Tree visitParenthesizedExpression(SLangParser.ParenthesizedExpressionContext ctx) {
+      return visit(ctx.statementOrExpression());
     }
 
     @Override
@@ -267,7 +275,17 @@ public class SLangConverter implements ASTConverter {
 
     @Override
     public Tree visitMultiplicativeExpression(SLangParser.MultiplicativeExpressionContext ctx) {
-      return binaryTree(ctx.atomicExpression(), ctx.multiplicativeOperator());
+      return binaryTree(ctx.unaryExpression(), ctx.multiplicativeOperator());
+    }
+
+    @Override
+    public Tree visitUnaryExpression(SLangParser.UnaryExpressionContext ctx) {
+      if (ctx.unaryOperator() == null) {
+        return visit(ctx.atomicExpression());
+      } else {
+        Tree operand = visit(ctx.atomicExpression());
+        return new UnaryExpressionTreeImpl(meta(ctx), UnaryExpressionTree.Operator.NEGATE, operand);
+      }
     }
 
     @Override

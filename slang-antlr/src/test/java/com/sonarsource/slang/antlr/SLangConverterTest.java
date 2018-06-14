@@ -31,6 +31,7 @@ import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.parser.SLangConverter;
 import java.util.List;
 import org.junit.Test;
@@ -48,6 +49,22 @@ public class SLangConverterTest {
     assertTree(binary).isBinaryExpression(Operator.PLUS).hasTextRange(1, 0, 1, 5);
     assertTree(binary.leftOperand()).isIdentifier("x").hasTextRange(1, 0, 1, 1);
     assertTree(binary.rightOperand()).isLiteral("1").hasTextRange(1, 4, 1, 5);
+  }
+
+  @Test
+  public void simple_unary_expression() {
+    BinaryExpressionTree binary = parseBinary("!(!x) && !(y && z)");
+    Tree left = binary.leftOperand();
+    Tree right = binary.rightOperand();
+
+    assertTree(left).isUnaryExpression(UnaryExpressionTree.Operator.NEGATE);
+    assertTree(right).isUnaryExpression(UnaryExpressionTree.Operator.NEGATE);
+
+    UnaryExpressionTree unaryLeft = (UnaryExpressionTree) left;
+    UnaryExpressionTree unaryRight = (UnaryExpressionTree) right;
+
+    assertTree(unaryLeft.operand()).isUnaryExpression(UnaryExpressionTree.Operator.NEGATE);
+    assertTree(unaryRight.operand()).isBinaryExpression(Operator.CONDITIONAL_AND);
   }
 
   @Test
