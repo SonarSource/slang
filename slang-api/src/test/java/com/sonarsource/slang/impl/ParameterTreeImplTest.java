@@ -39,13 +39,14 @@ public class ParameterTreeImplTest {
     IdentifierTree identifierTreeX = new IdentifierTreeImpl(meta, "x");
     IdentifierTree identifierTreeY = new IdentifierTreeImpl(meta, "y");
     ParameterTreeImpl parameterTreeX = new ParameterTreeImpl(meta, identifierTreeX, null);
+    ParameterTreeImpl parameterTreeXCopy = new ParameterTreeImpl(meta, new IdentifierTreeImpl(meta, "x"), null);
     ParameterTreeImpl parameterTreeXTyped = new ParameterTreeImpl(meta, identifierTreeX, parameterType);
     ParameterTreeImpl parameterTreeY = new ParameterTreeImpl(meta, identifierTreeY, parameterType);
 
     assertThat(parameterTreeX.children()).hasSize(2);
     assertThat(parameterTreeX.type()).isNull();
     assertThat(parameterTreeX.identifier()).isEqualTo(identifierTreeX);
-    assertThat(areEquivalent(parameterTreeX, parameterTreeX)).isTrue();
+    assertThat(areEquivalent(parameterTreeX, parameterTreeXCopy)).isTrue();
     assertThat(areEquivalent(parameterTreeX, parameterTreeXTyped)).isFalse();
     assertThat(areEquivalent(parameterTreeX, parameterTreeY)).isFalse();
     assertThat(areEquivalent(parameterTreeXTyped, parameterTreeY)).isFalse();

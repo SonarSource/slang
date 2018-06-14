@@ -31,10 +31,12 @@ import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
+import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
+import org.junit.Test;
+
 import java.util.Collections;
 import java.util.List;
-import org.junit.Test;
 
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static java.util.Collections.singletonList;
@@ -63,6 +65,11 @@ public class TreeAssertTest {
   @Test(expected = AssertionError.class)
   public void not_an_identifier() {
     assertTree(LITERAL_42).isIdentifier("abc");
+  }
+
+  @Test
+  public void parameter_has_identifier() {
+    assertTree(new ParameterTreeImpl(null, IDENTIFIER_ABC, null)).hasParameterName("abc");
   }
 
   @Test

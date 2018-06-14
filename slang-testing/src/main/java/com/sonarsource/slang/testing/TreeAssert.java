@@ -22,13 +22,16 @@ package com.sonarsource.slang.testing;
 import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BlockTree;
+import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.utils.SyntacticEquivalence;
-import java.util.Objects;
 import org.assertj.core.api.AbstractAssert;
+
+import java.util.List;
+import java.util.Objects;
 
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.visitors.TreePrinter.tree2string;
@@ -55,6 +58,21 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
     isInstanceOf(ParameterTree.class);
     ParameterTree actualParameter = (ParameterTree) actual;
     assertTree(actualParameter.identifier()).isIdentifier(expectedIdentifierName);
+    return this;
+  }
+
+  public TreeAssert hasParameterNames(String... names) {
+    isNotNull();
+    isInstanceOf(FunctionDeclarationTree.class);
+    FunctionDeclarationTree actualFunction = (FunctionDeclarationTree) actual;
+    List<ParameterTree> actualParameters = actualFunction.formalParameters();
+    if (actualParameters.size() != names.length) {
+      failWithMessage("Expected to have <%s> parameters but found <%s>", names.length, actualParameters.size());
+    }
+    for (int i = 0; i < actualParameters.size(); i++) {
+      ParameterTree tree = actualParameters.get(i);
+      assertTree(tree).hasParameterName(names[i]);
+    }
     return this;
   }
 
