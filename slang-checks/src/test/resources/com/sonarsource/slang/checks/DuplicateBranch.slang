@@ -23,6 +23,7 @@
     foo;
     foo;
   } else if (y) { // Noncompliant {{This branch's code block is the same as the block for the branch on line 22.}}
+//              ^[el=+4;ec=3]
     foo;
     foo;
   } else {
