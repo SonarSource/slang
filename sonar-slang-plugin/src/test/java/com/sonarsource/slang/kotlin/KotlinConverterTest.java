@@ -115,7 +115,6 @@ public class KotlinConverterTest {
 
     FunctionDeclarationTree functionWithPrivate = (FunctionDeclarationTree) kotlin("private fun function2() {}");
     assertThat(functionWithPrivate.formalParameters()).isEmpty();
-    assertTree(functionWithPrivate).hasParameterNames();
     Tree privateModifier = functionDeclarationTree.modifiers().get(0);
     assertTree(privateModifier).isNotEquivalentTo(functionWithInternalModifier.modifiers().get(0));
     assertTree(privateModifier).isEquivalentTo(functionWithPrivate.modifiers().get(0));
@@ -133,7 +132,6 @@ public class KotlinConverterTest {
     assertThat(emptyLambdaFunction.modifiers()).isEmpty();
     assertTree(emptyLambdaFunction.returnType()).isNull();
     assertThat(emptyLambdaFunction.formalParameters()).isEmpty();
-    assertTree(functionWithPrivate).hasParameterNames();
     assertTree(emptyLambdaFunction.body()).isNull();
 
     Tree aIntParam1 = functionDeclarationTree.formalParameters().get(0);
