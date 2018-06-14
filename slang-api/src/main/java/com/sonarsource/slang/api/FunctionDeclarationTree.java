@@ -29,6 +29,7 @@ public interface FunctionDeclarationTree extends Tree {
   @CheckForNull
   Tree returnType();
 
+  @CheckForNull
   IdentifierTree name();
 
   List<ParameterTree> formalParameters();
