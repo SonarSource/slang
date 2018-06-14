@@ -39,11 +39,12 @@ public class UnaryExpressionTreeImplTest  {
     TreeMetaData meta = null;
     Tree condition = new IdentifierTreeImpl(meta, "x");
     Tree negCondition = new UnaryExpressionTreeImpl(meta, UnaryExpressionTree.Operator.NEGATE, condition);
+    Tree negConditionCopy = new UnaryExpressionTreeImpl(meta, UnaryExpressionTree.Operator.NEGATE, condition);
     Tree nativeTree = new NativeTreeImpl(meta, new TypeNativeKind(), Arrays.asList(condition));
     Tree negNative = new UnaryExpressionTreeImpl(meta, UnaryExpressionTree.Operator.NEGATE, nativeTree);
 
     assertThat(negCondition.children()).containsExactly(condition);
-    assertThat(areEquivalent(negCondition, negCondition)).isTrue();
+    assertThat(areEquivalent(negCondition, negConditionCopy)).isTrue();
     assertThat(areEquivalent(negNative, negCondition)).isFalse();
   }
 

@@ -27,7 +27,7 @@ import java.util.List;
 
 public class UnaryExpressionTreeImpl extends BaseTreeImpl implements UnaryExpressionTree {
 
-  private final UnaryExpressionTree.Operator operator;
+  private final Operator operator;
   private final Tree operand;
 
   public UnaryExpressionTreeImpl(TreeMetaData metaData, Operator operator, Tree operand) {
