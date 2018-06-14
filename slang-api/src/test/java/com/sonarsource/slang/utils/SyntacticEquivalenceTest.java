@@ -28,11 +28,11 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
-import static com.sonarsource.slang.TreeCreationUtils.assignment;
-import static com.sonarsource.slang.TreeCreationUtils.binary;
-import static com.sonarsource.slang.TreeCreationUtils.identifier;
-import static com.sonarsource.slang.TreeCreationUtils.literal;
-import static com.sonarsource.slang.TreeCreationUtils.simpleNative;
+import static com.sonarsource.slang.utils.TreeCreationUtils.assignment;
+import static com.sonarsource.slang.utils.TreeCreationUtils.binary;
+import static com.sonarsource.slang.utils.TreeCreationUtils.identifier;
+import static com.sonarsource.slang.utils.TreeCreationUtils.literal;
+import static com.sonarsource.slang.utils.TreeCreationUtils.simpleNative;
 import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static com.sonarsource.slang.utils.SyntacticEquivalence.findDuplicatedGroups;
 import static org.assertj.core.api.Assertions.assertThat;

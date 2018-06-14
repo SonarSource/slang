@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang;
+package com.sonarsource.slang.utils;
 
 import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree;
@@ -41,9 +41,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class TreeCreationUtils {
-  private TreeCreationUtils() {
-
-  }
+  private TreeCreationUtils() { }
 
   public static LiteralTree literal(String value) {
     return new LiteralTreeImpl(null, value);

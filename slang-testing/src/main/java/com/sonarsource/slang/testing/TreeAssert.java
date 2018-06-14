@@ -97,19 +97,20 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
     return this;
   }
 
-  public TreeAssert hasDescendant(Tree expected) {
+  private boolean checkHasDescendant(Tree expected) {
     isNotNull();
-    boolean descendantFound = actual.descendants().anyMatch(descendant -> SyntacticEquivalence.areEquivalent(descendant, expected));
-    if (!descendantFound) {
+    return actual.descendants().anyMatch(descendant -> SyntacticEquivalence.areEquivalent(descendant, expected));
+  }
+
+  public TreeAssert hasDescendant(Tree expected) {
+    if (!checkHasDescendant(expected)) {
       failWithMessage("Expected tree <%s> to be a descendant of <%s>", expected, actual);
     }
     return this;
   }
 
   public TreeAssert hasNotDescendant(Tree expected) {
-    isNotNull();
-    boolean descendantFound = actual.descendants().anyMatch(descendant -> SyntacticEquivalence.areEquivalent(descendant, expected));
-    if (descendantFound) {
+    if (checkHasDescendant(expected)) {
       failWithMessage("Expected tree <%s> not to be a descendant of <%s>", expected, actual);
     }
     return this;

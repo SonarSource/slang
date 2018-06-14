@@ -20,7 +20,6 @@
 package com.sonarsource.slang.api;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 public interface Tree {
@@ -31,8 +30,7 @@ public interface Tree {
 
   default Stream<Tree> descendants() {
     return children().stream()
-      .filter(Objects::nonNull)
-      .flatMap(tree -> children().isEmpty() ? Stream.of(tree) : Stream.concat(Stream.of(tree), tree.descendants()));
+      .flatMap(tree -> Stream.concat(Stream.of(tree), tree.descendants()));
   }
 
 }

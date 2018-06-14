@@ -23,32 +23,38 @@ import java.util.Arrays;
 import java.util.Collections;
 import org.junit.Test;
 
-import static com.sonarsource.slang.TreeCreationUtils.assignment;
-import static com.sonarsource.slang.TreeCreationUtils.binary;
-import static com.sonarsource.slang.TreeCreationUtils.block;
-import static com.sonarsource.slang.TreeCreationUtils.identifier;
-import static com.sonarsource.slang.TreeCreationUtils.literal;
-import static com.sonarsource.slang.TreeCreationUtils.simpleFunction;
-import static com.sonarsource.slang.TreeCreationUtils.topLevel;
 import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.EQUAL_TO;
+import static com.sonarsource.slang.utils.TreeCreationUtils.assignment;
+import static com.sonarsource.slang.utils.TreeCreationUtils.binary;
+import static com.sonarsource.slang.utils.TreeCreationUtils.block;
+import static com.sonarsource.slang.utils.TreeCreationUtils.identifier;
+import static com.sonarsource.slang.utils.TreeCreationUtils.literal;
+import static com.sonarsource.slang.utils.TreeCreationUtils.simpleFunction;
+import static com.sonarsource.slang.utils.TreeCreationUtils.simpleNative;
+import static com.sonarsource.slang.utils.TreeCreationUtils.topLevel;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TreeTest {
+
+  private static final NativeKind SIMPLE_KIND = new NativeKind() {
+  };
 
   @Test
   public void test() {
     Tree x = identifier("x");
     Tree y = identifier("y");
+    Tree z = identifier("z");
     Tree int1 = literal("1");
     Tree xEqualTo1 = binary(EQUAL_TO, x, int1);
     Tree yEqualsXEqualTo1 = assignment(y, xEqualTo1);
     IdentifierTree functionName = identifier("x");
     BlockTree functionBody = block(Arrays.asList(xEqualTo1, yEqualsXEqualTo1));
     Tree function = simpleFunction(functionName, functionBody);
-    Tree topLevelTree = topLevel(Collections.singletonList(function));
+    Tree nativeTree = simpleNative(SIMPLE_KIND, Collections.singletonList(z));
+    Tree topLevelTree = topLevel(Arrays.asList(function, nativeTree));
 
     assertThat(topLevelTree.descendants())
-      .containsExactly(function, functionName, functionBody, xEqualTo1, x, int1, yEqualsXEqualTo1, y, xEqualTo1, x, int1);
+      .containsExactly(function, functionName, functionBody, xEqualTo1, x, int1, yEqualsXEqualTo1, y, xEqualTo1, x, int1, nativeTree, z);
     assertThat(function.descendants())
       .containsExactly(functionName, functionBody, xEqualTo1, x, int1, yEqualsXEqualTo1, y, xEqualTo1, x, int1);
     assertThat(yEqualsXEqualTo1.descendants())
