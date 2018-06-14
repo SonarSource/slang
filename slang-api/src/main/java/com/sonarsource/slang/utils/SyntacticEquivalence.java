@@ -27,10 +27,11 @@ import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.visitors.TreePrinter;
+
+import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 
 public class SyntacticEquivalence {
 

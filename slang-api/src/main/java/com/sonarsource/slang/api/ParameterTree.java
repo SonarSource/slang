@@ -19,21 +19,13 @@
  */
 package com.sonarsource.slang.api;
 
-import java.util.List;
 import javax.annotation.CheckForNull;
 
-public interface FunctionDeclarationTree extends Tree {
+public interface ParameterTree extends Tree {
 
-  List<Tree> modifiers();
-
-  @CheckForNull
-  Tree returnType();
-
-  IdentifierTree name();
-
-  List<ParameterTree> formalParameters();
+  IdentifierTree identifier();
 
   @CheckForNull
-  BlockTree body();
+  Tree type();
 
 }

@@ -25,6 +25,8 @@ import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.NativeKind;
+import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
@@ -39,19 +41,11 @@ import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
 import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
+import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import javax.annotation.CheckForNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
@@ -79,6 +73,16 @@ import org.jetbrains.kotlin.psi.KtTypeElement;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
 import org.jetbrains.kotlin.psi.KtWhenEntry;
 import org.jetbrains.kotlin.psi.KtWhenExpression;
+
+import javax.annotation.CheckForNull;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class KotlinTreeVisitor {
   private static final Map<KtToken, Operator> TOKENS_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
@@ -160,11 +164,12 @@ class KotlinTreeVisitor {
     } else if (element instanceof KtDestructuringDeclarationEntry || isSimpleStringLiteralEntry(element)) {
       // To differentiate between the native trees of complex string template entries, we add the string value to the native kind
       return createNativeTree(metaData, new KotlinNativeKind(element, element.getText()), element);
-    } else if (element instanceof KtParameter) {
-      return createParameter(metaData, element);
+    } else if (element instanceof KtParameter){
+      return createParameter((KtParameter) element);
     } else {
       return createNativeTree(metaData, new KotlinNativeKind(element), element);
     }
+
   }
 
   private Tree createFunctionDeclarationTree(TreeMetaData metaData, KtFunction functionElement) {
@@ -177,6 +182,11 @@ class KotlinTreeVisitor {
     Tree returnType = null;
     IdentifierTree identifierTree = null;
     List<Tree> parametersList = list(functionElement.getValueParameters().stream());
+    if (parametersList.stream().anyMatch(param -> param instanceof NativeTree)) {
+      return createNativeTree(metaData, new KotlinNativeKind(functionElement), functionElement);
+    }
+    List<ParameterTree> parameterTreeList = parametersList.stream().map(ParameterTree.class::cast).collect(Collectors.toList());
+
     Tree bodyTree = createElement(functionElement.getBodyExpression());
     KtTypeElement typeElement = functionElement.getTypeReference() != null ? functionElement.getTypeReference().getTypeElement() : null;
     String name = functionElement.getName();
@@ -192,14 +202,13 @@ class KotlinTreeVisitor {
       if (!(bodyTree instanceof BlockTree)) {
         bodyTree = new BlockTreeImpl(bodyTree.metaData(), Collections.singletonList(bodyTree));
       }
-
       // Set bodyTree to null for empty lambda functions
       if (bodyTree.children().isEmpty()) {
         bodyTree = null;
       }
     }
 
-    return new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, identifierTree, parametersList, (BlockTree) bodyTree);
+    return new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, identifierTree, parameterTreeList, (BlockTree) bodyTree);
   }
 
   private List<Tree> getModifierList(@Nullable KtModifierList modifierList) {
@@ -229,16 +238,18 @@ class KotlinTreeVisitor {
     return new IfTreeImpl(metaData, condition, thenBranch, elseBranch);
   }
 
-  private Tree createParameter(TreeMetaData metaData, PsiElement element) {
-    String name = ((KtParameter) element).getName();
-    NativeKind kind;
+  private Tree createParameter(KtParameter ktParameter) {
+    TreeMetaData metaData = getTreeMetaData(ktParameter);
+    Tree type = createElement(ktParameter.getTypeReference());
+    String name = ktParameter.getName();
+
     // For some reason the Identifier is not among the Parameter children array, so for now we add this information to the native kind
-    if (name != null) {
-      kind = new KotlinNativeKind(element, name);
-    } else {
-      kind = new KotlinNativeKind(element);
+    if (name == null) {
+      return createNativeTree(metaData, new KotlinNativeKind(ktParameter), ktParameter);
     }
-    return createNativeTree(metaData, kind, element);
+
+    IdentifierTree identifier = new IdentifierTreeImpl(metaData, name);
+    return new ParameterTreeImpl(metaData, identifier, type);
   }
 
   private Tree createNativeTree(TreeMetaData metaData, NativeKind kind, PsiElement element) {

@@ -29,12 +29,16 @@ import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
+import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
+import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
+import org.junit.Test;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Test;
 
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static java.util.Collections.singletonList;
@@ -49,6 +53,9 @@ public class TreeAssertTest {
     new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, IDENTIFIER_ABC, LITERAL_42);
   private static final BinaryExpressionTreeImpl ABC_PLUS_ABC_PLUS_42 =
     new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, IDENTIFIER_ABC, ABC_PLUS_42);
+  private static final ParameterTreeImpl PARAMETER_ABC = new ParameterTreeImpl(null, IDENTIFIER_ABC, null);
+  private static final FunctionDeclarationTreeImpl FUNCTION_ABC = new
+      FunctionDeclarationTreeImpl(null, Collections.emptyList(), null, null, Arrays.asList(PARAMETER_ABC),null);
 
   @Test
   public void identifier_ok() {
@@ -63,6 +70,31 @@ public class TreeAssertTest {
   @Test(expected = AssertionError.class)
   public void not_an_identifier() {
     assertTree(LITERAL_42).isIdentifier("abc");
+  }
+
+  @Test
+  public void parameter_has_identifier() {
+    assertTree(PARAMETER_ABC).hasParameterName("abc");
+  }
+
+  @Test(expected = AssertionError.class)
+  public void parameter_does_not_have_identifier() {
+    assertTree(PARAMETER_ABC).hasParameterName("xxx");
+  }
+
+  @Test
+  public void function_has_parameters() {
+    assertTree(FUNCTION_ABC).hasParameterNames("abc");
+  }
+
+  @Test(expected = AssertionError.class)
+  public void function_does_not_have_two_parameters() {
+    assertTree(FUNCTION_ABC).hasParameterNames("abc","xxx");
+  }
+
+  @Test(expected = AssertionError.class)
+  public void function_does_not_have_parameters() {
+    assertTree(FUNCTION_ABC).hasParameterNames("xxx");
   }
 
   @Test

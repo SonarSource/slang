@@ -30,12 +30,13 @@ import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.parser.SLangConverter;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
@@ -104,13 +105,16 @@ public class KotlinConverterTest {
     assertThat(functionDeclarationTree.modifiers()).hasSize(1);
     assertTree(functionDeclarationTree.returnType()).isIdentifier("Boolean");
     assertThat(functionDeclarationTree.formalParameters()).hasSize(2);
+    assertTree(functionDeclarationTree).hasParameterNames("a", "b");
     assertTree(functionDeclarationTree.body()).isBlock(LiteralTree.class);
 
-    FunctionDeclarationTree functionWithInternalModifier = (FunctionDeclarationTree) kotlin("internal fun function1(a: Int, b: String): Boolean = true");
+    FunctionDeclarationTree functionWithInternalModifier = (FunctionDeclarationTree) kotlin("internal fun function1(a: Int, c: String): Boolean = true");
     assertTree(functionWithInternalModifier.body()).isNotNull();
     assertThat(functionWithInternalModifier.modifiers()).hasSize(1);
+    assertTree(functionWithInternalModifier).hasParameterNames("a", "c");
 
     FunctionDeclarationTree functionWithPrivate = (FunctionDeclarationTree) kotlin("private fun function2() {}");
+    assertThat(functionWithPrivate.formalParameters()).isEmpty();
     Tree privateModifier = functionDeclarationTree.modifiers().get(0);
     assertTree(privateModifier).isNotEquivalentTo(functionWithInternalModifier.modifiers().get(0));
     assertTree(privateModifier).isEquivalentTo(functionWithPrivate.modifiers().get(0));
@@ -120,6 +124,7 @@ public class KotlinConverterTest {
     assertThat(constructorFunction.modifiers()).isEmpty();
     assertTree(constructorFunction.returnType()).isNull();
     assertThat(constructorFunction.formalParameters()).hasSize(2);
+    assertTree(constructorFunction).hasParameterNames("a", "b");
     assertTree(constructorFunction.body()).isNull();
 
     FunctionDeclarationTree emptyLambdaFunction = (FunctionDeclarationTree) kotlin("{ }");
@@ -290,6 +295,14 @@ public class KotlinConverterTest {
   }
 
   @Test
+  public void testLambdas() {
+    Tree lambdaWithDestructor = kotlinStatement("{ (a, b) -> a.length < b.length }");
+    Tree lambdaWithoutDestructor = kotlinStatement("{ a, b -> a.length < b.length }");
+    assertTree(lambdaWithDestructor).hasChildren(NativeTree.class);
+    assertTree(lambdaWithoutDestructor).hasChildren(FunctionDeclarationTree.class);
+  }
+
+  @Test
   public void testEquivalenceWithComments() {
     assertTrees(kotlinStatements("x + 2; // EOL comment"))
       .isEquivalentTo(slangStatements("x + 2"));
@@ -350,5 +363,4 @@ public class KotlinConverterTest {
     assertThat(functionDeclarationTree.body()).isNotNull();
     return functionDeclarationTree.body().statementOrExpressions();
   }
-
 }

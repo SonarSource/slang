@@ -21,6 +21,7 @@ package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
+import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import java.util.List;
@@ -38,11 +39,14 @@ public class FunctionDeclarationTreeImplTest {
     List<Tree> modifiers = singletonList(new IdentifierTreeImpl(meta, "public"));
     Tree returnType = new IdentifierTreeImpl(meta, "int");
     IdentifierTree name = new IdentifierTreeImpl(meta, "foo");
-    List<Tree> params = singletonList(new IdentifierTreeImpl(meta, "p1"));
+    IdentifierTree paramName = new IdentifierTreeImpl(meta, "p1");
+    ParameterTree param = new ParameterTreeImpl(meta, paramName, null);
+    List<ParameterTree> params = singletonList(param);
     BlockTree body = new BlockTreeImpl(meta, emptyList());
 
     FunctionDeclarationTreeImpl tree = new FunctionDeclarationTreeImpl(meta, modifiers, returnType, name, params, body);
-    assertThat(tree.children()).containsExactly(modifiers.get(0), returnType, name, params.get(0), body);
+    assertThat(tree.children()).hasSize(5);
+    assertThat(tree.children()).containsExactly(modifiers.get(0), returnType, name, param, body);
     assertThat(tree.modifiers()).isEqualTo(modifiers);
     assertThat(tree.returnType()).isEqualTo(returnType);
     assertThat(tree.name()).isEqualTo(name);
