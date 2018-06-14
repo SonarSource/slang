@@ -47,6 +47,8 @@ public class TreeAssertTest {
     new AssignmentExpressionTreeImpl(null, AssignmentExpressionTree.Operator.EQUAL, IDENTIFIER_ABC, LITERAL_42);
   private static final BinaryExpressionTreeImpl ABC_PLUS_42 =
     new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, IDENTIFIER_ABC, LITERAL_42);
+  private static final BinaryExpressionTreeImpl ABC_PLUS_ABC_PLUS_42 =
+    new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, IDENTIFIER_ABC, ABC_PLUS_42);
 
   @Test
   public void identifier_ok() {
@@ -161,6 +163,26 @@ public class TreeAssertTest {
   @Test(expected = AssertionError.class)
   public void notequivalent_failure() {
     assertTree(LITERAL_42).isNotEquivalentTo(new LiteralTreeImpl(null, "42"));
+  }
+
+  @Test
+  public void hasdescendant_ok() {
+    assertTree(ABC_PLUS_ABC_PLUS_42).hasDescendant(new LiteralTreeImpl(null, "42"));
+  }
+
+  @Test(expected = AssertionError.class)
+  public void hasdescendant_failure() {
+    assertTree(ABC_PLUS_ABC_PLUS_42).hasDescendant(new LiteralTreeImpl(null, "43"));
+  }
+
+  @Test
+  public void hasnotdescendant_ok() {
+    assertTree(ABC_PLUS_ABC_PLUS_42).hasNotDescendant(new LiteralTreeImpl(null, "43"));
+  }
+
+  @Test(expected = AssertionError.class)
+  public void hasnotdescendant_failure() {
+    assertTree(ABC_PLUS_ABC_PLUS_42).hasNotDescendant(new LiteralTreeImpl(null, "42"));
   }
 
   private TreeMetaData meta(TextRange textRange) {

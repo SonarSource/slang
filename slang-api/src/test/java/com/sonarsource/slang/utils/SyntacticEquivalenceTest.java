@@ -23,16 +23,16 @@ import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.NativeKind;
 import com.sonarsource.slang.api.Tree;
-import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
-import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
-import com.sonarsource.slang.impl.IdentifierTreeImpl;
-import com.sonarsource.slang.impl.LiteralTreeImpl;
-import com.sonarsource.slang.impl.NativeTreeImpl;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
+import static com.sonarsource.slang.utils.TreeCreationUtils.assignment;
+import static com.sonarsource.slang.utils.TreeCreationUtils.binary;
+import static com.sonarsource.slang.utils.TreeCreationUtils.identifier;
+import static com.sonarsource.slang.utils.TreeCreationUtils.literal;
+import static com.sonarsource.slang.utils.TreeCreationUtils.simpleNative;
 import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static com.sonarsource.slang.utils.SyntacticEquivalence.findDuplicatedGroups;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -108,26 +108,6 @@ public class SyntacticEquivalenceTest {
     Tree b1 = identifier("b");
     assertThat(findDuplicatedGroups(Arrays.asList(a1, b1, a2, a3))).containsExactly(Arrays.asList(a1, a2, a3));
     assertThat(findDuplicatedGroups(Arrays.asList(a1, b1, null))).isEmpty();
-  }
-
-  private static Tree literal(String value) {
-    return new LiteralTreeImpl(null, value);
-  }
-
-  private static Tree identifier(String name) {
-    return new IdentifierTreeImpl(null, name);
-  }
-
-  private static Tree binary(Operator operator, Tree leftOperand, Tree rightOperand) {
-    return new BinaryExpressionTreeImpl(null, operator, leftOperand, rightOperand);
-  }
-
-  private static Tree assignment(AssignmentExpressionTree.Operator operator, Tree leftOperand, Tree rightOperand) {
-    return new AssignmentExpressionTreeImpl(null, operator, leftOperand, rightOperand);
-  }
-
-  private static Tree simpleNative(NativeKind kind, List<Tree> children) {
-    return new NativeTreeImpl(null, kind, children);
   }
 
 }

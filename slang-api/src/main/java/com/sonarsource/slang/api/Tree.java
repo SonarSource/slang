@@ -20,11 +20,17 @@
 package com.sonarsource.slang.api;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public interface Tree {
 
   List<Tree> children();
 
   TreeMetaData metaData();
+
+  default Stream<Tree> descendants() {
+    return children().stream()
+      .flatMap(tree -> Stream.concat(Stream.of(tree), tree.descendants()));
+  }
 
 }
