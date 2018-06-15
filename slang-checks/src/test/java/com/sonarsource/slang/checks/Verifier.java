@@ -104,19 +104,24 @@ public class Verifier {
 
     @Override
     public void reportIssue(TextRange textRange, String message) {
-      reportIssue(textRange, message, Collections.emptyList());
+      reportIssue(textRange, message, Collections.emptyList(), null);
     }
 
     @Override
     public void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations) {
-      reportIssue(tree.metaData().textRange(), message, secondaryLocations);
+      reportIssue(tree, message, secondaryLocations, null);
     }
 
-    private void reportIssue(TextRange textRange, String message, List<SecondaryLocation> secondaryLocations) {
+    @Override
+    public void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
+      reportIssue(tree.metaData().textRange(), message, secondaryLocations, gap);
+    }
+
+    private void reportIssue(TextRange textRange, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
       TextPointer start = textRange.start();
       TextPointer end = textRange.end();
       SingleFileVerifier.Issue issue =
-        verifier.reportIssue(message).onRange(start.line(), start.lineOffset() + 1, end.line(), end.lineOffset());
+        verifier.reportIssue(message).onRange(start.line(), start.lineOffset() + 1, end.line(), end.lineOffset()).withGap(gap);
       secondaryLocations.forEach(secondary ->
         issue.addSecondary(
           secondary.textRange.start().line(),
@@ -124,6 +129,7 @@ public class Verifier {
           secondary.textRange.end().line(),
           secondary.textRange.end().lineOffset(),
           secondary.message));
+
     }
 
   }
