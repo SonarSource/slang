@@ -36,6 +36,8 @@ import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
+import com.sonarsource.slang.impl.TokenImpl;
+import com.sonarsource.slang.impl.TreeMetaDataProvider;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +48,8 @@ import static java.util.Collections.singletonList;
 
 public class TreeAssertTest {
 
-  private static final IdentifierTreeImpl IDENTIFIER_ABC = new IdentifierTreeImpl(null, "abc");
+  private static final TreeMetaDataProvider META_DATA_PROVIDER = new TreeMetaDataProvider(Collections.emptyList());
+  private static final IdentifierTreeImpl IDENTIFIER_ABC = new IdentifierTreeImpl(META_DATA_PROVIDER.metaData(null, Collections.singletonList(new TokenImpl(new TextRangeImpl(1, 0, 1, 3), "abc", false))), "abc");
   private static final StringLiteralTreeImpl STRING_LITERAL_STR = new StringLiteralTreeImpl(null, "\"str\"");
   private static final LiteralTreeImpl LITERAL_42 = new LiteralTreeImpl(null, "42");
   public static final AssignmentExpressionTreeImpl ASSIGN_42_TO_ABC = new AssignmentExpressionTreeImpl(null, AssignmentExpressionTree.Operator.EQUAL, IDENTIFIER_ABC, LITERAL_42);
@@ -228,6 +231,16 @@ public class TreeAssertTest {
   @Test(expected = AssertionError.class)
   public void hasnotdescendant_failure() {
     assertTree(ABC_PLUS_ABC_PLUS_42).hasNotDescendant(new LiteralTreeImpl(null, "42"));
+  }
+
+  @Test
+  public void hasSource_ok() {
+    assertTree(IDENTIFIER_ABC).hasSource("abc");
+  }
+
+  @Test(expected = AssertionError.class)
+  public void hasSource_failure() {
+    assertTree(IDENTIFIER_ABC).hasSource("xxx");
   }
 
   private TreeMetaData meta(TextRange textRange) {

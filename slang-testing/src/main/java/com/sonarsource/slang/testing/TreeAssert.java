@@ -27,11 +27,15 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.StringLiteralTree;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.utils.SyntacticEquivalence;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.assertj.core.api.AbstractAssert;
 
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
@@ -195,6 +199,49 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
       failWithMessage("Expected <%s> to not be equivalent to <%s>", actual, expected);
     }
     return this;
+  }
+
+  public TreeAssert hasSource(String expected) {
+    isNotNull();
+    assertThat(source(actual)).isEqualTo(expected);
+    return this;
+  }
+
+  private static String source(Tree tree) {
+    StringBuilder code = new StringBuilder();
+    List<Token> tokens = new ArrayList<>(tree.metaData().directTokens());
+    tokens.addAll(
+      tree.descendants()
+        .flatMap(t -> t.metaData().directTokens().stream())
+        .collect(Collectors.toList()));
+    List<Token> sortedTokens = tokens.stream()
+      .sorted(Comparator.comparing(t -> t.textRange().start()))
+      .collect(Collectors.toList());
+
+    int line = 1;
+    int column = 0;
+    for (Token token : sortedTokens) {
+      int linesToInsert = token.textRange().start().line() - line;
+      if (linesToInsert < 0) {
+        throw new IllegalStateException("Illegal token line for " + token);
+      } else if (linesToInsert > 0) {
+        for (int i = 0; i < linesToInsert; i++) {
+          code.append("\n");
+          line++;
+        }
+        column = 0;
+      }
+      int spacesToInsert = token.textRange().start().lineOffset() - column;
+      for (int i = 0; i < spacesToInsert; i++) {
+        code.append(' ');
+        column++;
+      }
+      String text = token.text();
+      code.append(text);
+      column += text.length();
+    }
+
+    return code.toString();
   }
 
   public static TreeAssert assertTree(Tree actual) {

@@ -140,7 +140,7 @@ public class SLangConverter implements ASTConverter {
     public Tree visitSlangFile(SLangParser.SlangFileContext ctx) {
       // Special case for text range here, as last token is <EOF> which has length 5, so we only go up to the start of the <EOF> token
       TextRangeImpl textRange = new TextRangeImpl(startOf(ctx.start), new TextPointerImpl(ctx.stop.getLine(), ctx.stop.getCharPositionInLine()));
-      return new TopLevelTreeImpl(meta(textRange), list(ctx.typeDeclaration()), metaDataProvider.allComments());
+      return new TopLevelTreeImpl(meta(textRange, Collections.emptyList()), list(ctx.typeDeclaration()), metaDataProvider.allComments());
     }
 
     @Override
@@ -150,32 +150,38 @@ public class SLangConverter implements ASTConverter {
 
     @Override
     public Tree visitParenthesizedExpression(SLangParser.ParenthesizedExpressionContext ctx) {
-      return visit(ctx.statementOrExpression());
+      return nativeTree(ctx, Collections.singletonList(ctx.statementOrExpression()));
     }
 
     @Override
     public Tree visitStatementOrExpression(SLangParser.StatementOrExpressionContext ctx) {
-      return assignmentTree(ctx.disjunction(), ctx.assignmentOperator());
+      return assignmentTree(ctx, ctx.disjunction(), ctx.assignmentOperator());
     }
 
     @Override
     public Tree visitMethodDeclaration(SLangParser.MethodDeclarationContext ctx) {
+      List<com.sonarsource.slang.api.Token> tokens = new ArrayList<>(tokens(ctx));
       List<Tree> modifiers = list(ctx.methodModifier());
       Tree returnType = null;
       IdentifierTree name = null;
       SLangParser.MethodHeaderContext methodHeaderContext = ctx.methodHeader();
+      tokens.addAll(tokens(methodHeaderContext));
       SLangParser.ResultContext resultContext = methodHeaderContext.result();
       SLangParser.IdentifierContext identifier = methodHeaderContext.methodDeclarator().identifier();
       if (resultContext != null) {
-        returnType = new IdentifierTreeImpl(meta(resultContext), resultContext.getText());
+        String resultText = resultContext.getText();
+        TokenImpl resultToken = new TokenImpl(meta(resultContext).textRange(), resultText, false);
+        returnType = new IdentifierTreeImpl(meta(resultContext, Collections.singletonList(resultToken)), resultText);
       }
       if (identifier != null) {
         name = (IdentifierTree) visit(identifier);
       }
 
+      tokens.addAll(tokens(methodHeaderContext.methodDeclarator()));
       List<ParameterTree> convertedParameters = new ArrayList<>();
       SLangParser.FormalParameterListContext formalParameterListContext = methodHeaderContext.methodDeclarator().formalParameterList();
       if (formalParameterListContext != null) {
+        tokens.addAll(tokens(formalParameterListContext));
         SLangParser.FormalParametersContext formalParameters = formalParameterListContext.formalParameters();
         if (formalParameters != null) {
           convertedParameters.addAll(list(formalParameters.formalParameter()).stream().map(ParameterTree.class::cast).collect(toList()));
@@ -183,7 +189,11 @@ public class SLangConverter implements ASTConverter {
         convertedParameters.add((ParameterTree) visit(formalParameterListContext.lastFormalParameter()));
       }
 
-      return new FunctionDeclarationTreeImpl(meta(ctx), modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()));
+      BlockTree body = (BlockTree) visit(ctx.methodBody());
+      if (body == null) {
+        tokens.addAll(tokens(ctx.methodBody()));
+      }
+      return new FunctionDeclarationTreeImpl(meta(ctx, tokens), modifiers, returnType, name, convertedParameters, body);
     }
 
     @Override
@@ -255,17 +265,17 @@ public class SLangConverter implements ASTConverter {
       Tree leftHandSide = visit(ctx.leftHandSide());
       Tree statementOrExpression = visit(ctx.statementOrExpression());
       AssignmentExpressionTree.Operator operator = ASSIGNMENT_OPERATOR_MAP.get(ctx.assignmentOperator().getText());
-      return new AssignmentExpressionTreeImpl(meta(ctx), operator, leftHandSide, statementOrExpression);
+      return new AssignmentExpressionTreeImpl(meta(ctx, tokens(ctx.assignmentOperator())), operator, leftHandSide, statementOrExpression);
     }
 
     @Override
     public Tree visitDisjunction(SLangParser.DisjunctionContext ctx) {
-      return binaryTree(Operator.CONDITIONAL_OR, ctx.conjunction());
+      return binaryTree(ctx, Operator.CONDITIONAL_OR, ctx.conjunction());
     }
 
     @Override
     public Tree visitConjunction(SLangParser.ConjunctionContext ctx) {
-      return binaryTree(Operator.CONDITIONAL_AND, ctx.equalityComparison());
+      return binaryTree(ctx, Operator.CONDITIONAL_AND, ctx.equalityComparison());
     }
 
     @Override
@@ -294,7 +304,7 @@ public class SLangConverter implements ASTConverter {
         return visit(ctx.atomicExpression());
       } else {
         Tree operand = visit(ctx.atomicExpression());
-        return new UnaryExpressionTreeImpl(meta(ctx), UnaryExpressionTree.Operator.NEGATE, operand);
+        return new UnaryExpressionTreeImpl(meta(ctx, tokens(ctx.unaryOperator())), UnaryExpressionTree.Operator.NEGATE, operand);
       }
     }
 
@@ -312,6 +322,16 @@ public class SLangConverter implements ASTConverter {
       return new IdentifierTreeImpl(meta(ctx), ctx.getText());
     }
 
+    private static List<com.sonarsource.slang.api.Token> tokens(ParserRuleContext ctx) {
+      boolean isInIdentifier = ctx instanceof SLangParser.IdentifierContext;
+      return ctx.children.stream()
+        .map(c -> (c instanceof SLangParser.SemiContext) ? ((SLangParser.SemiContext) c).SEMICOLON() : c)
+        .filter(c -> c instanceof TerminalNode)
+        .map(c -> ((TerminalNode) c))
+        .map(c -> new TokenImpl(range(c.getSymbol()), c.getText(), !isInIdentifier && Character.isAlphabetic(c.getText().charAt(0))))
+        .collect(Collectors.toList());
+    }
+
     private static TextPointer startOf(Token token) {
       return new TextPointerImpl(token.getLine(), token.getCharPositionInLine());
     }
@@ -320,27 +340,28 @@ public class SLangConverter implements ASTConverter {
       return new TextPointerImpl(token.getLine(), token.getCharPositionInLine() + token.getText().length());
     }
 
+    private static TextRange range(Token token) {
+      return range(token, token);
+    }
+
+    private static TextRange range(Token first, Token last) {
+      return new TextRangeImpl(startOf(first), endOf(last));
+    }
+
+    private static TextRange range(Tree first, Tree last) {
+      return new TextRangeImpl(first.metaData().textRange().start(), last.metaData().textRange().end());
+    }
+
     private TreeMetaData meta(ParserRuleContext ctx) {
-      List<com.sonarsource.slang.api.Token> tokens = ctx.children.stream()
-        .filter(c -> c instanceof TerminalNode)
-        .map(c -> new TokenImpl(range(((TerminalNode) c).getSymbol()), c.getText(), Character.isAlphabetic(c.getText().charAt(0))))
-        .collect(Collectors.toList());
-      Token firstToken = ctx.start;
-      Token lastToken = ctx.stop;
-      return meta(new TextRangeImpl(startOf(firstToken), endOf(lastToken)), tokens);
+      return meta(range(ctx.start, ctx.stop), tokens(ctx));
     }
 
-    private TextRange range(Token token) {
-      return new TextRangeImpl(startOf(token), endOf(token));
+    private TreeMetaData meta(ParserRuleContext ctx, List<com.sonarsource.slang.api.Token> tokens) {
+      return meta(range(ctx.start, ctx.stop), tokens);
     }
 
-    private TreeMetaData meta(Tree first, Tree last) {
-      return meta(new TextRangeImpl(first.metaData().textRange().start(), last.metaData().textRange().end()));
-    }
-
-    @Deprecated
-    private TreeMetaData meta(TextRange textRange) {
-      return metaDataProvider.metaData(textRange);
+    private TreeMetaData meta(Tree first, Tree last, List<com.sonarsource.slang.api.Token> tokens) {
+      return meta(range(first, last), tokens);
     }
 
     private TreeMetaData meta(TextRange textRange, List<com.sonarsource.slang.api.Token> tokens) {
@@ -363,31 +384,35 @@ public class SLangConverter implements ASTConverter {
         .collect(toList());
     }
 
-    private Tree binaryTree(Operator operator, List<? extends ParseTree> operands) {
+    private Tree binaryTree(ParserRuleContext ctx, Operator operator, List<? extends ParseTree> operands) {
       Tree result = visit(operands.get(operands.size() - 1));
+      List<com.sonarsource.slang.api.Token> tokens = tokens(ctx);
       for (int i = operands.size() - 2; i >= 0; i--) {
         Tree left = visit(operands.get(i));
-        result = new BinaryExpressionTreeImpl(meta(left, result), operator, left, result);
+        result = new BinaryExpressionTreeImpl(meta(left, result, Collections.singletonList(tokens.get(i))), operator, left, result);
       }
       return result;
     }
 
-    private Tree binaryTree(List<? extends ParseTree> operands, List<? extends ParseTree> operators) {
+    private Tree binaryTree(List<? extends ParseTree> operands, List<? extends ParserRuleContext> operators) {
       Tree result = visit(operands.get(operands.size() - 1));
       for (int i = operands.size() - 2; i >= 0; i--) {
         Tree left = visit(operands.get(i));
         Operator operator = BINARY_OPERATOR_MAP.get(operators.get(i).getText());
-        result = new BinaryExpressionTreeImpl(meta(left, result), operator, left, result);
+        result = new BinaryExpressionTreeImpl(meta(left, result, tokens(operators.get(i))), operator, left, result);
       }
       return result;
     }
 
-    private Tree assignmentTree(List<? extends ParseTree> expressions, List<? extends ParseTree> operators) {
+    private Tree assignmentTree(SLangParser.StatementOrExpressionContext ctx, List<? extends ParseTree> expressions, List<? extends ParserRuleContext> operators) {
       Tree result = visit(expressions.get(expressions.size() - 1));
       for (int i = expressions.size() - 2; i >= 0; i--) {
         Tree left = visit(expressions.get(i));
         AssignmentExpressionTree.Operator operator = ASSIGNMENT_OPERATOR_MAP.get(operators.get(i).getText());
-        result = new AssignmentExpressionTreeImpl(meta(left, result), operator, left, result);
+        result = new AssignmentExpressionTreeImpl(meta(left, result, tokens(operators.get(i))), operator, left, result);
+      }
+      if (ctx.semi() != null) {
+        return new NativeTreeImpl(meta(ctx), new SNativeKind(ctx), Collections.singletonList(result));
       }
       return result;
     }

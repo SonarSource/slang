@@ -60,7 +60,7 @@ public class KotlinConverterTest {
   @Test
   public void testBinaryExpression() {
     assertTrees(kotlinStatements("x + 2; x - 2; x * 2; x / 2; x == 2; x != 2; x > 2; x >= 2; x < 2; x <= 2; x && y; x || y;"))
-      .isEquivalentTo(slangStatements("x + 2; x - 2; x * 2; x / 2; x == 2; x != 2; x > 2; x >= 2; x < 2; x <= 2; x && y; x || y;"));
+      .isEquivalentTo(slangStatements("x + 2\n x - 2\n x * 2\n x / 2\n x == 2\n x != 2\n x > 2\n x >= 2\n x < 2\n x <= 2\n x && y\n x || y\n"));
   }
 
   @Test
@@ -159,7 +159,7 @@ public class KotlinConverterTest {
   @Test
   public void testLiterals() {
     assertTrees(kotlinStatements("554; true; false; null; \"string\"; 'c';"))
-      .isEquivalentTo(slangStatements("554; true; false; null; \"string\"; 'c';"));
+      .isEquivalentTo(slangStatements("554 true false null \"string\" 'c'"));
   }
 
   @Test
@@ -216,7 +216,7 @@ public class KotlinConverterTest {
       .isEquivalentTo(slangStatements("if (x) 1 else 4"));
 
     assertTrees(kotlinStatements("if (x) 1 else if (x > 2) 4"))
-      .isEquivalentTo(slangStatements("if (x) 1 else if (x > 2) 4;"));
+      .isEquivalentTo(slangStatements("if (x) 1 else if (x > 2) 4"));
 
     // In kotlin a null 'then' branch is valid code, so this if will be mapped to a native tree as it is not valid in Slang AST
     NativeTree ifStatementWithNullThenBranch = (NativeTree) kotlinStatement("if (x) else 4");
@@ -314,7 +314,7 @@ public class KotlinConverterTest {
   @Test
   public void testAssignments() {
     assertTrees(kotlinStatements("x = 3\nx -= y + 3\n"))
-      .isEquivalentTo(slangStatements("x = 3; x -= y + 3"));
+      .isEquivalentTo(slangStatements("x = 3\n x -= y + 3\n"));
   }
 
   private static String createString(String s) {
