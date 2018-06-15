@@ -28,10 +28,14 @@ import com.sonarsource.slang.checks.api.CheckContext;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.checks.api.SlangCheck;
+import com.sonarsource.slang.visitors.TreeContext;
+import com.sonarsource.slang.visitors.TreeVisitor;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.sonar.check.Rule;
 
@@ -47,12 +51,17 @@ public class DuplicatedFunctionImplementationCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(TopLevelTree.class, (ctx, tree) -> {
-      List<FunctionDeclarationTree> functionDeclarations = tree.descendants()
-        .filter(FunctionDeclarationTree.class::isInstance)
-        .map(FunctionDeclarationTree.class::cast)
-        .collect(Collectors.toList());
+      Map<Tree, List<FunctionDeclarationTree>> functionsByParents = new HashMap<>();
+      TreeVisitor<TreeContext> functionVisitor = new TreeVisitor<>();
+      functionVisitor.register(FunctionDeclarationTree.class,
+        (functionCtx, functionDeclarationTree) -> functionsByParents
+          .computeIfAbsent(functionCtx.ancestors().peek(), key -> new ArrayList<>())
+          .add(functionDeclarationTree));
+      functionVisitor.scan(new TreeContext(), tree);
 
-      check(ctx, functionDeclarations);
+      for (Map.Entry<Tree, List<FunctionDeclarationTree>> entry : functionsByParents.entrySet()) {
+        check(ctx, entry.getValue());
+      }
     });
   }
 
