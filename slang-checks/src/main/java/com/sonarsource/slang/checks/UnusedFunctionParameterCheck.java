@@ -20,6 +20,7 @@
 package com.sonarsource.slang.checks;
 
 import com.sonarsource.slang.api.FunctionDeclarationTree;
+import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SecondaryLocation;
@@ -38,11 +39,7 @@ public class UnusedFunctionParameterCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(FunctionDeclarationTree.class, (ctx, functionDeclarationTree) -> {
-      if (!(ctx.parent() instanceof TopLevelTreeImpl)) {
-        return;
-      }
-
-      if (functionDeclarationTree.body() == null || functionDeclarationTree.body().descendants() == null) {
+      if (!(ctx.parent() instanceof TopLevelTreeImpl) || (functionDeclarationTree.body() == null)) {
         return;
       }
 
@@ -56,17 +53,17 @@ public class UnusedFunctionParameterCheck implements SlangCheck {
       }
 
       List<SecondaryLocation> secondaryLocations = unusedParameters.stream()
-          .skip(1)
-          .map(SecondaryLocation::new)
+          .map(unusedParameter ->
+              new SecondaryLocation(unusedParameter.identifier(), "Remove this unused method parameter " + unusedParameter.identifier().name() + "\"."))
           .collect(Collectors.toList());
 
-      ParameterTree firstUnused = unusedParameters.get(0);
+      IdentifierTree firstUnused = unusedParameters.get(0).identifier();
       String msg;
 
       if (unusedParameters.size() > 1) {
         msg = "Remove these unused function parameters.";
       } else {
-        msg = "Remove this unused function parameter \"" + firstUnused.identifier().name() + "\".";
+        msg = "Remove this unused function parameter \"" + firstUnused.name() + "\".";
       }
 
       ctx.reportIssue(firstUnused, msg, secondaryLocations);
