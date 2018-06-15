@@ -35,6 +35,7 @@ public class CommonCheckList {
       CollapsibleIfStatementsCheck.class,
       DuplicateBranchCheck.class,
       DuplicatedFunctionImplementationCheck.class,
+      ElseIfWithoutElseCheck.class,
       EmptyBlockCheck.class,
       EmptyFunctionCheck.class,
       IfConditionalAlwaysTrueOrFalseCheck.class,
