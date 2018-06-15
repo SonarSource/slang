@@ -23,8 +23,6 @@ import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TreeMetaData;
-
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,11 +36,6 @@ public class TreeMetaDataProvider {
 
   public List<Comment> allComments() {
     return comments;
-  }
-
-  @Deprecated
-  public TreeMetaData metaData(TextRange textRange) {
-    return metaData(textRange, Collections.emptyList());
   }
 
   public TreeMetaData metaData(TextRange textRange, List<Token> tokens) {

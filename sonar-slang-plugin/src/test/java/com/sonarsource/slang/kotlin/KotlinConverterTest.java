@@ -26,10 +26,13 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.parser.SLangConverter;
+import java.util.ArrayList;
+import java.util.Comparator;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -103,7 +106,10 @@ public class KotlinConverterTest {
     FunctionDeclarationTree functionDeclarationTree = ((FunctionDeclarationTree) kotlin("private fun function1(a: Int, b: String): Boolean { true; }"));
     assertTree(functionDeclarationTree.name()).isIdentifier("function1").hasTextRange(1, 12, 1, 21);
     assertThat(functionDeclarationTree.modifiers()).hasSize(1);
-    assertTree(functionDeclarationTree.returnType()).isIdentifier("Boolean");
+    assertThat(functionDeclarationTree.returnType().descendants()
+      .filter(d -> d instanceof IdentifierTree)
+      .map(d -> ((IdentifierTree) d).name())
+    ).containsExactly("Boolean");
     assertThat(functionDeclarationTree.formalParameters()).hasSize(2);
     assertTree(functionDeclarationTree).hasParameterNames("a", "b");
     assertTree(functionDeclarationTree.body()).isBlock(LiteralTree.class);
@@ -132,7 +138,7 @@ public class KotlinConverterTest {
     assertThat(emptyLambdaFunction.modifiers()).isEmpty();
     assertTree(emptyLambdaFunction.returnType()).isNull();
     assertThat(emptyLambdaFunction.formalParameters()).isEmpty();
-    assertTree(emptyLambdaFunction.body()).isNull();
+    assertTree(emptyLambdaFunction.body()).isBlock();
 
     Tree aIntParam1 = functionDeclarationTree.formalParameters().get(0);
     Tree bStringParam = functionDeclarationTree.formalParameters().get(1);
@@ -317,6 +323,17 @@ public class KotlinConverterTest {
       .isEquivalentTo(slangStatements("x = 3\n x -= y + 3\n"));
   }
 
+  @Test
+  public void testTokens() {
+    Tree tree = kotlin("private fun foo() { }");
+    List<Token> tokens = new ArrayList<>(tree.metaData().directTokens());
+    tree.descendants().forEach(
+      d -> tokens.addAll(d.metaData().directTokens()));
+    tokens.sort(Comparator.comparing(token -> token.textRange().start()));
+    assertThat(tokens).extracting(Token::text).containsExactly("private", "fun", "foo", "(", ")", "{", "}");
+    assertThat(tokens).extracting(Token::isKeyword).containsExactly(true, true, false, false, false, false, false);
+  }
+
   private static String createString(String s) {
     return "\"" + s + "\"";
   }
@@ -347,6 +364,7 @@ public class KotlinConverterTest {
 
   private Tree kotlin(String innerCode) {
     Tree tree = converter.parse(innerCode);
+    assertTree(tree).hasSource(innerCode);
     assertThat(tree).isInstanceOf(TopLevelTree.class);
     assertThat(tree.children()).hasSize(3);
     return tree.children().get(2);

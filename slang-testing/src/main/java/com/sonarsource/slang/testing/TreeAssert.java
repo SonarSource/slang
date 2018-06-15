@@ -27,6 +27,7 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.StringLiteralTree;
+import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
@@ -37,6 +38,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.assertj.core.api.AbstractAssert;
+import org.sonarsource.analyzer.commons.TokenLocation;
 
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.visitors.TreePrinter.tree2string;
@@ -221,7 +223,9 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
     int line = 1;
     int column = 0;
     for (Token token : sortedTokens) {
-      int linesToInsert = token.textRange().start().line() - line;
+      TextPointer start = token.textRange().start();
+      TokenLocation tokenLocation = new TokenLocation(start.line(), start.lineOffset(), token.text());
+      int linesToInsert = start.line() - line;
       if (linesToInsert < 0) {
         throw new IllegalStateException("Illegal token line for " + token);
       } else if (linesToInsert > 0) {
@@ -231,14 +235,14 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
         }
         column = 0;
       }
-      int spacesToInsert = token.textRange().start().lineOffset() - column;
+      int spacesToInsert = start.lineOffset() - column;
       for (int i = 0; i < spacesToInsert; i++) {
         code.append(' ');
         column++;
       }
-      String text = token.text();
-      code.append(text);
-      column += text.length();
+      line = tokenLocation.endLine();
+      column = tokenLocation.endLineOffset();
+      code.append(token.text());
     }
 
     return code.toString();
