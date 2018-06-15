@@ -72,7 +72,7 @@ public class DuplicatedFunctionImplementationCheck implements SlangCheck {
       functionDeclarations.stream()
         .skip(i + 1L)
         .filter(f -> !reportedDuplicates.contains(f))
-        .filter(DuplicatedFunctionImplementationCheck::hasMinimumLineNumber)
+        .filter(DuplicatedFunctionImplementationCheck::hasMinimumSize)
         .filter(f -> areDuplicatedImplementation(original, f))
         .forEach(duplicate -> {
           reportDuplicate(ctx, original, duplicate);
@@ -82,7 +82,7 @@ public class DuplicatedFunctionImplementationCheck implements SlangCheck {
 
   }
 
-  private static boolean hasMinimumLineNumber(FunctionDeclarationTree function) {
+  private static boolean hasMinimumSize(FunctionDeclarationTree function) {
     BlockTree functionBody = function.body();
     if (functionBody == null) {
       return false;
