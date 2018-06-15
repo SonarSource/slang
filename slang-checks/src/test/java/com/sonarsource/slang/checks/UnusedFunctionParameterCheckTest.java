@@ -19,31 +19,13 @@
  */
 package com.sonarsource.slang.checks;
 
-import java.util.Arrays;
-import java.util.List;
+import org.junit.Test;
 
-public class CommonCheckList {
+public class UnusedFunctionParameterCheckTest {
 
-  private CommonCheckList() {
-  }
-
-  public static List<Class> checks() {
-    return Arrays.asList(
-      AllBranchesIdenticalCheck.class,
-      BadFunctionNameCheck.class,
-      BooleanLiteralCheck.class,
-      CollapsibleIfStatementsCheck.class,
-      DuplicateBranchCheck.class,
-      DuplicatedFunctionImplementationCheck.class,
-      EmptyBlockCheck.class,
-      FixMeCommentCheck.class,
-      IdenticalBinaryOperandCheck.class,
-      IdenticalConditionsCheck.class,
-      SelfAssignmentCheck.class,
-      StringLiteralDuplicatedCheck.class,
-      TodoCommentCheck.class,
-      TooManyParametersCheck.class,
-      UnusedFunctionParameterCheck.class);
+  @Test
+  public void test() {
+    Verifier.verify("UnusedFunctionParameter.slang", new UnusedFunctionParameterCheck());
   }
 
 }

@@ -77,7 +77,7 @@ public class SlangRulingTest {
       .setSourceEncoding("utf-8")
       .setProperty("sonar.inclusions", "**/*.kt")
       .setProperty("sonar.exclusions", "**/testData/**/*")
-      .setProperty("sonar.analysis.mode", "preview")
+    //  .setProperty("sonar.analysis.mode", "preview")
       .setProperty("dump.old", FileLocation.of("src/test/resources/expected").getFile().getAbsolutePath())
       .setProperty("dump.new", FileLocation.of("target/actual").getFile().getAbsolutePath())
       .setProperty("lits.differences", litsDifferencesFile.getAbsolutePath())
