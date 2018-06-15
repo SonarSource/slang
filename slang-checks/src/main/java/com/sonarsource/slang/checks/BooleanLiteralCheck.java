@@ -62,10 +62,9 @@ public class BooleanLiteralCheck implements SlangCheck {
     });
   }
 
-  private static Optional<LiteralTree> getBooleanLiteral(Tree... trees) {
+  private static Optional<Tree> getBooleanLiteral(Tree... trees) {
     return Arrays.stream(trees)
       .filter(tree -> tree instanceof LiteralTree && BOOLEAN_LITERALS.contains(((LiteralTree) tree).value()))
-      .map(LiteralTree.class::cast)
       .findFirst();
   }
 }

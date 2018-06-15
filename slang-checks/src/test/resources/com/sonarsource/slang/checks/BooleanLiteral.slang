@@ -15,9 +15,10 @@ x || true;                                   // Noncompliant {{Remove the unnece
 
 !x                                           // OK
 x || foo;                                    // OK
+x == y                                       // OK
+z != x                                       // OK
 
 x = if (foo) y else false;                   // Noncompliant {{Remove the unnecessary Boolean literal.}}
-x = if (foo) y else true;                    // Noncompliant {{Remove the unnecessary Boolean literal.}}
 x = if (foo) y else true;                    // Noncompliant {{Remove the unnecessary Boolean literal.}}
 x = if (foo) true else y;                    // Noncompliant {{Remove the unnecessary Boolean literal.}}
 x = if (foo) false else y;                   // Noncompliant {{Remove the unnecessary Boolean literal.}}
