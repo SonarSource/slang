@@ -25,6 +25,7 @@ import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.TextRange;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
@@ -238,6 +239,11 @@ public class TreeAssertTest {
 
       @Override
       public List<Comment> commentsInside() {
+        return null;
+      }
+
+      @Override
+      public List<Token> directTokens() {
         return null;
       }
     };

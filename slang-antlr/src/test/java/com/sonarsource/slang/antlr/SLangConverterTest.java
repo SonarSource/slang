@@ -29,6 +29,7 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Test;
 
+import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -248,6 +250,16 @@ public class SLangConverterTest {
       assertTree(topLevelTree.declarations().get(i)).isLiteral(values.get(i));
       assertTree(topLevelTree.declarations().get(i)).isStringLiteral(content.get(i));
     }
+  }
+  
+  @Test
+  public void tokens() {
+    Tree topLevel = converter.parse("if (cond) x = 1;");
+    IfTree ifTree = (IfTree) topLevel.children().get(0);
+    assertThat(topLevel.metaData().directTokens()).isEmpty();
+    assertThat(ifTree.metaData().directTokens()).extracting(Token::text).containsExactly("if", "(", ")");
+    assertThat(ifTree.metaData().directTokens()).extracting(Token::isKeyword).containsExactly(true, false, false);
+    assertRange(ifTree.metaData().directTokens().get(1).textRange()).hasRange(1, 3, 1, 4);
   }
 
   private BinaryExpressionTree parseBinary(String code) {

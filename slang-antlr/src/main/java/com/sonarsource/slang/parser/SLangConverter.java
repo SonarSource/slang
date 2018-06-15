@@ -40,28 +40,30 @@ import com.sonarsource.slang.impl.CommentImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
+import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
 import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.ParameterTreeImpl;
+import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.impl.TextPointerImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
+import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
-import com.sonarsource.slang.impl.LiteralTreeImpl;
-import com.sonarsource.slang.impl.StringLiteralTreeImpl;
+import com.sonarsource.slang.impl.UnaryExpressionTreeImpl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.sonarsource.slang.impl.UnaryExpressionTreeImpl;
+import java.util.stream.Collectors;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.sonarsource.analyzer.commons.TokenLocation;
 
 import static java.util.stream.Collectors.toList;
@@ -314,20 +316,35 @@ public class SLangConverter implements ASTConverter {
       return new TextPointerImpl(token.getLine(), token.getCharPositionInLine());
     }
 
+    private static TextPointer endOf(Token token) {
+      return new TextPointerImpl(token.getLine(), token.getCharPositionInLine() + token.getText().length());
+    }
+
     private TreeMetaData meta(ParserRuleContext ctx) {
+      List<com.sonarsource.slang.api.Token> tokens = ctx.children.stream()
+        .filter(c -> c instanceof TerminalNode)
+        .map(c -> new TokenImpl(range(((TerminalNode) c).getSymbol()), c.getText(), Character.isAlphabetic(c.getText().charAt(0))))
+        .collect(Collectors.toList());
       Token firstToken = ctx.start;
       Token lastToken = ctx.stop;
-      return meta(new TextRangeImpl(
-        startOf(firstToken),
-        new TextPointerImpl(lastToken.getLine(), lastToken.getCharPositionInLine() + lastToken.getText().length())));
+      return meta(new TextRangeImpl(startOf(firstToken), endOf(lastToken)), tokens);
+    }
+
+    private TextRange range(Token token) {
+      return new TextRangeImpl(startOf(token), endOf(token));
     }
 
     private TreeMetaData meta(Tree first, Tree last) {
       return meta(new TextRangeImpl(first.metaData().textRange().start(), last.metaData().textRange().end()));
     }
 
+    @Deprecated
     private TreeMetaData meta(TextRange textRange) {
       return metaDataProvider.metaData(textRange);
+    }
+
+    private TreeMetaData meta(TextRange textRange, List<com.sonarsource.slang.api.Token> tokens) {
+      return metaDataProvider.metaData(textRange, tokens);
     }
 
     private NativeTree nativeTree(ParserRuleContext ctx, List<? extends ParseTree> rawChildren) {
