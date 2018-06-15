@@ -6,7 +6,7 @@ fun smallF1() {
   bar = foo > 3 || bar
 }
 
-fun smallF2() { // Compliant - has less than 3 lines
+fun smallF2() { // Noncompliant
   foo = 1;
   bar = foo > 3 || bar
 }
@@ -80,4 +80,8 @@ fun f11(int a, int b) { // Noncompliant  {{Update this function so that its impl
   foobar = "abcdefg";
   foo = 1;
   bar = foo > 34 || bar
+}
+
+fun f11(int a, int b) { // Noncompliant  {{Update this function so that its implementation is not identical to the one on line 73.}}
+  foobar = "abcdefg"; foo = 1; bar = foo > 34 || bar
 }

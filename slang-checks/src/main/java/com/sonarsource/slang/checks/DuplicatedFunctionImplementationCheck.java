@@ -22,7 +22,6 @@ package com.sonarsource.slang.checks;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
-import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.api.CheckContext;
@@ -43,6 +42,7 @@ public class DuplicatedFunctionImplementationCheck implements SlangCheck {
 
   private static final String MESSAGE = "Update this function so that its implementation is not identical to \"%s\" on line %s.";
   private static final String MESSAGE_NO_NAME = "Update this function so that its implementation is not identical to the one on line %s.";
+  private static final int MINIMUM_STATEMENTS_COUNT = 2;
 
   @Override
   public void initialize(InitContext init) {
@@ -78,9 +78,7 @@ public class DuplicatedFunctionImplementationCheck implements SlangCheck {
     if (functionBody == null) {
       return false;
     }
-    // TODO replace by > 2 LoC when available
-    TextRange textRange = functionBody.metaData().textRange();
-    return textRange.end().line() - textRange.start().line() >= 4;
+    return functionBody.statementOrExpressions().size() >= MINIMUM_STATEMENTS_COUNT;
   }
 
   private static boolean areDuplicatedImplementation(FunctionDeclarationTree original, FunctionDeclarationTree possibleDuplicate) {
@@ -90,14 +88,15 @@ public class DuplicatedFunctionImplementationCheck implements SlangCheck {
 
   private static void reportDuplicate(CheckContext ctx, FunctionDeclarationTree original, FunctionDeclarationTree duplicate) {
     IdentifierTree identifier = original.name();
+    int line = original.metaData().textRange().start().line();
     String message;
     Tree secondaryTree;
     if (identifier != null) {
       secondaryTree = identifier;
-      message = String.format(MESSAGE, identifier.name(), original.metaData().textRange().start().line());
+      message = String.format(MESSAGE, identifier.name(), line);
     } else {
       secondaryTree = original;
-      message = String.format(MESSAGE_NO_NAME, original.metaData().textRange().start().line());
+      message = String.format(MESSAGE_NO_NAME, line);
     }
     SecondaryLocation secondaryLocation = new SecondaryLocation(secondaryTree, "original implementation");
     IdentifierTree duplicateIdentifier = duplicate.name();
