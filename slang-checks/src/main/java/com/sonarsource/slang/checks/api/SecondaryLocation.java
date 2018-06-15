@@ -31,7 +31,11 @@ public class SecondaryLocation {
   public final String message;
 
   public SecondaryLocation(Tree tree) {
-    this(tree.metaData().textRange(), null);
+    this(tree, null);
+  }
+
+  public SecondaryLocation(Tree tree, @Nullable String message) {
+    this(tree.metaData().textRange(), message);
   }
 
   public SecondaryLocation(TextRange textRange, @Nullable String message) {
