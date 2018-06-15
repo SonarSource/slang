@@ -21,6 +21,7 @@ package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.TextRange;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TreeMetaData;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,9 +29,11 @@ import java.util.stream.Collectors;
 public class TreeMetaDataProvider {
 
   private final List<Comment> comments;
+  private final List<Token> tokens;
 
-  public TreeMetaDataProvider(List<Comment> comments) {
+  public TreeMetaDataProvider(List<Comment> comments, List<Token> tokens) {
     this.comments = comments;
+    this.tokens = tokens;
   }
 
   public List<Comment> allComments() {
@@ -59,6 +62,14 @@ public class TreeMetaDataProvider {
       // TODO improve performance by storing an ordered list of comments
       return comments.stream()
         .filter(comment -> comment.textRange().isInside(textRange))
+        .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Token> tokens() {
+      // TODO improve performance by storing an ordered list of tokens
+      return tokens.stream()
+        .filter(token -> token.textRange().isInside(textRange))
         .collect(Collectors.toList());
     }
   }

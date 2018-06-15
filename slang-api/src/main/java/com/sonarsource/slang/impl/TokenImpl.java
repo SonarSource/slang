@@ -17,16 +17,35 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
+package com.sonarsource.slang.impl;
 
-import java.util.List;
+import com.sonarsource.slang.api.TextRange;
+import com.sonarsource.slang.api.Token;
 
-public interface TreeMetaData {
+public class TokenImpl implements Token {
 
-  TextRange textRange();
+  private final TextRange textRange;
+  private final String text;
+  private final boolean isKeyword;
 
-  List<Comment> commentsInside();
+  public TokenImpl(TextRange textRange, String text, boolean isKeyword) {
+    this.textRange = textRange;
+    this.text = text;
+    this.isKeyword = isKeyword;
+  }
 
-  List<Token> tokens();
+  @Override
+  public TextRange textRange() {
+    return textRange;
+  }
 
+  @Override
+  public String text() {
+    return text;
+  }
+
+  @Override
+  public boolean isKeyword() {
+    return isKeyword;
+  }
 }

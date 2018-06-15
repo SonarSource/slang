@@ -20,15 +20,20 @@
 package com.sonarsource.slang.kotlin;
 
 import com.sonarsource.slang.api.Comment;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.impl.CommentImpl;
+import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.psi.PsiComment;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
+import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace;
+import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType;
+import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid;
 
 import static org.jetbrains.kotlin.lexer.KtTokens.BLOCK_COMMENT;
@@ -36,7 +41,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.DOC_COMMENT;
 import static org.jetbrains.kotlin.lexer.KtTokens.EOL_COMMENT;
 import static org.jetbrains.kotlin.lexer.KtTokens.SHEBANG_COMMENT;
 
-public class CommentVisitor extends KtTreeVisitorVoid {
+public class CommentAndTokenVisitor extends KtTreeVisitorVoid {
   private static final int MIN_BLOCK_COMMENT_LENGTH = 4;
   private static final int MIN_DOC_COMMENT_LENGTH = 5;
   private static final int MIN_LINE_COMMENT_LENGTH = 2;
@@ -47,16 +52,22 @@ public class CommentVisitor extends KtTreeVisitorVoid {
   private static final int LINE_COMMENT_PREFIX_LENGTH = 2;
 
   private final Document psiDocument;
-  private final List<Comment> allComments;
+  private final List<Comment> allComments = new ArrayList<>();
+  private final List<Token> tokens = new ArrayList<>();
 
-  public CommentVisitor(Document psiDocument) {
+  public CommentAndTokenVisitor(Document psiDocument) {
     this.psiDocument = psiDocument;
-    this.allComments = new LinkedList<>();
   }
 
+  @Override
   public void visitElement(@NotNull PsiElement element) {
     if (element instanceof PsiComment) {
       allComments.add(createComment((PsiComment) element));
+    } else if (element instanceof LeafPsiElement && !(element instanceof PsiWhiteSpace)) {
+      LeafPsiElement leaf = (LeafPsiElement) element;
+      String text = leaf.getText();
+      boolean isKeyword = leaf.getElementType() instanceof KtKeywordToken;
+      tokens.add(new TokenImpl(KotlinTextRanges.textRange(psiDocument, leaf), text, isKeyword));
     }
     super.visitElement(element);
   }
@@ -87,5 +98,9 @@ public class CommentVisitor extends KtTreeVisitorVoid {
 
   public List<Comment> getAllComments() {
     return allComments;
+  }
+
+  public List<Token> getTokens() {
+    return tokens;
   }
 }

@@ -26,6 +26,7 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.LiteralTree;
@@ -315,6 +316,13 @@ public class KotlinConverterTest {
   public void testAssignments() {
     assertTrees(kotlinStatements("x = 3\nx -= y + 3\n"))
       .isEquivalentTo(slangStatements("x = 3; x -= y + 3"));
+  }
+
+  @Test
+  public void testTokens() {
+    List<Token> tokens = kotlin("private fun foo() { }").metaData().tokens();
+    assertThat(tokens).extracting(Token::text).containsExactly("private", "fun", "foo", "(", ")", "{", "}");
+    assertThat(tokens).extracting(Token::isKeyword).containsExactly(true, true, false, false, false, false, false);
   }
 
   private static String createString(String s) {
