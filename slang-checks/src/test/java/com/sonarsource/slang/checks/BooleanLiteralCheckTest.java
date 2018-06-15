@@ -19,28 +19,9 @@
  */
 package com.sonarsource.slang.checks;
 
-import java.util.Arrays;
-import java.util.List;
+import org.junit.Test;
 
-public class CommonCheckList {
-
-  private CommonCheckList() {
-  }
-
-  public static List<Class> checks() {
-    return Arrays.asList(
-      AllBranchesIdenticalCheck.class,
-      BadFunctionNameCheck.class,
-      BooleanLiteralCheck.class,
-      CollapsibleIfStatementsCheck.class,
-      DuplicateBranchCheck.class,
-      EmptyBlockCheck.class,
-      IdenticalBinaryOperandCheck.class,
-      IdenticalConditionsCheck.class,
-      SelfAssignmentCheck.class,
-      StringLiteralDuplicatedCheck.class,
-      TodoCommentCheck.class,
-      TooManyParametersCheck.class);
-  }
-
+public class BooleanLiteralCheckTest {
+  @Test
+  public void test() { Verifier.verify("BooleanLiteral.slang", new BooleanLiteralCheck()); }
 }
