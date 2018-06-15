@@ -34,6 +34,7 @@ import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.sensor.error.AnalysisError;
+import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.batch.sensor.issue.IssueLocation;
@@ -72,6 +73,16 @@ public class KotlinSensorTest {
     assertThat(location.inputComponent()).isEqualTo(inputFile);
     assertThat(location.message()).isEqualTo("Correct one of the identical sub-expressions on both sides this operator");
     assertTextRange(location.textRange(), 2, 12, 2, 13);
+  }
+
+  @Test
+  public void simple_file() {
+    InputFile inputFile = createInputFile("file1.kt", "" +
+      "fun main(args: Array<String>) {\nprint (1 == 1);}");
+    context.fileSystem().add(inputFile);
+    sensor(checkFactory()).execute(context);
+    assertThat(context.highlightingTypeAt(inputFile.key(), 1, 0)).containsExactly(TypeOfText.KEYWORD);
+    assertThat(context.highlightingTypeAt(inputFile.key(), 1, 3)).isEmpty();
   }
 
   @Test
