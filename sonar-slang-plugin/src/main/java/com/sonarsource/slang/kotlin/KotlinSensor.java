@@ -24,9 +24,10 @@ import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.CommonCheckList;
 import com.sonarsource.slang.checks.api.SlangCheck;
+import com.sonarsource.slang.plugin.SyntaxHighlighter;
 import com.sonarsource.slang.visitors.TreeVisitor;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
@@ -64,7 +65,9 @@ public class KotlinSensor implements Sensor {
       fileSystem.predicates().hasLanguage(KotlinPlugin.LANGUAGE_KEY),
       fileSystem.predicates().hasType(InputFile.Type.MAIN));
     Iterable<InputFile> inputFiles = fileSystem.inputFiles(mainFilePredicate);
-    analyseFiles(sensorContext, inputFiles, Collections.singletonList(new ChecksVisitor(checks)));
+    analyseFiles(sensorContext, inputFiles, Arrays.asList(
+      new ChecksVisitor(checks),
+      new SyntaxHighlighter()));
   }
 
   private static void analyseFiles(SensorContext sensorContext, Iterable<InputFile> inputFiles, List<TreeVisitor<InputFileContext>> visitors) {

@@ -2,17 +2,17 @@
 
 if (x) {
 } else if (x) { // Noncompliant {{This condition duplicates the one on line 3.}}
-};
+}
 
-if (x) {};
-if (x) {} else {};
-if (x) {} else if (y) {};
-if (x) {} else if (x) {}; // Noncompliant
+if (x) {}
+if (x) {} else {}
+if (x) {} else if (y) {}
+if (x) {} else if (x) {} // Noncompliant
 //  ^>             ^
-if (x) {} else if (y) {} else if (z) {};
-if (x) {} else if (y) {} else if (y) {}; // Noncompliant
+if (x) {} else if (y) {} else if (z) {}
+if (x) {} else if (y) {} else if (y) {} // Noncompliant
 //                 ^>             ^
-if (x) {} else if (x) {} else if (x) {}; // Noncompliant 2
+if (x) {} else if (x) {} else if (x) {} // Noncompliant 2
 
 
 // match

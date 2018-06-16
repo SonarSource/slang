@@ -20,7 +20,9 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.Comment;
+import com.sonarsource.slang.api.Token;
 import java.util.Collections;
+import java.util.List;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,10 +32,10 @@ public class TreeMetaDataProviderTest {
   @Test
   public void commentsInside() {
     Comment comment = new CommentImpl("comment1", "// comment1", new TextRangeImpl(2, 5, 2, 12));
+    List<Token> tokens = Collections.emptyList();
     TreeMetaDataProvider provider = new TreeMetaDataProvider(Collections.singletonList(comment));
-    assertThat(provider.metaData(new TextRangeImpl(1, 1, 1, 20)).commentsInside()).isEmpty();
-    assertThat(provider.metaData(new TextRangeImpl(2, 1, 2, 20)).commentsInside()).containsExactly(comment);
+    assertThat(provider.metaData(new TextRangeImpl(1, 1, 1, 20), tokens).commentsInside()).isEmpty();
+    assertThat(provider.metaData(new TextRangeImpl(2, 1, 2, 20), tokens).commentsInside()).containsExactly(comment);
   }
-
 
 }

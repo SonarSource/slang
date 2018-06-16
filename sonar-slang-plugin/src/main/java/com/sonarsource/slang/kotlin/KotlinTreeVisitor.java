@@ -29,6 +29,7 @@ import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
@@ -44,10 +45,12 @@ import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
+import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -63,6 +66,7 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiErrorElement;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement;
+import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
@@ -77,7 +81,9 @@ import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
 import org.jetbrains.kotlin.psi.KtModifierList;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.KtOperationExpression;
+import org.jetbrains.kotlin.psi.KtOperationReferenceExpression;
 import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.psi.KtParameterList;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtTypeElement;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
@@ -192,21 +198,23 @@ class KotlinTreeVisitor {
     String name = functionElement.getName();
 
     if (typeElement != null) {
-      returnType = new IdentifierTreeImpl(getTreeMetaData(typeElement), typeElement.getText());
+      returnType = createElement(typeElement);
+
     }
     if (nameIdentifier != null && name != null) {
       identifierTree = new IdentifierTreeImpl(getTreeMetaData(nameIdentifier), name);
     }
-    if (bodyTree != null) {
+    if (bodyTree != null && !(bodyTree instanceof BlockTree)) {
       // FIXME are we sure we want body of function as block tree ?
-      if (!(bodyTree instanceof BlockTree)) {
-        bodyTree = new BlockTreeImpl(bodyTree.metaData(), Collections.singletonList(bodyTree));
-      }
-      // Set bodyTree to null for empty lambda functions
-      if (bodyTree.children().isEmpty()) {
-        bodyTree = null;
-      }
+      bodyTree = new BlockTreeImpl(getTreeMetaData(functionElement.getBodyExpression(), Collections.emptyList()), Collections.singletonList(bodyTree));
     }
+
+    List<Token> tokens = new ArrayList<>(tokens(functionElement));
+    KtParameterList parameterList = functionElement.getValueParameterList();
+    if (parameterList != null) {
+      tokens.addAll(tokens(parameterList));
+    }
+    metaData = getTreeMetaData(functionElement, tokens);
 
     return new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, identifierTree, parameterTreeList, (BlockTree) bodyTree);
   }
@@ -220,7 +228,8 @@ class KotlinTreeVisitor {
       .filter(Objects::nonNull)
       .map(element -> {
         NativeKind modifierKind = new KotlinNativeKind(element, element.getText());
-        return createNativeTree(getTreeMetaData(element), modifierKind, Collections.emptyList());
+        Token token = new TokenImpl(textRange(element), element.getText(), true);
+        return createNativeTree(getTreeMetaData(element, Collections.singletonList(token)), modifierKind, Collections.emptyList());
       })
       .collect(Collectors.toList());
   }
@@ -241,14 +250,14 @@ class KotlinTreeVisitor {
   private Tree createParameter(KtParameter ktParameter) {
     TreeMetaData metaData = getTreeMetaData(ktParameter);
     Tree type = createElement(ktParameter.getTypeReference());
-    String name = ktParameter.getName();
+    PsiElement nameIdentifier = ktParameter.getNameIdentifier();
 
     // For some reason the Identifier is not among the Parameter children array, so for now we add this information to the native kind
-    if (name == null) {
+    if (nameIdentifier == null) {
       return createNativeTree(metaData, new KotlinNativeKind(ktParameter), ktParameter);
     }
 
-    IdentifierTree identifier = new IdentifierTreeImpl(metaData, name);
+    IdentifierTree identifier = (IdentifierTree) createIdentifierTree(getTreeMetaData(nameIdentifier), nameIdentifier.getText());
     return new ParameterTreeImpl(metaData, identifier, type);
   }
 
@@ -285,7 +294,7 @@ class KotlinTreeVisitor {
       TextPointer startPointer = conditionsList.get(0).metaData().textRange().start();
       TextPointer endPointer = conditionsList.get(conditionsList.size() - 1).metaData().textRange().end();
       TextRange textRange = new TextRangeImpl(startPointer, endPointer);
-      TreeMetaData treeMetaData = metaDataProvider.metaData(textRange);
+      TreeMetaData treeMetaData = metaDataProvider.metaData(textRange, Collections.emptyList());
       conditionExpression = createNativeTree(treeMetaData, new KotlinNativeKind(KtWhenCondition.class), conditionsList);
     }
     return new MatchCaseTreeImpl(metaData, conditionExpression, body);
@@ -306,9 +315,9 @@ class KotlinTreeVisitor {
     Operator operator = TOKENS_OPERATOR_MAP.get(operationToken);
     AssignmentExpressionTree.Operator assignmentOperator = ASSIGNMENTS_OPERATOR_MAP.get(operationToken);
     if (operator != null) {
-      return new BinaryExpressionTreeImpl(metaData, operator, leftOperand, rightOperand);
+      return new BinaryExpressionTreeImpl(getTreeMetaData(element, element.getOperationReference()), operator, leftOperand, rightOperand);
     } else if (assignmentOperator != null) {
-      return new AssignmentExpressionTreeImpl(metaData, assignmentOperator, leftOperand, rightOperand);
+      return new AssignmentExpressionTreeImpl(getTreeMetaData(element, element.getOperationReference()), assignmentOperator, leftOperand, rightOperand);
     } else {
       // FIXME ensure they are all supported. Ex: Add '/=' for assignments
       return createOperationExpression(metaData, element);
@@ -327,8 +336,33 @@ class KotlinTreeVisitor {
     return createNativeTree(metaData, nativeKind, operationExpression);
   }
 
+  private TextRange textRange(PsiElement element) {
+    return KotlinTextRanges.textRange(psiDocument, element);
+  }
+
+  private TreeMetaData getTreeMetaData(PsiElement element, List<Token> tokens) {
+    return metaDataProvider.metaData(textRange(element), tokens);
+  }
+
   private TreeMetaData getTreeMetaData(PsiElement element) {
-    return metaDataProvider.metaData(KotlinTextRanges.textRange(psiDocument, element));
+    return getTreeMetaData(element, tokens(element));
+  }
+
+  private TreeMetaData getTreeMetaData(PsiElement element, KtOperationReferenceExpression operationReference) {
+    Token token = new TokenImpl(textRange(operationReference), operationReference.getText(), false);
+    return getTreeMetaData(element, Collections.singletonList(token));
+  }
+
+  private List<Token> tokens(PsiElement element) {
+    if (isSimpleStringLiteral(element)) {
+      return Collections.singletonList(new TokenImpl(textRange(element), element.getText(), false));
+    }
+    return Arrays.stream(element.getNode().getChildren(null))
+      .filter(c -> !(c instanceof PsiWhiteSpace))
+      .filter(c -> c instanceof LeafPsiElement)
+      .map(c -> ((LeafPsiElement) c))
+      .map(c -> new TokenImpl(textRange(c), c.getText(), c.getElementType() instanceof KtKeywordToken))
+      .collect(Collectors.toList());
   }
 
   private List<Tree> list(Stream<? extends PsiElement> stream) {

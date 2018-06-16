@@ -19,14 +19,12 @@
  */
 package com.sonarsource.slang.api;
 
-import java.util.List;
-
-public interface TreeMetaData {
+public interface Token {
 
   TextRange textRange();
 
-  List<Comment> commentsInside();
+  String text();
 
-  List<Token> directTokens();
+  boolean isKeyword();
 
 }

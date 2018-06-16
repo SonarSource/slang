@@ -17,16 +17,5 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
-
-import java.util.List;
-
-public interface TreeMetaData {
-
-  TextRange textRange();
-
-  List<Comment> commentsInside();
-
-  List<Token> directTokens();
-
-}
+@javax.annotation.ParametersAreNonnullByDefault
+package com.sonarsource.slang.plugin;

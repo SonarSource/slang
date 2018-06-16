@@ -29,15 +29,18 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.parser.SLangConverter;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Test;
 
+import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,8 +68,10 @@ public class SLangConverterTest {
     UnaryExpressionTree unaryLeft = (UnaryExpressionTree) left;
     UnaryExpressionTree unaryRight = (UnaryExpressionTree) right;
 
-    assertTree(unaryLeft.operand()).isUnaryExpression(UnaryExpressionTree.Operator.NEGATE);
-    assertTree(unaryRight.operand()).isBinaryExpression(Operator.CONDITIONAL_AND);
+    assertTree(unaryLeft.operand()).isInstanceOf(NativeTree.class);
+    assertTree(unaryLeft.operand().children().get(0)).isUnaryExpression(UnaryExpressionTree.Operator.NEGATE);
+    assertTree(unaryRight.operand()).isInstanceOf(NativeTree.class);
+    assertTree(unaryRight.operand().children().get(0)).isBinaryExpression(Operator.CONDITIONAL_AND);
   }
 
   @Test
@@ -120,7 +125,7 @@ public class SLangConverterTest {
 
   @Test
   public void if_without_else() {
-    Tree tree = converter.parse("if (x > 0) { x = 1; }").children().get(0);
+    Tree tree = parse("if (x > 0) { x = 1; }").children().get(0);
     assertThat(tree).isInstanceOf(IfTree.class);
     IfTree ifTree = (IfTree) tree;
     assertTree(ifTree).hasTextRange(1, 0, 1, 21);
@@ -130,7 +135,7 @@ public class SLangConverterTest {
 
   @Test
   public void if_with_else() {
-    Tree tree = converter.parse("if (x > 0) { x == 1; } else { y }").children().get(0);
+    Tree tree = parse("if (x > 0) { x == 1; } else { y }").children().get(0);
     assertThat(tree).isInstanceOf(IfTree.class);
     IfTree ifTree = (IfTree) tree;
     assertTree(ifTree).hasTextRange(1, 0, 1, 33);
@@ -141,7 +146,7 @@ public class SLangConverterTest {
 
   @Test
   public void if_with_else_if() {
-    Tree tree = converter.parse("if (x > 0) { x == 1; } else if (x < 1) { y }").children().get(0);
+    Tree tree = parse("if (x > 0) { x == 1; } else if (x < 1) { y }").children().get(0);
     assertThat(tree).isInstanceOf(IfTree.class);
     IfTree ifTree = (IfTree) tree;
     assertTree(ifTree.elseBranch()).isInstanceOf(IfTree.class);
@@ -149,7 +154,7 @@ public class SLangConverterTest {
 
   @Test
   public void match() {
-    Tree tree = converter.parse("match(x) { 1 -> a; else -> b; }").children().get(0);
+    Tree tree = parse("match(x) { 1 -> a; else -> b; }").children().get(0);
     assertTree(tree).isInstanceOf(MatchTree.class).hasTextRange(1, 0, 1, 31);
     MatchTree matchTree = (MatchTree) tree;
     assertTree(matchTree.expression()).isIdentifier("x");
@@ -161,10 +166,10 @@ public class SLangConverterTest {
 
   @Test
   public void natives() {
-    Tree tree = converter.parse("native [] {}").children().get(0);
+    Tree tree = parse("native [] {}").children().get(0);
     assertTree(tree).isInstanceOf(NativeTree.class).hasTextRange(1, 0, 1, 12);
 
-    tree = converter.parse("native [] { [x] } = x").children().get(0);
+    tree = parse("native [] { [x] } = x").children().get(0);
     assertTree(tree).isAssignmentExpression(AssignmentExpressionTree.Operator.EQUAL);
     AssignmentExpressionTree assignment = (AssignmentExpressionTree) tree;
     assertTree(assignment.leftHandSide()).isInstanceOf(NativeTree.class).hasTextRange(1, 0, 1, 17);
@@ -172,13 +177,13 @@ public class SLangConverterTest {
 
   @Test
   public void simple_assignment() {
-    Tree tree = converter.parse("x = 1").children().get(0);
+    Tree tree = parse("x = 1").children().get(0);
     assertTree(tree).isAssignmentExpression(AssignmentExpressionTree.Operator.EQUAL).hasTextRange(1, 0, 1, 5);
   }
 
   @Test
   public void nested_assignments() {
-    Tree tree = converter.parse("x -= y += 2").children().get(0);
+    Tree tree = parse("x -= y += 2").children().get(0);
     assertTree(tree).isAssignmentExpression(AssignmentExpressionTree.Operator.MINUS_EQUAL).hasTextRange(1, 0, 1, 11);
     AssignmentExpressionTree assignment = (AssignmentExpressionTree) tree;
     assertTree(assignment.leftHandSide()).isIdentifier("x");
@@ -187,13 +192,13 @@ public class SLangConverterTest {
 
   @Test
   public void top_level_tree() {
-    Tree tree1 = converter.parse("int fun foo(p1);\nx == 3;");
-    Tree tree2 = converter.parse("x + y\n\n- z");
-    Tree emptyTree = converter.parse("");
+    Tree tree1 = parse("int fun foo(p1);\nx == 3");
+    Tree tree2 = parse("x + y\n\n- z");
+    Tree emptyTree = parse("");
     assertTree(tree1)
       .isInstanceOf(TopLevelTree.class)
       .hasChildren(FunctionDeclarationTree.class, BinaryExpressionTree.class)
-      .hasTextRange(1, 0, 2, 7);
+      .hasTextRange(1, 0, 2, 6);
     assertTree(tree2)
       .isInstanceOf(TopLevelTree.class)
       .hasChildren(BinaryExpressionTree.class)
@@ -206,7 +211,7 @@ public class SLangConverterTest {
 
   @Test
   public void comments() {
-    BinaryExpressionTree binary = parseBinary("/* comment1 */ x /* comment2 */ == // comment3\n1");
+    Tree binary = converter.parse("/* comment1 */ x /* comment2 */ == // comment3\n1").children().get(0);
     List<Comment> comments = binary.metaData().commentsInside();
     assertThat(comments).hasSize(2);
     Comment comment = comments.get(0);
@@ -218,16 +223,19 @@ public class SLangConverterTest {
 
   @Test
   public void decimalLiterals() {
-    Tree tree = converter.parse("0; 5; 10; 123; 1010; 5554; 12345567;");
+    Tree tree = parse("0; 5; 10; 123; 1010; 5554; 12345567;");
     String[] values = {"0", "5", "10", "123", "1010", "5554", "12345567"};
 
     assertTree(tree).isNotNull();
     assertTree(tree).isInstanceOf(TopLevelTree.class);
     TopLevelTree topLevelTree = (TopLevelTree) tree;
     assertThat(topLevelTree.declarations()).hasSize(7);
+    List<Tree> nonNativeDescendants = topLevelTree.descendants()
+      .filter(d -> !(d instanceof NativeTree))
+      .collect(Collectors.toList());
 
     for (int i = 0; i < topLevelTree.declarations().size(); i++) {
-      assertTree(topLevelTree.declarations().get(i)).isLiteral(values[i]);
+      assertTree(nonNativeDescendants.get(i)).isLiteral(values[i]);
     }
   }
 
@@ -237,17 +245,31 @@ public class SLangConverterTest {
     List<String> content = Arrays.asList("a", "string", "string with spaces");
 
     String slangCode = values.stream().collect(Collectors.joining(";"));
-    Tree tree = converter.parse(slangCode);
+    Tree tree = parse(slangCode);
 
     assertTree(tree).isNotNull();
     assertTree(tree).isInstanceOf(TopLevelTree.class);
     TopLevelTree topLevelTree = (TopLevelTree) tree;
     assertThat(topLevelTree.declarations()).hasSize(3);
+    List<Tree> nonNativeDescendants = topLevelTree.descendants()
+      .filter(d -> !(d instanceof NativeTree))
+      .collect(Collectors.toList());
 
     for (int i = 0; i < topLevelTree.declarations().size(); i++) {
-      assertTree(topLevelTree.declarations().get(i)).isLiteral(values.get(i));
-      assertTree(topLevelTree.declarations().get(i)).isStringLiteral(content.get(i));
+      assertTree(nonNativeDescendants.get(i)).isLiteral(values.get(i));
+      assertTree(nonNativeDescendants.get(i)).isStringLiteral(content.get(i));
     }
+  }
+
+  @Test
+  public void tokens() {
+    Tree topLevel = parse("if (cond) x = 1;");
+    IfTree ifTree = (IfTree) topLevel.children().get(0);
+    assertThat(topLevel.metaData().directTokens()).isEmpty();
+    assertThat(ifTree.metaData().directTokens()).extracting(Token::text).containsExactly("if", "(", ")");
+    assertThat(ifTree.metaData().directTokens()).extracting(Token::isKeyword).containsExactly(true, false, false);
+    assertRange(ifTree.metaData().directTokens().get(1).textRange()).hasRange(1, 3, 1, 4);
+    assertThat(ifTree.condition().metaData().directTokens()).extracting(Token::isKeyword).containsExactly(false);
   }
 
   private BinaryExpressionTree parseBinary(String code) {
@@ -255,12 +277,18 @@ public class SLangConverterTest {
   }
 
   private Tree parseExpressionOrStatement(String code) {
-    Tree tree = converter.parse(code);
+    Tree tree = parse(code);
     return tree.children().get(0);
   }
 
   private FunctionDeclarationTree parseFunction(String code) {
-    return (FunctionDeclarationTree) converter.parse(code).children().get(0);
+    return (FunctionDeclarationTree) parse(code).children().get(0);
+  }
+
+  private Tree parse(String code) {
+    Tree tree = converter.parse(code);
+    assertTree(tree).hasSource(code);
+    return tree;
   }
 
 }
