@@ -40,23 +40,26 @@ import com.sonarsource.slang.impl.CommentImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
+import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
 import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.ParameterTreeImpl;
+import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.impl.TextPointerImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
+import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
-import com.sonarsource.slang.impl.LiteralTreeImpl;
-import com.sonarsource.slang.impl.StringLiteralTreeImpl;
+import com.sonarsource.slang.impl.UnaryExpressionTreeImpl;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
-import com.sonarsource.slang.impl.UnaryExpressionTreeImpl;
+import java.util.Set;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -68,26 +71,42 @@ import static java.util.stream.Collectors.toList;
 
 public class SLangConverter implements ASTConverter {
 
+  private static final Set<Integer> KEYWORD_TOKEN_TYPES = new HashSet<>(Arrays.asList(
+    SLangParser.ELSE,
+    SLangParser.FUN,
+    SLangParser.IF,
+    SLangParser.MATCH,
+    SLangParser.NATIVE,
+    SLangParser.PRIVATE,
+    SLangParser.PUBLIC,
+    SLangParser.RETURN,
+    SLangParser.THIS
+  ));
+
   @Override
   public Tree parse(String slangCode) {
     SLangLexer lexer = new SLangLexer(CharStreams.fromString(slangCode));
 
     List<Comment> comments = new ArrayList<>();
-    CommonTokenStream tokens = new CommonTokenStream(lexer);
-    tokens.fill();
+    CommonTokenStream antlrTokens = new CommonTokenStream(lexer);
+    antlrTokens.fill();
 
-    for (int index = 0; index < tokens.size(); index++) {
-      Token token = tokens.get(index);
+    List<com.sonarsource.slang.api.Token> tokens = new ArrayList<>();
+
+    for (int index = 0; index < antlrTokens.size(); index++) {
+      Token token = antlrTokens.get(index);
+      TokenLocation location = new TokenLocation(token.getLine(), token.getCharPositionInLine(), token.getText());
+      TextRange textRange = new TextRangeImpl(location.startLine(), location.startLineOffset(), location.endLine(), location.endLineOffset());
       if (token.getChannel() == 1) {
-        TokenLocation location = new TokenLocation(token.getLine(), token.getCharPositionInLine(), token.getText());
-        TextRange textRange = new TextRangeImpl(location.startLine(), location.startLineOffset(), location.endLine(), location.endLineOffset());
         comments.add(new CommentImpl(commentContent(token.getText()), token.getText(), textRange));
+      } else {
+        tokens.add(new TokenImpl(textRange, token.getText(), KEYWORD_TOKEN_TYPES.contains(token.getType())));
       }
     }
 
-    SLangParser parser = new SLangParser(tokens);
+    SLangParser parser = new SLangParser(antlrTokens);
 
-    SLangParseTreeVisitor slangVisitor = new SLangParseTreeVisitor(comments);
+    SLangParseTreeVisitor slangVisitor = new SLangParseTreeVisitor(comments, tokens);
     return slangVisitor.visit(parser.slangFile());
   }
 
@@ -130,8 +149,8 @@ public class SLangConverter implements ASTConverter {
 
     private final TreeMetaDataProvider metaDataProvider;
 
-    public SLangParseTreeVisitor(List<Comment> comments) {
-      metaDataProvider = new TreeMetaDataProvider(comments);
+    public SLangParseTreeVisitor(List<Comment> comments, List<com.sonarsource.slang.api.Token> tokens) {
+      metaDataProvider = new TreeMetaDataProvider(comments, tokens);
     }
 
     @Override
@@ -314,12 +333,12 @@ public class SLangConverter implements ASTConverter {
       return new TextPointerImpl(token.getLine(), token.getCharPositionInLine());
     }
 
+    private static TextPointer endOf(Token token) {
+      return new TextPointerImpl(token.getLine(), token.getCharPositionInLine() + token.getText().length());
+    }
+
     private TreeMetaData meta(ParserRuleContext ctx) {
-      Token firstToken = ctx.start;
-      Token lastToken = ctx.stop;
-      return meta(new TextRangeImpl(
-        startOf(firstToken),
-        new TextPointerImpl(lastToken.getLine(), lastToken.getCharPositionInLine() + lastToken.getText().length())));
+      return meta(new TextRangeImpl(startOf(ctx.start), endOf(ctx.stop)));
     }
 
     private TreeMetaData meta(Tree first, Tree last) {

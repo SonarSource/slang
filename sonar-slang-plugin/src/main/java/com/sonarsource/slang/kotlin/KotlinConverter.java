@@ -49,9 +49,9 @@ public class KotlinConverter implements ASTConverter {
       throw new ParseException("Cannot correctly map AST with a null Document object");
     }
 
-    CommentVisitor commentVisitor = new CommentVisitor(document);
-    psiFile.accept(commentVisitor);
-    KotlinTreeVisitor kotlinTreeVisitor = new KotlinTreeVisitor(psiFile, new TreeMetaDataProvider(commentVisitor.getAllComments()));
+    CommentAndTokenVisitor commentsAndTokens = new CommentAndTokenVisitor(document);
+    psiFile.accept(commentsAndTokens);
+    KotlinTreeVisitor kotlinTreeVisitor = new KotlinTreeVisitor(psiFile, new TreeMetaDataProvider(commentsAndTokens.getAllComments(), commentsAndTokens.getTokens()));
     return kotlinTreeVisitor.getSLangAST();
   }
 

@@ -20,9 +20,13 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.Comment;
+import com.sonarsource.slang.api.Token;
+import java.util.Arrays;
 import java.util.Collections;
 import org.junit.Test;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TreeMetaDataProviderTest {
@@ -30,10 +34,18 @@ public class TreeMetaDataProviderTest {
   @Test
   public void commentsInside() {
     Comment comment = new CommentImpl("comment1", "// comment1", new TextRangeImpl(2, 5, 2, 12));
-    TreeMetaDataProvider provider = new TreeMetaDataProvider(Collections.singletonList(comment));
+    TreeMetaDataProvider provider = new TreeMetaDataProvider(singletonList(comment), emptyList());
     assertThat(provider.metaData(new TextRangeImpl(1, 1, 1, 20)).commentsInside()).isEmpty();
     assertThat(provider.metaData(new TextRangeImpl(2, 1, 2, 20)).commentsInside()).containsExactly(comment);
   }
 
+  @Test
+  public void tokens() {
+    Token token1 = new TokenImpl(new TextRangeImpl(1, 3, 1, 6), "abc", false);
+    Token token2 = new TokenImpl(new TextRangeImpl(1, 9, 1, 12), "abc", false);
+    TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2));
+    assertThat(provider.metaData(new TextRangeImpl(1, 1, 1, 20)).tokens()).containsExactly(token1, token2);
+    assertThat(provider.metaData(new TextRangeImpl(1, 3, 1, 8)).tokens()).containsExactly(token1);
+  }
 
 }

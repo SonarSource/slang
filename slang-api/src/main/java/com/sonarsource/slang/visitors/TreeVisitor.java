@@ -36,7 +36,9 @@ public class TreeVisitor<C extends TreeContext> {
   public void scan(C ctx, @Nullable Tree root) {
     if (root != null) {
       ctx.before(root);
+      before(ctx, root);
       visit(ctx, root);
+      after(ctx, root);
     }
   }
  
@@ -51,6 +53,14 @@ public class TreeVisitor<C extends TreeContext> {
       node.children().forEach(child -> visit(ctx, child));
       ctx.leave(node);
     }
+  }
+
+  protected void before(C ctx, Tree root) {
+    // default behaviour is to do nothing
+  }
+
+  protected void after(C ctx, Tree root) {
+    // default behaviour is to do nothing
   }
 
   public <T extends Tree> TreeVisitor<C> register(Class<T> cls, BiConsumer<C, T> visitor) {
