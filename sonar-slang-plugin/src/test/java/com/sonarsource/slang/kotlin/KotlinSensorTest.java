@@ -38,10 +38,15 @@ import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.batch.sensor.issue.IssueLocation;
+import org.sonar.api.issue.NoSonarFilter;
+import org.sonar.api.measures.FileLinesContext;
+import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.LogTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -49,6 +54,7 @@ public class KotlinSensorTest {
 
   private File baseDir = new File("src/test/resources/sensor");
   private SensorContextTester context;
+  private FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
 
   @Rule
   public LogTester logTester = new LogTester();
@@ -56,6 +62,8 @@ public class KotlinSensorTest {
   @Before
   public void setup() {
     context = SensorContextTester.create(baseDir);
+    FileLinesContext fileLinesContext = mock(FileLinesContext.class);
+    when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
   }
 
   @Test
@@ -172,7 +180,7 @@ public class KotlinSensorTest {
   }
 
   private KotlinSensor sensor(CheckFactory checkFactory) {
-    return new KotlinSensor(checkFactory);
+    return new KotlinSensor(checkFactory, fileLinesContextFactory, new NoSonarFilter());
   }
 
 }

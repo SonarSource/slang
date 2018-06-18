@@ -24,6 +24,7 @@ import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.CommonCheckList;
 import com.sonarsource.slang.checks.api.SlangCheck;
+import com.sonarsource.slang.plugin.MetricVisitor;
 import com.sonarsource.slang.plugin.SyntaxHighlighter;
 import com.sonarsource.slang.visitors.TreeVisitor;
 import java.io.IOException;
@@ -37,6 +38,8 @@ import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
+import org.sonar.api.issue.NoSonarFilter;
+import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -45,10 +48,14 @@ public class KotlinSensor implements Sensor {
   private static final Logger LOG = Loggers.get(KotlinSensor.class);
 
   private final Checks<SlangCheck> checks;
+  private final NoSonarFilter noSonarFilter;
+  private FileLinesContextFactory fileLinesContextFactory;
 
-  public KotlinSensor(CheckFactory checkFactory) {
+  public KotlinSensor(CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter) {
     checks = checkFactory.create(SlangPlugin.KOTLIN_REPOSITORY_KEY);
     checks.addAnnotatedChecks((Iterable<?>) CommonCheckList.checks());
+    this.fileLinesContextFactory = fileLinesContextFactory;
+    this.noSonarFilter = noSonarFilter;
   }
 
   @Override
@@ -67,6 +74,7 @@ public class KotlinSensor implements Sensor {
     Iterable<InputFile> inputFiles = fileSystem.inputFiles(mainFilePredicate);
     analyseFiles(sensorContext, inputFiles, Arrays.asList(
       new ChecksVisitor(checks),
+      new MetricVisitor(fileLinesContextFactory, noSonarFilter),
       new SyntaxHighlighter()));
   }
 
