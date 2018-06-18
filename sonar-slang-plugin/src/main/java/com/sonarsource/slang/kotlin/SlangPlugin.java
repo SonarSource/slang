@@ -30,14 +30,14 @@ public class SlangPlugin implements Plugin {
   private static final String KOTLIN_CATEGORY = "Kotlin";
 
   // Global constants
-  public static final String LANGUAGE_KEY = "kotlin";
-  public static final String LANGUAGE_NAME = "Kotlin";
-  public static final String REPOSITORY_KEY = "kotlin";
+  public static final String KOTLIN_LANGUAGE_KEY = "kotlin";
+  public static final String KOTLIN_LANGUAGE_NAME = "Kotlin";
+  public static final String KOTLIN_REPOSITORY_KEY = "kotlin";
   public static final String REPOSITORY_NAME = "SonarAnalyzer";
   public static final String PROFILE_NAME = "Sonar way";
 
-  public static final String FILE_SUFFIXES_KEY = "sonar.kotlin.file.suffixes";
-  public static final String FILE_SUFFIXES_DEFAULT_VALUE = ".kt";
+  public static final String KOTLIN_FILE_SUFFIXES_KEY = "sonar.kotlin.file.suffixes";
+  public static final String KOTLIN_FILE_SUFFIXES_DEFAULT_VALUE = ".kt";
 
   @Override
   public void define(Context context) {
@@ -46,8 +46,8 @@ public class SlangPlugin implements Plugin {
       KotlinSensor.class,
       KotlinRulesDefinition.class,
       KotlinProfileDefinition.class,
-      PropertyDefinition.builder(FILE_SUFFIXES_KEY)
-        .defaultValue(FILE_SUFFIXES_DEFAULT_VALUE)
+      PropertyDefinition.builder(KOTLIN_FILE_SUFFIXES_KEY)
+        .defaultValue(KOTLIN_FILE_SUFFIXES_DEFAULT_VALUE)
         .name("File Suffixes")
         .description("Comma-separated list of suffixes for files to analyze.")
         .subCategory(GENERAL)
