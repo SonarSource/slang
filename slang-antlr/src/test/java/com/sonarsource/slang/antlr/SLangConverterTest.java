@@ -24,9 +24,11 @@ import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.Comment;
+import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
+import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Token;
@@ -159,6 +161,18 @@ public class SLangConverterTest {
     assertTree(matchTree.cases().get(0).expression()).isLiteral("1");
     assertTree(matchTree.cases().get(1).expression()).isNull();
     assertTree(matchTree.cases().get(1)).hasTextRange(1, 19, 1, 29);
+  }
+
+  @Test
+  public void exception_handling() {
+    Tree tree = converter.parse("try { 1 } catch (e) {} finally {}").children().get(0);
+    assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1,0,1,33);
+    ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) tree;
+    assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
+    assertThat(exceptionHandlingTree.catchBlocks()).hasSize(1);
+    assertTree(exceptionHandlingTree.catchBlocks().get(0).catchParameter()).hasParameterName("e");
+    assertTree(exceptionHandlingTree.catchBlocks().get(0).catchBlock()).isBlock();
+    assertTree(exceptionHandlingTree.finallyBlock()).isBlock();
   }
 
   @Test

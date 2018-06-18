@@ -23,6 +23,7 @@ import com.sonarsource.slang.api.ASTConverter;
 import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
+import com.sonarsource.slang.api.CatchTree;
 import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
@@ -36,7 +37,9 @@ import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
+import com.sonarsource.slang.impl.CatchTreeImpl;
 import com.sonarsource.slang.impl.CommentImpl;
+import com.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
@@ -260,6 +263,24 @@ public class SLangConverter implements ASTConverter {
       Tree expression = ctx.statementOrExpression() == null ? null : visit(ctx.statementOrExpression());
       Tree body = visit(ctx.controlBlock());
       return new MatchCaseTreeImpl(meta(ctx), expression, body);
+    }
+
+    @Override
+    public Tree visitCatchBlock(SLangParser.CatchBlockContext ctx) {
+      ParameterTree parameter = ctx.formalParameter() == null ? null : (ParameterTree) visit(ctx.formalParameter());
+      Tree body = visit(ctx.block());
+      return new CatchTreeImpl(meta(ctx), parameter, body);
+    }
+
+    @Override
+    public Tree visitTryExpression(SLangParser.TryExpressionContext ctx) {
+      Tree tryBlock = visit(ctx.block());
+      List<CatchTree> catchTreeList = new ArrayList<>();
+      for (SLangParser.CatchBlockContext catchBlockContext : ctx.catchBlock()) {
+        catchTreeList.add((CatchTree) visit(catchBlockContext));
+      }
+      Tree finallyBlock = ctx.finallyBlock() == null ? null : visit(ctx.finallyBlock());
+      return new ExceptionHandlingTreeImpl(meta(ctx), tryBlock, catchTreeList, finallyBlock);
     }
 
     @Override

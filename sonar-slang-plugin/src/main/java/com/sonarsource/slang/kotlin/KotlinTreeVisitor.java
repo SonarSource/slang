@@ -22,6 +22,8 @@ package com.sonarsource.slang.kotlin;
 import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
+import com.sonarsource.slang.api.CatchTree;
+import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.NativeKind;
@@ -34,6 +36,8 @@ import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
+import com.sonarsource.slang.impl.CatchTreeImpl;
+import com.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
@@ -67,10 +71,12 @@ import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
 import org.jetbrains.kotlin.psi.KtBlockExpression;
+import org.jetbrains.kotlin.psi.KtCatchClause;
 import org.jetbrains.kotlin.psi.KtConstantExpression;
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry;
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtFinallySection;
 import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.KtIfExpression;
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
@@ -79,6 +85,7 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.KtOperationExpression;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
+import org.jetbrains.kotlin.psi.KtTryExpression;
 import org.jetbrains.kotlin.psi.KtTypeElement;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
 import org.jetbrains.kotlin.psi.KtWhenEntry;
@@ -157,6 +164,12 @@ class KotlinTreeVisitor {
       return createMatchTree(metaData, (KtWhenExpression) element);
     } else if (element instanceof KtWhenEntry) {
       return createMatchCase(metaData, (KtWhenEntry) element);
+    } else if (element instanceof KtTryExpression) {
+      return createExceptionHandling(metaData, (KtTryExpression) element);
+    } else if (element instanceof KtCatchClause) {
+      return createCatchTree(metaData, (KtCatchClause) element);
+    } else if (element instanceof KtFinallySection) {
+      return createElement(((KtFinallySection) element).getFinalExpression());
     } else if (isLiteral(element)) {
       return createLiteral(metaData, element);
     } else if (element instanceof KtOperationExpression) {
@@ -169,7 +182,6 @@ class KotlinTreeVisitor {
     } else {
       return createNativeTree(metaData, new KotlinNativeKind(element), element);
     }
-
   }
 
   private Tree createFunctionDeclarationTree(TreeMetaData metaData, KtFunction functionElement) {
@@ -283,6 +295,24 @@ class KotlinTreeVisitor {
       conditionExpression = createNativeTree(treeMetaData, new KotlinNativeKind(KtWhenCondition.class), conditionsList);
     }
     return new MatchCaseTreeImpl(metaData, conditionExpression, body);
+  }
+
+  private ExceptionHandlingTree createExceptionHandling(TreeMetaData metadata, KtTryExpression element) {
+    Tree tryTree = createMandatoryElement(element.getTryBlock());
+    List<Tree> catchTreeList = list(element.getCatchClauses().stream());
+    List<CatchTree> catchTrees = catchTreeList.stream().map(CatchTree.class::cast).collect(Collectors.toList());
+    Tree finallyTree = createElement(element.getFinallyBlock());
+    return new ExceptionHandlingTreeImpl(metadata, tryTree, catchTrees, finallyTree);
+  }
+
+  private CatchTree createCatchTree(TreeMetaData metaData, KtCatchClause element) {
+    Tree catchParameter = createParameter(element.getCatchParameter());
+    Tree catchBody = createElement(element.getCatchBody());
+    if (catchParameter == null) {
+      return new CatchTreeImpl(metaData, null, catchBody);
+    } else {
+      return new CatchTreeImpl(metaData, (ParameterTree) catchParameter, catchBody);
+    }
   }
 
   private Tree createBinaryExpression(TreeMetaData metaData, KtBinaryExpression element) {

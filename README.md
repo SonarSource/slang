@@ -17,3 +17,9 @@ Then run the ITs
 
     cd its
     mvn clean install -Dsonar.runtimeVersion=7.1
+
+## License headers
+
+When adding a new source file, you will need to add license headers. Instead of copy-pasting blocks, the following command line can be used:
+
+    mvn license:format
