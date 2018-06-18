@@ -19,36 +19,27 @@
  */
 package com.sonarsource.slang.checks;
 
+import com.sonarsource.slang.api.IfTree;
+import com.sonarsource.slang.api.LiteralTree;
+import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.checks.api.InitContext;
+import com.sonarsource.slang.checks.api.SlangCheck;
 import java.util.Arrays;
 import java.util.List;
+import org.sonar.check.Rule;
 
-public class CommonCheckList {
+@Rule(key = "S1145")
+public class IfConditionalAlwaysTrueOrFalseCheck implements SlangCheck {
+  private static final List<String> BOOLEAN_LITERALS = Arrays.asList("true", "false");
 
-  private CommonCheckList() {
-  }
-
-  public static List<Class> checks() {
-    return Arrays.asList(
-      AllBranchesIdenticalCheck.class,
-      BadFunctionNameCheck.class,
-      BooleanLiteralCheck.class,
-      CollapsibleIfStatementsCheck.class,
-      DuplicateBranchCheck.class,
-      DuplicatedFunctionImplementationCheck.class,
-      EmptyBlockCheck.class,
-      EmptyFunctionCheck.class,
-      IfConditionalAlwaysTrueOrFalseCheck.class,
-      FixMeCommentCheck.class,
-      IdenticalBinaryOperandCheck.class,
-      IdenticalConditionsCheck.class,
-      SelfAssignmentCheck.class,
-      StringLiteralDuplicatedCheck.class,
-      TodoCommentCheck.class,
-      TooLongFunctionCheck.class,
-      TooLongLineCheck.class,
-      TooManyLinesOfCodeFileCheck.class,
-      TooManyParametersCheck.class,
-      UnusedFunctionParameterCheck.class);
+  @Override
+  public void initialize(InitContext init) {
+    init.register(IfTree.class, (ctx, ifTree) -> {
+      Tree condition = ifTree.condition();
+      if (condition instanceof LiteralTree && BOOLEAN_LITERALS.contains(((LiteralTree) condition).value())) {
+        ctx.reportIssue(condition, "Remove this useless \"if\" statement.");
+      }
+    });
   }
 
 }
