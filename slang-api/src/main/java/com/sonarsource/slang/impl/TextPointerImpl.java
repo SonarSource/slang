@@ -20,6 +20,7 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.TextPointer;
+import java.util.Objects;
 
 public class TextPointerImpl implements TextPointer {
 
@@ -40,4 +41,31 @@ public class TextPointerImpl implements TextPointer {
   public int lineOffset() {
     return lineOffset;
   }
+
+  @Override
+  public int compareTo(TextPointer other) {
+    int lineCompare = Integer.compare(this.line(), other.line());
+    if (lineCompare != 0) {
+      return lineCompare;
+    }
+    return Integer.compare(this.lineOffset(), other.lineOffset());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    TextPointerImpl that = (TextPointerImpl) o;
+    return line == that.line && lineOffset == that.lineOffset;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(line, lineOffset);
+  }
+
 }
