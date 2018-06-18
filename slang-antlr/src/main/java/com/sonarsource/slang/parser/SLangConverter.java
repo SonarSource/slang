@@ -80,8 +80,7 @@ public class SLangConverter implements ASTConverter {
     SLangParser.PRIVATE,
     SLangParser.PUBLIC,
     SLangParser.RETURN,
-    SLangParser.THIS,
-    SLangParser.VOID
+    SLangParser.THIS
   ));
 
   @Override

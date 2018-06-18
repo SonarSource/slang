@@ -58,12 +58,12 @@ public class SyntaxHighlighterTest {
     sensorContext = SensorContextTester.create(tempFolder.getRoot());
   }
 
-  private void highlight(String sqlCode) throws IOException {
+  private void highlight(String code) throws IOException {
     inputFile = new TestInputFileBuilder("moduleKey", tempFolder.newFile().getName())
       .setCharset(StandardCharsets.UTF_8)
-      .initMetadata(sqlCode).build();
+      .initMetadata(code).build();
     InputFileContext ctx = new InputFileContext(sensorContext, inputFile);
-    highlightingVisitor.scan(ctx, parser.parse(sqlCode));
+    highlightingVisitor.scan(ctx, parser.parse(code));
   }
 
   private void assertHighlighting(int columnFirst, int columnLast, @Nullable TypeOfText type) {
