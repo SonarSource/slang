@@ -197,15 +197,9 @@ class KotlinTreeVisitor {
     if (nameIdentifier != null && name != null) {
       identifierTree = new IdentifierTreeImpl(getTreeMetaData(nameIdentifier), name);
     }
-    if (bodyTree != null) {
+    if (bodyTree != null && !(bodyTree instanceof BlockTree)) {
       // FIXME are we sure we want body of function as block tree ?
-      if (!(bodyTree instanceof BlockTree)) {
-        bodyTree = new BlockTreeImpl(bodyTree.metaData(), Collections.singletonList(bodyTree));
-      }
-      // Set bodyTree to null for empty lambda functions
-      if (bodyTree.children().isEmpty()) {
-        bodyTree = null;
-      }
+      bodyTree = new BlockTreeImpl(bodyTree.metaData(), Collections.singletonList(bodyTree));
     }
 
     return new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, identifierTree, parameterTreeList, (BlockTree) bodyTree);
@@ -241,14 +235,14 @@ class KotlinTreeVisitor {
   private Tree createParameter(KtParameter ktParameter) {
     TreeMetaData metaData = getTreeMetaData(ktParameter);
     Tree type = createElement(ktParameter.getTypeReference());
-    String name = ktParameter.getName();
+    PsiElement nameIdentifier = ktParameter.getNameIdentifier();
 
     // For some reason the Identifier is not among the Parameter children array, so for now we add this information to the native kind
-    if (name == null) {
+    if (nameIdentifier == null) {
       return createNativeTree(metaData, new KotlinNativeKind(ktParameter), ktParameter);
     }
 
-    IdentifierTree identifier = new IdentifierTreeImpl(metaData, name);
+    IdentifierTree identifier = createIdentifierTree(getTreeMetaData(nameIdentifier), nameIdentifier.getText());
     return new ParameterTreeImpl(metaData, identifier, type);
   }
 
@@ -260,7 +254,7 @@ class KotlinTreeVisitor {
     return new NativeTreeImpl(metaData, kind, children);
   }
 
-  private static Tree createIdentifierTree(TreeMetaData metaData, String name) {
+  private static IdentifierTree createIdentifierTree(TreeMetaData metaData, String name) {
     return new IdentifierTreeImpl(metaData, name);
   }
 
