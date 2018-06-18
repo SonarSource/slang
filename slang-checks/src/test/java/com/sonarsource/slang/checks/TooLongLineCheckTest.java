@@ -19,33 +19,20 @@
  */
 package com.sonarsource.slang.checks;
 
-import java.util.Arrays;
-import java.util.List;
+import org.junit.Test;
 
-public class CommonCheckList {
+public class TooLongLineCheckTest {
 
-  private CommonCheckList() {
+  private TooLongLineCheck check = new TooLongLineCheck();
+
+  @Test
+  public void max_120() {
+    Verifier.verify("TooLongLine.slang", check);
   }
 
-  public static List<Class> checks() {
-    return Arrays.asList(
-      AllBranchesIdenticalCheck.class,
-      BadFunctionNameCheck.class,
-      BooleanLiteralCheck.class,
-      CollapsibleIfStatementsCheck.class,
-      DuplicateBranchCheck.class,
-      DuplicatedFunctionImplementationCheck.class,
-      EmptyBlockCheck.class,
-      FixMeCommentCheck.class,
-      IdenticalBinaryOperandCheck.class,
-      IdenticalConditionsCheck.class,
-      SelfAssignmentCheck.class,
-      StringLiteralDuplicatedCheck.class,
-      TodoCommentCheck.class,
-      TooLongFunctionCheck.class,
-      TooLongLineCheck.class,
-      TooManyParametersCheck.class,
-      UnusedFunctionParameterCheck.class);
+  @Test
+  public void max_40() {
+    check.maximumLineLength = 40;
+    Verifier.verify("TooLongLine_40.slang", check);
   }
-
 }
