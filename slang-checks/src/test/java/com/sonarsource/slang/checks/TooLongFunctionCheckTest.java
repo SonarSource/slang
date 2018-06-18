@@ -17,28 +17,24 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.testing;
+package com.sonarsource.slang.checks;
 
-import com.sonarsource.slang.api.TextRange;
-import com.sonarsource.slang.impl.TextRanges;
-import org.assertj.core.api.AbstractAssert;
+import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+public class TooLongFunctionCheckTest {
 
-public class RangeAssert extends AbstractAssert<RangeAssert, TextRange> {
+  TooLongFunctionCheck check = new TooLongFunctionCheck();
 
-  public RangeAssert(TextRange actual) {
-    super(actual, RangeAssert.class);
+  @Test
+  public void max_3() {
+    check.max = 3;
+    Verifier.verify("TooLongFunction_3.slang", check);
   }
 
-  public RangeAssert hasRange(int startLine, int startLineOffset, int endLine, int endLineOffset) {
-    isNotNull();
-    assertThat(actual).isEqualTo(TextRanges.range(startLine, startLineOffset, endLine, endLineOffset));
-    return this;
-  }
-
-  public static RangeAssert assertRange(TextRange actual) {
-    return new RangeAssert(actual);
+  @Test
+  public void max_4() {
+    check.max = 4;
+    Verifier.verify("TooLongFunction_4.slang", check);
   }
 
 }

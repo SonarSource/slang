@@ -24,9 +24,11 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
 
+import static com.sonarsource.slang.impl.TextRanges.range;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,4 +58,40 @@ public class FunctionDeclarationTreeImplTest {
     assertThat(new FunctionDeclarationTreeImpl(meta, modifiers, null, null, emptyList(), null).children())
       .containsExactly(modifiers.get(0));
   }
+
+  @Test
+  public void rangeToHighlight_with_name() {
+    TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(emptyList(), emptyList());
+    TreeMetaData nameMetaData = metaDataProvider.metaData(range(1, 2, 3, 4));
+    TreeMetaData bodyMetaData = metaDataProvider.metaData(range(5, 1, 5, 7));
+    IdentifierTree name = new IdentifierTreeImpl(nameMetaData, "foo");
+    BlockTree body = new BlockTreeImpl(bodyMetaData, emptyList());
+    assertThat(new FunctionDeclarationTreeImpl(body.metaData(), emptyList(), null, name, emptyList(), body).rangeToHighlight())
+      .isEqualTo(nameMetaData.textRange());
+  }
+
+  @Test
+  public void rangeToHighlight_with_body_only() {
+    TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(emptyList(), emptyList());
+    TreeMetaData bodyMetaData = metaDataProvider.metaData(range(5, 1, 5, 7));
+    BlockTree body = new BlockTreeImpl(bodyMetaData, emptyList());
+    assertThat(new FunctionDeclarationTreeImpl(body.metaData(), emptyList(), null, null, emptyList(), body).rangeToHighlight())
+      .isEqualTo(body.metaData().textRange());
+  }
+
+  @Test
+  public void rangeToHighlight_with_no_name_but_some_signature() {
+    TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(emptyList(), Arrays.asList(
+      new TokenImpl(range(5, 1, 5, 10), "fun", true),
+      new TokenImpl(range(5, 11, 5, 15), "foo", false),
+      new TokenImpl(range(5, 1, 17, 18), "{", false),
+      new TokenImpl(range(5, 1, 19, 20), "}", false)
+    ));
+    TreeMetaData functionMetaData = metaDataProvider.metaData(range(5, 1, 5, 20));
+    TreeMetaData bodyMetaData = metaDataProvider.metaData(range(5, 17, 5, 20));
+    BlockTree body = new BlockTreeImpl(bodyMetaData, emptyList());
+    assertThat(new FunctionDeclarationTreeImpl(functionMetaData, emptyList(), null, null, emptyList(), body).rangeToHighlight())
+      .isEqualTo(range(5, 1, 5, 15));
+  }
+
 }

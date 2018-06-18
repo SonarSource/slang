@@ -37,4 +37,6 @@ public interface FunctionDeclarationTree extends Tree {
   @CheckForNull
   BlockTree body();
 
+  TextRange rangeToHighlight();
+
 }

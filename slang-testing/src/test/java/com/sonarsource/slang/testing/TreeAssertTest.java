@@ -246,6 +246,11 @@ public class TreeAssertTest {
       public List<Token> tokens() {
         return null;
       }
+
+      @Override
+      public int numberOfLinesOfCode() {
+        return 0;
+      }
     };
   }
 }

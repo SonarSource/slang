@@ -42,6 +42,7 @@ public class CommonCheckList {
       SelfAssignmentCheck.class,
       StringLiteralDuplicatedCheck.class,
       TodoCommentCheck.class,
+      TooLongFunctionCheck.class,
       TooManyParametersCheck.class,
       UnusedFunctionParameterCheck.class);
   }

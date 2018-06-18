@@ -29,4 +29,6 @@ public interface TreeMetaData {
 
   List<Token> tokens();
 
+  int numberOfLinesOfCode();
+
 }

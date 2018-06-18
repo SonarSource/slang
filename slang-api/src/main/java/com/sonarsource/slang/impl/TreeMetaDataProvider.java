@@ -23,7 +23,9 @@ import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TreeMetaData;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TreeMetaDataProvider {
@@ -71,6 +73,18 @@ public class TreeMetaDataProvider {
       return tokens.stream()
         .filter(token -> token.textRange().isInside(textRange))
         .collect(Collectors.toList());
+    }
+
+    @Override
+    public int numberOfLinesOfCode() {
+      Set<Integer> linesOfCode = new HashSet<>();
+      for (Token token : tokens()) {
+        TextRange range = token.textRange();
+        for (int i = range.start().line(); i <= range.end().line(); i++) {
+          linesOfCode.add(i);
+        }
+      }
+      return linesOfCode.size();
     }
   }
 }
