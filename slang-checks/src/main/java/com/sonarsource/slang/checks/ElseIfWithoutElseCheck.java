@@ -34,7 +34,7 @@ public class ElseIfWithoutElseCheck implements SlangCheck {
   public void initialize(InitContext init) {
     init.register(IfTree.class, (ctx, ifTree) -> {
       Tree elseBranch = ifTree.elseBranch();
-      if (elseBranch != null && elseBranch instanceof IfTree) {
+      if (elseBranch instanceof IfTree) {
         IfTree nestedIfTree = (IfTree) elseBranch;
         if (nestedIfTree.elseBranch() == null) {
           ctx.reportIssue(elseBranch, MESSAGE);
