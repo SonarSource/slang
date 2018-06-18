@@ -23,21 +23,21 @@ import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
+import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
-import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.parser.SLangConverter;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
@@ -133,9 +133,9 @@ public class KotlinConverterTest {
     assertThat(emptyLambdaFunction.modifiers()).isEmpty();
     assertTree(emptyLambdaFunction.returnType()).isNull();
     assertThat(emptyLambdaFunction.formalParameters()).isEmpty();
-    assertTree(emptyLambdaFunction.body()).isNull();
+    assertTree(emptyLambdaFunction.body()).isBlock();
 
-    Tree aIntParam1 = functionDeclarationTree.formalParameters().get(0);
+    ParameterTree aIntParam1 = functionDeclarationTree.formalParameters().get(0);
     Tree bStringParam = functionDeclarationTree.formalParameters().get(1);
     Tree aIntParam2 = functionWithInternalModifier.formalParameters().get(0);
     Tree aStringParam = constructorFunction.formalParameters().get(1);
@@ -143,6 +143,8 @@ public class KotlinConverterTest {
     assertTree(aIntParam1).isEquivalentTo(aIntParam2);
     assertTree(aIntParam1).isNotEquivalentTo(aStringParam);
     assertTree(aStringParam).isNotEquivalentTo(bStringParam);
+    assertTree(aIntParam1).hasTextRange(1, 22, 1, 28);
+    assertTree(aIntParam1.identifier()).hasTextRange(1, 22, 1, 23);
   }
 
   @Test
