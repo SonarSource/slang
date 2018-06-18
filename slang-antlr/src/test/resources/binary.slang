@@ -12,7 +12,7 @@ native ["DEFER"] {
   [ b = 2;
     c = b + 1;
   ]
-}
+};
 
 public int fun test()
 {

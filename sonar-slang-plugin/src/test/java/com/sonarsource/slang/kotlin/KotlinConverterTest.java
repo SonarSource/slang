@@ -216,10 +216,10 @@ public class KotlinConverterTest {
   @Test
   public void testIfExpressions() {
     assertTrees(kotlinStatements("if (x == 0) { 3; x + 2;}"))
-      .isEquivalentTo(slangStatements("if (x == 0) { 3; x + 2;}"));
+      .isEquivalentTo(slangStatements("if (x == 0) { 3; x + 2;};"));
 
     assertTrees(kotlinStatements("if (x) 1 else 4"))
-      .isEquivalentTo(slangStatements("if (x) 1 else 4"));
+      .isEquivalentTo(slangStatements("if (x) 1 else 4;"));
 
     assertTrees(kotlinStatements("if (x) 1 else if (x > 2) 4"))
       .isEquivalentTo(slangStatements("if (x) 1 else if (x > 2) 4;"));
@@ -227,12 +227,12 @@ public class KotlinConverterTest {
     // In kotlin a null 'then' branch is valid code, so this if will be mapped to a native tree as it is not valid in Slang AST
     NativeTree ifStatementWithNullThenBranch = (NativeTree) kotlinStatement("if (x) else 4");
     assertTrees(Collections.singletonList(ifStatementWithNullThenBranch))
-      .isNotEquivalentTo(slangStatements("if (x) { } else 4"));
+      .isNotEquivalentTo(slangStatements("if (x) { } else 4;"));
     assertTree(ifStatementWithNullThenBranch).hasChildren(IdentifierTree.class, LiteralTree.class);
 
     NativeTree ifStatementWithNullBranches = (NativeTree) kotlinStatement("if (x) else;");
     assertTrees(Collections.singletonList(ifStatementWithNullBranches))
-      .isNotEquivalentTo(slangStatements("if (x) { } else { }"));
+      .isNotEquivalentTo(slangStatements("if (x) { } else { };"));
     assertTree(ifStatementWithNullBranches).hasChildren(IdentifierTree.class);
   }
 
@@ -353,7 +353,7 @@ public class KotlinConverterTest {
   @Test
   public void testEquivalenceWithComments() {
     assertTrees(kotlinStatements("x + 2; // EOL comment"))
-      .isEquivalentTo(slangStatements("x + 2"));
+      .isEquivalentTo(slangStatements("x + 2;"));
   }
 
   @Test
@@ -372,7 +372,7 @@ public class KotlinConverterTest {
   @Test
   public void testAssignments() {
     assertTrees(kotlinStatements("x = 3\nx -= y + 3\n"))
-      .isEquivalentTo(slangStatements("x = 3; x -= y + 3"));
+      .isEquivalentTo(slangStatements("x = 3; x -= y + 3;"));
   }
 
   @Test

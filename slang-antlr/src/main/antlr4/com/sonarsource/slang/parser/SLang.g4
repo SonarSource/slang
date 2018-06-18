@@ -6,7 +6,7 @@ slangFile
 
 typeDeclaration
   :  methodDeclaration 
-  |  statementOrExpression
+  |  statement SEMICOLON
   ;
 
 methodDeclaration
@@ -55,15 +55,29 @@ variableDeclaratorId
 
 methodBody
   : block 
-  | SEMICOLON 
+  | SEMICOLON
   ;
 
 block
-  :  LCURLY (statementOrExpression semi)* (statementOrExpression semi?)? RCURLY 
+  :  LCURLY (statement semi)* (statement semi?)? RCURLY
   ;
 
-statementOrExpression
-  :  disjunction (assignmentOperator disjunction)* semi? 
+statement
+  :  declaration
+  |  assignment
+  |  expression
+  ;
+
+declaration
+  :  simpleType identifier SEMICOLON
+  ;
+
+assignment
+  :  expression (assignmentOperator statement)+
+  ;
+
+expression
+  :  disjunction
   ;
 
 disjunction
@@ -100,7 +114,6 @@ atomicExpression
   |  nativeExpression 
   |  literal
   |  conditional
-  |  assignment
   |  methodInvocation
   |  returnExpression
   |  expressionName
@@ -108,15 +121,7 @@ atomicExpression
   ;
 
 parenthesizedExpression
-  :  LPAREN statementOrExpression RPAREN
-  ;
-
-assignment 
-  :  leftHandSide assignmentOperator statementOrExpression
-  ; 
-
-leftHandSide
-  :  expressionName
+  :  LPAREN statement RPAREN
   ;
 
 methodInvocation
@@ -128,7 +133,7 @@ methodName
   ;
 
 argumentList
-  :  statementOrExpression (COMMA statementOrExpression)*
+  :  statement (COMMA statement)*
   ; 
 
 expressionName
@@ -141,21 +146,21 @@ conditional
   ;
 
 ifExpression
-  : IF LPAREN statementOrExpression RPAREN controlBlock (ELSE controlBlock)?
+  : IF LPAREN statement RPAREN controlBlock (ELSE controlBlock)?
   ;
 
 matchExpression
-  : MATCH LPAREN statementOrExpression RPAREN LCURLY matchCase* RCURLY
+  : MATCH LPAREN statement RPAREN LCURLY matchCase* RCURLY
   ;
 
 matchCase
-  :  statementOrExpression ARROW controlBlock semi
+  :  statement ARROW controlBlock semi
   |  ELSE ARROW controlBlock semi
   ;
 
 controlBlock
   :  block
-  |  statementOrExpression
+  |  statement
   ;
 
 tryExpression
@@ -175,11 +180,11 @@ nativeExpression
   ; 
 
 nativeBlock
-  :  LBRACK (statementOrExpression semi)* (statementOrExpression semi?)? RBRACK 
+  :  LBRACK (statement semi)* (statement semi?)? RBRACK
   ;
 
 returnExpression
-  :  RETURN statementOrExpression
+  :  RETURN statement
   ;
 
 /* Operators */ 

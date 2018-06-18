@@ -1,7 +1,7 @@
   if (x) {
     foo;
     foo;
-  }
+  };
 
   if (x) {
     foo;
@@ -9,7 +9,7 @@
   } else {
     bar;
     bar;
-  }
+  };
 
   if (x) { // handled by S3923
     foo;
@@ -17,7 +17,7 @@
   } else {
     foo;
     foo;
-  }
+  };
 
   if (x) {
     foo;
@@ -29,7 +29,7 @@
   } else {
     bar;
     bar;
-  }
+  };
 
   if (x) {
     foo;
@@ -40,7 +40,7 @@
   } else { // Noncompliant
     bar;
     bar;
-  }
+  };
 
   if (x) {
 
@@ -48,7 +48,7 @@
 
   } else {
     bar; bar;
-  }
+  };
 
   if (x) {
     foo; foo;
@@ -56,21 +56,22 @@
     foo; foo;
   } else {
     bar; bar;
-  }
-
-  if (x)
-    foo;
-  else if (y)
-    foo;
-  else
-    bar;
+  };
 
   if (x)
     foo
-    + bar;
   else if (y)
-    foo   // Noncompliant
-    + bar;
+    foo
   else
     bar
-    ;
+  ;
+
+  if (x)
+    foo
+    + bar
+  else if (y)
+    foo   // Noncompliant
+    + bar
+  else
+    bar
+  ;
