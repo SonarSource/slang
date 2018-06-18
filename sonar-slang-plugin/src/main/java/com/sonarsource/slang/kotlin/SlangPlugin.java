@@ -23,22 +23,21 @@ import org.sonar.api.Plugin;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
 
-public class KotlinPlugin implements Plugin {
+public class SlangPlugin implements Plugin {
 
   // Subcategories
   private static final String GENERAL = "General";
-  private static final String KOTLIN_CATEGORY = "Slang";
+  private static final String KOTLIN_CATEGORY = "Kotlin";
 
   // Global constants
-  private static final String PLUGIN_KEY = "slang";
-  public static final String LANGUAGE_KEY = "kotlin";
-  public static final String LANGUAGE_NAME = "Kotlin";
-  public static final String REPOSITORY_KEY = "kotlin";
+  public static final String KOTLIN_LANGUAGE_KEY = "kotlin";
+  public static final String KOTLIN_LANGUAGE_NAME = "Kotlin";
+  public static final String KOTLIN_REPOSITORY_KEY = "kotlin";
   public static final String REPOSITORY_NAME = "SonarAnalyzer";
   public static final String PROFILE_NAME = "Sonar way";
 
-  public static final String FILE_SUFFIXES_KEY = "sonar.kotlin.file.suffixes";
-  public static final String FILE_SUFFIXES_DEFAULT_VALUE = ".kt";
+  public static final String KOTLIN_FILE_SUFFIXES_KEY = "sonar.kotlin.file.suffixes";
+  public static final String KOTLIN_FILE_SUFFIXES_DEFAULT_VALUE = ".kt";
 
   @Override
   public void define(Context context) {
@@ -47,8 +46,8 @@ public class KotlinPlugin implements Plugin {
       KotlinSensor.class,
       KotlinRulesDefinition.class,
       KotlinProfileDefinition.class,
-      PropertyDefinition.builder(FILE_SUFFIXES_KEY)
-        .defaultValue(FILE_SUFFIXES_DEFAULT_VALUE)
+      PropertyDefinition.builder(KOTLIN_FILE_SUFFIXES_KEY)
+        .defaultValue(KOTLIN_FILE_SUFFIXES_DEFAULT_VALUE)
         .name("File Suffixes")
         .description("Comma-separated list of suffixes for files to analyze.")
         .subCategory(GENERAL)

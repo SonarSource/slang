@@ -76,7 +76,7 @@
         <configuration>
           <!-- This value shows up in the SonarQube GUI -->
           <pluginName>SonarSlang</pluginName>
-          <pluginClass>com.sonarsource.slang.kotlin.KotlinPlugin</pluginClass>
+          <pluginClass>com.sonarsource.slang.kotlin.SlangPlugin</pluginClass>
           <sonarLintSupported>true</sonarLintSupported>
           <addMavenDescriptor>false</addMavenDescriptor>
           <sonarQubeMinVersion>6.7</sonarQubeMinVersion>

@@ -47,7 +47,7 @@ public class KotlinSensor implements Sensor {
   private final Checks<SlangCheck> checks;
 
   public KotlinSensor(CheckFactory checkFactory) {
-    checks = checkFactory.create(KotlinPlugin.REPOSITORY_KEY);
+    checks = checkFactory.create(SlangPlugin.KOTLIN_REPOSITORY_KEY);
     checks.addAnnotatedChecks((Iterable<?>) CommonCheckList.checks());
   }
 
@@ -62,7 +62,7 @@ public class KotlinSensor implements Sensor {
   public void execute(SensorContext sensorContext) {
     FileSystem fileSystem = sensorContext.fileSystem();
     FilePredicate mainFilePredicate = fileSystem.predicates().and(
-      fileSystem.predicates().hasLanguage(KotlinPlugin.LANGUAGE_KEY),
+      fileSystem.predicates().hasLanguage(SlangPlugin.KOTLIN_LANGUAGE_KEY),
       fileSystem.predicates().hasType(InputFile.Type.MAIN));
     Iterable<InputFile> inputFiles = fileSystem.inputFiles(mainFilePredicate);
     analyseFiles(sensorContext, inputFiles, Arrays.asList(

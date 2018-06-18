@@ -30,8 +30,8 @@ public class KotlinRulesDefinition implements RulesDefinition {
   @Override
   public void define(Context context) {
     NewRepository repository = context
-      .createRepository(KotlinPlugin.REPOSITORY_KEY, KotlinPlugin.LANGUAGE_KEY)
-      .setName(KotlinPlugin.REPOSITORY_NAME);
+      .createRepository(SlangPlugin.KOTLIN_REPOSITORY_KEY, SlangPlugin.KOTLIN_LANGUAGE_KEY)
+      .setName(SlangPlugin.REPOSITORY_NAME);
     RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER);
     ruleMetadataLoader.addRulesByAnnotatedClass(repository, CommonCheckList.checks());
     repository.done();
