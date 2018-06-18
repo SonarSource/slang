@@ -174,11 +174,17 @@ class KotlinTreeVisitor {
       return createLiteral(metaData, element);
     } else if (element instanceof KtOperationExpression) {
       return createOperationExpression(metaData, (KtOperationExpression) element);
-    } else if (element instanceof KtDestructuringDeclarationEntry || isSimpleStringLiteralEntry(element)) {
-      // To differentiate between the native trees of complex string template entries, we add the string value to the native kind
-      return createNativeTree(metaData, new KotlinNativeKind(element, element.getText()), element);
     } else if (element instanceof KtParameter) {
       return createParameter((KtParameter) element);
+    } else {
+      return convertElementToNative(element, metaData);
+    }
+  }
+
+  private Tree convertElementToNative(PsiElement element, TreeMetaData metaData) {
+    if (element instanceof KtDestructuringDeclarationEntry || isSimpleStringLiteralEntry(element)) {
+      // To differentiate between the native trees of complex string template entries, we add the string value to the native kind
+      return createNativeTree(metaData, new KotlinNativeKind(element, element.getText()), element);
     } else {
       return createNativeTree(metaData, new KotlinNativeKind(element), element);
     }
@@ -306,12 +312,11 @@ class KotlinTreeVisitor {
   }
 
   private CatchTree createCatchTree(TreeMetaData metaData, KtCatchClause element) {
-    Tree catchParameter = createParameter(element.getCatchParameter());
-    Tree catchBody = createElement(element.getCatchBody());
-    if (catchParameter == null) {
+    Tree catchBody = createMandatoryElement(element.getCatchBody());
+    if (element.getCatchParameter() == null) {
       return new CatchTreeImpl(metaData, null, catchBody);
     } else {
-      return new CatchTreeImpl(metaData, (ParameterTree) catchParameter, catchBody);
+      return new CatchTreeImpl(metaData, (ParameterTree) createParameter(element.getCatchParameter()), catchBody);
     }
   }
 

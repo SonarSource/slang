@@ -43,14 +43,20 @@ public class ExceptionHandlingTreeImpl extends BaseTreeImpl implements Exception
   }
 
   @Override
-  public Tree tryBlock() { return tryBlock; }
+  public Tree tryBlock() {
+    return tryBlock;
+  }
 
   @Override
-  public List<CatchTree> catchBlocks() { return catchBlocks; }
+  public List<CatchTree> catchBlocks() {
+    return catchBlocks;
+  }
 
   @CheckForNull
   @Override
-  public Tree finallyBlock() { return finallyBlock; }
+  public Tree finallyBlock() {
+    return finallyBlock;
+  }
 
   @Override
   public List<Tree> children() {

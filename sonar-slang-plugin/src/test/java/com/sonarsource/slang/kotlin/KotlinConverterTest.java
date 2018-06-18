@@ -296,7 +296,7 @@ public class KotlinConverterTest {
 
   @Test
   public void testTryCatchFinally() {
-    Tree kotlinStatement = kotlinStatement("try { 1 } catch (e: SomeException) { } catch (f : Exception) { } finally { 2 }");
+    Tree kotlinStatement = kotlinStatement("try { 1 } catch (e: SomeException) { } catch { } finally { 2 }");
     assertTree(kotlinStatement).isInstanceOf(ExceptionHandlingTree.class);
     ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) kotlinStatement;
     assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
@@ -305,8 +305,7 @@ public class KotlinConverterTest {
     assertTree(catchTreeList.get(0).catchParameter()).hasParameterName("e");
     assertThat(catchTreeList.get(0).catchParameter().type()).isNotNull();
     assertTree(catchTreeList.get(0).catchBlock()).isBlock();
-    assertTree(catchTreeList.get(1).catchParameter()).hasParameterName("f");
-    assertThat(catchTreeList.get(1).catchParameter().type()).isNotNull();
+    assertThat(catchTreeList.get(1).catchParameter()).isNull();
     assertTree(catchTreeList.get(1).catchBlock()).isBlock();
     assertThat(exceptionHandlingTree.finallyBlock()).isNotNull();
     assertTree(exceptionHandlingTree.finallyBlock()).isBlock(LiteralTree.class);
