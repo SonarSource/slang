@@ -40,6 +40,7 @@ public class CommonCheckList {
       EmptyFunctionCheck.class,
       IfConditionalAlwaysTrueOrFalseCheck.class,
       FixMeCommentCheck.class,
+      HardcodedCredentialsCheck.class,
       IdenticalBinaryOperandCheck.class,
       IdenticalConditionsCheck.class,
       MatchCaseTooBigCheck.class,
