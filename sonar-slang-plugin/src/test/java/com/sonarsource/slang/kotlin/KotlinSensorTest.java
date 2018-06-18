@@ -75,6 +75,24 @@ public class KotlinSensorTest {
   }
 
   @Test
+  public void test_rule_with_gap() {
+    InputFile inputFile = createInputFile("file1.kt", "" +
+      "fun f() { print(\"string literal\"); print(\"string literal\"); print(\"string literal\"); }");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S1192");
+    sensor(checkFactory).execute(context);
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).hasSize(1);
+    Issue issue = issues.iterator().next();
+    assertThat(issue.ruleKey().rule()).isEqualTo("S1192");
+    IssueLocation location = issue.primaryLocation();
+    assertThat(location.inputComponent()).isEqualTo(inputFile);
+    assertThat(location.message()).isEqualTo("Define a constant instead of duplicating this literal \"string literal\" 3 times.");
+    assertTextRange(location.textRange(), 1, 16, 1, 32);
+    assertThat(issue.gap()).isEqualTo(2.0);
+  }
+
+  @Test
   public void test_fail_input() throws IOException {
     InputFile inputFile = createInputFile("fakeFile.kt", "");
     InputFile spyInputFile = spy(inputFile);

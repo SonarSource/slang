@@ -21,10 +21,10 @@ package com.sonarsource.slang.checks.api;
 
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
-
-import javax.annotation.CheckForNull;
 import java.util.Deque;
 import java.util.List;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 
 public interface CheckContext {
 
@@ -46,5 +46,7 @@ public interface CheckContext {
   void reportIssue(Tree tree, String message, SecondaryLocation secondaryLocation);
 
   void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations);
+
+  void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap);
 
 }

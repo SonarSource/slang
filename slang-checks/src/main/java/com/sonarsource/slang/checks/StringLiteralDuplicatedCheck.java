@@ -71,7 +71,8 @@ public class StringLiteralDuplicatedCheck implements SlangCheck {
           .skip(1)
           .map(stringLiteral -> new SecondaryLocation(stringLiteral.metaData().textRange(), "Duplication"))
           .collect(Collectors.toList());
-        ctx.reportIssue(first, message, secondaryLocations);
+        double gap = size - 1.0;
+        ctx.reportIssue(first, message, secondaryLocations, gap);
       }
     }
   }

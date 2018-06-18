@@ -32,6 +32,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import javax.annotation.Nullable;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.rule.RuleKey;
 
@@ -70,7 +71,7 @@ public class ChecksVisitor extends TreeVisitor<InputFileContext> {
 
     @Override
     public void reportIssue(TextRange textRange, String message) {
-      reportIssue(textRange, message, Collections.emptyList());
+      reportIssue(textRange, message, Collections.emptyList(), null);
     }
 
     @Override
@@ -80,16 +81,21 @@ public class ChecksVisitor extends TreeVisitor<InputFileContext> {
 
     @Override
     public void reportIssue(Tree tree, String message, SecondaryLocation secondaryLocation) {
-      reportIssue(tree.metaData().textRange(), message, Collections.singletonList(secondaryLocation));
+      reportIssue(tree, message, Collections.singletonList(secondaryLocation));
     }
 
     @Override
     public void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations) {
-      reportIssue(tree.metaData().textRange(), message, secondaryLocations);
+      reportIssue(tree, message, secondaryLocations, null);
     }
 
-    private void reportIssue(TextRange textRange, String message, List<SecondaryLocation> secondaryLocations) {
-      currentCtx.reportIssue(ruleKey, textRange, message, secondaryLocations);
+    @Override
+    public void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
+      reportIssue(tree.metaData().textRange(), message, secondaryLocations, gap);
+    }
+
+    private void reportIssue(TextRange textRange, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
+      currentCtx.reportIssue(ruleKey, textRange, message, secondaryLocations, gap);
     }
 
   }

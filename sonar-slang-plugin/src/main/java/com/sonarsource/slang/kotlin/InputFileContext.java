@@ -50,14 +50,19 @@ public class InputFileContext extends TreeContext {
       textRange.end().lineOffset());
   }
 
-  public void reportIssue(RuleKey ruleKey, com.sonarsource.slang.api.TextRange textRange, String message, List<SecondaryLocation> secondaryLocations) {
+  public void reportIssue(RuleKey ruleKey,
+                          com.sonarsource.slang.api.TextRange textRange,
+                          String message,
+                          List<SecondaryLocation> secondaryLocations,
+                          @Nullable Double gap) {
     NewIssue issue = sensorContext.newIssue();
     issue
       .forRule(ruleKey)
       .at(issue.newLocation()
         .on(inputFile)
         .at(textRange(textRange))
-        .message(message));
+        .message(message))
+      .gap(gap);
 
     secondaryLocations.forEach(secondary -> issue.addLocation(
       issue.newLocation()
