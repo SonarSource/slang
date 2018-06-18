@@ -17,18 +17,31 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
+package com.sonarsource.slang.impl;
 
-public interface TextPointer extends Comparable<TextPointer> {
+import com.sonarsource.slang.api.TextRange;
+import java.util.Arrays;
+import org.junit.Test;
 
-  /**
-   * Starts at 1
-   */
-  int line();
+import static com.sonarsource.slang.impl.TextRanges.range;
+import static org.assertj.core.api.Assertions.assertThat;
 
-  /**
-   * Starts at 0
-   */
-  int lineOffset();
+public class TextRangesTest {
+
+  @Test
+  public void merge_not_empty_list() {
+    assertThat(merge(range(1, 2, 3, 4))).isEqualTo(range(1, 2, 3, 4));
+    assertThat(merge(range(1, 2, 3, 4), range(5, 1, 5, 7))).isEqualTo(range(1, 2, 5, 7));
+    assertThat(merge(range(1, 2, 3, 4), range(1, 3, 1, 5))).isEqualTo(range(1, 2, 3, 4));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void merge_empty_list() {
+    merge();
+  }
+
+  private static TextRange merge(TextRange... ranges) {
+    return TextRanges.merge(Arrays.asList(ranges));
+  }
 
 }

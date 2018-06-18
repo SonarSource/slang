@@ -21,6 +21,7 @@ package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
+import java.util.Objects;
 
 public class TextRangeImpl implements TextRange {
 
@@ -46,4 +47,25 @@ public class TextRangeImpl implements TextRange {
     return end;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    TextRangeImpl textRange = (TextRangeImpl) o;
+    return Objects.equals(start, textRange.start) && Objects.equals(end, textRange.end);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(start, end);
+  }
+
+  @Override
+  public String toString() {
+    return "TextRange[" + start.line() + ", " + start.lineOffset() + ", " + end.line() + ", " + end.lineOffset() + ']';
+  }
 }
