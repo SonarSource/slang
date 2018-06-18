@@ -23,11 +23,11 @@ import org.sonar.api.Plugin;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
 
-public class KotlinPlugin implements Plugin {
+public class SlangPlugin implements Plugin {
 
   // Subcategories
   private static final String GENERAL = "General";
-  private static final String KOTLIN_CATEGORY = "Slang";
+  private static final String KOTLIN_CATEGORY = "Kotlin";
 
   // Global constants
   private static final String PLUGIN_KEY = "slang";

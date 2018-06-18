@@ -28,8 +28,8 @@ public class KotlinProfileDefinition implements BuiltInQualityProfilesDefinition
 
   @Override
   public void define(Context context) {
-    NewBuiltInQualityProfile profile = context.createBuiltInQualityProfile(KotlinPlugin.PROFILE_NAME, KotlinPlugin.LANGUAGE_KEY);
-    BuiltInQualityProfileJsonLoader.load(profile, KotlinPlugin.REPOSITORY_KEY, PATH_TO_JSON);
+    NewBuiltInQualityProfile profile = context.createBuiltInQualityProfile(SlangPlugin.PROFILE_NAME, SlangPlugin.LANGUAGE_KEY);
+    BuiltInQualityProfileJsonLoader.load(profile, SlangPlugin.REPOSITORY_KEY, PATH_TO_JSON);
     profile.done();
   }
 

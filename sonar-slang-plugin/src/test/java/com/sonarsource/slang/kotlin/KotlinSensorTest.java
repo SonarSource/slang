@@ -152,7 +152,7 @@ public class KotlinSensorTest {
     DefaultInputFile inputFile = new TestInputFileBuilder("moduleKey", relativePath)
       .setModuleBaseDir(baseDir.toPath())
       .setType(InputFile.Type.MAIN)
-      .setLanguage(KotlinPlugin.LANGUAGE_KEY)
+      .setLanguage(SlangPlugin.LANGUAGE_KEY)
       .setCharset(StandardCharsets.UTF_8)
       .setContents(content)
       .build();
@@ -163,7 +163,7 @@ public class KotlinSensorTest {
   private CheckFactory checkFactory(String... ruleKeys) {
     ActiveRulesBuilder builder = new ActiveRulesBuilder();
     for (String ruleKey : ruleKeys) {
-      builder.create(RuleKey.of(KotlinPlugin.REPOSITORY_KEY, ruleKey))
+      builder.create(RuleKey.of(SlangPlugin.REPOSITORY_KEY, ruleKey))
         .setName(ruleKey)
         .activate();
     }
