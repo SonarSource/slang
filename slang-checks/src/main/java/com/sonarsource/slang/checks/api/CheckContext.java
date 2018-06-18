@@ -49,4 +49,6 @@ public interface CheckContext {
 
   void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap);
 
+  String fileContent();
+
 }

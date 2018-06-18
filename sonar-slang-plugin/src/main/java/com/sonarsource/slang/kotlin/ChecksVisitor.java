@@ -35,16 +35,20 @@ import java.util.function.BiConsumer;
 import javax.annotation.Nullable;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.rule.RuleKey;
+import org.sonarsource.analyzer.commons.InputFileContentExtractor;
 
 public class ChecksVisitor extends TreeVisitor<InputFileContext> {
 
-  public ChecksVisitor(Checks<SlangCheck> checks) {
+  private final InputFileContentExtractor inputFileContextExtractor;
+
+  public ChecksVisitor(Checks<SlangCheck> checks, InputFileContentExtractor inputFileContentExtractor) {
     Collection<SlangCheck> rulesActiveInSonarQube = checks.all();
     for (SlangCheck check : rulesActiveInSonarQube) {
       RuleKey ruleKey = checks.ruleKey(check);
       Objects.requireNonNull(ruleKey);
       check.initialize(new ContextAdapter(ruleKey));
     }
+    this.inputFileContextExtractor = inputFileContentExtractor;
   }
 
   public class ContextAdapter implements InitContext, CheckContext {
@@ -92,6 +96,11 @@ public class ChecksVisitor extends TreeVisitor<InputFileContext> {
     @Override
     public void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
       reportIssue(tree.metaData().textRange(), message, secondaryLocations, gap);
+    }
+
+    @Override
+    public String fileContent() {
+      return inputFileContextExtractor.content(currentCtx.inputFile);
     }
 
     private void reportIssue(TextRange textRange, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
