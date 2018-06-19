@@ -29,6 +29,7 @@ import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import com.sonarsource.slang.visitors.TreeContext;
+import com.sonarsource.slang.visitors.TreePrinter;
 import com.sonarsource.slang.visitors.TreeVisitor;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -19,7 +19,7 @@ methodModifier
   ;
 
 methodHeader
-  :  result? FUN methodDeclarator
+  :  simpleType? FUN methodDeclarator
   ;
 
 methodDeclarator
@@ -69,7 +69,12 @@ statement
   ;
 
 declaration
-  :  simpleType identifier
+  :  simpleType declarationModifier identifier
+  ;
+
+declarationModifier
+  : VAR
+  | VAL
   ;
 
 assignment
@@ -212,73 +217,10 @@ unaryOperator
   :  '!'
   ;
 
-// Type Hierarchy 
-
-result
-  :  simpleType
-  |  VOID 
-  ;
+// Type Hierarchy
 
 simpleType
-  :  simplePrimitiveType
-  |  referenceType
-  ;
-
-simplePrimitiveType
-  :  numericType
-  |  BOOLEAN
-  ;
-
-referenceType
-  :  classOrInterfaceType
-  |  typeVariable
-  ;
-
-numericType
-  :  integralType
-  |  floatingPointType
-  ;
-
-integralType
-  :  BYTE 
-  |  SHORT 
-  |  INT
-  |  LONG
-  |  CHAR
-  ;
-
-floatingPointType
-  :  FLOAT
-  |  DOUBLE
-  ;
-
-classOrInterfaceType
-  :  classType
-  |  interfaceType
-  ;
-
-classType
-  : identifier typeArguments?
-  ;
-
-interfaceType
-  :  classType
-  ;
-
-typeVariable
-  : identifier
-  ;
-
-typeArguments
-  :  LT typeArgumentList GT
-  ;
-
-typeArgumentList
-  :  typeArgument (COMMA typeArgument)*
-  ;
-
-typeArgument
-  :  referenceType
+  :  identifier
   ;
 
 literal
@@ -301,27 +243,20 @@ identifier : Identifier;
 
 // Keywords
 
-BOOLEAN : 'boolean';
-BYTE : 'byte';
 CATCH : 'catch';
-CHAR : 'char';
-DOUBLE : 'double';
 ELSE : 'else';
 FINALLY : 'finally';
-FLOAT : 'float';
 FUN: 'fun';
 IF : 'if';
-INT : 'int';
-LONG : 'long';
 MATCH : 'match';
 NATIVE : 'native'; 
 PRIVATE : 'private';
 PUBLIC : 'public';
 RETURN : 'return';
-SHORT : 'short';
 THIS : 'this';
 TRY : 'try';
-VOID : 'void';
+VAL : 'val';
+VAR : 'var';
 
 
 // Integer Literals

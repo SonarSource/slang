@@ -38,16 +38,18 @@ public class VariableDeclarationTreeImplTest {
     Tree variableType = new NativeTreeImpl(meta, new VariableDeclarationTreeImplTest.TypeNativeKind(), null);
     IdentifierTree identifierTreeX = new IdentifierTreeImpl(meta, "x");
     IdentifierTree identifierTreeY = new IdentifierTreeImpl(meta, "y");
-    VariableDeclarationTreeImpl variableTreeX = new VariableDeclarationTreeImpl(meta, identifierTreeX, null);
-    VariableDeclarationTreeImpl variableTreeXCopy = new VariableDeclarationTreeImpl(meta, new IdentifierTreeImpl(meta, "x"), null);
-    VariableDeclarationTreeImpl variableTreeXTyped = new VariableDeclarationTreeImpl(meta, identifierTreeX, variableType);
-    VariableDeclarationTreeImpl variableTreeY = new VariableDeclarationTreeImpl(meta, identifierTreeY, variableType);
+    VariableDeclarationTreeImpl variableTreeX = new VariableDeclarationTreeImpl(meta, identifierTreeX, null, false);
+    VariableDeclarationTreeImpl variableTreeXCopy = new VariableDeclarationTreeImpl(meta, new IdentifierTreeImpl(meta, "x"), null, false);
+    VariableDeclarationTreeImpl valueTreeX = new VariableDeclarationTreeImpl(meta, new IdentifierTreeImpl(meta, "x"), null, true);
+    VariableDeclarationTreeImpl variableTreeXTyped = new VariableDeclarationTreeImpl(meta, identifierTreeX, variableType, false);
+    VariableDeclarationTreeImpl variableTreeY = new VariableDeclarationTreeImpl(meta, identifierTreeY, variableType, false);
 
     assertThat(variableTreeXTyped.children()).hasSize(2);
     assertThat(variableTreeX.children()).hasSize(1);
     assertThat(variableTreeX.type()).isNull();
     assertThat(variableTreeX.identifier()).isEqualTo(identifierTreeX);
     assertThat(areEquivalent(variableTreeX, variableTreeXCopy)).isTrue();
+    assertThat(areEquivalent(variableTreeX, valueTreeX)).isFalse();
     assertThat(areEquivalent(variableTreeX, variableTreeXTyped)).isFalse();
     assertThat(areEquivalent(variableTreeX, variableTreeY)).isFalse();
     assertThat(areEquivalent(variableTreeXTyped, variableTreeY)).isFalse();

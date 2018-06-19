@@ -52,6 +52,7 @@ import com.sonarsource.slang.impl.TextRangeImpl;
 import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
+import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
@@ -89,6 +90,8 @@ import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtTryExpression;
 import org.jetbrains.kotlin.psi.KtTypeElement;
+import org.jetbrains.kotlin.psi.KtTypeReference;
+import org.jetbrains.kotlin.psi.KtVariableDeclaration;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
 import org.jetbrains.kotlin.psi.KtWhenEntry;
 import org.jetbrains.kotlin.psi.KtWhenExpression;
@@ -183,9 +186,29 @@ class KotlinTreeVisitor {
       return createOperationExpression(metaData, (KtOperationExpression) element);
     } else if (element instanceof KtParameter) {
       return createParameter((KtParameter) element);
+    } else if (element instanceof KtVariableDeclaration) {
+      return createVariableDeclaration((KtVariableDeclaration) element);
     } else {
       return convertElementToNative(element, metaData);
     }
+  }
+
+  private Tree createVariableDeclaration(KtVariableDeclaration ktVariableDeclaration) {
+    TreeMetaData metaData = getTreeMetaData(ktVariableDeclaration);
+    PsiElement nameIdentifier = ktVariableDeclaration.getNameIdentifier();
+    KtTypeReference type = ktVariableDeclaration.getTypeReference();
+
+    // For some reason the Identifier is not among the Parameter children array, so for now we add this information to the native kind
+    if (nameIdentifier == null || type == null) {
+      return convertElementToNative(ktVariableDeclaration, metaData);
+    }
+
+
+    boolean isVal = !ktVariableDeclaration.isVar();
+    IdentifierTree identifierTree = new IdentifierTreeImpl(metaData, nameIdentifier.getText());
+    Tree typeTree = createMandatoryElement(ktVariableDeclaration.getTypeReference());
+
+    return new VariableDeclarationTreeImpl(metaData, identifierTree, typeTree, isVal);
   }
 
   private Tree convertElementToNative(PsiElement element, TreeMetaData metaData) {

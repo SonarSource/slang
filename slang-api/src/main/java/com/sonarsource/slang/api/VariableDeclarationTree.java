@@ -25,4 +25,6 @@ public interface VariableDeclarationTree extends Tree {
 
   Tree type();
 
+  boolean isVal();
+
 }

@@ -33,11 +33,13 @@ public class VariableDeclarationTreeImpl extends BaseTreeImpl implements Variabl
 
   private final IdentifierTree identifier;
   private final Tree type;
+  private final boolean isVal;
 
-  public VariableDeclarationTreeImpl(TreeMetaData metaData, IdentifierTree identifier, Tree type) {
+  public VariableDeclarationTreeImpl(TreeMetaData metaData, IdentifierTree identifier, Tree type, boolean isVal) {
     super(metaData);
     this.identifier = identifier;
     this.type = type;
+    this.isVal = isVal;
   }
 
   @Override
@@ -48,6 +50,11 @@ public class VariableDeclarationTreeImpl extends BaseTreeImpl implements Variabl
   @Override
   public Tree type() {
     return type;
+  }
+
+  @Override
+  public boolean isVal() {
+    return isVal;
   }
 
   @Override

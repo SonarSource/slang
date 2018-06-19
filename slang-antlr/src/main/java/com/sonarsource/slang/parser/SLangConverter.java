@@ -234,7 +234,7 @@ public class SLangConverter implements ASTConverter {
       IdentifierTree tree = (IdentifierTree) visit(ctx.variableDeclaratorId().identifier());
       Tree type = null;
       if (ctx.simpleType() != null) {
-        type = visit(ctx.simpleType());
+        type = new IdentifierTreeImpl(meta(ctx.simpleType()), ctx.simpleType().getText());
       }
       return new ParameterTreeImpl(meta(ctx), tree, type);
     }
@@ -247,8 +247,11 @@ public class SLangConverter implements ASTConverter {
     @Override
     public Tree visitDeclaration(SLangParser.DeclarationContext ctx) {
       IdentifierTree identifier = (IdentifierTree) visit(ctx.identifier());
-      Tree type = visit(ctx.simpleType());
-      return new VariableDeclarationTreeImpl(meta(ctx), identifier, type);
+      Tree type = new IdentifierTreeImpl(meta(ctx.simpleType()), ctx.simpleType().getText());
+      if (ctx.declarationModifier().VAL() != null) {
+        return new VariableDeclarationTreeImpl(meta(ctx), identifier, type, true);
+      }
+      return new VariableDeclarationTreeImpl(meta(ctx), identifier, type, false);
     }
 
     @Override
