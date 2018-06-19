@@ -39,6 +39,10 @@ public interface CheckContext {
     }
   }
 
+  String filename();
+
+  String fileContent();
+
   void reportIssue(TextRange textRange, String message);
 
   void reportIssue(Tree tree, String message);
@@ -49,6 +53,7 @@ public interface CheckContext {
 
   void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap);
 
-  String fileContent();
+  void reportFileIssue(String message);
 
+  void reportFileIssue(String message, @Nullable Double gap);
 }

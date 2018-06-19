@@ -29,6 +29,7 @@ import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.error.NewAnalysisError;
 import org.sonar.api.batch.sensor.issue.NewIssue;
+import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
 
 public class InputFileContext extends TreeContext {
@@ -51,17 +52,22 @@ public class InputFileContext extends TreeContext {
   }
 
   public void reportIssue(RuleKey ruleKey,
-                          com.sonarsource.slang.api.TextRange textRange,
+                          @Nullable com.sonarsource.slang.api.TextRange textRange,
                           String message,
                           List<SecondaryLocation> secondaryLocations,
                           @Nullable Double gap) {
     NewIssue issue = sensorContext.newIssue();
+    NewIssueLocation issueLocation = issue.newLocation()
+      .on(inputFile)
+      .message(message);
+
+    if (textRange != null) {
+      issueLocation.at(textRange(textRange));
+    }
+
     issue
       .forRule(ruleKey)
-      .at(issue.newLocation()
-        .on(inputFile)
-        .at(textRange(textRange))
-        .message(message))
+      .at(issueLocation)
       .gap(gap);
 
     secondaryLocations.forEach(secondary -> issue.addLocation(
