@@ -19,15 +19,13 @@
  */
 package com.sonarsource.slang.api;
 
-public interface Token {
+public interface Token extends HasTextRange {
 
   public enum Type {
     KEYWORD,
     STRING_LITERAL,
     OTHER
   }
-
-  TextRange textRange();
 
   String text();
 

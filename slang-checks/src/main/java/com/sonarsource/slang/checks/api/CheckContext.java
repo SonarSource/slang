@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.checks.api;
 
+import com.sonarsource.slang.api.HasTextRange;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import java.util.Deque;
@@ -45,13 +46,13 @@ public interface CheckContext {
 
   void reportIssue(TextRange textRange, String message);
 
-  void reportIssue(Tree tree, String message);
+  void reportIssue(HasTextRange toHighlight, String message);
 
-  void reportIssue(Tree tree, String message, SecondaryLocation secondaryLocation);
+  void reportIssue(HasTextRange toHighlight, String message, SecondaryLocation secondaryLocation);
 
-  void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations);
+  void reportIssue(HasTextRange toHighlight, String message, List<SecondaryLocation> secondaryLocations);
 
-  void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap);
+  void reportIssue(HasTextRange toHighlight, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap);
 
   void reportFileIssue(String message);
 

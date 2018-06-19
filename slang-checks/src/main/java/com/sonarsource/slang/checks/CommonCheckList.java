@@ -49,6 +49,7 @@ public class CommonCheckList {
       TooLongFunctionCheck.class,
       TooLongLineCheck.class,
       TooManyLinesOfCodeFileCheck.class,
+      TooManyCasesCheck.class,
       TooManyParametersCheck.class,
       UnusedFunctionParameterCheck.class);
   }

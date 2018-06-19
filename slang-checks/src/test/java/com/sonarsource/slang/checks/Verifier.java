@@ -21,6 +21,7 @@ package com.sonarsource.slang.checks;
 
 import com.sonarsource.checks.verifier.CommentParser;
 import com.sonarsource.checks.verifier.SingleFileVerifier;
+import com.sonarsource.slang.api.HasTextRange;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
@@ -102,13 +103,13 @@ public class Verifier {
     }
 
     @Override
-    public void reportIssue(Tree tree, String message) {
-      reportIssue(tree, message, Collections.emptyList());
+    public void reportIssue(HasTextRange toHighlight, String message) {
+      reportIssue(toHighlight, message, Collections.emptyList());
     }
 
     @Override
-    public void reportIssue(Tree tree, String message, SecondaryLocation secondaryLocation) {
-      reportIssue(tree, message, Collections.singletonList(secondaryLocation));
+    public void reportIssue(HasTextRange toHighlight, String message, SecondaryLocation secondaryLocation) {
+      reportIssue(toHighlight, message, Collections.singletonList(secondaryLocation));
     }
 
     @Override
@@ -127,13 +128,13 @@ public class Verifier {
     }
 
     @Override
-    public void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations) {
-      reportIssue(tree, message, secondaryLocations, null);
+    public void reportIssue(HasTextRange toHighlight, String message, List<SecondaryLocation> secondaryLocations) {
+      reportIssue(toHighlight, message, secondaryLocations, null);
     }
 
     @Override
-    public void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
-      reportIssue(tree.metaData().textRange(), message, secondaryLocations, gap);
+    public void reportIssue(HasTextRange toHighlight, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
+      reportIssue(toHighlight.textRange(), message, secondaryLocations, gap);
     }
 
     public void reportFileIssue(String message) {

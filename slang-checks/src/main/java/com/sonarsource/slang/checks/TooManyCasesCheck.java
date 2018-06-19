@@ -20,22 +20,43 @@
 package com.sonarsource.slang.checks;
 
 import com.sonarsource.slang.api.MatchTree;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.checks.api.InitContext;
+import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.checks.api.SlangCheck;
-import java.text.MessageFormat;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.sonar.check.Rule;
+import org.sonar.check.RuleProperty;
 
-@Rule(key = "S1821")
-public class NestedMatchCheck implements SlangCheck {
-  private static final String MESSAGE = "Refactor the code to eliminate this nested \"{0}\".";
+@Rule(key = "S1479")
+public class TooManyCasesCheck implements SlangCheck {
+
+  private static final int DEFAULT_MAX = 30;
+
+  @RuleProperty(
+    key = "maximum",
+    description = "Maximum number of branches",
+    defaultValue = "" + DEFAULT_MAX)
+  public int maximum = DEFAULT_MAX;
 
   @Override
   public void initialize(InitContext init) {
-    init.register(MatchTree.class, (ctx, matchTree) -> ctx.ancestors().stream()
-      .filter(node -> node instanceof MatchTree)
-      .findFirst()
-      .ifPresent(parentMatch ->
-        ctx.reportIssue(matchTree.keyword(), MessageFormat.format(MESSAGE, matchTree.keyword().text()))
-      ));
+    init.register(MatchTree.class, (ctx, tree) -> {
+      int numberOfCases = tree.cases().size();
+      if (numberOfCases > maximum) {
+        Token matchKeyword = tree.keyword();
+        String message = String.format(
+          "Reduce the number of %s branches from %s to at most %s.",
+          matchKeyword.text(),
+          numberOfCases,
+          maximum);
+        List<SecondaryLocation> secondaryLocations = tree.cases().stream()
+          .map(matchCase -> new SecondaryLocation(matchCase.rangeToHighlight(), null))
+          .collect(Collectors.toList());
+        ctx.reportIssue(matchKeyword, message, secondaryLocations);
+      }
+    });
   }
+
 }
