@@ -183,7 +183,7 @@ public class SLangConverterTest {
 
   @Test
   public void try_catch_finally() {
-    Tree tree = converter.parse("try { 1 } catch (e) {} catch () {} finally {}").children().get(0);
+    Tree tree = converter.parse("try { 1 } catch (e) {} catch () {} finally {};").children().get(0);
     assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1,0,1,45);
     ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) tree;
     assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
@@ -196,7 +196,7 @@ public class SLangConverterTest {
 
   @Test
   public void try_catch() {
-    Tree tree = converter.parse("try { 1 } catch (e) {}").children().get(0);
+    Tree tree = converter.parse("try { 1 } catch (e) {};").children().get(0);
     assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1,0,1,22);
     ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) tree;
     assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
@@ -208,7 +208,7 @@ public class SLangConverterTest {
 
   @Test
   public void try_finally() {
-    Tree tree = converter.parse("try { 1 } finally {}").children().get(0);
+    Tree tree = converter.parse("try { 1 } finally {};").children().get(0);
     assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1,0,1,20);
     ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) tree;
     assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);

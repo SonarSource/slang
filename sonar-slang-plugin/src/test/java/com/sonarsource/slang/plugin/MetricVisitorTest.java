@@ -76,7 +76,7 @@ public class MetricVisitorTest {
   @Test
   public void linesOfCode() throws Exception {
     scan("" +
-      "x + 1\n" +
+      "x + 1;\n" +
       "// comment\n" +
       "fun function1() { // comment\n" +
       "x = true || false; }");
@@ -86,7 +86,7 @@ public class MetricVisitorTest {
   @Test
   public void commentLines() throws Exception {
     scan("" +
-      "x + 1\n" +
+      "x + 1;\n" +
       "// comment\n" +
       "fun function1() { // comment\n" +
       "x = true || false; }");
@@ -106,7 +106,7 @@ public class MetricVisitorTest {
   @Test
   public void nosonarLines() throws Exception {
     scan("" +
-      "x + 1\n" +
+      "x + 1;\n" +
       "// NOSONAR comment\n" +
       "fun function1() { // comment\n" +
       "x = true || false; }");
@@ -119,13 +119,13 @@ public class MetricVisitorTest {
   @Test
   public void functions() throws Exception {
     scan("" +
-      "x + 1\n" +
+      "x + 1;\n" +
       "x = true || false;");
     assertThat(visitor.numberOfFunctions()).isEqualTo(0);
     scan("" +
-      "x + 1\n" +
+      "x + 1;\n" +
       "fun noBodyFunction();\n" + // Only functions with implementation bodies are considered for the metric
-      "fun() { x = 1 }\n" + // Anonymous functions are not considered for function metric computation
+      "fun() { x = 1; }\n" + // Anonymous functions are not considered for function metric computation
       "fun function1() { // comment\n" +
       "x = true || false; }");
     assertThat(visitor.numberOfFunctions()).isEqualTo(1);
