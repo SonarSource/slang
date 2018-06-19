@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.impl;
 
+import com.sonarsource.slang.api.ConditionalKeyword;
 import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
@@ -54,6 +55,11 @@ public class IfTreeImpl extends BaseTreeImpl implements IfTree {
   @Override
   public Tree elseBranch() {
     return elseBranch;
+  }
+
+  @Override
+  public ConditionalKeyword keyword() {
+    return null;
   }
 
   @Override
