@@ -40,8 +40,8 @@ public class TreeMetaDataProviderTest {
 
   @Test
   public void tokens() {
-    Token token1 = new TokenImpl(new TextRangeImpl(1, 3, 1, 6), "abc", false);
-    Token token2 = new TokenImpl(new TextRangeImpl(1, 9, 1, 12), "abc", false);
+    Token token1 = new TokenImpl(new TextRangeImpl(1, 3, 1, 6), "abc", Token.Type.OTHER);
+    Token token2 = new TokenImpl(new TextRangeImpl(1, 9, 1, 12), "abc", Token.Type.OTHER);
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2));
     assertThat(provider.metaData(new TextRangeImpl(1, 1, 1, 20)).tokens()).containsExactly(token1, token2);
     assertThat(provider.metaData(new TextRangeImpl(1, 3, 1, 8)).tokens()).containsExactly(token1);
@@ -49,10 +49,10 @@ public class TreeMetaDataProviderTest {
 
   @Test
   public void lines_of_code() {
-    Token token1 = new TokenImpl(new TextRangeImpl(1, 3, 1, 6), "abc", false);
-    Token token2 = new TokenImpl(new TextRangeImpl(1, 9, 1, 12), "def", false);
-    Token token3 = new TokenImpl(new TextRangeImpl(2, 1, 2, 4), "abc", false);
-    Token token4 = new TokenImpl(new TextRangeImpl(4, 1, 6, 2), "ab\ncd\nef", false);
+    Token token1 = new TokenImpl(new TextRangeImpl(1, 3, 1, 6), "abc", Token.Type.OTHER);
+    Token token2 = new TokenImpl(new TextRangeImpl(1, 9, 1, 12), "def", Token.Type.OTHER);
+    Token token3 = new TokenImpl(new TextRangeImpl(2, 1, 2, 4), "abc", Token.Type.OTHER);
+    Token token4 = new TokenImpl(new TextRangeImpl(4, 1, 6, 2), "ab\ncd\nef", Token.Type.OTHER);
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2, token3, token4));
     assertThat(provider.metaData(new TextRangeImpl(1, 1, 1, 20)).linesOfCode()).containsExactly(1);
     assertThat(provider.metaData(new TextRangeImpl(1, 1, 2, 20)).linesOfCode()).containsExactly(1, 2);

@@ -321,7 +321,7 @@ class KotlinTreeVisitor {
     return new TokenImpl(
       KotlinTextRanges.textRange(psiDocument, element.getWhenKeyword()),
       element.getWhenKeyword().getText(),
-      true
+      Token.Type.KEYWORD
     );
   }
 

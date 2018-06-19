@@ -31,6 +31,7 @@ import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
+import com.sonarsource.slang.api.Token.Type;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.api.UnaryExpressionTree;
@@ -88,6 +89,13 @@ public class SLangConverter implements ASTConverter {
     SLangParser.THIS
   ));
 
+  private static final Set<Integer> LITERAL_TOKEN_TYPES = new HashSet<>(Arrays.asList(
+    SLangParser.IntegerLiteral,
+    SLangParser.BooleanLiteral,
+    SLangParser.CharacterLiteral,
+    SLangParser.StringLiteral
+  ));
+
   @Override
   public Tree parse(String slangCode) {
     SLangLexer lexer = new SLangLexer(CharStreams.fromString(slangCode));
@@ -104,7 +112,13 @@ public class SLangConverter implements ASTConverter {
       if (token.getChannel() == 1) {
         comments.add(new CommentImpl(commentContent(token.getText()), token.getText(), textRange));
       } else {
-        tokens.add(new TokenImpl(textRange, token.getText(), KEYWORD_TOKEN_TYPES.contains(token.getType())));
+        Type type = Type.OTHER;
+        if (KEYWORD_TOKEN_TYPES.contains(token.getType())) {
+          type = Type.KEYWORD;
+        } else if (LITERAL_TOKEN_TYPES.contains(token.getType())) {
+          type = Type.LITERAL;
+        }
+        tokens.add(new TokenImpl(textRange, token.getText(), type));
       }
     }
 
@@ -291,7 +305,7 @@ public class SLangConverter implements ASTConverter {
 
     private static com.sonarsource.slang.api.Token getMatchKeyword(Token matchToken) {
       TextRange textRange = getSlangTextRange(matchToken);
-      return new TokenImpl(textRange, matchToken.getText(), true);
+      return new TokenImpl(textRange, matchToken.getText(), Type.KEYWORD);
     }
 
     @Override

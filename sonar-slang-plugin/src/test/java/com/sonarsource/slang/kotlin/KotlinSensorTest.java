@@ -113,6 +113,7 @@ public class KotlinSensorTest {
     assertThat(context.measure(inputFile.key(), CoreMetrics.NCLOC).value()).isEqualTo(2);
     assertThat(context.measure(inputFile.key(), CoreMetrics.COMMENT_LINES).value()).isEqualTo(0);
     assertThat(context.measure(inputFile.key(), CoreMetrics.FUNCTIONS).value()).isEqualTo(1);
+    assertThat(context.cpdTokens(inputFile.key()).get(1).getValue()).isEqualTo("print(LITERAL==LITERAL);}");
   }
 
   @Test

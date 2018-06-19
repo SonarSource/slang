@@ -25,7 +25,10 @@ import com.sonarsource.slang.impl.CommentImpl;
 import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.psi.PsiComment;
@@ -34,6 +37,8 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
+import org.jetbrains.kotlin.lexer.KtToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid;
 
 import static org.jetbrains.kotlin.lexer.KtTokens.BLOCK_COMMENT;
@@ -51,6 +56,13 @@ public class CommentAndTokenVisitor extends KtTreeVisitorVoid {
   private static final int DOC_COMMENT_SUFFIX_LENGTH = 2;
   private static final int LINE_COMMENT_PREFIX_LENGTH = 2;
 
+  private static final Set<KtToken> LITERAL_TOKEN_TYPES = new HashSet<>(Arrays.asList(
+    KtTokens.INTEGER_LITERAL,
+    KtTokens.FLOAT_LITERAL,
+    KtTokens.CHARACTER_LITERAL,
+    KtTokens.REGULAR_STRING_PART
+  ));
+
   private final Document psiDocument;
   private final List<Comment> allComments = new ArrayList<>();
   private final List<Token> tokens = new ArrayList<>();
@@ -66,8 +78,13 @@ public class CommentAndTokenVisitor extends KtTreeVisitorVoid {
     } else if (element instanceof LeafPsiElement && !(element instanceof PsiWhiteSpace)) {
       LeafPsiElement leaf = (LeafPsiElement) element;
       String text = leaf.getText();
-      boolean isKeyword = leaf.getElementType() instanceof KtKeywordToken;
-      tokens.add(new TokenImpl(KotlinTextRanges.textRange(psiDocument, leaf), text, isKeyword));
+      Token.Type type = Token.Type.OTHER;
+      if (leaf.getElementType() instanceof KtKeywordToken) {
+        type = Token.Type.KEYWORD;
+      } else if (LITERAL_TOKEN_TYPES.contains(leaf.getElementType())) {
+        type = Token.Type.LITERAL;
+      }
+      tokens.add(new TokenImpl(KotlinTextRanges.textRange(psiDocument, leaf), text, type));
     }
     super.visitElement(element);
   }

@@ -21,10 +21,16 @@ package com.sonarsource.slang.api;
 
 public interface Token {
 
+  public enum Type {
+    KEYWORD,
+    LITERAL,
+    OTHER
+  }
+
   TextRange textRange();
 
   String text();
 
-  boolean isKeyword();
+  Type type();
 
 }

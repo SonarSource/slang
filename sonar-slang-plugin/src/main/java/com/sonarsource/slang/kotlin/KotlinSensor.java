@@ -24,6 +24,7 @@ import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.CommonCheckList;
 import com.sonarsource.slang.checks.api.SlangCheck;
+import com.sonarsource.slang.plugin.CpdVisitor;
 import com.sonarsource.slang.plugin.MetricVisitor;
 import com.sonarsource.slang.plugin.SyntaxHighlighter;
 import com.sonarsource.slang.visitors.TreeVisitor;
@@ -75,6 +76,7 @@ public class KotlinSensor implements Sensor {
     analyseFiles(sensorContext, inputFiles, Arrays.asList(
       new ChecksVisitor(checks),
       new MetricVisitor(fileLinesContextFactory, noSonarFilter),
+      new CpdVisitor(),
       new SyntaxHighlighter()));
   }
 

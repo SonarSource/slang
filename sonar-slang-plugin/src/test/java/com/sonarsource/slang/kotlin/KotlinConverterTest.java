@@ -36,14 +36,16 @@ import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.VariableDeclarationTree;
 import com.sonarsource.slang.parser.SLangConverter;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import static com.sonarsource.slang.api.Token.Type.KEYWORD;
+import static com.sonarsource.slang.api.Token.Type.LITERAL;
+import static com.sonarsource.slang.api.Token.Type.OTHER;
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static com.sonarsource.slang.testing.TreesAssert.assertTrees;
@@ -409,9 +411,11 @@ public class KotlinConverterTest {
 
   @Test
   public void testTokens() {
-    List<Token> tokens = kotlin("private fun foo() { }").metaData().tokens();
-    assertThat(tokens).extracting(Token::text).containsExactly("private", "fun", "foo", "(", ")", "{", "}");
-    assertThat(tokens).extracting(Token::isKeyword).containsExactly(true, true, false, false, false, false, false);
+    List<Token> tokens = kotlin("private fun foo() { 42 + \"a\" }").metaData().tokens();
+    assertThat(tokens).extracting(Token::text).containsExactly(
+      "private", "fun", "foo", "(", ")", "{", "42", "+", "\"", "a", "\"", "}");
+    assertThat(tokens).extracting(Token::type).containsExactly(
+      KEYWORD, KEYWORD, OTHER, OTHER, OTHER, OTHER, LITERAL, OTHER, OTHER, LITERAL, OTHER, OTHER);
   }
 
   private static String createString(String s) {

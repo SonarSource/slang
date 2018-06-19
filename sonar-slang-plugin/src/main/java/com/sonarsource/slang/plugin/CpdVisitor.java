@@ -17,35 +17,35 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.impl;
+package com.sonarsource.slang.plugin;
 
-import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Token;
+import com.sonarsource.slang.api.TopLevelTree;
+import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.kotlin.InputFileContext;
+import com.sonarsource.slang.visitors.TreeVisitor;
+import org.sonar.api.batch.sensor.cpd.NewCpdTokens;
 
-public class TokenImpl implements Token {
+public class CpdVisitor extends TreeVisitor<InputFileContext> {
 
-  private final TextRange textRange;
-  private final String text;
-  private final Type type;
+  private NewCpdTokens cpdTokens;
 
-  public TokenImpl(TextRange textRange, String text, Type type) {
-    this.textRange = textRange;
-    this.text = text;
-    this.type = type;
+  public CpdVisitor() {
+    register(TopLevelTree.class, (ctx, tree) -> {
+      for (Token token : tree.metaData().tokens()) {
+        String text = token.type() == Token.Type.LITERAL ? "LITERAL" : token.text();
+        cpdTokens.addToken(ctx.textRange(token.textRange()), text);
+      }
+    });
   }
 
   @Override
-  public TextRange textRange() {
-    return textRange;
+  protected void before(InputFileContext ctx, Tree root) {
+    cpdTokens = ctx.sensorContext.newCpdTokens().onFile(ctx.inputFile);
   }
 
   @Override
-  public String text() {
-    return text;
-  }
-
-  @Override
-  public Type type() {
-    return type;
+  protected void after(InputFileContext ctx, Tree root) {
+    cpdTokens.save();
   }
 }
