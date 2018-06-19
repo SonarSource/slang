@@ -40,7 +40,7 @@ public class TooLongFunctionCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(FunctionDeclarationTree.class, (ctx, tree) -> {
-      int numberOfLinesOfCode = tree.metaData().numberOfLinesOfCode();
+      int numberOfLinesOfCode = tree.metaData().linesOfCode().size();
       if (numberOfLinesOfCode > max) {
         String message = String.format(
           "This function has %s lines of code, which is greater than the %s authorized. Split it into smaller functions.",
