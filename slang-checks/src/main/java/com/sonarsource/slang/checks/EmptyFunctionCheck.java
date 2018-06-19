@@ -19,35 +19,23 @@
  */
 package com.sonarsource.slang.checks;
 
-import java.util.Arrays;
-import java.util.List;
+import com.sonarsource.slang.api.BlockTree;
+import com.sonarsource.slang.api.FunctionDeclarationTree;
+import com.sonarsource.slang.checks.api.InitContext;
+import com.sonarsource.slang.checks.api.SlangCheck;
+import org.sonar.check.Rule;
 
-public class CommonCheckList {
+@Rule(key = "S1186")
+public class EmptyFunctionCheck implements SlangCheck {
 
-  private CommonCheckList() {
-  }
-
-  public static List<Class> checks() {
-    return Arrays.asList(
-      AllBranchesIdenticalCheck.class,
-      BadFunctionNameCheck.class,
-      BooleanLiteralCheck.class,
-      CollapsibleIfStatementsCheck.class,
-      DuplicateBranchCheck.class,
-      DuplicatedFunctionImplementationCheck.class,
-      EmptyBlockCheck.class,
-      EmptyFunctionCheck.class,
-      FixMeCommentCheck.class,
-      IdenticalBinaryOperandCheck.class,
-      IdenticalConditionsCheck.class,
-      SelfAssignmentCheck.class,
-      StringLiteralDuplicatedCheck.class,
-      TodoCommentCheck.class,
-      TooLongFunctionCheck.class,
-      TooLongLineCheck.class,
-      TooManyLinesOfCodeFileCheck.class,
-      TooManyParametersCheck.class,
-      UnusedFunctionParameterCheck.class);
+  @Override
+  public void initialize(InitContext init) {
+    init.register(FunctionDeclarationTree.class, (ctx, tree) -> {
+      BlockTree body = tree.body();
+      if (body != null && body.statementOrExpressions().isEmpty() && body.metaData().commentsInside().isEmpty()) {
+        ctx.reportIssue(body, "Add a nested comment explaining why this function is empty or complete the implementation.");
+      }
+    });
   }
 
 }
