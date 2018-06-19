@@ -33,12 +33,19 @@ public class IfTreeImpl extends BaseTreeImpl implements IfTree {
   private final Tree condition;
   private final Tree thenBranch;
   private final Tree elseBranch;
+  private final ConditionalKeyword conditionalKeyword;
 
-  public IfTreeImpl(TreeMetaData metaData, Tree condition, Tree thenBranch, @Nullable Tree elseBranch) {
+  public IfTreeImpl(
+    TreeMetaData metaData,
+    Tree condition,
+    Tree thenBranch,
+    @Nullable Tree elseBranch,
+    ConditionalKeyword conditionalKeyword) {
     super(metaData);
     this.condition = condition;
     this.thenBranch = thenBranch;
     this.elseBranch = elseBranch;
+    this.conditionalKeyword = conditionalKeyword;
   }
 
   @Override
@@ -59,7 +66,7 @@ public class IfTreeImpl extends BaseTreeImpl implements IfTree {
 
   @Override
   public ConditionalKeyword keyword() {
-    return null;
+    return conditionalKeyword;
   }
 
   @Override

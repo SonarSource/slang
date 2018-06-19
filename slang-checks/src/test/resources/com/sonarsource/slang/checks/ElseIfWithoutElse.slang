@@ -5,13 +5,13 @@ if (x == 0) {
 if (x == 0) {
   x = 42;
 } else {
-  x = -42;
+  x = 43;
 }
 
 if (x == 0) {
   doSomething();
-} else if (x == 1) { // Noncompliant
-//     ^[el=+3;ec=1]
+} else if (x == 1) { // Noncompliant {{Add the missing "else" clause.}}
+//^^^^^^^
   doSomethingElse();
 }
 

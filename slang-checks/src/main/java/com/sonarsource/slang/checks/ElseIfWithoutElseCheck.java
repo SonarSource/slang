@@ -20,9 +20,12 @@
 package com.sonarsource.slang.checks;
 
 import com.sonarsource.slang.api.IfTree;
+import com.sonarsource.slang.api.TextRange;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
+import com.sonarsource.slang.impl.TextRangeImpl;
 import org.sonar.check.Rule;
 
 @Rule(key = "S126")
@@ -37,9 +40,16 @@ public class ElseIfWithoutElseCheck implements SlangCheck {
       if (elseBranch instanceof IfTree) {
         IfTree nestedIfTree = (IfTree) elseBranch;
         if (nestedIfTree.elseBranch() == null) {
-          ctx.reportIssue(elseBranch, MESSAGE);
+          Token elseToken = ifTree.keyword().elseKeyword();
+          Token ifToken = nestedIfTree.keyword().ifKeyword();
+          TextRange textRange = new TextRangeImpl(
+            elseToken.textRange().start(),
+            ifToken.textRange().end()
+          );
+          ctx.reportIssue(textRange, MESSAGE);
         }
       }
     });
+
   }
 }

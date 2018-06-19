@@ -23,6 +23,7 @@ import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.CatchTree;
+import com.sonarsource.slang.api.ConditionalKeyword;
 import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
@@ -40,6 +41,7 @@ import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
 import com.sonarsource.slang.impl.CatchTreeImpl;
 import com.sonarsource.slang.impl.ClassDeclarationTreeImpl;
+import com.sonarsource.slang.impl.ConditionalKeywordImpl;
 import com.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
@@ -268,7 +270,25 @@ class KotlinTreeVisitor {
       List<Tree> children = elseBranch != null ? Arrays.asList(condition, elseBranch) : Collections.singletonList(condition);
       return createNativeTree(metaData, new KotlinNativeKind(element), children);
     }
-    return new IfTreeImpl(metaData, condition, thenBranch, elseBranch);
+    return new IfTreeImpl(metaData, condition, thenBranch, elseBranch, getConditionalKeyword(element));
+  }
+
+  private ConditionalKeyword getConditionalKeyword(KtIfExpression element) {
+    com.sonarsource.slang.api.Token ifToken = new TokenImpl(
+      KotlinTextRanges.textRange(psiDocument, element.getIfKeyword()),
+      element.getIfKeyword().getText(),
+      Token.Type.KEYWORD
+    );
+    com.sonarsource.slang.api.Token elseToken = null;
+    PsiElement elseKeyword = element.getElseKeyword();
+    if (elseKeyword != null) {
+      elseToken = new TokenImpl(
+        KotlinTextRanges.textRange(psiDocument, element.getElseKeyword()),
+        element.getElseKeyword().getText(),
+        Token.Type.KEYWORD
+      );
+    }
+    return new ConditionalKeywordImpl(ifToken, null, elseToken);
   }
 
   private Tree createParameter(TreeMetaData metaData, KtParameter ktParameter) {
