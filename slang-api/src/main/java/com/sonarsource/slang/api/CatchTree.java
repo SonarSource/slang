@@ -24,7 +24,7 @@ import javax.annotation.CheckForNull;
 public interface CatchTree extends Tree {
 
   @CheckForNull
-  ParameterTree catchParameter();
+  Tree catchParameter();
 
   Tree catchBlock();
 

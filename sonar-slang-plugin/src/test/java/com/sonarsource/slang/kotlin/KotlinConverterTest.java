@@ -275,8 +275,10 @@ public class KotlinConverterTest {
     assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
     List<CatchTree> catchTreeList = exceptionHandlingTree.catchBlocks();
     assertThat(catchTreeList).hasSize(1);
-    assertTree(catchTreeList.get(0).catchParameter()).hasParameterName("e");
-    assertThat(catchTreeList.get(0).catchParameter().type()).isNotNull();
+    assertTree(catchTreeList.get(0).catchParameter()).isInstanceOf(ParameterTree.class);
+    ParameterTree catchParameter = (ParameterTree) catchTreeList.get(0).catchParameter();
+    assertTree(catchParameter).hasParameterName("e");
+    assertThat(catchParameter.type()).isNotNull();
     assertTree(catchTreeList.get(0).catchBlock()).isBlock();
     assertThat(exceptionHandlingTree.finallyBlock()).isNull();
   }
@@ -302,8 +304,10 @@ public class KotlinConverterTest {
     assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
     List<CatchTree> catchTreeList = exceptionHandlingTree.catchBlocks();
     assertThat(catchTreeList).hasSize(2);
-    assertTree(catchTreeList.get(0).catchParameter()).hasParameterName("e");
-    assertThat(catchTreeList.get(0).catchParameter().type()).isNotNull();
+    assertTree(catchTreeList.get(0).catchParameter()).isInstanceOf(ParameterTree.class);
+    ParameterTree catchParameterOne = (ParameterTree) catchTreeList.get(0).catchParameter();
+    assertTree(catchParameterOne).hasParameterName("e");
+    assertThat(catchParameterOne.type()).isNotNull();
     assertTree(catchTreeList.get(0).catchBlock()).isBlock();
     assertThat(catchTreeList.get(1).catchParameter()).isNull();
     assertTree(catchTreeList.get(1).catchBlock()).isBlock();

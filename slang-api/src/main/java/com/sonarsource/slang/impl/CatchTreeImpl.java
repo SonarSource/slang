@@ -20,7 +20,6 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.CatchTree;
-import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 
@@ -31,10 +30,10 @@ import java.util.List;
 
 public class CatchTreeImpl extends BaseTreeImpl implements CatchTree {
 
-  private final ParameterTree catchParameter;
+  private final Tree catchParameter;
   private final Tree catchBlock;
 
-  public CatchTreeImpl(TreeMetaData metaData, @Nullable ParameterTree catchParameter, Tree catchBlock) {
+  public CatchTreeImpl(TreeMetaData metaData, @Nullable Tree catchParameter, Tree catchBlock) {
     super(metaData);
     this.catchParameter = catchParameter;
     this.catchBlock = catchBlock;
@@ -42,7 +41,7 @@ public class CatchTreeImpl extends BaseTreeImpl implements CatchTree {
 
   @CheckForNull
   @Override
-  public ParameterTree catchParameter() {
+  public Tree catchParameter() {
     return catchParameter;
   }
 

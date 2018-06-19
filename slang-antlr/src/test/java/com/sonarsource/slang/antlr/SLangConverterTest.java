@@ -164,14 +164,37 @@ public class SLangConverterTest {
   }
 
   @Test
-  public void exception_handling() {
-    Tree tree = converter.parse("try { 1 } catch (e) {} finally {}").children().get(0);
-    assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1,0,1,33);
+  public void try_catch_finally() {
+    Tree tree = converter.parse("try { 1 } catch (e) {} catch () {} finally {}").children().get(0);
+    assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1,0,1,45);
+    ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) tree;
+    assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
+    assertThat(exceptionHandlingTree.catchBlocks()).hasSize(2);
+    assertTree(exceptionHandlingTree.catchBlocks().get(0).catchParameter()).hasParameterName("e");
+    assertTree(exceptionHandlingTree.catchBlocks().get(0).catchBlock()).isBlock();
+    assertTree(exceptionHandlingTree.catchBlocks().get(1).catchParameter()).isNull();
+    assertTree(exceptionHandlingTree.finallyBlock()).isBlock();
+  }
+
+  @Test
+  public void try_catch() {
+    Tree tree = converter.parse("try { 1 } catch (e) {}").children().get(0);
+    assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1,0,1,22);
     ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) tree;
     assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
     assertThat(exceptionHandlingTree.catchBlocks()).hasSize(1);
     assertTree(exceptionHandlingTree.catchBlocks().get(0).catchParameter()).hasParameterName("e");
     assertTree(exceptionHandlingTree.catchBlocks().get(0).catchBlock()).isBlock();
+    assertTree(exceptionHandlingTree.finallyBlock()).isNull();
+  }
+
+  @Test
+  public void try_finally() {
+    Tree tree = converter.parse("try { 1 } finally {}").children().get(0);
+    assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1,0,1,20);
+    ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) tree;
+    assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
+    assertThat(exceptionHandlingTree.catchBlocks()).hasSize(0);
     assertTree(exceptionHandlingTree.finallyBlock()).isBlock();
   }
 
