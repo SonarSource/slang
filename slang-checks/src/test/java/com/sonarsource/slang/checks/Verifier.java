@@ -148,7 +148,10 @@ public class Verifier {
     private void reportIssue(TextRange textRange, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
       TextPointer start = textRange.start();
       TextPointer end = textRange.end();
-      SingleFileVerifier.Issue issue = verifier.reportIssue(message).onRange(start.line(), start.lineOffset() + 1, end.line(), end.lineOffset()).withGap(gap);
+      SingleFileVerifier.Issue issue = verifier
+        .reportIssue(message)
+        .onRange(start.line(), start.lineOffset() + 1, end.line(), end.lineOffset())
+        .withGap(gap);
       secondaryLocations.forEach(secondary -> issue.addSecondary(
         secondary.textRange.start().line(),
         secondary.textRange.start().lineOffset() + 1,
