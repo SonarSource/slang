@@ -50,6 +50,10 @@ public class Verifier {
     createVerifier(fileName, check).assertOneOrMoreIssues();
   }
 
+  public static void verifyNoIssue(String fileName, SlangCheck check) {
+    createVerifier(fileName, check).assertNoIssues();
+  }
+
   private static SingleFileVerifier createVerifier(String fileName, SlangCheck check) {
     Path path = BASE_DIR.resolve(fileName);
     SingleFileVerifier verifier = SingleFileVerifier.create(path, UTF_8);
@@ -57,7 +61,7 @@ public class Verifier {
     String testFileContent = readFile(path);
     Tree root = new SLangConverter().parse(testFileContent);
 
-    TestContext ctx = new TestContext(verifier, testFileContent);
+    TestContext ctx = new TestContext(verifier, fileName, testFileContent);
     check.initialize(ctx);
     ctx.scan(root);
 
@@ -78,10 +82,12 @@ public class Verifier {
 
     private final TreeVisitor<TestContext> visitor;
     private final SingleFileVerifier verifier;
+    private final String filename;
     private String testFileContent;
 
-    public TestContext(SingleFileVerifier verifier, String testFileContent) {
+    public TestContext(SingleFileVerifier verifier, String filename, String testFileContent) {
       this.verifier = verifier;
+      this.filename = filename;
       this.testFileContent = testFileContent;
       visitor = new TreeVisitor<>();
     }
@@ -106,6 +112,16 @@ public class Verifier {
     }
 
     @Override
+    public String filename() {
+      return filename;
+    }
+
+    @Override
+    public String fileContent() {
+      return testFileContent;
+    }
+
+    @Override
     public void reportIssue(TextRange textRange, String message) {
       reportIssue(textRange, message, Collections.emptyList(), null);
     }
@@ -120,24 +136,25 @@ public class Verifier {
       reportIssue(tree.metaData().textRange(), message, secondaryLocations, gap);
     }
 
+    public void reportFileIssue(String message) {
+      reportFileIssue(message, null);
+    }
+
     @Override
-    public String fileContent() {
-      return testFileContent;
+    public void reportFileIssue(String message, @Nullable Double gap) {
+      verifier.reportIssue(message).onFile().withGap(gap);
     }
 
     private void reportIssue(TextRange textRange, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
       TextPointer start = textRange.start();
       TextPointer end = textRange.end();
-      SingleFileVerifier.Issue issue =
-        verifier.reportIssue(message).onRange(start.line(), start.lineOffset() + 1, end.line(), end.lineOffset()).withGap(gap);
-      secondaryLocations.forEach(secondary ->
-        issue.addSecondary(
-          secondary.textRange.start().line(),
-          secondary.textRange.start().lineOffset() + 1,
-          secondary.textRange.end().line(),
-          secondary.textRange.end().lineOffset(),
-          secondary.message));
-
+      SingleFileVerifier.Issue issue = verifier.reportIssue(message).onRange(start.line(), start.lineOffset() + 1, end.line(), end.lineOffset()).withGap(gap);
+      secondaryLocations.forEach(secondary -> issue.addSecondary(
+        secondary.textRange.start().line(),
+        secondary.textRange.start().lineOffset() + 1,
+        secondary.textRange.end().line(),
+        secondary.textRange.end().lineOffset(),
+        secondary.message));
     }
 
   }

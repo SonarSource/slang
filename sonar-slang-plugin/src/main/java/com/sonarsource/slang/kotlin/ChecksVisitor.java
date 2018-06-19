@@ -71,6 +71,20 @@ public class ChecksVisitor extends TreeVisitor<InputFileContext> {
     }
 
     @Override
+    public String filename() {
+      return currentCtx.inputFile.filename();
+    }
+
+    @Override
+    public String fileContent() {
+      try {
+        return currentCtx.inputFile.contents();
+      } catch (IOException e) {
+        throw new IllegalStateException("Cannot read content of " + currentCtx.inputFile, e);
+      }
+    }
+
+    @Override
     public void reportIssue(TextRange textRange, String message) {
       reportIssue(textRange, message, Collections.emptyList(), null);
     }
@@ -96,15 +110,16 @@ public class ChecksVisitor extends TreeVisitor<InputFileContext> {
     }
 
     @Override
-    public String fileContent() {
-      try {
-        return currentCtx.inputFile.contents();
-      } catch (IOException e) {
-        throw new IllegalStateException("Cannot read content of " + currentCtx.inputFile, e);
-      }
+    public void reportFileIssue(String message) {
+      reportFileIssue(message, null);
     }
 
-    private void reportIssue(TextRange textRange, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
+    @Override
+    public void reportFileIssue(String message, @Nullable Double gap) {
+      reportIssue((TextRange) null, message, Collections.emptyList(), gap);
+    }
+
+    private void reportIssue(@Nullable TextRange textRange, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
       currentCtx.reportIssue(ruleKey, textRange, message, secondaryLocations, gap);
     }
 
