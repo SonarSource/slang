@@ -104,6 +104,7 @@ atomicExpression
   |  methodInvocation
   |  returnExpression
   |  expressionName
+  |  tryExpression
   ;
 
 parenthesizedExpression
@@ -155,6 +156,18 @@ matchCase
 controlBlock
   :  block
   |  statementOrExpression
+  ;
+
+tryExpression
+  : TRY block catchBlock* finallyBlock?
+  ;
+
+catchBlock
+  : CATCH LPAREN formalParameter? RPAREN block
+  ;
+
+finallyBlock
+  : FINALLY block
   ;
 
 nativeExpression
@@ -285,9 +298,11 @@ identifier : Identifier;
 
 BOOLEAN : 'boolean';
 BYTE : 'byte';
+CATCH : 'catch';
 CHAR : 'char';
 DOUBLE : 'double';
 ELSE : 'else';
+FINALLY : 'finally';
 FLOAT : 'float';
 FUN: 'fun';
 IF : 'if';
@@ -300,6 +315,7 @@ PUBLIC : 'public';
 RETURN : 'return';
 SHORT : 'short';
 THIS : 'this';
+TRY : 'try';
 VOID : 'void';
 
 

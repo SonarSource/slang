@@ -24,9 +24,11 @@ import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.Comment;
+import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
+import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Token;
@@ -159,6 +161,41 @@ public class SLangConverterTest {
     assertTree(matchTree.cases().get(0).expression()).isLiteral("1");
     assertTree(matchTree.cases().get(1).expression()).isNull();
     assertTree(matchTree.cases().get(1)).hasTextRange(1, 19, 1, 29);
+  }
+
+  @Test
+  public void try_catch_finally() {
+    Tree tree = converter.parse("try { 1 } catch (e) {} catch () {} finally {}").children().get(0);
+    assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1,0,1,45);
+    ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) tree;
+    assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
+    assertThat(exceptionHandlingTree.catchBlocks()).hasSize(2);
+    assertTree(exceptionHandlingTree.catchBlocks().get(0).catchParameter()).hasParameterName("e");
+    assertTree(exceptionHandlingTree.catchBlocks().get(0).catchBlock()).isBlock();
+    assertTree(exceptionHandlingTree.catchBlocks().get(1).catchParameter()).isNull();
+    assertTree(exceptionHandlingTree.finallyBlock()).isBlock();
+  }
+
+  @Test
+  public void try_catch() {
+    Tree tree = converter.parse("try { 1 } catch (e) {}").children().get(0);
+    assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1,0,1,22);
+    ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) tree;
+    assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
+    assertThat(exceptionHandlingTree.catchBlocks()).hasSize(1);
+    assertTree(exceptionHandlingTree.catchBlocks().get(0).catchParameter()).hasParameterName("e");
+    assertTree(exceptionHandlingTree.catchBlocks().get(0).catchBlock()).isBlock();
+    assertTree(exceptionHandlingTree.finallyBlock()).isNull();
+  }
+
+  @Test
+  public void try_finally() {
+    Tree tree = converter.parse("try { 1 } finally {}").children().get(0);
+    assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1,0,1,20);
+    ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) tree;
+    assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
+    assertThat(exceptionHandlingTree.catchBlocks()).hasSize(0);
+    assertTree(exceptionHandlingTree.finallyBlock()).isBlock();
   }
 
   @Test

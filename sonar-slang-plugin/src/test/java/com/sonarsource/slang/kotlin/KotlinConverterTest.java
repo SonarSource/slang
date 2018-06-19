@@ -20,7 +20,9 @@
 package com.sonarsource.slang.kotlin;
 
 import com.sonarsource.slang.api.BinaryExpressionTree;
+import com.sonarsource.slang.api.CatchTree;
 import com.sonarsource.slang.api.Comment;
+import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
@@ -32,12 +34,13 @@ import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.parser.SLangConverter;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
@@ -262,6 +265,54 @@ public class KotlinConverterTest {
     assertTree(emptyWhen).hasChildren(0);
     assertTree(emptyWhen).isEquivalentTo(kotlinStatement("when {}"));
     assertTree(emptyWhen).isNotEquivalentTo(kotlinStatement("when (x) {}"));
+  }
+
+  @Test
+  public void testTryCatch() {
+    Tree kotlinStatement = kotlinStatement("try { 1 } catch (e: SomeException) { }");
+    assertTree(kotlinStatement).isInstanceOf(ExceptionHandlingTree.class);
+    ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) kotlinStatement;
+    assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
+    List<CatchTree> catchTreeList = exceptionHandlingTree.catchBlocks();
+    assertThat(catchTreeList).hasSize(1);
+    assertTree(catchTreeList.get(0).catchParameter()).isInstanceOf(ParameterTree.class);
+    ParameterTree catchParameter = (ParameterTree) catchTreeList.get(0).catchParameter();
+    assertTree(catchParameter).hasParameterName("e");
+    assertThat(catchParameter.type()).isNotNull();
+    assertTree(catchTreeList.get(0).catchBlock()).isBlock();
+    assertThat(exceptionHandlingTree.finallyBlock()).isNull();
+  }
+
+  @Test
+  public void testTryFinally() {
+    Tree kotlinStatement = kotlinStatement("try { 1 } finally { 2 }");
+    assertTree(kotlinStatement).isInstanceOf(ExceptionHandlingTree.class);
+    ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) kotlinStatement;
+    assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
+    List<CatchTree> catchTreeList = exceptionHandlingTree.catchBlocks();
+    assertThat(catchTreeList).hasSize(0);
+    assertThat(exceptionHandlingTree.finallyBlock()).isNotNull();
+    assertTree(exceptionHandlingTree.finallyBlock()).isBlock(LiteralTree.class);
+  }
+
+
+  @Test
+  public void testTryCatchFinally() {
+    Tree kotlinStatement = kotlinStatement("try { 1 } catch (e: SomeException) { } catch { } finally { 2 }");
+    assertTree(kotlinStatement).isInstanceOf(ExceptionHandlingTree.class);
+    ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) kotlinStatement;
+    assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
+    List<CatchTree> catchTreeList = exceptionHandlingTree.catchBlocks();
+    assertThat(catchTreeList).hasSize(2);
+    assertTree(catchTreeList.get(0).catchParameter()).isInstanceOf(ParameterTree.class);
+    ParameterTree catchParameterOne = (ParameterTree) catchTreeList.get(0).catchParameter();
+    assertTree(catchParameterOne).hasParameterName("e");
+    assertThat(catchParameterOne.type()).isNotNull();
+    assertTree(catchTreeList.get(0).catchBlock()).isBlock();
+    assertThat(catchTreeList.get(1).catchParameter()).isNull();
+    assertTree(catchTreeList.get(1).catchBlock()).isBlock();
+    assertThat(exceptionHandlingTree.finallyBlock()).isNotNull();
+    assertTree(exceptionHandlingTree.finallyBlock()).isBlock(LiteralTree.class);
   }
 
   @Test
