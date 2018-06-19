@@ -148,9 +148,9 @@ public class KotlinSensorTest {
     TextPointer textPointer = analysisError.location();
     assertThat(textPointer).isNotNull();
     assertThat(textPointer.line()).isEqualTo(1);
-    assertThat(textPointer.lineOffset()).isEqualTo(14);
+    assertThat(textPointer.lineOffset()).isEqualTo(15);
 
-    assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. Parse error at position 1:14", inputFile.uri()));
+    assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. Parse error at position 1:15", inputFile.uri()));
   }
 
   private void assertTextRange(TextRange textRange, int startLine, int startLineOffset, int endLine, int endLineOffset) {

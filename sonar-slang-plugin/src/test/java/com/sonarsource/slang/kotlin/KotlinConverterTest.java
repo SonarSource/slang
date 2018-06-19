@@ -268,7 +268,7 @@ public class KotlinConverterTest {
   public void testComments() {
     Tree parent = converter.parse("#! Shebang comment\n/** Doc comment \n*/\nfun function1(a: /* Block comment */Int, b: String): Boolean { // EOL comment\n true; }");
     assertTree(parent).isInstanceOf(TopLevelTree.class);
-    assertThat(parent.children()).hasSize(3);
+    assertThat(parent.children()).hasSize(1);
 
     TopLevelTree topLevelTree = (TopLevelTree) parent;
     List<Comment> comments = topLevelTree.allComments();
@@ -278,7 +278,7 @@ public class KotlinConverterTest {
     assertThat(comment.text()).isEqualTo(" Doc comment \n");
     assertThat(comment.textWithDelimiters()).isEqualTo("/** Doc comment \n*/");
 
-    FunctionDeclarationTree tree = (FunctionDeclarationTree) topLevelTree.declarations().get(2);
+    FunctionDeclarationTree tree = (FunctionDeclarationTree) topLevelTree.declarations().get(0);
     List<Comment> commentsInsideFunction = tree.metaData().commentsInside();
     // Kotlin doc is considered part of the function
     assertThat(commentsInsideFunction).hasSize(3);
@@ -293,6 +293,9 @@ public class KotlinConverterTest {
     Tree lambdaWithoutDestructor = kotlinStatement("{ a, b -> a.length < b.length }");
     assertTree(lambdaWithDestructor).hasChildren(NativeTree.class);
     assertTree(lambdaWithoutDestructor).hasChildren(FunctionDeclarationTree.class);
+
+    FunctionDeclarationTree emptyLambda = (FunctionDeclarationTree) kotlinStatement("{ }").children().get(0);
+    assertThat(emptyLambda.body()).isNull();
   }
 
   @Test
@@ -358,8 +361,8 @@ public class KotlinConverterTest {
   private Tree kotlin(String innerCode) {
     Tree tree = converter.parse(innerCode);
     assertThat(tree).isInstanceOf(TopLevelTree.class);
-    assertThat(tree.children()).hasSize(3);
-    return tree.children().get(2);
+    assertThat(tree.children()).hasSize(1);
+    return tree.children().get(0);
   }
 
   private List<Tree> kotlinStatements(String innerCode) {

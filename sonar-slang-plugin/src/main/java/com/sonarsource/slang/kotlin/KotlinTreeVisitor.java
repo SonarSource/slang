@@ -134,7 +134,12 @@ class KotlinTreeVisitor {
       // skip tokens and whitespaces nodes in kotlin AST
       return null;
     }
-    return convertElementToSlangAST(element, getTreeMetaData(element));
+    TreeMetaData metaData = getTreeMetaData(element);
+    TextRange textRange = metaData.textRange();
+    if (textRange.start().equals(textRange.end())) {
+      return null;
+    }
+    return convertElementToSlangAST(element, metaData);
   }
 
   private Tree convertElementToSlangAST(PsiElement element, TreeMetaData metaData) {
