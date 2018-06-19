@@ -19,27 +19,55 @@
  */
 package com.sonarsource.slang.checks;
 
+import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
+import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
-import java.util.Arrays;
-import java.util.List;
+import com.sonarsource.slang.checks.utils.ExpressionUtils;
+import java.util.function.Predicate;
 import org.sonar.check.Rule;
+
+import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.CONDITIONAL_AND;
+import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.CONDITIONAL_OR;
+import static com.sonarsource.slang.checks.utils.ExpressionUtils.isBinaryOperation;
+import static com.sonarsource.slang.checks.utils.ExpressionUtils.isBooleanLiteral;
+import static com.sonarsource.slang.checks.utils.ExpressionUtils.isFalseValueLiteral;
+import static com.sonarsource.slang.checks.utils.ExpressionUtils.isNegation;
+import static com.sonarsource.slang.checks.utils.ExpressionUtils.isTrueValueLiteral;
 
 @Rule(key = "S1145")
 public class IfConditionalAlwaysTrueOrFalseCheck implements SlangCheck {
-  private static final List<String> BOOLEAN_LITERALS = Arrays.asList("true", "false");
 
   @Override
   public void initialize(InitContext init) {
     init.register(IfTree.class, (ctx, ifTree) -> {
       Tree condition = ifTree.condition();
-      if (condition instanceof LiteralTree && BOOLEAN_LITERALS.contains(((LiteralTree) condition).value())) {
+      if (isAlwaysTrueOrFalse(condition)) {
         ctx.reportIssue(condition, "Remove this useless \"if\" statement.");
       }
     });
+  }
+
+  private static boolean isAlwaysTrueOrFalse(Tree condition) {
+    return isBooleanLiteral(condition)
+      || isTrueValueLiteral(condition)
+      || isFalseValueLiteral(condition)
+      || isSimpleExpressionWithLiteral(condition, CONDITIONAL_AND, ExpressionUtils::isFalseValueLiteral)
+      || isSimpleExpressionWithLiteral(condition, CONDITIONAL_OR, ExpressionUtils::isTrueValueLiteral);
+  }
+
+  private static boolean isSimpleExpressionWithLiteral(Tree condition, Operator operator, Predicate<? super Tree> hasLiteralValue) {
+    boolean simpleExpression = isBinaryOperation(condition, operator)
+      && condition.descendants()
+        .allMatch(tree -> tree instanceof IdentifierTree
+          || tree instanceof LiteralTree
+          || isNegation(tree)
+          || isBinaryOperation(tree, operator));
+
+    return simpleExpression && condition.descendants().anyMatch(hasLiteralValue);
   }
 
 }
