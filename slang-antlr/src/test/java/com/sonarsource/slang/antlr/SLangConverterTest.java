@@ -35,6 +35,8 @@ import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
+import com.sonarsource.slang.api.VariableDeclarationTree;
+import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 import com.sonarsource.slang.parser.SLangConverter;
 import java.util.Arrays;
 import java.util.List;
@@ -87,6 +89,21 @@ public class SLangConverterTest {
     assertTree(binary).isBinaryExpression(Operator.PLUS);
     assertTree(binary.leftOperand()).isIdentifier("x");
     assertTree(binary.rightOperand()).isBinaryExpression(Operator.MINUS).hasTextRange(1, 4, 2, 3);
+  }
+
+  @Test
+  public void variable_declaration() {
+    Tree tree = converter.parse("int x;").children().get(0);
+    Tree anotherTree = converter.parse("int x;").children().get(0);
+    assertThat(tree).isInstanceOf(VariableDeclarationTree.class);
+    assertThat(anotherTree).isInstanceOf(VariableDeclarationTree.class);
+
+    VariableDeclarationTree varDeclX = (VariableDeclarationTree) tree;
+    VariableDeclarationTree anotherVarDeclX = (VariableDeclarationTree) anotherTree;
+
+    assertThat(varDeclX.children()).hasSize(1);
+    assertTree(varDeclX.identifier()).isIdentifier("x");
+    assertTree(varDeclX).isEquivalentTo(anotherVarDeclX);
   }
 
   @Test

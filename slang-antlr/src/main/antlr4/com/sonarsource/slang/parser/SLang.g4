@@ -69,7 +69,7 @@ statement
   ;
 
 declaration
-  :  simpleType identifier SEMICOLON
+  :  simpleType identifier
   ;
 
 assignment

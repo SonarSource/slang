@@ -20,16 +20,16 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.IdentifierTree;
-import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
+import com.sonarsource.slang.api.VariableDeclarationTree;
 
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class VariableDeclarationTreeImpl extends BaseTreeImpl implements ParameterTree {
+public class VariableDeclarationTreeImpl extends BaseTreeImpl implements VariableDeclarationTree {
 
   private final IdentifierTree identifier;
   private final Tree type;
