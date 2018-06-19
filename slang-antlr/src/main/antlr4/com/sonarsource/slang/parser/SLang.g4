@@ -91,7 +91,7 @@ multiplicativeExpression
   ;
 
 unaryExpression
-  :  unaryOperator atomicExpression
+  :  unaryOperator unaryExpression
   |  atomicExpression
   ;
 
