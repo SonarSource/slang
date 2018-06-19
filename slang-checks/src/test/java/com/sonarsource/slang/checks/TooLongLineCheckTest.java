@@ -27,7 +27,8 @@ public class TooLongLineCheckTest {
 
   @Test
   public void max_120() {
-    Verifier.verify("TooLongLine.slang", check);
+    check.maximumLineLength = 120;
+    Verifier.verify("TooLongLine_120.slang", check);
   }
 
   @Test

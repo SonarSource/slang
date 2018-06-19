@@ -26,6 +26,7 @@ import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import com.sonarsource.slang.visitors.TreeVisitor;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
@@ -35,20 +36,16 @@ import java.util.function.BiConsumer;
 import javax.annotation.Nullable;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.rule.RuleKey;
-import org.sonarsource.analyzer.commons.InputFileContentExtractor;
 
 public class ChecksVisitor extends TreeVisitor<InputFileContext> {
 
-  private final InputFileContentExtractor inputFileContextExtractor;
-
-  public ChecksVisitor(Checks<SlangCheck> checks, InputFileContentExtractor inputFileContentExtractor) {
+  public ChecksVisitor(Checks<SlangCheck> checks) {
     Collection<SlangCheck> rulesActiveInSonarQube = checks.all();
     for (SlangCheck check : rulesActiveInSonarQube) {
       RuleKey ruleKey = checks.ruleKey(check);
       Objects.requireNonNull(ruleKey);
       check.initialize(new ContextAdapter(ruleKey));
     }
-    this.inputFileContextExtractor = inputFileContentExtractor;
   }
 
   public class ContextAdapter implements InitContext, CheckContext {
@@ -100,7 +97,11 @@ public class ChecksVisitor extends TreeVisitor<InputFileContext> {
 
     @Override
     public String fileContent() {
-      return inputFileContextExtractor.content(currentCtx.inputFile);
+      try {
+        return currentCtx.inputFile.contents();
+      } catch (IOException e) {
+        throw new IllegalStateException("Cannot read content of " + currentCtx.inputFile, e);
+      }
     }
 
     private void reportIssue(TextRange textRange, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {

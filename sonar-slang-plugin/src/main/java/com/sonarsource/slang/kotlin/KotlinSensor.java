@@ -39,7 +39,6 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonarsource.analyzer.commons.InputFileContentExtractor;
 
 public class KotlinSensor implements Sensor {
 
@@ -67,7 +66,7 @@ public class KotlinSensor implements Sensor {
       fileSystem.predicates().hasType(InputFile.Type.MAIN));
     Iterable<InputFile> inputFiles = fileSystem.inputFiles(mainFilePredicate);
     analyseFiles(sensorContext, inputFiles, Arrays.asList(
-      new ChecksVisitor(checks, new InputFileContentExtractor(sensorContext)),
+      new ChecksVisitor(checks),
       new SyntaxHighlighter()));
   }
 

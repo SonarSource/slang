@@ -32,7 +32,7 @@ import org.sonar.check.RuleProperty;
 
 @Rule(key = "S103")
 public class TooLongLineCheck implements SlangCheck {
-  private static final int DEFAULT_MAXIMUM_LINE_LENGTH = 120;
+  private static final int DEFAULT_MAXIMUM_LINE_LENGTH = 200;
 
   @RuleProperty(
     key = "maximumLineLength",
