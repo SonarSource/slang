@@ -148,10 +148,8 @@ class KotlinTreeVisitor {
   private Tree convertElementToSlangAST(PsiElement element, TreeMetaData metaData) {
     if (isError(element)) {
       throw new ParseException("Cannot convert file due to syntactic errors", metaData.textRange().start());
-    } else if (element instanceof KtBinaryExpression) {
-      return createBinaryExpression(metaData, (KtBinaryExpression) element);
-    } else if (element instanceof KtUnaryExpression) {
-      return createUnaryExpression(metaData, (KtUnaryExpression) element);
+    } else if (element instanceof KtOperationExpression) {
+      return createOperationExpression(metaData, (KtOperationExpression) element);
     } else if (element instanceof KtNameReferenceExpression) {
       return createIdentifierTree(metaData, element.getText());
     } else if (element instanceof KtBlockExpression) {
@@ -169,8 +167,6 @@ class KotlinTreeVisitor {
       return createMatchCase(metaData, (KtWhenEntry) element);
     } else if (isLiteral(element)) {
       return createLiteral(metaData, element);
-    } else if (element instanceof KtOperationExpression) {
-      return createOperationExpression(metaData, (KtOperationExpression) element);
     } else if (element instanceof KtDestructuringDeclarationEntry || isSimpleStringLiteralEntry(element)) {
       // To differentiate between the native trees of complex string template entries, we add the string value to the native kind
       return createNativeTree(metaData, new KotlinNativeKind(element, element.getText()), element);
@@ -179,7 +175,6 @@ class KotlinTreeVisitor {
     } else {
       return createNativeTree(metaData, new KotlinNativeKind(element), element);
     }
-
   }
 
   private Tree createFunctionDeclarationTree(TreeMetaData metaData, KtFunction functionElement) {
@@ -295,6 +290,16 @@ class KotlinTreeVisitor {
     return new MatchCaseTreeImpl(metaData, conditionExpression, body);
   }
 
+  private Tree createOperationExpression(TreeMetaData metaData, KtOperationExpression operationExpression) {
+    if (operationExpression instanceof KtBinaryExpression) {
+      return createBinaryExpression(metaData, (KtBinaryExpression) operationExpression);
+    } else if (operationExpression instanceof KtUnaryExpression) {
+      return createUnaryExpression(metaData, (KtUnaryExpression) operationExpression);
+    }
+
+    return createNativeOperationExpression(metaData, operationExpression);
+  }
+
   private Tree createBinaryExpression(TreeMetaData metaData, KtBinaryExpression element) {
     Tree leftOperand = createElement(element.getLeft());
     Tree rightOperand = createElement(element.getRight());
@@ -315,7 +320,7 @@ class KotlinTreeVisitor {
       return new AssignmentExpressionTreeImpl(metaData, assignmentOperator, leftOperand, rightOperand);
     } else {
       // FIXME ensure they are all supported. Ex: Add '/=' for assignments
-      return createOperationExpression(metaData, element);
+      return createNativeOperationExpression(metaData, element);
     }
   }
 
@@ -325,7 +330,7 @@ class KotlinTreeVisitor {
     UnaryExpressionTree.Operator operator = UNARY_OPERATOR_MAP.get(operationToken);
 
     if (operand == null || operator == null) {
-      return createOperationExpression(metaData, element);
+      return createNativeOperationExpression(metaData, element);
     }
     return new UnaryExpressionTreeImpl(metaData, operator, operand);
   }
@@ -337,7 +342,7 @@ class KotlinTreeVisitor {
     return new LiteralTreeImpl(metaData, element.getText());
   }
 
-  private Tree createOperationExpression(TreeMetaData metaData, KtOperationExpression operationExpression) {
+  private Tree createNativeOperationExpression(TreeMetaData metaData, KtOperationExpression operationExpression) {
     NativeKind nativeKind = new KotlinNativeKind(operationExpression, operationExpression.getOperationReference().getReferencedNameElement().getText());
     return createNativeTree(metaData, nativeKind, operationExpression);
   }
