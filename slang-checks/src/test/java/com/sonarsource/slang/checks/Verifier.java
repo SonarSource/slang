@@ -54,9 +54,10 @@ public class Verifier {
     Path path = BASE_DIR.resolve(fileName);
     SingleFileVerifier verifier = SingleFileVerifier.create(path, UTF_8);
 
-    Tree root = new SLangConverter().parse(readFile(path));
+    String testFileContent = readFile(path);
+    Tree root = new SLangConverter().parse(testFileContent);
 
-    TestContext ctx = new TestContext(verifier);
+    TestContext ctx = new TestContext(verifier, testFileContent);
     check.initialize(ctx);
     ctx.scan(root);
 
@@ -77,9 +78,11 @@ public class Verifier {
 
     private final TreeVisitor<TestContext> visitor;
     private final SingleFileVerifier verifier;
+    private String testFileContent;
 
-    public TestContext(SingleFileVerifier verifier) {
+    public TestContext(SingleFileVerifier verifier, String testFileContent) {
       this.verifier = verifier;
+      this.testFileContent = testFileContent;
       visitor = new TreeVisitor<>();
     }
 
@@ -115,6 +118,11 @@ public class Verifier {
     @Override
     public void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
       reportIssue(tree.metaData().textRange(), message, secondaryLocations, gap);
+    }
+
+    @Override
+    public String fileContent() {
+      return testFileContent;
     }
 
     private void reportIssue(TextRange textRange, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {

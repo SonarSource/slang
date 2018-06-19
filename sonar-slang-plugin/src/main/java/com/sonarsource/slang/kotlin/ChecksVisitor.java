@@ -26,6 +26,7 @@ import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import com.sonarsource.slang.visitors.TreeVisitor;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
@@ -92,6 +93,15 @@ public class ChecksVisitor extends TreeVisitor<InputFileContext> {
     @Override
     public void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
       reportIssue(tree.metaData().textRange(), message, secondaryLocations, gap);
+    }
+
+    @Override
+    public String fileContent() {
+      try {
+        return currentCtx.inputFile.contents();
+      } catch (IOException e) {
+        throw new IllegalStateException("Cannot read content of " + currentCtx.inputFile, e);
+      }
     }
 
     private void reportIssue(TextRange textRange, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
