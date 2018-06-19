@@ -19,35 +19,11 @@
  */
 package com.sonarsource.slang.checks;
 
-import java.util.Arrays;
-import java.util.List;
+import org.junit.Test;
 
-public class CommonCheckList {
+public class EmptyFunctionCheckTest {
 
-  private CommonCheckList() {
-  }
-
-  public static List<Class> checks() {
-    return Arrays.asList(
-      AllBranchesIdenticalCheck.class,
-      BadFunctionNameCheck.class,
-      BooleanLiteralCheck.class,
-      CollapsibleIfStatementsCheck.class,
-      DuplicateBranchCheck.class,
-      DuplicatedFunctionImplementationCheck.class,
-      EmptyBlockCheck.class,
-      EmptyFunctionCheck.class,
-      FixMeCommentCheck.class,
-      IdenticalBinaryOperandCheck.class,
-      IdenticalConditionsCheck.class,
-      SelfAssignmentCheck.class,
-      StringLiteralDuplicatedCheck.class,
-      TodoCommentCheck.class,
-      TooLongFunctionCheck.class,
-      TooLongLineCheck.class,
-      TooManyLinesOfCodeFileCheck.class,
-      TooManyParametersCheck.class,
-      UnusedFunctionParameterCheck.class);
-  }
+  @Test
+  public void test() { Verifier.verify("EmptyFunction.slang", new EmptyFunctionCheck()); }
 
 }
