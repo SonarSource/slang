@@ -19,13 +19,10 @@
  */
 package com.sonarsource.slang.checks;
 
-import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
-import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import java.text.MessageFormat;
-import java.util.Optional;
 import org.sonar.check.Rule;
 
 @Rule(key = "S1821")
@@ -34,21 +31,11 @@ public class NestedMatchCheck implements SlangCheck {
 
   @Override
   public void initialize(InitContext init) {
-    init.register(MatchTree.class, (ctx, matchTree) -> matchTree.cases().stream()
-      .map(NestedMatchCheck::getNestedMatchTrees)
-      .filter(Optional::isPresent)
-      .map(Optional::get)
-      .forEach(nestedMatch -> {
-          MatchTree match = (MatchTree) nestedMatch;
-          ctx.reportIssue(match.keyword().textRange(), MessageFormat.format(MESSAGE, match.keyword().text()));
-        }
-      ));
-  }
-
-  private static Optional<Tree> getNestedMatchTrees(MatchCaseTree matchCaseTree) {
-    return matchCaseTree
-      .descendants()
+    init.register(MatchTree.class, (ctx, matchTree) -> ctx.ancestors().stream()
       .filter(node -> node instanceof MatchTree)
-      .findFirst();
+      .findFirst()
+      .ifPresent(parentMatch ->
+        ctx.reportIssue(matchTree.keyword().textRange(), MessageFormat.format(MESSAGE, matchTree.keyword().text()))
+      ));
   }
 }

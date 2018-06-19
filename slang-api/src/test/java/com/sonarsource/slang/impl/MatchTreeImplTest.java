@@ -41,6 +41,7 @@ public class MatchTreeImplTest {
     assertThat(tree.children()).containsExactly(expression, case1);
     assertThat(tree.expression()).isEqualTo(expression);
     assertThat(tree.cases()).containsExactly(case1);
+    assertThat(tree.keyword().text()).isEqualTo("match");
   }
 
 }

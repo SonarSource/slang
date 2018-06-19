@@ -8,12 +8,15 @@
 'kotlin-project:corda/experimental/src/main/kotlin/net/corda/finance/contracts/universal/PrettyPrint.kt':[
 86,
 100,
+105,
+111,
 136,
 ],
 'kotlin-project:corda/experimental/src/main/kotlin/net/corda/finance/contracts/universal/UniversalContract.kt':[
 50,
 73,
 193,
+220,
 258,
 ],
 'kotlin-project:corda/experimental/src/main/kotlin/net/corda/finance/contracts/universal/Util.kt':[
@@ -42,6 +45,7 @@
 95,
 261,
 283,
+315,
 ],
 'kotlin-project:corda/node/src/test/kotlin/net/corda/node/services/statemachine/FlowFrameworkTests.kt':[
 794,
@@ -262,6 +266,7 @@
 'kotlin-project:kotlin/idea/idea-analysis/src/org/jetbrains/kotlin/idea/highlighter/KotlinPsiChecker.kt':[
 217,
 253,
+258,
 ],
 'kotlin-project:kotlin/idea/idea-analysis/src/org/jetbrains/kotlin/idea/search/searchUtil.kt':[
 63,
@@ -322,6 +327,7 @@
 ],
 'kotlin-project:kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/ConvertLambdaToReferenceIntention.kt':[
 235,
+242,
 ],
 'kotlin-project:kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/InvertIfConditionIntention.kt':[
 231,
@@ -358,6 +364,7 @@
 'kotlin-project:kotlin/idea/src/org/jetbrains/kotlin/idea/quickfix/createFromUsage/callableBuilder/CallableBuilder.kt':[
 252,
 533,
+538,
 548,
 ],
 'kotlin-project:kotlin/idea/src/org/jetbrains/kotlin/idea/quickfix/expectactual/CreateActualFix.kt':[

@@ -60,7 +60,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -258,16 +257,13 @@ public class SLangConverter implements ASTConverter {
         meta,
         visit(ctx.statementOrExpression()),
         cases,
-        getKeyword(meta.tokens(), "match"));
+        getMatchKeyword(ctx.MATCH().getSymbol()));
     }
 
-    private static com.sonarsource.slang.api.Token getKeyword(List<com.sonarsource.slang.api.Token> tokens, String keyword) {
-      Supplier<IllegalArgumentException> keywordNotFound = () ->
-        new IllegalArgumentException("MatchExpression must contain \"" + keyword + "\" keyword");
-      return tokens.stream()
-        .filter(token -> token.isKeyword() && token.text().equals(keyword))
-        .findFirst()
-        .orElseThrow(keywordNotFound);
+    private static com.sonarsource.slang.api.Token getMatchKeyword(Token matchToken) {
+      TokenLocation location = new TokenLocation(matchToken.getLine(), matchToken.getCharPositionInLine(), matchToken.getText());
+      TextRange textRange = new TextRangeImpl(location.startLine(), location.startLineOffset(), location.endLine(), location.endLineOffset());
+      return new TokenImpl(textRange, matchToken.getText(), true);
     }
 
     @Override

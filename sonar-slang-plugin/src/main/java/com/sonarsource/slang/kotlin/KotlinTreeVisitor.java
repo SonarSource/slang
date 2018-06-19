@@ -45,6 +45,7 @@ import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
+import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
@@ -54,7 +55,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
@@ -277,16 +277,16 @@ class KotlinTreeVisitor {
       whenExpressions.stream()
         .map(MatchCaseTree.class::cast)
         .collect(Collectors.toList()),
-      getKeyword(metaData.tokens(), "when"));
+      getWhenKeyword(element));
   }
 
   @NotNull
-  private static Token getKeyword(List<Token> tokens, String keyword) {
-    Supplier<IllegalArgumentException> keywordNotFound = () -> new IllegalArgumentException("MatchExpression must contain \"" + keyword + "\" keyword");
-    return tokens.stream()
-      .filter(token -> token.isKeyword() && token.text().equals(keyword))
-      .findFirst()
-      .orElseThrow(keywordNotFound);
+  private Token getWhenKeyword(KtWhenExpression element) {
+    return new TokenImpl(
+      KotlinTextRanges.textRange(psiDocument, element.getWhenKeyword()),
+      element.getWhenKeyword().getText(),
+      true
+    );
   }
 
   private Tree createMatchCase(TreeMetaData metaData, KtWhenEntry element) {
