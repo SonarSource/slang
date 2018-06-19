@@ -44,7 +44,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import static com.sonarsource.slang.api.Token.Type.KEYWORD;
-import static com.sonarsource.slang.api.Token.Type.LITERAL;
+import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static com.sonarsource.slang.api.Token.Type.OTHER;
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
@@ -415,7 +415,7 @@ public class KotlinConverterTest {
     assertThat(tokens).extracting(Token::text).containsExactly(
       "private", "fun", "foo", "(", ")", "{", "42", "+", "\"", "a", "\"", "}");
     assertThat(tokens).extracting(Token::type).containsExactly(
-      KEYWORD, KEYWORD, OTHER, OTHER, OTHER, OTHER, LITERAL, OTHER, OTHER, LITERAL, OTHER, OTHER);
+      KEYWORD, KEYWORD, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, STRING_LITERAL, OTHER, OTHER);
   }
 
   private static String createString(String s) {

@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import static com.sonarsource.slang.api.Token.Type.KEYWORD;
-import static com.sonarsource.slang.api.Token.Type.LITERAL;
+import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static com.sonarsource.slang.api.Token.Type.OTHER;
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
@@ -349,7 +349,7 @@ public class SLangConverterTest {
     assertThat(topLevel.metaData().tokens()).extracting(Token::text)
       .containsExactly("if", "(", "cond", "==", "42", ")", "\"a\"", ";");
     assertThat(topLevel.metaData().tokens()).extracting(Token::type)
-      .containsExactly(KEYWORD, OTHER, OTHER, OTHER, LITERAL, OTHER, LITERAL, OTHER);
+      .containsExactly(KEYWORD, OTHER, OTHER, OTHER, OTHER, OTHER, STRING_LITERAL, OTHER);
     assertRange(topLevel.metaData().tokens().get(1).textRange()).hasRange(1, 3, 1, 4);
     assertThat(ifTree.condition().metaData().tokens()).extracting(Token::text).containsExactly("cond", "==", "42");
   }

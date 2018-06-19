@@ -89,13 +89,6 @@ public class SLangConverter implements ASTConverter {
     SLangParser.THIS
   ));
 
-  private static final Set<Integer> LITERAL_TOKEN_TYPES = new HashSet<>(Arrays.asList(
-    SLangParser.IntegerLiteral,
-    SLangParser.BooleanLiteral,
-    SLangParser.CharacterLiteral,
-    SLangParser.StringLiteral
-  ));
-
   @Override
   public Tree parse(String slangCode) {
     SLangLexer lexer = new SLangLexer(CharStreams.fromString(slangCode));
@@ -115,8 +108,8 @@ public class SLangConverter implements ASTConverter {
         Type type = Type.OTHER;
         if (KEYWORD_TOKEN_TYPES.contains(token.getType())) {
           type = Type.KEYWORD;
-        } else if (LITERAL_TOKEN_TYPES.contains(token.getType())) {
-          type = Type.LITERAL;
+        } else if (token.getType() == SLangParser.StringLiteral) {
+          type = Type.STRING_LITERAL;
         }
         tokens.add(new TokenImpl(textRange, token.getText(), type));
       }

@@ -33,7 +33,7 @@ public class CpdVisitor extends TreeVisitor<InputFileContext> {
   public CpdVisitor() {
     register(TopLevelTree.class, (ctx, tree) -> {
       for (Token token : tree.metaData().tokens()) {
-        String text = token.type() == Token.Type.LITERAL ? "LITERAL" : token.text();
+        String text = token.type() == Token.Type.STRING_LITERAL ? "LITERAL" : token.text();
         cpdTokens.addToken(ctx.textRange(token.textRange()), text);
       }
     });

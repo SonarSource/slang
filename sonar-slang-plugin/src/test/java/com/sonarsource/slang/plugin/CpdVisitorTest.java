@@ -59,7 +59,7 @@ public class CpdVisitorTest {
     assertThat(cpdTokenLines.get(0).getStartUnit()).isEqualTo(1);
     assertThat(cpdTokenLines.get(0).getEndUnit()).isEqualTo(3);
 
-    assertThat(cpdTokenLines.get(1).getValue()).isEqualTo("*LITERAL");
+    assertThat(cpdTokenLines.get(1).getValue()).isEqualTo("*42");
     assertThat(cpdTokenLines.get(1).getStartLine()).isEqualTo(2);
     assertThat(cpdTokenLines.get(1).getStartUnit()).isEqualTo(4);
     assertThat(cpdTokenLines.get(1).getEndUnit()).isEqualTo(5);

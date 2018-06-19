@@ -23,7 +23,7 @@ public interface Token {
 
   public enum Type {
     KEYWORD,
-    LITERAL,
+    STRING_LITERAL,
     OTHER
   }
 
