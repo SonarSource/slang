@@ -20,6 +20,7 @@
 package com.sonarsource.slang.api;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TreeMetaData {
 
@@ -29,6 +30,6 @@ public interface TreeMetaData {
 
   List<Token> tokens();
 
-  int numberOfLinesOfCode();
+  Set<Integer> linesOfCode();
 
 }

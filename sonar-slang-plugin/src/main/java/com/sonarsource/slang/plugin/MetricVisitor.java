@@ -53,8 +53,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
     register(TopLevelTree.class, (ctx, tree) -> {
       tree.allComments().forEach(
         comment -> addCommentMetrics(comment, commentLines, nosonarLines));
-      tree.metaData().tokens().forEach(
-        token -> add(token.textRange(), linesOfCode));
+      linesOfCode.addAll(tree.metaData().linesOfCode());
     });
     register(FunctionDeclarationTree.class, (ctx, tree) -> {
       if (tree.name() != null && tree.body() != null) {

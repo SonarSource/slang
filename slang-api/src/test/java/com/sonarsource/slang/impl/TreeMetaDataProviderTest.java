@@ -54,9 +54,9 @@ public class TreeMetaDataProviderTest {
     Token token3 = new TokenImpl(new TextRangeImpl(2, 1, 2, 4), "abc", false);
     Token token4 = new TokenImpl(new TextRangeImpl(4, 1, 6, 2), "ab\ncd\nef", false);
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2, token3, token4));
-    assertThat(provider.metaData(new TextRangeImpl(1, 1, 1, 20)).numberOfLinesOfCode()).isEqualTo(1);
-    assertThat(provider.metaData(new TextRangeImpl(1, 1, 2, 20)).numberOfLinesOfCode()).isEqualTo(2);
-    assertThat(provider.metaData(new TextRangeImpl(1, 1, 3, 20)).numberOfLinesOfCode()).isEqualTo(2);
-    assertThat(provider.metaData(new TextRangeImpl(1, 1, 6, 20)).numberOfLinesOfCode()).isEqualTo(5);
+    assertThat(provider.metaData(new TextRangeImpl(1, 1, 1, 20)).linesOfCode()).containsExactly(1);
+    assertThat(provider.metaData(new TextRangeImpl(1, 1, 2, 20)).linesOfCode()).containsExactly(1, 2);
+    assertThat(provider.metaData(new TextRangeImpl(1, 1, 3, 20)).linesOfCode()).containsExactly(1, 2);
+    assertThat(provider.metaData(new TextRangeImpl(1, 1, 6, 20)).linesOfCode()).containsExactly(1, 2, 4, 5, 6);
   }
 }

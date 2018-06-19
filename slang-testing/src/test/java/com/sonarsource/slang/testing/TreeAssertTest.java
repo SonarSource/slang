@@ -39,6 +39,7 @@ import com.sonarsource.slang.impl.TextRangeImpl;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import org.junit.Test;
 
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
@@ -248,8 +249,8 @@ public class TreeAssertTest {
       }
 
       @Override
-      public int numberOfLinesOfCode() {
-        return 0;
+      public Set<Integer> linesOfCode() {
+        return Collections.emptySet();
       }
     };
   }

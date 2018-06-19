@@ -49,6 +49,7 @@ public class TreeMetaDataProvider {
   private class TreeMetaDataImpl implements TreeMetaData {
 
     private final TextRange textRange;
+    private Set<Integer> linesOfCode;
 
     private TreeMetaDataImpl(TextRange textRange) {
       this.textRange = textRange;
@@ -76,15 +77,24 @@ public class TreeMetaDataProvider {
     }
 
     @Override
-    public int numberOfLinesOfCode() {
-      Set<Integer> linesOfCode = new HashSet<>();
+    public Set<Integer> linesOfCode() {
+      if (linesOfCode == null) {
+        linesOfCode = computeLinesOfCode();
+      }
+      return linesOfCode;
+    }
+
+    private Set<Integer> computeLinesOfCode() {
+      Set<Integer> loc = new HashSet<>();
       for (Token token : tokens()) {
         TextRange range = token.textRange();
         for (int i = range.start().line(); i <= range.end().line(); i++) {
-          linesOfCode.add(i);
+          loc.add(i);
         }
       }
-      return linesOfCode.size();
+      return loc;
     }
+
   }
+
 }
