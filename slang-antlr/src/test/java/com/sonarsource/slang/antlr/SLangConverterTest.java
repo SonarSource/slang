@@ -98,15 +98,13 @@ public class SLangConverterTest {
     Tree anotherTree = converter.parse("int var x;").children().get(0);
     Tree yetAnotherTree = converter.parse("boolean var x;").children().get(0);
     assertThat(tree).isInstanceOf(VariableDeclarationTree.class);
-    assertThat(anotherTree).isInstanceOf(VariableDeclarationTree.class);
 
     VariableDeclarationTree varDeclX = (VariableDeclarationTree) tree;
-    VariableDeclarationTree anotherVarDeclX = (VariableDeclarationTree) anotherTree;
 
     assertThat(varDeclX.children()).hasSize(2);
     assertTree(varDeclX.type()).isIdentifier("int");
     assertTree(varDeclX.identifier()).isIdentifier("x");
-    assertTree(varDeclX).isEquivalentTo(anotherVarDeclX);
+    assertTree(varDeclX).isEquivalentTo(anotherTree);
     assertTree(varDeclX).isNotEquivalentTo(yetAnotherTree);
     assertTree(varDeclX).isNotEquivalentTo(valueTree);
   }
@@ -135,6 +133,8 @@ public class SLangConverterTest {
     assertTree(varDeclX).isNotEquivalentTo(valDeclX);
     assertTree(varDeclX).isNotEquivalentTo(converter.parse("myint var x = 0;").children().get(0));
     assertTree(varDeclX).isNotEquivalentTo(converter.parse("int var x = 1;").children().get(0));
+    assertTree(varDeclX).isNotEquivalentTo(converter.parse("var x = 0;").children().get(0));
+    assertTree(varDeclX).isNotEquivalentTo(converter.parse("var x;").children().get(0));;
   }
 
 

@@ -26,6 +26,7 @@ import com.sonarsource.slang.api.VariableDeclarationTree;
 
 
 import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class VariableDeclarationTreeImpl extends BaseTreeImpl implements Variabl
   private final Tree initializer;
   private final boolean isVal;
 
-  public VariableDeclarationTreeImpl(TreeMetaData metaData, IdentifierTree identifier, @CheckForNull Tree type, @CheckForNull Tree initializer, boolean isVal) {
+  public VariableDeclarationTreeImpl(TreeMetaData metaData, IdentifierTree identifier, @Nullable Tree type, @Nullable Tree initializer, boolean isVal) {
     super(metaData);
     this.identifier = identifier;
     this.type = type;

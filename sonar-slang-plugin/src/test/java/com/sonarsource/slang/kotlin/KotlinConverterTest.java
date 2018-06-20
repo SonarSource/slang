@@ -128,6 +128,7 @@ public class KotlinConverterTest {
     assertTree(valY).isInstanceOf(VariableDeclarationTree.class);
     assertThat(((VariableDeclarationTree) varX).initializer()).isInstanceOf(LiteralTree.class);
     assertThat(((VariableDeclarationTree) valY).initializer()).isInstanceOf(StringLiteralTree.class);
+    assertTree(varX).isEquivalentTo(kotlinStatement("var x : Int = 0"));
     assertTree(varX).isNotEquivalentTo(valY);
     assertTree(varX).isNotEquivalentTo(kotlinStatement("var x: Int"));
     assertTree(varX).isNotEquivalentTo(kotlinStatement("var x: Boolean = true"));

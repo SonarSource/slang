@@ -35,7 +35,7 @@ public class VariableDeclarationTreeImplTest {
   @Test
   public void test() {
     TreeMetaData meta = null;
-    Tree variableType = new NativeTreeImpl(meta, new VariableDeclarationTreeImplTest.TypeNativeKind(), null);
+    Tree variableType = new NativeTreeImpl(meta, new TypeNativeKind(), null);
     IdentifierTree identifierTreeX = new IdentifierTreeImpl(meta, "x");
     IdentifierTree identifierTreeY = new IdentifierTreeImpl(meta, "y");
     VariableDeclarationTreeImpl variableTreeX = new VariableDeclarationTreeImpl(meta, identifierTreeX, null,null, false);
