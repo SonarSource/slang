@@ -161,6 +161,7 @@ public class SLangConverterTest {
     assertTree(matchTree.cases().get(0).expression()).isLiteral("1");
     assertTree(matchTree.cases().get(1).expression()).isNull();
     assertTree(matchTree.cases().get(1)).hasTextRange(1, 19, 1, 29);
+    assertThat(matchTree.keyword().text()).isEqualTo("match");
   }
 
   @Test

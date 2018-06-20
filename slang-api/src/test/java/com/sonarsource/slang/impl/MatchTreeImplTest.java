@@ -21,6 +21,7 @@ package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import java.util.Collections;
@@ -35,10 +36,12 @@ public class MatchTreeImplTest {
     TreeMetaData meta = null;
     Tree expression = new IdentifierTreeImpl(null, "x");
     MatchCaseTree case1 = new MatchCaseTreeImpl(null, null, new LiteralTreeImpl(meta, "42"));
-    MatchTree tree = new MatchTreeImpl(meta, expression, Collections.singletonList(case1));
+    Token keywordToken = new TokenImpl(new TextRangeImpl(1,0,1,20), "match", true);
+    MatchTree tree = new MatchTreeImpl(meta, expression, Collections.singletonList(case1), keywordToken);
     assertThat(tree.children()).containsExactly(expression, case1);
     assertThat(tree.expression()).isEqualTo(expression);
     assertThat(tree.cases()).containsExactly(case1);
+    assertThat(tree.keyword().text()).isEqualTo("match");
   }
 
 }

@@ -31,6 +31,7 @@ import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
@@ -48,6 +49,7 @@ import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
+import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
@@ -291,7 +293,16 @@ class KotlinTreeVisitor {
       subjectExpression,
       whenExpressions.stream()
         .map(MatchCaseTree.class::cast)
-        .collect(Collectors.toList()));
+        .collect(Collectors.toList()),
+      getWhenKeyword(element));
+  }
+
+  private Token getWhenKeyword(KtWhenExpression element) {
+    return new TokenImpl(
+      KotlinTextRanges.textRange(psiDocument, element.getWhenKeyword()),
+      element.getWhenKeyword().getText(),
+      true
+    );
   }
 
   private Tree createMatchCase(TreeMetaData metaData, KtWhenEntry element) {

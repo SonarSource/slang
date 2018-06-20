@@ -98,8 +98,7 @@ public class SLangConverter implements ASTConverter {
 
     for (int index = 0; index < antlrTokens.size(); index++) {
       Token token = antlrTokens.get(index);
-      TokenLocation location = new TokenLocation(token.getLine(), token.getCharPositionInLine(), token.getText());
-      TextRange textRange = new TextRangeImpl(location.startLine(), location.startLineOffset(), location.endLine(), location.endLineOffset());
+      TextRange textRange = getSlangTextRange(token);
       if (token.getChannel() == 1) {
         comments.add(new CommentImpl(commentContent(token.getText()), token.getText(), textRange));
       } else {
@@ -146,6 +145,11 @@ public class SLangConverter implements ASTConverter {
     map.put("*=", AssignmentExpressionTree.Operator.TIMES_EQUAL);
     map.put("%=", AssignmentExpressionTree.Operator.MODULO_EQUAL);
     return Collections.unmodifiableMap(map);
+  }
+
+  private static TextRange getSlangTextRange(Token matchToken) {
+    TokenLocation location = new TokenLocation(matchToken.getLine(), matchToken.getCharPositionInLine(), matchToken.getText());
+    return new TextRangeImpl(location.startLine(), location.startLineOffset(), location.endLine(), location.endLineOffset());
   }
 
   private static class SLangParseTreeVisitor extends SLangBaseVisitor<Tree> {
@@ -255,7 +259,17 @@ public class SLangConverter implements ASTConverter {
       for (SLangParser.MatchCaseContext matchCaseContext : ctx.matchCase()) {
         cases.add((MatchCaseTree) visit(matchCaseContext));
       }
-      return new MatchTreeImpl(meta(ctx), visit(ctx.statementOrExpression()), cases);
+      TreeMetaData meta = meta(ctx);
+      return new MatchTreeImpl(
+        meta,
+        visit(ctx.statementOrExpression()),
+        cases,
+        getMatchKeyword(ctx.MATCH().getSymbol()));
+    }
+
+    private static com.sonarsource.slang.api.Token getMatchKeyword(Token matchToken) {
+      TextRange textRange = getSlangTextRange(matchToken);
+      return new TokenImpl(textRange, matchToken.getText(), true);
     }
 
     @Override

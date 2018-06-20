@@ -17,16 +17,25 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
+package com.sonarsource.slang.checks;
 
-import java.util.List;
+import com.sonarsource.slang.api.MatchTree;
+import com.sonarsource.slang.checks.api.InitContext;
+import com.sonarsource.slang.checks.api.SlangCheck;
+import java.text.MessageFormat;
+import org.sonar.check.Rule;
 
-public interface MatchTree extends Tree {
+@Rule(key = "S1821")
+public class NestedMatchCheck implements SlangCheck {
+  private static final String MESSAGE = "Refactor the code to eliminate this nested \"{0}\".";
 
-  Tree expression();
-
-  List<MatchCaseTree> cases();
-
-  Token keyword();
-
+  @Override
+  public void initialize(InitContext init) {
+    init.register(MatchTree.class, (ctx, matchTree) -> ctx.ancestors().stream()
+      .filter(node -> node instanceof MatchTree)
+      .findFirst()
+      .ifPresent(parentMatch ->
+        ctx.reportIssue(matchTree.keyword().textRange(), MessageFormat.format(MESSAGE, matchTree.keyword().text()))
+      ));
+  }
 }

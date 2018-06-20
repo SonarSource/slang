@@ -41,6 +41,7 @@ public class CommonCheckList {
       FixMeCommentCheck.class,
       IdenticalBinaryOperandCheck.class,
       IdenticalConditionsCheck.class,
+      NestedMatchCheck.class,
       SelfAssignmentCheck.class,
       StringLiteralDuplicatedCheck.class,
       TodoCommentCheck.class,
