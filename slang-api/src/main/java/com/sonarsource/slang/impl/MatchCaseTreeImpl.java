@@ -20,10 +20,13 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.MatchCaseTree;
+import com.sonarsource.slang.api.TextRange;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
@@ -47,6 +50,16 @@ public class MatchCaseTreeImpl extends BaseTreeImpl implements MatchCaseTree {
   @Override
   public Tree body() {
     return body;
+  }
+
+  @Override
+  public TextRange rangeToHighlight() {
+    TextRange bodyRange = body.metaData().textRange();
+    List<TextRange> tokenRangesBeforeBody = metaData().tokens().stream()
+      .map(Token::textRange)
+      .filter(t -> t.start().compareTo(bodyRange.start()) < 0)
+      .collect(Collectors.toList());
+    return TextRanges.merge(tokenRangesBeforeBody);
   }
 
   @Override

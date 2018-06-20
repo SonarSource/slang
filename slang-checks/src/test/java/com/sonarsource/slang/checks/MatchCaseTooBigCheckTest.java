@@ -17,18 +17,23 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
+package com.sonarsource.slang.checks;
 
-import javax.annotation.CheckForNull;
+import org.junit.Test;
 
-public interface MatchCaseTree extends Tree {
+public class MatchCaseTooBigCheckTest {
 
-  // expression is null in case of default clause
-  @CheckForNull
-  Tree expression();
+  private MatchCaseTooBigCheck check = new MatchCaseTooBigCheck();
 
-  Tree body();
+  @Test
+  public void max_5() {
+    check.max = 5;
+    Verifier.verify("MatchCaseTooBig_5.slang", check);
+  }
 
-  TextRange rangeToHighlight();
-
+  @Test
+  public void max_3() {
+    check.max = 3;
+    Verifier.verify("MatchCaseTooBig_3.slang", check);
+  }
 }
