@@ -57,7 +57,7 @@ public class TreePrinter {
       } else if (t instanceof NativeTree) {
         sb.append(" ").append(((NativeTree) t).nativeKind());
       } else if (t instanceof VariableDeclarationTree) {
-      sb.append(" ").append(((VariableDeclarationTree) t).identifier().name());
+        sb.append(" ").append(((VariableDeclarationTree) t).identifier().name());
       }
       sb.append("\n");
     });
