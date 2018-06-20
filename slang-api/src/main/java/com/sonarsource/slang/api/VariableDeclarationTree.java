@@ -19,11 +19,17 @@
  */
 package com.sonarsource.slang.api;
 
+import javax.annotation.CheckForNull;
+
 public interface VariableDeclarationTree extends Tree {
 
   IdentifierTree identifier();
 
+  @CheckForNull
   Tree type();
+
+  @CheckForNull
+  Tree initializer();
 
   boolean isVal();
 

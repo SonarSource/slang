@@ -112,6 +112,33 @@ public class SLangConverterTest {
   }
 
   @Test
+  public void variable_declaration_with_initializer() {
+    Tree tree = converter.parse("int var x = 0;").children().get(0);
+    Tree anotherTree = converter.parse("int val x = 0;").children().get(0);
+    assertThat(tree).isInstanceOf(VariableDeclarationTree.class);
+    assertThat(anotherTree).isInstanceOf(VariableDeclarationTree.class);
+
+    VariableDeclarationTree varDeclX = (VariableDeclarationTree) tree;
+    VariableDeclarationTree valDeclX = (VariableDeclarationTree) anotherTree;
+
+    assertThat(varDeclX.children()).hasSize(3);
+    assertTree(varDeclX.type()).isIdentifier("int");
+    assertTree(varDeclX.identifier()).isIdentifier("x");
+    assertTree(varDeclX.initializer()).isLiteral("0");
+    assertThat(varDeclX.isVal()).isFalse();
+    assertThat(valDeclX.children()).hasSize(3);
+    assertTree(valDeclX.type()).isIdentifier("int");
+    assertTree(valDeclX.identifier()).isIdentifier("x");
+    assertTree(valDeclX.initializer()).isLiteral("0");
+    assertThat(valDeclX.isVal()).isTrue();
+    assertTree(varDeclX).isEquivalentTo(converter.parse("int var x = 0;").children().get(0));
+    assertTree(varDeclX).isNotEquivalentTo(valDeclX);
+    assertTree(varDeclX).isNotEquivalentTo(converter.parse("myint var x = 0;").children().get(0));
+    assertTree(varDeclX).isNotEquivalentTo(converter.parse("int var x = 1;").children().get(0));
+  }
+
+
+  @Test
   public void function() {
     FunctionDeclarationTree function = parseFunction("private int fun foo(x1, x2) { x1 + x2 }");
     assertThat(function.name().name()).isEqualTo("foo");

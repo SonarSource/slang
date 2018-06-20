@@ -247,11 +247,17 @@ public class SLangConverter implements ASTConverter {
     @Override
     public Tree visitDeclaration(SLangParser.DeclarationContext ctx) {
       IdentifierTree identifier = (IdentifierTree) visit(ctx.identifier());
-      Tree type = new IdentifierTreeImpl(meta(ctx.simpleType()), ctx.simpleType().getText());
-      if (ctx.declarationModifier().VAL() != null) {
-        return new VariableDeclarationTreeImpl(meta(ctx), identifier, type, true);
+      Tree type = null;
+      if (ctx.simpleType() != null) {
+        type = new IdentifierTreeImpl(meta(ctx.simpleType()), ctx.simpleType().getText());
       }
-      return new VariableDeclarationTreeImpl(meta(ctx), identifier, type, false);
+      Tree initializer = null;
+      if (ctx.expression() != null) {
+        initializer = visit(ctx.expression());
+      }
+
+      boolean isVal = ctx.declarationModifier().VAL() != null;
+      return new VariableDeclarationTreeImpl(meta(ctx), identifier, type, initializer, isVal);
     }
 
     @Override

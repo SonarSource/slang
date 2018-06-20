@@ -25,6 +25,8 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.VariableDeclarationTree;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -54,6 +56,8 @@ public class TreePrinter {
         sb.append(" ").append(((IdentifierTree) t).name());
       } else if (t instanceof NativeTree) {
         sb.append(" ").append(((NativeTree) t).nativeKind());
+      } else if (t instanceof VariableDeclarationTree) {
+      sb.append(" ").append(((VariableDeclarationTree) t).identifier().name());
       }
       sb.append("\n");
     });

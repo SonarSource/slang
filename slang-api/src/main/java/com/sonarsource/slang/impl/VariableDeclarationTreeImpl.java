@@ -25,20 +25,22 @@ import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.api.VariableDeclarationTree;
 
 
-import java.util.Arrays;
-import java.util.Collections;
+import javax.annotation.CheckForNull;
+import java.util.ArrayList;
 import java.util.List;
 
 public class VariableDeclarationTreeImpl extends BaseTreeImpl implements VariableDeclarationTree {
 
   private final IdentifierTree identifier;
   private final Tree type;
+  private final Tree initializer;
   private final boolean isVal;
 
-  public VariableDeclarationTreeImpl(TreeMetaData metaData, IdentifierTree identifier, Tree type, boolean isVal) {
+  public VariableDeclarationTreeImpl(TreeMetaData metaData, IdentifierTree identifier, @CheckForNull Tree type, @CheckForNull Tree initializer, boolean isVal) {
     super(metaData);
     this.identifier = identifier;
     this.type = type;
+    this.initializer = initializer;
     this.isVal = isVal;
   }
 
@@ -47,9 +49,16 @@ public class VariableDeclarationTreeImpl extends BaseTreeImpl implements Variabl
     return identifier;
   }
 
+  @CheckForNull
   @Override
   public Tree type() {
     return type;
+  }
+
+  @CheckForNull
+  @Override
+  public Tree initializer() {
+    return initializer;
   }
 
   @Override
@@ -59,11 +68,18 @@ public class VariableDeclarationTreeImpl extends BaseTreeImpl implements Variabl
 
   @Override
   public List<Tree> children() {
+    List<Tree> children = new ArrayList<>();
+    children.add(identifier);
+
     if (type != null) {
-      return Arrays.asList(identifier, type);
-    } else {
-      return Collections.singletonList(identifier);
+      children.add(type);
     }
+
+    if (initializer != null) {
+      children.add(initializer);
+    }
+
+    return children;
   }
 
 }

@@ -30,6 +30,7 @@ import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.ParameterTree;
+import com.sonarsource.slang.api.StringLiteralTree;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
@@ -117,6 +118,19 @@ public class KotlinConverterTest {
     assertTree(varX).isNotEquivalentTo(kotlinStatement("var y: Int"));
     assertTree(varX).isNotEquivalentTo(kotlinStatement("val x: Int"));
     assertTree(varX).isNotEquivalentTo(kotlinStatement("var x: Boolean"));
+  }
+
+  @Test
+  public void testVariableDeclarationWithInitializer() {
+    Tree varX = kotlinStatement("var x : Int = 0");
+    Tree valY = kotlinStatement("val x : Int = \"4\"");
+    assertTree(varX).isInstanceOf(VariableDeclarationTree.class);
+    assertTree(valY).isInstanceOf(VariableDeclarationTree.class);
+    assertThat(((VariableDeclarationTree) varX).initializer()).isInstanceOf(LiteralTree.class);
+    assertThat(((VariableDeclarationTree) valY).initializer()).isInstanceOf(StringLiteralTree.class);
+    assertTree(varX).isNotEquivalentTo(valY);
+    assertTree(varX).isNotEquivalentTo(kotlinStatement("var x: Int"));
+    assertTree(varX).isNotEquivalentTo(kotlinStatement("var x: Boolean = true"));
   }
 
   @Test

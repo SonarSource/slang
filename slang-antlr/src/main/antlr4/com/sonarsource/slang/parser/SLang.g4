@@ -69,7 +69,7 @@ statement
   ;
 
 declaration
-  :  simpleType declarationModifier identifier
+  :  simpleType? declarationModifier identifier ('=' expression)?
   ;
 
 declarationModifier

@@ -38,11 +38,11 @@ public class VariableDeclarationTreeImplTest {
     Tree variableType = new NativeTreeImpl(meta, new VariableDeclarationTreeImplTest.TypeNativeKind(), null);
     IdentifierTree identifierTreeX = new IdentifierTreeImpl(meta, "x");
     IdentifierTree identifierTreeY = new IdentifierTreeImpl(meta, "y");
-    VariableDeclarationTreeImpl variableTreeX = new VariableDeclarationTreeImpl(meta, identifierTreeX, null, false);
-    VariableDeclarationTreeImpl variableTreeXCopy = new VariableDeclarationTreeImpl(meta, new IdentifierTreeImpl(meta, "x"), null, false);
-    VariableDeclarationTreeImpl valueTreeX = new VariableDeclarationTreeImpl(meta, new IdentifierTreeImpl(meta, "x"), null, true);
-    VariableDeclarationTreeImpl variableTreeXTyped = new VariableDeclarationTreeImpl(meta, identifierTreeX, variableType, false);
-    VariableDeclarationTreeImpl variableTreeY = new VariableDeclarationTreeImpl(meta, identifierTreeY, variableType, false);
+    VariableDeclarationTreeImpl variableTreeX = new VariableDeclarationTreeImpl(meta, identifierTreeX, null,null, false);
+    VariableDeclarationTreeImpl variableTreeXCopy = new VariableDeclarationTreeImpl(meta, new IdentifierTreeImpl(meta, "x"), null, null,false);
+    VariableDeclarationTreeImpl valueTreeX = new VariableDeclarationTreeImpl(meta, new IdentifierTreeImpl(meta, "x"), null, null, true);
+    VariableDeclarationTreeImpl variableTreeXTyped = new VariableDeclarationTreeImpl(meta, identifierTreeX, variableType, null, false);
+    VariableDeclarationTreeImpl variableTreeY = new VariableDeclarationTreeImpl(meta, identifierTreeY, variableType, null, false);
 
     assertThat(variableTreeXTyped.children()).hasSize(2);
     assertThat(variableTreeX.children()).hasSize(1);

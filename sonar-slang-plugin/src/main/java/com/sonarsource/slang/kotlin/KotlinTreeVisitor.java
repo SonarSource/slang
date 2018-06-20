@@ -33,6 +33,7 @@ import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
+
 import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
@@ -87,11 +88,10 @@ import org.jetbrains.kotlin.psi.KtModifierList;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.KtOperationExpression;
 import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtTryExpression;
 import org.jetbrains.kotlin.psi.KtTypeElement;
-import org.jetbrains.kotlin.psi.KtTypeReference;
-import org.jetbrains.kotlin.psi.KtVariableDeclaration;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
 import org.jetbrains.kotlin.psi.KtWhenEntry;
 import org.jetbrains.kotlin.psi.KtWhenExpression;
@@ -186,29 +186,28 @@ class KotlinTreeVisitor {
       return createOperationExpression(metaData, (KtOperationExpression) element);
     } else if (element instanceof KtParameter) {
       return createParameter((KtParameter) element);
-    } else if (element instanceof KtVariableDeclaration) {
-      return createVariableDeclaration((KtVariableDeclaration) element);
+    } else if (element instanceof KtProperty) {
+      return createVariableDeclaration((KtProperty) element);
     } else {
       return convertElementToNative(element, metaData);
     }
   }
 
-  private Tree createVariableDeclaration(KtVariableDeclaration ktVariableDeclaration) {
-    TreeMetaData metaData = getTreeMetaData(ktVariableDeclaration);
-    PsiElement nameIdentifier = ktVariableDeclaration.getNameIdentifier();
-    KtTypeReference type = ktVariableDeclaration.getTypeReference();
+  private Tree createVariableDeclaration(KtProperty ktProperty) {
+    TreeMetaData metaData = getTreeMetaData(ktProperty);
+    PsiElement nameIdentifier = ktProperty.getNameIdentifier();
 
-    // For some reason the Identifier is not among the Parameter children array, so for now we add this information to the native kind
-    if (nameIdentifier == null || type == null) {
-      return convertElementToNative(ktVariableDeclaration, metaData);
+    if (nameIdentifier == null) {
+      return convertElementToNative(ktProperty, metaData);
+    } else if (!ktProperty.isLocal() || ktProperty.hasDelegate()) {
+      return createNativeTree(metaData, new KotlinNativeKind(ktProperty, nameIdentifier.getText()), ktProperty);
     }
 
-
-    boolean isVal = !ktVariableDeclaration.isVar();
     IdentifierTree identifierTree = new IdentifierTreeImpl(metaData, nameIdentifier.getText());
-    Tree typeTree = createMandatoryElement(ktVariableDeclaration.getTypeReference());
-
-    return new VariableDeclarationTreeImpl(metaData, identifierTree, typeTree, isVal);
+    Tree typeTree = createElement(ktProperty.getTypeReference());
+    Tree initializerTree = createElement(ktProperty.getInitializer());
+    boolean isVal = !ktProperty.isVar();
+    return new VariableDeclarationTreeImpl(metaData, identifierTree, typeTree, initializerTree, isVal);
   }
 
   private Tree convertElementToNative(PsiElement element, TreeMetaData metaData) {

@@ -18,9 +18,6 @@
 'kotlin-project:corda/node/src/test/kotlin/net/corda/node/services/RPCSecurityManagerTest.kt':[
 105,
 ],
-'kotlin-project:corda/node/src/test/kotlin/net/corda/node/services/events/NodeSchedulerServiceTest.kt':[
-220,
-],
 'kotlin-project:corda/node/src/test/kotlin/net/corda/node/services/persistence/HibernateConfigurationTest.kt':[
 704,
 ],
