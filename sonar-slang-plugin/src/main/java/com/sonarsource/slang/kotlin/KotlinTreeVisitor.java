@@ -33,6 +33,7 @@ import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
+
 import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
@@ -52,6 +53,7 @@ import com.sonarsource.slang.impl.TextRangeImpl;
 import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
+import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
@@ -86,6 +88,7 @@ import org.jetbrains.kotlin.psi.KtModifierList;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.KtOperationExpression;
 import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtTryExpression;
 import org.jetbrains.kotlin.psi.KtTypeElement;
@@ -182,7 +185,9 @@ class KotlinTreeVisitor {
     } else if (element instanceof KtOperationExpression) {
       return createOperationExpression(metaData, (KtOperationExpression) element);
     } else if (element instanceof KtParameter) {
-      return createParameter((KtParameter) element);
+      return createParameter(metaData, (KtParameter) element);
+    } else if (element instanceof KtProperty) {
+      return createVariableDeclaration(metaData, (KtProperty) element);
     } else {
       return convertElementToNative(element, metaData);
     }
@@ -257,8 +262,7 @@ class KotlinTreeVisitor {
     return new IfTreeImpl(metaData, condition, thenBranch, elseBranch);
   }
 
-  private Tree createParameter(KtParameter ktParameter) {
-    TreeMetaData metaData = getTreeMetaData(ktParameter);
+  private Tree createParameter(TreeMetaData metaData, KtParameter ktParameter) {
     Tree type = createElement(ktParameter.getTypeReference());
     PsiElement nameIdentifier = ktParameter.getNameIdentifier();
 
@@ -269,6 +273,22 @@ class KotlinTreeVisitor {
 
     IdentifierTree identifier = createIdentifierTree(getTreeMetaData(nameIdentifier), nameIdentifier.getText());
     return new ParameterTreeImpl(metaData, identifier, type);
+  }
+
+  private Tree createVariableDeclaration(TreeMetaData metaData, KtProperty ktProperty) {
+    PsiElement nameIdentifier = ktProperty.getNameIdentifier();
+
+    if (nameIdentifier == null) {
+      return convertElementToNative(ktProperty, metaData);
+    } else if (!ktProperty.isLocal() || ktProperty.hasDelegate()) {
+      return createNativeTree(metaData, new KotlinNativeKind(ktProperty, nameIdentifier.getText()), ktProperty);
+    }
+
+    IdentifierTree identifierTree = new IdentifierTreeImpl(metaData, nameIdentifier.getText());
+    Tree typeTree = createElement(ktProperty.getTypeReference());
+    Tree initializerTree = createElement(ktProperty.getInitializer());
+    boolean isVal = !ktProperty.isVar();
+    return new VariableDeclarationTreeImpl(metaData, identifierTree, typeTree, initializerTree, isVal);
   }
 
   private Tree createNativeTree(TreeMetaData metaData, NativeKind kind, PsiElement element) {
@@ -332,7 +352,7 @@ class KotlinTreeVisitor {
     if (element.getCatchParameter() == null) {
       return new CatchTreeImpl(metaData, null, catchBody);
     } else {
-      return new CatchTreeImpl(metaData, (ParameterTree) createParameter(element.getCatchParameter()), catchBody);
+      return new CatchTreeImpl(metaData, createParameter(metaData, element.getCatchParameter()), catchBody);
     }
   }
 

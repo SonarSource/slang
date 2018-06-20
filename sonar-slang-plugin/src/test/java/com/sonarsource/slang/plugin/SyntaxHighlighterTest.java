@@ -122,7 +122,7 @@ public class SyntaxHighlighterTest {
 
   @Test
   public void string_literal() throws Exception {
-    highlight("x + \"abc\" + y");
+    highlight("x + \"abc\" + y;");
     assertHighlighting(1, 3, null);
     assertHighlighting(4, 8, STRING);
     assertHighlighting(9, 9, null);
@@ -130,7 +130,7 @@ public class SyntaxHighlighterTest {
 
   @Test
   public void numeric_literal() throws Exception {
-    highlight("x + 123 + y");
+    highlight("x + 123 + y;");
     assertHighlighting(1, 3, null);
     assertHighlighting(4, 6, CONSTANT);
     assertHighlighting(7, 7, null);

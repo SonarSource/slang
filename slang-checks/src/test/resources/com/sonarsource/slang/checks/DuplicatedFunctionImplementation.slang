@@ -52,7 +52,7 @@ fun f7() { // Compliant - only 1 line
   foo = 1;
 }
 
-fun f8(int a) { // Noncompliant
+fun f8(int a) { // Compliant
   foobar = "abc";
   foo = 1;
   bar = foo > 3 || bar

@@ -51,7 +51,7 @@ public class SLangParserTest {
 
   @Test
   public void testBinaryExpression() {
-    SLangLexer lexer = new SLangLexer(CharStreams.fromString("x = 1\n//comment\ny = 2 + \"1\""));
+    SLangLexer lexer = new SLangLexer(CharStreams.fromString("x = 1;\n//comment\ny = 2 + \"1\";"));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     SLangParser parser = new SLangParser(tokens);
     SLangParser.SlangFileContext tree = parser.slangFile();

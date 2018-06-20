@@ -30,9 +30,11 @@ import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.ParameterTree;
+import com.sonarsource.slang.api.StringLiteralTree;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.VariableDeclarationTree;
 import com.sonarsource.slang.parser.SLangConverter;
 import org.junit.Rule;
 import org.junit.Test;
@@ -100,6 +102,36 @@ public class KotlinConverterTest {
       .isNotEquivalentTo(kotlinStatement("for ((b, a) in container) {a}"));
     assertTree(kotlinStatement("for ((a, b) in container) {a}"))
       .isEquivalentTo(kotlinStatement("for ((a, b) in container) {a}"));
+  }
+
+  @Test
+  public void testVariableDeclaration() {
+    Tree varX = kotlinStatement("var x : Int");
+    Tree valY = kotlinStatement("val y : Int");
+    assertTree(varX).isInstanceOf(VariableDeclarationTree.class);
+    assertTree(valY).isInstanceOf(VariableDeclarationTree.class);
+    assertTree(((VariableDeclarationTree) varX).identifier()).isIdentifier("x");
+    assertThat(((VariableDeclarationTree) varX).isVal()).isFalse();
+    assertTree(((VariableDeclarationTree) valY).identifier()).isIdentifier("y");
+    assertThat(((VariableDeclarationTree) valY).isVal()).isTrue();
+    assertTree(varX).isEquivalentTo(kotlinStatement("var x: Int"));
+    assertTree(varX).isNotEquivalentTo(kotlinStatement("var y: Int"));
+    assertTree(varX).isNotEquivalentTo(kotlinStatement("val x: Int"));
+    assertTree(varX).isNotEquivalentTo(kotlinStatement("var x: Boolean"));
+  }
+
+  @Test
+  public void testVariableDeclarationWithInitializer() {
+    Tree varX = kotlinStatement("var x : Int = 0");
+    Tree valY = kotlinStatement("val x : Int = \"4\"");
+    assertTree(varX).isInstanceOf(VariableDeclarationTree.class);
+    assertTree(valY).isInstanceOf(VariableDeclarationTree.class);
+    assertThat(((VariableDeclarationTree) varX).initializer()).isInstanceOf(LiteralTree.class);
+    assertThat(((VariableDeclarationTree) valY).initializer()).isInstanceOf(StringLiteralTree.class);
+    assertTree(varX).isEquivalentTo(kotlinStatement("var x : Int = 0"));
+    assertTree(varX).isNotEquivalentTo(valY);
+    assertTree(varX).isNotEquivalentTo(kotlinStatement("var x: Int"));
+    assertTree(varX).isNotEquivalentTo(kotlinStatement("var x: Boolean = true"));
   }
 
   @Test
@@ -216,10 +248,10 @@ public class KotlinConverterTest {
   @Test
   public void testIfExpressions() {
     assertTrees(kotlinStatements("if (x == 0) { 3; x + 2;}"))
-      .isEquivalentTo(slangStatements("if (x == 0) { 3; x + 2;}"));
+      .isEquivalentTo(slangStatements("if (x == 0) { 3; x + 2;};"));
 
     assertTrees(kotlinStatements("if (x) 1 else 4"))
-      .isEquivalentTo(slangStatements("if (x) 1 else 4"));
+      .isEquivalentTo(slangStatements("if (x) 1 else 4;"));
 
     assertTrees(kotlinStatements("if (x) 1 else if (x > 2) 4"))
       .isEquivalentTo(slangStatements("if (x) 1 else if (x > 2) 4;"));
@@ -227,12 +259,12 @@ public class KotlinConverterTest {
     // In kotlin a null 'then' branch is valid code, so this if will be mapped to a native tree as it is not valid in Slang AST
     NativeTree ifStatementWithNullThenBranch = (NativeTree) kotlinStatement("if (x) else 4");
     assertTrees(Collections.singletonList(ifStatementWithNullThenBranch))
-      .isNotEquivalentTo(slangStatements("if (x) { } else 4"));
+      .isNotEquivalentTo(slangStatements("if (x) { } else 4;"));
     assertTree(ifStatementWithNullThenBranch).hasChildren(IdentifierTree.class, LiteralTree.class);
 
     NativeTree ifStatementWithNullBranches = (NativeTree) kotlinStatement("if (x) else;");
     assertTrees(Collections.singletonList(ifStatementWithNullBranches))
-      .isNotEquivalentTo(slangStatements("if (x) { } else { }"));
+      .isNotEquivalentTo(slangStatements("if (x) { } else { };"));
     assertTree(ifStatementWithNullBranches).hasChildren(IdentifierTree.class);
   }
 
@@ -353,7 +385,7 @@ public class KotlinConverterTest {
   @Test
   public void testEquivalenceWithComments() {
     assertTrees(kotlinStatements("x + 2; // EOL comment"))
-      .isEquivalentTo(slangStatements("x + 2"));
+      .isEquivalentTo(slangStatements("x + 2;"));
   }
 
   @Test
@@ -372,7 +404,7 @@ public class KotlinConverterTest {
   @Test
   public void testAssignments() {
     assertTrees(kotlinStatements("x = 3\nx -= y + 3\n"))
-      .isEquivalentTo(slangStatements("x = 3; x -= y + 3"));
+      .isEquivalentTo(slangStatements("x = 3; x -= y + 3;"));
   }
 
   @Test
