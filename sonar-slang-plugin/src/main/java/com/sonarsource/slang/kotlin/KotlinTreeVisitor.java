@@ -58,7 +58,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
@@ -280,7 +279,6 @@ class KotlinTreeVisitor {
       getWhenKeyword(element));
   }
 
-  @NotNull
   private Token getWhenKeyword(KtWhenExpression element) {
     return new TokenImpl(
       KotlinTextRanges.textRange(psiDocument, element.getWhenKeyword()),
