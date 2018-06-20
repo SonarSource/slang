@@ -27,6 +27,7 @@ import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.kotlin.InputFileContext;
 import com.sonarsource.slang.visitors.TreeVisitor;
+import javax.annotation.Nullable;
 import org.sonar.api.batch.sensor.highlighting.NewHighlighting;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 
@@ -53,13 +54,13 @@ public class SyntaxHighlighter extends TreeVisitor<InputFileContext> {
   }
 
   @Override
-  protected void before(InputFileContext ctx, Tree root) {
+  protected void before(InputFileContext ctx, @Nullable Tree root) {
     newHighlighting = ctx.sensorContext.newHighlighting()
       .onFile(ctx.inputFile);
   }
 
   @Override
-  protected void after(InputFileContext ctx, Tree root) {
+  protected void after(InputFileContext ctx, @Nullable Tree root) {
     newHighlighting.save();
   }
 

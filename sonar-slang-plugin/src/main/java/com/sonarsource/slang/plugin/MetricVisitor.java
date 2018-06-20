@@ -30,6 +30,7 @@ import com.sonarsource.slang.visitors.TreeVisitor;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import javax.annotation.Nullable;
 import org.sonar.api.batch.measure.Metric;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
@@ -66,7 +67,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
   }
 
   @Override
-  protected void before(InputFileContext ctx, Tree root) {
+  protected void before(InputFileContext ctx, @Nullable Tree root) {
     linesOfCode = new HashSet<>();
     commentLines = new HashSet<>();
     nosonarLines = new HashSet<>();
@@ -75,7 +76,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
   }
 
   @Override
-  protected void after(InputFileContext ctx, Tree root) {
+  protected void after(InputFileContext ctx, @Nullable Tree root) {
     saveMetric(ctx, CoreMetrics.NCLOC, linesOfCode().size());
     saveMetric(ctx, CoreMetrics.COMMENT_LINES, commentLines().size());
     saveMetric(ctx, CoreMetrics.FUNCTIONS, numberOfFunctions());

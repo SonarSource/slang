@@ -31,6 +31,7 @@ import com.sonarsource.slang.visitors.TreeVisitor;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
@@ -84,24 +85,21 @@ public class KotlinSensor implements Sensor {
     ASTConverter converter = new KotlinConverter();
     for (InputFile inputFile : inputFiles) {
       InputFileContext inputFileContext = new InputFileContext(sensorContext, inputFile);
-      try {
-        analyseFile(converter, inputFileContext, inputFile, visitors);
-      } catch (ParseException e) {
-        logParsingError(inputFile, e);
-        inputFileContext.reportError("Unable to parse file: " + inputFile, e.getPosition());
-      }
+      analyseFile(converter, inputFileContext, inputFile, visitors);
     }
   }
 
   private static void analyseFile(ASTConverter converter, InputFileContext inputFileContext, InputFile inputFile, List<TreeVisitor<InputFileContext>> visitors) {
-    String content;
+    Tree tree = null;
     try {
-      content = inputFile.contents();
+      String content = inputFile.contents();
+      tree = converter.parse(content);
     } catch (IOException e) {
-      throw new ParseException("Cannot read " + inputFile);
+      reportError(inputFileContext, inputFile, e.getMessage(), null);
+    } catch (ParseException e) {
+      reportError(inputFileContext, inputFile, e.getMessage(), e.getPosition());
     }
 
-    Tree tree = converter.parse(content);
     for (TreeVisitor<InputFileContext> visitor : visitors) {
       try {
         visitor.scan(inputFileContext, tree);
@@ -112,14 +110,14 @@ public class KotlinSensor implements Sensor {
     }
   }
 
-  private static void logParsingError(InputFile inputFile, ParseException e) {
-    TextPointer position = e.getPosition();
+  private static void reportError(InputFileContext inputFileContext, InputFile inputFile, String errorMessage, @Nullable TextPointer position) {
     String positionMessage = "";
     if (position != null) {
       positionMessage = String.format("Parse error at position %s:%s", position.line(), position.lineOffset());
     }
     LOG.error(String.format("Unable to parse file: %s. %s", inputFile.uri(), positionMessage));
-    LOG.error(e.getMessage());
+    LOG.error(errorMessage);
+    inputFileContext.reportError("Unable to parse file: " + inputFile, position);
   }
 
 }
