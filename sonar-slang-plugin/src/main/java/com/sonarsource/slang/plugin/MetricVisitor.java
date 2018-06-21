@@ -62,9 +62,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
         numberOfFunctions++;
       }
     });
-    register(ClassDeclarationTree.class, (ctx, tree) -> {
-      numberOfClasses++;
-    });
+    register(ClassDeclarationTree.class, (ctx, tree) -> numberOfClasses++);
   }
 
   @Override
