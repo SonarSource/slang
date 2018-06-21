@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.impl;
 
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import org.junit.Test;
@@ -33,13 +34,16 @@ public class IfTreeImplTest {
     Tree condition = new LiteralTreeImpl(meta, "42");
     Tree thenBranch = new IdentifierTreeImpl(meta, "x");
     Tree elseBranch = new IdentifierTreeImpl(meta, "y");
-    IfTreeImpl tree = new IfTreeImpl(meta, condition, thenBranch, elseBranch);
+    TokenImpl ifToken = new TokenImpl(new TextRangeImpl(1, 0, 1, 2), "if", Token.Type.KEYWORD);
+    TokenImpl elseToken = new TokenImpl(new TextRangeImpl(2, 0, 1, 4), "else", Token.Type.KEYWORD);
+    IfTreeImpl tree = new IfTreeImpl(meta, condition, thenBranch, elseBranch, ifToken, elseToken);
     assertThat(tree.children()).containsExactly(condition, thenBranch, elseBranch);
     assertThat(tree.condition()).isEqualTo(condition);
     assertThat(tree.thenBranch()).isEqualTo(thenBranch);
     assertThat(tree.elseBranch()).isEqualTo(elseBranch);
 
-    assertThat(new IfTreeImpl(meta, condition, thenBranch, null).children()).containsExactly(condition, thenBranch);
+    assertThat(new IfTreeImpl(meta, condition, thenBranch, null, ifToken, null)
+      .children()).containsExactly(condition, thenBranch);
   }
 
 }

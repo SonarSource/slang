@@ -33,7 +33,6 @@ import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
-
 import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
@@ -268,13 +267,14 @@ class KotlinTreeVisitor {
     Tree condition = createMandatoryElement(element.getCondition());
     Tree thenBranch = createElement(element.getThen());
     Tree elseBranch = createElement(element.getElse());
-
+    Token ifToken = toSlangToken(element.getIfKeyword());
+    Token elseToken = element.getElseKeyword() != null ? toSlangToken(element.getElseKeyword()) : null;
     if (thenBranch == null) {
       // Kotlin allows for a null then branch, which we match to a native since this is not allowed in Slang
       List<Tree> children = elseBranch != null ? Arrays.asList(condition, elseBranch) : Collections.singletonList(condition);
       return createNativeTree(metaData, new KotlinNativeKind(element), children);
     }
-    return new IfTreeImpl(metaData, condition, thenBranch, elseBranch);
+    return new IfTreeImpl(metaData, condition, thenBranch, elseBranch, ifToken, elseToken);
   }
 
   private Tree createParameter(TreeMetaData metaData, KtParameter ktParameter) {
@@ -329,15 +329,7 @@ class KotlinTreeVisitor {
       whenExpressions.stream()
         .map(MatchCaseTree.class::cast)
         .collect(Collectors.toList()),
-      getWhenKeyword(element));
-  }
-
-  private Token getWhenKeyword(KtWhenExpression element) {
-    return new TokenImpl(
-      KotlinTextRanges.textRange(psiDocument, element.getWhenKeyword()),
-      element.getWhenKeyword().getText(),
-      Token.Type.KEYWORD
-    );
+      toSlangToken(element.getWhenKeyword()));
   }
 
   private Tree createMatchCase(TreeMetaData metaData, KtWhenEntry element) {
@@ -463,6 +455,14 @@ class KotlinTreeVisitor {
 
   private static boolean isSimpleStringLiteralEntry(PsiElement element) {
     return element instanceof KtLiteralStringTemplateEntry || element instanceof KtEscapeStringTemplateEntry;
+  }
+
+  private TokenImpl toSlangToken(PsiElement psiElement) {
+    return new TokenImpl(
+      KotlinTextRanges.textRange(psiDocument, psiElement),
+      psiElement.getText(),
+      Token.Type.KEYWORD
+    );
   }
 
 }

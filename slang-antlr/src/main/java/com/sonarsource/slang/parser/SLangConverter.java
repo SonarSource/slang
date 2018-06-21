@@ -57,7 +57,7 @@ import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
 import com.sonarsource.slang.impl.UnaryExpressionTreeImpl;
-
+import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -66,8 +66,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -291,12 +289,21 @@ public class SLangConverter implements ASTConverter {
 
     @Override
     public Tree visitIfExpression(SLangParser.IfExpressionContext ctx) {
+      com.sonarsource.slang.api.Token ifToken = toSlangToken(ctx.IF().getSymbol());
+      com.sonarsource.slang.api.Token elseToken = null;
       Tree elseBranch = null;
       if (ctx.controlBlock().size() > 1) {
         elseBranch = visit(ctx.controlBlock(1));
+        elseToken = toSlangToken(ctx.ELSE().getSymbol());
       }
       Tree thenBranch = visit(ctx.controlBlock(0));
-      return new IfTreeImpl(meta(ctx), visit(ctx.statement()), thenBranch, elseBranch);
+      return new IfTreeImpl(
+        meta(ctx),
+        visit(ctx.statement()),
+        thenBranch,
+        elseBranch,
+        ifToken,
+        elseToken);
     }
 
     @Override
@@ -310,12 +317,7 @@ public class SLangConverter implements ASTConverter {
         meta,
         visit(ctx.statement()),
         cases,
-        getMatchKeyword(ctx.MATCH().getSymbol()));
-    }
-
-    private static com.sonarsource.slang.api.Token getMatchKeyword(Token matchToken) {
-      TextRange textRange = getSlangTextRange(matchToken);
-      return new TokenImpl(textRange, matchToken.getText(), Type.KEYWORD);
+        toSlangToken(ctx.MATCH().getSymbol()));
     }
 
     @Override
@@ -473,6 +475,11 @@ public class SLangConverter implements ASTConverter {
         result = new AssignmentExpressionTreeImpl(meta(left, result), operator, left, result);
       }
       return result;
+    }
+
+    private static com.sonarsource.slang.api.Token toSlangToken(Token antlrToken) {
+      TextRange textRange = getSlangTextRange(antlrToken);
+      return new TokenImpl(textRange, antlrToken.getText(), Type.KEYWORD);
     }
   }
 }

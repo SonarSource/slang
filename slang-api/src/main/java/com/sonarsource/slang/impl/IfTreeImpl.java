@@ -20,6 +20,7 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.IfTree;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import java.util.ArrayList;
@@ -32,12 +33,22 @@ public class IfTreeImpl extends BaseTreeImpl implements IfTree {
   private final Tree condition;
   private final Tree thenBranch;
   private final Tree elseBranch;
+  private final Token ifKeyword;
+  private final Token elseKeyword;
 
-  public IfTreeImpl(TreeMetaData metaData, Tree condition, Tree thenBranch, @Nullable Tree elseBranch) {
+  public IfTreeImpl(
+    TreeMetaData metaData,
+    Tree condition,
+    Tree thenBranch,
+    @Nullable Tree elseBranch,
+    Token ifKeyword,
+    @Nullable Token elseKeyword) {
     super(metaData);
     this.condition = condition;
     this.thenBranch = thenBranch;
     this.elseBranch = elseBranch;
+    this.ifKeyword = ifKeyword;
+    this.elseKeyword = elseKeyword;
   }
 
   @Override
@@ -54,6 +65,17 @@ public class IfTreeImpl extends BaseTreeImpl implements IfTree {
   @Override
   public Tree elseBranch() {
     return elseBranch;
+  }
+
+  @Override
+  public Token ifKeyword() {
+    return ifKeyword;
+  }
+
+  @CheckForNull
+  @Override
+  public Token elseKeyword() {
+    return elseKeyword;
   }
 
   @Override

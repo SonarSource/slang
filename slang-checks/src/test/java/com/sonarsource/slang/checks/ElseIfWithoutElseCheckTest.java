@@ -17,21 +17,11 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
+package com.sonarsource.slang.checks;
 
-import javax.annotation.CheckForNull;
+import org.junit.Test;
 
-public interface IfTree extends Tree {
-
-  Tree condition();
-
-  Tree thenBranch();
-
-  @CheckForNull
-  Tree elseBranch();
-
-  Token ifKeyword();
-
-  @CheckForNull
-  Token elseKeyword();
+public class ElseIfWithoutElseCheckTest {
+  @Test
+  public void test() { Verifier.verify("ElseIfWithoutElse.slang", new ElseIfWithoutElseCheck()); }
 }
