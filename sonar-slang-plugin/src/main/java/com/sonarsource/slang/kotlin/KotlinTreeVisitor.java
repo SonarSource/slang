@@ -299,7 +299,7 @@ class KotlinTreeVisitor {
       return createNativeTree(metaData, new KotlinNativeKind(ktProperty, nameIdentifier.getText()), ktProperty);
     }
 
-    IdentifierTree identifierTree = new IdentifierTreeImpl(metaData, nameIdentifier.getText());
+    IdentifierTree identifierTree = new IdentifierTreeImpl(getTreeMetaData(nameIdentifier), nameIdentifier.getText());
     Tree typeTree = createElement(ktProperty.getTypeReference());
     Tree initializerTree = createElement(ktProperty.getInitializer());
     boolean isVal = !ktProperty.isVar();

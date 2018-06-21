@@ -129,8 +129,8 @@ public class KotlinConverterTest {
 
   @Test
   public void testVariableDeclarationWithInitializer() {
-    Tree varX = kotlinStatement("var x : Int = 0");
-    Tree valY = kotlinStatement("val x : Int = \"4\"");
+    Tree varX = kotlinStatement("\nvar x : Int = 0");
+    Tree valY = kotlinStatement("\nval x : Int = \"4\"");
     assertTree(varX).isInstanceOf(VariableDeclarationTree.class);
     assertTree(valY).isInstanceOf(VariableDeclarationTree.class);
     assertThat(((VariableDeclarationTree) varX).initializer()).isInstanceOf(LiteralTree.class);
@@ -139,6 +139,7 @@ public class KotlinConverterTest {
     assertTree(varX).isNotEquivalentTo(valY);
     assertTree(varX).isNotEquivalentTo(kotlinStatement("var x: Int"));
     assertTree(varX).isNotEquivalentTo(kotlinStatement("var x: Boolean = true"));
+    assertTree(((VariableDeclarationTree) varX).identifier()).hasTextRange(2, 4, 2, 5);
   }
 
   @Test
