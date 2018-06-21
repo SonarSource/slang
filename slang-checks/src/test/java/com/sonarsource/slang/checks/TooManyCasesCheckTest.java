@@ -17,25 +17,24 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
+package com.sonarsource.slang.checks;
 
-import java.util.List;
-import java.util.stream.Stream;
+import org.junit.Test;
 
-public interface Tree extends HasTextRange {
+public class TooManyCasesCheckTest {
 
-  List<Tree> children();
+  private TooManyCasesCheck check = new TooManyCasesCheck();
 
-  TreeMetaData metaData();
-
-  @Override
-  default TextRange textRange() {
-    return metaData().textRange();
+  @Test
+  public void test_3() {
+    check.maximum = 3;
+    Verifier.verify("TooManyCases_3.slang", check);
   }
 
-  default Stream<Tree> descendants() {
-    return children().stream()
-      .flatMap(tree -> Stream.concat(Stream.of(tree), tree.descendants()));
+  @Test
+  public void test_4() {
+    check.maximum = 4;
+    Verifier.verify("TooManyCases_4.slang", check);
   }
 
 }

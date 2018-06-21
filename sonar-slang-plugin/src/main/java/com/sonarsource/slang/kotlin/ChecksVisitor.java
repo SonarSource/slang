@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.kotlin;
 
+import com.sonarsource.slang.api.HasTextRange;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.api.CheckContext;
@@ -90,23 +91,23 @@ public class ChecksVisitor extends TreeVisitor<InputFileContext> {
     }
 
     @Override
-    public void reportIssue(Tree tree, String message) {
-      reportIssue(tree, message, Collections.emptyList());
+    public void reportIssue(HasTextRange toHighlight, String message) {
+      reportIssue(toHighlight, message, Collections.emptyList());
     }
 
     @Override
-    public void reportIssue(Tree tree, String message, SecondaryLocation secondaryLocation) {
-      reportIssue(tree, message, Collections.singletonList(secondaryLocation));
+    public void reportIssue(HasTextRange toHighlight, String message, SecondaryLocation secondaryLocation) {
+      reportIssue(toHighlight, message, Collections.singletonList(secondaryLocation));
     }
 
     @Override
-    public void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations) {
-      reportIssue(tree, message, secondaryLocations, null);
+    public void reportIssue(HasTextRange toHighlight, String message, List<SecondaryLocation> secondaryLocations) {
+      reportIssue(toHighlight, message, secondaryLocations, null);
     }
 
     @Override
-    public void reportIssue(Tree tree, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
-      reportIssue(tree.metaData().textRange(), message, secondaryLocations, gap);
+    public void reportIssue(HasTextRange toHighlight, String message, List<SecondaryLocation> secondaryLocations, @Nullable Double gap) {
+      reportIssue(toHighlight.textRange(), message, secondaryLocations, gap);
     }
 
     @Override

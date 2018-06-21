@@ -19,23 +19,8 @@
  */
 package com.sonarsource.slang.api;
 
-import java.util.List;
-import java.util.stream.Stream;
+public interface HasTextRange {
 
-public interface Tree extends HasTextRange {
-
-  List<Tree> children();
-
-  TreeMetaData metaData();
-
-  @Override
-  default TextRange textRange() {
-    return metaData().textRange();
-  }
-
-  default Stream<Tree> descendants() {
-    return children().stream()
-      .flatMap(tree -> Stream.concat(Stream.of(tree), tree.descendants()));
-  }
+  TextRange textRange();
 
 }
