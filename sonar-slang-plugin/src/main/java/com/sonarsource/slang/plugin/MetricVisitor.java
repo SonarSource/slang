@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.plugin;
 
+import com.sonarsource.slang.api.ClassDeclarationTree;
 import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.TextRange;
@@ -45,6 +46,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
   private Set<Integer> commentLines;
   private Set<Integer> nosonarLines;
   private int numberOfFunctions;
+  private int numberOfClasses;
 
   public MetricVisitor(FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter) {
     this.fileLinesContextFactory = fileLinesContextFactory;
@@ -60,6 +62,9 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
         numberOfFunctions++;
       }
     });
+    register(ClassDeclarationTree.class, (ctx, tree) -> {
+      numberOfClasses++;
+    });
   }
 
   @Override
@@ -68,6 +73,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
     commentLines = new HashSet<>();
     nosonarLines = new HashSet<>();
     numberOfFunctions = 0;
+    numberOfClasses = 0;
   }
 
   @Override
@@ -75,6 +81,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
     saveMetric(ctx, CoreMetrics.NCLOC, linesOfCode().size());
     saveMetric(ctx, CoreMetrics.COMMENT_LINES, commentLines().size());
     saveMetric(ctx, CoreMetrics.FUNCTIONS, numberOfFunctions());
+    saveMetric(ctx, CoreMetrics.CLASSES, numberOfClasses());
 
     FileLinesContext fileLinesContext = fileLinesContextFactory.createFor(ctx.inputFile);
     linesOfCode().forEach(line -> fileLinesContext.setIntValue(CoreMetrics.NCLOC_DATA_KEY, line, 1));
@@ -123,6 +130,10 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
 
   public int numberOfFunctions() {
     return numberOfFunctions;
+  }
+
+  public int numberOfClasses() {
+    return numberOfClasses;
   }
 
 }
