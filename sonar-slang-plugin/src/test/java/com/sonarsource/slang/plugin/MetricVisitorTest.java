@@ -131,6 +131,22 @@ public class MetricVisitorTest {
     assertThat(visitor.numberOfFunctions()).isEqualTo(1);
   }
 
+  @Test
+  public void classes() throws Exception {
+    scan("" +
+            "x + 1;\n" +
+            "x = true || false;");
+    assertThat(visitor.numberOfClasses()).isEqualTo(0);
+    scan("" +
+            "class C {}\n" +
+            "fun function() {}\n" +
+            "class D { int val x = 0; }\n" +
+            "class E {\n" +
+            "  fun doSomething(int x) {}\n" +
+            "}");
+    assertThat(visitor.numberOfClasses()).isEqualTo(3);
+  }
+
   private void scan(String code) throws IOException {
     inputFile = new TestInputFileBuilder("moduleKey", tempFolder.newFile().getName())
       .setCharset(StandardCharsets.UTF_8)
