@@ -39,6 +39,7 @@ import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
 import com.sonarsource.slang.impl.CatchTreeImpl;
+import com.sonarsource.slang.impl.ClassDeclarationTreeImpl;
 import com.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
@@ -76,6 +77,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
 import org.jetbrains.kotlin.psi.KtBlockExpression;
 import org.jetbrains.kotlin.psi.KtCatchClause;
+import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtConstantExpression;
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry;
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry;
@@ -166,6 +168,8 @@ class KotlinTreeVisitor {
       return new BlockTreeImpl(metaData, statementOrExpressions);
     } else if (element instanceof KtFile) {
       return new TopLevelTreeImpl(metaData, list(Arrays.stream(element.getChildren())), metaDataProvider.allComments());
+    } else if (element instanceof KtClass) {
+      return createClassDeclarationTree(metaData, (KtClass) element);
     } else if (element instanceof KtFunction) {
       return createFunctionDeclarationTree(metaData, (KtFunction) element);
     } else if (element instanceof KtIfExpression) {
@@ -193,8 +197,13 @@ class KotlinTreeVisitor {
     }
   }
 
+  private Tree createClassDeclarationTree(TreeMetaData metaData, KtClass ktClass) {
+    Tree classDecl = createNativeTree(metaData, new KotlinNativeKind(ktClass, ktClass.getName()), ktClass);
+    return new ClassDeclarationTreeImpl(metaData, classDecl);
+  }
+
   private Tree convertElementToNative(PsiElement element, TreeMetaData metaData) {
-    if (element instanceof KtDestructuringDeclarationEntry || isSimpleStringLiteralEntry(element)) {
+    if (element instanceof KtDestructuringDeclarationEntry || isSimpleStringLiteralEntry(element) ) {
       // To differentiate between the native trees of complex string template entries, we add the string value to the native kind
       return createNativeTree(metaData, new KotlinNativeKind(element, element.getText()), element);
     } else {

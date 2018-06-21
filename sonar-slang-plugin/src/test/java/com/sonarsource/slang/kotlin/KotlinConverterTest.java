@@ -21,6 +21,7 @@ package com.sonarsource.slang.kotlin;
 
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.CatchTree;
+import com.sonarsource.slang.api.ClassDeclarationTree;
 import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
@@ -137,6 +138,32 @@ public class KotlinConverterTest {
   }
 
   @Test
+  public void testClassWithBody() {
+    Tree treeA = kotlin("class A { private fun function(a : Int): Boolean { true; }}");
+    assertTree(treeA).isInstanceOf(ClassDeclarationTree.class);
+    ClassDeclarationTree classA = (ClassDeclarationTree) treeA;
+    assertThat(classA.children()).hasSize(1);
+    assertTree(treeA).isNotEquivalentTo(kotlin("class A { private fun function(a : Int): Boolean { true; false; }"));
+    assertTree(treeA).isNotEquivalentTo(kotlin("class A { private fun function(a : Int): Boolean { false; }"));
+    assertTree(treeA).isNotEquivalentTo(kotlin("class A { private fun function(a : Int): Int { true; }"));
+    assertTree(treeA).isNotEquivalentTo(kotlin("class A { private fun function(a : Boolean): Boolean { true; }"));
+    assertTree(treeA).isNotEquivalentTo(kotlin("class A { private fun function(b : Int): Boolean { true; }"));
+    assertTree(treeA).isNotEquivalentTo(kotlin("class A { private fun foo(a : Int): Boolean { true; }"));
+    assertTree(treeA).isNotEquivalentTo(kotlin("class A { public fun function(a : Int): Boolean { true; }"));
+    assertTree(treeA).isNotEquivalentTo(kotlin("class B { private fun function(a : Int): Boolean { true; }"));
+    assertTree(treeA).isNotEquivalentTo(kotlin("class A { val x: Int; private fun function(a : Int): Boolean { true; }"));
+  }
+
+  @Test
+  public void testClassWithoutBody() {
+    Tree classA = kotlin("class A {}");
+    assertTree(classA).isInstanceOf(ClassDeclarationTree.class);
+    assertTree(classA).isEquivalentTo(kotlin("class A {}"));
+    assertTree(classA).isNotEquivalentTo(kotlin("class A constructor(){}"));
+    assertTree(classA).isNotEquivalentTo(kotlin("class B {}"));
+  }
+
+  @Test
   public void testFunctionDeclaration() {
     FunctionDeclarationTree functionDeclarationTree = ((FunctionDeclarationTree) kotlin("private fun function1(a: Int, b: String): Boolean { true; }"));
     assertTree(functionDeclarationTree.name()).isIdentifier("function1").hasTextRange(1, 12, 1, 21);
@@ -157,7 +184,7 @@ public class KotlinConverterTest {
     assertTree(privateModifier).isNotEquivalentTo(functionWithInternalModifier.modifiers().get(0));
     assertTree(privateModifier).isEquivalentTo(functionWithPrivate.modifiers().get(0));
 
-    FunctionDeclarationTree constructorFunction = ((FunctionDeclarationTree) kotlin("class classC(a: String, b: Int) {}").children().get(0));
+    FunctionDeclarationTree constructorFunction = ((FunctionDeclarationTree) kotlin("class classC(a: String, b: Int) {}").children().get(0).children().get(0));
     assertTree(constructorFunction.name()).isNull();
     assertThat(constructorFunction.modifiers()).isEmpty();
     assertTree(constructorFunction.returnType()).isNull();

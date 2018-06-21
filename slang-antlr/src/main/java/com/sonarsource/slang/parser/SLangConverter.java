@@ -39,6 +39,7 @@ import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
 import com.sonarsource.slang.impl.CatchTreeImpl;
+import com.sonarsource.slang.impl.ClassDeclarationTreeImpl;
 import com.sonarsource.slang.impl.CommentImpl;
 import com.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
@@ -56,6 +57,7 @@ import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
 import com.sonarsource.slang.impl.UnaryExpressionTreeImpl;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -180,10 +182,26 @@ public class SLangConverter implements ASTConverter {
     public Tree visitTypeDeclaration(SLangParser.TypeDeclarationContext ctx) {
       if (ctx.methodDeclaration() != null) {
         return visit(ctx.methodDeclaration());
+      } else if (ctx.classDeclaration() != null) {
+        return visit(ctx.classDeclaration());
       } else {
         return visit(ctx.statement());
       }
-     }
+    }
+
+    @Override
+    public Tree visitClassDeclaration(SLangParser.ClassDeclarationContext ctx) {
+      List<Tree> children = new ArrayList<>();
+
+      if (ctx.identifier() != null) {
+        children.add(visit(ctx.identifier()));
+      }
+
+      children.addAll(list(ctx.typeDeclaration()));
+
+      NativeTree classDecl = new NativeTreeImpl(meta(ctx), new SNativeKind(ctx), children);
+      return new ClassDeclarationTreeImpl(meta(ctx), classDecl);
+    }
 
     @Override
     public Tree visitNativeExpression(SLangParser.NativeExpressionContext ctx) {

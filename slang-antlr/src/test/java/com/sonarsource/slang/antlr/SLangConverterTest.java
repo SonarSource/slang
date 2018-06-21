@@ -23,6 +23,7 @@ package com.sonarsource.slang.antlr;
 import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
+import com.sonarsource.slang.api.ClassDeclarationTree;
 import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
@@ -36,7 +37,6 @@ import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.api.VariableDeclarationTree;
-import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 import com.sonarsource.slang.parser.SLangConverter;
 import java.util.Arrays;
 import java.util.List;
@@ -140,6 +140,46 @@ public class SLangConverterTest {
     assertTree(varDeclX).isNotEquivalentTo(converter.parse("var x;").children().get(0));;
   }
 
+  @Test
+  public void class_with_identifier_and_body() {
+    ClassDeclarationTree classe = parseClass("class MyClass { int val x; fun foo (x); } ");
+    assertThat(classe.children()).hasSize(1);
+    assertThat(classe.classTree()).isInstanceOf(NativeTree.class);
+    NativeTree classChildren = (NativeTree) classe.classTree();
+    assertThat(classChildren.children()).hasSize(3);
+    assertTree(classChildren.children().get(0)).isIdentifier("MyClass");
+    assertThat(classChildren.children().get(1)).isInstanceOf(VariableDeclarationTree.class);
+    assertTree(classChildren.children().get(2)).isInstanceOf(FunctionDeclarationTree.class);
+  }
+
+  @Test
+  public void class_without_body() {
+    ClassDeclarationTree classe = parseClass("class MyClass { } ");
+    assertThat(classe.children()).hasSize(1);
+    assertThat(classe.classTree()).isInstanceOf(NativeTree.class);
+    NativeTree classChildren = (NativeTree) classe.classTree();
+    assertThat(classChildren.children()).hasSize(1);
+    assertTree(classChildren.children().get(0)).isIdentifier("MyClass");
+  }
+
+  @Test
+  public void class_without_identifier() {
+    ClassDeclarationTree classe = parseClass("class { int val x; } ");
+    assertThat(classe.children()).hasSize(1);
+    assertThat(classe.classTree()).isInstanceOf(NativeTree.class);
+    NativeTree classChildren = (NativeTree) classe.classTree();
+    assertThat(classChildren.children()).hasSize(1);
+    assertThat(classChildren.children().get(0)).isInstanceOf(VariableDeclarationTree.class);
+  }
+
+  @Test
+  public void class_without_identifier_and_body() {
+    ClassDeclarationTree classe = parseClass("class { } ");
+    assertThat(classe.children()).hasSize(1);
+    assertThat(classe.classTree()).isInstanceOf(NativeTree.class);
+    NativeTree classChildren = (NativeTree) classe.classTree();
+    assertThat(classChildren.children()).hasSize(0);
+  }
 
   @Test
   public void function() {
@@ -367,4 +407,7 @@ public class SLangConverterTest {
     return (FunctionDeclarationTree) converter.parse(code).children().get(0);
   }
 
+  private ClassDeclarationTree parseClass(String code) {
+    return (ClassDeclarationTree) converter.parse(code).children().get(0);
+  }
 }
