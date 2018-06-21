@@ -88,8 +88,7 @@ public class SLangConverter implements ASTConverter {
     SLangParser.PRIVATE,
     SLangParser.PUBLIC,
     SLangParser.RETURN,
-    SLangParser.THIS
-  ));
+    SLangParser.THIS));
 
   @Override
   public Tree parse(String slangCode) {
@@ -392,7 +391,7 @@ public class SLangConverter implements ASTConverter {
       if (ctx.unaryOperator() == null) {
         return visit(ctx.atomicExpression());
       } else {
-        Tree operand = visit(ctx.atomicExpression());
+        Tree operand = visit(ctx.unaryExpression());
         return new UnaryExpressionTreeImpl(meta(ctx), UnaryExpressionTree.Operator.NEGATE, operand);
       }
     }

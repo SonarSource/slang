@@ -85,6 +85,9 @@ public class KotlinConverterTest {
 
   @Test
   public void unaryExpressions() {
+    assertTree(kotlinStatement("!x")).isEquivalentTo(kotlinStatement("!x"));
+    assertTree(kotlinStatement("!x")).isEquivalentTo(slangStatement("!x;"));
+    assertTree(kotlinStatement("!!x")).isEquivalentTo(slangStatement("!!x;"));
     assertTree(kotlinStatement("+1")).isEquivalentTo(kotlinStatement("+1"));
     assertTree(kotlinStatement("+1")).isNotEquivalentTo(kotlinStatement("+2"));
     assertTree(kotlinStatement("+1")).isNotEquivalentTo(kotlinStatement("-1"));
@@ -459,6 +462,12 @@ public class KotlinConverterTest {
 
   private static Tree getCondition(List<MatchCaseTree> cases, int i) {
     return cases.get(i).expression();
+  }
+
+  private Tree slangStatement(String innerCode) {
+    List<Tree> slangStatements = slangStatements(innerCode);
+    assertThat(slangStatements).hasSize(1);
+    return slangStatements.get(0);
   }
 
   private List<Tree> slangStatements(String innerCode) {

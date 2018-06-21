@@ -35,6 +35,7 @@ import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 
 import com.sonarsource.slang.api.TreeMetaData;
+import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
@@ -54,6 +55,7 @@ import com.sonarsource.slang.impl.TextRangeImpl;
 import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
+import com.sonarsource.slang.impl.UnaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
 import java.util.AbstractMap.SimpleEntry;
@@ -72,6 +74,7 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiErrorElement;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement;
+import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
@@ -94,12 +97,13 @@ import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtTryExpression;
 import org.jetbrains.kotlin.psi.KtTypeElement;
+import org.jetbrains.kotlin.psi.KtUnaryExpression;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
 import org.jetbrains.kotlin.psi.KtWhenEntry;
 import org.jetbrains.kotlin.psi.KtWhenExpression;
 
 class KotlinTreeVisitor {
-  private static final Map<KtToken, Operator> TOKENS_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
+  private static final Map<KtToken, Operator> BINARY_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
     new SimpleEntry<>(KtTokens.EQEQ, Operator.EQUAL_TO),
     new SimpleEntry<>(KtTokens.EXCLEQ, Operator.NOT_EQUAL_TO),
     new SimpleEntry<>(KtTokens.LT, Operator.LESS_THAN),
@@ -112,6 +116,10 @@ class KotlinTreeVisitor {
     new SimpleEntry<>(KtTokens.MINUS, Operator.MINUS),
     new SimpleEntry<>(KtTokens.MUL, Operator.TIMES),
     new SimpleEntry<>(KtTokens.DIV, Operator.DIVIDED_BY))
+    .collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue)));
+
+  private static final Map<KtToken, UnaryExpressionTree.Operator> UNARY_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
+    new SimpleEntry<>(KtTokens.EXCL, UnaryExpressionTree.Operator.NEGATE))
     .collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue)));
 
   private static final Map<KtToken, AssignmentExpressionTree.Operator> ASSIGNMENTS_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
@@ -159,8 +167,8 @@ class KotlinTreeVisitor {
   private Tree convertElementToSlangAST(PsiElement element, TreeMetaData metaData) {
     if (isError(element)) {
       throw new ParseException("Cannot convert file due to syntactic errors", metaData.textRange().start());
-    } else if (element instanceof KtBinaryExpression) {
-      return createBinaryExpression(metaData, (KtBinaryExpression) element);
+    } else if (element instanceof KtOperationExpression) {
+      return createOperationExpression(metaData, (KtOperationExpression) element);
     } else if (element instanceof KtNameReferenceExpression) {
       return createIdentifierTree(metaData, element.getText());
     } else if (element instanceof KtBlockExpression) {
@@ -186,8 +194,6 @@ class KotlinTreeVisitor {
       return createElement(((KtFinallySection) element).getFinalExpression());
     } else if (isLiteral(element)) {
       return createLiteral(metaData, element);
-    } else if (element instanceof KtOperationExpression) {
-      return createOperationExpression(metaData, (KtOperationExpression) element);
     } else if (element instanceof KtParameter) {
       return createParameter(metaData, (KtParameter) element);
     } else if (element instanceof KtProperty) {
@@ -348,6 +354,16 @@ class KotlinTreeVisitor {
     return new MatchCaseTreeImpl(metaData, conditionExpression, body);
   }
 
+  private Tree createOperationExpression(TreeMetaData metaData, KtOperationExpression operationExpression) {
+    if (operationExpression instanceof KtBinaryExpression) {
+      return createBinaryExpression(metaData, (KtBinaryExpression) operationExpression);
+    } else if (operationExpression instanceof KtUnaryExpression) {
+      return createUnaryExpression(metaData, (KtUnaryExpression) operationExpression);
+    }
+
+    return createNativeOperationExpression(metaData, operationExpression);
+  }
+
   private ExceptionHandlingTree createExceptionHandling(TreeMetaData metadata, KtTryExpression element) {
     Tree tryTree = createMandatoryElement(element.getTryBlock());
     List<Tree> catchTreeList = list(element.getCatchClauses().stream());
@@ -377,7 +393,7 @@ class KotlinTreeVisitor {
       return createNativeTree(metaData, new KotlinNativeKind(element, operationToken), children);
     }
 
-    Operator operator = TOKENS_OPERATOR_MAP.get(operationToken);
+    Operator operator = BINARY_OPERATOR_MAP.get(operationToken);
     AssignmentExpressionTree.Operator assignmentOperator = ASSIGNMENTS_OPERATOR_MAP.get(operationToken);
     if (operator != null) {
       return new BinaryExpressionTreeImpl(metaData, operator, leftOperand, rightOperand);
@@ -385,8 +401,19 @@ class KotlinTreeVisitor {
       return new AssignmentExpressionTreeImpl(metaData, assignmentOperator, leftOperand, rightOperand);
     } else {
       // FIXME ensure they are all supported. Ex: Add '/=' for assignments
-      return createOperationExpression(metaData, element);
+      return createNativeOperationExpression(metaData, element);
     }
+  }
+
+  private Tree createUnaryExpression(TreeMetaData metaData, KtUnaryExpression element) {
+    Tree operand = createElement(element.getBaseExpression());
+    IElementType operationToken = element.getOperationToken();
+    UnaryExpressionTree.Operator operator = UNARY_OPERATOR_MAP.get(operationToken);
+
+    if (operand == null || operator == null) {
+      return createNativeOperationExpression(metaData, element);
+    }
+    return new UnaryExpressionTreeImpl(metaData, operator, operand);
   }
 
   private static Tree createLiteral(TreeMetaData metaData, PsiElement element) {
@@ -396,7 +423,7 @@ class KotlinTreeVisitor {
     return new LiteralTreeImpl(metaData, element.getText());
   }
 
-  private Tree createOperationExpression(TreeMetaData metaData, KtOperationExpression operationExpression) {
+  private Tree createNativeOperationExpression(TreeMetaData metaData, KtOperationExpression operationExpression) {
     NativeKind nativeKind = new KotlinNativeKind(operationExpression, operationExpression.getOperationReference().getReferencedNameElement().getText());
     return createNativeTree(metaData, nativeKind, operationExpression);
   }
