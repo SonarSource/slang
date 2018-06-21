@@ -5,8 +5,13 @@ slangFile
   ;
 
 typeDeclaration
-  :  methodDeclaration 
+  :  classDeclaration
+  |  methodDeclaration
   |  statement SEMICOLON
+  ;
+
+classDeclaration
+  :  CLASS identifier? LCURLY typeDeclaration* RCURLY
   ;
 
 methodDeclaration
@@ -244,6 +249,7 @@ identifier : Identifier;
 // Keywords
 
 CATCH : 'catch';
+CLASS : 'class';
 ELSE : 'else';
 FINALLY : 'finally';
 FUN: 'fun';
