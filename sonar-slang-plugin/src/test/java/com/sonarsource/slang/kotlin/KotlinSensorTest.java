@@ -105,7 +105,7 @@ public class KotlinSensorTest {
   @Test
   public void simple_file() {
     InputFile inputFile = createInputFile("file1.kt", "" +
-      "fun main(args: Array<String>) {\nprint (1 == 1);}");
+      "fun main(args: Array<String>) {\nprint (1 == 1); print(\"abc\"); }");
     context.fileSystem().add(inputFile);
     sensor(checkFactory()).execute(context);
     assertThat(context.highlightingTypeAt(inputFile.key(), 1, 0)).containsExactly(TypeOfText.KEYWORD);
@@ -113,6 +113,7 @@ public class KotlinSensorTest {
     assertThat(context.measure(inputFile.key(), CoreMetrics.NCLOC).value()).isEqualTo(2);
     assertThat(context.measure(inputFile.key(), CoreMetrics.COMMENT_LINES).value()).isEqualTo(0);
     assertThat(context.measure(inputFile.key(), CoreMetrics.FUNCTIONS).value()).isEqualTo(1);
+    assertThat(context.cpdTokens(inputFile.key()).get(1).getValue()).isEqualTo("print(1==1);print(\"LITERAL\");}");
   }
 
   @Test
@@ -148,9 +149,9 @@ public class KotlinSensorTest {
     TextPointer textPointer = analysisError.location();
     assertThat(textPointer).isNotNull();
     assertThat(textPointer.line()).isEqualTo(1);
-    assertThat(textPointer.lineOffset()).isEqualTo(14);
+    assertThat(textPointer.lineOffset()).isEqualTo(15);
 
-    assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. Parse error at position 1:14", inputFile.uri()));
+    assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. Parse error at position 1:15", inputFile.uri()));
   }
 
   private void assertTextRange(TextRange textRange, int startLine, int startLineOffset, int endLine, int endLineOffset) {

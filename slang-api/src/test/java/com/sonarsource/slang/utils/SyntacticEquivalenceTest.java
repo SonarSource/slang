@@ -35,6 +35,8 @@ import static com.sonarsource.slang.utils.TreeCreationUtils.literal;
 import static com.sonarsource.slang.utils.TreeCreationUtils.simpleNative;
 import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static com.sonarsource.slang.utils.SyntacticEquivalence.findDuplicatedGroups;
+import static com.sonarsource.slang.utils.TreeCreationUtils.value;
+import static com.sonarsource.slang.utils.TreeCreationUtils.variable;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SyntacticEquivalenceTest {
@@ -61,6 +63,17 @@ public class SyntacticEquivalenceTest {
     assertThat(areEquivalent(identifierA, identifier("a"))).isTrue();
     assertThat(areEquivalent(identifierA, identifier("b"))).isFalse();
     assertThat(areEquivalent(identifierA, literal1)).isFalse();
+
+    Tree variableA = variable("a");
+    assertThat(areEquivalent(variableA , variableA )).isTrue();
+    assertThat(areEquivalent(variableA , variable("a"))).isTrue();
+    assertThat(areEquivalent(variableA , variable("b"))).isFalse();
+
+    Tree valueA = value("a");
+    assertThat(areEquivalent(valueA , valueA )).isTrue();
+    assertThat(areEquivalent(valueA , value("a"))).isTrue();
+    assertThat(areEquivalent(valueA , value("b"))).isFalse();
+    assertThat(areEquivalent(valueA , variableA)).isFalse();
 
     Tree binaryAEquals1 = binary(Operator.EQUAL_TO, identifierA, literal1);
     assertThat(areEquivalent(binaryAEquals1, binaryAEquals1)).isTrue();

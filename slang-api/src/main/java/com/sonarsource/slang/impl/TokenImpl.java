@@ -26,12 +26,12 @@ public class TokenImpl implements Token {
 
   private final TextRange textRange;
   private final String text;
-  private final boolean isKeyword;
+  private final Type type;
 
-  public TokenImpl(TextRange textRange, String text, boolean isKeyword) {
+  public TokenImpl(TextRange textRange, String text, Type type) {
     this.textRange = textRange;
     this.text = text;
-    this.isKeyword = isKeyword;
+    this.type = type;
   }
 
   @Override
@@ -45,7 +45,7 @@ public class TokenImpl implements Token {
   }
 
   @Override
-  public boolean isKeyword() {
-    return isKeyword;
+  public Type type() {
+    return type;
   }
 }

@@ -25,6 +25,7 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Tree;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

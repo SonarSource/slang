@@ -27,4 +27,6 @@ public interface MatchTree extends Tree {
 
   List<MatchCaseTree> cases();
 
+  Token keyword();
+
 }

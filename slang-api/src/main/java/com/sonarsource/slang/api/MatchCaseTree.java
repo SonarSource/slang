@@ -23,9 +23,12 @@ import javax.annotation.CheckForNull;
 
 public interface MatchCaseTree extends Tree {
 
+  // expression is null in case of default clause
   @CheckForNull
   Tree expression();
 
   Tree body();
+
+  TextRange rangeToHighlight();
 
 }

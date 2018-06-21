@@ -29,6 +29,7 @@ import com.sonarsource.slang.api.NativeKind;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.VariableDeclarationTree;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
@@ -37,6 +38,8 @@ import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
+import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -49,6 +52,14 @@ public class TreeCreationUtils {
 
   public static IdentifierTree identifier(String name) {
     return new IdentifierTreeImpl(null, name);
+  }
+
+  public static VariableDeclarationTree variable(String name) {
+    return new VariableDeclarationTreeImpl(null, identifier(name), null, null, false);
+  }
+
+  public static VariableDeclarationTree value(String name) {
+    return new VariableDeclarationTreeImpl(null, identifier(name), null, null, true);
   }
 
   public static BinaryExpressionTree binary(BinaryExpressionTree.Operator operator, Tree leftOperand, Tree rightOperand) {

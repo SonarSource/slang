@@ -20,7 +20,9 @@
 package com.sonarsource.slang.kotlin;
 
 import com.sonarsource.slang.api.BinaryExpressionTree;
+import com.sonarsource.slang.api.CatchTree;
 import com.sonarsource.slang.api.Comment;
+import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
@@ -28,9 +30,11 @@ import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.ParameterTree;
+import com.sonarsource.slang.api.StringLiteralTree;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.api.VariableDeclarationTree;
 import com.sonarsource.slang.parser.SLangConverter;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +43,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import static com.sonarsource.slang.api.Token.Type.KEYWORD;
+import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
+import static com.sonarsource.slang.api.Token.Type.OTHER;
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static com.sonarsource.slang.testing.TreesAssert.assertTrees;
@@ -100,6 +107,36 @@ public class KotlinConverterTest {
       .isNotEquivalentTo(kotlinStatement("for ((b, a) in container) {a}"));
     assertTree(kotlinStatement("for ((a, b) in container) {a}"))
       .isEquivalentTo(kotlinStatement("for ((a, b) in container) {a}"));
+  }
+
+  @Test
+  public void testVariableDeclaration() {
+    Tree varX = kotlinStatement("var x : Int");
+    Tree valY = kotlinStatement("val y : Int");
+    assertTree(varX).isInstanceOf(VariableDeclarationTree.class);
+    assertTree(valY).isInstanceOf(VariableDeclarationTree.class);
+    assertTree(((VariableDeclarationTree) varX).identifier()).isIdentifier("x");
+    assertThat(((VariableDeclarationTree) varX).isVal()).isFalse();
+    assertTree(((VariableDeclarationTree) valY).identifier()).isIdentifier("y");
+    assertThat(((VariableDeclarationTree) valY).isVal()).isTrue();
+    assertTree(varX).isEquivalentTo(kotlinStatement("var x: Int"));
+    assertTree(varX).isNotEquivalentTo(kotlinStatement("var y: Int"));
+    assertTree(varX).isNotEquivalentTo(kotlinStatement("val x: Int"));
+    assertTree(varX).isNotEquivalentTo(kotlinStatement("var x: Boolean"));
+  }
+
+  @Test
+  public void testVariableDeclarationWithInitializer() {
+    Tree varX = kotlinStatement("var x : Int = 0");
+    Tree valY = kotlinStatement("val x : Int = \"4\"");
+    assertTree(varX).isInstanceOf(VariableDeclarationTree.class);
+    assertTree(valY).isInstanceOf(VariableDeclarationTree.class);
+    assertThat(((VariableDeclarationTree) varX).initializer()).isInstanceOf(LiteralTree.class);
+    assertThat(((VariableDeclarationTree) valY).initializer()).isInstanceOf(StringLiteralTree.class);
+    assertTree(varX).isEquivalentTo(kotlinStatement("var x : Int = 0"));
+    assertTree(varX).isNotEquivalentTo(valY);
+    assertTree(varX).isNotEquivalentTo(kotlinStatement("var x: Int"));
+    assertTree(varX).isNotEquivalentTo(kotlinStatement("var x: Boolean = true"));
   }
 
   @Test
@@ -216,10 +253,10 @@ public class KotlinConverterTest {
   @Test
   public void testIfExpressions() {
     assertTrees(kotlinStatements("if (x == 0) { 3; x + 2;}"))
-      .isEquivalentTo(slangStatements("if (x == 0) { 3; x + 2;}"));
+      .isEquivalentTo(slangStatements("if (x == 0) { 3; x + 2;};"));
 
     assertTrees(kotlinStatements("if (x) 1 else 4"))
-      .isEquivalentTo(slangStatements("if (x) 1 else 4"));
+      .isEquivalentTo(slangStatements("if (x) 1 else 4;"));
 
     assertTrees(kotlinStatements("if (x) 1 else if (x > 2) 4"))
       .isEquivalentTo(slangStatements("if (x) 1 else if (x > 2) 4;"));
@@ -227,12 +264,12 @@ public class KotlinConverterTest {
     // In kotlin a null 'then' branch is valid code, so this if will be mapped to a native tree as it is not valid in Slang AST
     NativeTree ifStatementWithNullThenBranch = (NativeTree) kotlinStatement("if (x) else 4");
     assertTrees(Collections.singletonList(ifStatementWithNullThenBranch))
-      .isNotEquivalentTo(slangStatements("if (x) { } else 4"));
+      .isNotEquivalentTo(slangStatements("if (x) { } else 4;"));
     assertTree(ifStatementWithNullThenBranch).hasChildren(IdentifierTree.class, LiteralTree.class);
 
     NativeTree ifStatementWithNullBranches = (NativeTree) kotlinStatement("if (x) else;");
     assertTrees(Collections.singletonList(ifStatementWithNullBranches))
-      .isNotEquivalentTo(slangStatements("if (x) { } else { }"));
+      .isNotEquivalentTo(slangStatements("if (x) { } else { };"));
     assertTree(ifStatementWithNullBranches).hasChildren(IdentifierTree.class);
   }
 
@@ -247,6 +284,7 @@ public class KotlinConverterTest {
     assertTree(getCondition(cases, 0)).isEquivalentTo(getCondition(cases, 1));
     assertTree(getCondition(cases, 0)).isNotEquivalentTo(getCondition(cases, 2));
     assertThat(getCondition(cases, 3)).isNull();
+    assertThat(matchTree.keyword().text()).isEqualTo("when");
   }
 
   @Test
@@ -268,10 +306,58 @@ public class KotlinConverterTest {
   }
 
   @Test
+  public void testTryCatch() {
+    Tree kotlinStatement = kotlinStatement("try { 1 } catch (e: SomeException) { }");
+    assertTree(kotlinStatement).isInstanceOf(ExceptionHandlingTree.class);
+    ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) kotlinStatement;
+    assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
+    List<CatchTree> catchTreeList = exceptionHandlingTree.catchBlocks();
+    assertThat(catchTreeList).hasSize(1);
+    assertTree(catchTreeList.get(0).catchParameter()).isInstanceOf(ParameterTree.class);
+    ParameterTree catchParameter = (ParameterTree) catchTreeList.get(0).catchParameter();
+    assertTree(catchParameter).hasParameterName("e");
+    assertThat(catchParameter.type()).isNotNull();
+    assertTree(catchTreeList.get(0).catchBlock()).isBlock();
+    assertThat(exceptionHandlingTree.finallyBlock()).isNull();
+  }
+
+  @Test
+  public void testTryFinally() {
+    Tree kotlinStatement = kotlinStatement("try { 1 } finally { 2 }");
+    assertTree(kotlinStatement).isInstanceOf(ExceptionHandlingTree.class);
+    ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) kotlinStatement;
+    assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
+    List<CatchTree> catchTreeList = exceptionHandlingTree.catchBlocks();
+    assertThat(catchTreeList).hasSize(0);
+    assertThat(exceptionHandlingTree.finallyBlock()).isNotNull();
+    assertTree(exceptionHandlingTree.finallyBlock()).isBlock(LiteralTree.class);
+  }
+
+
+  @Test
+  public void testTryCatchFinally() {
+    Tree kotlinStatement = kotlinStatement("try { 1 } catch (e: SomeException) { } catch { } finally { 2 }");
+    assertTree(kotlinStatement).isInstanceOf(ExceptionHandlingTree.class);
+    ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) kotlinStatement;
+    assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
+    List<CatchTree> catchTreeList = exceptionHandlingTree.catchBlocks();
+    assertThat(catchTreeList).hasSize(2);
+    assertTree(catchTreeList.get(0).catchParameter()).isInstanceOf(ParameterTree.class);
+    ParameterTree catchParameterOne = (ParameterTree) catchTreeList.get(0).catchParameter();
+    assertTree(catchParameterOne).hasParameterName("e");
+    assertThat(catchParameterOne.type()).isNotNull();
+    assertTree(catchTreeList.get(0).catchBlock()).isBlock();
+    assertThat(catchTreeList.get(1).catchParameter()).isNull();
+    assertTree(catchTreeList.get(1).catchBlock()).isBlock();
+    assertThat(exceptionHandlingTree.finallyBlock()).isNotNull();
+    assertTree(exceptionHandlingTree.finallyBlock()).isBlock(LiteralTree.class);
+  }
+
+  @Test
   public void testComments() {
     Tree parent = converter.parse("#! Shebang comment\n/** Doc comment \n*/\nfun function1(a: /* Block comment */Int, b: String): Boolean { // EOL comment\n true; }");
     assertTree(parent).isInstanceOf(TopLevelTree.class);
-    assertThat(parent.children()).hasSize(3);
+    assertThat(parent.children()).hasSize(1);
 
     TopLevelTree topLevelTree = (TopLevelTree) parent;
     List<Comment> comments = topLevelTree.allComments();
@@ -281,7 +367,7 @@ public class KotlinConverterTest {
     assertThat(comment.text()).isEqualTo(" Doc comment \n");
     assertThat(comment.textWithDelimiters()).isEqualTo("/** Doc comment \n*/");
 
-    FunctionDeclarationTree tree = (FunctionDeclarationTree) topLevelTree.declarations().get(2);
+    FunctionDeclarationTree tree = (FunctionDeclarationTree) topLevelTree.declarations().get(0);
     List<Comment> commentsInsideFunction = tree.metaData().commentsInside();
     // Kotlin doc is considered part of the function
     assertThat(commentsInsideFunction).hasSize(3);
@@ -296,12 +382,15 @@ public class KotlinConverterTest {
     Tree lambdaWithoutDestructor = kotlinStatement("{ a, b -> a.length < b.length }");
     assertTree(lambdaWithDestructor).hasChildren(NativeTree.class);
     assertTree(lambdaWithoutDestructor).hasChildren(FunctionDeclarationTree.class);
+
+    FunctionDeclarationTree emptyLambda = (FunctionDeclarationTree) kotlinStatement("{ }").children().get(0);
+    assertThat(emptyLambda.body()).isNull();
   }
 
   @Test
   public void testEquivalenceWithComments() {
     assertTrees(kotlinStatements("x + 2; // EOL comment"))
-      .isEquivalentTo(slangStatements("x + 2"));
+      .isEquivalentTo(slangStatements("x + 2;"));
   }
 
   @Test
@@ -320,14 +409,16 @@ public class KotlinConverterTest {
   @Test
   public void testAssignments() {
     assertTrees(kotlinStatements("x = 3\nx -= y + 3\n"))
-      .isEquivalentTo(slangStatements("x = 3; x -= y + 3"));
+      .isEquivalentTo(slangStatements("x = 3; x -= y + 3;"));
   }
 
   @Test
   public void testTokens() {
-    List<Token> tokens = kotlin("private fun foo() { }").metaData().tokens();
-    assertThat(tokens).extracting(Token::text).containsExactly("private", "fun", "foo", "(", ")", "{", "}");
-    assertThat(tokens).extracting(Token::isKeyword).containsExactly(true, true, false, false, false, false, false);
+    List<Token> tokens = kotlin("private fun foo() { 42 + \"a\" }").metaData().tokens();
+    assertThat(tokens).extracting(Token::text).containsExactly(
+      "private", "fun", "foo", "(", ")", "{", "42", "+", "\"", "a", "\"", "}");
+    assertThat(tokens).extracting(Token::type).containsExactly(
+      KEYWORD, KEYWORD, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, STRING_LITERAL, OTHER, OTHER);
   }
 
   private static String createString(String s) {
@@ -367,8 +458,8 @@ public class KotlinConverterTest {
   private Tree kotlin(String innerCode) {
     Tree tree = converter.parse(innerCode);
     assertThat(tree).isInstanceOf(TopLevelTree.class);
-    assertThat(tree.children()).hasSize(3);
-    return tree.children().get(2);
+    assertThat(tree.children()).hasSize(1);
+    return tree.children().get(0);
   }
 
   private List<Tree> kotlinStatements(String innerCode) {

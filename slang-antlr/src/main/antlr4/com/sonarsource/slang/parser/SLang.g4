@@ -6,7 +6,7 @@ slangFile
 
 typeDeclaration
   :  methodDeclaration 
-  |  statementOrExpression
+  |  statement SEMICOLON
   ;
 
 methodDeclaration
@@ -19,7 +19,7 @@ methodModifier
   ;
 
 methodHeader
-  :  result? FUN methodDeclarator
+  :  simpleType? FUN methodDeclarator
   ;
 
 methodDeclarator
@@ -55,15 +55,34 @@ variableDeclaratorId
 
 methodBody
   : block 
-  | SEMICOLON 
+  | SEMICOLON
   ;
 
 block
-  :  LCURLY (statementOrExpression semi)* (statementOrExpression semi?)? RCURLY 
+  :  LCURLY (statement semi)* (statement semi?)? RCURLY
   ;
 
-statementOrExpression
-  :  disjunction (assignmentOperator disjunction)* semi? 
+statement
+  :  declaration
+  |  assignment
+  |  expression
+  ;
+
+declaration
+  :  simpleType? declarationModifier identifier ('=' expression)?
+  ;
+
+declarationModifier
+  : VAR
+  | VAL
+  ;
+
+assignment
+  :  expression (assignmentOperator statement)+
+  ;
+
+expression
+  :  disjunction
   ;
 
 disjunction
@@ -100,22 +119,14 @@ atomicExpression
   |  nativeExpression 
   |  literal
   |  conditional
-  |  assignment
   |  methodInvocation
   |  returnExpression
   |  expressionName
+  |  tryExpression
   ;
 
 parenthesizedExpression
-  :  LPAREN statementOrExpression RPAREN
-  ;
-
-assignment 
-  :  leftHandSide assignmentOperator statementOrExpression
-  ; 
-
-leftHandSide
-  :  expressionName
+  :  LPAREN statement RPAREN
   ;
 
 methodInvocation
@@ -127,7 +138,7 @@ methodName
   ;
 
 argumentList
-  :  statementOrExpression (COMMA statementOrExpression)*
+  :  statement (COMMA statement)*
   ; 
 
 expressionName
@@ -140,21 +151,33 @@ conditional
   ;
 
 ifExpression
-  : IF LPAREN statementOrExpression RPAREN controlBlock (ELSE controlBlock)?
+  : IF LPAREN statement RPAREN controlBlock (ELSE controlBlock)?
   ;
 
 matchExpression
-  : MATCH LPAREN statementOrExpression RPAREN LCURLY matchCase* RCURLY
+  : MATCH LPAREN statement RPAREN LCURLY matchCase* RCURLY
   ;
 
 matchCase
-  :  statementOrExpression ARROW controlBlock semi
+  :  statement ARROW controlBlock semi
   |  ELSE ARROW controlBlock semi
   ;
 
 controlBlock
   :  block
-  |  statementOrExpression
+  |  statement
+  ;
+
+tryExpression
+  : TRY block catchBlock* finallyBlock?
+  ;
+
+catchBlock
+  : CATCH LPAREN formalParameter? RPAREN block
+  ;
+
+finallyBlock
+  : FINALLY block
   ;
 
 nativeExpression
@@ -162,11 +185,11 @@ nativeExpression
   ; 
 
 nativeBlock
-  :  LBRACK (statementOrExpression semi)* (statementOrExpression semi?)? RBRACK 
+  :  LBRACK (statement semi)* (statement semi?)? RBRACK
   ;
 
 returnExpression
-  :  RETURN statementOrExpression
+  :  RETURN statement
   ;
 
 /* Operators */ 
@@ -194,73 +217,10 @@ unaryOperator
   :  '!'
   ;
 
-// Type Hierarchy 
-
-result
-  :  simpleType
-  |  VOID 
-  ;
+// Type Hierarchy
 
 simpleType
-  :  simplePrimitiveType
-  |  referenceType
-  ;
-
-simplePrimitiveType
-  :  numericType
-  |  BOOLEAN
-  ;
-
-referenceType
-  :  classOrInterfaceType
-  |  typeVariable
-  ;
-
-numericType
-  :  integralType
-  |  floatingPointType
-  ;
-
-integralType
-  :  BYTE 
-  |  SHORT 
-  |  INT
-  |  LONG
-  |  CHAR
-  ;
-
-floatingPointType
-  :  FLOAT
-  |  DOUBLE
-  ;
-
-classOrInterfaceType
-  :  classType
-  |  interfaceType
-  ;
-
-classType
-  : identifier typeArguments?
-  ;
-
-interfaceType
-  :  classType
-  ;
-
-typeVariable
-  : identifier
-  ;
-
-typeArguments
-  :  LT typeArgumentList GT
-  ;
-
-typeArgumentList
-  :  typeArgument (COMMA typeArgument)*
-  ;
-
-typeArgument
-  :  referenceType
+  :  identifier
   ;
 
 literal
@@ -283,24 +243,20 @@ identifier : Identifier;
 
 // Keywords
 
-BOOLEAN : 'boolean';
-BYTE : 'byte';
-CHAR : 'char';
-DOUBLE : 'double';
+CATCH : 'catch';
 ELSE : 'else';
-FLOAT : 'float';
+FINALLY : 'finally';
 FUN: 'fun';
 IF : 'if';
-INT : 'int';
-LONG : 'long';
 MATCH : 'match';
 NATIVE : 'native'; 
 PRIVATE : 'private';
 PUBLIC : 'public';
 RETURN : 'return';
-SHORT : 'short';
 THIS : 'this';
-VOID : 'void';
+TRY : 'try';
+VAL : 'val';
+VAR : 'var';
 
 
 // Integer Literals

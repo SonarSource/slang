@@ -23,6 +23,7 @@ import com.sonarsource.slang.api.ASTConverter;
 import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
+import com.sonarsource.slang.api.CatchTree;
 import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
@@ -30,13 +31,16 @@ import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
+import com.sonarsource.slang.api.Token.Type;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
+import com.sonarsource.slang.impl.CatchTreeImpl;
 import com.sonarsource.slang.impl.CommentImpl;
+import com.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
@@ -60,6 +64,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -94,12 +100,17 @@ public class SLangConverter implements ASTConverter {
 
     for (int index = 0; index < antlrTokens.size(); index++) {
       Token token = antlrTokens.get(index);
-      TokenLocation location = new TokenLocation(token.getLine(), token.getCharPositionInLine(), token.getText());
-      TextRange textRange = new TextRangeImpl(location.startLine(), location.startLineOffset(), location.endLine(), location.endLineOffset());
+      TextRange textRange = getSlangTextRange(token);
       if (token.getChannel() == 1) {
         comments.add(new CommentImpl(commentContent(token.getText()), token.getText(), textRange));
       } else {
-        tokens.add(new TokenImpl(textRange, token.getText(), KEYWORD_TOKEN_TYPES.contains(token.getType())));
+        Type type = Type.OTHER;
+        if (KEYWORD_TOKEN_TYPES.contains(token.getType())) {
+          type = Type.KEYWORD;
+        } else if (token.getType() == SLangParser.StringLiteral) {
+          type = Type.STRING_LITERAL;
+        }
+        tokens.add(new TokenImpl(textRange, token.getText(), type));
       }
     }
 
@@ -144,6 +155,11 @@ public class SLangConverter implements ASTConverter {
     return Collections.unmodifiableMap(map);
   }
 
+  private static TextRange getSlangTextRange(Token matchToken) {
+    TokenLocation location = new TokenLocation(matchToken.getLine(), matchToken.getCharPositionInLine(), matchToken.getText());
+    return new TextRangeImpl(location.startLine(), location.startLineOffset(), location.endLine(), location.endLineOffset());
+  }
+
   private static class SLangParseTreeVisitor extends SLangBaseVisitor<Tree> {
 
     private final TreeMetaDataProvider metaDataProvider;
@@ -160,18 +176,22 @@ public class SLangConverter implements ASTConverter {
     }
 
     @Override
+    public Tree visitTypeDeclaration(SLangParser.TypeDeclarationContext ctx) {
+      if (ctx.methodDeclaration() != null) {
+        return visit(ctx.methodDeclaration());
+      } else {
+        return visit(ctx.statement());
+      }
+     }
+
+    @Override
     public Tree visitNativeExpression(SLangParser.NativeExpressionContext ctx) {
       return nativeTree(ctx, ctx.nativeBlock());
     }
 
     @Override
     public Tree visitParenthesizedExpression(SLangParser.ParenthesizedExpressionContext ctx) {
-      return visit(ctx.statementOrExpression());
-    }
-
-    @Override
-    public Tree visitStatementOrExpression(SLangParser.StatementOrExpressionContext ctx) {
-      return assignmentTree(ctx.disjunction(), ctx.assignmentOperator());
+      return visit(ctx.statement());
     }
 
     @Override
@@ -180,7 +200,7 @@ public class SLangConverter implements ASTConverter {
       Tree returnType = null;
       IdentifierTree name = null;
       SLangParser.MethodHeaderContext methodHeaderContext = ctx.methodHeader();
-      SLangParser.ResultContext resultContext = methodHeaderContext.result();
+      SLangParser.SimpleTypeContext resultContext = methodHeaderContext.simpleType();
       SLangParser.IdentifierContext identifier = methodHeaderContext.methodDeclarator().identifier();
       if (resultContext != null) {
         returnType = new IdentifierTreeImpl(meta(resultContext), resultContext.getText());
@@ -220,7 +240,7 @@ public class SLangConverter implements ASTConverter {
       IdentifierTree tree = (IdentifierTree) visit(ctx.variableDeclaratorId().identifier());
       Tree type = null;
       if (ctx.simpleType() != null) {
-        type = visit(ctx.simpleType());
+        type = new IdentifierTreeImpl(meta(ctx.simpleType()), ctx.simpleType().getText());
       }
       return new ParameterTreeImpl(meta(ctx), tree, type);
     }
@@ -231,8 +251,24 @@ public class SLangConverter implements ASTConverter {
     }
 
     @Override
+    public Tree visitDeclaration(SLangParser.DeclarationContext ctx) {
+      IdentifierTree identifier = (IdentifierTree) visit(ctx.identifier());
+      Tree type = null;
+      if (ctx.simpleType() != null) {
+        type = new IdentifierTreeImpl(meta(ctx.simpleType()), ctx.simpleType().getText());
+      }
+      Tree initializer = null;
+      if (ctx.expression() != null) {
+        initializer = visit(ctx.expression());
+      }
+
+      boolean isVal = ctx.declarationModifier().VAL() != null;
+      return new VariableDeclarationTreeImpl(meta(ctx), identifier, type, initializer, isVal);
+    }
+
+    @Override
     public Tree visitBlock(SLangParser.BlockContext ctx) {
-      return new BlockTreeImpl(meta(ctx), list(ctx.statementOrExpression()));
+      return new BlockTreeImpl(meta(ctx), list(ctx.statement()));
     }
 
     @Override
@@ -242,7 +278,7 @@ public class SLangConverter implements ASTConverter {
         elseBranch = visit(ctx.controlBlock(1));
       }
       Tree thenBranch = visit(ctx.controlBlock(0));
-      return new IfTreeImpl(meta(ctx), visit(ctx.statementOrExpression()), thenBranch, elseBranch);
+      return new IfTreeImpl(meta(ctx), visit(ctx.statement()), thenBranch, elseBranch);
     }
 
     @Override
@@ -251,26 +287,54 @@ public class SLangConverter implements ASTConverter {
       for (SLangParser.MatchCaseContext matchCaseContext : ctx.matchCase()) {
         cases.add((MatchCaseTree) visit(matchCaseContext));
       }
-      return new MatchTreeImpl(meta(ctx), visit(ctx.statementOrExpression()), cases);
+      TreeMetaData meta = meta(ctx);
+      return new MatchTreeImpl(
+        meta,
+        visit(ctx.statement()),
+        cases,
+        getMatchKeyword(ctx.MATCH().getSymbol()));
+    }
+
+    private static com.sonarsource.slang.api.Token getMatchKeyword(Token matchToken) {
+      TextRange textRange = getSlangTextRange(matchToken);
+      return new TokenImpl(textRange, matchToken.getText(), Type.KEYWORD);
     }
 
     @Override
     public Tree visitMatchCase(SLangParser.MatchCaseContext ctx) {
-      Tree expression = ctx.statementOrExpression() == null ? null : visit(ctx.statementOrExpression());
+      Tree expression = ctx.statement() == null ? null : visit(ctx.statement());
       Tree body = visit(ctx.controlBlock());
       return new MatchCaseTreeImpl(meta(ctx), expression, body);
     }
 
     @Override
+    public Tree visitCatchBlock(SLangParser.CatchBlockContext ctx) {
+      ParameterTree parameter = ctx.formalParameter() == null ? null : (ParameterTree) visit(ctx.formalParameter());
+      Tree body = visit(ctx.block());
+      return new CatchTreeImpl(meta(ctx), parameter, body);
+    }
+
+    @Override
+    public Tree visitTryExpression(SLangParser.TryExpressionContext ctx) {
+      Tree tryBlock = visit(ctx.block());
+      List<CatchTree> catchTreeList = new ArrayList<>();
+      for (SLangParser.CatchBlockContext catchBlockContext : ctx.catchBlock()) {
+        catchTreeList.add((CatchTree) visit(catchBlockContext));
+      }
+      Tree finallyBlock = ctx.finallyBlock() == null ? null : visit(ctx.finallyBlock());
+      return new ExceptionHandlingTreeImpl(meta(ctx), tryBlock, catchTreeList, finallyBlock);
+    }
+
+    @Override
     public Tree visitNativeBlock(SLangParser.NativeBlockContext ctx) {
-      return nativeTree(ctx, ctx.statementOrExpression());
+      return nativeTree(ctx, ctx.statement());
     }
 
     @Override
     public Tree visitAssignment(SLangParser.AssignmentContext ctx) {
-      Tree leftHandSide = visit(ctx.leftHandSide());
-      Tree statementOrExpression = visit(ctx.statementOrExpression());
-      AssignmentExpressionTree.Operator operator = ASSIGNMENT_OPERATOR_MAP.get(ctx.assignmentOperator().getText());
+      Tree leftHandSide = visit(ctx.expression());
+      Tree statementOrExpression = assignmentTree(ctx.statement(), ctx.assignmentOperator());
+      AssignmentExpressionTree.Operator operator = ASSIGNMENT_OPERATOR_MAP.get(ctx.assignmentOperator(0).getText());
       return new AssignmentExpressionTreeImpl(meta(ctx), operator, leftHandSide, statementOrExpression);
     }
 

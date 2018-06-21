@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid;
 
 import static org.jetbrains.kotlin.lexer.KtTokens.BLOCK_COMMENT;
@@ -66,8 +67,13 @@ public class CommentAndTokenVisitor extends KtTreeVisitorVoid {
     } else if (element instanceof LeafPsiElement && !(element instanceof PsiWhiteSpace)) {
       LeafPsiElement leaf = (LeafPsiElement) element;
       String text = leaf.getText();
-      boolean isKeyword = leaf.getElementType() instanceof KtKeywordToken;
-      tokens.add(new TokenImpl(KotlinTextRanges.textRange(psiDocument, leaf), text, isKeyword));
+      Token.Type type = Token.Type.OTHER;
+      if (leaf.getElementType() instanceof KtKeywordToken) {
+        type = Token.Type.KEYWORD;
+      } else if (leaf.getElementType() == KtTokens.REGULAR_STRING_PART) {
+        type = Token.Type.STRING_LITERAL;
+      }
+      tokens.add(new TokenImpl(KotlinTextRanges.textRange(psiDocument, leaf), text, type));
     }
     super.visitElement(element);
   }

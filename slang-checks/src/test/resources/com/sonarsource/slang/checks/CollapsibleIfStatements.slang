@@ -8,12 +8,12 @@ if (a) {
   if (c) {
   }
 } else {
-}
+};
 
 if (a)
   if (b) {
   } else {
-  }
+  };
 
    if (a) { // Noncompliant {{Merge this if statement with the nested one.}} [[sc=1;ec=7;el=+0;secondary=+1]]
 // ^[el=+3;ec=5]
@@ -35,14 +35,14 @@ if (a) // Noncompliant {{Merge this if statement with the nested one.}}
 if (a) { // Noncompliant
   if (b) {
   }
-}
+};
 
 if (a) { // Noncompliant
   if (b) { // Noncompliant
     if (c) {
     }
   }
-}
+};
 
 if (a) { // Noncompliant
   if (b) {
@@ -50,9 +50,9 @@ if (a) { // Noncompliant
     } else {
     }
   }
-}
+};
 
 if (a) // Noncompliant
   if (b) {
-  }
+  };
 

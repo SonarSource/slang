@@ -21,11 +21,11 @@ package com.sonarsource.slang.checks;
 
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.IfTree;
-import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
+import com.sonarsource.slang.checks.utils.ExpressionUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +33,6 @@ import org.sonar.check.Rule;
 
 @Rule(key = "S1125")
 public class BooleanLiteralCheck implements SlangCheck {
-  private static final List<String> BOOLEAN_LITERALS = Arrays.asList("true", "false");
   private static final List<BinaryExpressionTree.Operator> CONDITIONAL_BINARY_OPERATORS = Arrays.asList(
     BinaryExpressionTree.Operator.CONDITIONAL_AND,
     BinaryExpressionTree.Operator.CONDITIONAL_OR,
@@ -64,7 +63,7 @@ public class BooleanLiteralCheck implements SlangCheck {
 
   private static Optional<Tree> getBooleanLiteral(Tree... trees) {
     return Arrays.stream(trees)
-      .filter(tree -> tree instanceof LiteralTree && BOOLEAN_LITERALS.contains(((LiteralTree) tree).value()))
+      .filter(ExpressionUtils::isBooleanLiteral)
       .findFirst();
   }
 }
