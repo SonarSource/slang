@@ -190,8 +190,6 @@ class KotlinTreeVisitor {
       return createElement(((KtFinallySection) element).getFinalExpression());
     } else if (isLiteral(element)) {
       return createLiteral(metaData, element);
-    } else if (element instanceof KtOperationExpression) {
-      return createOperationExpression(metaData, (KtOperationExpression) element);
     } else if (element instanceof KtParameter) {
       return createParameter(metaData, (KtParameter) element);
     } else if (element instanceof KtProperty) {
