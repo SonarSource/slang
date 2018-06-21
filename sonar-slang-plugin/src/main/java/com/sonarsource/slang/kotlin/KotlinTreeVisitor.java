@@ -78,7 +78,6 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression;
 import org.jetbrains.kotlin.psi.KtBlockExpression;
 import org.jetbrains.kotlin.psi.KtCatchClause;
 import org.jetbrains.kotlin.psi.KtClass;
-import org.jetbrains.kotlin.psi.KtClassLiteralExpression;
 import org.jetbrains.kotlin.psi.KtConstantExpression;
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry;
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry;
