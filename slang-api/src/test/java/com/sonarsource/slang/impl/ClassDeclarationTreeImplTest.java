@@ -19,29 +19,28 @@
  */
 package com.sonarsource.slang.impl;
 
-import com.sonarsource.slang.api.ClassTree;
+import com.sonarsource.slang.api.ClassDeclarationTree;
+import com.sonarsource.slang.api.NativeKind;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
+import org.junit.Test;
 
 import java.util.Collections;
-import java.util.List;
 
-public class ClassTreeImpl extends BaseTreeImpl implements ClassTree {
+import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
+import static org.assertj.core.api.Assertions.assertThat;
 
-  private final Tree classTree;
+public class ClassDeclarationTreeImplTest {
 
-  public ClassTreeImpl(TreeMetaData metaData, Tree classTree) {
-    super(metaData);
-    this.classTree = classTree ;
-  }
+  private class ClassNativeKind implements NativeKind {}
 
-  @Override
-  public Tree classTree() {
-    return classTree;
-  }
-
-  @Override
-  public List<Tree> children() {
-    return Collections.singletonList(classTree);
+  @Test
+  public void test() {
+    TreeMetaData meta = null;
+    Tree className = new IdentifierTreeImpl(meta, "MyClass");
+    Tree classDecl = new NativeTreeImpl(meta, new ClassNativeKind(), Collections.singletonList(className));
+    ClassDeclarationTree tree = new ClassDeclarationTreeImpl(meta, classDecl);
+    assertThat(tree.children()).hasSize(1);
+    assertThat(areEquivalent(tree.children().get(0), classDecl)).isTrue();
   }
 }

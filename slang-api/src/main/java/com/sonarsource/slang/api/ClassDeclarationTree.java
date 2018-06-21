@@ -19,7 +19,7 @@
  */
 package com.sonarsource.slang.api;
 
-public interface ClassTree extends Tree {
+public interface ClassDeclarationTree extends Tree {
 
   Tree classTree();
 

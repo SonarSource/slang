@@ -19,20 +19,29 @@
  */
 package com.sonarsource.slang.impl;
 
-import com.sonarsource.slang.api.MatchCaseTree;
+import com.sonarsource.slang.api.ClassDeclarationTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
-import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Collections;
+import java.util.List;
 
-public class ClassTreeImplTest {
+public class ClassDeclarationTreeImpl extends BaseTreeImpl implements ClassDeclarationTree {
 
-    @Test
-  public void test() {
-    TreeMetaData meta = null;
-    Tree body = new IdentifierTreeImpl(meta, "x");
-    ClassTree tree = new ClassTreeImpl(meta, body);
-    assertThat(tree.children()).containsExactly(body);
+  private final Tree classTree;
+
+  public ClassDeclarationTreeImpl(TreeMetaData metaData, Tree classTree) {
+    super(metaData);
+    this.classTree = classTree ;
+  }
+
+  @Override
+  public Tree classTree() {
+    return classTree;
+  }
+
+  @Override
+  public List<Tree> children() {
+    return Collections.singletonList(classTree);
   }
 }
