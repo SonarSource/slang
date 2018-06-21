@@ -138,13 +138,13 @@ public class MetricVisitorTest {
             "x = true || false;");
     assertThat(visitor.numberOfClasses()).isEqualTo(0);
     scan("" +
-            "class C(val a: Int, val b: Int) {}\n" +
+            "class C {}\n" +
             "fun function() {}\n" +
-            "class D() {}\n" +
-            "class E(var a: String) {\n" +
-            "  fun doSomething(): String = a\n" +
+            "class D { int val x = 0; }\n" +
+            "class E {\n" +
+            "  fun doSomething(int x) {}\n" +
             "}");
-    assertThat(visitor.numberOfFunctions()).isEqualTo(3);
+    assertThat(visitor.numberOfClasses()).isEqualTo(3);
   }
 
   private void scan(String code) throws IOException {
