@@ -36,6 +36,7 @@ public class TreeMetaDataProviderTest {
     TreeMetaDataProvider provider = new TreeMetaDataProvider(singletonList(comment), emptyList());
     assertThat(provider.metaData(new TextRangeImpl(1, 1, 1, 20)).commentsInside()).isEmpty();
     assertThat(provider.metaData(new TextRangeImpl(2, 1, 2, 20)).commentsInside()).containsExactly(comment);
+    assertThat(provider.metaData(new TextRangeImpl(2, 5, 2, 20)).commentsInside()).containsExactly(comment);
   }
 
   @Test
@@ -45,6 +46,7 @@ public class TreeMetaDataProviderTest {
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2));
     assertThat(provider.metaData(new TextRangeImpl(1, 1, 1, 20)).tokens()).containsExactly(token1, token2);
     assertThat(provider.metaData(new TextRangeImpl(1, 3, 1, 8)).tokens()).containsExactly(token1);
+    assertThat(provider.metaData(new TextRangeImpl(1, 3, 1, 6)).tokens()).containsExactly(token1);
   }
 
   @Test

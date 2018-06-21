@@ -73,8 +73,11 @@ public class FunctionDeclarationTreeImplTest {
 
   @Test
   public void rangeToHighlight_with_body_only() {
-    TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(emptyList(), emptyList());
-    TreeMetaData bodyMetaData = metaDataProvider.metaData(range(5, 1, 5, 7));
+    TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(emptyList(), Arrays.asList(
+      new TokenImpl(range(5, 1, 17, 18), "{", Token.Type.OTHER),
+      new TokenImpl(range(5, 1, 19, 20), "}", Token.Type.OTHER)
+    ));
+    TreeMetaData bodyMetaData = metaDataProvider.metaData(range(5, 1, 17, 20));
     BlockTree body = new BlockTreeImpl(bodyMetaData, emptyList());
     assertThat(new FunctionDeclarationTreeImpl(body.metaData(), emptyList(), null, null, emptyList(), body).rangeToHighlight())
       .isEqualTo(body.metaData().textRange());
@@ -85,8 +88,8 @@ public class FunctionDeclarationTreeImplTest {
     TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(emptyList(), Arrays.asList(
       new TokenImpl(range(5, 1, 5, 10), "fun", Token.Type.KEYWORD),
       new TokenImpl(range(5, 11, 5, 15), "foo", Token.Type.OTHER),
-      new TokenImpl(range(5, 1, 17, 18), "{", Token.Type.OTHER),
-      new TokenImpl(range(5, 1, 19, 20), "}", Token.Type.OTHER)
+      new TokenImpl(range(5, 17, 5, 18), "{", Token.Type.OTHER),
+      new TokenImpl(range(5, 19, 5, 20), "}", Token.Type.OTHER)
     ));
     TreeMetaData functionMetaData = metaDataProvider.metaData(range(5, 1, 5, 20));
     TreeMetaData bodyMetaData = metaDataProvider.metaData(range(5, 17, 5, 20));
