@@ -198,7 +198,7 @@ class KotlinTreeVisitor {
   }
 
   private Tree createClassDeclarationTree(TreeMetaData metaData, KtClass ktClass) {
-    Tree classDecl = createNativeTree(metaData, new KotlinNativeKind(ktClass, ktClass.getName()), ktClass);;
+    Tree classDecl = createNativeTree(metaData, new KotlinNativeKind(ktClass, ktClass.getName()), ktClass);
     return new ClassDeclarationTreeImpl(metaData, classDecl);
   }
 
