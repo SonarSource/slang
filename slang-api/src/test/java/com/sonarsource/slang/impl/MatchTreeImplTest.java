@@ -36,7 +36,7 @@ public class MatchTreeImplTest {
     TreeMetaData meta = null;
     Tree expression = new IdentifierTreeImpl(null, "x");
     MatchCaseTree case1 = new MatchCaseTreeImpl(null, null, new LiteralTreeImpl(meta, "42"));
-    Token keywordToken = new TokenImpl(new TextRangeImpl(1,0,1,20), "match", true);
+    Token keywordToken = new TokenImpl(new TextRangeImpl(1,0,1,20), "match", Token.Type.KEYWORD);
     MatchTree tree = new MatchTreeImpl(meta, expression, Collections.singletonList(case1), keywordToken);
     assertThat(tree.children()).containsExactly(expression, case1);
     assertThat(tree.expression()).isEqualTo(expression);

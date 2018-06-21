@@ -43,6 +43,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Test;
 
+import static com.sonarsource.slang.api.Token.Type.KEYWORD;
+import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
+import static com.sonarsource.slang.api.Token.Type.OTHER;
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -341,12 +344,14 @@ public class SLangConverterTest {
   
   @Test
   public void tokens() {
-    Tree topLevel = converter.parse("if (cond) x;");
+    Tree topLevel = converter.parse("if (cond == 42) \"a\";");
     IfTree ifTree = (IfTree) topLevel.children().get(0);
-    assertThat(topLevel.metaData().tokens()).extracting(Token::text).containsExactly("if", "(", "cond", ")", "x", ";");
-    assertThat(topLevel.metaData().tokens()).extracting(Token::isKeyword).containsExactly(true, false, false, false, false, false);
+    assertThat(topLevel.metaData().tokens()).extracting(Token::text)
+      .containsExactly("if", "(", "cond", "==", "42", ")", "\"a\"", ";");
+    assertThat(topLevel.metaData().tokens()).extracting(Token::type)
+      .containsExactly(KEYWORD, OTHER, OTHER, OTHER, OTHER, OTHER, STRING_LITERAL, OTHER);
     assertRange(topLevel.metaData().tokens().get(1).textRange()).hasRange(1, 3, 1, 4);
-    assertThat(ifTree.condition().metaData().tokens()).extracting(Token::text).containsExactly("cond");
+    assertThat(ifTree.condition().metaData().tokens()).extracting(Token::text).containsExactly("cond", "==", "42");
   }
 
   private BinaryExpressionTree parseBinary(String code) {

@@ -44,7 +44,7 @@ public class SyntaxHighlighter extends TreeVisitor<InputFileContext> {
       tree.allComments().forEach(
         comment -> highlight(ctx, comment.textRange(), COMMENT));
       tree.metaData().tokens().stream()
-        .filter(Token::isKeyword)
+        .filter(t -> t.type() == Token.Type.KEYWORD)
         .forEach(token -> highlight(ctx, token.textRange(), KEYWORD));
     });
 
