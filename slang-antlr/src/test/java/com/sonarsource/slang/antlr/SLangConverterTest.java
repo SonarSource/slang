@@ -64,7 +64,7 @@ public class SLangConverterTest {
 
   @Test
   public void simple_unary_expression() {
-    BinaryExpressionTree binary = parseBinary("!!x && !(y && z)");
+    BinaryExpressionTree binary = parseBinary("!!x && !(y && z);");
     Tree left = binary.leftOperand();
     Tree right = binary.rightOperand();
 
