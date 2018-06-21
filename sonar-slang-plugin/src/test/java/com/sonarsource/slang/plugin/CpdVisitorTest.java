@@ -42,7 +42,7 @@ public class CpdVisitorTest {
   @Test
   public void test() throws Exception {
     File file = tempFolder.newFile();
-    String content = "foo(x\n * 42 \n+ \"abc\")";
+    String content = "foo(x\n * 42 \n+ \"abc\");";
     SensorContextTester sensorContext = SensorContextTester.create(tempFolder.getRoot());
     DefaultInputFile inputFile = new TestInputFileBuilder("moduleKey", file.getName())
       .setContents(content)
@@ -64,10 +64,10 @@ public class CpdVisitorTest {
     assertThat(cpdTokenLines.get(1).getStartUnit()).isEqualTo(4);
     assertThat(cpdTokenLines.get(1).getEndUnit()).isEqualTo(5);
 
-    assertThat(cpdTokenLines.get(2).getValue()).isEqualTo("+LITERAL)");
+    assertThat(cpdTokenLines.get(2).getValue()).isEqualTo("+LITERAL);");
     assertThat(cpdTokenLines.get(2).getStartLine()).isEqualTo(3);
     assertThat(cpdTokenLines.get(2).getStartUnit()).isEqualTo(6);
-    assertThat(cpdTokenLines.get(2).getEndUnit()).isEqualTo(8);
+    assertThat(cpdTokenLines.get(2).getEndUnit()).isEqualTo(9);
 
   }
 
