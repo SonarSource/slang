@@ -23,7 +23,6 @@ import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.CatchTree;
-import com.sonarsource.slang.api.ConditionalKeyword;
 import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
@@ -34,14 +33,12 @@ import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
-
 import com.sonarsource.slang.api.TreeMetaData;
 import com.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.BlockTreeImpl;
 import com.sonarsource.slang.impl.CatchTreeImpl;
 import com.sonarsource.slang.impl.ClassDeclarationTreeImpl;
-import com.sonarsource.slang.impl.ConditionalKeywordImpl;
 import com.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
@@ -264,31 +261,14 @@ class KotlinTreeVisitor {
     Tree condition = createMandatoryElement(element.getCondition());
     Tree thenBranch = createElement(element.getThen());
     Tree elseBranch = createElement(element.getElse());
-
+    Token ifToken = toSlangToken(element.getIfKeyword());
+    Token elseToken = element.getElseKeyword() != null ? toSlangToken(element.getElseKeyword()) : null;
     if (thenBranch == null) {
       // Kotlin allows for a null then branch, which we match to a native since this is not allowed in Slang
       List<Tree> children = elseBranch != null ? Arrays.asList(condition, elseBranch) : Collections.singletonList(condition);
       return createNativeTree(metaData, new KotlinNativeKind(element), children);
     }
-    return new IfTreeImpl(metaData, condition, thenBranch, elseBranch, getConditionalKeyword(element));
-  }
-
-  private ConditionalKeyword getConditionalKeyword(KtIfExpression element) {
-    com.sonarsource.slang.api.Token ifToken = new TokenImpl(
-      KotlinTextRanges.textRange(psiDocument, element.getIfKeyword()),
-      element.getIfKeyword().getText(),
-      Token.Type.KEYWORD
-    );
-    com.sonarsource.slang.api.Token elseToken = null;
-    PsiElement elseKeyword = element.getElseKeyword();
-    if (elseKeyword != null) {
-      elseToken = new TokenImpl(
-        KotlinTextRanges.textRange(psiDocument, element.getElseKeyword()),
-        element.getElseKeyword().getText(),
-        Token.Type.KEYWORD
-      );
-    }
-    return new ConditionalKeywordImpl(ifToken, null, elseToken);
+    return new IfTreeImpl(metaData, condition, thenBranch, elseBranch, ifToken, elseToken);
   }
 
   private Tree createParameter(TreeMetaData metaData, KtParameter ktParameter) {
@@ -343,15 +323,7 @@ class KotlinTreeVisitor {
       whenExpressions.stream()
         .map(MatchCaseTree.class::cast)
         .collect(Collectors.toList()),
-      getWhenKeyword(element));
-  }
-
-  private Token getWhenKeyword(KtWhenExpression element) {
-    return new TokenImpl(
-      KotlinTextRanges.textRange(psiDocument, element.getWhenKeyword()),
-      element.getWhenKeyword().getText(),
-      Token.Type.KEYWORD
-    );
+      toSlangToken(element.getWhenKeyword()));
   }
 
   private Tree createMatchCase(TreeMetaData metaData, KtWhenEntry element) {
@@ -456,6 +428,14 @@ class KotlinTreeVisitor {
 
   private static boolean isSimpleStringLiteralEntry(PsiElement element) {
     return element instanceof KtLiteralStringTemplateEntry || element instanceof KtEscapeStringTemplateEntry;
+  }
+
+  private TokenImpl toSlangToken(PsiElement psiElement) {
+    return new TokenImpl(
+      KotlinTextRanges.textRange(psiDocument, psiElement),
+      psiElement.getText(),
+      Token.Type.KEYWORD
+    );
   }
 
 }

@@ -26,7 +26,6 @@ import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.ClassDeclarationTree;
 import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.ExceptionHandlingTree;
-import com.sonarsource.slang.api.ConditionalKeyword;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
@@ -223,10 +222,8 @@ public class SLangConverterTest {
     assertTree(ifTree).hasTextRange(1, 0, 1, 21);
     assertTree(ifTree.condition()).isBinaryExpression(Operator.GREATER_THAN);
     assertThat(ifTree.elseBranch()).isNull();
-    ConditionalKeyword conditionalKeyword = ifTree.keyword();
-    assertThat(conditionalKeyword.ifKeyword().text()).isEqualTo("if");
-    assertThat(conditionalKeyword.thenKeyword()).isNull();
-    assertThat(conditionalKeyword.elseKeyword()).isNull();
+    assertThat(ifTree.ifKeyword().text()).isEqualTo("if");
+    assertThat(ifTree.elseKeyword()).isNull();
   }
 
   @Test
@@ -238,10 +235,8 @@ public class SLangConverterTest {
     assertTree(ifTree.condition()).isBinaryExpression(Operator.GREATER_THAN);
     assertTree(ifTree.thenBranch()).isBlock(BinaryExpressionTree.class).hasTextRange(1, 11, 1, 22);
     assertTree(ifTree.elseBranch()).isBlock(IdentifierTree.class);
-    ConditionalKeyword conditionalKeyword = ifTree.keyword();
-    assertThat(conditionalKeyword.ifKeyword().text()).isEqualTo("if");
-    assertThat(conditionalKeyword.thenKeyword()).isNull();
-    assertThat(conditionalKeyword.elseKeyword().text()).isEqualTo("else");
+    assertThat(ifTree.ifKeyword().text()).isEqualTo("if");
+    assertThat(ifTree.elseKeyword().text()).isEqualTo("else");
   }
 
   @Test

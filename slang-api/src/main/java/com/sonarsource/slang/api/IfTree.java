@@ -30,5 +30,8 @@ public interface IfTree extends Tree {
   @CheckForNull
   Tree elseBranch();
 
-  ConditionalKeyword keyword();
+  Token ifKeyword();
+
+  @CheckForNull
+  Token elseKeyword();
 }

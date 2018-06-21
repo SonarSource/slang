@@ -25,7 +25,6 @@ import com.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.CatchTree;
 import com.sonarsource.slang.api.Comment;
-import com.sonarsource.slang.api.ConditionalKeyword;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.NativeTree;
@@ -42,7 +41,6 @@ import com.sonarsource.slang.impl.BlockTreeImpl;
 import com.sonarsource.slang.impl.CatchTreeImpl;
 import com.sonarsource.slang.impl.ClassDeclarationTreeImpl;
 import com.sonarsource.slang.impl.CommentImpl;
-import com.sonarsource.slang.impl.ConditionalKeywordImpl;
 import com.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
@@ -59,7 +57,7 @@ import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
 import com.sonarsource.slang.impl.UnaryExpressionTreeImpl;
-
+import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,8 +66,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
-import javax.annotation.Nullable;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -294,40 +290,21 @@ public class SLangConverter implements ASTConverter {
 
     @Override
     public Tree visitIfExpression(SLangParser.IfExpressionContext ctx) {
+      com.sonarsource.slang.api.Token ifToken = toSlangToken(ctx.IF().getSymbol());
+      com.sonarsource.slang.api.Token elseToken = null;
       Tree elseBranch = null;
       if (ctx.controlBlock().size() > 1) {
         elseBranch = visit(ctx.controlBlock(1));
+        elseToken = toSlangToken(ctx.ELSE().getSymbol());
       }
       Tree thenBranch = visit(ctx.controlBlock(0));
-      TreeMetaData meta = meta(ctx);
-      Token ifToken = ctx.IF().getSymbol();
-      Token elseToken = ctx.ELSE() != null ? ctx.ELSE().getSymbol() : null;
       return new IfTreeImpl(
-        meta,
+        meta(ctx),
         visit(ctx.statement()),
         thenBranch,
         elseBranch,
-        getConditionalKeyword(ifToken, elseToken));
-    }
-
-    private static ConditionalKeyword getConditionalKeyword(Token ktIf, @Nullable Token ktElse) {
-      return new ConditionalKeywordImpl(
-        toSlangToken(ktIf),
-        null,
-        ktElse != null  ? toSlangToken(ktElse) : null);
-    }
-
-    private static com.sonarsource.slang.api.Token toSlangToken(Token antlrToken) {
-      TokenLocation location = new TokenLocation(
-        antlrToken.getLine(),
-        antlrToken.getCharPositionInLine(),
-        antlrToken.getText());
-      TextRange textRange = new TextRangeImpl(
-        location.startLine(),
-        location.startLineOffset(),
-        location.endLine(),
-        location.endLineOffset());
-      return new TokenImpl(textRange, antlrToken.getText(), true);
+        ifToken,
+        elseToken);
     }
 
     @Override
@@ -341,12 +318,7 @@ public class SLangConverter implements ASTConverter {
         meta,
         visit(ctx.statement()),
         cases,
-        getMatchKeyword(ctx.MATCH().getSymbol()));
-    }
-
-    private static com.sonarsource.slang.api.Token getMatchKeyword(Token matchToken) {
-      TextRange textRange = getSlangTextRange(matchToken);
-      return new TokenImpl(textRange, matchToken.getText(), Type.KEYWORD);
+        toSlangToken(ctx.MATCH().getSymbol()));
     }
 
     @Override
@@ -504,6 +476,11 @@ public class SLangConverter implements ASTConverter {
         result = new AssignmentExpressionTreeImpl(meta(left, result), operator, left, result);
       }
       return result;
+    }
+
+    private static com.sonarsource.slang.api.Token toSlangToken(Token antlrToken) {
+      TextRange textRange = getSlangTextRange(antlrToken);
+      return new TokenImpl(textRange, antlrToken.getText(), Type.KEYWORD);
     }
   }
 }

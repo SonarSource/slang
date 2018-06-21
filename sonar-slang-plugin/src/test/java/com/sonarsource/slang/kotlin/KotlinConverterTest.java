@@ -23,7 +23,6 @@ import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.CatchTree;
 import com.sonarsource.slang.api.ClassDeclarationTree;
 import com.sonarsource.slang.api.Comment;
-import com.sonarsource.slang.api.ConditionalKeyword;
 import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
@@ -301,10 +300,8 @@ public class KotlinConverterTest {
     Tree tree = kotlinStatement("if (x) 1 else 4");
     assertTree(tree).isInstanceOf(IfTree.class);
     IfTree ifTree = (IfTree) tree;
-    ConditionalKeyword conditionalKeyword = ifTree.keyword();
-    assertThat(conditionalKeyword.ifKeyword().text()).isEqualTo("if");
-    assertThat(conditionalKeyword.elseKeyword().text()).isEqualTo("else");
-    assertThat(conditionalKeyword.thenKeyword()).isNull();
+    assertThat(ifTree.ifKeyword().text()).isEqualTo("if");
+    assertThat(ifTree.elseKeyword().text()).isEqualTo("else");
   }
 
   @Test

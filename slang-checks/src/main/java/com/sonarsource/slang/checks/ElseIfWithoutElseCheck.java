@@ -40,8 +40,8 @@ public class ElseIfWithoutElseCheck implements SlangCheck {
       if (elseBranch instanceof IfTree) {
         IfTree nestedIfTree = (IfTree) elseBranch;
         if (nestedIfTree.elseBranch() == null) {
-          Token elseToken = ifTree.keyword().elseKeyword();
-          Token ifToken = nestedIfTree.keyword().ifKeyword();
+          Token elseToken = ifTree.elseKeyword();
+          Token ifToken = nestedIfTree.ifKeyword();
           TextRange textRange = new TextRangeImpl(
             elseToken.textRange().start(),
             ifToken.textRange().end()
