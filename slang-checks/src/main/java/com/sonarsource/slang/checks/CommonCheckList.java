@@ -51,7 +51,8 @@ public class CommonCheckList {
       TooLongLineCheck.class,
       TooManyLinesOfCodeFileCheck.class,
       TooManyParametersCheck.class,
-      UnusedFunctionParameterCheck.class);
+      UnusedFunctionParameterCheck.class,
+      VariableAndParameterNameCheck.class);
   }
 
 }
