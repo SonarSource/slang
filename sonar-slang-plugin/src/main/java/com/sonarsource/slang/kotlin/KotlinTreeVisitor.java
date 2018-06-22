@@ -358,22 +358,35 @@ class KotlinTreeVisitor {
   }
 
   private Tree createLoopTree(TreeMetaData metaData, KtLoopExpression ktLoopExpression) {
-    Tree body = createMandatoryElement(ktLoopExpression.getBody());
+    Tree body = createElement(ktLoopExpression.getBody());
+    if (body == null) {
+      return convertElementToNative(ktLoopExpression, metaData);
+    }
+
     if (ktLoopExpression instanceof KtForExpression) {
       KtForExpression forExpression = (KtForExpression) ktLoopExpression;
-      Tree parameter = createMandatoryElement(forExpression.getLoopParameter());
-      Tree range = createMandatoryElement(forExpression.getLoopRange());
+      Tree parameter = createElement(forExpression.getLoopParameter());
+      Tree range = createElement(forExpression.getLoopRange());
+      if (parameter == null || range == null) {
+        return convertElementToNative(ktLoopExpression, metaData);
+      }
       Tree condition = createNativeTree(metaData, new KotlinNativeKind(ktLoopExpression), Arrays.asList(parameter, range));
       Token forToken = toSlangToken(forExpression.getForKeyword());
       return new LoopTreeImpl(metaData, condition, body, FOR, forToken);
     } else if (ktLoopExpression instanceof KtWhileExpression) {
       KtWhileExpression whileExpression = (KtWhileExpression) ktLoopExpression;
-      Tree condition = createMandatoryElement(whileExpression.getCondition());
+      Tree condition = createElement(whileExpression.getCondition());
+      if (condition == null) {
+        return convertElementToNative(ktLoopExpression, metaData);
+      }
       Token whileToken = toSlangToken(whileExpression.getFirstChild());
       return new LoopTreeImpl(metaData, condition, body, WHILE, whileToken);
     } else {
       KtDoWhileExpression doWhileExpression = (KtDoWhileExpression) ktLoopExpression;
-      Tree condition = createMandatoryElement(doWhileExpression.getCondition());
+      Tree condition = createElement(doWhileExpression.getCondition());
+      if (condition == null) {
+        return convertElementToNative(ktLoopExpression, metaData);
+      }
       Token whileToken = toSlangToken(doWhileExpression.getFirstChild());
       return new LoopTreeImpl(metaData, condition, body, DOWHILE, whileToken);
     }
