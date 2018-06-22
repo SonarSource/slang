@@ -55,7 +55,7 @@ public class UnusedLocalVariableCheck implements SlangCheck {
           .collect(Collectors.toSet());
 
       variableIdentifiers.stream()
-        .filter(var -> identifierTrees.isEmpty() || identifierTrees.stream().noneMatch(identifier -> SyntacticEquivalence.areEquivalent(var, identifier)))
+        .filter(var -> identifierTrees.stream().noneMatch(identifier -> SyntacticEquivalence.areEquivalent(var, identifier)))
         .forEach(identifier -> ctx.reportIssue(identifier, "Remove this unused \"" + identifier.name() + "\" local variable."));
 
     });
