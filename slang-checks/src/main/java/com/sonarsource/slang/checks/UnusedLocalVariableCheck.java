@@ -38,11 +38,14 @@ public class UnusedLocalVariableCheck implements SlangCheck {
   public void initialize(InitContext init) {
     init.register(FunctionDeclarationTree.class, (ctx, functionDeclarationTree) -> {
 
+      if(ctx.ancestors().stream().anyMatch(tree -> tree instanceof FunctionDeclarationTree)) {
+        return;
+      }
+
       Set<IdentifierTree> variableIdentifiers =
         functionDeclarationTree.descendants()
           .filter(tree -> tree instanceof VariableDeclarationTree)
           .map(VariableDeclarationTree.class::cast)
-          .filter(declarationTree -> !declarationTree.isVal())
           .map(VariableDeclarationTree::identifier)
           .collect(Collectors.toSet());
 
@@ -54,6 +57,7 @@ public class UnusedLocalVariableCheck implements SlangCheck {
       variableIdentifiers.stream()
         .filter(var -> identifierTrees.isEmpty() || identifierTrees.stream().noneMatch(identifier -> SyntacticEquivalence.areEquivalent(var, identifier)))
         .forEach(identifier -> ctx.reportIssue(identifier, "Remove this unused \"" + identifier.name() + "\" local variable."));
+
     });
   }
 }
