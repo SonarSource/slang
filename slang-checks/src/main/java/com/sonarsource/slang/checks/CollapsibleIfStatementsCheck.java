@@ -40,8 +40,8 @@ public class CollapsibleIfStatementsCheck implements SlangCheck {
       if (ifTreeStatement.elseBranch() == null) {
         getCollapsibleIfStatement(ifTreeStatement.thenBranch())
           .ifPresent(innerIfStatement -> {
-            TextRange innerIfRange = innerIfStatement.metaData().textRange();
-            ctx.reportIssue(ifTreeStatement, MESSAGE, new SecondaryLocation(innerIfRange, SECONDARY_MESSAGE));
+            TextRange innerIfRange = innerIfStatement.ifKeyword().textRange();
+            ctx.reportIssue(ifTreeStatement.ifKeyword(), MESSAGE, new SecondaryLocation(innerIfRange, SECONDARY_MESSAGE));
           });
       }
     });
