@@ -124,6 +124,7 @@ atomicExpression
   |  nativeExpression 
   |  literal
   |  conditional
+  |  loopExpression
   |  methodInvocation
   |  returnExpression
   |  expressionName
@@ -166,6 +167,24 @@ matchExpression
 matchCase
   :  statement ARROW controlBlock semi
   |  ELSE ARROW controlBlock semi
+  ;
+
+loopExpression
+  :  forLoop
+  |  whileLoop
+  |  doWhileLoop
+  ;
+
+forLoop
+  :  FOR LPAREN declaration COLON statement RPAREN controlBlock
+  ;
+
+whileLoop
+  :  WHILE LPAREN statement RPAREN controlBlock
+  ;
+
+doWhileLoop
+  :  DO controlBlock WHILE LPAREN statement RPAREN
   ;
 
 controlBlock
