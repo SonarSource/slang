@@ -45,6 +45,7 @@ import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
+import com.sonarsource.slang.impl.LoopTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
 import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
@@ -82,12 +83,15 @@ import org.jetbrains.kotlin.psi.KtCatchClause;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtConstantExpression;
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry;
+import org.jetbrains.kotlin.psi.KtDoWhileExpression;
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFinallySection;
+import org.jetbrains.kotlin.psi.KtForExpression;
 import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.KtIfExpression;
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
+import org.jetbrains.kotlin.psi.KtLoopExpression;
 import org.jetbrains.kotlin.psi.KtModifierList;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.KtOperationExpression;
@@ -100,6 +104,11 @@ import org.jetbrains.kotlin.psi.KtUnaryExpression;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
 import org.jetbrains.kotlin.psi.KtWhenEntry;
 import org.jetbrains.kotlin.psi.KtWhenExpression;
+import org.jetbrains.kotlin.psi.KtWhileExpression;
+
+import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
+import static com.sonarsource.slang.api.LoopTree.LoopKind.FOR;
+import static com.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
 
 class KotlinTreeVisitor {
   private static final Map<KtToken, Operator> BINARY_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
@@ -185,6 +194,8 @@ class KotlinTreeVisitor {
       return createMatchTree(metaData, (KtWhenExpression) element);
     } else if (element instanceof KtWhenEntry) {
       return createMatchCase(metaData, (KtWhenEntry) element);
+    } else if (element instanceof KtLoopExpression) {
+      return createLoopTree(metaData, (KtLoopExpression) element);
     } else if (element instanceof KtTryExpression) {
       return createExceptionHandling(metaData, (KtTryExpression) element);
     } else if (element instanceof KtCatchClause) {
@@ -344,6 +355,28 @@ class KotlinTreeVisitor {
       conditionExpression = createNativeTree(treeMetaData, new KotlinNativeKind(KtWhenCondition.class), conditionsList);
     }
     return new MatchCaseTreeImpl(metaData, conditionExpression, body);
+  }
+
+  private Tree createLoopTree(TreeMetaData metaData, KtLoopExpression ktLoopExpression) {
+    Tree body = createMandatoryElement(ktLoopExpression.getBody());
+    if (ktLoopExpression instanceof KtForExpression) {
+      KtForExpression forExpression = (KtForExpression) ktLoopExpression;
+      Tree parameter = createMandatoryElement(forExpression.getLoopParameter());
+      Tree range = createMandatoryElement(forExpression.getLoopRange());
+      Tree condition = createNativeTree(metaData, new KotlinNativeKind(ktLoopExpression), Arrays.asList(parameter, range));
+      Token forToken = toSlangToken(forExpression.getForKeyword());
+      return new LoopTreeImpl(metaData, condition, body, FOR, forToken);
+    } else if (ktLoopExpression instanceof KtWhileExpression) {
+      KtWhileExpression whileExpression = (KtWhileExpression) ktLoopExpression;
+      Tree condition = createMandatoryElement(whileExpression.getCondition());
+      Token whileToken = toSlangToken(whileExpression.getFirstChild());
+      return new LoopTreeImpl(metaData, condition, body, WHILE, whileToken);
+    } else {
+      KtDoWhileExpression doWhileExpression = (KtDoWhileExpression) ktLoopExpression;
+      Tree condition = createMandatoryElement(doWhileExpression.getCondition());
+      Token whileToken = toSlangToken(doWhileExpression.getFirstChild());
+      return new LoopTreeImpl(metaData, condition, body, DOWHILE, whileToken);
+    }
   }
 
   private Tree createOperationExpression(TreeMetaData metaData, KtOperationExpression operationExpression) {

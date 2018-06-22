@@ -30,6 +30,7 @@ import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.LiteralTree;
+import com.sonarsource.slang.api.LoopTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Token;
@@ -41,8 +42,14 @@ import com.sonarsource.slang.parser.SLangConverter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.antlr.v4.codegen.model.Loop;
 import org.junit.Test;
 
+import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.GREATER_THAN;
+import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
+import static com.sonarsource.slang.api.LoopTree.LoopKind.FOR;
+import static com.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
 import static com.sonarsource.slang.api.Token.Type.KEYWORD;
 import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static com.sonarsource.slang.api.Token.Type.OTHER;
@@ -220,7 +227,7 @@ public class SLangConverterTest {
     assertThat(tree).isInstanceOf(IfTree.class);
     IfTree ifTree = (IfTree) tree;
     assertTree(ifTree).hasTextRange(1, 0, 1, 21);
-    assertTree(ifTree.condition()).isBinaryExpression(Operator.GREATER_THAN);
+    assertTree(ifTree.condition()).isBinaryExpression(GREATER_THAN);
     assertThat(ifTree.elseBranch()).isNull();
     assertThat(ifTree.ifKeyword().text()).isEqualTo("if");
     assertThat(ifTree.elseKeyword()).isNull();
@@ -232,7 +239,7 @@ public class SLangConverterTest {
     assertThat(tree).isInstanceOf(IfTree.class);
     IfTree ifTree = (IfTree) tree;
     assertTree(ifTree).hasTextRange(1, 0, 1, 33);
-    assertTree(ifTree.condition()).isBinaryExpression(Operator.GREATER_THAN);
+    assertTree(ifTree.condition()).isBinaryExpression(GREATER_THAN);
     assertTree(ifTree.thenBranch()).isBlock(BinaryExpressionTree.class).hasTextRange(1, 11, 1, 22);
     assertTree(ifTree.elseBranch()).isBlock(IdentifierTree.class);
     assertThat(ifTree.ifKeyword().text()).isEqualTo("if");
@@ -258,6 +265,39 @@ public class SLangConverterTest {
     assertTree(matchTree.cases().get(1).expression()).isNull();
     assertTree(matchTree.cases().get(1)).hasTextRange(1, 19, 1, 29);
     assertThat(matchTree.keyword().text()).isEqualTo("match");
+  }
+
+  @Test
+  public void for_loop() {
+    Tree tree = converter.parse("for (var x : list) { x; };").children().get(0);
+    assertTree(tree).isInstanceOf(LoopTree.class).hasTextRange(1, 0, 1, 25);
+    LoopTree forLoop = (LoopTree) tree;
+    assertThat(forLoop.condition().children()).hasSize(2);
+    assertTree(forLoop.body()).isBlock(IdentifierTree.class);
+    assertThat(forLoop.kind()).isEqualTo(FOR);
+    assertThat(forLoop.keyword().text()).isEqualTo("for");
+  }
+
+  @Test
+  public void while_loop() {
+    Tree tree = converter.parse("while (x > y) { x = x-1; };").children().get(0);
+    assertTree(tree).isInstanceOf(LoopTree.class).hasTextRange(1, 0, 1, 26);
+    LoopTree forLoop = (LoopTree) tree;
+    assertTree(forLoop.condition()).isBinaryExpression(GREATER_THAN);
+    assertTree(forLoop.body()).isBlock(AssignmentExpressionTree.class);
+    assertThat(forLoop.kind()).isEqualTo(WHILE);
+    assertThat(forLoop.keyword().text()).isEqualTo("while");
+  }
+
+  @Test
+  public void doWhile_loop() {
+    Tree tree = converter.parse("do { x = x-1; } while (x > y);").children().get(0);
+    assertTree(tree).isInstanceOf(LoopTree.class).hasTextRange(1, 0, 1, 29);
+    LoopTree forLoop = (LoopTree) tree;
+    assertTree(forLoop.condition()).isBinaryExpression(GREATER_THAN);
+    assertTree(forLoop.body()).isBlock(AssignmentExpressionTree.class);
+    assertThat(forLoop.kind()).isEqualTo(DOWHILE);
+    assertThat(forLoop.keyword().text()).isEqualTo("do");
   }
 
   @Test

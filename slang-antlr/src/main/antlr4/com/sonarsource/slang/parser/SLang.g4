@@ -269,8 +269,10 @@ identifier : Identifier;
 
 CATCH : 'catch';
 CLASS : 'class';
+DO : 'do';
 ELSE : 'else';
 FINALLY : 'finally';
+FOR : 'for';
 FUN: 'fun';
 IF : 'if';
 MATCH : 'match';
@@ -282,6 +284,7 @@ THIS : 'this';
 TRY : 'try';
 VAL : 'val';
 VAR : 'var';
+WHILE : 'while';
 
 
 // Integer Literals
@@ -355,6 +358,7 @@ NullLiteral
 // Separators
 
 ARROW : '->' ;
+COLON : ':' ;
 COMMA : ',' ;
 DOT : '.' ;
 ELLIPSIS : '...' ;

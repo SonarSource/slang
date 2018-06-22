@@ -19,6 +19,7 @@
  */
 package com.sonarsource.slang.kotlin;
 
+import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.CatchTree;
 import com.sonarsource.slang.api.ClassDeclarationTree;
@@ -28,6 +29,7 @@ import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.LiteralTree;
+import com.sonarsource.slang.api.LoopTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
@@ -45,6 +47,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.LESS_THAN;
+import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
+import static com.sonarsource.slang.api.LoopTree.LoopKind.FOR;
+import static com.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
 import static com.sonarsource.slang.api.Token.Type.KEYWORD;
 import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static com.sonarsource.slang.api.Token.Type.OTHER;
@@ -344,6 +350,48 @@ public class KotlinConverterTest {
     assertTree(emptyWhen).hasChildren(0);
     assertTree(emptyWhen).isEquivalentTo(kotlinStatement("when {}"));
     assertTree(emptyWhen).isNotEquivalentTo(kotlinStatement("when (x) {}"));
+  }
+
+  @Test
+  public void testForLoop() {
+    Tree kotlinStatement = kotlinStatement("for (item : Int in ints) { x = item; x = x + 1; }");
+    assertTree(kotlinStatement).isInstanceOf(LoopTree.class);
+    LoopTree forLoop = (LoopTree) kotlinStatement;
+    assertTree(forLoop.condition()).isInstanceOf(NativeTree.class);
+    assertThat(forLoop.condition().children()).hasSize(2);
+    assertTree(forLoop.condition().children().get(0)).hasParameterName("item");
+    assertTree(forLoop.condition().children().get(1)).isIdentifier("ints");
+    assertTree(forLoop.body()).isBlock(AssignmentExpressionTree.class, AssignmentExpressionTree.class);
+    assertThat(forLoop.kind()).isEqualTo(FOR);
+    assertThat(forLoop.keyword().text()).isEqualTo("for");
+    assertTree(forLoop).isNotEquivalentTo(kotlinStatement("for (item : String in ints) { x = item; x = x + 1; }"));
+    assertTree(forLoop).isNotEquivalentTo(kotlinStatement("for (it : Int in ints) { x = item; x = x + 1; }"));
+    assertTree(forLoop).isNotEquivalentTo(kotlinStatement("for (item : Int in floats) { x = item; x = x + 1; }"));
+  }
+
+  @Test
+  public void testWhileLoop() {
+    Tree kotlinStatement = kotlinStatement("while (x < j) { item = i; i = i + 1; }");
+    assertTree(kotlinStatement).isInstanceOf(LoopTree.class);
+    LoopTree whileLoop = (LoopTree) kotlinStatement;
+    assertTree(whileLoop.condition()).isBinaryExpression(LESS_THAN);
+    assertTree(whileLoop.body()).isBlock(AssignmentExpressionTree.class, AssignmentExpressionTree.class);
+    assertThat(whileLoop.kind()).isEqualTo(WHILE);
+    assertThat(whileLoop.keyword().text()).isEqualTo("while");
+    assertTree(whileLoop).isNotEquivalentTo(kotlinStatement("while (x < k) { item = i; i = i + 1; }"));
+  }
+
+  @Test
+  public void testDoWhileLoop() {
+    Tree kotlinStatement = kotlinStatement("do { item = i; i = i + 1; } while (x < j)");
+    assertTree(kotlinStatement).isInstanceOf(LoopTree.class);
+    LoopTree doWhileLoop = (LoopTree) kotlinStatement;
+    assertTree(doWhileLoop.condition()).isBinaryExpression(LESS_THAN);
+    assertTree(doWhileLoop.body()).isBlock(AssignmentExpressionTree.class, AssignmentExpressionTree.class);
+    assertThat(doWhileLoop.kind()).isEqualTo(DOWHILE);
+    assertThat(doWhileLoop.keyword().text()).isEqualTo("do");
+    assertTree(doWhileLoop).isNotEquivalentTo(kotlinStatement("do { item = i; i = i + 1; } while (x < k)"));
+    assertTree(doWhileLoop).isNotEquivalentTo(kotlinStatement("while (x < j) { item = i; i = i + 1; }"));
   }
 
   @Test
