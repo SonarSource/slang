@@ -59,7 +59,9 @@ public class LoopTreeImpl extends BaseTreeImpl implements LoopTree {
   }
 
   @Override
-  public Token keyword() { return keyword; }
+  public Token keyword() {
+    return keyword;
+  }
 
   @Override
   public List<Tree> children() {
