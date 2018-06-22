@@ -26,10 +26,14 @@ import com.sonar.orchestrator.locator.FileLocation;
 import com.sonar.orchestrator.locator.Location;
 import com.sonar.orchestrator.locator.MavenLocation;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.Scanner;
 import org.apache.commons.lang.StringUtils;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.sonarsource.analyzer.commons.ProfileGenerator;
 
@@ -38,6 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SlangRulingTest {
   private static Orchestrator orchestrator;
+  private static boolean keepSonarqubeRunning = false;
 
   @BeforeClass
   public static void setUp() {
@@ -53,7 +58,7 @@ public class SlangRulingTest {
 
     OrchestratorBuilder builder = Orchestrator.builderEnv()
       .setSonarVersion(requireNonNull(System.getProperty("sonar.runtimeVersion"), "Please set system property sonar.runtimeVersion"))
-      .addPlugin(MavenLocation.of("org.sonarsource.sonar-lits-plugin","sonar-lits-plugin", "0.6"))
+      .addPlugin(MavenLocation.of("org.sonarsource.sonar-lits-plugin", "sonar-lits-plugin", "0.6"))
       .addPlugin(slangLocation);
 
     orchestrator = builder.build();
@@ -64,7 +69,15 @@ public class SlangRulingTest {
   }
 
   @Test
-  public void test() throws Exception {
+  // @Ignore because it should only be run manually
+  @Ignore
+  public void manual_keep_sonarqube_server_up() throws IOException {
+    keepSonarqubeRunning = true;
+    test();
+  }
+
+  @Test
+  public void test() throws IOException {
     orchestrator.getServer().provisionProject("kotlin-project", "kotlin-project");
     orchestrator.getServer().associateProjectToQualityProfile("kotlin-project", "kotlin", "rules");
 
@@ -77,7 +90,6 @@ public class SlangRulingTest {
       .setSourceEncoding("utf-8")
       .setProperty("sonar.inclusions", "**/*.kt")
       .setProperty("sonar.exclusions", "**/testData/**/*")
-      .setProperty("sonar.analysis.mode", "preview")
       .setProperty("dump.old", FileLocation.of("src/test/resources/expected").getFile().getAbsolutePath())
       .setProperty("dump.new", FileLocation.of("target/actual").getFile().getAbsolutePath())
       .setProperty("lits.differences", litsDifferencesFile.getAbsolutePath())
@@ -85,10 +97,22 @@ public class SlangRulingTest {
       .setProperty("sonar.scm.disabled", "true")
       .setEnvironmentVariable("SONAR_RUNNER_OPTS", "-Xmx1024m");
 
+    if (!keepSonarqubeRunning) {
+      build.setProperty("sonar.analysis.mode", "preview");
+    }
+
     orchestrator.executeBuild(build);
 
     String litsDifference = new String(Files.readAllBytes(litsDifferencesFile.toPath()));
     assertThat(litsDifference).isEmpty();
+  }
+
+  @AfterClass
+  public static void after() {
+    if (keepSonarqubeRunning) {
+      // keep server running, use CTRL-C to stop it
+      new Scanner(System.in).next();
+    }
   }
 
 }
