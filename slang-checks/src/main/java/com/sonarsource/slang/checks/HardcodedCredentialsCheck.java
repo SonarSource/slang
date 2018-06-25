@@ -97,7 +97,7 @@ public class HardcodedCredentialsCheck implements SlangCheck {
 
   private Stream<Pattern> literalPatterns() {
     if (literalPatterns == null) {
-      literalPatterns = toPatterns("=\\S.");
+      literalPatterns = toPatterns("=\\S");
     }
     return literalPatterns.stream();
   }

@@ -19,8 +19,6 @@
  */
 package com.sonarsource.slang.api;
 
-import com.sonarsource.slang.api.LiteralTree;
-
 public interface StringLiteralTree extends LiteralTree {
 
   String content();
