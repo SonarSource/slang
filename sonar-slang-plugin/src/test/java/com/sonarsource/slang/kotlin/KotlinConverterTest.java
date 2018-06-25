@@ -229,6 +229,12 @@ public class KotlinConverterTest {
   }
 
   @Test
+  public void testFunctionInvocation() {
+    Tree tree = kotlinStatement("foo(\"Hello world!\")");
+    assertThat(tree).isInstanceOf(NativeTree.class);
+  }
+
+  @Test
   public void testLiterals() {
     assertTrees(kotlinStatements("554; true; false; null; \"string\"; 'c';"))
       .isEquivalentTo(slangStatements("554; true; false; null; \"string\"; 'c';"));

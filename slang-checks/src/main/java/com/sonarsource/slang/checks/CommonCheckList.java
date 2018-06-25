@@ -44,6 +44,7 @@ public class CommonCheckList {
       IdenticalConditionsCheck.class,
       MatchCaseTooBigCheck.class,
       NestedMatchCheck.class,
+      OneStatementPerLineCheck.class,
       SelfAssignmentCheck.class,
       StringLiteralDuplicatedCheck.class,
       TodoCommentCheck.class,

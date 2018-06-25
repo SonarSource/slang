@@ -244,6 +244,11 @@ public class SLangConverter implements ASTConverter {
     }
 
     @Override
+    public Tree visitMethodInvocation(SLangParser.MethodInvocationContext ctx) {
+      return simpleNativeTree(ctx);
+    }
+
+    @Override
     public Tree visitMethodBody(SLangParser.MethodBodyContext ctx) {
       if (ctx.SEMICOLON() != null) {
         return null;
