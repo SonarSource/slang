@@ -19,10 +19,13 @@
  */
 package com.sonarsource.slang.kotlin;
 
+import com.sonarsource.slang.api.TopLevelTree;
+import com.sonarsource.slang.checks.api.SlangCheck;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,6 +35,7 @@ import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.CheckFactory;
+import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.sensor.error.AnalysisError;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
@@ -153,6 +157,26 @@ public class KotlinSensorTest {
     assertThat(textPointer.lineOffset()).isEqualTo(15);
 
     assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. Parse error at position 1:15", inputFile.uri()));
+  }
+
+  @Test
+  public void test_failure_in_check() {
+    InputFile inputFile = createInputFile("file1.kt", "fun f() {}");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = mock(CheckFactory.class);
+    Checks checks = mock(Checks.class);
+    SlangCheck failingCheck = init ->
+      init.register(TopLevelTree.class, (ctx, tree) -> { throw new IllegalStateException("BOUM"); });
+    when(checks.ruleKey(failingCheck)).thenReturn(RuleKey.of("kotlin", "failing"));
+    when(checkFactory.create(SlangPlugin.KOTLIN_REPOSITORY_KEY)).thenReturn(checks);
+    when(checks.all()).thenReturn(Collections.singletonList(failingCheck));
+    sensor(checkFactory).execute(context);
+
+    Collection<AnalysisError> analysisErrors = context.allAnalysisErrors();
+    assertThat(analysisErrors).hasSize(1);
+    AnalysisError analysisError = analysisErrors.iterator().next();
+    assertThat(analysisError.inputFile()).isEqualTo(inputFile);
+    assertThat(logTester.logs()).contains("Cannot analyse file1.kt");
   }
 
   private void assertTextRange(TextRange textRange, int startLine, int startLineOffset, int endLine, int endLineOffset) {
