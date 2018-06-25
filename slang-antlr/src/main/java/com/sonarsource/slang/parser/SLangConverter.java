@@ -46,6 +46,7 @@ import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
+import com.sonarsource.slang.impl.LoopTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
 import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
@@ -73,6 +74,9 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.sonarsource.analyzer.commons.TokenLocation;
 
+import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
+import static com.sonarsource.slang.api.LoopTree.LoopKind.FOR;
+import static com.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
 import static java.util.stream.Collectors.toList;
 
 public class SLangConverter implements ASTConverter {
@@ -330,6 +334,27 @@ public class SLangConverter implements ASTConverter {
       Tree expression = ctx.statement() == null ? null : visit(ctx.statement());
       Tree body = visit(ctx.controlBlock());
       return new MatchCaseTreeImpl(meta(ctx), expression, body);
+    }
+
+    @Override
+    public Tree visitForLoop(SLangParser.ForLoopContext ctx) {
+      Tree condition = visit(ctx.declaration());
+      Tree body = visit(ctx.controlBlock());
+      return new LoopTreeImpl(meta(ctx), condition, body, FOR, toSlangToken(ctx.FOR().getSymbol()));
+    }
+
+    @Override
+    public Tree visitWhileLoop(SLangParser.WhileLoopContext ctx) {
+      Tree condition = visit(ctx.statement());
+      Tree body = visit(ctx.controlBlock());
+      return new LoopTreeImpl(meta(ctx), condition, body, WHILE, toSlangToken(ctx.WHILE().getSymbol()));
+    }
+
+    @Override
+    public Tree visitDoWhileLoop(SLangParser.DoWhileLoopContext ctx) {
+      Tree condition = visit(ctx.statement());
+      Tree body = visit(ctx.controlBlock());
+      return new LoopTreeImpl(meta(ctx), condition, body, DOWHILE, toSlangToken(ctx.DO().getSymbol()));
     }
 
     @Override

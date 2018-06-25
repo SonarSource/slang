@@ -124,6 +124,7 @@ atomicExpression
   |  nativeExpression 
   |  literal
   |  conditional
+  |  loopExpression
   |  methodInvocation
   |  returnExpression
   |  expressionName
@@ -166,6 +167,24 @@ matchExpression
 matchCase
   :  statement ARROW controlBlock semi
   |  ELSE ARROW controlBlock semi
+  ;
+
+loopExpression
+  :  forLoop
+  |  whileLoop
+  |  doWhileLoop
+  ;
+
+forLoop
+  :  FOR LPAREN declaration RPAREN controlBlock
+  ;
+
+whileLoop
+  :  WHILE LPAREN statement RPAREN controlBlock
+  ;
+
+doWhileLoop
+  :  DO controlBlock WHILE LPAREN statement RPAREN
   ;
 
 controlBlock
@@ -250,8 +269,10 @@ identifier : Identifier;
 
 CATCH : 'catch';
 CLASS : 'class';
+DO : 'do';
 ELSE : 'else';
 FINALLY : 'finally';
+FOR : 'for';
 FUN: 'fun';
 IF : 'if';
 MATCH : 'match';
@@ -263,6 +284,7 @@ THIS : 'this';
 TRY : 'try';
 VAL : 'val';
 VAR : 'var';
+WHILE : 'while';
 
 
 // Integer Literals
