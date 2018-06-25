@@ -22,13 +22,13 @@ package com.sonarsource.slang.impl;
 import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.CatchTree;
 import com.sonarsource.slang.api.ParameterTree;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,6 +44,7 @@ public class ExceptionHandlingTreeImplTest {
         new AssignmentExpressionTreeImpl(meta, AssignmentExpressionTree.Operator.EQUAL, lhs, one);
     CatchTreeImpl catchWithIdentifier = new CatchTreeImpl(meta, parameter, assignmentExpressionTree, null);
     CatchTreeImpl catchWithoutIdentifier = new CatchTreeImpl(meta, null, assignmentExpressionTree, null);
+    TokenImpl tryToken = new TokenImpl(new TextRangeImpl(1, 0, 1, 3), "try", Token.Type.KEYWORD);
 
     Tree emptyTry = new BlockTreeImpl(meta, Collections.emptyList());
 
@@ -52,7 +53,7 @@ public class ExceptionHandlingTreeImplTest {
     Tree emptyFinally = new BlockTreeImpl(meta, Collections.emptyList());
 
     ExceptionHandlingTreeImpl exceptionHandlingTree =
-        new ExceptionHandlingTreeImpl(null, emptyTry, catchTreeList, emptyFinally);
+        new ExceptionHandlingTreeImpl(null, emptyTry, catchTreeList, emptyFinally, tryToken);
 
     assertThat(exceptionHandlingTree.children()).containsExactly(emptyTry, catchWithIdentifier, catchWithoutIdentifier, emptyFinally);
     assertThat(exceptionHandlingTree.tryBlock()).isEqualTo(emptyTry);

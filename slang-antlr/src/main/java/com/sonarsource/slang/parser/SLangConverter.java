@@ -401,7 +401,7 @@ public class SLangConverter implements ASTConverter {
         catchTreeList.add((CatchTree) visit(catchBlockContext));
       }
       Tree finallyBlock = ctx.finallyBlock() == null ? null : visit(ctx.finallyBlock());
-      return new ExceptionHandlingTreeImpl(meta(ctx), tryBlock, catchTreeList, finallyBlock);
+      return new ExceptionHandlingTreeImpl(meta(ctx), tryBlock, catchTreeList, finallyBlock, toSlangToken(ctx.TRY().getSymbol()));
     }
 
     @Override

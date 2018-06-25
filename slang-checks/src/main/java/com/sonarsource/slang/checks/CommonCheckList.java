@@ -54,6 +54,7 @@ public class CommonCheckList {
       SelfAssignmentCheck.class,
       StringLiteralDuplicatedCheck.class,
       TodoCommentCheck.class,
+      TooDeeplyNestedStatementsCheck.class,
       TooLongFunctionCheck.class,
       TooLongLineCheck.class,
       TooManyLinesOfCodeFileCheck.class,
