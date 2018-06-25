@@ -17,10 +17,15 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
+package com.sonarsource.slang.checks;
 
-public interface StringLiteralTree extends LiteralTree {
+import org.junit.Test;
 
-  String content();
+public class HardcodedCredentialsCheckTest {
+
+  @Test
+  public void test() {
+    Verifier.verify("HardcodedCredentials.slang", new HardcodedCredentialsCheck());
+  }
 
 }
