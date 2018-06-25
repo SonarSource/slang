@@ -33,7 +33,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 
@@ -81,10 +80,7 @@ public class HardcodedCredentialsCheck implements SlangCheck {
     ctx.reportIssue(tree, message);
   }
 
-  private Optional<String> getPasswordVariableName(@Nullable String name) {
-    if (name == null) {
-      return Optional.empty();
-    }
+  private Optional<String> getPasswordVariableName(String name) {
     return variablePatterns()
       .map(pattern -> pattern.matcher(name))
       .filter(Matcher::find)

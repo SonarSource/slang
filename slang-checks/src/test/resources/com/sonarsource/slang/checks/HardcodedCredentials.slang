@@ -4,6 +4,7 @@ x = "password";
 "password";
 x = "login=a&password=";
 "login=a&password=";
+"login=a&password= " + value;
 x = "login=a&password=xxx"; // Noncompliant {{'password' detected in this expression, review this potentially hardcoded credential.}}
 //  ^^^^^^^^^^^^^^^^^^^^^^
 "login=a&password=xxx"; // Noncompliant
