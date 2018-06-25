@@ -364,6 +364,7 @@ public class KotlinConverterTest {
     assertTree(forLoop.body()).isBlock(AssignmentExpressionTree.class, AssignmentExpressionTree.class);
     assertThat(forLoop.kind()).isEqualTo(FOR);
     assertThat(forLoop.keyword().text()).isEqualTo("for");
+    assertTree(forLoop).isEquivalentTo(kotlinStatement("for (item : Int in ints) { x = item; x = x + 1; }"));
     assertTree(forLoop).isNotEquivalentTo(kotlinStatement("for (item : String in ints) { x = item; x = x + 1; }"));
     assertTree(forLoop).isNotEquivalentTo(kotlinStatement("for (it : Int in ints) { x = item; x = x + 1; }"));
     assertTree(forLoop).isNotEquivalentTo(kotlinStatement("for (item : Int in floats) { x = item; x = x + 1; }"));
@@ -378,6 +379,8 @@ public class KotlinConverterTest {
     assertTree(whileLoop.body()).isBlock(AssignmentExpressionTree.class, AssignmentExpressionTree.class);
     assertThat(whileLoop.kind()).isEqualTo(WHILE);
     assertThat(whileLoop.keyword().text()).isEqualTo("while");
+    assertTree(whileLoop).isEquivalentTo(slangStatement("while (x < j) { item = i; i = i + 1; };"));
+    assertTree(whileLoop).isEquivalentTo(kotlinStatement("while (x < j) { item = i; i = i + 1; }"));
     assertTree(whileLoop).isNotEquivalentTo(kotlinStatement("while (x < k) { item = i; i = i + 1; }"));
   }
 
@@ -390,6 +393,8 @@ public class KotlinConverterTest {
     assertTree(doWhileLoop.body()).isBlock(AssignmentExpressionTree.class, AssignmentExpressionTree.class);
     assertThat(doWhileLoop.kind()).isEqualTo(DOWHILE);
     assertThat(doWhileLoop.keyword().text()).isEqualTo("do");
+    assertTree(doWhileLoop).isEquivalentTo(kotlinStatement("do { item = i; i = i + 1; } while (x < j)"));
+    assertTree(doWhileLoop).isEquivalentTo(slangStatement("do { item = i; i = i + 1; } while (x < j);"));
     assertTree(doWhileLoop).isNotEquivalentTo(kotlinStatement("do { item = i; i = i + 1; } while (x < k)"));
     assertTree(doWhileLoop).isNotEquivalentTo(kotlinStatement("while (x < j) { item = i; i = i + 1; }"));
   }

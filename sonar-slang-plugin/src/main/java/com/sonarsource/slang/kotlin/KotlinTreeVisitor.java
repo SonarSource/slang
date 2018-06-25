@@ -370,7 +370,11 @@ class KotlinTreeVisitor {
       if (parameter == null || range == null) {
         return convertElementToNative(ktLoopExpression, metaData);
       }
-      Tree condition = createNativeTree(metaData, new KotlinNativeKind(ktLoopExpression), Arrays.asList(parameter, range));
+      TextPointer startPointer = parameter.textRange().start();
+      TextPointer endPointer = range.textRange().end();
+      TextRange textRange = new TextRangeImpl(startPointer, endPointer);
+      TreeMetaData conditionMetaData = metaDataProvider.metaData(textRange);
+      Tree condition = createNativeTree(conditionMetaData, new KotlinNativeKind(ktLoopExpression), Arrays.asList(parameter, range));
       Token forToken = toSlangToken(forExpression.getForKeyword());
       return new LoopTreeImpl(metaData, condition, body, FOR, forToken);
     } else if (ktLoopExpression instanceof KtWhileExpression) {

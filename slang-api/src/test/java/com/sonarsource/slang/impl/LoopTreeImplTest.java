@@ -49,16 +49,7 @@ public class LoopTreeImplTest {
     assertThat(forTree.kind()).isEqualTo(FOR);
 
     LoopTreeImpl whileTree = new LoopTreeImpl(meta, condition, body, WHILE, whileToken);
-    assertThat(whileTree.children()).containsExactly(condition, body);
-    assertThat(whileTree.condition()).isEqualTo(condition);
-    assertThat(whileTree.body()).isEqualTo(body);
-    assertThat(whileTree.kind()).isEqualTo(WHILE);
-
     LoopTreeImpl doTree = new LoopTreeImpl(meta, condition, body, DOWHILE, doToken);
-    assertThat(doTree.children()).containsExactly(condition, body);
-    assertThat(doTree.condition()).isEqualTo(condition);
-    assertThat(doTree.body()).isEqualTo(body);
-    assertThat(doTree.kind()).isEqualTo(DOWHILE);
 
     assertThat(areEquivalent(forTree, new LoopTreeImpl(meta, condition, body, FOR, forToken))).isTrue();
     assertThat(areEquivalent(forTree, whileTree)).isFalse();

@@ -176,7 +176,7 @@ loopExpression
   ;
 
 forLoop
-  :  FOR LPAREN declaration COLON statement RPAREN controlBlock
+  :  FOR LPAREN declaration RPAREN controlBlock
   ;
 
 whileLoop
@@ -358,7 +358,6 @@ NullLiteral
 // Separators
 
 ARROW : '->' ;
-COLON : ':' ;
 COMMA : ',' ;
 DOT : '.' ;
 ELLIPSIS : '...' ;

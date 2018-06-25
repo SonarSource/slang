@@ -43,7 +43,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.antlr.v4.codegen.model.Loop;
 import org.junit.Test;
 
 import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.GREATER_THAN;
@@ -269,7 +268,7 @@ public class SLangConverterTest {
 
   @Test
   public void for_loop() {
-    Tree tree = converter.parse("for (var x : list) { x; };").children().get(0);
+    Tree tree = converter.parse("for (var x = list) { x; };").children().get(0);
     assertTree(tree).isInstanceOf(LoopTree.class).hasTextRange(1, 0, 1, 25);
     LoopTree forLoop = (LoopTree) tree;
     assertThat(forLoop.condition().children()).hasSize(2);
