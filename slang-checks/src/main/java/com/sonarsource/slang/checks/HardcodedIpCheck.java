@@ -31,7 +31,7 @@ import org.sonar.check.Rule;
 @Rule(key = "S1313")
 public class HardcodedIpCheck implements SlangCheck {
 
-  private static final String IP_ADDRESS_REGEX = "([^\\d.]*\\/)?(?<ip>(?:\\d{1,3}\\.){3}\\d{1,3}(?!\\d|\\.))(\\/.*)?";
+  private static final String IP_ADDRESS_REGEX = "([^\\d.]*/)?(?<ip>(?:\\d{1,3}\\.){3}\\d{1,3}(?!\\d|\\.))(/.*)?";
 
   private static final Pattern pattern = Pattern.compile(IP_ADDRESS_REGEX);
 
