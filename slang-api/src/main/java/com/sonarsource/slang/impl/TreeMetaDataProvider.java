@@ -20,26 +20,33 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.Comment;
+import com.sonarsource.slang.api.HasTextRange;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TreeMetaData;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class TreeMetaDataProvider {
 
-  private final List<Comment> comments;
-  private final List<Token> tokens;
+  public static final Comparator<HasTextRange> COMPARATOR = Comparator.comparing(e -> e.textRange().start());
+
+  private final List<Comment> sortedComments;
+  private final List<Token> sortedTokens;
 
   public TreeMetaDataProvider(List<Comment> comments, List<Token> tokens) {
-    this.comments = comments;
-    this.tokens = tokens;
+    this.sortedComments = new ArrayList<>(comments);
+    this.sortedComments.sort(COMPARATOR);
+    this.sortedTokens = new ArrayList<>(tokens);
+    this.sortedTokens.sort(COMPARATOR);
   }
 
   public List<Comment> allComments() {
-    return comments;
+    return sortedComments;
   }
 
   public TreeMetaData metaData(TextRange textRange) {
@@ -62,18 +69,29 @@ public class TreeMetaDataProvider {
 
     @Override
     public List<Comment> commentsInside() {
-      // TODO improve performance by storing an ordered list of comments
-      return comments.stream()
-        .filter(comment -> comment.textRange().isInside(textRange))
-        .collect(Collectors.toList());
+      return getElementsInsideRange(sortedComments);
     }
 
     @Override
     public List<Token> tokens() {
-      // TODO improve performance by storing an ordered list of tokens
-      return tokens.stream()
-        .filter(token -> token.textRange().isInside(textRange))
-        .collect(Collectors.toList());
+      return getElementsInsideRange(sortedTokens);
+    }
+
+    private <T extends HasTextRange> List<T> getElementsInsideRange(List<T> sortedList) {
+      List<T> elementsInsideRange = new ArrayList<>();
+      HasTextRange key = () -> textRange;
+      int index = Collections.binarySearch(sortedList, key, COMPARATOR);
+      if (index < 0) {
+        index = -index - 1;
+      }
+      for (int i = index; i < sortedList.size(); i++) {
+        T element = sortedList.get(i);
+        if (!element.textRange().isInside(textRange)) {
+          break;
+        }
+        elementsInsideRange.add(element);
+      }
+      return elementsInsideRange;
     }
 
     @Override
