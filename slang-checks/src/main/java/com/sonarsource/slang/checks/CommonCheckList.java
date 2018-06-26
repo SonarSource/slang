@@ -41,6 +41,7 @@ public class CommonCheckList {
       IfConditionalAlwaysTrueOrFalseCheck.class,
       FixMeCommentCheck.class,
       HardcodedCredentialsCheck.class,
+      HardcodedIpCheck.class,
       IdenticalBinaryOperandCheck.class,
       IdenticalConditionsCheck.class,
       MatchCaseTooBigCheck.class,
