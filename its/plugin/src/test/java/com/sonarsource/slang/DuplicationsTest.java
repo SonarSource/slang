@@ -17,27 +17,23 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.kotlin;
+package com.sonarsource.slang;
 
-import org.sonar.api.config.Configuration;
-import org.sonar.api.resources.AbstractLanguage;
+import org.junit.Test;
 
-public class KotlinLanguage extends AbstractLanguage {
+import static org.assertj.core.api.Assertions.assertThat;
 
-  private Configuration configuration;
+public class DuplicationsTest extends TestBase {
+  private static final String BASE_DIRECTORY = "projects/duplications/";
 
-  public KotlinLanguage(Configuration configuration) {
-    super(SlangPlugin.KOTLIN_LANGUAGE_KEY, SlangPlugin.KOTLIN_LANGUAGE_NAME);
-    this.configuration = configuration;
-  }
+  @Test
+  public void kotlin_duplications() {
+    ORCHESTRATOR.executeBuild(getSonarScanner(BASE_DIRECTORY, "kotlin"));
 
-  @Override
-  public String[] getFileSuffixes() {
-    String[] suffixes = configuration.getStringArray(SlangPlugin.KOTLIN_FILE_SUFFIXES_KEY);
-    if (suffixes == null || suffixes.length == 0) {
-      suffixes = SlangPlugin.KOTLIN_FILE_SUFFIXES_DEFAULT_VALUE.split(",");
-    }
-    return suffixes;
+    assertThat(getMeasureAsInt("duplicated_lines")).isEqualTo(77);
+    assertThat(getMeasureAsInt("duplicated_blocks")).isEqualTo(5);
+    assertThat(getMeasureAsInt("duplicated_files")).isEqualTo(2);
+    assertThat(getMeasure("duplicated_lines_density").getValue()).isEqualTo("56.6");
   }
 
 }

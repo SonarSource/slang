@@ -23,30 +23,30 @@ pipeline {
     }
     stage('QA') {
       parallel {
-        stage('ITs-lts') {
+        stage('ruling-latest') {
           agent {
             label 'linux'
           }
           steps {
-            runITs "LATEST_RELEASE[6.7]"
+            runRuling "LATEST_RELEASE"
           }
         }
 
-        stage('ITs-latest') {
+        stage('plugin-lts') {
           agent {
             label 'linux'
           }
           steps {
-            runITs "LATEST_RELEASE"
+            runPlugin "LATEST_RELEASE[6.7]"
           }
         }
 
-        stage('ITs-dev') {
+        stage('plugin-dev') {
           agent {
             label 'linux'
           }
           steps {
-            runITs "DEV"
+            runPlugin "DEV"
           }
         }
       }
@@ -69,13 +69,24 @@ pipeline {
   }
 }
 
-def runITs(String sqRuntimeVersion) {
+def runRuling(String sqRuntimeVersion) {
   withQAEnv {
     withMaven(maven: MAVEN_TOOL) {
       mavenSetBuildVersion()
       dir('its') {
         sh 'git submodule update --init --recursive'
-        sh "mvn ${itBuildArguments sqRuntimeVersion}"
+        sh "mvn -pl ruling ${itBuildArguments sqRuntimeVersion}"
+      }
+    }
+  }
+}
+
+def runPlugin(String sqRuntimeVersion) {
+  withQAEnv {
+    withMaven(maven: MAVEN_TOOL) {
+      mavenSetBuildVersion()
+      dir('its') {
+        sh "mvn -pl plugin ${itBuildArguments sqRuntimeVersion}"
       }
     }
   }
