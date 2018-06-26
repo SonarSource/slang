@@ -37,9 +37,6 @@ public class ClassDeclarationTreeImpl extends BaseTreeImpl implements ClassDecla
     super(metaData);
     this.identifier = identifier;
     this.classTree = classTree;
-    if (identifier != null && classTree.descendants().noneMatch(identifier::equals)) {
-      throw new IllegalStateException("Class identifier must be inside the native classTree structure");
-    }
   }
 
   @CheckForNull

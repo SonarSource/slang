@@ -40,6 +40,7 @@ import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.VariableDeclarationTree;
 import com.sonarsource.slang.parser.SLangConverter;
+import com.sonarsource.slang.visitors.TreePrinter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -182,6 +183,7 @@ public class KotlinConverterTest {
   @Test
   public void testEnumClassEntries() {
     Tree tree = kotlin("enum class A { B, C, D }");
+    System.out.println(TreePrinter.tree2string(tree));
     assertTree(tree).isInstanceOf(ClassDeclarationTree.class);
     assertThat(tree.descendants().noneMatch(ClassDeclarationTree.class::isInstance)).isTrue();
   }
@@ -214,7 +216,7 @@ public class KotlinConverterTest {
     assertTree(privateModifier).isNotEquivalentTo(functionWithInternalModifier.modifiers().get(0));
     assertTree(privateModifier).isEquivalentTo(functionWithPrivate.modifiers().get(0));
 
-    FunctionDeclarationTree constructorFunction = ((FunctionDeclarationTree) kotlin("class classC(a: String, b: Int) {}").children().get(0).children().get(1));
+    FunctionDeclarationTree constructorFunction = ((FunctionDeclarationTree) kotlin("class classC(a: String, b: Int) {}").children().get(0).children().get(0));
     assertTree(constructorFunction.name()).isNull();
     assertThat(constructorFunction.modifiers()).isEmpty();
     assertTree(constructorFunction.returnType()).isNull();
