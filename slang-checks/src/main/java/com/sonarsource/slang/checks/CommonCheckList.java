@@ -37,6 +37,7 @@ public class CommonCheckList {
       DuplicatedFunctionImplementationCheck.class,
       ElseIfWithoutElseCheck.class,
       EmptyBlockCheck.class,
+      EmptyCommentCheck.class,
       EmptyFunctionCheck.class,
       IfConditionalAlwaysTrueOrFalseCheck.class,
       FixMeCommentCheck.class,
