@@ -20,7 +20,6 @@
 package com.sonarsource.slang.plugin;
 
 import com.sonarsource.slang.api.BinaryExpressionTree;
-import com.sonarsource.slang.api.ClassDeclarationTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.HasTextRange;
 import com.sonarsource.slang.api.IfTree;
@@ -43,8 +42,6 @@ public class CyclomaticComplexityVisitor extends TreeVisitor<TreeContext> {
         complexityTrees.add(tree);
       }
     });
-
-    register(ClassDeclarationTree.class, (ctx, tree) -> complexityTrees.add(tree));
 
     register(IfTree.class, (ctx, tree) -> complexityTrees.add(tree.ifKeyword()));
 

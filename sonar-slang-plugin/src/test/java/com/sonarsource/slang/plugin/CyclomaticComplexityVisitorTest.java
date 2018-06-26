@@ -19,24 +19,15 @@
  */
 package com.sonarsource.slang.plugin;
 
-import com.sonarsource.slang.api.ClassDeclarationTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.HasTextRange;
 import com.sonarsource.slang.api.LoopTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
-import com.sonarsource.slang.kotlin.InputFileContext;
 import com.sonarsource.slang.parser.SLangConverter;
-import java.io.File;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.sonar.api.batch.fs.internal.DefaultInputFile;
-import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
-import org.sonar.api.batch.sensor.internal.SensorContextTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -73,14 +64,6 @@ public class CyclomaticComplexityVisitorTest {
     assertThat(trees).hasSize(2);
     assertThat(trees.get(0)).isInstanceOf(FunctionDeclarationTree.class);
     assertThat(trees.get(1)).isInstanceOf(Token.class);
-  }
-
-  @Test
-  public void test_class() throws Exception {
-    String content = "class foo {}";
-    List<HasTextRange> trees = getComplexityTrees(content);
-    assertThat(trees).hasSize(1);
-    assertThat(trees.get(0)).isInstanceOf(ClassDeclarationTree.class);
   }
 
   @Test
