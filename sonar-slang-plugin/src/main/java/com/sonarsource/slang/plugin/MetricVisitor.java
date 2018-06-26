@@ -47,6 +47,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
   private Set<Integer> nosonarLines;
   private int numberOfFunctions;
   private int numberOfClasses;
+  private int complexity;
 
   public MetricVisitor(FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter) {
     this.fileLinesContextFactory = fileLinesContextFactory;
@@ -56,6 +57,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
       tree.allComments().forEach(
         comment -> addCommentMetrics(comment, commentLines, nosonarLines));
       linesOfCode.addAll(tree.metaData().linesOfCode());
+      complexity = new CyclomaticComplexityVisitor().complexityTrees(tree).size();
     });
     register(FunctionDeclarationTree.class, (ctx, tree) -> {
       if (tree.name() != null && tree.body() != null) {
@@ -72,6 +74,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
     nosonarLines = new HashSet<>();
     numberOfFunctions = 0;
     numberOfClasses = 0;
+    complexity = 0;
   }
 
   @Override
@@ -80,6 +83,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
     saveMetric(ctx, CoreMetrics.COMMENT_LINES, commentLines().size());
     saveMetric(ctx, CoreMetrics.FUNCTIONS, numberOfFunctions());
     saveMetric(ctx, CoreMetrics.CLASSES, numberOfClasses());
+    saveMetric(ctx, CoreMetrics.COMPLEXITY, complexity);
 
     FileLinesContext fileLinesContext = fileLinesContextFactory.createFor(ctx.inputFile);
     linesOfCode().forEach(line -> fileLinesContext.setIntValue(CoreMetrics.NCLOC_DATA_KEY, line, 1));
