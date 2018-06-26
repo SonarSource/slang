@@ -193,15 +193,17 @@ public class SLangConverter implements ASTConverter {
     @Override
     public Tree visitClassDeclaration(SLangParser.ClassDeclarationContext ctx) {
       List<Tree> children = new ArrayList<>();
+      IdentifierTree identifier = null;
 
       if (ctx.identifier() != null) {
-        children.add(visit(ctx.identifier()));
+        identifier = (IdentifierTree) visit(ctx.identifier());
+        children.add(identifier);
       }
 
       children.addAll(list(ctx.typeDeclaration()));
 
       NativeTree classDecl = new NativeTreeImpl(meta(ctx), new SNativeKind(ctx), children);
-      return new ClassDeclarationTreeImpl(meta(ctx), classDecl);
+      return new ClassDeclarationTreeImpl(meta(ctx), identifier, classDecl);
     }
 
     @Override

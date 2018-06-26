@@ -214,12 +214,21 @@ class KotlinTreeVisitor {
   }
 
   private Tree createClassDeclarationTree(TreeMetaData metaData, KtClass ktClass) {
-    Tree classDecl = createNativeTree(metaData, new KotlinNativeKind(ktClass, ktClass.getName()), ktClass);
-    return new ClassDeclarationTreeImpl(metaData, classDecl);
+    PsiElement nameIdentifier = ktClass.getNameIdentifier();
+    IdentifierTree identifier = null;
+    String name = null;
+
+    if (nameIdentifier != null) {
+      name = nameIdentifier.getText();
+      identifier = createIdentifierTree(getTreeMetaData(nameIdentifier), name);
+    }
+
+    Tree classDecl = createNativeTree(metaData, new KotlinNativeKind(ktClass, name), ktClass);
+    return new ClassDeclarationTreeImpl(metaData, identifier, classDecl);
   }
 
   private Tree convertElementToNative(PsiElement element, TreeMetaData metaData) {
-    if (element instanceof KtDestructuringDeclarationEntry || isSimpleStringLiteralEntry(element) ) {
+    if (element instanceof KtDestructuringDeclarationEntry || isSimpleStringLiteralEntry(element)) {
       // To differentiate between the native trees of complex string template entries, we add the string value to the native kind
       return createNativeTree(metaData, new KotlinNativeKind(element, element.getText()), element);
     } else {
@@ -511,8 +520,7 @@ class KotlinTreeVisitor {
     return new TokenImpl(
       KotlinTextRanges.textRange(psiDocument, psiElement),
       psiElement.getText(),
-      Token.Type.KEYWORD
-    );
+      Token.Type.KEYWORD);
   }
 
 }

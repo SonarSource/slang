@@ -19,7 +19,12 @@
  */
 package com.sonarsource.slang.api;
 
+import javax.annotation.CheckForNull;
+
 public interface ClassDeclarationTree extends Tree {
+
+  @CheckForNull
+  IdentifierTree identifier();
 
   Tree classTree();
 

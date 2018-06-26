@@ -52,8 +52,8 @@ import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
 import static com.sonarsource.slang.api.Token.Type.KEYWORD;
-import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static com.sonarsource.slang.api.Token.Type.OTHER;
+import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static com.sonarsource.slang.testing.TreesAssert.assertTrees;
@@ -153,6 +153,7 @@ public class KotlinConverterTest {
     Tree treeA = kotlin("class A { private fun function(a : Int): Boolean { true; }}");
     assertTree(treeA).isInstanceOf(ClassDeclarationTree.class);
     ClassDeclarationTree classA = (ClassDeclarationTree) treeA;
+    assertTree(classA.identifier()).isIdentifier("A");
     assertThat(classA.children()).hasSize(1);
     assertTree(treeA).isNotEquivalentTo(kotlin("class A { private fun function(a : Int): Boolean { true; false; }"));
     assertTree(treeA).isNotEquivalentTo(kotlin("class A { private fun function(a : Int): Boolean { false; }"));
@@ -167,11 +168,14 @@ public class KotlinConverterTest {
 
   @Test
   public void testClassWithoutBody() {
-    Tree classA = kotlin("class A {}");
-    assertTree(classA).isInstanceOf(ClassDeclarationTree.class);
-    assertTree(classA).isEquivalentTo(kotlin("class A {}"));
-    assertTree(classA).isNotEquivalentTo(kotlin("class A constructor(){}"));
-    assertTree(classA).isNotEquivalentTo(kotlin("class B {}"));
+    Tree tree = kotlin("class A {}");
+    assertTree(tree).isInstanceOf(ClassDeclarationTree.class);
+    ClassDeclarationTree classA2 = (ClassDeclarationTree) tree;
+    assertTree(classA2.identifier()).isIdentifier("A");
+    assertRange(classA2.identifier().textRange()).hasRange(1, 6, 1, 7);
+    assertTree(tree).isEquivalentTo(kotlin("class A {}"));
+    assertTree(tree).isNotEquivalentTo(kotlin("class A constructor(){}"));
+    assertTree(tree).isNotEquivalentTo(kotlin("class B {}"));
   }
 
   @Test
@@ -426,7 +430,6 @@ public class KotlinConverterTest {
     assertThat(exceptionHandlingTree.finallyBlock()).isNotNull();
     assertTree(exceptionHandlingTree.finallyBlock()).isBlock(LiteralTree.class);
   }
-
 
   @Test
   public void testTryCatchFinally() {

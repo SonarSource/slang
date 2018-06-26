@@ -42,7 +42,6 @@ import com.sonarsource.slang.parser.SLangConverter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.junit.Test;
 
 import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.GREATER_THAN;
@@ -50,8 +49,8 @@ import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
 import static com.sonarsource.slang.api.Token.Type.KEYWORD;
-import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static com.sonarsource.slang.api.Token.Type.OTHER;
+import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -143,7 +142,8 @@ public class SLangConverterTest {
     assertTree(varDeclX).isNotEquivalentTo(converter.parse("myint var x = 0;").children().get(0));
     assertTree(varDeclX).isNotEquivalentTo(converter.parse("int var x = 1;").children().get(0));
     assertTree(varDeclX).isNotEquivalentTo(converter.parse("var x = 0;").children().get(0));
-    assertTree(varDeclX).isNotEquivalentTo(converter.parse("var x;").children().get(0));;
+    assertTree(varDeclX).isNotEquivalentTo(converter.parse("var x;").children().get(0));
+    ;
   }
 
   @Test
@@ -151,6 +151,7 @@ public class SLangConverterTest {
     ClassDeclarationTree classe = parseClass("class MyClass { int val x; fun foo (x); } ");
     assertThat(classe.children()).hasSize(1);
     assertThat(classe.classTree()).isInstanceOf(NativeTree.class);
+    assertTree(classe.identifier()).isIdentifier("MyClass");
     NativeTree classChildren = (NativeTree) classe.classTree();
     assertThat(classChildren.children()).hasSize(3);
     assertTree(classChildren.children().get(0)).isIdentifier("MyClass");
@@ -163,6 +164,8 @@ public class SLangConverterTest {
     ClassDeclarationTree classe = parseClass("class MyClass { } ");
     assertThat(classe.children()).hasSize(1);
     assertThat(classe.classTree()).isInstanceOf(NativeTree.class);
+    assertTree(classe.identifier()).isIdentifier("MyClass");
+    assertRange(classe.identifier().textRange()).hasRange(1, 6, 1, 13);
     NativeTree classChildren = (NativeTree) classe.classTree();
     assertThat(classChildren.children()).hasSize(1);
     assertTree(classChildren.children().get(0)).isIdentifier("MyClass");
@@ -173,6 +176,7 @@ public class SLangConverterTest {
     ClassDeclarationTree classe = parseClass("class { int val x; } ");
     assertThat(classe.children()).hasSize(1);
     assertThat(classe.classTree()).isInstanceOf(NativeTree.class);
+    assertTree(classe.identifier()).isNull();
     NativeTree classChildren = (NativeTree) classe.classTree();
     assertThat(classChildren.children()).hasSize(1);
     assertThat(classChildren.children().get(0)).isInstanceOf(VariableDeclarationTree.class);
@@ -183,6 +187,7 @@ public class SLangConverterTest {
     ClassDeclarationTree classe = parseClass("class { } ");
     assertThat(classe.children()).hasSize(1);
     assertThat(classe.classTree()).isInstanceOf(NativeTree.class);
+    assertTree(classe.identifier()).isNull();
     NativeTree classChildren = (NativeTree) classe.classTree();
     assertThat(classChildren.children()).hasSize(0);
   }
@@ -302,7 +307,7 @@ public class SLangConverterTest {
   @Test
   public void try_catch_finally() {
     Tree tree = converter.parse("try { 1 } catch (e) {} catch () {} finally {};").children().get(0);
-    assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1,0,1,45);
+    assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1, 0, 1, 45);
     ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) tree;
     assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
     assertThat(exceptionHandlingTree.catchBlocks()).hasSize(2);
@@ -315,7 +320,7 @@ public class SLangConverterTest {
   @Test
   public void try_catch() {
     Tree tree = converter.parse("try { 1 } catch (e) {};").children().get(0);
-    assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1,0,1,22);
+    assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1, 0, 1, 22);
     ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) tree;
     assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
     assertThat(exceptionHandlingTree.catchBlocks()).hasSize(1);
@@ -327,7 +332,7 @@ public class SLangConverterTest {
   @Test
   public void try_finally() {
     Tree tree = converter.parse("try { 1 } finally {};").children().get(0);
-    assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1,0,1,20);
+    assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1, 0, 1, 20);
     ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) tree;
     assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
     assertThat(exceptionHandlingTree.catchBlocks()).hasSize(0);
@@ -412,7 +417,7 @@ public class SLangConverterTest {
     List<String> content = Arrays.asList("a", "string", "string with spaces");
 
     String slangCode = values.stream().collect(Collectors.joining(";"));
-    Tree tree = converter.parse(slangCode+";");
+    Tree tree = converter.parse(slangCode + ";");
 
     assertTree(tree).isNotNull();
     assertTree(tree).isInstanceOf(TopLevelTree.class);
