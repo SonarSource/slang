@@ -59,8 +59,10 @@ import com.sonarsource.slang.impl.UnaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -142,8 +144,10 @@ class KotlinTreeVisitor {
   private final Document psiDocument;
   private final TreeMetaDataProvider metaDataProvider;
   private final Tree sLangAST;
+  private final Deque<Boolean> enumClassDeclaration;
 
   public KotlinTreeVisitor(PsiFile psiFile, TreeMetaDataProvider metaDataProvider) {
+    this.enumClassDeclaration = new ArrayDeque<>();
     this.psiDocument = psiFile.getViewProvider().getDocument();
     this.metaDataProvider = metaDataProvider;
     this.sLangAST = createMandatoryElement(psiFile);
@@ -222,9 +226,15 @@ class KotlinTreeVisitor {
       name = nameIdentifier.getText();
       identifier = createIdentifierTree(getTreeMetaData(nameIdentifier), name);
     }
-
-    Tree classDecl = createNativeTree(metaData, new KotlinNativeKind(ktClass, name), ktClass);
-    return new ClassDeclarationTreeImpl(metaData, identifier, classDecl);
+    Boolean isInsideEnum = enumClassDeclaration.peekLast();
+    enumClassDeclaration.addLast(ktClass.isEnum());
+    Tree nativeClassDecl = createNativeTree(metaData, new KotlinNativeKind(ktClass, name), ktClass);
+    Tree classDecl = nativeClassDecl;
+    if (isInsideEnum == null || !isInsideEnum) {
+      classDecl = new ClassDeclarationTreeImpl(metaData, identifier, nativeClassDecl);
+    }
+    enumClassDeclaration.removeLast();
+    return classDecl;
   }
 
   private Tree convertElementToNative(PsiElement element, TreeMetaData metaData) {

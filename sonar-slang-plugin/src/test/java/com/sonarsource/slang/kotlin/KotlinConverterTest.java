@@ -179,6 +179,20 @@ public class KotlinConverterTest {
   }
 
   @Test
+  public void testEnumClassEntries() {
+    Tree tree = kotlin("enum class A { B, C, D }");
+    assertTree(tree).isInstanceOf(ClassDeclarationTree.class);
+    assertThat(tree.descendants().noneMatch(ClassDeclarationTree.class::isInstance)).isTrue();
+  }
+
+  @Test
+  public void testNestedClasses() {
+    Tree tree = kotlin("class A { class B { class C {} } }");
+    assertTree(tree).isInstanceOf(ClassDeclarationTree.class);
+    assertThat(tree.descendants().filter(ClassDeclarationTree.class::isInstance).count()).isEqualTo(2);
+  }
+
+  @Test
   public void testFunctionDeclaration() {
     FunctionDeclarationTree functionDeclarationTree = ((FunctionDeclarationTree) kotlin("private fun function1(a: Int, b: String): Boolean { true; }"));
     assertTree(functionDeclarationTree.name()).isIdentifier("function1").hasTextRange(1, 12, 1, 21);
