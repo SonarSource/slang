@@ -30,6 +30,7 @@ public class CommonCheckList {
   public static List<Class> checks() {
     return Arrays.asList(
       AllBranchesIdenticalCheck.class,
+      BadClassNameCheck.class,
       BadFunctionNameCheck.class,
       BooleanLiteralCheck.class,
       CollapsibleIfStatementsCheck.class,
