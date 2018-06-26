@@ -57,7 +57,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
       tree.allComments().forEach(
         comment -> addCommentMetrics(comment, commentLines, nosonarLines));
       linesOfCode.addAll(tree.metaData().linesOfCode());
-      complexity = new ComplexityVisitor().complexityTrees(ctx, tree).size();
+      complexity = new CyclomaticComplexityVisitor().complexityTrees(tree).size();
     });
     register(FunctionDeclarationTree.class, (ctx, tree) -> {
       if (tree.name() != null && tree.body() != null) {

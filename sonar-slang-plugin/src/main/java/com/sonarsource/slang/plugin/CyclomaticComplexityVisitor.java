@@ -27,15 +27,16 @@ import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.LoopTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.Tree;
-import com.sonarsource.slang.kotlin.InputFileContext;
+import com.sonarsource.slang.visitors.TreeContext;
 import com.sonarsource.slang.visitors.TreeVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComplexityVisitor extends TreeVisitor<InputFileContext> {
+public class CyclomaticComplexityVisitor extends TreeVisitor<TreeContext> {
 
   private List<HasTextRange> complexityTrees = new ArrayList<>();
-  public ComplexityVisitor() {
+
+  public CyclomaticComplexityVisitor() {
 
     register(FunctionDeclarationTree.class, (ctx, tree) -> {
       if (tree.name() != null && tree.body() != null) {
@@ -45,16 +46,15 @@ public class ComplexityVisitor extends TreeVisitor<InputFileContext> {
 
     register(ClassDeclarationTree.class, (ctx, tree) -> complexityTrees.add(tree));
 
-    register(IfTree.class, (ctx, tree) -> {
-      complexityTrees.add(tree.ifKeyword());
-      if (tree.elseBranch() != null) {
-        complexityTrees.add(tree.elseKeyword());
-      }
-    });
+    register(IfTree.class, (ctx, tree) -> complexityTrees.add(tree.ifKeyword()));
 
     register(LoopTree.class, (ctx, tree) -> complexityTrees.add(tree));
 
-    register(MatchCaseTree.class, (ctx, tree) -> complexityTrees.add(tree));
+    register(MatchCaseTree.class, (ctx, tree) -> {
+      if (tree.expression() != null) {
+        complexityTrees.add(tree);
+      }
+    });
 
     register(BinaryExpressionTree.class, (ctx, tree) -> {
       if (tree.operator() == BinaryExpressionTree.Operator.CONDITIONAL_AND ||
@@ -64,14 +64,14 @@ public class ComplexityVisitor extends TreeVisitor<InputFileContext> {
     });
   }
 
-  public List<HasTextRange> complexityTrees(InputFileContext ctx, Tree tree) {
+  public List<HasTextRange> complexityTrees(Tree tree) {
     this.complexityTrees = new ArrayList<>();
-    this.scan(ctx, tree);
+    this.scan(new TreeContext(), tree);
     return this.complexityTrees;
   }
 
   @Override
-  protected void before(InputFileContext ctx, Tree root) {
+  protected void before(TreeContext ctx, Tree root) {
     complexityTrees = new ArrayList<>();
   }
 }

@@ -19,7 +19,6 @@
  */
 package com.sonarsource.slang.plugin;
 
-import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.ClassDeclarationTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.HasTextRange;
@@ -38,24 +37,14 @@ import org.junit.rules.TemporaryFolder;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
-import org.sonar.duplications.internal.pmd.TokensLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ComplexityVisitorTest {
+public class CyclomaticComplexityVisitorTest {
 
-  @Rule
-  public TemporaryFolder tempFolder = new TemporaryFolder();
-  private InputFileContext ctx;
-
-  @Before
-  public void setUp() throws Exception {
-    File file = tempFolder.newFile();
-    SensorContextTester sensorContext = SensorContextTester.create(tempFolder.getRoot());
-    DefaultInputFile inputFile = new TestInputFileBuilder("moduleKey", file.getName())
-      .setContents("")
-      .build();
-    ctx = new InputFileContext(sensorContext, inputFile);
+  private List<HasTextRange> getComplexityTrees(String content) {
+    Tree root = new SLangConverter().parse(content);
+    return new CyclomaticComplexityVisitor().complexityTrees(root);
   }
 
   @Test
@@ -66,9 +55,8 @@ public class ComplexityVisitorTest {
       "      2 -> return \"many\";" +
       "      else -> return \"it's complicated\";" +
       "    };";
-    Tree root = new SLangConverter().parse(content);
-    List<HasTextRange> trees = new ComplexityVisitor().complexityTrees(ctx, root);
-    assertThat(trees).hasSize(4);
+    List<HasTextRange> trees = getComplexityTrees(content);
+    assertThat(trees).hasSize(3);
     assertThat(trees).allMatch(tree -> tree instanceof MatchCaseTree);
   }
 
@@ -81,19 +69,16 @@ public class ComplexityVisitorTest {
       "        print(a);" +
       "      };" +
       "    }";
-    Tree root = new SLangConverter().parse(content);
-    List<HasTextRange> trees = new ComplexityVisitor().complexityTrees(ctx, root);
-    assertThat(trees).hasSize(3);
+    List<HasTextRange> trees = getComplexityTrees(content);
+    assertThat(trees).hasSize(2);
     assertThat(trees.get(0)).isInstanceOf(FunctionDeclarationTree.class);
     assertThat(trees.get(1)).isInstanceOf(Token.class);
-    assertThat(trees.get(2)).isInstanceOf(Token.class);
   }
 
   @Test
   public void test_class() throws Exception {
     String content = "class foo {}";
-    Tree root = new SLangConverter().parse(content);
-    List<HasTextRange> trees = new ComplexityVisitor().complexityTrees(ctx, root);
+    List<HasTextRange> trees = getComplexityTrees(content);
     assertThat(trees).hasSize(1);
     assertThat(trees.get(0)).isInstanceOf(ClassDeclarationTree.class);
   }
@@ -106,14 +91,12 @@ public class ComplexityVisitorTest {
       "    x = x-1;" +
       "  };" +
       "};";
-    Tree root = new SLangConverter().parse(content);
-    List<HasTextRange> trees = new ComplexityVisitor().complexityTrees(ctx, root);
+    List<HasTextRange> trees = getComplexityTrees(content);
     assertThat(trees).hasSize(2);
     assertThat(trees).allMatch(tree -> tree instanceof LoopTree);
 
     content = "do { x = x-1; } while (x > y);";
-    root = new SLangConverter().parse(content);
-    trees = new ComplexityVisitor().complexityTrees(ctx, root);
+    trees = getComplexityTrees(content);
     assertThat(trees).hasSize(1);
     assertThat(trees).allMatch(tree -> tree instanceof LoopTree);
 
