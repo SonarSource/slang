@@ -458,8 +458,9 @@ public class KotlinConverterTest {
     assertThat(comments).hasSize(4);
     Comment comment = comments.get(1);
     assertRange(comment.textRange()).hasRange(2, 0, 3, 2);
-    assertThat(comment.text()).isEqualTo(" Doc comment \n");
-    assertThat(comment.textWithDelimiters()).isEqualTo("/** Doc comment \n*/");
+    assertRange(comment.contentRange()).hasRange(2, 3, 3, 0);
+    assertThat(comment.contentText()).isEqualTo(" Doc comment \n");
+    assertThat(comment.text()).isEqualTo("/** Doc comment \n*/");
 
     FunctionDeclarationTree tree = (FunctionDeclarationTree) topLevelTree.declarations().get(0);
     List<Comment> commentsInsideFunction = tree.metaData().commentsInside();
@@ -467,7 +468,8 @@ public class KotlinConverterTest {
     assertThat(commentsInsideFunction).hasSize(3);
     comment = commentsInsideFunction.get(2);
     assertRange(comment.textRange()).hasRange(4, 63, 4, 77);
-    assertThat(comment.textWithDelimiters()).isEqualTo("// EOL comment");
+    assertRange(comment.contentRange()).hasRange(4, 65, 4, 77);
+    assertThat(comment.text()).isEqualTo("// EOL comment");
   }
 
   @Test
@@ -496,8 +498,8 @@ public class KotlinConverterTest {
 
     assertThat(kotlinTree.allComments()).hasSize(3);
     assertThat(kotlinTree.allComments()).isNotEqualTo(slangTree.allComments()); // Kotlin considers the '/**' delimiter as separate comments
-    List<String> slangCommentsWithDelimiters = slangTree.allComments().stream().map(Comment::textWithDelimiters).collect(Collectors.toList());
-    assertThat(kotlinTree.allComments()).extracting(Comment::textWithDelimiters).isEqualTo(slangCommentsWithDelimiters);
+    List<String> slangCommentsWithDelimiters = slangTree.allComments().stream().map(Comment::text).collect(Collectors.toList());
+    assertThat(kotlinTree.allComments()).extracting(Comment::text).isEqualTo(slangCommentsWithDelimiters);
   }
 
   @Test

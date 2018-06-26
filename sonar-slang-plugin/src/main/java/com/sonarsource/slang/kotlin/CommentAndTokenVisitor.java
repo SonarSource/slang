@@ -20,8 +20,12 @@
 package com.sonarsource.slang.kotlin;
 
 import com.sonarsource.slang.api.Comment;
+import com.sonarsource.slang.api.TextPointer;
+import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.impl.CommentImpl;
+import com.sonarsource.slang.impl.TextPointerImpl;
+import com.sonarsource.slang.impl.TextRangeImpl;
 import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
 import java.util.ArrayList;
@@ -79,27 +83,33 @@ public class CommentAndTokenVisitor extends KtTreeVisitorVoid {
   }
 
   private Comment createComment(@NotNull PsiComment element) {
-    String textWithDelimiters = element.getText();
-    return new CommentImpl(
-      commentContent(element, textWithDelimiters),
-      textWithDelimiters,
-      KotlinTextRanges.textRange(psiDocument, element));
-  }
-
-  private static String commentContent(@NotNull PsiComment element, @NotNull String textWithDelimiters) {
+    String text = element.getText();
     IElementType tokenType = element.getTokenType();
-    int length = textWithDelimiters.length();
+    int length = text.length();
+    int prefixLength;
+    int suffixLength;
 
     if (BLOCK_COMMENT.equals(tokenType) && length >= MIN_BLOCK_COMMENT_LENGTH) {
-      return textWithDelimiters.substring(BLOCK_COMMENT_PREFIX_LENGTH, length - BLOCK_COMMENT_SUFFIX_LENGTH);
+      prefixLength = BLOCK_COMMENT_PREFIX_LENGTH;
+      suffixLength = BLOCK_COMMENT_SUFFIX_LENGTH;
     } else if (DOC_COMMENT.equals(tokenType) && length >= MIN_DOC_COMMENT_LENGTH) {
-      return textWithDelimiters.substring(DOC_COMMENT_PREFIX_LENGTH, length - DOC_COMMENT_SUFFIX_LENGTH);
+      prefixLength = DOC_COMMENT_PREFIX_LENGTH;
+      suffixLength = DOC_COMMENT_SUFFIX_LENGTH;
     } else if ((EOL_COMMENT.equals(tokenType) || SHEBANG_COMMENT.equals(tokenType)) && length >= MIN_LINE_COMMENT_LENGTH) {
-      return textWithDelimiters.substring(LINE_COMMENT_PREFIX_LENGTH);
+      prefixLength = LINE_COMMENT_PREFIX_LENGTH;
+      suffixLength = 0;
     } else {
       // FIXME error message: unknown comment type
-      return textWithDelimiters;
+      prefixLength = 0;
+      suffixLength = 0;
     }
+
+    String contentText = text.substring(prefixLength, length - suffixLength);
+    TextRange range = KotlinTextRanges.textRange(psiDocument, element);
+    TextPointer contentStart = new TextPointerImpl(range.start().line(), range.start().lineOffset() + prefixLength);
+    TextPointer contentEnd = new TextPointerImpl(range.end().line(), range.end().lineOffset() - suffixLength);
+    TextRange contentRange = new TextRangeImpl(contentStart, contentEnd);
+    return new CommentImpl(text, contentText, range, contentRange);
   }
 
   public List<Comment> getAllComments() {
