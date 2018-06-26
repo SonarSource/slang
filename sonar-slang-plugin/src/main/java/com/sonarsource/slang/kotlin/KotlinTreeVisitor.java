@@ -451,7 +451,7 @@ class KotlinTreeVisitor {
     List<CatchTree> catchTrees = catchTreeList.stream().map(CatchTree.class::cast).collect(Collectors.toList());
     Tree finallyTree = createElement(element.getFinallyBlock());
     Token tryToken = toSlangToken(element.getTryKeyword());
-    return new ExceptionHandlingTreeImpl(metadata, tryTree, catchTrees, finallyTree, tryToken);
+    return new ExceptionHandlingTreeImpl(metadata, tryTree, tryToken, catchTrees, finallyTree);
   }
 
   private CatchTree createCatchTree(TreeMetaData metaData, KtCatchClause element) {

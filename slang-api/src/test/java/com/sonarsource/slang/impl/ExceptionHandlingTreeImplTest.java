@@ -53,7 +53,7 @@ public class ExceptionHandlingTreeImplTest {
     Tree emptyFinally = new BlockTreeImpl(meta, Collections.emptyList());
 
     ExceptionHandlingTreeImpl exceptionHandlingTree =
-        new ExceptionHandlingTreeImpl(null, emptyTry, catchTreeList, emptyFinally, tryToken);
+        new ExceptionHandlingTreeImpl(null, emptyTry, tryToken, catchTreeList, emptyFinally);
 
     assertThat(exceptionHandlingTree.children()).containsExactly(emptyTry, catchWithIdentifier, catchWithoutIdentifier, emptyFinally);
     assertThat(exceptionHandlingTree.tryBlock()).isEqualTo(emptyTry);

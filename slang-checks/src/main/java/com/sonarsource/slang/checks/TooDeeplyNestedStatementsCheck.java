@@ -19,7 +19,6 @@
  */
 package com.sonarsource.slang.checks;
 
-import com.sonarsource.slang.api.CatchTree;
 import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.LoopTree;
@@ -33,7 +32,6 @@ import com.sonarsource.slang.checks.api.SlangCheck;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
@@ -42,7 +40,7 @@ import java.util.List;
 
 @Rule(key = "S134")
 public class TooDeeplyNestedStatementsCheck implements SlangCheck {
-  private static final int DEFAULT_MAX_DEPTH = 4;
+  private static final int DEFAULT_MAX_DEPTH = 3;
 
   @RuleProperty(
       key = "max",
@@ -66,11 +64,18 @@ public class TooDeeplyNestedStatementsCheck implements SlangCheck {
 
     Iterator<Tree> iterator = ctx.ancestors().iterator();
     Deque<Token> nestedParentNodes = new LinkedList<>();
-    Tree last = null;
+    Tree last = tree;
 
     while (iterator.hasNext()) {
       Tree parent = iterator.next();
-      updateNestedParentList(nestedParentNodes, parent, last);
+      if (isElseIfStatement(parent, last) && !nestedParentNodes.isEmpty()) {
+        nestedParentNodes.removeLast();
+      }
+
+      if (parent instanceof LoopTree || parent instanceof ExceptionHandlingTree || parent instanceof IfTree || parent instanceof MatchTree) {
+        nestedParentNodes.addLast(getNodeToHighlight(parent));
+      }
+
       if (nestedParentNodes.size() > max) {
         return;
       }
@@ -82,20 +87,10 @@ public class TooDeeplyNestedStatementsCheck implements SlangCheck {
     }
   }
 
-  private static void updateNestedParentList(Deque<Token> nestedParentNodes, Tree parent, @Nullable Tree last) {
-    if (isElseIfStatement(parent, last)) {
-      nestedParentNodes.removeLast();
-    } else if (parent instanceof LoopTree || parent instanceof ExceptionHandlingTree
-        || parent instanceof CatchTree || parent instanceof IfTree || parent instanceof MatchTree) {
-      nestedParentNodes.addLast(getNodeToHighlight(parent));
-    }
-  }
-
   private static boolean isElseIfStatement(Tree parent, Tree tree) {
-    return tree instanceof IfTree && parent instanceof IfTree;
+    return tree instanceof IfTree && parent instanceof IfTree && tree.equals(((IfTree) parent).elseBranch());
   }
-
-
+  
   private void reportIssue(CheckContext ctx, Tree statement, Deque<Token> nestedStatements) {
     String message = String.format("Refactor this code to not nest more than %s control flow statements.", max);
     List<SecondaryLocation> secondaryLocations = new ArrayList<>(nestedStatements.size());

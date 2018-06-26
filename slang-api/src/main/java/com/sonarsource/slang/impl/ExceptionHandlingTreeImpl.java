@@ -37,7 +37,7 @@ public class ExceptionHandlingTreeImpl extends BaseTreeImpl implements Exception
   private final Tree finallyBlock;
   private final Token tryKeyword;
 
-  public ExceptionHandlingTreeImpl(TreeMetaData metaData, Tree tryBlock, List<CatchTree> catchBlocks, @Nullable Tree finallyBlock, Token tryKeyword) {
+  public ExceptionHandlingTreeImpl(TreeMetaData metaData, Tree tryBlock, Token tryKeyword, List<CatchTree> catchBlocks, @Nullable Tree finallyBlock) {
     super(metaData);
     this.tryBlock = tryBlock;
     this.catchBlocks = catchBlocks;

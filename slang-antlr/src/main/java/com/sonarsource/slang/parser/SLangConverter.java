@@ -400,8 +400,9 @@ public class SLangConverter implements ASTConverter {
       for (SLangParser.CatchBlockContext catchBlockContext : ctx.catchBlock()) {
         catchTreeList.add((CatchTree) visit(catchBlockContext));
       }
+      com.sonarsource.slang.api.Token tryToken = toSlangToken(ctx.TRY().getSymbol());
       Tree finallyBlock = ctx.finallyBlock() == null ? null : visit(ctx.finallyBlock());
-      return new ExceptionHandlingTreeImpl(meta(ctx), tryBlock, catchTreeList, finallyBlock, toSlangToken(ctx.TRY().getSymbol()));
+      return new ExceptionHandlingTreeImpl(meta(ctx), tryBlock, tryToken, catchTreeList, finallyBlock);
     }
 
     @Override

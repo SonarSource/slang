@@ -26,7 +26,7 @@ public class TooDeeplyNestedStatementsCheckTest {
   @Test
   public void test() {
     TooDeeplyNestedStatementsCheck check = new TooDeeplyNestedStatementsCheck();
-    check.max = 4;
+    check.max = 3;
     Verifier.verify("TooDeeplyNestedStatements.slang", check);
   }
 }
