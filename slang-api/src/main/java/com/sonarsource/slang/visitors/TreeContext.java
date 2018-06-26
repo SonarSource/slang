@@ -22,7 +22,6 @@ package com.sonarsource.slang.visitors;
 import com.sonarsource.slang.api.Tree;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import javax.annotation.Nullable;
 
 public class TreeContext {
 
@@ -37,7 +36,7 @@ public class TreeContext {
     return ancestors;
   }
 
-  protected void before(@Nullable Tree root) {
+  protected void before(Tree root) {
     ancestors.clear();
   }
 

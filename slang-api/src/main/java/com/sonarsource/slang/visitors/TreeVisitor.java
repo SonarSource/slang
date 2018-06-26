@@ -34,12 +34,14 @@ public class TreeVisitor<C extends TreeContext> {
   }
 
   public void scan(C ctx, @Nullable Tree root) {
-    ctx.before(root);
-    before(ctx, root);
-    visit(ctx, root);
-    after(ctx, root);
+    if (root != null) {
+      ctx.before(root);
+      before(ctx, root);
+      visit(ctx, root);
+      after(ctx, root);
+    }
   }
-
+ 
   private void visit(C ctx, @Nullable Tree node) {
     if (node != null) {
       ctx.enter(node);
@@ -53,11 +55,11 @@ public class TreeVisitor<C extends TreeContext> {
     }
   }
 
-  protected void before(C ctx, @Nullable Tree root) {
+  protected void before(C ctx, Tree root) {
     // default behaviour is to do nothing
   }
 
-  protected void after(C ctx, @Nullable Tree root) {
+  protected void after(C ctx, Tree root) {
     // default behaviour is to do nothing
   }
 

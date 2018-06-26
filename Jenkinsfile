@@ -23,15 +23,6 @@ pipeline {
     }
     stage('QA') {
       parallel {
-        stage('ruling-lts') {
-          agent {
-            label 'linux'
-          }
-          steps {
-            runRuling "LATEST_RELEASE[6.7]"
-          }
-        }
-
         stage('ruling-latest') {
           agent {
             label 'linux'
@@ -95,7 +86,6 @@ def runPlugin(String sqRuntimeVersion) {
     withMaven(maven: MAVEN_TOOL) {
       mavenSetBuildVersion()
       dir('its') {
-        sh 'git submodule update --init --recursive'
         sh "mvn -pl plugin ${itBuildArguments sqRuntimeVersion}"
       }
     }

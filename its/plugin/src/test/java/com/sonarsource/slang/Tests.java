@@ -34,7 +34,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
   MeasuresTest.class,
   DuplicationsTest.class,
-  DefaultProfileTest.class,
   FileSuffixesTest.class
 })
 public class Tests {

@@ -33,15 +33,11 @@ public class MeasuresTest extends TestBase {
   public void kotlin_measures() {
     ORCHESTRATOR.executeBuild(getSonarScanner(BASE_DIRECTORY, "kotlin"));
 
-    assertThat(getMeasureAsInt("empty_file.kt", "lines")).isEqualTo(1);
-    assertThat(getMeasureAsInt("file1.kt", "lines")).isEqualTo(14);
-    assertThat(getMeasureAsInt("file2.kt", "lines")).isEqualTo(12);
-
-    assertThat(getMeasureAsInt("empty_file.kt", "ncloc")).isEqualTo(0);
+    assertThat(getMeasure("empty_file.kt", "ncloc")).isNull();
     assertThat(getMeasureAsInt("file1.kt", "ncloc")).isEqualTo(6);
     assertThat(getMeasureAsInt("file2.kt", "ncloc")).isEqualTo(8);
 
-    assertThat(getMeasureAsInt("empty_file.kt", "comment_lines")).isEqualTo(0);
+    assertThat(getMeasure("empty_file.kt", "comment_lines")).isNull();
     assertThat(getMeasureAsInt("file1.kt", "comment_lines")).isEqualTo(8);
     assertThat(getMeasureAsInt("file2.kt", "comment_lines")).isEqualTo(3);
 
