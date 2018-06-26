@@ -25,13 +25,20 @@ import com.sonarsource.slang.api.TextRange;
 public class CommentImpl implements Comment {
 
   private final String text;
-  private final String textWithDelimiters;
-  private final TextRange textRange;
+  private final String contentText;
+  private final TextRange range;
+  private final TextRange contentRange;
 
-  public CommentImpl(String text, String textWithDelimiters, TextRange textRange) {
+  public CommentImpl(String text, String contentText, TextRange range, TextRange contentRange) {
+    this.contentText = contentText;
     this.text = text;
-    this.textWithDelimiters = textWithDelimiters;
-    this.textRange = textRange;
+    this.range = range;
+    this.contentRange = contentRange;
+  }
+
+  @Override
+  public String contentText() {
+    return contentText;
   }
 
   @Override
@@ -40,13 +47,13 @@ public class CommentImpl implements Comment {
   }
 
   @Override
-  public String textWithDelimiters() {
-    return textWithDelimiters;
+  public TextRange textRange() {
+    return range;
   }
 
   @Override
-  public TextRange textRange() {
-    return textRange;
+  public TextRange contentRange() {
+    return contentRange;
   }
 
 }

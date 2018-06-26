@@ -40,10 +40,10 @@ public class TodoCommentCheck implements SlangCheck {
   public void initialize(InitContext init) {
     init.register(TopLevelTree.class, (ctx, tree) ->
       tree.allComments().forEach(comment -> {
-        Matcher matcher = todoPattern.matcher(comment.textWithDelimiters());
+        Matcher matcher = todoPattern.matcher(comment.text());
         if (matcher.find()) {
           TextPointer start = comment.textRange().start();
-          TokenLocation location = new TokenLocation(start.line(), start.lineOffset(), comment.textWithDelimiters().substring(0, matcher.start(2)));
+          TokenLocation location = new TokenLocation(start.line(), start.lineOffset(), comment.text().substring(0, matcher.start(2)));
           TextRange todoRange = new TextRangeImpl(
             new TextPointerImpl(location.endLine(), location.endLineOffset()),
             new TextPointerImpl(location.endLine(), location.endLineOffset() + 4)

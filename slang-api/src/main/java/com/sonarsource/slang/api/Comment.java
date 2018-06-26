@@ -21,8 +21,10 @@ package com.sonarsource.slang.api;
 
 public interface Comment extends HasTextRange {
 
+  String contentText();
+
   String text();
 
-  String textWithDelimiters();
+  TextRange contentRange();
 
 }

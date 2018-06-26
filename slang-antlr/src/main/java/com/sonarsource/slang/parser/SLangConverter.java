@@ -106,7 +106,7 @@ public class SLangConverter implements ASTConverter {
       Token token = antlrTokens.get(index);
       TextRange textRange = getSlangTextRange(token);
       if (token.getChannel() == 1) {
-        comments.add(new CommentImpl(commentContent(token.getText()), token.getText(), textRange));
+        comments.add(comment(token, textRange));
       } else {
         Type type = Type.OTHER;
         if (KEYWORD_TOKEN_TYPES.contains(token.getType())) {
@@ -124,11 +124,19 @@ public class SLangConverter implements ASTConverter {
     return slangVisitor.visit(parser.slangFile());
   }
 
-  private static String commentContent(String text) {
+  private static CommentImpl comment(Token token, TextRange range) {
+    String text = token.getText();
+    String contentText;
+    TextPointer contentEnd;
     if (text.startsWith("//")) {
-      return text.substring(2);
+      contentText = text.substring(2);
+      contentEnd = range.end();
+    } else {
+      contentText = text.substring(2, text.length() - 2);
+      contentEnd = new TextPointerImpl(range.end().line(), range.end().lineOffset() - 2);
     }
-    return text.substring(2, text.length() - 2);
+    TextPointer contentStart = new TextPointerImpl(range.start().line(), range.start().lineOffset() + 2);
+    return new CommentImpl(token.getText(), contentText, range, new TextRangeImpl(contentStart, contentEnd));
   }
 
   private static final Map<String, Operator> BINARY_OPERATOR_MAP = binaryOperatorMap();

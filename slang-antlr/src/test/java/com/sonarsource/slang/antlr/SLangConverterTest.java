@@ -42,7 +42,6 @@ import com.sonarsource.slang.parser.SLangConverter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.junit.Test;
 
 import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.GREATER_THAN;
@@ -50,8 +49,8 @@ import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
 import static com.sonarsource.slang.api.Token.Type.KEYWORD;
-import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static com.sonarsource.slang.api.Token.Type.OTHER;
+import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -385,10 +384,12 @@ public class SLangConverterTest {
     List<Comment> comments = binary.metaData().commentsInside();
     assertThat(comments).hasSize(2);
     Comment comment = comments.get(0);
-    assertThat(comment.textRange().start().lineOffset()).isEqualTo(17);
-    assertThat(comment.textWithDelimiters()).isEqualTo("/* comment2 */");
-    assertThat(comment.text()).isEqualTo(" comment2 ");
-    assertThat(comments.get(1).text()).isEqualTo(" comment3");
+    assertRange(comment.textRange()).hasRange(1, 17, 1, 31);
+    assertRange(comment.contentRange()).hasRange(1, 19, 1, 29);
+    assertThat(comment.text()).isEqualTo("/* comment2 */");
+    assertThat(comment.contentText()).isEqualTo(" comment2 ");
+    assertThat(comments.get(1).contentText()).isEqualTo(" comment3");
+    assertRange(comments.get(1).contentRange()).hasRange(1, 37, 1, 46);
   }
 
   @Test

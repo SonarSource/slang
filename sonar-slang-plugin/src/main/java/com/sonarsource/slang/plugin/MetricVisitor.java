@@ -111,7 +111,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
   }
 
   public static boolean isNosonarComment(Comment comment) {
-    return comment.text().trim().toUpperCase(Locale.ENGLISH).startsWith(NOSONAR_PREFIX);
+    return comment.contentText().trim().toUpperCase(Locale.ENGLISH).startsWith(NOSONAR_PREFIX);
   }
 
   public Set<Integer> linesOfCode() {

@@ -39,13 +39,13 @@ public class FixMeCommentCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(TopLevelTree.class, (ctx, tree) -> tree.allComments().forEach(comment -> {
-      Matcher matcher = fixMePattern.matcher(comment.textWithDelimiters());
+      Matcher matcher = fixMePattern.matcher(comment.text());
       if (matcher.find()) {
         TextPointer start = comment.textRange().start();
         TokenLocation location = new TokenLocation(
           start.line(),
           start.lineOffset(),
-          comment.textWithDelimiters().substring(0, matcher.start(2)));
+          comment.text().substring(0, matcher.start(2)));
         TextRange fixMeRange = new TextRangeImpl(
           new TextPointerImpl(location.endLine(), location.endLineOffset()),
           new TextPointerImpl(location.endLine(), location.endLineOffset() + 5));
