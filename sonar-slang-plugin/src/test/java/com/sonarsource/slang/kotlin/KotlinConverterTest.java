@@ -40,6 +40,7 @@ import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.VariableDeclarationTree;
 import com.sonarsource.slang.parser.SLangConverter;
+import com.sonarsource.slang.visitors.TreePrinter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,8 +53,8 @@ import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
 import static com.sonarsource.slang.api.Token.Type.KEYWORD;
-import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static com.sonarsource.slang.api.Token.Type.OTHER;
+import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
 import static com.sonarsource.slang.testing.TreeAssert.assertTree;
 import static com.sonarsource.slang.testing.TreesAssert.assertTrees;
@@ -153,6 +154,7 @@ public class KotlinConverterTest {
     Tree treeA = kotlin("class A { private fun function(a : Int): Boolean { true; }}");
     assertTree(treeA).isInstanceOf(ClassDeclarationTree.class);
     ClassDeclarationTree classA = (ClassDeclarationTree) treeA;
+    assertTree(classA.identifier()).isIdentifier("A");
     assertThat(classA.children()).hasSize(1);
     assertTree(treeA).isNotEquivalentTo(kotlin("class A { private fun function(a : Int): Boolean { true; false; }"));
     assertTree(treeA).isNotEquivalentTo(kotlin("class A { private fun function(a : Int): Boolean { false; }"));
@@ -167,11 +169,30 @@ public class KotlinConverterTest {
 
   @Test
   public void testClassWithoutBody() {
-    Tree classA = kotlin("class A {}");
-    assertTree(classA).isInstanceOf(ClassDeclarationTree.class);
-    assertTree(classA).isEquivalentTo(kotlin("class A {}"));
-    assertTree(classA).isNotEquivalentTo(kotlin("class A constructor(){}"));
-    assertTree(classA).isNotEquivalentTo(kotlin("class B {}"));
+    Tree tree = kotlin("class A {}");
+    assertTree(tree).isInstanceOf(ClassDeclarationTree.class);
+    ClassDeclarationTree classA = (ClassDeclarationTree) tree;
+    assertTree(classA.identifier()).isIdentifier("A");
+    assertThat(classA.descendants().anyMatch(IdentifierTree.class::isInstance)).isTrue();
+    assertRange(classA.identifier().textRange()).hasRange(1, 6, 1, 7);
+    assertTree(tree).isEquivalentTo(kotlin("class A {}"));
+    assertTree(tree).isNotEquivalentTo(kotlin("class A constructor(){}"));
+    assertTree(tree).isNotEquivalentTo(kotlin("class B {}"));
+  }
+
+  @Test
+  public void testEnumClassEntries() {
+    Tree tree = kotlin("enum class A { B, C, D }");
+    System.out.println(TreePrinter.tree2string(tree));
+    assertTree(tree).isInstanceOf(ClassDeclarationTree.class);
+    assertThat(tree.descendants().noneMatch(ClassDeclarationTree.class::isInstance)).isTrue();
+  }
+
+  @Test
+  public void testNestedClasses() {
+    Tree tree = kotlin("class A { class B { class C {} } }");
+    assertTree(tree).isInstanceOf(ClassDeclarationTree.class);
+    assertThat(tree.descendants().filter(ClassDeclarationTree.class::isInstance).count()).isEqualTo(2);
   }
 
   @Test
@@ -426,7 +447,6 @@ public class KotlinConverterTest {
     assertThat(exceptionHandlingTree.finallyBlock()).isNotNull();
     assertTree(exceptionHandlingTree.finallyBlock()).isBlock(LiteralTree.class);
   }
-
 
   @Test
   public void testTryCatchFinally() {

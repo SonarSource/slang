@@ -20,19 +20,29 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.ClassDeclarationTree;
+import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
-
 import java.util.Collections;
 import java.util.List;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 
 public class ClassDeclarationTreeImpl extends BaseTreeImpl implements ClassDeclarationTree {
 
+  private final IdentifierTree identifier;
   private final Tree classTree;
 
-  public ClassDeclarationTreeImpl(TreeMetaData metaData, Tree classTree) {
+  public ClassDeclarationTreeImpl(TreeMetaData metaData, @Nullable IdentifierTree identifier, Tree classTree) {
     super(metaData);
-    this.classTree = classTree ;
+    this.identifier = identifier;
+    this.classTree = classTree;
+  }
+
+  @CheckForNull
+  @Override
+  public IdentifierTree identifier() {
+    return identifier;
   }
 
   @Override
@@ -42,6 +52,7 @@ public class ClassDeclarationTreeImpl extends BaseTreeImpl implements ClassDecla
 
   @Override
   public List<Tree> children() {
+    // identifier is not added to the children as it is already part of this classTree structure
     return Collections.singletonList(classTree);
   }
 }

@@ -17,15 +17,15 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
+package com.sonarsource.slang.checks;
 
-import javax.annotation.CheckForNull;
+import org.junit.Test;
 
-public interface ClassDeclarationTree extends Tree {
+public class BadClassNameCheckTest {
 
-  @CheckForNull
-  IdentifierTree identifier();
-
-  Tree classTree();
+  @Test
+  public void test() {
+    Verifier.verify("BadClassName.slang", new BadClassNameCheck());
+  }
 
 }

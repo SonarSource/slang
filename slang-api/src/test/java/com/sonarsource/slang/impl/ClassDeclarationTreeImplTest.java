@@ -20,12 +20,12 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.ClassDeclarationTree;
+import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.NativeKind;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
-import org.junit.Test;
-
 import java.util.Collections;
+import org.junit.Test;
 
 import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,10 +37,12 @@ public class ClassDeclarationTreeImplTest {
   @Test
   public void test() {
     TreeMetaData meta = null;
-    Tree className = new IdentifierTreeImpl(meta, "MyClass");
+    IdentifierTree className = new IdentifierTreeImpl(meta, "MyClass");
     Tree classDecl = new NativeTreeImpl(meta, new ClassNativeKind(), Collections.singletonList(className));
-    ClassDeclarationTree tree = new ClassDeclarationTreeImpl(meta, classDecl);
+    ClassDeclarationTree tree = new ClassDeclarationTreeImpl(meta, className, classDecl);
     assertThat(tree.children()).hasSize(1);
     assertThat(areEquivalent(tree.children().get(0), classDecl)).isTrue();
+    assertThat(areEquivalent(tree.identifier(), className)).isTrue();
   }
+
 }
