@@ -143,7 +143,6 @@ public class SLangConverterTest {
     assertTree(varDeclX).isNotEquivalentTo(converter.parse("int var x = 1;").children().get(0));
     assertTree(varDeclX).isNotEquivalentTo(converter.parse("var x = 0;").children().get(0));
     assertTree(varDeclX).isNotEquivalentTo(converter.parse("var x;").children().get(0));
-    ;
   }
 
   @Test

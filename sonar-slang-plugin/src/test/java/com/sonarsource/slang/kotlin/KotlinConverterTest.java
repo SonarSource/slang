@@ -170,9 +170,10 @@ public class KotlinConverterTest {
   public void testClassWithoutBody() {
     Tree tree = kotlin("class A {}");
     assertTree(tree).isInstanceOf(ClassDeclarationTree.class);
-    ClassDeclarationTree classA2 = (ClassDeclarationTree) tree;
-    assertTree(classA2.identifier()).isIdentifier("A");
-    assertRange(classA2.identifier().textRange()).hasRange(1, 6, 1, 7);
+    ClassDeclarationTree classA = (ClassDeclarationTree) tree;
+    assertTree(classA.identifier()).isIdentifier("A");
+    assertThat(classA.descendants().anyMatch(IdentifierTree.class::isInstance)).isTrue();
+    assertRange(classA.identifier().textRange()).hasRange(1, 6, 1, 7);
     assertTree(tree).isEquivalentTo(kotlin("class A {}"));
     assertTree(tree).isNotEquivalentTo(kotlin("class A constructor(){}"));
     assertTree(tree).isNotEquivalentTo(kotlin("class B {}"));
@@ -213,7 +214,7 @@ public class KotlinConverterTest {
     assertTree(privateModifier).isNotEquivalentTo(functionWithInternalModifier.modifiers().get(0));
     assertTree(privateModifier).isEquivalentTo(functionWithPrivate.modifiers().get(0));
 
-    FunctionDeclarationTree constructorFunction = ((FunctionDeclarationTree) kotlin("class classC(a: String, b: Int) {}").children().get(0).children().get(0));
+    FunctionDeclarationTree constructorFunction = ((FunctionDeclarationTree) kotlin("class classC(a: String, b: Int) {}").children().get(0).children().get(1));
     assertTree(constructorFunction.name()).isNull();
     assertThat(constructorFunction.modifiers()).isEmpty();
     assertTree(constructorFunction.returnType()).isNull();

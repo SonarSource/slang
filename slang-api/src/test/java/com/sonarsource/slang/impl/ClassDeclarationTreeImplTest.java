@@ -25,7 +25,9 @@ import com.sonarsource.slang.api.NativeKind;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import java.util.Collections;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,6 +35,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ClassDeclarationTreeImplTest {
 
   private class ClassNativeKind implements NativeKind {}
+
+  @Rule
+  public ExpectedException expected = ExpectedException.none();
 
   @Test
   public void test() {
@@ -43,6 +48,15 @@ public class ClassDeclarationTreeImplTest {
     assertThat(tree.children()).hasSize(1);
     assertThat(areEquivalent(tree.children().get(0), classDecl)).isTrue();
     assertThat(areEquivalent(tree.identifier(), className)).isTrue();
+  }
+
+  @Test
+  public void test_failure() {
+    IdentifierTree className = new IdentifierTreeImpl(null, "MyClass");
+    Tree classDecl = new NativeTreeImpl(null, new ClassNativeKind(), Collections.emptyList());
+    expected.expect(IllegalStateException.class);
+    expected.expectMessage("Class identifier must be inside the native classTree structure");
+    new ClassDeclarationTreeImpl(null, className, classDecl);
   }
 
 }

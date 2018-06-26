@@ -60,6 +60,7 @@ import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
@@ -220,15 +221,17 @@ class KotlinTreeVisitor {
   private Tree createClassDeclarationTree(TreeMetaData metaData, KtClass ktClass) {
     PsiElement nameIdentifier = ktClass.getNameIdentifier();
     IdentifierTree identifier = null;
-    String name = null;
+    List<Tree> children = new ArrayList<>();
 
     if (nameIdentifier != null) {
-      name = nameIdentifier.getText();
-      identifier = createIdentifierTree(getTreeMetaData(nameIdentifier), name);
+      identifier = createIdentifierTree(getTreeMetaData(nameIdentifier), nameIdentifier.getText());
+      children.add(identifier);
     }
     Boolean isInsideEnum = enumClassDeclaration.peekLast();
     enumClassDeclaration.addLast(ktClass.isEnum());
-    Tree nativeClassDecl = createNativeTree(metaData, new KotlinNativeKind(ktClass, name), ktClass);
+
+    children.addAll(list(Arrays.stream(ktClass.getChildren())));
+    Tree nativeClassDecl = createNativeTree(metaData, new KotlinNativeKind(ktClass), children);
     Tree classDecl = nativeClassDecl;
     if (isInsideEnum == null || !isInsideEnum) {
       classDecl = new ClassDeclarationTreeImpl(metaData, identifier, nativeClassDecl);
