@@ -31,7 +31,7 @@ import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
@@ -87,7 +87,7 @@ public class TooDeeplyNestedStatementsCheck implements SlangCheck {
     }
   }
 
-  private static boolean isElseIfStatement(Tree parent, Tree tree) {
+  private static boolean isElseIfStatement(@Nullable Tree parent, Tree tree) {
     return tree instanceof IfTree && parent instanceof IfTree && tree.equals(((IfTree) parent).elseBranch());
   }
   
