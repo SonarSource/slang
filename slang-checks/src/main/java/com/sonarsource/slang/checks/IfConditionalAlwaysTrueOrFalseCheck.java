@@ -41,12 +41,15 @@ import static com.sonarsource.slang.checks.utils.ExpressionUtils.isTrueValueLite
 @Rule(key = "S1145")
 public class IfConditionalAlwaysTrueOrFalseCheck implements SlangCheck {
 
+  public static final String MESSAGE_TEMPLATE = "Remove this useless \"%s\" statement.";
+
   @Override
   public void initialize(InitContext init) {
     init.register(IfTree.class, (ctx, ifTree) -> {
       Tree condition = ifTree.condition();
       if (isAlwaysTrueOrFalse(condition)) {
-        ctx.reportIssue(condition, "Remove this useless \"if\" statement.");
+        String message = String.format(MESSAGE_TEMPLATE, ifTree.ifKeyword().text());
+        ctx.reportIssue(condition, message);
       }
     });
   }

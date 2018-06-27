@@ -31,8 +31,8 @@ import org.sonar.check.Rule;
 
 @Rule(key = "S1066")
 public class CollapsibleIfStatementsCheck implements SlangCheck {
-  private static final String MESSAGE = "Merge this if statement with the nested one.";
-  private static final String SECONDARY_MESSAGE = "Nested \"if\" statement";
+  private static final String MESSAGE_TEMPLATE = "Merge this %s statement with the nested one.";
+  private static final String SECONDARY_MESSAGE_TEMPLATE = "Nested \"%s\" statement";
 
   @Override
   public void initialize(InitContext init) {
@@ -41,7 +41,9 @@ public class CollapsibleIfStatementsCheck implements SlangCheck {
         getCollapsibleIfStatement(ifTreeStatement.thenBranch())
           .ifPresent(innerIfStatement -> {
             TextRange innerIfRange = innerIfStatement.ifKeyword().textRange();
-            ctx.reportIssue(ifTreeStatement.ifKeyword(), MESSAGE, new SecondaryLocation(innerIfRange, SECONDARY_MESSAGE));
+            String message = String.format(MESSAGE_TEMPLATE, ifTreeStatement.ifKeyword().text());
+            String secondaryMessage = String.format(SECONDARY_MESSAGE_TEMPLATE, innerIfStatement.ifKeyword().text());
+            ctx.reportIssue(ifTreeStatement.ifKeyword(), message, new SecondaryLocation(innerIfRange, secondaryMessage));
           });
       }
     });

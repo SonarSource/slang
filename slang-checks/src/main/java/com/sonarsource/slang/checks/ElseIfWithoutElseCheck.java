@@ -31,7 +31,7 @@ import org.sonar.check.Rule;
 @Rule(key = "S126")
 public class ElseIfWithoutElseCheck implements SlangCheck {
 
-  private static final String MESSAGE = "Add the missing \"else\" clause.";
+  private static final String MESSAGE_TEMPLATE = "Add the missing \"%s\" clause.";
 
   @Override
   public void initialize(InitContext init) {
@@ -46,7 +46,8 @@ public class ElseIfWithoutElseCheck implements SlangCheck {
             elseToken.textRange().start(),
             ifToken.textRange().end()
           );
-          ctx.reportIssue(textRange, MESSAGE);
+          String message = String.format(MESSAGE_TEMPLATE, elseToken.text());
+          ctx.reportIssue(textRange, message);
         }
       }
     });
