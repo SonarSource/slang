@@ -87,7 +87,7 @@ public class TooDeeplyNestedStatementsCheck implements SlangCheck {
     }
   }
 
-  private static boolean isElseIfStatement(@Nullable Tree parent, Tree tree) {
+  private static boolean isElseIfStatement(@Nullable Tree parent, @Nullable Tree tree) {
     return tree instanceof IfTree && parent instanceof IfTree && tree.equals(((IfTree) parent).elseBranch());
   }
   
