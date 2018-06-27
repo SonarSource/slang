@@ -444,6 +444,21 @@ public class SLangConverterTest {
     assertThat(ifTree.condition().metaData().tokens()).extracting(Token::text).containsExactly("cond", "==", "42");
   }
 
+  @Test
+  public void methodInvocations() {
+    Tree functionInvocationNoArgument = converter.parse("function();");
+    assertTree(functionInvocationNoArgument).isEquivalentTo(functionInvocationNoArgument);
+    assertTree(functionInvocationNoArgument).isEquivalentTo(converter.parse("function();"));
+    assertTree(functionInvocationNoArgument).isNotEquivalentTo(converter.parse("function2();"));
+    assertTree(functionInvocationNoArgument).isNotEquivalentTo(converter.parse("function(1);"));
+    assertTree(functionInvocationNoArgument).isNotEquivalentTo(converter.parse("function(1, 2);"));
+    assertTree(converter.parse("function(1);")).isEquivalentTo(converter.parse("function(1);"));
+    assertTree(converter.parse("function(1);")).isNotEquivalentTo(converter.parse("function(1, 2);"));
+
+    assertThat(functionInvocationNoArgument.descendants()
+      .anyMatch(e -> e instanceof IdentifierTree && ((IdentifierTree) e).name().equals("function"))).isTrue();
+  }
+
   private BinaryExpressionTree parseBinary(String code) {
     return (BinaryExpressionTree) parseExpressionOrStatement(code);
   }

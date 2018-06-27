@@ -260,7 +260,14 @@ public class SLangConverter implements ASTConverter {
 
     @Override
     public Tree visitMethodInvocation(SLangParser.MethodInvocationContext ctx) {
-      return simpleNativeTree(ctx);
+      SLangParser.ArgumentListContext argumentListContext = ctx.argumentList();
+      List<Tree> children = new ArrayList<>();
+      children.add(visit(ctx.methodName()));
+      if (argumentListContext != null) {
+        children.addAll(list(argumentListContext.statement()));
+      }
+
+      return new NativeTreeImpl(meta(ctx), new SNativeKind(ctx), children);
     }
 
     @Override
