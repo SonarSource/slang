@@ -41,6 +41,7 @@ public class CommonCheckList {
       EmptyCommentCheck.class,
       EmptyFunctionCheck.class,
       IfConditionalAlwaysTrueOrFalseCheck.class,
+      FileHeaderCheck.class,
       FixMeCommentCheck.class,
       HardcodedCredentialsCheck.class,
       HardcodedIpCheck.class,
