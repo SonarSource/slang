@@ -60,6 +60,7 @@ public class CommonCheckList {
       TooManyParametersCheck.class,
       UnusedFunctionParameterCheck.class,
       UnusedLocalVariableCheck.class,
+      UnusedPrivateMethodCheck.class,
       VariableAndParameterNameCheck.class);
   }
 

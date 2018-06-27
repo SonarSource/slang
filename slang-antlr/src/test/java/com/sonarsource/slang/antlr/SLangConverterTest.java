@@ -38,6 +38,7 @@ import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.api.VariableDeclarationTree;
+import com.sonarsource.slang.impl.ModifierTreeImpl;
 import com.sonarsource.slang.parser.SLangConverter;
 import java.util.Arrays;
 import java.util.List;
@@ -48,6 +49,8 @@ import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.GREATER_TH
 import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
+import static com.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
+import static com.sonarsource.slang.api.ModifierTree.Kind.PUBLIC;
 import static com.sonarsource.slang.api.Token.Type.KEYWORD;
 import static com.sonarsource.slang.api.Token.Type.OTHER;
 import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
@@ -215,6 +218,8 @@ public class SLangConverterTest {
     Tree privateModifier2 = emptyParamFunction.modifiers().get(0);
     assertTree(privateModifier1).isNotEquivalentTo(publicModifier1);
     assertTree(privateModifier1).isEquivalentTo(privateModifier2);
+    assertTree(privateModifier1).isEquivalentTo(new ModifierTreeImpl(null, PRIVATE));
+    assertTree(publicModifier1).isEquivalentTo(new ModifierTreeImpl(null, PUBLIC));
 
     FunctionDeclarationTree simpleFunction = parseFunction("fun foo() {}");
     assertThat(simpleFunction.modifiers()).isEmpty();

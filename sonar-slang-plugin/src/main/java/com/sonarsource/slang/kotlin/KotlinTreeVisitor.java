@@ -46,6 +46,7 @@ import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.LoopTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
 import com.sonarsource.slang.impl.MatchTreeImpl;
+import com.sonarsource.slang.impl.ModifierTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.StringLiteralTreeImpl;
@@ -111,6 +112,8 @@ import org.jetbrains.kotlin.psi.KtWhileExpression;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
+import static com.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
+import static com.sonarsource.slang.api.ModifierTree.Kind.PUBLIC;
 
 class KotlinTreeVisitor {
   private static final Map<KtToken, Operator> BINARY_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
@@ -292,8 +295,15 @@ class KotlinTreeVisitor {
       .map(modifierList::getModifier)
       .filter(Objects::nonNull)
       .map(element -> {
-        NativeKind modifierKind = new KotlinNativeKind(element, element.getText());
-        return createNativeTree(getTreeMetaData(element), modifierKind, Collections.emptyList());
+        TreeMetaData metaData = getTreeMetaData(element);
+        if (KtTokens.PUBLIC_KEYWORD.getValue().equals(element.getText())) {
+          return new ModifierTreeImpl(metaData, PUBLIC);
+        } else if (KtTokens.PRIVATE_KEYWORD.getValue().equals(element.getText())) {
+          return new ModifierTreeImpl(metaData, PRIVATE);
+        } else {
+          NativeKind modifierKind = new KotlinNativeKind(element, element.getText());
+          return createNativeTree(metaData, modifierKind, Collections.emptyList());
+        }
       })
       .collect(Collectors.toList());
   }

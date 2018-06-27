@@ -24,6 +24,7 @@ import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.LoopTree;
+import com.sonarsource.slang.api.ModifierTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
@@ -93,7 +94,8 @@ public class SyntacticEquivalence {
     boolean assignTreeCheck = (first instanceof AssignmentExpressionTree) && (((AssignmentExpressionTree) first).operator() != ((AssignmentExpressionTree) second).operator());
     boolean vardeclTreeCheck = (first instanceof VariableDeclarationTree) && (((VariableDeclarationTree) first).isVal() != ((VariableDeclarationTree) second).isVal());
     boolean loopTreeCheck = (first instanceof LoopTree) && (((LoopTree) first).kind() != ((LoopTree) second).kind());
-    return nativeTreeCheck || unaryTreeCheck || binaryTreeCheck || assignTreeCheck || vardeclTreeCheck || loopTreeCheck;
+    boolean modifierTreeCheck = (first instanceof ModifierTree) && (((ModifierTree) first).kind() != ((ModifierTree) second).kind());
+    return nativeTreeCheck || unaryTreeCheck || binaryTreeCheck || assignTreeCheck || vardeclTreeCheck || loopTreeCheck || modifierTreeCheck;
   }
 
   public static List<List<Tree>> findDuplicatedGroups(List<Tree> list) {

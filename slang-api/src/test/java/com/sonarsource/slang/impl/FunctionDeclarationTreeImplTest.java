@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
 
+import static com.sonarsource.slang.api.ModifierTree.Kind.PUBLIC;
 import static com.sonarsource.slang.impl.TextRanges.range;
 import static com.sonarsource.slang.utils.TreeCreationUtils.identifier;
 import static com.sonarsource.slang.utils.TreeCreationUtils.simpleNative;
@@ -45,7 +46,7 @@ public class FunctionDeclarationTreeImplTest {
   @Test
   public void test() {
     TreeMetaData meta = null;
-    List<Tree> modifiers = singletonList(new IdentifierTreeImpl(meta, "public"));
+    List<Tree> modifiers = Arrays.asList(new ModifierTreeImpl(meta, PUBLIC));
     Tree returnType = new IdentifierTreeImpl(meta, "int");
     IdentifierTree name = new IdentifierTreeImpl(meta, "foo");
     IdentifierTree paramName = new IdentifierTreeImpl(meta, "p1");

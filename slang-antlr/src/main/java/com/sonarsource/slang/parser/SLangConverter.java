@@ -27,6 +27,7 @@ import com.sonarsource.slang.api.CatchTree;
 import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
+import com.sonarsource.slang.api.ModifierTree.Kind;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.TextPointer;
@@ -49,6 +50,7 @@ import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.LoopTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
 import com.sonarsource.slang.impl.MatchTreeImpl;
+import com.sonarsource.slang.impl.ModifierTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.StringLiteralTreeImpl;
@@ -77,6 +79,8 @@ import org.sonarsource.analyzer.commons.TokenLocation;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
+import static com.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
+import static com.sonarsource.slang.api.ModifierTree.Kind.PUBLIC;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
@@ -255,7 +259,11 @@ public class SLangConverter implements ASTConverter {
 
     @Override
     public Tree visitMethodModifier(SLangParser.MethodModifierContext ctx) {
-      return simpleNativeTree(ctx);
+      Kind modifierKind = PUBLIC;
+      if (ctx.PRIVATE() != null) {
+        modifierKind = PRIVATE;
+      }
+      return new ModifierTreeImpl(meta(ctx), modifierKind);
     }
 
     @Override
@@ -483,10 +491,6 @@ public class SLangConverter implements ASTConverter {
     private NativeTree nativeTree(ParserRuleContext ctx, List<? extends ParseTree> rawChildren) {
       List<Tree> children = list(rawChildren);
       return new NativeTreeImpl(meta(ctx), new SNativeKind(ctx), children);
-    }
-
-    private NativeTree simpleNativeTree(ParserRuleContext ctx) {
-      return new NativeTreeImpl(meta(ctx), new SNativeKind(ctx, ctx.getText()), emptyList());
     }
 
     private List<Tree> list(List<? extends ParseTree> rawChildren) {

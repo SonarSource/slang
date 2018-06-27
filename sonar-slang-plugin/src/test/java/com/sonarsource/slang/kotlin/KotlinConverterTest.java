@@ -39,6 +39,7 @@ import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.VariableDeclarationTree;
+import com.sonarsource.slang.impl.ModifierTreeImpl;
 import com.sonarsource.slang.parser.SLangConverter;
 import java.util.Collections;
 import java.util.List;
@@ -51,6 +52,8 @@ import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.LESS_THAN;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
+import static com.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
+import static com.sonarsource.slang.api.ModifierTree.Kind.PUBLIC;
 import static com.sonarsource.slang.api.Token.Type.KEYWORD;
 import static com.sonarsource.slang.api.Token.Type.OTHER;
 import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
@@ -207,12 +210,24 @@ public class KotlinConverterTest {
     assertTree(functionWithInternalModifier.body()).isNotNull();
     assertThat(functionWithInternalModifier.modifiers()).hasSize(1);
     assertTree(functionWithInternalModifier).hasParameterNames("a", "c");
+    assertTree(functionWithInternalModifier).isNotEquivalentTo(functionDeclarationTree);
+
+    FunctionDeclarationTree functionWithProtectedModifier = (FunctionDeclarationTree) kotlin("protected fun function1(a: Int, c: String): Boolean = true");
+    assertThat(functionWithProtectedModifier.modifiers()).hasSize(1);
+    assertTree(functionWithProtectedModifier).isNotEquivalentTo(functionDeclarationTree);
 
     FunctionDeclarationTree functionWithPrivate = (FunctionDeclarationTree) kotlin("private fun function2() {}");
     assertThat(functionWithPrivate.formalParameters()).isEmpty();
     Tree privateModifier = functionDeclarationTree.modifiers().get(0);
-    assertTree(privateModifier).isNotEquivalentTo(functionWithInternalModifier.modifiers().get(0));
+    Tree internalModifier = functionWithInternalModifier.modifiers().get(0);
+    Tree protectedModifier = functionWithProtectedModifier.modifiers().get(0);
+    assertTree(privateModifier).isNotEquivalentTo(internalModifier);
     assertTree(privateModifier).isEquivalentTo(functionWithPrivate.modifiers().get(0));
+    assertTree(privateModifier).isEquivalentTo(new ModifierTreeImpl(null, PRIVATE));
+    assertTree(privateModifier).isNotEquivalentTo(new ModifierTreeImpl(null, PUBLIC));
+    assertTree(internalModifier).isNotEquivalentTo(new ModifierTreeImpl(null, PRIVATE));
+    assertTree(internalModifier).isNotEquivalentTo(new ModifierTreeImpl(null, PUBLIC));
+    assertTree(internalModifier).isNotEquivalentTo(protectedModifier);
 
     FunctionDeclarationTree noModifierFunction = (FunctionDeclarationTree) kotlin("fun function1(a: Int = 3, a: String) {}");
     assertThat(noModifierFunction.modifiers()).isEmpty();
