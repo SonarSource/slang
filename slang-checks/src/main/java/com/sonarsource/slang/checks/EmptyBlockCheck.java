@@ -20,12 +20,13 @@
 package com.sonarsource.slang.checks;
 
 import com.sonarsource.slang.api.BlockTree;
+import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.MatchTree;
+import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.checks.api.CheckContext;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
-import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonar.check.Rule;
 
 @Rule(key = "S108")
@@ -36,7 +37,8 @@ public class EmptyBlockCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(BlockTree.class, (ctx, blockTree) -> {
-      if (!(ctx.parent() instanceof FunctionDeclarationTreeImpl)) {
+      Tree parent = ctx.parent();
+      if (!(parent instanceof FunctionDeclarationTree) && !(parent instanceof NativeTree)) {
         if (blockTree.statementOrExpressions().isEmpty()) {
           checkComments(ctx, blockTree);
         }
