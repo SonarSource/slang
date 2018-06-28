@@ -455,10 +455,11 @@ class KotlinTreeVisitor {
 
   private CatchTree createCatchTree(TreeMetaData metaData, KtCatchClause element) {
     Tree catchBody = createMandatoryElement(element.getCatchBody());
+    Token keyword = toSlangToken(element.getFirstChild());
     if (element.getCatchParameter() == null) {
-      return new CatchTreeImpl(metaData, null, catchBody);
+      return new CatchTreeImpl(metaData, null, catchBody, keyword);
     } else {
-      return new CatchTreeImpl(metaData, createParameter(metaData, element.getCatchParameter()), catchBody);
+      return new CatchTreeImpl(metaData, createParameter(metaData, element.getCatchParameter()), catchBody, keyword);
     }
   }
 

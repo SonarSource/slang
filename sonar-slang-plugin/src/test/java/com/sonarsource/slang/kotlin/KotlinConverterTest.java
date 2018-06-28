@@ -490,6 +490,7 @@ public class KotlinConverterTest {
     assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
     List<CatchTree> catchTreeList = exceptionHandlingTree.catchBlocks();
     assertThat(catchTreeList).hasSize(1);
+    assertThat(catchTreeList.get(0).keyword().text()).isEqualTo("catch");
     assertTree(catchTreeList.get(0).catchParameter()).isInstanceOf(ParameterTree.class);
     ParameterTree catchParameter = (ParameterTree) catchTreeList.get(0).catchParameter();
     assertTree(catchParameter).hasParameterName("e");

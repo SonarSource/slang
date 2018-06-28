@@ -23,6 +23,8 @@ import javax.annotation.CheckForNull;
 
 public interface CatchTree extends Tree {
 
+  Token keyword();
+
   @CheckForNull
   Tree catchParameter();
 

@@ -387,7 +387,7 @@ public class SLangConverter implements ASTConverter {
     public Tree visitCatchBlock(SLangParser.CatchBlockContext ctx) {
       ParameterTree parameter = ctx.formalParameter() == null ? null : (ParameterTree) visit(ctx.formalParameter());
       Tree body = visit(ctx.block());
-      return new CatchTreeImpl(meta(ctx), parameter, body);
+      return new CatchTreeImpl(meta(ctx), parameter, body, toSlangToken(ctx.CATCH().getSymbol()));
     }
 
     @Override

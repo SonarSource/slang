@@ -42,8 +42,8 @@ public class ExceptionHandlingTreeImplTest {
     Tree one = new LiteralTreeImpl(meta, "1");
     Tree assignmentExpressionTree =
         new AssignmentExpressionTreeImpl(meta, AssignmentExpressionTree.Operator.EQUAL, lhs, one);
-    CatchTreeImpl catchWithIdentifier = new CatchTreeImpl(meta, parameter, assignmentExpressionTree);
-    CatchTreeImpl catchWithoutIdentifier = new CatchTreeImpl(meta, null, assignmentExpressionTree);
+    CatchTreeImpl catchWithIdentifier = new CatchTreeImpl(meta, parameter, assignmentExpressionTree, null);
+    CatchTreeImpl catchWithoutIdentifier = new CatchTreeImpl(meta, null, assignmentExpressionTree, null);
 
     Tree emptyTry = new BlockTreeImpl(meta, Collections.emptyList());
 

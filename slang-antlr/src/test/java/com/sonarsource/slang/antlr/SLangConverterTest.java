@@ -331,6 +331,7 @@ public class SLangConverterTest {
     assertThat(exceptionHandlingTree.catchBlocks()).hasSize(1);
     assertTree(exceptionHandlingTree.catchBlocks().get(0).catchParameter()).hasParameterName("e");
     assertTree(exceptionHandlingTree.catchBlocks().get(0).catchBlock()).isBlock();
+    assertThat(exceptionHandlingTree.catchBlocks().get(0).keyword().text()).isEqualTo("catch");
     assertTree(exceptionHandlingTree.finallyBlock()).isNull();
   }
 
