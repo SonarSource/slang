@@ -91,11 +91,11 @@ expression
   ;
 
 disjunction
-  :  conjunction ('||' conjunction)*
+  :  conjunction (disjunctionOperator conjunction)*
   ;
 
 conjunction
-  :  equalityComparison ('&&' equalityComparison)*
+  :  equalityComparison (conjunctionOperator equalityComparison)*
   ;
 
 equalityComparison
@@ -239,6 +239,14 @@ assignmentOperator
 
 unaryOperator
   :  '!'
+  ;
+
+disjunctionOperator
+  :  '||'
+  ;
+
+conjunctionOperator
+  :  '&&'
   ;
 
 // Type Hierarchy

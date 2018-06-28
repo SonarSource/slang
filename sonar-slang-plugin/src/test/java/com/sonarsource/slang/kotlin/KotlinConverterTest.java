@@ -80,6 +80,7 @@ public class KotlinConverterTest {
   public void testBinaryExpression() {
     assertTrees(kotlinStatements("x + 2; x - 2; x * 2; x / 2; x == 2; x != 2; x > 2; x >= 2; x < 2; x <= 2; x && y; x || y;"))
       .isEquivalentTo(slangStatements("x + 2; x - 2; x * 2; x / 2; x == 2; x != 2; x > 2; x >= 2; x < 2; x <= 2; x && y; x || y;"));
+    assertThat(((BinaryExpressionTree) kotlinStatement("x + 2;")).operatorToken().text()).isEqualTo("+");
   }
 
   @Test

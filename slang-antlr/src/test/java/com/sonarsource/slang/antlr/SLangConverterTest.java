@@ -68,6 +68,7 @@ public class SLangConverterTest {
     assertTree(binary).isBinaryExpression(Operator.PLUS).hasTextRange(1, 0, 1, 5);
     assertTree(binary.leftOperand()).isIdentifier("x").hasTextRange(1, 0, 1, 1);
     assertTree(binary.rightOperand()).isLiteral("1").hasTextRange(1, 4, 1, 5);
+    assertThat(binary.operatorToken().text()).isEqualTo("+");
   }
 
   @Test
@@ -92,6 +93,7 @@ public class SLangConverterTest {
     assertTree(binary).isBinaryExpression(Operator.CONDITIONAL_AND);
     assertTree(binary.leftOperand()).isIdentifier("x");
     assertTree(binary.rightOperand()).isBinaryExpression(Operator.CONDITIONAL_AND);
+    assertRange(binary.operatorToken().textRange()).hasRange(1, 2, 1, 4);
   }
 
   @Test

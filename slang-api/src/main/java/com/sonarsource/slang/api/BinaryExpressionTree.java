@@ -40,6 +40,8 @@ public interface BinaryExpressionTree extends Tree {
 
   Operator operator();
 
+  Token operatorToken();
+
   Tree leftOperand();
 
   Tree rightOperand();

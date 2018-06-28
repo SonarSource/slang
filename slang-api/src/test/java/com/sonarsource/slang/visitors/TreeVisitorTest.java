@@ -46,8 +46,8 @@ public class TreeVisitorTest {
 
   private IdentifierTree var1 = new IdentifierTreeImpl(null, "var1");
   private LiteralTree number1 = new LiteralTreeImpl(null, "1");
-  private BinaryExpressionTree binary = new BinaryExpressionTreeImpl(null, Operator.PLUS, var1, number1);
-  private BinaryExpressionTree binminus = new BinaryExpressionTreeImpl(null, Operator.MINUS, var1, var1);
+  private BinaryExpressionTree binary = new BinaryExpressionTreeImpl(null, Operator.PLUS, null, var1, number1);
+  private BinaryExpressionTree binminus = new BinaryExpressionTreeImpl(null, Operator.MINUS, null, var1, var1);
 
   private DummyNativeKind nkind = new DummyNativeKind();
   private NativeTree nativeNode = new NativeTreeImpl(null, nkind, Arrays.asList(binary, binminus));

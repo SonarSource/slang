@@ -67,7 +67,7 @@ public class TreeCreationUtils {
   }
 
   public static BinaryExpressionTree binary(BinaryExpressionTree.Operator operator, Tree leftOperand, Tree rightOperand) {
-    return new BinaryExpressionTreeImpl(null, operator, leftOperand, rightOperand);
+    return new BinaryExpressionTreeImpl(null, operator, null, leftOperand, rightOperand);
   }
 
   public static AssignmentExpressionTree assignment(Tree leftOperand, Tree rightOperand) {
