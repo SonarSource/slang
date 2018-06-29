@@ -8,6 +8,7 @@ typeDeclaration
   :  classDeclaration
   |  methodDeclaration
   |  statement SEMICOLON
+  |  importStatement
   ;
 
 classDeclaration
@@ -80,6 +81,10 @@ declaration
 declarationModifier
   : VAR
   | VAL
+  ;
+
+importStatement
+  :  IMPORT identifier semi
   ;
 
 assignment
@@ -275,6 +280,7 @@ FINALLY : 'finally';
 FOR : 'for';
 FUN: 'fun';
 IF : 'if';
+IMPORT : 'import';
 MATCH : 'match';
 NATIVE : 'native'; 
 PRIVATE : 'private';

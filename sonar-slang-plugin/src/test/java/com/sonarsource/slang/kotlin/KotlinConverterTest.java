@@ -28,6 +28,7 @@ import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
+import com.sonarsource.slang.api.ImportTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.LoopTree;
 import com.sonarsource.slang.api.MatchCaseTree;
@@ -526,6 +527,13 @@ public class KotlinConverterTest {
   public void testAssignments() {
     assertTrees(kotlinStatements("x = 3\nx -= y + 3\n"))
       .isEquivalentTo(slangStatements("x = 3; x -= y + 3;"));
+  }
+
+  @Test
+  public void testImports() {
+    assertThat(converter.parse("import x;").descendants().filter(ImportTree.class::isInstance)).hasSize(1);
+    assertTree(kotlin("import x;")).isEquivalentTo(kotlin("import x;"));
+    assertTree(kotlin("import x;")).isNotEquivalentTo(kotlin("import y;"));
   }
 
   @Test

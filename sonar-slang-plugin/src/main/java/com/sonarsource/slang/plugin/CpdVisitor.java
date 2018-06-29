@@ -19,11 +19,14 @@
  */
 package com.sonarsource.slang.plugin;
 
+import com.sonarsource.slang.api.ImportTree;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.kotlin.InputFileContext;
 import com.sonarsource.slang.visitors.TreeVisitor;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.sonar.api.batch.sensor.cpd.NewCpdTokens;
 
 public class CpdVisitor extends TreeVisitor<InputFileContext> {
@@ -32,10 +35,19 @@ public class CpdVisitor extends TreeVisitor<InputFileContext> {
 
   public CpdVisitor() {
     register(TopLevelTree.class, (ctx, tree) -> {
+
+      Set<Token> importTokens = tree.descendants()
+        .filter(ImportTree.class::isInstance)
+        .flatMap(t -> t.metaData().tokens().stream())
+        .collect(Collectors.toSet());
+
       for (Token token : tree.metaData().tokens()) {
-        String text = token.type() == Token.Type.STRING_LITERAL ? "LITERAL" : token.text();
-        cpdTokens.addToken(ctx.textRange(token.textRange()), text);
+        if (!importTokens.contains(token)) {
+          String text = token.type() == Token.Type.STRING_LITERAL ? "LITERAL" : token.text();
+          cpdTokens.addToken(ctx.textRange(token.textRange()), text);
+        }
       }
+
     });
   }
 
