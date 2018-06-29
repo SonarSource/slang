@@ -50,6 +50,8 @@ public class FileHeaderCheck implements SlangCheck {
   private Pattern searchPattern = null;
   private String[] expectedLines = null;
 
+  private static final String LINES_REGEX = "\r\n|\n|\r";
+
   @Override
   public void initialize(InitContext init) {
     initializeParameters();
@@ -70,16 +72,20 @@ public class FileHeaderCheck implements SlangCheck {
         throw new IllegalArgumentException("[" + getClass().getSimpleName() + "] Unable to compile the regular expression: " + headerFormat, e);
       }
     } else {
-      expectedLines = headerFormat.split("(?:\r)?\n|\r");
+      expectedLines = headerFormat.split(LINES_REGEX);
     }
   }
 
   private void checkExpectedLines(CheckContext ctx) {
-    String[] lines = ctx.fileContent().split("\r\n|\n|\r", -1);
-    IntStream.range(0, expectedLines.length)
-      .filter(lineIndex -> !lines[lineIndex].equals(expectedLines[lineIndex]))
-      .findFirst()
-      .ifPresent(lineIndex -> ctx.reportFileIssue(MESSAGE));
+    String[] lines = ctx.fileContent().split(LINES_REGEX, -1);
+    if (lines.length < expectedLines.length) {
+      ctx.reportFileIssue(MESSAGE);
+    } else {
+      IntStream.range(0, expectedLines.length)
+        .filter(lineIndex -> !lines[lineIndex].equals(expectedLines[lineIndex]))
+        .findFirst()
+        .ifPresent(lineIndex -> ctx.reportFileIssue(MESSAGE));
+    }
   }
 
   private void checkRegularExpression(CheckContext ctx) {
@@ -91,7 +97,7 @@ public class FileHeaderCheck implements SlangCheck {
 
   private String getHeaderFormat() {
     String format = headerFormat;
-    if(format.charAt(0) != '^') {
+    if (format.charAt(0) != '^') {
       format = "^" + format;
     }
     return format;
