@@ -19,7 +19,6 @@
  */
 package com.sonarsource.slang.checks;
 
-import java.nio.file.FileSystems;
 import org.junit.Test;
 
 public class FileHeaderCheckTest {

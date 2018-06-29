@@ -90,7 +90,7 @@ public class FileHeaderCheck implements SlangCheck {
 
   private void checkRegularExpression(CheckContext ctx) {
     Matcher matcher = searchPattern.matcher(ctx.fileContent());
-    if (!matcher.find() || matcher.start() != 0) {
+    if (!matcher.find()) {
       ctx.reportFileIssue(MESSAGE);
     }
   }
