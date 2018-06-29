@@ -82,6 +82,7 @@ import org.jetbrains.kotlin.psi.KtBlockExpression;
 import org.jetbrains.kotlin.psi.KtCatchClause;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtConstantExpression;
+import org.jetbrains.kotlin.psi.KtConstructor;
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry;
 import org.jetbrains.kotlin.psi.KtDoWhileExpression;
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry;
@@ -247,8 +248,8 @@ class KotlinTreeVisitor {
   }
 
   private Tree createFunctionDeclarationTree(TreeMetaData metaData, KtFunction functionElement) {
-    if (functionElement.getReceiverTypeReference() != null) {
-      // Extension function. For now they are considered as native elements instead of function declaration to avoid FP
+    if (functionElement instanceof KtConstructor || functionElement.getReceiverTypeReference() != null) {
+      // Constructors and extension functions: for now they are considered as native elements instead of function declaration to avoid FP
       return createNativeTree(metaData, new KotlinNativeKind(functionElement), functionElement);
     }
 

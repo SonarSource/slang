@@ -481,6 +481,12 @@
 'kotlin-project:kotlin/compiler/ir/ir.tree/src/org/jetbrains/kotlin/ir/expressions/impl/IrBlockImpl.kt':[
 56,
 ],
+'kotlin-project:kotlin/compiler/ir/ir.tree/src/org/jetbrains/kotlin/ir/expressions/impl/IrCallImpl.kt':[
+64,
+],
+'kotlin-project:kotlin/compiler/ir/ir.tree/src/org/jetbrains/kotlin/ir/expressions/impl/IrPrimitiveCall.kt':[
+120,
+],
 'kotlin-project:kotlin/compiler/ir/ir.tree/src/org/jetbrains/kotlin/ir/util/DumpIrTree.kt':[
 89,
 ],
