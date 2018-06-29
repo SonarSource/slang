@@ -64,6 +64,8 @@ public class SlangRulingTest {
     orchestrator = builder.build();
     orchestrator.start();
     ProfileGenerator.RulesConfiguration rulesConfiguration = new ProfileGenerator.RulesConfiguration();
+    rulesConfiguration.add("S1451", "headerFormat", "/\\*\n \\* Copyright \\d{4}-\\d{4} JetBrains s\\.r\\.o\\.");
+    rulesConfiguration.add("S1451", "isRegularExpression", "true");
     File profile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "kotlin", "kotlin", rulesConfiguration, Collections.emptySet());
     orchestrator.getServer().restoreProfile(FileLocation.of(profile));
   }
