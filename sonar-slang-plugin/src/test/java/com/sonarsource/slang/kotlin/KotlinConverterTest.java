@@ -40,7 +40,6 @@ import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.VariableDeclarationTree;
 import com.sonarsource.slang.parser.SLangConverter;
-import com.sonarsource.slang.visitors.TreePrinter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -183,7 +182,6 @@ public class KotlinConverterTest {
   @Test
   public void testEnumClassEntries() {
     Tree tree = kotlin("enum class A { B, C, D }");
-    System.out.println(TreePrinter.tree2string(tree));
     assertTree(tree).isInstanceOf(ClassDeclarationTree.class);
     assertThat(tree.descendants().noneMatch(ClassDeclarationTree.class::isInstance)).isTrue();
   }
@@ -216,13 +214,12 @@ public class KotlinConverterTest {
     assertTree(privateModifier).isNotEquivalentTo(functionWithInternalModifier.modifiers().get(0));
     assertTree(privateModifier).isEquivalentTo(functionWithPrivate.modifiers().get(0));
 
-    FunctionDeclarationTree constructorFunction = ((FunctionDeclarationTree) kotlin("class classC(a: String, b: Int) {}").children().get(0).children().get(0));
-    assertTree(constructorFunction.name()).isNull();
-    assertThat(constructorFunction.modifiers()).isEmpty();
-    assertTree(constructorFunction.returnType()).isNull();
-    assertThat(constructorFunction.formalParameters()).hasSize(2);
-    assertTree(constructorFunction).hasParameterNames("a", "b");
-    assertTree(constructorFunction.body()).isNull();
+    FunctionDeclarationTree noModifierFunction = (FunctionDeclarationTree) kotlin("fun function1(a: Int = 3, a: String) {}");
+    assertThat(noModifierFunction.modifiers()).isEmpty();
+    assertTree(noModifierFunction.returnType()).isNull();
+    assertThat(noModifierFunction.formalParameters()).hasSize(2);
+    assertThat(noModifierFunction.formalParameters().get(0)).isInstanceOf(NativeTree.class);
+    assertTree(noModifierFunction.body()).isBlock();
 
     FunctionDeclarationTree emptyLambdaFunction = (FunctionDeclarationTree) kotlin("{ }");
     assertTree(emptyLambdaFunction.name()).isNull();
@@ -231,16 +228,20 @@ public class KotlinConverterTest {
     assertThat(emptyLambdaFunction.formalParameters()).isEmpty();
     assertTree(emptyLambdaFunction.body()).isBlock();
 
-    ParameterTree aIntParam1 = functionDeclarationTree.formalParameters().get(0);
+    ParameterTree aIntParam1 = (ParameterTree) functionDeclarationTree.formalParameters().get(0);
     Tree bStringParam = functionDeclarationTree.formalParameters().get(1);
     Tree aIntParam2 = functionWithInternalModifier.formalParameters().get(0);
-    Tree aStringParam = constructorFunction.formalParameters().get(1);
+    Tree aIntParamWithInitializer = noModifierFunction.formalParameters().get(0);
+    Tree aStringParam = noModifierFunction.formalParameters().get(1);
     assertTree(aIntParam1).isNotEquivalentTo(bStringParam);
     assertTree(aIntParam1).isEquivalentTo(aIntParam2);
     assertTree(aIntParam1).isNotEquivalentTo(aStringParam);
+    assertTree(aIntParam1).isNotEquivalentTo(aIntParamWithInitializer);
     assertTree(aStringParam).isNotEquivalentTo(bStringParam);
     assertTree(aIntParam1).hasTextRange(1, 22, 1, 28);
     assertTree(aIntParam1.identifier()).hasTextRange(1, 22, 1, 23);
+    assertTree(aStringParam).isInstanceOf(ParameterTree.class);
+    assertTree(aIntParamWithInitializer).hasTextRange(1, 14, 1, 24);
   }
 
   @Test
@@ -253,6 +254,36 @@ public class KotlinConverterTest {
       .isEquivalentTo(kotlin("fun A.fun1() {}"));
     assertTree(kotlin("fun A.fun1() {}"))
       .isNotEquivalentTo(kotlin("class A { fun fun1() {} }"));
+  }
+
+  @Test
+  public void testGenericFunctions() {
+    assertTree(kotlin("fun f1() {}"))
+      .isNotEquivalentTo(kotlin("fun <A> f1() {}"));
+    assertTree(kotlin("fun <A> f1() {}"))
+      .isEquivalentTo(kotlin("fun <A> f1() {}"));
+    assertTree(kotlin("fun <A, B> f1() {}"))
+      .isEquivalentTo(kotlin("fun <A, B> f1() {}"));
+    assertTree(kotlin("fun <A, B> f1() {}"))
+      .isNotEquivalentTo(kotlin("fun <A, B, C> f1() {}"));
+  }
+
+  @Test
+  public void testUnmappedFunctionModifiers() {
+    assertTree(kotlin("fun f1() {}"))
+      .isNotEquivalentTo(kotlin("inline fun f1() {}"));
+    assertTree(kotlin("tailrec fun f1() {}"))
+      .isNotEquivalentTo(kotlin("inline fun f1() {}"));
+    assertTree(kotlin("inline fun f1() {}"))
+      .isEquivalentTo(kotlin("inline fun f1() {}"));
+  }
+
+  @Test
+  public void testGenericClasses() {
+    assertTree(kotlin("class A<T>() {}"))
+      .isNotEquivalentTo(kotlin("class A() {}"));
+    assertTree(kotlin("class A<T>() {}"))
+      .isEquivalentTo(kotlin("class A<T>() {}"));
   }
 
   @Test
@@ -496,7 +527,7 @@ public class KotlinConverterTest {
   public void testLambdas() {
     Tree lambdaWithDestructor = kotlinStatement("{ (a, b) -> a.length < b.length }");
     Tree lambdaWithoutDestructor = kotlinStatement("{ a, b -> a.length < b.length }");
-    assertTree(lambdaWithDestructor).hasChildren(NativeTree.class);
+    assertTree(lambdaWithDestructor).hasChildren(FunctionDeclarationTree.class);
     assertTree(lambdaWithoutDestructor).hasChildren(FunctionDeclarationTree.class);
 
     FunctionDeclarationTree emptyLambda = (FunctionDeclarationTree) kotlinStatement("{ }").children().get(0);

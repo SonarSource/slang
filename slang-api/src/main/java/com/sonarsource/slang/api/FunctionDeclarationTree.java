@@ -32,10 +32,13 @@ public interface FunctionDeclarationTree extends Tree {
   @CheckForNull
   IdentifierTree name();
 
-  List<ParameterTree> formalParameters();
+  List<Tree> formalParameters();
 
   @CheckForNull
   BlockTree body();
+
+  @CheckForNull
+  Tree nativeChildren();
 
   TextRange rangeToHighlight();
 

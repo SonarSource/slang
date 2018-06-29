@@ -5,9 +5,6 @@
 'kotlin-project:corda/node/src/main/kotlin/net/corda/node/SerialFilter.kt':[
 64,
 ],
-'kotlin-project:corda/node/src/main/kotlin/net/corda/node/services/keys/KMSUtils.kt':[
-34,
-],
 'kotlin-project:corda/samples/attachment-demo/src/main/kotlin/net/corda/attachmentdemo/Main.kt':[
 14,
 ],
@@ -157,7 +154,6 @@
 87,
 ],
 'kotlin-project:kotlin/libraries/tools/binary-compatibility-validator/src/test/kotlin/cases/default/functions.kt':[
-4,
 6,
 ],
 'kotlin-project:kotlin/libraries/tools/binary-compatibility-validator/src/test/kotlin/cases/private/privateMultifile2.kt':[

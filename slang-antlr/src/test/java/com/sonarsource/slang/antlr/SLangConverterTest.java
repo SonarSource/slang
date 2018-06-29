@@ -200,6 +200,7 @@ public class SLangConverterTest {
     assertThat(function.formalParameters()).hasSize(2);
     assertTree(function.formalParameters().get(0)).hasParameterName("x1");
     assertThat(function.body()).isNotNull();
+    assertThat(function.nativeChildren()).isNull();
 
     FunctionDeclarationTree publicFunction = parseFunction("public int fun foo(p1);");
     assertThat(publicFunction.formalParameters()).hasSize(1);

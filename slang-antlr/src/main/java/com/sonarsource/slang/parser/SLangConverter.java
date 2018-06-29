@@ -239,17 +239,17 @@ public class SLangConverter implements ASTConverter {
         name = (IdentifierTree) visit(identifier);
       }
 
-      List<ParameterTree> convertedParameters = new ArrayList<>();
+      List<Tree> convertedParameters = new ArrayList<>();
       SLangParser.FormalParameterListContext formalParameterListContext = methodHeaderContext.methodDeclarator().formalParameterList();
       if (formalParameterListContext != null) {
         SLangParser.FormalParametersContext formalParameters = formalParameterListContext.formalParameters();
         if (formalParameters != null) {
-          convertedParameters.addAll(list(formalParameters.formalParameter()).stream().map(ParameterTree.class::cast).collect(toList()));
+          convertedParameters.addAll(list(formalParameters.formalParameter()));
         }
-        convertedParameters.add((ParameterTree) visit(formalParameterListContext.lastFormalParameter()));
+        convertedParameters.add(visit(formalParameterListContext.lastFormalParameter()));
       }
 
-      return new FunctionDeclarationTreeImpl(meta(ctx), modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()));
+      return new FunctionDeclarationTreeImpl(meta(ctx), modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()), null);
     }
 
     @Override

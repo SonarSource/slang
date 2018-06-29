@@ -22,7 +22,6 @@ package com.sonarsource.slang.impl;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
-import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
@@ -38,18 +37,19 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
   private final List<Tree> modifiers;
   private final Tree returnType;
   private final IdentifierTree name;
-  private final List<ParameterTree> formalParameters;
+  private final List<Tree> formalParameters;
   private final BlockTree body;
   private final List<Tree> children = new ArrayList<>();
+  private final Tree nativeChildren;
 
   public FunctionDeclarationTreeImpl(
     TreeMetaData metaData,
     List<Tree> modifiers,
     @Nullable Tree returnType,
     @Nullable IdentifierTree name,
-    List<ParameterTree> formalParameters,
-    @Nullable BlockTree body
-  ) {
+    List<Tree> formalParameters,
+    @Nullable BlockTree body,
+    @Nullable Tree nativeChildren) {
     super(metaData);
 
     this.modifiers = modifiers;
@@ -57,6 +57,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
     this.name = name;
     this.formalParameters = formalParameters;
     this.body = body;
+    this.nativeChildren = nativeChildren;
 
     this.children.addAll(modifiers);
     if (returnType != null) {
@@ -68,6 +69,9 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
     this.children.addAll(formalParameters);
     if (body != null) {
       this.children.add(body);
+    }
+    if (nativeChildren != null) {
+      this.children.add(nativeChildren);
     }
   }
 
@@ -89,7 +93,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
   }
 
   @Override
-  public List<ParameterTree> formalParameters() {
+  public List<Tree> formalParameters() {
     return formalParameters;
   }
 
@@ -97,6 +101,12 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
   @Override
   public BlockTree body() {
     return body;
+  }
+
+  @CheckForNull
+  @Override
+  public Tree nativeChildren() {
+    return nativeChildren;
   }
 
   @Override
