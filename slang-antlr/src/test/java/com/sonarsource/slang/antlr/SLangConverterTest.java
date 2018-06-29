@@ -29,6 +29,7 @@ import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
+import com.sonarsource.slang.api.ImportTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.LoopTree;
 import com.sonarsource.slang.api.MatchTree;
@@ -38,6 +39,7 @@ import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.api.VariableDeclarationTree;
+import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.parser.SLangConverter;
 import java.util.Arrays;
 import java.util.List;
@@ -362,6 +364,14 @@ public class SLangConverterTest {
     AssignmentExpressionTree assignment = (AssignmentExpressionTree) tree;
     assertTree(assignment.leftHandSide()).isIdentifier("x");
     assertTree(assignment.statementOrExpression()).isAssignmentExpression(AssignmentExpressionTree.Operator.PLUS_EQUAL).hasTextRange(1, 5, 1, 11);
+  }
+
+  @Test
+  public void import_statement() {
+    Tree tree = converter.parse("import a;").children().get(0);
+    assertThat(tree).isInstanceOf(ImportTree.class);
+    assertTree(tree).hasDescendant(new IdentifierTreeImpl(null, "a"));
+    assertTree(tree).hasNotDescendant(new IdentifierTreeImpl(null, "import"));
   }
 
   @Test

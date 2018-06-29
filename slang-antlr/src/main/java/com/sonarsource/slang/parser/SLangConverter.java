@@ -45,6 +45,7 @@ import com.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
+import com.sonarsource.slang.impl.ImportTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.LoopTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
@@ -188,11 +189,18 @@ public class SLangConverter implements ASTConverter {
     }
 
     @Override
+    public Tree visitImportStatement(SLangParser.ImportStatementContext ctx) {
+      return new ImportTreeImpl(meta(ctx), visit(ctx.identifier()));
+    }
+
+    @Override
     public Tree visitTypeDeclaration(SLangParser.TypeDeclarationContext ctx) {
       if (ctx.methodDeclaration() != null) {
         return visit(ctx.methodDeclaration());
       } else if (ctx.classDeclaration() != null) {
         return visit(ctx.classDeclaration());
+      } else if (ctx.importStatement() != null) {
+        return visit(ctx.importStatement());
       } else {
         return visit(ctx.statement());
       }

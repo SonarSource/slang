@@ -44,6 +44,7 @@ import com.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
+import com.sonarsource.slang.impl.ImportTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.LoopTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
@@ -92,6 +93,7 @@ import org.jetbrains.kotlin.psi.KtFinallySection;
 import org.jetbrains.kotlin.psi.KtForExpression;
 import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.KtIfExpression;
+import org.jetbrains.kotlin.psi.KtImportDirective;
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
 import org.jetbrains.kotlin.psi.KtLoopExpression;
 import org.jetbrains.kotlin.psi.KtModifierList;
@@ -212,6 +214,8 @@ class KotlinTreeVisitor {
       return createParameter(metaData, (KtParameter) element);
     } else if (element instanceof KtProperty) {
       return createVariableDeclaration(metaData, (KtProperty) element);
+    } else if (element instanceof KtImportDirective) {
+      return new ImportTreeImpl(metaData, convertElementToNative(element, metaData));
     } else {
       return convertElementToNative(element, metaData);
     }
