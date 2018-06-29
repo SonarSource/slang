@@ -25,8 +25,13 @@ import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.ModifierTree;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
+import com.sonarsource.slang.visitors.TreeContext;
+import com.sonarsource.slang.visitors.TreeVisitor;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import org.sonar.check.Rule;
 
 import static com.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
@@ -34,13 +39,32 @@ import static com.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
 @Rule(key = "S1144")
 public class UnusedPrivateMethodCheck implements SlangCheck {
 
+  // Serializable method should not raise any issue in Kotlin. Either change it as parameter when adding new language,
+  // or add all exceptions here
+  private static final Set<String> IGNORED_METHODS = new HashSet<>(Arrays.asList(
+    "writeObject",
+    "readObject",
+    "writeReplace",
+    "readResolve",
+    "readObjectNoData"));
+
   @Override
   public void initialize(InitContext init) {
     init.register(ClassDeclarationTree.class, (ctx, classDeclarationTree) -> {
-      Set<FunctionDeclarationTree> classMethods = classDeclarationTree.descendants()
-        .filter(FunctionDeclarationTree.class::isInstance)
-        .map(FunctionDeclarationTree.class::cast)
-        .collect(Collectors.toSet());
+      Set<FunctionDeclarationTree> classMethods = new HashSet<>();
+      TreeVisitor<TreeContext> functionVisitor = new TreeVisitor<>();
+      functionVisitor.register(FunctionDeclarationTree.class,
+        (functionCtx, functionDeclarationTree) -> {
+          boolean isCurrentClassMethod = functionCtx.ancestors().stream()
+            .filter(ClassDeclarationTree.class::isInstance)
+            .findFirst().map(classDeclarationTree::equals)
+            .orElse(false);
+          if (isCurrentClassMethod) {
+            classMethods.add(functionDeclarationTree);
+          }
+        });
+      functionVisitor.scan(new TreeContext(), classDeclarationTree);
+
       Set<IdentifierTree> usedIdentifiers = classDeclarationTree.descendants()
         .filter(IdentifierTree.class::isInstance)
         .map(IdentifierTree.class::cast)
@@ -49,7 +73,6 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
       usedIdentifiers.removeAll(classMethods.stream()
         .map(FunctionDeclarationTree::name)
         .collect(Collectors.toSet()));
-      usedIdentifiers.remove(classDeclarationTree.identifier());
 
       Set<String> usedIdentifierNames = usedIdentifiers.stream()
         .map(IdentifierTree::name)
@@ -59,7 +82,7 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
         .filter(UnusedPrivateMethodCheck::isPrivateMethod)
         .forEach(tree -> {
           IdentifierTree identifier = tree.name();
-          if (identifier != null && !usedIdentifierNames.contains(identifier.name())) {
+          if (isUnusedMethod(identifier, usedIdentifierNames)) {
             String message = String.format("Remove this unused private \"%s\" method.", identifier.name());
             ctx.reportIssue(tree.rangeToHighlight(), message);
           }
@@ -67,6 +90,12 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
 
     });
 
+  }
+
+  private static boolean isUnusedMethod(@Nullable IdentifierTree identifier, Set<String> usedIdentifierNames) {
+    return identifier != null
+      && !usedIdentifierNames.contains(identifier.name())
+      && !IGNORED_METHODS.contains(identifier.name());
   }
 
   private static boolean isPrivateMethod(FunctionDeclarationTree method) {
