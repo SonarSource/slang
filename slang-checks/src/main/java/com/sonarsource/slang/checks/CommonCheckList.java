@@ -40,7 +40,6 @@ public class CommonCheckList {
       EmptyBlockCheck.class,
       EmptyCommentCheck.class,
       EmptyFunctionCheck.class,
-      IfConditionalAlwaysTrueOrFalseCheck.class,
       FileHeaderCheck.class,
       FixMeCommentCheck.class,
       FunctionCognitiveComplexityCheck.class,
