@@ -25,6 +25,7 @@ import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.checks.complexity.CognitiveComplexity;
 import com.sonarsource.slang.kotlin.InputFileContext;
 import com.sonarsource.slang.visitors.TreeVisitor;
 import java.util.HashSet;
@@ -48,6 +49,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
   private int numberOfFunctions;
   private int numberOfClasses;
   private int complexity;
+  private int cognitiveComplexity;
 
   public MetricVisitor(FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter) {
     this.fileLinesContextFactory = fileLinesContextFactory;
@@ -58,6 +60,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
         comment -> addCommentMetrics(comment, commentLines, nosonarLines));
       linesOfCode.addAll(tree.metaData().linesOfCode());
       complexity = new CyclomaticComplexityVisitor().complexityTrees(tree).size();
+      cognitiveComplexity = new CognitiveComplexity(tree).value();
     });
     register(FunctionDeclarationTree.class, (ctx, tree) -> {
       if (tree.name() != null && tree.body() != null) {
@@ -75,6 +78,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
     numberOfFunctions = 0;
     numberOfClasses = 0;
     complexity = 0;
+    cognitiveComplexity = 0;
   }
 
   @Override
@@ -84,6 +88,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
     saveMetric(ctx, CoreMetrics.FUNCTIONS, numberOfFunctions());
     saveMetric(ctx, CoreMetrics.CLASSES, numberOfClasses());
     saveMetric(ctx, CoreMetrics.COMPLEXITY, complexity);
+    saveMetric(ctx, CoreMetrics.COGNITIVE_COMPLEXITY, cognitiveComplexity);
 
     FileLinesContext fileLinesContext = fileLinesContextFactory.createFor(ctx.inputFile);
     linesOfCode().forEach(line -> fileLinesContext.setIntValue(CoreMetrics.NCLOC_DATA_KEY, line, 1));
@@ -136,6 +141,10 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
 
   public int numberOfClasses() {
     return numberOfClasses;
+  }
+
+  public int cognitiveComplexity() {
+    return cognitiveComplexity;
   }
 
 }

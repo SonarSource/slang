@@ -147,6 +147,29 @@ public class MetricVisitorTest {
     assertThat(visitor.numberOfClasses()).isEqualTo(3);
   }
 
+  @Test
+  public void cognitiveComplexity() throws Exception {
+    scan("" +
+      "class A { fun foo() { if(1 != 1) 1; } }" + // +1 for 'if'
+      "fun function() {" +
+      "  if (1 != 1) {" + // +1 for 'if'
+      "    if (1 != 1) {" + // + 2 for nested 'if'
+      "      1" +
+      "    }" +
+      "  };" +
+      "  class B {" + // Nesting level reset here because of class declaration
+      "    fun bar(int a) {" +
+      "      match(a) {" + // +1 for match
+      "        1 -> doSomething();" +
+      "        2 -> doSomething();" +
+      "        else -> if (1 != 1) doSomething();" + // +2 for nested 'if'
+      "      }" +
+      "    }" +
+      "  };" +
+      "}");
+    assertThat(visitor.cognitiveComplexity()).isEqualTo(7);
+  }
+
   private void scan(String code) throws IOException {
     inputFile = new TestInputFileBuilder("moduleKey", tempFolder.newFile().getName())
       .setCharset(StandardCharsets.UTF_8)
