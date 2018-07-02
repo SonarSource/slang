@@ -1462,9 +1462,6 @@
 200,
 234,
 ],
-'kotlin-project:kotlin/idea/tests/org/jetbrains/kotlin/idea/refactoring/introduce/AbstractExtractionTest.kt':[
-98,
-],
 'kotlin-project:kotlin/idea/tests/org/jetbrains/kotlin/idea/run/RunConfigurationTest.kt':[
 57,
 ],

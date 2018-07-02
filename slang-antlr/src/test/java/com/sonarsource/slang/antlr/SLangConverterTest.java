@@ -197,6 +197,14 @@ public class SLangConverterTest {
   }
 
   @Test
+  public void nested_class_in_function() {
+    FunctionDeclarationTree func = parseFunction("fun foo() { class { } }");
+    assertThat(func.children()).hasSize(2);
+    assertTree(func.name()).isIdentifier("foo");
+    assertTree(func.body()).isBlock(ClassDeclarationTree.class);
+  }
+
+  @Test
   public void function() {
     FunctionDeclarationTree function = parseFunction("private int fun foo(x1, x2) { x1 + x2 }");
     assertThat(function.name().name()).isEqualTo("foo");
