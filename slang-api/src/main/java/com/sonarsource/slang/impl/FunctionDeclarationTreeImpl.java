@@ -70,9 +70,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
     if (body != null) {
       this.children.add(body);
     }
-    if (nativeChildren != null) {
-      this.children.addAll(nativeChildren);
-    }
+    this.children.addAll(nativeChildren);
   }
 
   @Override
