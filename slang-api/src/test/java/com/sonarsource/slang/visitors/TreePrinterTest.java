@@ -30,10 +30,10 @@ import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.ModifierTreeImpl;
 import java.util.Arrays;
-import java.util.Collections;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class TreePrinterTest {
@@ -46,7 +46,7 @@ public class TreePrinterTest {
     Tree binaryExp = new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, var1, literal1);
     Tree assignExp = new AssignmentExpressionTreeImpl(null, AssignmentExpressionTree.Operator.EQUAL, x1, binaryExp);
     Tree modifier = new ModifierTreeImpl(null, ModifierTree.Kind.PRIVATE);
-    Tree function = new FunctionDeclarationTreeImpl(null, singletonList(modifier), null, null, Collections.emptyList(), null);
+    Tree function = new FunctionDeclarationTreeImpl(null, singletonList(modifier), null, null, emptyList(), null, emptyList());
     Assertions.assertThat(TreePrinter.tree2string(Arrays.asList(assignExp, function))).isEqualTo(
       "AssignmentExpressionTreeImpl EQUAL\n" +
         "  IdentifierTreeImpl x1\n" +
