@@ -91,6 +91,16 @@ public class CognitiveComplexityTest {
     assertThat(complexity("if (x) { f = fun() { if (x) 42; }; };").value()).isEqualTo(4);
   }
 
+  @Test
+  public void nesting_with_classes() {
+    assertThat(complexity("class A { if (x) a && b; }").value()).isEqualTo(2);
+    assertThat(complexity("class A { fun foo() { if (x) a && b; } }").value()).isEqualTo(2);
+    assertThat(complexity("class A { fun foo() { fun bar() { if (x) a && b; } } }").value()).isEqualTo(3);
+    assertThat(complexity("class A { fun foo() { class B { fun bar() { if (x) a && b; } } } }").value()).isEqualTo(2);
+    assertThat(complexity("class A { fun foo() { if (x) a && b; class B { fun bar() { if (x) a && b; } } } }").value()).isEqualTo(4);
+  }
+
+
   private CognitiveComplexity complexity(String code) {
     Tree tree = parser.parse(code);
     return new CognitiveComplexity(tree);

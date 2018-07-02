@@ -121,8 +121,9 @@ unaryExpression
 
 atomicExpression
   :  parenthesizedExpression 
-  |  nativeExpression 
+  |  nativeExpression
   |  methodDeclaration
+  |  classDeclaration
   |  literal
   |  conditional
   |  loopExpression

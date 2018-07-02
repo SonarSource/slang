@@ -21,6 +21,7 @@ package com.sonarsource.slang.checks.complexity;
 
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.CatchTree;
+import com.sonarsource.slang.api.ClassDeclarationTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.LoopTree;
@@ -155,7 +156,6 @@ public class CognitiveComplexity {
     }
 
     private int nestingLevel(TreeContext ctx) {
-      // TODO reset all (nestingLevel + isInsideFunction) on class declaration
       int nestingLevel = 0;
       boolean isInsideFunction = false;
       Iterator<Tree> ancestors = ctx.ancestors().descendingIterator();
@@ -166,9 +166,11 @@ public class CognitiveComplexity {
             nestingLevel++;
           }
           isInsideFunction = true;
-        }
-        if (t instanceof IfTree || t instanceof MatchTree || t instanceof LoopTree || t instanceof CatchTree) {
+        } else if (t instanceof IfTree || t instanceof MatchTree || t instanceof LoopTree || t instanceof CatchTree) {
           nestingLevel++;
+        } else if (t instanceof ClassDeclarationTree) {
+          nestingLevel = 0;
+          isInsideFunction = false;
         }
       }
       return nestingLevel;
