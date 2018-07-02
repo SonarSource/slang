@@ -21,6 +21,7 @@ package com.sonarsource.slang.checks;
 
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
+import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.VariableDeclarationTree;
 import com.sonarsource.slang.checks.api.CheckContext;
 import com.sonarsource.slang.checks.api.InitContext;
@@ -52,7 +53,10 @@ public class VariableAndParameterNameCheck implements SlangCheck {
     });
 
     init.register(FunctionDeclarationTree.class, (ctx, tree) ->
-      tree.formalParameters().forEach(
+      tree.formalParameters().stream()
+        .filter(ParameterTree.class::isInstance)
+        .map(ParameterTree.class::cast)
+        .forEach(
         param -> check(pattern, ctx, param.identifier(), "parameter")));
   }
 

@@ -478,6 +478,15 @@
 'kotlin-project:kotlin/compiler/ir/ir.tree/src/org/jetbrains/kotlin/ir/builders/ExpressionHelpers.kt':[
 182,
 ],
+'kotlin-project:kotlin/compiler/ir/ir.tree/src/org/jetbrains/kotlin/ir/expressions/impl/IrBlockImpl.kt':[
+56,
+],
+'kotlin-project:kotlin/compiler/ir/ir.tree/src/org/jetbrains/kotlin/ir/expressions/impl/IrCallImpl.kt':[
+64,
+],
+'kotlin-project:kotlin/compiler/ir/ir.tree/src/org/jetbrains/kotlin/ir/expressions/impl/IrPrimitiveCall.kt':[
+120,
+],
 'kotlin-project:kotlin/compiler/ir/ir.tree/src/org/jetbrains/kotlin/ir/util/DumpIrTree.kt':[
 89,
 ],
@@ -572,6 +581,9 @@
 ],
 'kotlin-project:kotlin/generators/test-generator/tests/org/jetbrains/kotlin/generators/tests/generator/TestGenerator.kt':[
 63,
+],
+'kotlin-project:kotlin/generators/tests/org/jetbrains/kotlin/generators/protobuf/GenerateProtoBufCompare.kt':[
+342,
 ],
 'kotlin-project:kotlin/generators/tests/org/jetbrains/kotlin/generators/tests/GeneratePrimitiveVsObjectEqualityTestData.kt':[
 40,

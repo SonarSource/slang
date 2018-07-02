@@ -32,6 +32,7 @@ import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.utils.SyntacticEquivalence;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.assertj.core.api.AbstractAssert;
 
 import static com.sonarsource.slang.testing.RangeAssert.assertRange;
@@ -66,7 +67,10 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
     isNotNull();
     isInstanceOf(FunctionDeclarationTree.class);
     FunctionDeclarationTree actualFunction = (FunctionDeclarationTree) actual;
-    List<ParameterTree> actualParameters = actualFunction.formalParameters();
+    List<ParameterTree> actualParameters = actualFunction.formalParameters().stream()
+      .filter(ParameterTree.class::isInstance)
+      .map(ParameterTree.class::cast)
+      .collect(Collectors.toList());
     if (actualParameters.size() != names.length) {
       failWithMessage("Expected to have <%s> parameters but found <%s>", names.length, actualParameters.size());
     }

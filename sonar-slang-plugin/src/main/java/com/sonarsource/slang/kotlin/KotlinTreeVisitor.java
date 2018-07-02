@@ -27,8 +27,6 @@ import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.NativeKind;
-import com.sonarsource.slang.api.NativeTree;
-import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Token;
@@ -84,6 +82,7 @@ import org.jetbrains.kotlin.psi.KtBlockExpression;
 import org.jetbrains.kotlin.psi.KtCatchClause;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtConstantExpression;
+import org.jetbrains.kotlin.psi.KtConstructor;
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry;
 import org.jetbrains.kotlin.psi.KtDoWhileExpression;
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry;
@@ -102,6 +101,7 @@ import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtTryExpression;
 import org.jetbrains.kotlin.psi.KtTypeElement;
+import org.jetbrains.kotlin.psi.KtTypeParameterList;
 import org.jetbrains.kotlin.psi.KtUnaryExpression;
 import org.jetbrains.kotlin.psi.KtWhenCondition;
 import org.jetbrains.kotlin.psi.KtWhenEntry;
@@ -248,23 +248,21 @@ class KotlinTreeVisitor {
   }
 
   private Tree createFunctionDeclarationTree(TreeMetaData metaData, KtFunction functionElement) {
-    if (functionElement.getReceiverTypeReference() != null) {
-      // Extension function. For now they are considered as native elements instead of function declaration to avoid FP
+    if (functionElement instanceof KtConstructor || functionElement.getReceiverTypeReference() != null) {
+      // Constructors and extension functions: for now they are considered as native elements instead of function declaration to avoid FP
       return createNativeTree(metaData, new KotlinNativeKind(functionElement), functionElement);
     }
+
     List<Tree> modifiers = getModifierList(functionElement.getModifierList());
     PsiElement nameIdentifier = functionElement.getNameIdentifier();
     Tree returnType = null;
     IdentifierTree identifierTree = null;
     List<Tree> parametersList = list(functionElement.getValueParameters().stream());
-    if (parametersList.stream().anyMatch(param -> param instanceof NativeTree)) {
-      return createNativeTree(metaData, new KotlinNativeKind(functionElement), functionElement);
-    }
-    List<ParameterTree> parameterTreeList = parametersList.stream().map(ParameterTree.class::cast).collect(Collectors.toList());
 
     Tree bodyTree = createElement(functionElement.getBodyExpression());
     KtTypeElement typeElement = functionElement.getTypeReference() != null ? functionElement.getTypeReference().getTypeElement() : null;
     String name = functionElement.getName();
+    KtTypeParameterList typeParameterList = functionElement.getTypeParameterList();
 
     if (typeElement != null) {
       returnType = new IdentifierTreeImpl(getTreeMetaData(typeElement), typeElement.getText());
@@ -276,8 +274,14 @@ class KotlinTreeVisitor {
       // FIXME are we sure we want body of function as block tree ?
       bodyTree = new BlockTreeImpl(bodyTree.metaData(), Collections.singletonList(bodyTree));
     }
+    List<Tree> typeParameters;
+    if (typeParameterList != null) {
+      typeParameters = list(Arrays.stream(typeParameterList.getChildren()));
+    } else {
+      typeParameters = Collections.emptyList();
+    }
 
-    return new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, identifierTree, parameterTreeList, (BlockTree) bodyTree);
+    return new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, identifierTree, parametersList, (BlockTree) bodyTree, typeParameters);
   }
 
   private List<Tree> getModifierList(@Nullable KtModifierList modifierList) {
@@ -318,7 +322,12 @@ class KotlinTreeVisitor {
     }
 
     IdentifierTree identifier = createIdentifierTree(getTreeMetaData(nameIdentifier), nameIdentifier.getText());
-    return new ParameterTreeImpl(metaData, identifier, type);
+    Tree initializer = createElement(ktParameter.getDefaultValue());
+    ParameterTreeImpl parameterTree = new ParameterTreeImpl(metaData, identifier, type);
+    if (initializer != null) {
+      return createNativeTree(metaData, new KotlinNativeKind(ktParameter), Arrays.asList(parameterTree, initializer));
+    }
+    return parameterTree;
   }
 
   private Tree createVariableDeclaration(TreeMetaData metaData, KtProperty ktProperty) {
