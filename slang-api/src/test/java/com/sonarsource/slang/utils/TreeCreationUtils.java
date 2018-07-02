@@ -25,6 +25,7 @@ import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
+import com.sonarsource.slang.api.ModifierTree;
 import com.sonarsource.slang.api.NativeKind;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TopLevelTree;
@@ -36,17 +37,18 @@ import com.sonarsource.slang.impl.BlockTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
+import com.sonarsource.slang.impl.ModifierTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
-
 import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
 
 public class TreeCreationUtils {
-  private TreeCreationUtils() { }
+  private TreeCreationUtils() {
+  }
 
   public static LiteralTree literal(String value) {
     return new LiteralTreeImpl(null, value);
@@ -86,6 +88,10 @@ public class TreeCreationUtils {
 
   public static NativeTree simpleNative(NativeKind kind, List<Tree> children) {
     return new NativeTreeImpl(null, kind, children);
+  }
+
+  public static ModifierTree simpleModifier(ModifierTree.Kind kind) {
+    return new ModifierTreeImpl(null, kind);
   }
 
   public static TopLevelTree topLevel(List<Tree> declarations) {

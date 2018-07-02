@@ -23,6 +23,7 @@ import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
+import com.sonarsource.slang.api.ModifierTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.Tree;
 
@@ -55,6 +56,8 @@ public class TreePrinter {
         sb.append(" ").append(((IdentifierTree) t).name());
       } else if (t instanceof NativeTree) {
         sb.append(" ").append(((NativeTree) t).nativeKind());
+      } else if (t instanceof ModifierTree) {
+        sb.append(" ").append(((ModifierTree) t).kind());
       }
       sb.append("\n");
     });

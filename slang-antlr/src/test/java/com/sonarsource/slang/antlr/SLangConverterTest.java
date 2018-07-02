@@ -38,6 +38,7 @@ import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.api.VariableDeclarationTree;
+import com.sonarsource.slang.impl.ModifierTreeImpl;
 import com.sonarsource.slang.parser.SLangConverter;
 import java.util.Arrays;
 import java.util.List;
@@ -48,6 +49,8 @@ import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.GREATER_TH
 import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
+import static com.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
+import static com.sonarsource.slang.api.ModifierTree.Kind.PUBLIC;
 import static com.sonarsource.slang.api.Token.Type.KEYWORD;
 import static com.sonarsource.slang.api.Token.Type.OTHER;
 import static com.sonarsource.slang.api.Token.Type.STRING_LITERAL;
@@ -215,6 +218,8 @@ public class SLangConverterTest {
     Tree privateModifier2 = emptyParamFunction.modifiers().get(0);
     assertTree(privateModifier1).isNotEquivalentTo(publicModifier1);
     assertTree(privateModifier1).isEquivalentTo(privateModifier2);
+    assertTree(privateModifier1).isEquivalentTo(new ModifierTreeImpl(null, PRIVATE));
+    assertTree(publicModifier1).isEquivalentTo(new ModifierTreeImpl(null, PUBLIC));
 
     FunctionDeclarationTree simpleFunction = parseFunction("fun foo() {}");
     assertThat(simpleFunction.modifiers()).isEmpty();
@@ -442,6 +447,21 @@ public class SLangConverterTest {
       .containsExactly(KEYWORD, OTHER, OTHER, OTHER, OTHER, OTHER, STRING_LITERAL, OTHER);
     assertRange(topLevel.metaData().tokens().get(1).textRange()).hasRange(1, 3, 1, 4);
     assertThat(ifTree.condition().metaData().tokens()).extracting(Token::text).containsExactly("cond", "==", "42");
+  }
+
+  @Test
+  public void methodInvocations() {
+    Tree functionInvocationNoArgument = converter.parse("function();");
+    assertTree(functionInvocationNoArgument).isEquivalentTo(functionInvocationNoArgument);
+    assertTree(functionInvocationNoArgument).isEquivalentTo(converter.parse("function();"));
+    assertTree(functionInvocationNoArgument).isNotEquivalentTo(converter.parse("function2();"));
+    assertTree(functionInvocationNoArgument).isNotEquivalentTo(converter.parse("function(1);"));
+    assertTree(functionInvocationNoArgument).isNotEquivalentTo(converter.parse("function(1, 2);"));
+    assertTree(converter.parse("function(1);")).isEquivalentTo(converter.parse("function(1);"));
+    assertTree(converter.parse("function(1);")).isNotEquivalentTo(converter.parse("function(1, 2);"));
+
+    assertThat(functionInvocationNoArgument.descendants()
+      .anyMatch(e -> e instanceof IdentifierTree && ((IdentifierTree) e).name().equals("function"))).isTrue();
   }
 
   private BinaryExpressionTree parseBinary(String code) {
