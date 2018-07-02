@@ -1398,6 +1398,9 @@
 121,
 366,
 ],
+'kotlin-project:kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/pullUp/JavaToKotlinPreconversionPullUpHelper.kt':[
+84,
+],
 'kotlin-project:kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/pullUp/KotlinPullUpHelper.kt':[
 100,
 437,
@@ -1543,6 +1546,9 @@
 ],
 'kotlin-project:kotlin/js/js.inliner/src/org/jetbrains/kotlin/js/coroutine/CoroutineBodyTransformer.kt':[
 243,
+],
+'kotlin-project:kotlin/js/js.inliner/src/org/jetbrains/kotlin/js/coroutine/CoroutineFunctionTransformer.kt':[
+68,
 ],
 'kotlin-project:kotlin/js/js.inliner/src/org/jetbrains/kotlin/js/inline/clean/CoroutineStateElimination.kt':[
 25,
