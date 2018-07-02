@@ -40,7 +40,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
   private final List<Tree> formalParameters;
   private final BlockTree body;
   private final List<Tree> children = new ArrayList<>();
-  private final Tree nativeChildren;
+  private final List<Tree> nativeChildren;
 
   public FunctionDeclarationTreeImpl(
     TreeMetaData metaData,
@@ -49,7 +49,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
     @Nullable IdentifierTree name,
     List<Tree> formalParameters,
     @Nullable BlockTree body,
-    @Nullable Tree nativeChildren) {
+    List<Tree> nativeChildren) {
     super(metaData);
 
     this.modifiers = modifiers;
@@ -71,7 +71,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
       this.children.add(body);
     }
     if (nativeChildren != null) {
-      this.children.add(nativeChildren);
+      this.children.addAll(nativeChildren);
     }
   }
 
@@ -103,9 +103,8 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
     return body;
   }
 
-  @CheckForNull
   @Override
-  public Tree nativeChildren() {
+  public List<Tree> nativeChildren() {
     return nativeChildren;
   }
 

@@ -37,8 +37,7 @@ public interface FunctionDeclarationTree extends Tree {
   @CheckForNull
   BlockTree body();
 
-  @CheckForNull
-  Tree nativeChildren();
+  List<Tree> nativeChildren();
 
   TextRange rangeToHighlight();
 

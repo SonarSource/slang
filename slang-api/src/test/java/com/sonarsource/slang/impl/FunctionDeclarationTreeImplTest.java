@@ -55,7 +55,8 @@ public class FunctionDeclarationTreeImplTest {
     IdentifierTree child = identifier("GENERIC");
     NativeTree nativeChildren = simpleNative(SIMPLE_KIND, singletonList(child));
 
-    FunctionDeclarationTreeImpl tree = new FunctionDeclarationTreeImpl(meta, modifiers, returnType, name, params, body, nativeChildren);
+    FunctionDeclarationTreeImpl tree =
+      new FunctionDeclarationTreeImpl(meta, modifiers, returnType, name, params, body, singletonList(nativeChildren));
     assertThat(tree.children()).hasSize(6);
     assertThat(tree.children()).containsExactly(modifiers.get(0), returnType, name, param, body, nativeChildren);
     assertThat(tree.modifiers()).isEqualTo(modifiers);
@@ -63,12 +64,12 @@ public class FunctionDeclarationTreeImplTest {
     assertThat(tree.name()).isEqualTo(name);
     assertThat(tree.formalParameters()).isEqualTo(params);
     assertThat(tree.body()).isEqualTo(body);
-    assertThat(tree.nativeChildren()).isEqualTo(nativeChildren);
+    assertThat(tree.nativeChildren()).isEqualTo(singletonList(nativeChildren));
 
-    FunctionDeclarationTreeImpl lightweightFunction = new FunctionDeclarationTreeImpl(meta, modifiers, null, null, emptyList(), null, null);
+    FunctionDeclarationTreeImpl lightweightFunction = new FunctionDeclarationTreeImpl(meta, modifiers, null, null, emptyList(), null, emptyList());
 
     assertThat(lightweightFunction.children()).containsExactly(modifiers.get(0));
-    assertThat(lightweightFunction.nativeChildren()).isNull();
+    assertThat(lightweightFunction.nativeChildren()).isEmpty();
   }
 
   @Test
@@ -78,7 +79,7 @@ public class FunctionDeclarationTreeImplTest {
     TreeMetaData bodyMetaData = metaDataProvider.metaData(range(5, 1, 5, 7));
     IdentifierTree name = new IdentifierTreeImpl(nameMetaData, "foo");
     BlockTree body = new BlockTreeImpl(bodyMetaData, emptyList());
-    assertThat(new FunctionDeclarationTreeImpl(body.metaData(), emptyList(), null, name, emptyList(), body, null).rangeToHighlight())
+    assertThat(new FunctionDeclarationTreeImpl(body.metaData(), emptyList(), null, name, emptyList(), body, emptyList()).rangeToHighlight())
       .isEqualTo(nameMetaData.textRange());
   }
 
@@ -89,7 +90,7 @@ public class FunctionDeclarationTreeImplTest {
       new TokenImpl(range(5, 1, 19, 20), "}", Token.Type.OTHER)));
     TreeMetaData bodyMetaData = metaDataProvider.metaData(range(5, 1, 17, 20));
     BlockTree body = new BlockTreeImpl(bodyMetaData, emptyList());
-    assertThat(new FunctionDeclarationTreeImpl(body.metaData(), emptyList(), null, null, emptyList(), body, null).rangeToHighlight())
+    assertThat(new FunctionDeclarationTreeImpl(body.metaData(), emptyList(), null, null, emptyList(), body, emptyList()).rangeToHighlight())
       .isEqualTo(body.metaData().textRange());
   }
 
@@ -103,7 +104,7 @@ public class FunctionDeclarationTreeImplTest {
     TreeMetaData functionMetaData = metaDataProvider.metaData(range(5, 1, 5, 20));
     TreeMetaData bodyMetaData = metaDataProvider.metaData(range(5, 17, 5, 20));
     BlockTree body = new BlockTreeImpl(bodyMetaData, emptyList());
-    assertThat(new FunctionDeclarationTreeImpl(functionMetaData, emptyList(), null, null, emptyList(), body, null).rangeToHighlight())
+    assertThat(new FunctionDeclarationTreeImpl(functionMetaData, emptyList(), null, null, emptyList(), body, emptyList()).rangeToHighlight())
       .isEqualTo(range(5, 1, 5, 15));
   }
 

@@ -257,7 +257,6 @@ class KotlinTreeVisitor {
     PsiElement nameIdentifier = functionElement.getNameIdentifier();
     Tree returnType = null;
     IdentifierTree identifierTree = null;
-    Tree typeParameters = null;
     List<Tree> parametersList = list(functionElement.getValueParameters().stream());
 
     Tree bodyTree = createElement(functionElement.getBodyExpression());
@@ -275,8 +274,11 @@ class KotlinTreeVisitor {
       // FIXME are we sure we want body of function as block tree ?
       bodyTree = new BlockTreeImpl(bodyTree.metaData(), Collections.singletonList(bodyTree));
     }
+    List<Tree> typeParameters;
     if (typeParameterList != null) {
-      typeParameters = createNativeTree(getTreeMetaData(typeParameterList), new KotlinNativeKind(typeParameterList), typeParameterList);
+      typeParameters = list(Arrays.stream(typeParameterList.getChildren()));
+    } else {
+      typeParameters = Collections.emptyList();
     }
 
     return new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, identifierTree, parametersList, (BlockTree) bodyTree, typeParameters);

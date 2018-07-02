@@ -43,6 +43,8 @@ import com.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+
 public class TreeCreationUtils {
   private TreeCreationUtils() { }
 
@@ -75,7 +77,7 @@ public class TreeCreationUtils {
   }
 
   public static FunctionDeclarationTree simpleFunction(IdentifierTree name, BlockTree body) {
-    return new FunctionDeclarationTreeImpl(null, Collections.emptyList(), null, name, Collections.emptyList(), body, null);
+    return new FunctionDeclarationTreeImpl(null, Collections.emptyList(), null, name, Collections.emptyList(), body, emptyList());
   }
 
   public static AssignmentExpressionTree assignment(AssignmentExpressionTree.Operator operator, Tree leftOperand, Tree rightOperand) {

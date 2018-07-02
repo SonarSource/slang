@@ -77,6 +77,7 @@ import org.sonarsource.analyzer.commons.TokenLocation;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 public class SLangConverter implements ASTConverter {
@@ -249,7 +250,7 @@ public class SLangConverter implements ASTConverter {
         convertedParameters.add(visit(formalParameterListContext.lastFormalParameter()));
       }
 
-      return new FunctionDeclarationTreeImpl(meta(ctx), modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()), null);
+      return new FunctionDeclarationTreeImpl(meta(ctx), modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()), emptyList());
     }
 
     @Override
@@ -478,7 +479,7 @@ public class SLangConverter implements ASTConverter {
     }
 
     private NativeTree simpleNativeTree(ParserRuleContext ctx) {
-      return new NativeTreeImpl(meta(ctx), new SNativeKind(ctx, ctx.getText()), Collections.emptyList());
+      return new NativeTreeImpl(meta(ctx), new SNativeKind(ctx, ctx.getText()), emptyList());
     }
 
     private List<Tree> list(List<? extends ParseTree> rawChildren) {
