@@ -25,8 +25,14 @@ public class TooDeeplyNestedStatementsCheckTest {
 
   @Test
   public void test() {
-    TooDeeplyNestedStatementsCheck check = new TooDeeplyNestedStatementsCheck();
-    check.max = 3;
-    Verifier.verify("TooDeeplyNestedStatements.slang", check);
+    Verifier.verify("TooDeeplyNestedStatements.slang", new TooDeeplyNestedStatementsCheck());
   }
+
+  @Test
+  public void test_max_2() {
+    TooDeeplyNestedStatementsCheck check = new TooDeeplyNestedStatementsCheck();
+    check.max = 2;
+    Verifier.verify("TooDeeplyNestedStatements.max_2.slang", check);
+  }
+
 }

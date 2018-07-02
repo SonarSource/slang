@@ -29,25 +29,24 @@ import com.sonarsource.slang.checks.api.CheckContext;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.checks.api.SlangCheck;
-import org.sonar.check.Rule;
-import org.sonar.check.RuleProperty;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import javax.annotation.Nullable;
+import org.sonar.check.Rule;
+import org.sonar.check.RuleProperty;
 
 @Rule(key = "S134")
 public class TooDeeplyNestedStatementsCheck implements SlangCheck {
   private static final int DEFAULT_MAX_DEPTH = 3;
 
   @RuleProperty(
-      key = "max",
-      description = "Maximum allowed control flow statement nesting depth",
-      defaultValue = "" + DEFAULT_MAX_DEPTH)
-
-  public int max;
+    key = "max",
+    description = "Maximum allowed control flow statement nesting depth",
+    defaultValue = "" + DEFAULT_MAX_DEPTH)
+  public int max = DEFAULT_MAX_DEPTH;
 
   @Override
   public void initialize(InitContext init) {
@@ -59,6 +58,7 @@ public class TooDeeplyNestedStatementsCheck implements SlangCheck {
 
   private void checkNestedDepth(CheckContext ctx, Tree tree) {
     if (isElseIfStatement(ctx.parent(), tree)) {
+      // Ignore 'else-if' statements since the issue would already be raised on the first 'if' statement
       return;
     }
 
@@ -69,13 +69,12 @@ public class TooDeeplyNestedStatementsCheck implements SlangCheck {
     while (iterator.hasNext()) {
       Tree parent = iterator.next();
       if (isElseIfStatement(parent, last) && !nestedParentNodes.isEmpty()) {
+        // Only the 'if' parent of the chained 'else-if' statements should be highlighted
         nestedParentNodes.removeLast();
       }
-
       if (parent instanceof LoopTree || parent instanceof ExceptionHandlingTree || parent instanceof IfTree || parent instanceof MatchTree) {
         nestedParentNodes.addLast(getNodeToHighlight(parent));
       }
-
       if (nestedParentNodes.size() > max) {
         return;
       }
@@ -90,7 +89,7 @@ public class TooDeeplyNestedStatementsCheck implements SlangCheck {
   private static boolean isElseIfStatement(@Nullable Tree parent, @Nullable Tree tree) {
     return tree instanceof IfTree && parent instanceof IfTree && tree.equals(((IfTree) parent).elseBranch());
   }
-  
+
   private void reportIssue(CheckContext ctx, Tree statement, Deque<Token> nestedStatements) {
     String message = String.format("Refactor this code to not nest more than %s control flow statements.", max);
     List<SecondaryLocation> secondaryLocations = new ArrayList<>(nestedStatements.size());
@@ -113,10 +112,8 @@ public class TooDeeplyNestedStatementsCheck implements SlangCheck {
       return ((MatchTree) tree).keyword();
     } else if (tree instanceof ExceptionHandlingTree) {
       return ((ExceptionHandlingTree) tree).tryKeyword();
-    } else if (tree instanceof LoopTree) {
-      return ((LoopTree) tree).keyword();
     } else {
-      throw new IllegalStateException("Unable to find node to highlight");
+      return ((LoopTree) tree).keyword();
     }
   }
 
