@@ -19,15 +19,19 @@
  */
 package com.sonarsource.slang.kotlin;
 
+import com.sonarsource.slang.externalreport.detekt.DetektRulesDefinition;
+import com.sonarsource.slang.externalreport.detekt.DetektSensor;
 import org.sonar.api.Plugin;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
+import org.sonar.api.utils.Version;
 
 public class SlangPlugin implements Plugin {
 
   // Subcategories
   private static final String GENERAL = "General";
   private static final String KOTLIN_CATEGORY = "Kotlin";
+  private static final String EXTERNAL_LINTER_SUBCATEGORY = "Popular Rule Engines";
 
   // Global constants
   public static final String KOTLIN_LANGUAGE_KEY = "kotlin";
@@ -41,10 +45,17 @@ public class SlangPlugin implements Plugin {
 
   @Override
   public void define(Context context) {
+    boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
+
+    DetektRulesDefinition detektRulesDefinition = new DetektRulesDefinition(externalIssuesSupported);
+    DetektSensor detektSensor = new DetektSensor(detektRulesDefinition);
+
     context.addExtensions(
       KotlinLanguage.class,
       KotlinSensor.class,
       KotlinRulesDefinition.class,
+      detektRulesDefinition,
+      detektSensor,
       KotlinProfileDefinition.class,
       PropertyDefinition.builder(KOTLIN_FILE_SUFFIXES_KEY)
         .defaultValue(KOTLIN_FILE_SUFFIXES_DEFAULT_VALUE)
@@ -55,6 +66,19 @@ public class SlangPlugin implements Plugin {
         .multiValues(true)
         .onQualifiers(Qualifiers.PROJECT)
         .build());
+
+    if (externalIssuesSupported) {
+      context.addExtension(
+        PropertyDefinition.builder(DetektSensor.REPORT_PROPERTY_KEY)
+          .name("Detekt Report Files")
+          .description("Paths (absolute or relative) to the files with detekt issues.")
+          .category(KOTLIN_CATEGORY)
+          .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
+          .onQualifiers(Qualifiers.PROJECT)
+          .defaultValue("")
+          .multiValues(true)
+          .build());
+    }
   }
 
 }

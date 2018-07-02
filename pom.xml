@@ -26,6 +26,7 @@
     <module>slang-antlr</module>
     <module>slang-checks</module>
     <module>sonar-slang-plugin</module>
+    <module>utils</module>
   </modules>
 
   <!--
@@ -47,8 +48,8 @@
 
   <properties>
     <license.title>SonarSource SLang</license.title>
-    <analyzer.commons.version>1.7.0.243</analyzer.commons.version>
-    <sonarqube.version>6.7</sonarqube.version>
+    <analyzer.commons.version>1.8.0.295</analyzer.commons.version>
+    <sonarqube.version>7.2</sonarqube.version>
     <!-- used for deployment to SonarSource Artifactory -->
     <gitRepositoryName>slang</gitRepositoryName>
     <!-- Release: enable publication to Bintray -->
