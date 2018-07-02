@@ -455,10 +455,11 @@ class KotlinTreeVisitor {
 
   private CatchTree createCatchTree(TreeMetaData metaData, KtCatchClause element) {
     Tree catchBody = createMandatoryElement(element.getCatchBody());
+    Token keyword = toSlangToken(element.getFirstChild());
     if (element.getCatchParameter() == null) {
-      return new CatchTreeImpl(metaData, null, catchBody);
+      return new CatchTreeImpl(metaData, null, catchBody, keyword);
     } else {
-      return new CatchTreeImpl(metaData, createParameter(metaData, element.getCatchParameter()), catchBody);
+      return new CatchTreeImpl(metaData, createParameter(metaData, element.getCatchParameter()), catchBody, keyword);
     }
   }
 
@@ -477,7 +478,8 @@ class KotlinTreeVisitor {
     Operator operator = BINARY_OPERATOR_MAP.get(operationToken);
     AssignmentExpressionTree.Operator assignmentOperator = ASSIGNMENTS_OPERATOR_MAP.get(operationToken);
     if (operator != null) {
-      return new BinaryExpressionTreeImpl(metaData, operator, leftOperand, rightOperand);
+      TokenImpl operatorToken = toSlangToken(element.getOperationReference(), Token.Type.OTHER);
+      return new BinaryExpressionTreeImpl(metaData, operator, operatorToken, leftOperand, rightOperand);
     } else if (assignmentOperator != null) {
       return new AssignmentExpressionTreeImpl(metaData, assignmentOperator, leftOperand, rightOperand);
     } else {
@@ -547,10 +549,15 @@ class KotlinTreeVisitor {
   }
 
   private TokenImpl toSlangToken(PsiElement psiElement) {
+    return toSlangToken(psiElement, Token.Type.KEYWORD);
+  }
+
+  private TokenImpl toSlangToken(PsiElement psiElement, Token.Type type) {
     return new TokenImpl(
       KotlinTextRanges.textRange(psiDocument, psiElement),
       psiElement.getText(),
-      Token.Type.KEYWORD);
+      type
+    );
   }
 
 }

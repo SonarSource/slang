@@ -17,17 +17,5 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
-
-import javax.annotation.CheckForNull;
-
-public interface CatchTree extends Tree {
-
-  Token keyword();
-
-  @CheckForNull
-  Tree catchParameter();
-
-  Tree catchBlock();
-
-}
+@javax.annotation.ParametersAreNonnullByDefault
+package com.sonarsource.slang.checks.complexity;

@@ -77,7 +77,7 @@ public class ExpressionUtilsTest {
 
   @Test
   public void test_binary_operation() {
-    Tree binaryAnd = new BinaryExpressionTreeImpl(null, CONDITIONAL_AND, TRUE_LITERAL, FALSE_LITERAL);
+    Tree binaryAnd = new BinaryExpressionTreeImpl(null, CONDITIONAL_AND, null, TRUE_LITERAL, FALSE_LITERAL);
 
     assertThat(isBinaryOperation(binaryAnd, CONDITIONAL_AND)).isTrue();
     assertThat(isBinaryOperation(binaryAnd, CONDITIONAL_OR)).isFalse();

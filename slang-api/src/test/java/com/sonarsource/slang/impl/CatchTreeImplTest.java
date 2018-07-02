@@ -21,10 +21,12 @@ package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.ParameterTree;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import org.junit.Test;
 
+import static com.sonarsource.slang.impl.TextRanges.range;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CatchTreeImplTest {
@@ -32,17 +34,19 @@ public class CatchTreeImplTest {
   @Test
   public void test() {
     TreeMetaData meta = null;
+    Token keyword = new TokenImpl(range(1, 2, 3, 4), "catch", Token.Type.KEYWORD);
     ParameterTree parameter = new ParameterTreeImpl(meta, new IdentifierTreeImpl(meta,"e"), null);
     Tree lhs = new IdentifierTreeImpl(meta, "x");
     Tree one = new LiteralTreeImpl(meta, "1");
     Tree assignmentExpressionTree =
         new AssignmentExpressionTreeImpl(meta, AssignmentExpressionTree.Operator.EQUAL, lhs, one);
-    CatchTreeImpl catchWithIdentifier = new CatchTreeImpl(meta, parameter, assignmentExpressionTree);
-    CatchTreeImpl catchWithoutIdentifier = new CatchTreeImpl(meta, null, assignmentExpressionTree);
+    CatchTreeImpl catchWithIdentifier = new CatchTreeImpl(meta, parameter, assignmentExpressionTree, keyword);
+    CatchTreeImpl catchWithoutIdentifier = new CatchTreeImpl(meta, null, assignmentExpressionTree, keyword);
 
     assertThat(catchWithIdentifier.children()).containsExactly(parameter, assignmentExpressionTree);
     assertThat(catchWithIdentifier.catchParameter()).isEqualTo(parameter);
     assertThat(catchWithIdentifier.catchBlock()).isEqualTo(assignmentExpressionTree);
+    assertThat(catchWithIdentifier.keyword()).isEqualTo(keyword);
 
     assertThat(catchWithoutIdentifier.children()).containsExactly(assignmentExpressionTree);
     assertThat(catchWithoutIdentifier.catchParameter()).isNull();

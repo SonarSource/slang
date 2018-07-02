@@ -56,6 +56,7 @@ import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.impl.TextPointerImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
+import com.sonarsource.slang.impl.TextRanges;
 import com.sonarsource.slang.impl.TokenImpl;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
@@ -149,6 +150,8 @@ public class SLangConverter implements ASTConverter {
 
   private static Map<String, Operator> binaryOperatorMap() {
     Map<String, Operator> map = new HashMap<>();
+    map.put("&&", Operator.CONDITIONAL_AND);
+    map.put("||", Operator.CONDITIONAL_OR);
     map.put(">", Operator.GREATER_THAN);
     map.put(">=", Operator.GREATER_THAN_OR_EQUAL_TO);
     map.put("<", Operator.LESS_THAN);
@@ -387,7 +390,7 @@ public class SLangConverter implements ASTConverter {
     public Tree visitCatchBlock(SLangParser.CatchBlockContext ctx) {
       ParameterTree parameter = ctx.formalParameter() == null ? null : (ParameterTree) visit(ctx.formalParameter());
       Tree body = visit(ctx.block());
-      return new CatchTreeImpl(meta(ctx), parameter, body);
+      return new CatchTreeImpl(meta(ctx), parameter, body, toSlangToken(ctx.CATCH().getSymbol()));
     }
 
     @Override
@@ -416,12 +419,12 @@ public class SLangConverter implements ASTConverter {
 
     @Override
     public Tree visitDisjunction(SLangParser.DisjunctionContext ctx) {
-      return binaryTree(Operator.CONDITIONAL_OR, ctx.conjunction());
+      return binaryTree(ctx.conjunction(), ctx.disjunctionOperator());
     }
 
     @Override
     public Tree visitConjunction(SLangParser.ConjunctionContext ctx) {
-      return binaryTree(Operator.CONDITIONAL_AND, ctx.equalityComparison());
+      return binaryTree(ctx.equalityComparison(), ctx.conjunctionOperator());
     }
 
     @Override
@@ -500,21 +503,12 @@ public class SLangConverter implements ASTConverter {
         .collect(toList());
     }
 
-    private Tree binaryTree(Operator operator, List<? extends ParseTree> operands) {
-      Tree result = visit(operands.get(operands.size() - 1));
-      for (int i = operands.size() - 2; i >= 0; i--) {
-        Tree left = visit(operands.get(i));
-        result = new BinaryExpressionTreeImpl(meta(left, result), operator, left, result);
-      }
-      return result;
-    }
-
-    private Tree binaryTree(List<? extends ParseTree> operands, List<? extends ParseTree> operators) {
+    private Tree binaryTree(List<? extends ParseTree> operands, List<? extends ParserRuleContext> operators) {
       Tree result = visit(operands.get(operands.size() - 1));
       for (int i = operands.size() - 2; i >= 0; i--) {
         Tree left = visit(operands.get(i));
         Operator operator = BINARY_OPERATOR_MAP.get(operators.get(i).getText());
-        result = new BinaryExpressionTreeImpl(meta(left, result), operator, left, result);
+        result = new BinaryExpressionTreeImpl(meta(left, result), operator, operatorToken(operators.get(i)), left, result);
       }
       return result;
     }
@@ -533,5 +527,14 @@ public class SLangConverter implements ASTConverter {
       TextRange textRange = getSlangTextRange(antlrToken);
       return new TokenImpl(textRange, antlrToken.getText(), Type.KEYWORD);
     }
+
+    private static com.sonarsource.slang.api.Token operatorToken(ParserRuleContext parserRuleContext) {
+      TextRange textRange = TextRanges.merge(Arrays.asList(
+        getSlangTextRange(parserRuleContext.start),
+        getSlangTextRange(parserRuleContext.stop)
+      ));
+      return new TokenImpl(textRange, parserRuleContext.getText(), Type.OTHER);
+    }
+
   }
 }

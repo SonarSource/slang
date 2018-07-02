@@ -20,6 +20,7 @@
 package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.BinaryExpressionTree;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 import java.util.Arrays;
@@ -28,12 +29,15 @@ import java.util.List;
 public class BinaryExpressionTreeImpl extends BaseTreeImpl implements BinaryExpressionTree {
 
   private final Operator operator;
+  private final Token operatorToken;
   private final Tree leftOperand;
   private final Tree rightOperand;
 
-  public BinaryExpressionTreeImpl(TreeMetaData metaData, Operator operator, Tree leftOperand, Tree rightOperand) {
+  public BinaryExpressionTreeImpl(TreeMetaData metaData, Operator operator, Token operatorToken, Tree leftOperand, Tree rightOperand) {
     super(metaData);
     this.operator = operator;
+    this.operatorToken = operatorToken;
+
     this.leftOperand = leftOperand;
     this.rightOperand = rightOperand;
   }
@@ -41,6 +45,11 @@ public class BinaryExpressionTreeImpl extends BaseTreeImpl implements BinaryExpr
   @Override
   public Operator operator() {
     return operator;
+  }
+
+  @Override
+  public Token operatorToken() {
+    return operatorToken;
   }
 
   @Override

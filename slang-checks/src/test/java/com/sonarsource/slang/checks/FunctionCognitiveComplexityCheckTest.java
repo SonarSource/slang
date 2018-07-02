@@ -17,17 +17,17 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
+package com.sonarsource.slang.checks;
 
-import javax.annotation.CheckForNull;
+import org.junit.Test;
 
-public interface CatchTree extends Tree {
+public class FunctionCognitiveComplexityCheckTest {
 
-  Token keyword();
-
-  @CheckForNull
-  Tree catchParameter();
-
-  Tree catchBlock();
+  @Test
+  public void test() {
+    FunctionCognitiveComplexityCheck check = new FunctionCognitiveComplexityCheck();
+    check.threshold = 4;
+    Verifier.verify("FunctionCognitiveComplexity.slang", check);
+  }
 
 }

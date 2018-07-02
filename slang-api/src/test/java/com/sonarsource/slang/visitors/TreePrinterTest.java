@@ -43,7 +43,7 @@ public class TreePrinterTest {
     Tree x1 = new IdentifierTreeImpl(null, "x1");
     Tree var1 = new IdentifierTreeImpl(null, "var1");
     Tree literal1 = new LiteralTreeImpl(null, "42");
-    Tree binaryExp = new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, var1, literal1);
+    Tree binaryExp = new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, null, var1, literal1);
     Tree assignExp = new AssignmentExpressionTreeImpl(null, AssignmentExpressionTree.Operator.EQUAL, x1, binaryExp);
     Tree modifier = new ModifierTreeImpl(null, ModifierTree.Kind.PRIVATE);
     Tree function = new FunctionDeclarationTreeImpl(null, singletonList(modifier), null, null, emptyList(), null, emptyList());
