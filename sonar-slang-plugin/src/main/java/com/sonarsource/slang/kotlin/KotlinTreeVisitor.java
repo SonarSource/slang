@@ -506,7 +506,10 @@ class KotlinTreeVisitor {
     UnaryExpressionTree.Operator operator = UNARY_OPERATOR_MAP.get(operationToken);
 
     if (operand == null || operator == null) {
-      return createNativeOperationExpression(metaData, element);
+      NativeKind nativeKind = new KotlinNativeKind(element, element.getOperationReference().getReferencedNameElement().getText());
+      return operand == null
+        ? new NativeTreeImpl(metaData, nativeKind, Collections.emptyList())
+        : new NativeTreeImpl(metaData, nativeKind, Collections.singletonList(operand));
     }
     return new UnaryExpressionTreeImpl(metaData, operator, operand);
   }

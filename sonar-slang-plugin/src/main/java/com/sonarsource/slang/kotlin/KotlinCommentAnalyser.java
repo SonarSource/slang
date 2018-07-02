@@ -20,20 +20,21 @@
 package com.sonarsource.slang.kotlin;
 
 import com.sonarsource.slang.api.ASTConverter;
+import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.IdentifierTree;
+import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
-import com.sonarsource.slang.api.TreeMetaData;
 import org.sonarsource.analyzer.commons.TokenLocation;
 
 public class KotlinCommentAnalyser implements ASTConverter {
   @Override
   public Tree parse(String content) {
     Tree ast;
-    String wrappedContent = "fun { " + content + "}";
+    String wrappedContent = "fun { " + content + " }";
     try {
       ast = new KotlinConverter().parse(wrappedContent);
       BlockTree blockTree = (BlockTree) ast.children().get(0).children().get(0);
@@ -53,10 +54,31 @@ public class KotlinCommentAnalyser implements ASTConverter {
     return end.line() != tokenLocation.endLine() || end.lineOffset() != tokenLocation.endLineOffset();
   }
 
-
   private static boolean isSimpleExpression(BlockTree tree) {
-    return tree.descendants()
-      .allMatch(element -> element instanceof IdentifierTree || element instanceof NativeTree);
+    long all = tree.descendants().count();
+    if (all == 0) {
+      return true;
+    }
+    long remaining = tree.descendants()
+      .filter(element -> !(element instanceof IdentifierTree ||
+        element instanceof NativeTree ||
+        element instanceof LiteralTree ||
+        simpleBinaryExpressionTree(element)))
+      .count();
+
+    double percentage = (double) remaining / all;
+    return  percentage < 0.3;
+
+  }
+
+  private static boolean simpleBinaryExpressionTree(Tree element) {
+    if (element instanceof BinaryExpressionTree) {
+      BinaryExpressionTree expression = (BinaryExpressionTree) element;
+      return expression.operator().equals(BinaryExpressionTree.Operator.PLUS)
+        || expression.operator().equals(BinaryExpressionTree.Operator.MINUS)
+        || expression.operator().equals(BinaryExpressionTree.Operator.DIVIDED_BY);
+    }
+    return false;
   }
 
 }

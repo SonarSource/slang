@@ -21,9 +21,12 @@ package com.sonarsource.slang.checks;
 
 import com.sonarsource.slang.api.ASTConverter;
 import com.sonarsource.slang.api.Comment;
+import com.sonarsource.slang.api.TextPointer;
+import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
+import com.sonarsource.slang.impl.TextRangeImpl;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +40,9 @@ public class CommentedCodeCheck implements SlangCheck {
   public CommentedCodeCheck(ASTConverter astConverter) {
     this.commentAnalyser = astConverter;
   }
+
   private static final String MESSAGE = "Remove this commented out code.";
+
   @Override
   public void initialize(InitContext init) {
     init.register(TopLevelTree.class, (ctx, tree) -> {
@@ -48,13 +53,16 @@ public class CommentedCodeCheck implements SlangCheck {
           .map(Comment::contentText)
           .collect(Collectors.joining(""));
         if (commentAnalyser.parse(content) != null) {
-         ctx.reportIssue(comments.get(0).textRange(), MESSAGE);
+          TextPointer start = comments.get(0).textRange().start();
+          TextPointer end = comments.get(comments.size() - 1).textRange().end();
+          TextRange textRange = new TextRangeImpl(start.line(), start.lineOffset(), end.line(), end.lineOffset());
+          ctx.reportIssue(textRange, MESSAGE);
         }
       });
     });
   }
 
-  private List<List<Comment>> groupComments(List<Comment> comments) {
+  private static List<List<Comment>> groupComments(List<Comment> comments) {
     List<List<Comment>> groups = new ArrayList<>();
     List<Comment> currentGroup = null;
     for (Comment comment : comments) {
@@ -73,15 +81,14 @@ public class CommentedCodeCheck implements SlangCheck {
     return groups;
   }
 
-  private List<Comment> initNewGroup(Comment comment) {
+  private static List<Comment> initNewGroup(Comment comment) {
     List<Comment> group = new LinkedList<>();
     group.add(comment);
     return group;
   }
 
-  private boolean areAdjacent(Comment commentA, Comment commentB) {
+  private static boolean areAdjacent(Comment commentA, Comment commentB) {
     return commentA.textRange().start().line() + 1 == commentB.textRange().start().line();
   }
-
 
 }

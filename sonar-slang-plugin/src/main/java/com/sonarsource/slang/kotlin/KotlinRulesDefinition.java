@@ -35,7 +35,7 @@ public class KotlinRulesDefinition implements RulesDefinition {
       .createRepository(SlangPlugin.KOTLIN_REPOSITORY_KEY, SlangPlugin.KOTLIN_LANGUAGE_KEY)
       .setName(SlangPlugin.REPOSITORY_NAME);
     RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER);
-
+// TODO: Add logic for rules that require language specific configuration at construction time
     ArrayList<Class> checks = new ArrayList<>(CommonCheckList.checks());
     checks.add(CommentedCodeCheck.class);
     ruleMetadataLoader.addRulesByAnnotatedClass(repository, checks);

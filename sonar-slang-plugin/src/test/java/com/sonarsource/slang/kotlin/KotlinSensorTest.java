@@ -110,11 +110,10 @@ public class KotlinSensorTest {
   public void test_commented_code() {
     InputFile inputFile = createInputFile("file1.kt", "" +
       "fun main(args: Array<String>) {\n" +
-      "//print(\"string literal\"); print(\"string literal\"); print(\"string literal\");\n" +
+      "//fun foo () { if (true) {print(\"string literal\");}}\n" +
       "print (1 == 1);\n" +
-      "//Remove the commented out code\n" +
       "print(b);\n" +
-      "// a b c .\n" +
+      "// a b c ...\n" +
       "}");
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("S125");
