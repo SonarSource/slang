@@ -20,8 +20,12 @@
 package com.sonarsource.slang.kotlin;
 
 import com.sonarsource.slang.api.ASTConverter;
+import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.impl.TreeMetaDataProvider;
+import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
+import java.util.Arrays;
+import java.util.stream.Stream;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector;
@@ -30,6 +34,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project;
 import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer;
+import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
+import org.jetbrains.kotlin.com.intellij.psi.PsiErrorElement;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -48,11 +54,28 @@ public class KotlinConverter implements ASTConverter {
       // A KotlinLexerException may occur when attempting to read invalid files
       throw new ParseException("Cannot correctly map AST with a null Document object");
     }
-
     CommentAndTokenVisitor commentsAndTokens = new CommentAndTokenVisitor(document);
     psiFile.accept(commentsAndTokens);
-    KotlinTreeVisitor kotlinTreeVisitor = new KotlinTreeVisitor(psiFile, new TreeMetaDataProvider(commentsAndTokens.getAllComments(), commentsAndTokens.getTokens()));
+    TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(commentsAndTokens.getAllComments(), commentsAndTokens.getTokens());
+    descendants(psiFile)
+      .filter(element -> element instanceof PsiErrorElement)
+      .findFirst()
+      .ifPresent(element -> {
+        throw new ParseException("Cannot convert file due to syntactic errors",
+          getErrorLocation(document, metaDataProvider, element));
+      });
+    KotlinTreeVisitor kotlinTreeVisitor = new KotlinTreeVisitor(psiFile, metaDataProvider);
     return kotlinTreeVisitor.getSLangAST();
+  }
+
+  private static TextPointer getErrorLocation(Document document, TreeMetaDataProvider metaDataProvider, PsiElement element) {
+    return metaDataProvider.metaData(KotlinTextRanges.textRange(document, element)).textRange().start();
+  }
+
+  private static Stream<PsiElement> descendants(PsiElement element) {
+    return Arrays.stream(element.getChildren()).flatMap(
+      tree -> Stream.concat(Stream.of(tree), descendants(tree))
+    );
   }
 
   private static Project createKotlinCoreEnvironment() {

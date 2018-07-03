@@ -72,7 +72,6 @@ import javax.annotation.CheckForNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
-import org.jetbrains.kotlin.com.intellij.psi.PsiErrorElement;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement;
@@ -182,9 +181,7 @@ class KotlinTreeVisitor {
   }
 
   private Tree convertElementToSlangAST(PsiElement element, TreeMetaData metaData) {
-    if (isError(element)) {
-      throw new ParseException("Cannot convert file due to syntactic errors", metaData.textRange().start());
-    } else if (element instanceof KtOperationExpression) {
+    if (element instanceof KtOperationExpression) {
       return createOperationExpression(metaData, (KtOperationExpression) element);
     } else if (element instanceof KtNameReferenceExpression) {
       return createIdentifierTree(metaData, element.getText());
@@ -544,10 +541,6 @@ class KotlinTreeVisitor {
 
   private static boolean shouldSkipElement(PsiElement element) {
     return element instanceof PsiWhiteSpace || element instanceof LeafPsiElement;
-  }
-
-  private static boolean isError(PsiElement element) {
-    return element instanceof PsiErrorElement;
   }
 
   private static boolean isLiteral(PsiElement element) {
