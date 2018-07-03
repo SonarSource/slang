@@ -49,7 +49,7 @@ public class DetektSensorTest {
 
   private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport", "detekt");
 
-  private static DetektSensor detektSensor = new DetektSensor(new DetektRulesDefinition(true));
+  private static DetektSensor detektSensor = new DetektSensor();
 
   @Rule
   public LogTester logTester = new LogTester();
@@ -57,7 +57,7 @@ public class DetektSensorTest {
   @Test
   public void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
-    new DetektSensor(new DetektRulesDefinition(true)).describe(sensorDescriptor);
+    detektSensor.describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of detekt issues");
     assertThat(sensorDescriptor.languages()).containsOnly("kotlin");
   }
@@ -167,21 +167,17 @@ public class DetektSensorTest {
   }
 
   static SensorContextTester createContext(int majorVersion, int minorVersion) throws IOException {
-    Path projectDir = Files.createTempDirectory("detekt-project");
-    projectDir.toFile().deleteOnExit();
-    SensorContextTester context = SensorContextTester.create(projectDir);
+    SensorContextTester context = SensorContextTester.create(PROJECT_DIR);
     Files.list(PROJECT_DIR)
       .filter(file -> file.getFileName().toString().endsWith(".kt"))
-      .forEach(file -> addFileToContext(context, projectDir, file));
+      .forEach(file -> addFileToContext(context, file));
     context.setRuntime(SonarRuntimeImpl.forSonarQube(Version.create(majorVersion, minorVersion), SonarQubeSide.SERVER));
     return context;
   }
 
-  private static void addFileToContext(SensorContextTester context, Path projectDir, Path sourceFile) {
+  private static void addFileToContext(SensorContextTester context, Path file) {
     try {
-      Path file = projectDir.resolve(sourceFile.getFileName());
-      Files.copy(sourceFile, file);
-      context.fileSystem().add(TestInputFileBuilder.create("detekt-project", projectDir.toFile(), file.toFile())
+      context.fileSystem().add(TestInputFileBuilder.create("detekt-project", PROJECT_DIR.toFile(), file.toFile())
         .setCharset(UTF_8)
         .setLanguage(SlangPlugin.KOTLIN_LANGUAGE_KEY)
         .setContents(new String(Files.readAllBytes(file), UTF_8))

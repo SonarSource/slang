@@ -43,12 +43,6 @@ public class DetektSensor implements Sensor {
 
   public static final String REPORT_PROPERTY_KEY = "sonar.kotlin.detekt.reportPaths";
 
-  private final DetektRulesDefinition rulesDefinition;
-
-  public DetektSensor(DetektRulesDefinition rulesDefinition) {
-    this.rulesDefinition = rulesDefinition;
-  }
-
   @Override
   public void describe(SensorDescriptor descriptor) {
     descriptor
@@ -63,10 +57,10 @@ public class DetektSensor implements Sensor {
     reportFiles.forEach(report -> importReport(report, context));
   }
 
-  private void importReport(File reportPath, SensorContext context) {
+  private static void importReport(File reportPath, SensorContext context) {
     try (InputStream in = new FileInputStream(reportPath)) {
       LOG.info("Importing {}", reportPath);
-      DetektXmlReportReader.read(context, rulesDefinition, in);
+      DetektXmlReportReader.read(context, in);
     } catch (IOException | XMLStreamException e) {
       LOG.error("No issues information will be saved as the report file '{}' can't be read.", reportPath, e);
     }

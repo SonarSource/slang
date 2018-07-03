@@ -45,41 +45,27 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.jetbrains.annotations.Nullable;
-import org.junit.Test;
-import org.sonar.api.internal.apachecommons.lang.StringEscapeUtils;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import javax.annotation.Nullable;
+import org.apache.commons.text.StringEscapeUtils;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertEquals;
 
-public class DetektRuleDefinitionTest {
+public class DetektRuleDefinition {
 
-  private static final Path EXPECTED_RULES_FILE = Paths.get("target", "rules.json").toAbsolutePath();
+  private static final Path RULES_FILE = Paths.get("sonar-slang-plugin", "src", "main", "resources",
+    "org", "sonar", "l10n", "kotlin", "rules", "detekt", "rules.json");
 
-  private static final Path SLANG_FOLDER = EXPECTED_RULES_FILE.getParent().getParent().getParent().getParent();
+  public static void main(String[] args) throws IOException {
+    String rules = DetektRuleDefinitionGenerator.generateRuleDefinitionJson();
 
-  private static final Path ACTUAL_RULES_FILE = SLANG_FOLDER.resolve(Paths.get("sonar-slang-plugin", "src", "main", "resources",
-    "org", "sonar", "l10n", "kotlin", "rules", "detekt", "rules.json"));
-
-  @Test
-  public void check_rule_definition() throws IOException {
-
-    String expected = DetektRuleDefinitionGenerator.generateRuleDefinitionJson();
-    String actual = new String(Files.readAllBytes(ACTUAL_RULES_FILE), UTF_8);
-
-    if (!expected.equals(actual)) {
-      Files.write(EXPECTED_RULES_FILE, expected.getBytes(UTF_8));
+    Path projectPath = Paths.get(".").toRealPath();
+    while(!projectPath.resolve(RULES_FILE).toFile().exists()) {
+      projectPath = projectPath.getParent();
     }
-
-    assertEquals("\nThe file:\n" + EXPECTED_RULES_FILE + "\nIs not equals to:\n" + ACTUAL_RULES_FILE + "\n",
-      expected, actual);
+    Files.write(projectPath.resolve(RULES_FILE), rules.getBytes(UTF_8));
   }
 
   static final class DetektRuleDefinitionGenerator {
-
-    private static final Logger LOG = Loggers.get(DetektRuleDefinitionGenerator.class);
 
     private static final String BASE_URL = "https://arturbosch.github.io/detekt/";
     private static final String BASE_PKG = "io.gitlab.arturbosch.detekt.rules.";
@@ -138,7 +124,7 @@ public class DetektRuleDefinitionTest {
         ExternalRule externalRule = new ExternalRule();
         externalRule.key = rule.getId();
         externalRule.name = pascalCaseToTitle(rule.getId());
-        externalRule.description = StringEscapeUtils.escapeHtml(rule.getIssue().getDescription());
+        externalRule.description = StringEscapeUtils.escapeHtml4(rule.getIssue().getDescription());
         externalRule.url = ruleDocumentation(rule);
         externalRule.tags = Collections.singleton(rule.getIssue().getSeverity().name().toLowerCase(Locale.ROOT));
         externalRule.type = "CODE_SMELL";
@@ -146,7 +132,6 @@ public class DetektRuleDefinitionTest {
         externalRule.constantDebtMinutes = Long.parseLong(rule.getIssue().getDebt().toString().replace("min",""));
         externalRules.add(externalRule);
       }
-      LOG.info("Found " + externalRules.size() + " rules");
       externalRules.sort(Comparator.comparing(a -> a.key));
       Gson gson = new GsonBuilder().setPrettyPrinting().create();
       return gson.toJson(externalRules) + "\n";

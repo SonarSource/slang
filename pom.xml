@@ -26,7 +26,6 @@
     <module>slang-antlr</module>
     <module>slang-checks</module>
     <module>sonar-slang-plugin</module>
-    <module>utils</module>
   </modules>
 
   <!--

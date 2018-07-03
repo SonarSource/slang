@@ -600,6 +600,18 @@
     "constantDebtMinutes": 10
   },
   {
+    "key": "MandatoryBracesIfStatements",
+    "name": "Mandatory Braces If Statements",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Multi-line if statement was found that does not have braces. These should be added to improve readability.",
+    "url": "https://arturbosch.github.io/detekt/style.html#mandatorybracesifstatements",
+    "tags": [
+      "style"
+    ],
+    "constantDebtMinutes": 5
+  },
+  {
     "key": "MatchingDeclarationName",
     "name": "Matching Declaration Name",
     "type": "CODE_SMELL",
@@ -786,6 +798,18 @@
     "severity": "INFO",
     "description": "Package names should match the naming convention set in the configuration.",
     "url": "https://arturbosch.github.io/detekt/naming.html#packagenaming",
+    "tags": [
+      "style"
+    ],
+    "constantDebtMinutes": 5
+  },
+  {
+    "key": "PreferToOverPairSyntax",
+    "name": "Prefer To Over Pair Syntax",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Pair was created using the Pair constructor, using the to syntax is preferred.",
+    "url": "https://arturbosch.github.io/detekt/style.html#prefertooverpairsyntax",
     "tags": [
       "style"
     ],

@@ -20,9 +20,14 @@
 package com.sonarsource.slang;
 
 import com.sonar.orchestrator.build.SonarScanner;
+import com.sonar.orchestrator.container.Server;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Test;
+import org.sonar.wsclient.SonarClient;
 import org.sonar.wsclient.issue.Issue;
+import org.sonar.wsclient.issue.IssueClient;
+import org.sonar.wsclient.issue.IssueQuery;
 
 import static org.assertj.core.api.Assertions.assertThat;
 public class ExternalReportTest extends TestBase {
@@ -47,6 +52,14 @@ public class ExternalReportTest extends TestBase {
     } else {
       assertThat(issues).isEmpty();
     }
+  }
+
+  private List<Issue> getExternalIssues() {
+    Server server = ORCHESTRATOR.getServer();
+    IssueClient issueClient = SonarClient.create(server.getUrl()).issueClient();
+    return issueClient.find(IssueQuery.create().componentRoots(PROJECT_KEY)).list().stream()
+      .filter(issue -> issue.ruleKey().startsWith("external_"))
+      .collect(Collectors.toList());
   }
 
 }

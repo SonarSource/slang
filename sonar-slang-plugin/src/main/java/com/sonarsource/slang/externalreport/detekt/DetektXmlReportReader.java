@@ -55,20 +55,17 @@ class DetektXmlReportReader {
 
   private final SensorContext context;
 
-  private final DetektRulesDefinition rulesDefinition;
-
   private int level = 0;
 
   @Nullable
   private InputFile inputFile = null;
 
-  private DetektXmlReportReader(SensorContext context, DetektRulesDefinition rulesDefinition) {
+  private DetektXmlReportReader(SensorContext context) {
     this.context = context;
-    this.rulesDefinition = rulesDefinition;
   }
 
-  static void read(SensorContext context, DetektRulesDefinition rulesDefinition, InputStream in) throws XMLStreamException, IOException {
-    new DetektXmlReportReader(context, rulesDefinition).read(in);
+  static void read(SensorContext context, InputStream in) throws XMLStreamException, IOException {
+    new DetektXmlReportReader(context).read(in);
   }
 
   private void read(InputStream in) throws XMLStreamException, IOException {
@@ -89,7 +86,7 @@ class DetektXmlReportReader {
       throw new IOException("Unexpected document root '" + element.getName().getLocalPart() + "' instead of 'checkstyle'.");
     } else if (level == 2 && FILE.equals(element.getName())) {
       onFileElement(element);
-    } else if (level == 3 && ERROR.equals(element.getName())) {
+    } else if (level == 3 && ERROR.equals(element.getName()) && inputFile != null) {
       onErrorElement(element);
     }
   }
@@ -120,9 +117,6 @@ class DetektXmlReportReader {
   }
 
   private void saveIssue(RuleKey ruleKey, String line, String message) {
-    if (inputFile == null) {
-      return;
-    }
     NewExternalIssue newExternalIssue = context.newExternalIssue();
     setRulesDefinitionProperties(newExternalIssue, ruleKey.rule());
 
@@ -140,11 +134,12 @@ class DetektXmlReportReader {
       .save();
   }
 
-  private void setRulesDefinitionProperties(NewExternalIssue newExternalIssue, String ruleKey) {
-    ExternalRuleLoader externalRuleLoader = rulesDefinition.externalRuleLoader();
-    newExternalIssue.type(externalRuleLoader.ruleType(ruleKey));
-    newExternalIssue.severity(externalRuleLoader.ruleSeverity(ruleKey));
-    newExternalIssue.remediationEffortMinutes(externalRuleLoader.ruleConstantDebtMinutes(ruleKey));
+  private static void setRulesDefinitionProperties(NewExternalIssue newExternalIssue, String ruleKey) {
+    ExternalRuleLoader externalRuleLoader = DetektRulesDefinition.RULE_LOADER;
+    newExternalIssue
+      .type(externalRuleLoader.ruleType(ruleKey))
+      .severity(externalRuleLoader.ruleSeverity(ruleKey))
+      .remediationEffortMinutes(externalRuleLoader.ruleConstantDebtMinutes(ruleKey));
   }
 
   private static String getAttributeValue(StartElement element, QName attributeName) {

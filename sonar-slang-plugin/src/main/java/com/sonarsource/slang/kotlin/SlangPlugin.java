@@ -47,15 +47,12 @@ public class SlangPlugin implements Plugin {
   public void define(Context context) {
     boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
 
-    DetektRulesDefinition detektRulesDefinition = new DetektRulesDefinition(externalIssuesSupported);
-    DetektSensor detektSensor = new DetektSensor(detektRulesDefinition);
-
     context.addExtensions(
       KotlinLanguage.class,
       KotlinSensor.class,
       KotlinRulesDefinition.class,
-      detektRulesDefinition,
-      detektSensor,
+      new DetektRulesDefinition(externalIssuesSupported),
+      DetektSensor.class,
       KotlinProfileDefinition.class,
       PropertyDefinition.builder(KOTLIN_FILE_SUFFIXES_KEY)
         .defaultValue(KOTLIN_FILE_SUFFIXES_DEFAULT_VALUE)
@@ -71,7 +68,7 @@ public class SlangPlugin implements Plugin {
       context.addExtension(
         PropertyDefinition.builder(DetektSensor.REPORT_PROPERTY_KEY)
           .name("Detekt Report Files")
-          .description("Paths (absolute or relative) to the files with detekt issues.")
+          .description("Paths (absolute or relative) to checkstyle xml files with detekt issues.")
           .category(KOTLIN_CATEGORY)
           .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
           .onQualifiers(Qualifiers.PROJECT)

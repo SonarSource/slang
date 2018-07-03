@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>org.sonarsource.slang</groupId>
-        <artifactId>utils</artifactId>
+        <artifactId>slang</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
@@ -15,9 +15,7 @@
 
     <properties>
         <kotlin.version>1.2.41</kotlin.version>
-        <detekt.version>1.0.0.RC7</detekt.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <detekt.version>1.0.0.RC7-3</detekt.version>
     </properties>
 
     <dependencies>
@@ -37,11 +35,6 @@
             <version>${detekt.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.gitlab.arturbosch.detekt</groupId>
-            <artifactId>detekt-rules</artifactId>
-            <version>${detekt.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-compiler-embeddable</artifactId>
             <version>${kotlin.version}</version>
@@ -53,17 +46,25 @@
             <version>1.72</version>
         </dependency>
         <dependency>
-            <groupId>org.sonarsource.sonarqube</groupId>
-            <artifactId>sonar-plugin-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.7</version>
+            <artifactId>commons-text</artifactId>
+            <version>1.4</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <configuration>
+                    <mainClass>com.sonarsource.slang.externalreport.detekt.DetektRuleDefinition</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

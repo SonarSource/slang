@@ -25,27 +25,23 @@ import org.sonarsource.analyzer.commons.ExternalRuleLoader;
 
 public class DetektRulesDefinition implements RulesDefinition {
 
+  static final ExternalRuleLoader RULE_LOADER = new ExternalRuleLoader(
+    DetektSensor.LINTER_KEY,
+    DetektSensor.LINTER_NAME,
+    "org/sonar/l10n/kotlin/rules/detekt/rules.json",
+    SlangPlugin.KOTLIN_LANGUAGE_KEY);
+
   private final boolean externalIssuesSupported;
-  private final ExternalRuleLoader externalRuleLoader;
 
   public DetektRulesDefinition(boolean externalIssuesSupported) {
     this.externalIssuesSupported = externalIssuesSupported;
-    this.externalRuleLoader = new ExternalRuleLoader(
-      DetektSensor.LINTER_KEY,
-      DetektSensor.LINTER_NAME,
-      "org/sonar/l10n/kotlin/rules/detekt/rules.json",
-      SlangPlugin.KOTLIN_LANGUAGE_KEY);
   }
 
   @Override
   public void define(Context context) {
     if (externalIssuesSupported) {
-      externalRuleLoader.createExternalRuleRepository(context);
+      RULE_LOADER.createExternalRuleRepository(context);
     }
-  }
-
-  public ExternalRuleLoader externalRuleLoader() {
-    return externalRuleLoader;
   }
 
 }

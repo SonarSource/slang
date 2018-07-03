@@ -47,7 +47,7 @@ public class DetektRulesDefinitionTest {
     assertThat(repository.language()).isEqualTo("kotlin");
     assertThat(repository.isExternal()).isEqualTo(true);
 
-    assertThat(repository.rules().size()).isEqualTo(109);
+    assertThat(repository.rules().size()).isEqualTo(111);
 
     RulesDefinition.Rule classNaming = repository.rule("ClassNaming");
     assertThat(classNaming).isNotNull();
