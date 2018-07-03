@@ -49,6 +49,7 @@ import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.ModifierTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.ParameterTreeImpl;
+import com.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
 import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
 import com.sonarsource.slang.impl.TokenImpl;
@@ -98,6 +99,7 @@ import org.jetbrains.kotlin.psi.KtModifierList;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.KtOperationExpression;
 import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.psi.KtParenthesizedExpression;
 import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtTryExpression;
@@ -215,9 +217,21 @@ class KotlinTreeVisitor {
       return createParameter(metaData, (KtParameter) element);
     } else if (element instanceof KtProperty) {
       return createVariableDeclaration(metaData, (KtProperty) element);
+    } else if (element instanceof KtParenthesizedExpression) {
+      return createParenthesizedExpression(metaData, (KtParenthesizedExpression) element);
     } else {
       return convertElementToNative(element, metaData);
     }
+  }
+
+  private Tree createParenthesizedExpression(TreeMetaData metaData, KtParenthesizedExpression element) {
+    Tree expression = createElement(element.getExpression());
+    if (expression == null) {
+      return convertElementToNative(element, metaData);
+    }
+    Token leftParenthesis = toSlangToken(element.getFirstChild());
+    Token rightParenthesis = toSlangToken(element.getLastChild());
+    return new ParenthesizedExpressionTreeImpl(metaData, expression, leftParenthesis, rightParenthesis);
   }
 
   private Tree createClassDeclarationTree(TreeMetaData metaData, KtClass ktClass) {

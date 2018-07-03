@@ -53,6 +53,7 @@ import com.sonarsource.slang.impl.MatchTreeImpl;
 import com.sonarsource.slang.impl.ModifierTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.ParameterTreeImpl;
+import com.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
 import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.impl.TextPointerImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
@@ -229,7 +230,11 @@ public class SLangConverter implements ASTConverter {
 
     @Override
     public Tree visitParenthesizedExpression(SLangParser.ParenthesizedExpressionContext ctx) {
-      return visit(ctx.statement());
+      return new ParenthesizedExpressionTreeImpl(
+        meta(ctx),
+        visit(ctx.statement()),
+        toSlangToken(ctx.LPAREN().getSymbol()),
+        toSlangToken(ctx.RPAREN().getSymbol()));
     }
 
     @Override
