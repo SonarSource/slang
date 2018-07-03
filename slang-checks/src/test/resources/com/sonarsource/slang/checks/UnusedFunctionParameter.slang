@@ -21,3 +21,6 @@ void fun fooBar(int a, b) {   // OK
   x = a;
   match (b) { }
 }
+
+void fun main(int a) {} // OK - "main" functions are ignored
+int fun Main(int a) {} // OK - "main" functions are ignored
