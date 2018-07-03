@@ -34,6 +34,7 @@ import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.ParameterTree;
+import com.sonarsource.slang.api.ParenthesizedExpressionTree;
 import com.sonarsource.slang.api.StringLiteralTree;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
@@ -81,6 +82,16 @@ public class KotlinConverterTest {
     assertTrees(kotlinStatements("x + 2; x - 2; x * 2; x / 2; x == 2; x != 2; x > 2; x >= 2; x < 2; x <= 2; x && y; x || y;"))
       .isEquivalentTo(slangStatements("x + 2; x - 2; x * 2; x / 2; x == 2; x != 2; x > 2; x >= 2; x < 2; x <= 2; x && y; x || y;"));
     assertThat(((BinaryExpressionTree) kotlinStatement("x + 2;")).operatorToken().text()).isEqualTo("+");
+  }
+
+  @Test
+  public void testParenthesisExpression() {
+    assertTrees(kotlinStatements("(a && b); (a && b || (c && d)); (!a || !(a && b));"))
+      .isEquivalentTo(slangStatements("(a && b); (a && b || (c && d)); (!a || !(a && b));"));
+    ParenthesizedExpressionTree kotlinParenthesisExpression = (ParenthesizedExpressionTree) kotlinStatement("(a && b);");
+    assertThat(kotlinParenthesisExpression.leftParenthesis().text()).isEqualTo("(");
+    assertThat(kotlinParenthesisExpression.rightParenthesis().text()).isEqualTo(")");
+    assertTree(kotlinParenthesisExpression.expression()).isBinaryExpression(BinaryExpressionTree.Operator.CONDITIONAL_AND);
   }
 
   @Test

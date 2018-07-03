@@ -33,6 +33,7 @@ import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.LoopTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
+import com.sonarsource.slang.api.ParenthesizedExpressionTree;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
@@ -84,7 +85,26 @@ public class SLangConverterTest {
     UnaryExpressionTree unaryRight = (UnaryExpressionTree) right;
 
     assertTree(unaryLeft.operand()).isUnaryExpression(UnaryExpressionTree.Operator.NEGATE);
-    assertTree(unaryRight.operand()).isBinaryExpression(Operator.CONDITIONAL_AND);
+    assertTree(unaryRight.operand()).isInstanceOf(ParenthesizedExpressionTree.class);
+    ParenthesizedExpressionTree parenthesizedExpression = (ParenthesizedExpressionTree) unaryRight.operand();
+    assertTree(parenthesizedExpression.expression()).isBinaryExpression(Operator.CONDITIONAL_AND);
+  }
+
+  @Test
+  public void parenthesized_expression() {
+    BinaryExpressionTree binary = parseBinary("((a && b) && (c || d)) || (y\n|| z);");
+    assertTree(binary.leftOperand()).isInstanceOf(ParenthesizedExpressionTree.class);
+    assertTree(binary.rightOperand()).isInstanceOf(ParenthesizedExpressionTree.class);
+    ParenthesizedExpressionTree left = (ParenthesizedExpressionTree) binary.leftOperand();
+    ParenthesizedExpressionTree right = (ParenthesizedExpressionTree) binary.rightOperand();
+
+    assertTree(left).hasTextRange(1, 0, 1, 22);
+    assertTree(left.expression()).isBinaryExpression(Operator.CONDITIONAL_AND);
+    BinaryExpressionTree innerBinary = (BinaryExpressionTree) left.expression();
+    assertTree(innerBinary.leftOperand()).isInstanceOf(ParenthesizedExpressionTree.class);
+    assertTree(innerBinary.rightOperand()).isInstanceOf(ParenthesizedExpressionTree.class);
+    assertTree(right).hasTextRange(1, 26, 2, 5);
+    assertTree(right.expression()).isBinaryExpression(Operator.CONDITIONAL_OR);
   }
 
   @Test
