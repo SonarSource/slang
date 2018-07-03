@@ -17,57 +17,42 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.kotlin;
+package com.sonarsource.slang.checks.commentedcode;
 
-import com.sonarsource.slang.api.ASTConverter;
 import com.sonarsource.slang.api.BinaryExpressionTree;
-import com.sonarsource.slang.api.BlockTree;
+import com.sonarsource.slang.api.CodeVerifier;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.LiteralTree;
-import com.sonarsource.slang.api.NativeTree;
-import com.sonarsource.slang.api.TextPointer;
-import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.Tree;
-import org.sonarsource.analyzer.commons.TokenLocation;
+import com.sonarsource.slang.parser.SLangConverter;
 
-public class KotlinCommentAnalyser implements ASTConverter {
+public class SlangCodeVerifier implements CodeVerifier {
   @Override
-  public Tree parse(String content) {
-    Tree ast;
-    String wrappedContent = "fun { " + content + " }";
+  public boolean containsCode(String content) {
+    SLangConverter sLangConverter = new SLangConverter();
+    Tree tree;
     try {
-      ast = new KotlinConverter().parse(wrappedContent);
-      BlockTree blockTree = (BlockTree) ast.children().get(0).children().get(0);
-      if (isNotCompletelyParsed(wrappedContent, ast.metaData().textRange()) || isSimpleExpression(blockTree)) {
-        return null;
-      }
+      tree = sLangConverter.parse(content);
     } catch (Exception e) {
-      ast = null;
+      tree = null;
     }
-    return ast;
+
+    return tree != null && !isSimpleExpression(tree);
   }
 
-  private static boolean isNotCompletelyParsed(String content, TextRange textRange) {
-    TextPointer start = textRange.start();
-    TextPointer end = textRange.end();
-    TokenLocation tokenLocation = new TokenLocation(start.line(), start.lineOffset(), content);
-    return end.line() != tokenLocation.endLine() || end.lineOffset() != tokenLocation.endLineOffset();
-  }
-
-  private static boolean isSimpleExpression(BlockTree tree) {
+  private static boolean isSimpleExpression(Tree tree) {
     long all = tree.descendants().count();
     if (all == 0) {
       return true;
     }
     long remaining = tree.descendants()
       .filter(element -> !(element instanceof IdentifierTree ||
-        element instanceof NativeTree ||
         element instanceof LiteralTree ||
         simpleBinaryExpressionTree(element)))
       .count();
 
     double percentage = (double) remaining / all;
-    return  percentage < 0.3;
+    return percentage < 0.3;
 
   }
 
@@ -80,5 +65,4 @@ public class KotlinCommentAnalyser implements ASTConverter {
     }
     return false;
   }
-
 }

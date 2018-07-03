@@ -74,7 +74,7 @@ public class KotlinConverterTest {
   public void testParseException() {
     thrown.expect(ParseException.class);
     thrown.expectMessage("Cannot convert file due to syntactic errors");
-    converter.parse("enum class A {\n<!REDECLARATION!>FOO<!>,<!REDECLARATION!>FOO<!>}");
+    converter.parse("fun foo(){ a b c... }");
   }
 
   @Test

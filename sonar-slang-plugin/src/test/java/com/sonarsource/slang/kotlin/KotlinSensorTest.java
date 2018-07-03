@@ -113,7 +113,12 @@ public class KotlinSensorTest {
       "//fun foo () { if (true) {print(\"string literal\");}}\n" +
       "print (1 == 1);\n" +
       "print(b);\n" +
-      "// a b c ...\n" +
+      "//a b c ...\n" +
+      "foo();\n" +
+      "// Coefficients of polynomial\n" +
+      "val b = DoubleArray(n) // linear\n" +
+      "val c = DoubleArray(n + 1) // quadratic\n" +
+      "val d = DoubleArray(n) // cubic\n" +
       "}");
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("S125");

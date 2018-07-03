@@ -56,7 +56,7 @@ public class KotlinSensor implements Sensor {
   public KotlinSensor(CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter) {
     checks = checkFactory.create(SlangPlugin.KOTLIN_REPOSITORY_KEY);
     // TODO: Add logic for rules that require language specific configuration at construction time
-    this.checks.addAnnotatedChecks(new CommentedCodeCheck(new KotlinCommentAnalyser()));
+    this.checks.addAnnotatedChecks(new CommentedCodeCheck(new KotlinCodeVerifier()));
     this.checks.addAnnotatedChecks((Iterable<?>) CommonCheckList.checks());
     this.fileLinesContextFactory = fileLinesContextFactory;
     this.noSonarFilter = noSonarFilter;

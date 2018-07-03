@@ -19,26 +19,25 @@
  */
 package com.sonarsource.slang.checks;
 
-import com.sonarsource.slang.api.ASTConverter;
+import com.sonarsource.slang.api.CodeVerifier;
 import com.sonarsource.slang.api.Comment;
-import com.sonarsource.slang.api.TextPointer;
+import com.sonarsource.slang.api.HasTextRange;
 import com.sonarsource.slang.api.TextRange;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
-import com.sonarsource.slang.impl.TextRangeImpl;
+import com.sonarsource.slang.impl.TextRanges;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.sonar.check.Rule;
 
 @Rule(key = "S125")
 public class CommentedCodeCheck implements SlangCheck {
-  private ASTConverter commentAnalyser;
+  private CodeVerifier codeVerifier;
 
-  public CommentedCodeCheck(ASTConverter astConverter) {
-    this.commentAnalyser = astConverter;
+  public CommentedCodeCheck(CodeVerifier codeVerifier) {
+    this.codeVerifier = codeVerifier;
   }
 
   private static final String MESSAGE = "Remove this commented out code.";
@@ -51,12 +50,12 @@ public class CommentedCodeCheck implements SlangCheck {
       groupedComments.forEach(comments -> {
         String content = comments.stream()
           .map(Comment::contentText)
-          .collect(Collectors.joining(""));
-        if (commentAnalyser.parse(content) != null) {
-          TextPointer start = comments.get(0).textRange().start();
-          TextPointer end = comments.get(comments.size() - 1).textRange().end();
-          TextRange textRange = new TextRangeImpl(start.line(), start.lineOffset(), end.line(), end.lineOffset());
-          ctx.reportIssue(textRange, MESSAGE);
+          .collect(Collectors.joining("\n"));
+        if (codeVerifier.containsCode(content)) {
+          List<TextRange> textRanges = comments.stream()
+            .map(HasTextRange::textRange)
+            .collect(Collectors.toList());
+          ctx.reportIssue(TextRanges.merge(textRanges), MESSAGE);
         }
       });
     });
@@ -82,7 +81,7 @@ public class CommentedCodeCheck implements SlangCheck {
   }
 
   private static List<Comment> initNewGroup(Comment comment) {
-    List<Comment> group = new LinkedList<>();
+    List<Comment> group = new ArrayList<>();
     group.add(comment);
     return group;
   }
