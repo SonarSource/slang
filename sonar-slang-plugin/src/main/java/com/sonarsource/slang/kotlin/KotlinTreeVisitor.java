@@ -25,6 +25,7 @@ import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.CatchTree;
 import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.IdentifierTree;
+import com.sonarsource.slang.api.JumpTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.NativeKind;
 import com.sonarsource.slang.api.TextPointer;
@@ -42,6 +43,7 @@ import com.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
+import com.sonarsource.slang.impl.JumpTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.LoopTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
@@ -50,6 +52,7 @@ import com.sonarsource.slang.impl.ModifierTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
+import com.sonarsource.slang.impl.ReturnTreeImpl;
 import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
 import com.sonarsource.slang.impl.TokenImpl;
@@ -80,10 +83,12 @@ import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
 import org.jetbrains.kotlin.psi.KtBlockExpression;
+import org.jetbrains.kotlin.psi.KtBreakExpression;
 import org.jetbrains.kotlin.psi.KtCatchClause;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtConstantExpression;
 import org.jetbrains.kotlin.psi.KtConstructor;
+import org.jetbrains.kotlin.psi.KtContinueExpression;
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry;
 import org.jetbrains.kotlin.psi.KtDoWhileExpression;
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry;
@@ -100,6 +105,8 @@ import org.jetbrains.kotlin.psi.KtOperationExpression;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.KtParenthesizedExpression;
 import org.jetbrains.kotlin.psi.KtProperty;
+import org.jetbrains.kotlin.psi.KtReturnExpression;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtTryExpression;
 import org.jetbrains.kotlin.psi.KtTypeElement;
@@ -216,6 +223,12 @@ class KotlinTreeVisitor {
       return createVariableDeclaration(metaData, (KtProperty) element);
     } else if (element instanceof KtParenthesizedExpression) {
       return createParenthesizedExpression(metaData, (KtParenthesizedExpression) element);
+    } else if (element instanceof KtBreakExpression) {
+      return createBreakTree(metaData, (KtBreakExpression) element);
+    } else if (element instanceof KtContinueExpression) {
+      return createContinueTree(metaData, (KtContinueExpression) element);
+    } else if (element instanceof KtReturnExpression) {
+      return createReturnTree(metaData, (KtReturnExpression) element);
     } else {
       return convertElementToNative(element, metaData);
     }
@@ -229,6 +242,35 @@ class KotlinTreeVisitor {
     Token leftParenthesis = toSlangToken(element.getFirstChild());
     Token rightParenthesis = toSlangToken(element.getLastChild());
     return new ParenthesizedExpressionTreeImpl(metaData, expression, leftParenthesis, rightParenthesis);
+  }
+  private Tree createReturnTree(TreeMetaData metaData, KtReturnExpression element) {
+    Tree returnExpression = null;
+    if (element.getReturnedExpression() != null) {
+      returnExpression = createElement(element.getReturnedExpression());
+    }
+    return new ReturnTreeImpl(metaData, toSlangToken(element.getReturnKeyword()), returnExpression);
+  }
+
+  private Tree createBreakTree(TreeMetaData metaData, KtBreakExpression ktBreakExpression) {
+    IdentifierTree label = null;
+
+    KtSimpleNameExpression targetLabel = ktBreakExpression.getTargetLabel();
+    if (targetLabel != null && targetLabel.getIdentifier() != null) {
+      PsiElement identifier = targetLabel.getIdentifier();
+      label = createIdentifierTree(getTreeMetaData(identifier), identifier.getText());
+    }
+    return new JumpTreeImpl(metaData,toSlangToken(ktBreakExpression), JumpTree.JumpKind.BREAK, label);
+  }
+
+  private Tree createContinueTree(TreeMetaData metaData, KtContinueExpression ktContinueExpression) {
+    IdentifierTree label = null;
+
+    KtSimpleNameExpression targetLabel = ktContinueExpression.getTargetLabel();
+    if (targetLabel != null && targetLabel.getIdentifier() != null) {
+      PsiElement identifier = targetLabel.getIdentifier();
+      label = createIdentifierTree(getTreeMetaData(identifier), identifier.getText());
+    }
+    return new JumpTreeImpl(metaData,toSlangToken(ktContinueExpression), JumpTree.JumpKind.CONTINUE, label);
   }
 
   private Tree createClassDeclarationTree(TreeMetaData metaData, KtClass ktClass) {

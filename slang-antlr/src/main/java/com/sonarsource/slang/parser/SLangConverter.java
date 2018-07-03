@@ -26,6 +26,7 @@ import com.sonarsource.slang.api.BlockTree;
 import com.sonarsource.slang.api.CatchTree;
 import com.sonarsource.slang.api.Comment;
 import com.sonarsource.slang.api.IdentifierTree;
+import com.sonarsource.slang.api.JumpTree;
 import com.sonarsource.slang.api.MatchCaseTree;
 import com.sonarsource.slang.api.ModifierTree.Kind;
 import com.sonarsource.slang.api.NativeTree;
@@ -46,6 +47,7 @@ import com.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import com.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import com.sonarsource.slang.impl.IdentifierTreeImpl;
 import com.sonarsource.slang.impl.IfTreeImpl;
+import com.sonarsource.slang.impl.JumpTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
 import com.sonarsource.slang.impl.LoopTreeImpl;
 import com.sonarsource.slang.impl.MatchCaseTreeImpl;
@@ -54,6 +56,7 @@ import com.sonarsource.slang.impl.ModifierTreeImpl;
 import com.sonarsource.slang.impl.NativeTreeImpl;
 import com.sonarsource.slang.impl.ParameterTreeImpl;
 import com.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
+import com.sonarsource.slang.impl.ReturnTreeImpl;
 import com.sonarsource.slang.impl.StringLiteralTreeImpl;
 import com.sonarsource.slang.impl.TextPointerImpl;
 import com.sonarsource.slang.impl.TextRangeImpl;
@@ -476,6 +479,33 @@ public class SLangConverter implements ASTConverter {
     @Override
     public Tree visitIdentifier(SLangParser.IdentifierContext ctx) {
       return new IdentifierTreeImpl(meta(ctx), ctx.getText());
+    }
+
+    @Override
+    public Tree visitBreakStatement(SLangParser.BreakStatementContext ctx) {
+      IdentifierTree label = null;
+      if (ctx.label() != null) {
+        label = (IdentifierTree) visit(ctx.label());
+      }
+      return new JumpTreeImpl(meta(ctx), toSlangToken(ctx.BREAK().getSymbol()),JumpTree.JumpKind.BREAK, label);
+    }
+
+    @Override
+    public Tree visitContinueStatement(SLangParser.ContinueStatementContext ctx) {
+      IdentifierTree label = null;
+      if (ctx.label() != null) {
+        label = (IdentifierTree) visit(ctx.label());
+      }
+      return new JumpTreeImpl(meta(ctx), toSlangToken(ctx.CONTINUE().getSymbol()),JumpTree.JumpKind.CONTINUE, label);
+    }
+
+    @Override
+    public Tree visitReturnExpression(SLangParser.ReturnExpressionContext ctx) {
+      Tree returnBody = null;
+      if (ctx.statement() != null) {
+        returnBody = visit(ctx.statement());
+      }
+      return new ReturnTreeImpl(meta(ctx), toSlangToken(ctx.RETURN().getSymbol()), returnBody);
     }
 
     private static TextPointer startOf(Token token) {
