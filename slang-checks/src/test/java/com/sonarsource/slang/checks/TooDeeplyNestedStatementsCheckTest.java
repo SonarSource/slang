@@ -17,20 +17,22 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.api;
+package com.sonarsource.slang.checks;
 
-import javax.annotation.CheckForNull;
-import java.util.List;
+import org.junit.Test;
 
-public interface ExceptionHandlingTree extends Tree {
+public class TooDeeplyNestedStatementsCheckTest {
 
-  Tree tryBlock();
+  @Test
+  public void test() {
+    Verifier.verify("TooDeeplyNestedStatements.slang", new TooDeeplyNestedStatementsCheck());
+  }
 
-  List<CatchTree> catchBlocks();
-
-  Token tryKeyword();
-
-  @CheckForNull
-  Tree finallyBlock();
+  @Test
+  public void test_max_2() {
+    TooDeeplyNestedStatementsCheck check = new TooDeeplyNestedStatementsCheck();
+    check.max = 2;
+    Verifier.verify("TooDeeplyNestedStatements.max_2.slang", check);
+  }
 
 }

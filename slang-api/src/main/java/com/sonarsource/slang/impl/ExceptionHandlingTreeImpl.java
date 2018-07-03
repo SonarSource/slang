@@ -21,6 +21,7 @@ package com.sonarsource.slang.impl;
 
 import com.sonarsource.slang.api.CatchTree;
 import com.sonarsource.slang.api.ExceptionHandlingTree;
+import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.TreeMetaData;
 
@@ -34,12 +35,14 @@ public class ExceptionHandlingTreeImpl extends BaseTreeImpl implements Exception
   private final Tree tryBlock;
   private final List<CatchTree> catchBlocks;
   private final Tree finallyBlock;
+  private final Token tryKeyword;
 
-  public ExceptionHandlingTreeImpl(TreeMetaData metaData, Tree tryBlock, List<CatchTree> catchBlocks, @Nullable Tree finallyBlock) {
+  public ExceptionHandlingTreeImpl(TreeMetaData metaData, Tree tryBlock, Token tryKeyword, List<CatchTree> catchBlocks, @Nullable Tree finallyBlock) {
     super(metaData);
     this.tryBlock = tryBlock;
     this.catchBlocks = catchBlocks;
     this.finallyBlock = finallyBlock;
+    this.tryKeyword = tryKeyword;
   }
 
   @Override
@@ -56,6 +59,11 @@ public class ExceptionHandlingTreeImpl extends BaseTreeImpl implements Exception
   @Override
   public Tree finallyBlock() {
     return finallyBlock;
+  }
+
+  @Override
+  public Token tryKeyword() {
+    return tryKeyword;
   }
 
   @Override
