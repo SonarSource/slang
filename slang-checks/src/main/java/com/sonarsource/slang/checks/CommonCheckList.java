@@ -53,6 +53,7 @@ public class CommonCheckList {
       OneStatementPerLineCheck.class,
       SelfAssignmentCheck.class,
       StringLiteralDuplicatedCheck.class,
+      TabsCheck.class,
       TodoCommentCheck.class,
       TooDeeplyNestedStatementsCheck.class,
       TooLongFunctionCheck.class,
