@@ -62,7 +62,7 @@ public class KotlinConverter implements ASTConverter {
     return kotlinTreeVisitor.getSLangAST();
   }
 
-  private void checkParsingErrors(PsiFile psiFile, Document document, TreeMetaDataProvider metaDataProvider) {
+  private static void checkParsingErrors(PsiFile psiFile, Document document, TreeMetaDataProvider metaDataProvider) {
     descendants(psiFile)
       .filter(element -> element instanceof PsiErrorElement)
       .findFirst()
