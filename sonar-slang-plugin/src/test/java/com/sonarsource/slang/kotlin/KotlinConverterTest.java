@@ -85,6 +85,13 @@ public class KotlinConverterTest {
   }
 
   @Test
+  public void testParseWithoutNullPointer() {
+    thrown.expect(ParseException.class);
+    thrown.expectMessage("Cannot convert file due to syntactic errors");
+    converter.parse("package ${package}");
+  }
+
+  @Test
   public void testBinaryExpression() {
     assertTrees(kotlinStatements("x + 2; x - 2; x * 2; x / 2; x == 2; x != 2; x > 2; x >= 2; x < 2; x <= 2; x && y; x || y;"))
       .isEquivalentTo(slangStatements("x + 2; x - 2; x * 2; x / 2; x == 2; x != 2; x > 2; x >= 2; x < 2; x <= 2; x && y; x || y;"));

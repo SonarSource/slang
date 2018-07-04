@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 import org.jetbrains.kotlin.cli.common.script.CliScriptDefinitionProvider;
 import org.jetbrains.kotlin.com.intellij.core.CoreASTFactory;
 import org.jetbrains.kotlin.com.intellij.core.CoreFileTypeRegistry;
+import org.jetbrains.kotlin.com.intellij.lang.Language;
 import org.jetbrains.kotlin.com.intellij.lang.LanguageASTFactory;
 import org.jetbrains.kotlin.com.intellij.lang.LanguageParserDefinitions;
 import org.jetbrains.kotlin.com.intellij.lang.MetaLanguage;
@@ -66,6 +67,7 @@ public class KotlinConverter implements ASTConverter {
   public Tree parse(String content) {
     PsiFile psiFile = psiFileFactory.createFileFromText(KotlinLanguage.INSTANCE, content);
     Document document;
+
     try {
       document = psiFile.getViewProvider().getDocument();
     } catch (AssertionError e) {
@@ -109,7 +111,8 @@ public class KotlinConverter implements ASTConverter {
     MockApplication application = new MockApplication(disposable);
     FileDocumentManager fileDocMgr = new MockFileDocumentManagerImpl(DocumentImpl::new, null);
     application.registerService(FileDocumentManager.class, fileDocMgr);
-    application.registerService(PsiBuilderFactory.class, new PsiBuilderFactoryImpl());
+    PsiBuilderFactoryImpl psiBuilderFactory = new PsiBuilderFactoryImpl();
+    application.registerService(PsiBuilderFactory.class, psiBuilderFactory);
     ApplicationManager.setApplication(application, FileTypeRegistry.ourInstanceGetter, disposable);
 
     Extensions.getArea(null).registerExtensionPoint(MetaLanguage.EP_NAME.getName(), MetaLanguage.class.getName(), ExtensionPoint.Kind.INTERFACE);
@@ -119,9 +122,11 @@ public class KotlinConverter implements ASTConverter {
     project.registerService(ScriptDefinitionProvider.class, CliScriptDefinitionProvider.class);
 
     LanguageParserDefinitions.INSTANCE.addExplicitExtension(KotlinLanguage.INSTANCE, new KotlinParserDefinition());
-    LanguageASTFactory.INSTANCE.addExplicitExtension(KotlinLanguage.INSTANCE, new CoreASTFactory());
+    CoreASTFactory astFactory = new CoreASTFactory();
+    LanguageASTFactory.INSTANCE.addExplicitExtension(KotlinLanguage.INSTANCE, astFactory);
+    LanguageASTFactory.INSTANCE.addExplicitExtension(Language.ANY, astFactory);
 
-    PsiManager psiManager = new PsiManagerImpl(project, fileDocMgr, new PsiBuilderFactoryImpl(), null, null, null);
+    PsiManager psiManager = new PsiManagerImpl(project, fileDocMgr, psiBuilderFactory, null, null, null);
     return new PsiFileFactoryImpl(psiManager);
   }
 
