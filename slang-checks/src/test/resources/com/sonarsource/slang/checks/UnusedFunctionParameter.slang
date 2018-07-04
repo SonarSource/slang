@@ -22,6 +22,9 @@ void fun fooBar(int a, b) {   // OK
   match (b) { }
 }
 
+id fun fooBar(int id) {} // OK - issue is not raised here as 'id' is found in method header.
+                         // This is done to avoid FP in languages that can use parameters in method headers (ex: in initializers for kotlin)
+
 class A {
 
   void fun fooBar() {}

@@ -40,7 +40,7 @@ public class UnusedFunctionParameterCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(FunctionDeclarationTree.class, (ctx, functionDeclarationTree) -> {
-      if (ignoreFunction(ctx, functionDeclarationTree)) {
+      if (shouldBeIgnored(ctx, functionDeclarationTree)) {
         return;
       }
 
@@ -74,9 +74,9 @@ public class UnusedFunctionParameterCheck implements SlangCheck {
 
   }
 
-  private static boolean ignoreFunction(CheckContext ctx, FunctionDeclarationTree tree) {
-    boolean interestingKind = ctx.parent() instanceof TopLevelTreeImpl || isPrivateMethod(tree);
-    return !interestingKind || tree.body() == null;
+  private static boolean shouldBeIgnored(CheckContext ctx, FunctionDeclarationTree tree) {
+    boolean validFunctionForRule = ctx.parent() instanceof TopLevelTreeImpl || isPrivateMethod(tree);
+    return !validFunctionForRule || tree.body() == null;
   }
 
 }
