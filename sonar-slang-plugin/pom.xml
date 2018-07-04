@@ -70,6 +70,7 @@
 
   <build>
     <plugins>
+
       <plugin>
         <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
@@ -77,10 +78,75 @@
           <!-- This value shows up in the SonarQube GUI -->
           <pluginName>SonarSlang</pluginName>
           <pluginClass>com.sonarsource.slang.kotlin.SlangPlugin</pluginClass>
+          <skipDependenciesPackaging>true</skipDependenciesPackaging>
           <sonarLintSupported>true</sonarLintSupported>
           <addMavenDescriptor>false</addMavenDescriptor>
           <sonarQubeMinVersion>6.7</sonarQubeMinVersion>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <shadedArtifactAttached>false</shadedArtifactAttached>
+              <minimizeJar>true</minimizeJar>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>kotlin/comparisons/**</exclude>
+                    <exclude>kotlin/scripts/**</exclude>
+                    <exclude>org/jetbrains/kotlin/org/jdom/**</exclude>
+                    <exclude>org/jetbrains/kotlin/com/intellij/icons/**</exclude>
+                    <exclude>org/jetbrains/kotlin/com/intellij/lang/jvm/**</exclude>
+                    <exclude>org/jetbrains/kotlin/com/intellij/ui/**</exclude>
+                    <exclude>org/jetbrains/kotlin/com/intellij/util/io/**</exclude>
+                    <exclude>org/jetbrains/kotlin/com/intellij/util/ui/**</exclude>
+                    <exclude>org/jetbrains/kotlin/com/intellij/util/xmlb/**</exclude>
+                    <exclude>org/jetbrains/kotlin/builtins/**</exclude>
+                    <exclude>org/jetbrains/kotlin/descriptors/**</exclude>
+                    <exclude>org/jetbrains/kotlin/renderer/**</exclude>
+                    <exclude>org/jetbrains/kotlin/resolve/**</exclude>
+                    <exclude>org/jetbrains/kotlin/storage/**</exclude>
+                    <exclude>org/jetbrains/kotlin/types/**</exclude>
+                    <exclude>org/jetbrains/org/**</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-plugin-size</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <phase>verify</phase>
+            <configuration>
+              <rules>
+                <requireFilesSize>
+                  <minsize>5000000</minsize>
+                  <maxsize>6000000</maxsize>
+                  <files>
+                    <file>${project.build.directory}/${project.build.finalName}.jar</file>
+                  </files>
+                </requireFilesSize>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

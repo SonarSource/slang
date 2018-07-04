@@ -26,28 +26,48 @@ import com.sonarsource.slang.impl.TreeMetaDataProvider;
 import com.sonarsource.slang.kotlin.utils.KotlinTextRanges;
 import java.util.Arrays;
 import java.util.stream.Stream;
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
-import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector;
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.common.script.CliScriptDefinitionProvider;
+import org.jetbrains.kotlin.com.intellij.core.CoreASTFactory;
+import org.jetbrains.kotlin.com.intellij.core.CoreFileTypeRegistry;
+import org.jetbrains.kotlin.com.intellij.lang.Language;
+import org.jetbrains.kotlin.com.intellij.lang.LanguageASTFactory;
+import org.jetbrains.kotlin.com.intellij.lang.LanguageParserDefinitions;
+import org.jetbrains.kotlin.com.intellij.lang.MetaLanguage;
+import org.jetbrains.kotlin.com.intellij.lang.PsiBuilderFactory;
+import org.jetbrains.kotlin.com.intellij.lang.impl.PsiBuilderFactoryImpl;
+import org.jetbrains.kotlin.com.intellij.mock.MockApplication;
+import org.jetbrains.kotlin.com.intellij.mock.MockFileDocumentManagerImpl;
+import org.jetbrains.kotlin.com.intellij.mock.MockProject;
+import org.jetbrains.kotlin.com.intellij.openapi.Disposable;
+import org.jetbrains.kotlin.com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
-import org.jetbrains.kotlin.com.intellij.openapi.project.Project;
+import org.jetbrains.kotlin.com.intellij.openapi.editor.impl.DocumentImpl;
+import org.jetbrains.kotlin.com.intellij.openapi.extensions.ExtensionPoint;
+import org.jetbrains.kotlin.com.intellij.openapi.extensions.Extensions;
+import org.jetbrains.kotlin.com.intellij.openapi.fileEditor.FileDocumentManager;
+import org.jetbrains.kotlin.com.intellij.openapi.fileTypes.FileTypeRegistry;
 import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer;
+import org.jetbrains.kotlin.com.intellij.openapi.util.StaticGetter;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.com.intellij.psi.PsiErrorElement;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.com.intellij.psi.PsiManager;
+import org.jetbrains.kotlin.com.intellij.psi.impl.PsiFileFactoryImpl;
+import org.jetbrains.kotlin.com.intellij.psi.impl.PsiManagerImpl;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
+import org.jetbrains.kotlin.script.ScriptDefinitionProvider;
 
 public class KotlinConverter implements ASTConverter {
-  private static final PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(createKotlinCoreEnvironment());
+  private static final PsiFileFactory psiFileFactory = psiFileFactory();
 
   @Override
   public Tree parse(String content) {
     PsiFile psiFile = psiFileFactory.createFileFromText(KotlinLanguage.INSTANCE, content);
     Document document;
+
     try {
       document = psiFile.getViewProvider().getDocument();
     } catch (AssertionError e) {
@@ -78,15 +98,36 @@ public class KotlinConverter implements ASTConverter {
 
   private static Stream<PsiElement> descendants(PsiElement element) {
     return Arrays.stream(element.getChildren()).flatMap(
-      tree -> Stream.concat(Stream.of(tree), descendants(tree))
-    );
+      tree -> Stream.concat(Stream.of(tree), descendants(tree)));
   }
 
-  private static Project createKotlinCoreEnvironment() {
-    System.setProperty("idea.io.use.fallback", "true");
-    CompilerConfiguration configuration = new CompilerConfiguration();
-    configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, new PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false));
-    return KotlinCoreEnvironment.createForProduction(Disposer.newDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES).getProject();
+  private static PsiFileFactory psiFileFactory() {
+    CoreFileTypeRegistry fileTypeRegistry = new CoreFileTypeRegistry();
+    fileTypeRegistry.registerFileType(KotlinFileType.INSTANCE, "kt");
+    FileTypeRegistry.ourInstanceGetter = new StaticGetter<>(fileTypeRegistry);
+
+    Disposable disposable = Disposer.newDisposable();
+
+    MockApplication application = new MockApplication(disposable);
+    FileDocumentManager fileDocMgr = new MockFileDocumentManagerImpl(DocumentImpl::new, null);
+    application.registerService(FileDocumentManager.class, fileDocMgr);
+    PsiBuilderFactoryImpl psiBuilderFactory = new PsiBuilderFactoryImpl();
+    application.registerService(PsiBuilderFactory.class, psiBuilderFactory);
+    ApplicationManager.setApplication(application, FileTypeRegistry.ourInstanceGetter, disposable);
+
+    Extensions.getArea(null).registerExtensionPoint(MetaLanguage.EP_NAME.getName(), MetaLanguage.class.getName(), ExtensionPoint.Kind.INTERFACE);
+    Extensions.registerAreaClass("IDEA_PROJECT", null);
+
+    MockProject project = new MockProject(null, disposable);
+    project.registerService(ScriptDefinitionProvider.class, CliScriptDefinitionProvider.class);
+
+    LanguageParserDefinitions.INSTANCE.addExplicitExtension(KotlinLanguage.INSTANCE, new KotlinParserDefinition());
+    CoreASTFactory astFactory = new CoreASTFactory();
+    LanguageASTFactory.INSTANCE.addExplicitExtension(KotlinLanguage.INSTANCE, astFactory);
+    LanguageASTFactory.INSTANCE.addExplicitExtension(Language.ANY, astFactory);
+
+    PsiManager psiManager = new PsiManagerImpl(project, fileDocMgr, psiBuilderFactory, null, null, null);
+    return new PsiFileFactoryImpl(psiManager);
   }
 
 }
