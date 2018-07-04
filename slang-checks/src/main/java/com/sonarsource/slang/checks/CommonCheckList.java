@@ -56,6 +56,7 @@ public class CommonCheckList {
       StringLiteralDuplicatedCheck.class,
       TabsCheck.class,
       TodoCommentCheck.class,
+      TooComplexExpressionCheck.class,
       TooDeeplyNestedStatementsCheck.class,
       TooLongFunctionCheck.class,
       TooLongLineCheck.class,

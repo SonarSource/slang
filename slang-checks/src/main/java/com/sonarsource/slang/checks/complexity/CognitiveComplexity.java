@@ -36,14 +36,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.CONDITIONAL_AND;
-import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.CONDITIONAL_OR;
+import static com.sonarsource.slang.checks.utils.ExpressionUtils.isLogicalBinaryExpression;
 
 public class CognitiveComplexity {
 
   private List<Increment> increments = new ArrayList<>();
 
-  public CognitiveComplexity (Tree root) {
+  public CognitiveComplexity(Tree root) {
     CognitiveComplexityVisitor visitor = new CognitiveComplexityVisitor();
     visitor.scan(new TreeContext(), root);
   }
@@ -120,14 +119,6 @@ public class CognitiveComplexity {
           alreadyConsideredOperators.add(operator);
         }
       });
-    }
-
-    private boolean isLogicalBinaryExpression(Tree tree) {
-      if (tree instanceof BinaryExpressionTree) {
-        BinaryExpressionTree.Operator operator = ((BinaryExpressionTree) tree).operator();
-        return operator == CONDITIONAL_AND || operator == CONDITIONAL_OR;
-      }
-      return false;
     }
 
     // TODO parentheses should probably be skipped
