@@ -131,11 +131,6 @@ public class KotlinConverterTest {
   }
 
   @Test
-  public void testEq() {
-    assertTree(kotlinStatement("a == b")).isEquivalentTo(kotlinStatement("a == b;;"));
-  }
-
-  @Test
   public void testNullParameterNames() {
     // In the following case, the '(a, b)' part is not a parameter with a name, but a 'KtDestructuringDeclaration'
     assertTree(kotlinStatement("for ((a, b) in container) {a}"))
