@@ -72,7 +72,6 @@ public class SlangPlugin implements Plugin {
           .category(KOTLIN_CATEGORY)
           .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
           .onQualifiers(Qualifiers.PROJECT)
-          .defaultValue("")
           .multiValues(true)
           .build());
     }

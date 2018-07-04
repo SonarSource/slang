@@ -120,7 +120,9 @@ public class DetektSensorTest {
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).startsWith("No issues information will be saved as the report file '");
+    assertThat(logTester.logs(LoggerLevel.ERROR).get(0))
+      .startsWith("No issues information will be saved as the report file '")
+      .endsWith("invalid-path.txt' can't be read.");
   }
 
   @Test
@@ -130,7 +132,9 @@ public class DetektSensorTest {
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).startsWith("No issues information will be saved as the report file '");
+    assertThat(logTester.logs(LoggerLevel.ERROR).get(0))
+      .startsWith("No issues information will be saved as the report file '")
+      .endsWith("not-checkstyle-file.xml' can't be read.");
   }
 
   @Test
@@ -140,7 +144,9 @@ public class DetektSensorTest {
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).startsWith("No issues information will be saved as the report file '");
+    assertThat(logTester.logs(LoggerLevel.ERROR).get(0))
+      .startsWith("No issues information will be saved as the report file '")
+      .endsWith("invalid-file.xml' can't be read.");
   }
 
   @Test
@@ -159,6 +165,8 @@ public class DetektSensorTest {
     assertThat(first.primaryLocation().textRange()).isNull();
 
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.WARN)).hasSize(1);
+    assertThat(logTester.logs(LoggerLevel.WARN).get(0)).isEqualTo("No input file found for not-existing-file.kt. No detekt issues will be imported on this file.");
   }
 
   static List<ExternalIssue> executeSensor(Sensor sensor, SensorContextTester context) {
