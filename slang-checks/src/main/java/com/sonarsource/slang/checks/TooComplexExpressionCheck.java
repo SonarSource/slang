@@ -26,14 +26,13 @@ import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.checks.api.CheckContext;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
-import com.sonarsource.slang.visitors.TreeContext;
-import com.sonarsource.slang.visitors.TreeVisitor;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
+
+import static com.sonarsource.slang.checks.utils.ExpressionUtils.isLogicalBinaryExpression;
+import static com.sonarsource.slang.checks.utils.ExpressionUtils.skipParentheses;
 
 @Rule(key = "S1067")
 public class TooComplexExpressionCheck implements SlangCheck {
@@ -75,17 +74,19 @@ public class TooComplexExpressionCheck implements SlangCheck {
     return true;
   }
 
-  private static int computeExpressionComplexity(BinaryExpressionTree tree) {
-    List<Tree> complexityTrees = new ArrayList<>();
-    TreeVisitor<TreeContext> binaryExpressionVisitor = new TreeVisitor<>();
-    binaryExpressionVisitor.register(BinaryExpressionTree.class, (ctx, binaryTree) -> {
-      if (binaryTree.operator() == BinaryExpressionTree.Operator.CONDITIONAL_AND ||
-        binaryTree.operator() == BinaryExpressionTree.Operator.CONDITIONAL_OR) {
-        complexityTrees.add(binaryTree);
-      }
-    });
-    binaryExpressionVisitor.scan(new TreeContext(), tree);
-    return complexityTrees.size();
+  private static int computeExpressionComplexity(Tree originalTree) {
+    Tree tree = skipParentheses(originalTree);
+    if (tree instanceof BinaryExpressionTree) {
+      int complexity = isLogicalBinaryExpression(tree) ? 1 : 0;
+      BinaryExpressionTree binary = (BinaryExpressionTree) tree;
+      return complexity
+        + computeExpressionComplexity(binary.leftOperand())
+        + computeExpressionComplexity(binary.rightOperand());
+    } else if (tree instanceof UnaryExpressionTree) {
+      return computeExpressionComplexity(((UnaryExpressionTree) tree).operand());
+    } else {
+      return 0;
+    }
   }
 
 }

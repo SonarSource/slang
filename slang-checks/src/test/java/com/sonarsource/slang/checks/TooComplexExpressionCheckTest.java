@@ -24,8 +24,15 @@ import org.junit.Test;
 public class TooComplexExpressionCheckTest {
 
   @Test
-  public void test() {
-    Verifier.verify("TooComplexExpression.slang", new TooComplexExpressionCheck());
+  public void test_max_3() {
+    Verifier.verify("TooComplexExpression_3.slang", new TooComplexExpressionCheck());
+  }
+
+  @Test
+  public void test_max_2() {
+    TooComplexExpressionCheck check = new TooComplexExpressionCheck();
+    check.max = 2;
+    Verifier.verify("TooComplexExpression_2.slang", check);
   }
 
 }

@@ -27,6 +27,9 @@ import com.sonarsource.slang.api.UnaryExpressionTree;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.CONDITIONAL_AND;
+import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.CONDITIONAL_OR;
+
 public class ExpressionUtils {
   private static final String TRUE_LITERAL = "true";
   private static final String FALSE_LITERAL = "false";
@@ -57,6 +60,10 @@ public class ExpressionUtils {
 
   public static boolean isBinaryOperation(Tree tree, BinaryExpressionTree.Operator operator) {
     return tree instanceof BinaryExpressionTree && ((BinaryExpressionTree) tree).operator() == operator;
+  }
+
+  public static boolean isLogicalBinaryExpression(Tree tree) {
+    return isBinaryOperation(tree, CONDITIONAL_AND) || isBinaryOperation(tree, CONDITIONAL_OR);
   }
 
   public static Tree skipParentheses(Tree tree) {

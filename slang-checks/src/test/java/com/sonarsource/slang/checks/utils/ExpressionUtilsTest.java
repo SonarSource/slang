@@ -23,16 +23,20 @@ import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import com.sonarsource.slang.impl.LiteralTreeImpl;
+import com.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
 import com.sonarsource.slang.impl.UnaryExpressionTreeImpl;
 import org.junit.Test;
 
 import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.CONDITIONAL_AND;
 import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.CONDITIONAL_OR;
+import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.EQUAL_TO;
 import static com.sonarsource.slang.checks.utils.ExpressionUtils.isBinaryOperation;
 import static com.sonarsource.slang.checks.utils.ExpressionUtils.isBooleanLiteral;
 import static com.sonarsource.slang.checks.utils.ExpressionUtils.isFalseValueLiteral;
+import static com.sonarsource.slang.checks.utils.ExpressionUtils.isLogicalBinaryExpression;
 import static com.sonarsource.slang.checks.utils.ExpressionUtils.isNegation;
 import static com.sonarsource.slang.checks.utils.ExpressionUtils.isTrueValueLiteral;
+import static com.sonarsource.slang.checks.utils.ExpressionUtils.skipParentheses;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExpressionUtilsTest {
@@ -82,4 +86,27 @@ public class ExpressionUtilsTest {
     assertThat(isBinaryOperation(binaryAnd, CONDITIONAL_AND)).isTrue();
     assertThat(isBinaryOperation(binaryAnd, CONDITIONAL_OR)).isFalse();
   }
+
+  @Test
+  public void test_logical_binary_operation() {
+    Tree binaryAnd = new BinaryExpressionTreeImpl(null, CONDITIONAL_AND, null, TRUE_LITERAL, FALSE_LITERAL);
+    Tree binaryOr = new BinaryExpressionTreeImpl(null, CONDITIONAL_OR, null, TRUE_LITERAL, FALSE_LITERAL);
+    Tree binaryEqual = new BinaryExpressionTreeImpl(null, EQUAL_TO, null, TRUE_LITERAL, FALSE_LITERAL);
+
+    assertThat(isLogicalBinaryExpression(binaryAnd)).isTrue();
+    assertThat(isLogicalBinaryExpression(binaryOr)).isTrue();
+    assertThat(isLogicalBinaryExpression(binaryEqual)).isFalse();
+    assertThat(isLogicalBinaryExpression(TRUE_NEGATED)).isFalse();
+  }
+
+  @Test
+  public void test_skip_parentheses() {
+    Tree parenthesizedExpression1 = new ParenthesizedExpressionTreeImpl(null, TRUE_LITERAL, null, null);
+    Tree parenthesizedExpression2 = new ParenthesizedExpressionTreeImpl(null, parenthesizedExpression1, null, null);
+
+    assertThat(skipParentheses(parenthesizedExpression1)).isEqualTo(TRUE_LITERAL);
+    assertThat(skipParentheses(parenthesizedExpression2)).isEqualTo(TRUE_LITERAL);
+    assertThat(skipParentheses(TRUE_LITERAL)).isEqualTo(TRUE_LITERAL);
+  }
+
 }
