@@ -21,7 +21,7 @@ package com.sonarsource.slang;
 
 import java.util.List;
 import org.junit.Test;
-import org.sonarqube.ws.Issues;
+import org.sonar.wsclient.issue.Issue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,10 +52,10 @@ public class MeasuresTest extends TestBase {
     assertThat(getMeasure("file1.kt", "comment_lines_data").getValue()).isEqualTo("1=1;4=1;5=1;8=1;9=1;10=1;11=1;12=1");
     assertThat(getMeasure("file2.kt", "comment_lines_data").getValue()).isEqualTo("2=1;8=1;9=1");
 
-    List<Issues.Issue> issuesForRule = getIssuesForRule("kotlin:S100");
+    List<Issue> issuesForRule = getIssuesForRule("kotlin:S100");
     String file2Component = PROJECT_KEY + ":file2.kt";
-    assertThat(issuesForRule).extracting(Issues.Issue::getLine).containsExactly(2, 7);
-    assertThat(issuesForRule).extracting(Issues.Issue::getComponent).containsExactly(file2Component, file2Component);
+    assertThat(issuesForRule).extracting(Issue::line).containsExactly(2, 7);
+    assertThat(issuesForRule).extracting(Issue::componentKey).containsExactly(file2Component, file2Component);
   }
 
 }
