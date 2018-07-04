@@ -126,6 +126,7 @@ public class SLangConverter implements ASTConverter {
     }
 
     SLangParser parser = new SLangParser(antlrTokens);
+    parser.setErrorHandler(new ErrorStrategy());
 
     SLangParseTreeVisitor slangVisitor = new SLangParseTreeVisitor(comments, tokens);
     return slangVisitor.visit(parser.slangFile());
@@ -537,8 +538,7 @@ public class SLangConverter implements ASTConverter {
     private static com.sonarsource.slang.api.Token operatorToken(ParserRuleContext parserRuleContext) {
       TextRange textRange = TextRanges.merge(Arrays.asList(
         getSlangTextRange(parserRuleContext.start),
-        getSlangTextRange(parserRuleContext.stop)
-      ));
+        getSlangTextRange(parserRuleContext.stop)));
       return new TokenImpl(textRange, parserRuleContext.getText(), Type.OTHER);
     }
 

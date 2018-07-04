@@ -44,7 +44,9 @@ import com.sonarsource.slang.parser.SLangConverter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static com.sonarsource.slang.api.BinaryExpressionTree.Operator.GREATER_THAN;
 import static com.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
@@ -61,6 +63,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SLangConverterTest {
 
+  @Rule
+  public ExpectedException expected = ExpectedException.none();
   private SLangConverter converter = new SLangConverter();
 
   @Test
@@ -493,6 +497,20 @@ public class SLangConverterTest {
 
     assertThat(functionInvocationNoArgument.descendants()
       .anyMatch(e -> e instanceof IdentifierTree && ((IdentifierTree) e).name().equals("function"))).isTrue();
+  }
+
+  @Test
+  public void parse_failure_1() {
+    expected.expect(IllegalStateException.class);
+    expected.expectMessage("missing ';' before '<EOF>' at position 1:5");
+    converter.parse("x + 1");
+  }
+
+  @Test
+  public void parse_failure_2() {
+    expected.expect(IllegalStateException.class);
+    expected.expectMessage("Unexpected parsing error occurred. Last found valid token: 'private' at position 1:0");
+    converter.parse("private fun fun foo() {}");
   }
 
   private BinaryExpressionTree parseBinary(String code) {
