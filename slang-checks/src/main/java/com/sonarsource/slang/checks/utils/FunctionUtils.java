@@ -26,6 +26,9 @@ import static com.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
 
 public class FunctionUtils {
 
+  private FunctionUtils() {
+  }
+
   public static boolean isPrivateMethod(FunctionDeclarationTree method) {
     return method.modifiers().stream()
       .filter(ModifierTree.class::isInstance)
