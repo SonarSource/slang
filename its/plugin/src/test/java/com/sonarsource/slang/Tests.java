@@ -24,7 +24,6 @@ import com.sonar.orchestrator.locator.FileLocation;
 import com.sonar.orchestrator.locator.Location;
 import com.sonar.orchestrator.locator.MavenLocation;
 import java.io.File;
-import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 import org.junit.ClassRule;
 import org.junit.runner.RunWith;
@@ -39,11 +38,12 @@ import org.junit.runners.Suite;
 public class Tests {
 
   private static final String SQ_VERSION_PROPERTY = "sonar.runtimeVersion";
+  private static final String DEFAULT_SQ_VERSION = "7.2";
 
   @ClassRule
   public static final Orchestrator ORCHESTRATOR = Orchestrator.builderEnv()
     .addPlugin(getSlangPluginLocation())
-    .setSonarVersion(Objects.requireNonNull(System.getProperty(SQ_VERSION_PROPERTY), "Please set system property " + SQ_VERSION_PROPERTY))
+    .setSonarVersion(System.getProperty(SQ_VERSION_PROPERTY, DEFAULT_SQ_VERSION))
     .restoreProfileAtStartup(FileLocation.of("src/test/resources/nosonar.xml"))
     .restoreProfileAtStartup(FileLocation.of("src/test/resources/norule.xml"))
     .build();

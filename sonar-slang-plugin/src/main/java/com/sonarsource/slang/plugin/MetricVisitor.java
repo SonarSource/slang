@@ -49,6 +49,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
   private int numberOfFunctions;
   private int numberOfClasses;
   private int complexity;
+  private int statements;
   private int cognitiveComplexity;
 
   public MetricVisitor(FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter) {
@@ -60,6 +61,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
         comment -> addCommentMetrics(comment, commentLines, nosonarLines));
       linesOfCode.addAll(tree.metaData().linesOfCode());
       complexity = new CyclomaticComplexityVisitor().complexityTrees(tree).size();
+      statements = new StatementsVisitor().statements(tree);
       cognitiveComplexity = new CognitiveComplexity(tree).value();
     });
     register(FunctionDeclarationTree.class, (ctx, tree) -> {
@@ -88,6 +90,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
     saveMetric(ctx, CoreMetrics.FUNCTIONS, numberOfFunctions());
     saveMetric(ctx, CoreMetrics.CLASSES, numberOfClasses());
     saveMetric(ctx, CoreMetrics.COMPLEXITY, complexity);
+    saveMetric(ctx, CoreMetrics.STATEMENTS, statements);
     saveMetric(ctx, CoreMetrics.COGNITIVE_COMPLEXITY, cognitiveComplexity);
 
     FileLinesContext fileLinesContext = fileLinesContextFactory.createFor(ctx.inputFile);
