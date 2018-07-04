@@ -57,6 +57,12 @@ public class KotlinConverter implements ASTConverter {
     CommentAndTokenVisitor commentsAndTokens = new CommentAndTokenVisitor(document);
     psiFile.accept(commentsAndTokens);
     TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(commentsAndTokens.getAllComments(), commentsAndTokens.getTokens());
+    checkParsingErrors(psiFile, document, metaDataProvider);
+    KotlinTreeVisitor kotlinTreeVisitor = new KotlinTreeVisitor(psiFile, metaDataProvider);
+    return kotlinTreeVisitor.getSLangAST();
+  }
+
+  private void checkParsingErrors(PsiFile psiFile, Document document, TreeMetaDataProvider metaDataProvider) {
     descendants(psiFile)
       .filter(element -> element instanceof PsiErrorElement)
       .findFirst()
@@ -64,8 +70,6 @@ public class KotlinConverter implements ASTConverter {
         throw new ParseException("Cannot convert file due to syntactic errors",
           getErrorLocation(document, metaDataProvider, element));
       });
-    KotlinTreeVisitor kotlinTreeVisitor = new KotlinTreeVisitor(psiFile, metaDataProvider);
-    return kotlinTreeVisitor.getSLangAST();
   }
 
   private static TextPointer getErrorLocation(Document document, TreeMetaDataProvider metaDataProvider, PsiElement element) {

@@ -255,8 +255,12 @@ public class KotlinConverterTest {
     assertThat(noModifierFunction.formalParameters().get(0)).isInstanceOf(NativeTree.class);
     assertTree(noModifierFunction.body()).isBlock();
 
-    Tree emptyLambdaFunction = kotlinStatement("{ }");
-    assertThat(emptyLambdaFunction).isInstanceOf(NativeTree.class);
+    FunctionDeclarationTree emptyLambdaFunction = (FunctionDeclarationTree) kotlinStatement("{ }").children().get(0);
+    assertTree(emptyLambdaFunction.name()).isNull();
+    assertThat(emptyLambdaFunction.modifiers()).isEmpty();
+    assertTree(emptyLambdaFunction.returnType()).isNull();
+    assertThat(emptyLambdaFunction.formalParameters()).isEmpty();
+    assertThat(emptyLambdaFunction.body()).isNull();
 
     ParameterTree aIntParam1 = (ParameterTree) functionDeclarationTree.formalParameters().get(0);
     Tree bStringParam = functionDeclarationTree.formalParameters().get(1);
