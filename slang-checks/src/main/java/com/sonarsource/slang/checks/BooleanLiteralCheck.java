@@ -63,6 +63,7 @@ public class BooleanLiteralCheck implements SlangCheck {
 
   private static Optional<Tree> getBooleanLiteral(Tree... trees) {
     return Arrays.stream(trees)
+      .map(ExpressionUtils::skipParentheses)
       .filter(ExpressionUtils::isBooleanLiteral)
       .findFirst();
   }

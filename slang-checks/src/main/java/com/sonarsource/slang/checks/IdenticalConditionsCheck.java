@@ -28,12 +28,15 @@ import com.sonarsource.slang.checks.api.CheckContext;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.checks.api.SlangCheck;
+import com.sonarsource.slang.checks.utils.ExpressionUtils;
 import com.sonarsource.slang.utils.SyntacticEquivalence;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.sonar.check.Rule;
+
+import static com.sonarsource.slang.checks.utils.ExpressionUtils.skipParentheses;
 
 @Rule(key = "S1862")
 public class IdenticalConditionsCheck implements SlangCheck {
@@ -52,11 +55,12 @@ public class IdenticalConditionsCheck implements SlangCheck {
     return matchTree.cases().stream()
       .map(MatchCaseTree::expression)
       .filter(Objects::nonNull)
+      .map(ExpressionUtils::skipParentheses)
       .collect(Collectors.toList());
   }
 
   private static List<Tree> collectConditions(IfTree ifTree, List<Tree> list) {
-    list.add(ifTree.condition());
+    list.add(skipParentheses(ifTree.condition()));
     Tree elseBranch = ifTree.elseBranch();
     if (elseBranch instanceof IfTree) {
       return collectConditions((IfTree) elseBranch, list);
