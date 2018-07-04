@@ -37,6 +37,7 @@ import static com.sonarsource.slang.checks.utils.ExpressionUtils.isBooleanLitera
 import static com.sonarsource.slang.checks.utils.ExpressionUtils.isFalseValueLiteral;
 import static com.sonarsource.slang.checks.utils.ExpressionUtils.isNegation;
 import static com.sonarsource.slang.checks.utils.ExpressionUtils.isTrueValueLiteral;
+import static com.sonarsource.slang.checks.utils.ExpressionUtils.skipParentheses;
 
 @Rule(key = "S1145")
 public class IfConditionalAlwaysTrueOrFalseCheck implements SlangCheck {
@@ -54,7 +55,8 @@ public class IfConditionalAlwaysTrueOrFalseCheck implements SlangCheck {
     });
   }
 
-  private static boolean isAlwaysTrueOrFalse(Tree condition) {
+  private static boolean isAlwaysTrueOrFalse(Tree originalCondition) {
+    Tree condition = skipParentheses(originalCondition);
     return isBooleanLiteral(condition)
       || isTrueValueLiteral(condition)
       || isFalseValueLiteral(condition)
@@ -65,6 +67,7 @@ public class IfConditionalAlwaysTrueOrFalseCheck implements SlangCheck {
   private static boolean isSimpleExpressionWithLiteral(Tree condition, Operator operator, Predicate<? super Tree> hasLiteralValue) {
     boolean simpleExpression = isBinaryOperation(condition, operator)
       && condition.descendants()
+        .map(ExpressionUtils::skipParentheses)
         .allMatch(tree -> tree instanceof IdentifierTree
           || tree instanceof LiteralTree
           || isNegation(tree)

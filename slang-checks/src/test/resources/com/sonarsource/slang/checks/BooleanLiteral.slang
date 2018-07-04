@@ -12,6 +12,7 @@ false != x;                                  // Noncompliant {{Remove the unnece
 !false;                                      // Noncompliant {{Remove the unnecessary Boolean literal.}}
 false && foo;                                // Noncompliant {{Remove the unnecessary Boolean literal.}}
 x || true;                                   // Noncompliant {{Remove the unnecessary Boolean literal.}}
+x || ((true));                                   // Noncompliant {{Remove the unnecessary Boolean literal.}}
 
 !x;                                          // OK
 x || foo;                                    // OK

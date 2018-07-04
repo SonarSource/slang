@@ -25,6 +25,7 @@ import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import org.sonar.check.Rule;
 
+import static com.sonarsource.slang.checks.utils.ExpressionUtils.skipParentheses;
 import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 
 @Rule(key = "S1764")
@@ -35,7 +36,7 @@ public class IdenticalBinaryOperandCheck implements SlangCheck {
     init.register(BinaryExpressionTree.class, (ctx, tree) -> {
       if (tree.operator() != BinaryExpressionTree.Operator.PLUS
         && tree.operator() != BinaryExpressionTree.Operator.TIMES
-        && areEquivalent(tree.leftOperand(), tree.rightOperand())) {
+        && areEquivalent(skipParentheses(tree.leftOperand()), skipParentheses(tree.rightOperand()))) {
         ctx.reportIssue(
           tree.rightOperand(),
           "Correct one of the identical sub-expressions on both sides this operator",

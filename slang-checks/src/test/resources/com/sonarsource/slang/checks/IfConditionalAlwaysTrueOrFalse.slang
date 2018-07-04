@@ -16,6 +16,9 @@ if (condition) {
 if (true) // Noncompliant
   return 1;
 
+if (((true))) // Noncompliant
+  return 1;
+
 if (!true) // Noncompliant
   return 1
 else if (cond && false) { // Noncompliant
@@ -25,6 +28,8 @@ else if (cond && false) { // Noncompliant
 else if (cond1 || cond2 || true) // Noncompliant
   return 1
 else if (cond && cond2 && !true && cond3) { // Noncompliant
+  return 1
+} else if (cond && !(cond2 && (!true && cond3))) { // Noncompliant
   return 1
 };
 

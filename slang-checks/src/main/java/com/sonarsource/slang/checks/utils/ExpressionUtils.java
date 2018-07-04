@@ -21,6 +21,7 @@ package com.sonarsource.slang.checks.utils;
 
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.LiteralTree;
+import com.sonarsource.slang.api.ParenthesizedExpressionTree;
 import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import java.util.Arrays;
@@ -38,12 +39,14 @@ public class ExpressionUtils {
     return tree instanceof LiteralTree && BOOLEAN_LITERALS.contains(((LiteralTree) tree).value());
   }
 
-  public static boolean isFalseValueLiteral(Tree tree) {
+  public static boolean isFalseValueLiteral(Tree originalTree) {
+    Tree tree = skipParentheses(originalTree);
     return (tree instanceof LiteralTree && FALSE_LITERAL.equals(((LiteralTree) tree).value()))
       || (isNegation(tree) && isTrueValueLiteral(((UnaryExpressionTree) tree).operand()));
   }
 
-  public static boolean isTrueValueLiteral(Tree tree) {
+  public static boolean isTrueValueLiteral(Tree originalTree) {
+    Tree tree = skipParentheses(originalTree);
     return (tree instanceof LiteralTree && TRUE_LITERAL.equals(((LiteralTree) tree).value()))
       || (isNegation(tree) && isFalseValueLiteral(((UnaryExpressionTree) tree).operand()));
   }
@@ -55,4 +58,13 @@ public class ExpressionUtils {
   public static boolean isBinaryOperation(Tree tree, BinaryExpressionTree.Operator operator) {
     return tree instanceof BinaryExpressionTree && ((BinaryExpressionTree) tree).operator() == operator;
   }
+
+  public static Tree skipParentheses(Tree tree) {
+    Tree result = tree;
+    while (result instanceof ParenthesizedExpressionTree) {
+      result = ((ParenthesizedExpressionTree) result).expression();
+    }
+    return result;
+  }
+
 }
