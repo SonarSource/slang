@@ -110,10 +110,16 @@ class DetektXmlReportReader {
     String source = getAttributeValue(element, SOURCE);
     String line = getAttributeValue(element, LINE);
     String message = getAttributeValue(element, MESSAGE);
-    if (source.startsWith(DETEKT_PREFIX) && !message.isEmpty()) {
-      RuleKey ruleKey = RuleKey.of(DetektSensor.LINTER_KEY, source.substring(DETEKT_PREFIX.length()));
-      saveIssue(ruleKey, line, message);
+    if (!source.startsWith(DETEKT_PREFIX)) {
+      LOG.debug("Unexpected rule key without '{}' suffix: '{}'", DETEKT_PREFIX, source);
+      return;
     }
+    if (message.isEmpty()) {
+      LOG.debug("Unexpected error without message for rule: '{}'", source);
+      return;
+    }
+    RuleKey ruleKey = RuleKey.of(DetektSensor.LINTER_KEY, source.substring(DETEKT_PREFIX.length()));
+    saveIssue(ruleKey, line, message);
   }
 
   private void saveIssue(RuleKey ruleKey, String line, String message) {

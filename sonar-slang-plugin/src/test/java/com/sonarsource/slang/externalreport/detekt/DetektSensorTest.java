@@ -165,8 +165,13 @@ public class DetektSensorTest {
     assertThat(first.primaryLocation().textRange()).isNull();
 
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.WARN)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.WARN).get(0)).isEqualTo("No input file found for not-existing-file.kt. No detekt issues will be imported on this file.");
+    assertThat(logTester.logs(LoggerLevel.WARN)).containsExactlyInAnyOrder(
+      "No input file found for not-existing-file.kt. No detekt issues will be imported on this file."
+    );
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).containsExactlyInAnyOrder(
+      "Unexpected error without message for rule: 'detekt.EmptyIfBlock'",
+      "Unexpected rule key without 'detekt.' suffix: 'invalid-format'"
+    );
   }
 
   static List<ExternalIssue> executeSensor(Sensor sensor, SensorContextTester context) {
