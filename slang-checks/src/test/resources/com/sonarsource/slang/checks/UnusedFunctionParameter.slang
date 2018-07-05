@@ -22,5 +22,22 @@ void fun fooBar(int a, b) {   // OK
   match (b) { }
 }
 
+id fun fooBar(int id) {} // OK - issue is not raised here as 'id' is found in method header.
+                         // This is done to avoid FP in languages that can use parameters in method headers (ex: in initializers for kotlin)
+
+class A {
+
+  void fun fooBar() {}
+
+  void fun fooBar(int a, int b) { // OK - method is not private and could potentially be overridden
+    x = a;
+  }
+
+  private void fun fooBar(int a, int b) { // Noncompliant
+    x = a;
+  }
+
+}
+
 void fun main(int a) {} // OK - "main" functions are ignored
 int fun Main(int a) {} // OK - "main" functions are ignored

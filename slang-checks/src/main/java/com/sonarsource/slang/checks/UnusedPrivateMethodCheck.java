@@ -22,9 +22,9 @@ package com.sonarsource.slang.checks;
 import com.sonarsource.slang.api.ClassDeclarationTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
-import com.sonarsource.slang.api.ModifierTree;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
+import com.sonarsource.slang.checks.utils.FunctionUtils;
 import com.sonarsource.slang.visitors.TreeContext;
 import com.sonarsource.slang.visitors.TreeVisitor;
 import java.util.Arrays;
@@ -33,8 +33,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.sonar.check.Rule;
-
-import static com.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
 
 @Rule(key = "S1144")
 public class UnusedPrivateMethodCheck implements SlangCheck {
@@ -79,7 +77,7 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
         .collect(Collectors.toSet());
 
       classMethods.stream()
-        .filter(UnusedPrivateMethodCheck::isPrivateMethod)
+        .filter(FunctionUtils::isPrivateMethod)
         .forEach(tree -> {
           IdentifierTree identifier = tree.name();
           if (isUnusedMethod(identifier, usedIdentifierNames)) {
@@ -96,13 +94,6 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
     return identifier != null
       && !usedIdentifierNames.contains(identifier.name())
       && !IGNORED_METHODS.contains(identifier.name());
-  }
-
-  private static boolean isPrivateMethod(FunctionDeclarationTree method) {
-    return method.modifiers().stream()
-      .filter(ModifierTree.class::isInstance)
-      .map(ModifierTree.class::cast)
-      .anyMatch(modifier -> modifier.kind() == PRIVATE);
   }
 
 }
