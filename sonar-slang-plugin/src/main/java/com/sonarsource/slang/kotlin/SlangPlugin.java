@@ -82,7 +82,7 @@ public class SlangPlugin implements Plugin {
           .build(),
         PropertyDefinition.builder(AndroidLintSensor.REPORT_PROPERTY_KEY)
           .name("Android Lint Report Files")
-          .description("Paths (absolute or relative) to xml files with android lint issues.")
+          .description("Paths (absolute or relative) to xml files with Android Lint issues.")
           .category(EXTERNAL_ANALYZERS_CATEGORY)
           .subCategory(ANDROID_SUBCATEGORY)
           .onQualifiers(Qualifiers.PROJECT)

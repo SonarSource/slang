@@ -61,7 +61,7 @@ public class DetektSensor implements Sensor {
     try (InputStream in = new FileInputStream(reportPath)) {
       LOG.info("Importing {}", reportPath);
       DetektXmlReportReader.read(context, in);
-    } catch (IOException | XMLStreamException e) {
+    } catch (IOException | XMLStreamException | RuntimeException e) {
       LOG.error("No issues information will be saved as the report file '{}' can't be read.", reportPath, e);
     }
   }

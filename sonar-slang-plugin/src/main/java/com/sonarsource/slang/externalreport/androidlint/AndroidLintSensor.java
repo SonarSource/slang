@@ -65,7 +65,7 @@ public class AndroidLintSensor implements Sensor {
     try (InputStream in = new FileInputStream(reportPath)) {
       LOG.info("Importing {}", reportPath);
       AndroidLintXmlReportReader.read(in, (id, file, line, message) -> saveIssue(context, id, file, line, message));
-    } catch (IOException | XMLStreamException e) {
+    } catch (IOException | XMLStreamException | RuntimeException e) {
       LOG.error("No issues information will be saved as the report file '{}' can't be read.", reportPath, e);
     }
   }
