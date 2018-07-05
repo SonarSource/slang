@@ -65,35 +65,9 @@ public class KotlinConverter implements ASTConverter {
 
   @Override
   public Tree parse(String content) {
-    PsiFile psiFile = psiFileFactory.createFileFromText(KotlinLanguage.INSTANCE, content);
-    Document document;
-
-    try {
-      document = psiFile.getViewProvider().getDocument();
-    } catch (AssertionError e) {
-      // A KotlinLexerException may occur when attempting to read invalid files
-      throw new ParseException("Cannot correctly map AST with a null Document object");
-    }
-    CommentAndTokenVisitor commentsAndTokens = new CommentAndTokenVisitor(document);
-    psiFile.accept(commentsAndTokens);
-    TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(commentsAndTokens.getAllComments(), commentsAndTokens.getTokens());
-    checkParsingErrors(psiFile, document, metaDataProvider);
-    KotlinTreeVisitor kotlinTreeVisitor = new KotlinTreeVisitor(psiFile, metaDataProvider);
+    KotlinTree kotlinTree = new KotlinTree(content);
+    KotlinTreeVisitor kotlinTreeVisitor = new KotlinTreeVisitor(kotlinTree.psiFile, kotlinTree.metaDataProvider);
     return kotlinTreeVisitor.getSLangAST();
-  }
-
-  private static void checkParsingErrors(PsiFile psiFile, Document document, TreeMetaDataProvider metaDataProvider) {
-    descendants(psiFile)
-      .filter(element -> element instanceof PsiErrorElement)
-      .findFirst()
-      .ifPresent(element -> {
-        throw new ParseException("Cannot convert file due to syntactic errors",
-          getErrorLocation(document, metaDataProvider, element));
-      });
-  }
-
-  private static TextPointer getErrorLocation(Document document, TreeMetaDataProvider metaDataProvider, PsiElement element) {
-    return metaDataProvider.metaData(KotlinTextRanges.textRange(document, element)).textRange().start();
   }
 
   private static Stream<PsiElement> descendants(PsiElement element) {
@@ -128,6 +102,42 @@ public class KotlinConverter implements ASTConverter {
 
     PsiManager psiManager = new PsiManagerImpl(project, fileDocMgr, psiBuilderFactory, null, null, null);
     return new PsiFileFactoryImpl(psiManager);
+  }
+
+  public static class KotlinTree {
+    final PsiFile psiFile;
+    final Document document;
+    final TreeMetaDataProvider metaDataProvider;
+
+
+    public KotlinTree(String content) {
+      psiFile = psiFileFactory.createFileFromText(KotlinLanguage.INSTANCE, content);
+      try {
+        document = psiFile.getViewProvider().getDocument();
+      } catch (AssertionError e) {
+        // A KotlinLexerException may occur when attempting to read invalid files
+        throw new ParseException("Cannot correctly map AST with a null Document object");
+      }
+      CommentAndTokenVisitor commentsAndTokens = new CommentAndTokenVisitor(document);
+      psiFile.accept(commentsAndTokens);
+      metaDataProvider = new TreeMetaDataProvider(commentsAndTokens.getAllComments(), commentsAndTokens.getTokens());
+      checkParsingErrors(psiFile, document, metaDataProvider);
+
+    }
+
+    private static void checkParsingErrors(PsiFile psiFile, Document document, TreeMetaDataProvider metaDataProvider) {
+      descendants(psiFile)
+        .filter(element -> element instanceof PsiErrorElement)
+        .findFirst()
+        .ifPresent(element -> {
+          throw new ParseException("Cannot convert file due to syntactic errors",
+            getErrorLocation(document, metaDataProvider, element));
+        });
+    }
+
+    private static TextPointer getErrorLocation(Document document, TreeMetaDataProvider metaDataProvider, PsiElement element) {
+      return metaDataProvider.metaData(KotlinTextRanges.textRange(document, element)).textRange().start();
+    }
   }
 
 }

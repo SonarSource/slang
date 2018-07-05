@@ -107,6 +107,32 @@ public class KotlinSensorTest {
   }
 
   @Test
+  public void test_commented_code() {
+    InputFile inputFile = createInputFile("file1.kt", "" +
+      "fun main(args: Array<String>) {\n" +
+      "//fun foo () { if (true) {print(\"string literal\");}}\n" +
+      "print (1 == 1);\n" +
+      "print(b);\n" +
+      "//a b c ...\n" +
+      "foo();\n" +
+      "// Coefficients of polynomial\n" +
+      "val b = DoubleArray(n) // linear\n" +
+      "val c = DoubleArray(n + 1) // quadratic\n" +
+      "val d = DoubleArray(n) // cubic\n" +
+      "}");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S125");
+    sensor(checkFactory).execute(context);
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).hasSize(1);
+    Issue issue = issues.iterator().next();
+    assertThat(issue.ruleKey().rule()).isEqualTo("S125");
+    IssueLocation location = issue.primaryLocation();
+    assertThat(location.inputComponent()).isEqualTo(inputFile);
+    assertThat(location.message()).isEqualTo("Remove this commented out code.");
+  }
+
+  @Test
   public void simple_file() {
     InputFile inputFile = createInputFile("file1.kt", "" +
       "fun main(args: Array<String>) {\nprint (1 == 1); print(\"abc\"); }\ndata class A(val a: Int)");

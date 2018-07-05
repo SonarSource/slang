@@ -19,22 +19,10 @@
  */
 package com.sonarsource.slang.checks;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import org.assertj.core.api.Assertions;
+import com.sonarsource.slang.checks.commentedcode.SlangCodeVerifier;
 import org.junit.Test;
-
-public class CommonCheckListTest {
-
-  // TODO: Add logic for rules that require language specific configuration at construction time
-  private static List<String> CHECKS_WITH_CONFIG = Collections.singletonList("CommentedCodeCheck.java");
+public class CommentedCodeCheckTest {
   @Test
-  public void all_checks_should_be_present() {
-    File directory = new File("src/main/java/com/sonarsource/slang/checks");
-    File[] checkFiles = directory.listFiles((dir, name) ->
-        name.endsWith("Check.java") && !name.startsWith("Abstract") && !CHECKS_WITH_CONFIG.contains(name));
-    Assertions.assertThat(CommonCheckList.checks().size()).isEqualTo(checkFiles.length);
-  }
+  public void test() { Verifier.verify("CommentedCode.slang", new CommentedCodeCheck(new SlangCodeVerifier())); }
 
 }

@@ -22,6 +22,7 @@ package com.sonarsource.slang.kotlin;
 import com.sonarsource.slang.api.ASTConverter;
 import com.sonarsource.slang.api.TextPointer;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.checks.CommentedCodeCheck;
 import com.sonarsource.slang.checks.CommonCheckList;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import com.sonarsource.slang.plugin.CpdVisitor;
@@ -54,7 +55,9 @@ public class KotlinSensor implements Sensor {
 
   public KotlinSensor(CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter) {
     checks = checkFactory.create(SlangPlugin.KOTLIN_REPOSITORY_KEY);
-    checks.addAnnotatedChecks((Iterable<?>) CommonCheckList.checks());
+    // TODO: Add logic for rules that require language specific configuration at construction time
+    this.checks.addAnnotatedChecks(new CommentedCodeCheck(new KotlinCodeVerifier()));
+    this.checks.addAnnotatedChecks((Iterable<?>) CommonCheckList.checks());
     this.fileLinesContextFactory = fileLinesContextFactory;
     this.noSonarFilter = noSonarFilter;
   }

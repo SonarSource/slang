@@ -19,7 +19,9 @@
  */
 package com.sonarsource.slang.kotlin;
 
+import com.sonarsource.slang.checks.CommentedCodeCheck;
 import com.sonarsource.slang.checks.CommonCheckList;
+import java.util.ArrayList;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
 
@@ -33,7 +35,10 @@ public class KotlinRulesDefinition implements RulesDefinition {
       .createRepository(SlangPlugin.KOTLIN_REPOSITORY_KEY, SlangPlugin.KOTLIN_LANGUAGE_KEY)
       .setName(SlangPlugin.REPOSITORY_NAME);
     RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER);
-    ruleMetadataLoader.addRulesByAnnotatedClass(repository, CommonCheckList.checks());
+// TODO: Add logic for rules that require language specific configuration at construction time
+    ArrayList<Class> checks = new ArrayList<>(CommonCheckList.checks());
+    checks.add(CommentedCodeCheck.class);
+    ruleMetadataLoader.addRulesByAnnotatedClass(repository, checks);
     repository.done();
   }
 
