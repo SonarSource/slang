@@ -40,15 +40,15 @@ public class AndroidLintRulesDefinition implements RulesDefinition {
    * ( https://android.googlesource.com/platform/tools/base/+/studio-master-dev/lint/libs/lint-api/src/main/java/com/android/tools/lint/detector/api/Scope.kt )
    * But this sensor provides rule descriptions only for ".xml", ".java", ".kt"
    */
-  private static final List<String> LANGUAGES_WHO_BENEFITS_FROM_RULE_DEFINITIONS = Arrays.asList("xml", "java", SlangPlugin.KOTLIN_LANGUAGE_KEY);
+  private static final List<String> RULE_REPOSITORY_LANGUAGES = Arrays.asList("xml", "java", SlangPlugin.KOTLIN_LANGUAGE_KEY);
 
   private static final List<String> TEXT_FILE_EXTENSIONS = Arrays.asList(".xml", ".java", ".kt", ".kts", ".properties", ".gradle", ".cfg", ".txt");
 
-  static final List<ExternalRuleLoader> RULE_LOADERS = LANGUAGES_WHO_BENEFITS_FROM_RULE_DEFINITIONS.stream()
+  static final List<ExternalRuleLoader> RULE_LOADERS = RULE_REPOSITORY_LANGUAGES.stream()
     .map(language -> new ExternalRuleLoader(LINTER_KEY + "-" + language, LINTER_NAME, RULES_JSON, language))
     .collect(Collectors.toList());
 
-  private static final String DEFAULT_REPOSITORY_WITHOUT_RULE_DEFINITIONS = LINTER_KEY;
+  private static final String DEFAULT_REPOSITORY_KEY = LINTER_KEY;
 
   private final boolean externalIssuesSupported;
 
@@ -64,8 +64,8 @@ public class AndroidLintRulesDefinition implements RulesDefinition {
   }
 
   static RuleKey ruleKey(@Nullable String language, String ruleId) {
-    if (language == null || !LANGUAGES_WHO_BENEFITS_FROM_RULE_DEFINITIONS.contains(language)) {
-      return RuleKey.of(DEFAULT_REPOSITORY_WITHOUT_RULE_DEFINITIONS, ruleId);
+    if (language == null || !RULE_REPOSITORY_LANGUAGES.contains(language)) {
+      return RuleKey.of(DEFAULT_REPOSITORY_KEY, ruleId);
     }
     return RuleKey.of(LINTER_KEY + "-" + language, ruleId);
   }

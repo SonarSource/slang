@@ -25,12 +25,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
+import org.sonar.api.batch.fs.FilePredicates;
+import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
+import org.sonar.api.batch.sensor.issue.NewExternalIssue;
+import org.sonar.api.batch.sensor.issue.NewIssueLocation;
+import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ExternalReportProvider;
+import org.sonarsource.analyzer.commons.ExternalRuleLoader;
 
 public class AndroidLintSensor implements Sensor {
 
@@ -58,10 +64,49 @@ public class AndroidLintSensor implements Sensor {
   private static void importReport(File reportPath, SensorContext context) {
     try (InputStream in = new FileInputStream(reportPath)) {
       LOG.info("Importing {}", reportPath);
-      AndroidLintXmlReportReader.read(context, in);
+      AndroidLintXmlReportReader.read(in, (id, file, line, message) -> saveIssue(context, id, file, line, message));
     } catch (IOException | XMLStreamException e) {
       LOG.error("No issues information will be saved as the report file '{}' can't be read.", reportPath, e);
     }
+  }
+
+  private static void saveIssue(SensorContext context, String id, String file, String line, String message) {
+    if (id.isEmpty() || message.isEmpty() || file.isEmpty() || !AndroidLintRulesDefinition.isTextFile(file)) {
+      return;
+    }
+    FilePredicates predicates = context.fileSystem().predicates();
+    InputFile inputFile = context.fileSystem().inputFile(predicates.or(
+      predicates.hasAbsolutePath(file),
+      predicates.hasRelativePath(file)));
+
+    if (inputFile == null) {
+      LOG.warn("No input file found for {}. No android lint issues will be imported on this file.", file);
+      return;
+    }
+    RuleKey ruleKey = AndroidLintRulesDefinition.ruleKey(inputFile.language(), id);
+    NewExternalIssue newExternalIssue = context.newExternalIssue();
+    setRulesDefinitionProperties(newExternalIssue, ruleKey.rule());
+
+    NewIssueLocation primaryLocation = newExternalIssue.newLocation()
+      .message(message)
+      .on(inputFile);
+
+    if (!line.isEmpty()) {
+      primaryLocation.at(inputFile.selectLine(Integer.parseInt(line)));
+    }
+
+    newExternalIssue
+      .at(primaryLocation)
+      .forRule(ruleKey)
+      .save();
+  }
+
+  private static void setRulesDefinitionProperties(NewExternalIssue newExternalIssue, String ruleKey) {
+    ExternalRuleLoader externalRuleLoader = AndroidLintRulesDefinition.RULE_LOADERS.get(0);
+    newExternalIssue
+      .type(externalRuleLoader.ruleType(ruleKey))
+      .severity(externalRuleLoader.ruleSeverity(ruleKey))
+      .remediationEffortMinutes(externalRuleLoader.ruleConstantDebtMinutes(ruleKey));
   }
 
 }

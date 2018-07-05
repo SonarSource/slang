@@ -28,19 +28,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import org.sonar.api.batch.fs.FilePredicates;
-import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.batch.sensor.issue.NewExternalIssue;
-import org.sonar.api.batch.sensor.issue.NewIssueLocation;
-import org.sonar.api.rule.RuleKey;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
-import org.sonarsource.analyzer.commons.ExternalRuleLoader;
 
 class AndroidLintXmlReportReader {
-
-  private static final Logger LOG = Loggers.get(AndroidLintXmlReportReader.class);
 
   private static final QName ISSUES_ELEMENT = new QName("issues");
   private static final QName ISSUE_ELEMENT = new QName("issue");
@@ -50,7 +39,7 @@ class AndroidLintXmlReportReader {
   private static final QName FILE_ATTRIBUTE = new QName("file");
   private static final QName LINE_ATTRIBUTE = new QName("line");
 
-  private final SensorContext context;
+  private final IssueConsumer consumer;
 
   private int level = 0;
 
@@ -59,12 +48,17 @@ class AndroidLintXmlReportReader {
   private String file = "";
   private String line = "";
 
-  private AndroidLintXmlReportReader(SensorContext context) {
-    this.context = context;
+  @FunctionalInterface
+  interface IssueConsumer {
+    void onIssue(String id, String file, String line, String message);
   }
 
-  static void read(SensorContext context, InputStream in) throws XMLStreamException, IOException {
-    new AndroidLintXmlReportReader(context).read(in);
+  private AndroidLintXmlReportReader(IssueConsumer consumer) {
+    this.consumer = consumer;
+  }
+
+  static void read(InputStream in, IssueConsumer consumer) throws XMLStreamException, IOException {
+    new AndroidLintXmlReportReader(consumer).read(in);
   }
 
   private void read(InputStream in) throws XMLStreamException, IOException {
@@ -83,7 +77,7 @@ class AndroidLintXmlReportReader {
 
   private void onEndElement() {
     if (level == 1) {
-      saveIssue();
+      consumer.onIssue(id, file, line, message);
       id = "";
       message = "";
       file = "";
@@ -101,45 +95,6 @@ class AndroidLintXmlReportReader {
       file = getAttributeValue(element, FILE_ATTRIBUTE);
       line = getAttributeValue(element, LINE_ATTRIBUTE);
     }
-  }
-
-  private void saveIssue() {
-    if (id.isEmpty() || message.isEmpty() || file.isEmpty() || !AndroidLintRulesDefinition.isTextFile(file)) {
-      return;
-    }
-    FilePredicates predicates = context.fileSystem().predicates();
-    InputFile inputFile = context.fileSystem().inputFile(predicates.or(
-      predicates.hasAbsolutePath(file),
-      predicates.hasRelativePath(file)));
-
-    if (inputFile == null) {
-      LOG.warn("No input file found for {}. No android lint issues will be imported on this file.", file);
-      return;
-    }
-    RuleKey ruleKey = AndroidLintRulesDefinition.ruleKey(inputFile.language(), id);
-    NewExternalIssue newExternalIssue = context.newExternalIssue();
-    setRulesDefinitionProperties(newExternalIssue, ruleKey.rule());
-
-    NewIssueLocation primaryLocation = newExternalIssue.newLocation()
-      .message(message)
-      .on(inputFile);
-
-    if (!line.isEmpty()) {
-      primaryLocation.at(inputFile.selectLine(Integer.parseInt(line)));
-    }
-
-    newExternalIssue
-      .at(primaryLocation)
-      .forRule(ruleKey)
-      .save();
-  }
-
-  private static void setRulesDefinitionProperties(NewExternalIssue newExternalIssue, String ruleKey) {
-    ExternalRuleLoader externalRuleLoader = AndroidLintRulesDefinition.RULE_LOADERS.get(0);
-    newExternalIssue
-      .type(externalRuleLoader.ruleType(ruleKey))
-      .severity(externalRuleLoader.ruleSeverity(ruleKey))
-      .remediationEffortMinutes(externalRuleLoader.ruleConstantDebtMinutes(ruleKey));
   }
 
   private static String getAttributeValue(StartElement element, QName attributeName) {
