@@ -32,6 +32,7 @@ public class CommonCheckList {
       AllBranchesIdenticalCheck.class,
       BadClassNameCheck.class,
       BadFunctionNameCheck.class,
+      BooleanInversionCheck.class,
       BooleanLiteralCheck.class,
       CollapsibleIfStatementsCheck.class,
       DuplicateBranchCheck.class,
