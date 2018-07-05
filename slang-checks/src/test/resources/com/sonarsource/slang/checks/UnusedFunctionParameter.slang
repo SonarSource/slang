@@ -38,3 +38,6 @@ class A {
   }
 
 }
+
+void fun main(int a) {} // OK - "main" functions are ignored
+int fun Main(int a) {} // OK - "main" functions are ignored

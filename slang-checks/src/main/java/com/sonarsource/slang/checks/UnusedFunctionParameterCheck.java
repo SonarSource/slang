@@ -28,6 +28,7 @@ import com.sonarsource.slang.checks.api.SecondaryLocation;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import com.sonarsource.slang.impl.TopLevelTreeImpl;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.sonar.check.Rule;
 
@@ -36,6 +37,9 @@ import static com.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 
 @Rule(key = "S1172")
 public class UnusedFunctionParameterCheck implements SlangCheck {
+
+  // Currently we ignore all functions named "main", however this should be configurable based on the analyzed language in the future.
+  private static final Pattern IGNORED_PATTERN = Pattern.compile("main", Pattern.CASE_INSENSITIVE);
 
   @Override
   public void initialize(InitContext init) {
@@ -76,7 +80,9 @@ public class UnusedFunctionParameterCheck implements SlangCheck {
 
   private static boolean shouldBeIgnored(CheckContext ctx, FunctionDeclarationTree tree) {
     boolean validFunctionForRule = ctx.parent() instanceof TopLevelTreeImpl || isPrivateMethod(tree);
-    return !validFunctionForRule || tree.body() == null;
+    return !validFunctionForRule 
+      || tree.body() == null
+      || (functionDeclarationTree.name() != null && IGNORED_PATTERN.matcher(functionDeclarationTree.name().name()).matches());
   }
 
 }
