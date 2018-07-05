@@ -32,6 +32,9 @@ import com.sonarsource.slang.visitors.TreeVisitor;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
@@ -44,6 +47,7 @@ import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
+import org.sonarsource.analyzer.commons.ProgressReport;
 
 public class KotlinSensor implements Sensor {
 
@@ -76,14 +80,26 @@ public class KotlinSensor implements Sensor {
       fileSystem.predicates().hasLanguage(SlangPlugin.KOTLIN_LANGUAGE_KEY),
       fileSystem.predicates().hasType(InputFile.Type.MAIN));
     Iterable<InputFile> inputFiles = fileSystem.inputFiles(mainFilePredicate);
-    analyseFiles(sensorContext, inputFiles, Arrays.asList(
-      new ChecksVisitor(checks),
-      new MetricVisitor(fileLinesContextFactory, noSonarFilter),
-      new CpdVisitor(),
-      new SyntaxHighlighter()));
+    List<String> filenames = StreamSupport.stream(inputFiles.spliterator(), false).map(InputFile::toString).collect(Collectors.toList());
+    ProgressReport progressReport = new ProgressReport("Progress of the Kotlin analysis", TimeUnit.SECONDS.toMillis(10));
+    progressReport.start(filenames);
+    boolean success = false;
+    try {
+      success = analyseFiles(sensorContext, inputFiles, progressReport, Arrays.asList(
+        new ChecksVisitor(checks),
+        new MetricVisitor(fileLinesContextFactory, noSonarFilter),
+        new CpdVisitor(),
+        new SyntaxHighlighter()));
+    } finally {
+      if (success) {
+        progressReport.stop();
+      } else {
+        progressReport.cancel();
+      }
+    }
   }
 
-  private static void analyseFiles(SensorContext sensorContext, Iterable<InputFile> inputFiles, List<TreeVisitor<InputFileContext>> visitors) {
+  private static boolean analyseFiles(SensorContext sensorContext, Iterable<InputFile> inputFiles, ProgressReport progressReport, List<TreeVisitor<InputFileContext>> visitors) {
     ASTConverter converter = new KotlinConverter();
     for (InputFile inputFile : inputFiles) {
       InputFileContext inputFileContext = new InputFileContext(sensorContext, inputFile);
@@ -93,7 +109,9 @@ public class KotlinSensor implements Sensor {
         logParsingError(inputFile, e);
         inputFileContext.reportError("Unable to parse file: " + inputFile, e.getPosition());
       }
+      progressReport.nextFile();
     }
+    return true;
   }
 
   private static void analyseFile(ASTConverter converter, InputFileContext inputFileContext, InputFile inputFile, List<TreeVisitor<InputFileContext>> visitors) {
