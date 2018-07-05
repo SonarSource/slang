@@ -28,6 +28,7 @@ import com.sonarsource.slang.api.LoopTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.Tree;
+import com.sonarsource.slang.impl.JumpTreeImpl;
 import com.sonarsource.slang.visitors.TreeContext;
 import com.sonarsource.slang.visitors.TreeVisitor;
 import java.util.ArrayList;
@@ -90,6 +91,11 @@ public class CognitiveComplexity {
       register(LoopTree.class, (ctx, tree) -> incrementWithNesting(tree.keyword(), ctx));
       register(MatchTree.class, (ctx, tree) -> incrementWithNesting(tree.keyword(), ctx));
       register(CatchTree.class, (ctx, tree) -> incrementWithNesting(tree.keyword(), ctx));
+      register(JumpTreeImpl.class, (ctx, tree) -> {
+        if (tree.label() != null) {
+          incrementWithoutNesting(tree.keyword());
+        }
+      });
 
       register(IfTree.class, (ctx, tree) -> {
         Tree parent = ctx.ancestors().peek();
@@ -102,23 +108,25 @@ public class CognitiveComplexity {
         }
       });
 
-      register(BinaryExpressionTree.class, (ctx, tree) -> {
-        if (!isLogicalBinaryExpression(tree) || alreadyConsideredOperators.contains(tree.operatorToken())) {
-          return;
-        }
+      register(BinaryExpressionTree.class, (ctx, tree) -> handleBinaryExpressions(tree));
+    }
 
-        List<Token> operators = new ArrayList<>();
-        flattenOperators(tree, operators);
+    private void handleBinaryExpressions(BinaryExpressionTree tree) {
+      if (!isLogicalBinaryExpression(tree) || alreadyConsideredOperators.contains(tree.operatorToken())) {
+        return;
+      }
 
-        Token previous = null;
-        for (Token operator : operators) {
-          if (previous == null || !previous.text().equals(operator.text())) {
-            incrementWithoutNesting(operator);
-          }
-          previous = operator;
-          alreadyConsideredOperators.add(operator);
+      List<Token> operators = new ArrayList<>();
+      flattenOperators(tree, operators);
+
+      Token previous = null;
+      for (Token operator : operators) {
+        if (previous == null || !previous.text().equals(operator.text())) {
+          incrementWithoutNesting(operator);
         }
-      });
+        previous = operator;
+        alreadyConsideredOperators.add(operator);
+      }
     }
 
     // TODO parentheses should probably be skipped

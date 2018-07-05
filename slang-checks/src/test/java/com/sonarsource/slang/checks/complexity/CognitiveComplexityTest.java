@@ -79,6 +79,19 @@ public class CognitiveComplexityTest {
   }
 
   @Test
+  public void jumps() {
+    assertThat(complexity("break;").value()).isEqualTo(0);
+    assertThat(complexity("break foo;").value()).isEqualTo(1);
+    assertThat(complexity("while (x) break;").value()).isEqualTo(1);
+    assertThat(complexity("while (x) break foo;").value()).isEqualTo(2);
+
+    assertThat(complexity("continue;").value()).isEqualTo(0);
+    assertThat(complexity("continue foo;").value()).isEqualTo(1);
+    assertThat(complexity("while (x) continue;").value()).isEqualTo(1);
+    assertThat(complexity("while (x) continue foo;").value()).isEqualTo(2);
+  }
+
+  @Test
   public void nesting() {
     assertThat(complexity("if (x) a && b;").value()).isEqualTo(2);
     assertThat(complexity("if (x) if (y) 42;").value()).isEqualTo(3);

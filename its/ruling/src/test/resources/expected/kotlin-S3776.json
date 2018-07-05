@@ -534,6 +534,9 @@
 'kotlin-project:kotlin/compiler/psi/src/org/jetbrains/kotlin/kdoc/psi/impl/KDocTag.kt':[
 78,
 ],
+'kotlin-project:kotlin/compiler/psi/src/org/jetbrains/kotlin/parsing/KotlinWhitespaceAndCommentsBinders.kt':[
+25,
+],
 'kotlin-project:kotlin/compiler/psi/src/org/jetbrains/kotlin/psi/addRemoveModifier.kt':[
 66,
 ],
@@ -662,6 +665,7 @@
 172,
 330,
 510,
+587,
 771,
 896,
 ],
