@@ -162,7 +162,13 @@ public class AndroidLintSensorTest {
     assertThat(logTester.logs(LoggerLevel.WARN)).containsExactlyInAnyOrder(
       "No input file found for unknown-file.xml. No android lint issues will be imported on this file."
     );
-    assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).containsExactlyInAnyOrder(
+      "Missing information or unsupported file type for:'', file:'AndroidManifest.xml', message:'Missing rule key.'",
+      "Missing information or unsupported file type for:'UnusedAttribute', file:'dancing-puppets.gif', message:'Valid rule key with binary file.'",
+      "Missing information or unsupported file type for:'UnusedAttribute', file:'', message:'Valid rule key without file path.'",
+      "Missing information or unsupported file type for:'UnusedAttribute', file:'', message:'Valid rule key with invalid location.'",
+      "Missing information or unsupported file type for:'', file:'', message:''"
+    );
   }
 
   private static String resolveInProject(String fileName) {
