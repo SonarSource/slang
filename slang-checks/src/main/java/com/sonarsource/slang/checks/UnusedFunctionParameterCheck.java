@@ -82,7 +82,7 @@ public class UnusedFunctionParameterCheck implements SlangCheck {
     boolean validFunctionForRule = ctx.parent() instanceof TopLevelTreeImpl || isPrivateMethod(tree);
     return !validFunctionForRule 
       || tree.body() == null
-      || (functionDeclarationTree.name() != null && IGNORED_PATTERN.matcher(functionDeclarationTree.name().name()).matches());
+      || (tree.name() != null && IGNORED_PATTERN.matcher(tree.name().name()).matches());
   }
 
 }
