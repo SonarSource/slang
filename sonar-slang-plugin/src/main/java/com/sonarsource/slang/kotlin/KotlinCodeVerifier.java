@@ -22,6 +22,7 @@ package com.sonarsource.slang.kotlin;
 import com.sonarsource.slang.api.CodeVerifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
@@ -60,7 +61,7 @@ public class KotlinCodeVerifier implements CodeVerifier {
   }
 
   private static boolean isKDoc(String content) {
-    return KDOC_TAGS.stream().anyMatch(tag -> content.toLowerCase().contains(tag));
+    return KDOC_TAGS.stream().anyMatch(tag -> content.toLowerCase(Locale.ENGLISH).contains(tag));
   }
 
   // Filter natural language sentences parsed
