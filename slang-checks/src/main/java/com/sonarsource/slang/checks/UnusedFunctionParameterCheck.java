@@ -79,10 +79,11 @@ public class UnusedFunctionParameterCheck implements SlangCheck {
   }
 
   private static boolean shouldBeIgnored(CheckContext ctx, FunctionDeclarationTree tree) {
+    IdentifierTree name = tree.name();
     boolean validFunctionForRule = ctx.parent() instanceof TopLevelTreeImpl || isPrivateMethod(tree);
-    return !validFunctionForRule 
+    return !validFunctionForRule
       || tree.body() == null
-      || (tree.name() != null && IGNORED_PATTERN.matcher(tree.name().name()).matches());
+      || (name != null && IGNORED_PATTERN.matcher(name.name()).matches());
   }
 
 }
