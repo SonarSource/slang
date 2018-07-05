@@ -51,8 +51,8 @@ public class SlangCodeVerifier implements CodeVerifier {
         simpleBinaryExpressionTree(element)))
       .count();
 
-    double percentage = (double) remaining / all;
-    return percentage < 0.3;
+    double detectedCodeRatio = (double) remaining / all;
+    return detectedCodeRatio < 0.3;
 
   }
 

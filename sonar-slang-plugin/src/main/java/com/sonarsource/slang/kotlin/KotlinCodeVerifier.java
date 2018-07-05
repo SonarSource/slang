@@ -32,7 +32,10 @@ import org.jetbrains.kotlin.psi.KtDotQualifiedExpression;
 import org.jetbrains.kotlin.psi.KtIsExpression;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.KtOperationReferenceExpression;
+import org.jetbrains.kotlin.psi.KtParenthesizedExpression;
+import org.jetbrains.kotlin.psi.KtPostfixExpression;
 import org.jetbrains.kotlin.psi.KtPrefixExpression;
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtThisExpression;
 
 public class KotlinCodeVerifier implements CodeVerifier {
@@ -42,11 +45,12 @@ public class KotlinCodeVerifier implements CodeVerifier {
 
   @Override
   public boolean containsCode(String content) {
-    String wrappedContent = "fun function () { " + content + " }";
-    if (isKDoc(content)) {
+    int words = content.trim().split("\\w+").length;
+    if (words < 2 || isKDoc(content)) {
       return false;
     }
     try {
+      String wrappedContent = "fun function () { " + content + " }";
       KotlinConverter.KotlinTree kotlinTree = new KotlinConverter.KotlinTree(wrappedContent);
       return !isSimpleExpression(kotlinTree.psiFile);
     } catch (ParseException e) {
@@ -56,9 +60,11 @@ public class KotlinCodeVerifier implements CodeVerifier {
   }
 
   private static boolean isKDoc(String content) {
-    return KDOC_TAGS.stream().anyMatch(content::contains);
+    return KDOC_TAGS.stream().anyMatch(tag -> content.toLowerCase().contains(tag));
   }
 
+  // Filter natural language sentences parsed
+  // as literals, infix notations or single expressions
   private static boolean isSimpleExpression(PsiFile tree) {
     PsiElement content = tree.getLastChild().getLastChild();
     PsiElement[] elements = content.getChildren();
@@ -66,23 +72,40 @@ public class KotlinCodeVerifier implements CodeVerifier {
       element instanceof KtNameReferenceExpression ||
         element instanceof KtCollectionLiteralExpression ||
         element instanceof KtConstantExpression ||
-        isInfixExpression(element)) || isSingleExpression(elements);
+        element instanceof KtIsExpression ||
+        element instanceof KtThisExpression ||
+        element instanceof KtStringTemplateExpression ||
+        isInfixNotation(element))
+      || isSingleExpression(elements);
   }
 
+  private static PsiElement[] removeParenthesizedExpressions(PsiElement[] elements) {
+    return Arrays.stream(elements)
+      .filter(element -> !(element instanceof KtParenthesizedExpression))
+      .toArray(PsiElement[]::new);
+  }
+
+  // Check for strings parsed as a single expression
+  // e.g. "this is fine" as IsExpression, "-- foo" as InfixExpression
   private static boolean isSingleExpression(PsiElement [] elements) {
-    if (elements.length != 1) {
+    PsiElement [] elementsWithoutParenthesis = removeParenthesizedExpressions(elements);
+    if (elementsWithoutParenthesis.length == 0) {
+      return true;
+    }
+    if (elementsWithoutParenthesis.length > 1) {
       return false;
     }
-    PsiElement element = elements[0];
-    return element instanceof KtIsExpression ||
-      element instanceof KtThisExpression ||
-      element instanceof KtPrefixExpression ||
+    PsiElement element = elementsWithoutParenthesis[0];
+    return element instanceof KtPrefixExpression ||
+      element instanceof KtPostfixExpression ||
       element instanceof KtBinaryExpression ||
       element instanceof KtBinaryExpressionWithTypeRHS ||
       element instanceof KtDotQualifiedExpression;
   }
 
-  private static boolean isInfixExpression(PsiElement element) {
+  // Kotlin supports infix function invocation like `1 shl 2` instead of `1.shl(2)`
+  // A regular three words sentence would be parsed as infix notation by Kotlin
+  private static boolean isInfixNotation(PsiElement element) {
     if (element instanceof KtBinaryExpression) {
       PsiElement[] binaryExprChildren = element.getChildren();
       return binaryExprChildren.length == 3 &&
