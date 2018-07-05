@@ -72,7 +72,7 @@ public class AndroidLintRuleDefinition {
         externalRule = help.read();
       }
       externalRules.sort(Comparator.comparing(a -> a.key));
-      Gson gson = new GsonBuilder().setPrettyPrinting().create();
+      Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
       return gson.toJson(externalRules) + "\n";
     }
 
@@ -226,17 +226,23 @@ public class AndroidLintRuleDefinition {
 
       private String consumeDescription() {
         StringBuilder html = new StringBuilder();
+        html.append("<p>\n");
         boolean lastLineWasMoreInformation = false;
         while (pos < lines.size() && !isSection("=+|-+")) {
           String line = StringEscapeUtils.escapeHtml(lines.get(pos));
-          if (lastLineWasMoreInformation && line.startsWith("http") && line.matches("\\S+")) {
+          if (line.isEmpty()) {
+            html.append(line).append("</p>\n<p>\n");
+          } else if (lastLineWasMoreInformation && line.startsWith("http") && line.matches("\\S+")) {
             html.append("<a href=\"").append(line).append("\">").append(line).append("</a><br />\n");
-          } else {
+          } else if (line.endsWith(":") || line.endsWith(": ")) {
             html.append(line).append("<br />\n");
+          } else {
+            html.append(line).append("\n");
           }
           lastLineWasMoreInformation = line.equals("More information: ");
           pos++;
         }
+        html.append("</p>\n");
         return html.toString();
       }
 

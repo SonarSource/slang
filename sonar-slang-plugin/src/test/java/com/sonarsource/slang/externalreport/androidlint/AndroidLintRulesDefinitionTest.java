@@ -68,7 +68,15 @@ public class AndroidLintRulesDefinitionTest {
     assertThat(rule.type()).isEqualTo(RuleType.BUG);
     assertThat(rule.severity()).isEqualTo("CRITICAL");
     assertThat(rule.htmlDescription()).isEqualTo(
-      "Defining a style which sets android:id to a dynamically generated id can cause<br />\nmany versions of aapt, the resource packaging tool, to crash. To work around<br />\nthis, declare the id explicitly with &lt;item type=&quot;id&quot; name=&quot;...&quot; /&gt; instead.<br />\n<br />\nMore information: <br />\n<a href=\"https://code.google.com/p/android/issues/detail?id=20479\">https://code.google.com/p/android/issues/detail?id=20479</a><br />");
+        "<p>\n" +
+        "Defining a style which sets android:id to a dynamically generated id can cause\n" +
+        "many versions of aapt, the resource packaging tool, to crash. To work around\n" +
+        "this, declare the id explicitly with &lt;item type=&quot;id&quot; name=&quot;...&quot; /&gt; instead.\n" +
+        "</p>\n" +
+        "<p>\n" +
+        "More information: <br />\n" +
+        "<a href=\"https://code.google.com/p/android/issues/detail?id=20479\">https://code.google.com/p/android/issues/detail?id=20479</a><br />\n" +
+        "</p>");
     assertThat(rule.tags()).containsExactlyInAnyOrder("android");
     assertThat(rule.debtRemediationFunction().baseEffort()).isEqualTo("5min");
   }
