@@ -40,7 +40,7 @@ public class AndroidLintSensor implements Sensor {
 
   static final String LINTER_NAME = "Android Lint";
 
-  public static final String REPORT_PROPERTY_KEY = "sonar.android.androidLint.reportPaths";
+  public static final String REPORT_PROPERTY_KEY = "sonar.androidLint.reportPaths";
 
   @Override
   public void describe(SensorDescriptor descriptor) {

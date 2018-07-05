@@ -42,6 +42,8 @@ public class AndroidLintRulesDefinition implements RulesDefinition {
    */
   private static final List<String> LANGUAGES_WHO_BENEFITS_FROM_RULE_DEFINITIONS = Arrays.asList("xml", "java", SlangPlugin.KOTLIN_LANGUAGE_KEY);
 
+  private static final List<String> TEXT_FILE_EXTENSIONS = Arrays.asList(".xml", ".java", ".kt", ".kts", ".properties", ".gradle", ".cfg", ".txt");
+
   static final List<ExternalRuleLoader> RULE_LOADERS = LANGUAGES_WHO_BENEFITS_FROM_RULE_DEFINITIONS.stream()
     .map(language -> new ExternalRuleLoader(LINTER_KEY + "-" + language, LINTER_NAME, RULES_JSON, language))
     .collect(Collectors.toList());
@@ -68,4 +70,7 @@ public class AndroidLintRulesDefinition implements RulesDefinition {
     return RuleKey.of(LINTER_KEY + "-" + language, ruleId);
   }
 
+  static boolean isTextFile(String file) {
+    return TEXT_FILE_EXTENSIONS.stream().anyMatch(file::endsWith);
+  }
 }

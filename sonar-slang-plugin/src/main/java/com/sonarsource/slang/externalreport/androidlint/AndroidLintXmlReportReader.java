@@ -104,7 +104,7 @@ class AndroidLintXmlReportReader {
   }
 
   private void saveIssue() {
-    if (id.isEmpty() || message.isEmpty() || file.isEmpty()) {
+    if (id.isEmpty() || message.isEmpty() || file.isEmpty() || !AndroidLintRulesDefinition.isTextFile(file)) {
       return;
     }
     FilePredicates predicates = context.fileSystem().predicates();

@@ -14,6 +14,12 @@
 
     <issue
         id="UnusedAttribute"
+        message="Valid rule key with binary file.">
+        <location file="dancing-puppets.gif"/>
+    </issue>
+
+    <issue
+        id="UnusedAttribute"
         message="Valid rule key without file path.">
         <location line="8" column="9"/>
     </issue>

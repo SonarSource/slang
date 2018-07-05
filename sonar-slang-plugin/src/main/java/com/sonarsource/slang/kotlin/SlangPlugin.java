@@ -33,8 +33,9 @@ public class SlangPlugin implements Plugin {
   // Subcategories
   private static final String GENERAL = "General";
   private static final String KOTLIN_CATEGORY = "Kotlin";
-  private static final String ANDROID_CATEGORY = "Android";
-  private static final String EXTERNAL_LINTER_SUBCATEGORY = "Popular Rule Engines";
+  private static final String EXTERNAL_ANALYZERS_CATEGORY = "External Analyzers";
+  private static final String ANDROID_SUBCATEGORY = "Android";
+  private static final String KOTLIN_SUBCATEGORY = "Kotlin";
 
   // Global constants
   public static final String KOTLIN_LANGUAGE_KEY = "kotlin";
@@ -74,18 +75,17 @@ public class SlangPlugin implements Plugin {
         PropertyDefinition.builder(DetektSensor.REPORT_PROPERTY_KEY)
           .name("Detekt Report Files")
           .description("Paths (absolute or relative) to checkstyle xml files with detekt issues.")
-          .category(KOTLIN_CATEGORY)
-          .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
+          .category(EXTERNAL_ANALYZERS_CATEGORY)
+          .subCategory(KOTLIN_SUBCATEGORY)
           .onQualifiers(Qualifiers.PROJECT)
           .multiValues(true)
           .build(),
         PropertyDefinition.builder(AndroidLintSensor.REPORT_PROPERTY_KEY)
           .name("Android Lint Report Files")
           .description("Paths (absolute or relative) to xml files with android lint issues.")
-          .category(ANDROID_CATEGORY)
-          .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
+          .category(EXTERNAL_ANALYZERS_CATEGORY)
+          .subCategory(ANDROID_SUBCATEGORY)
           .onQualifiers(Qualifiers.PROJECT)
-          .defaultValue("")
           .multiValues(true)
           .build());
     }

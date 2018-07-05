@@ -24,6 +24,7 @@ import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
 
+import static com.sonarsource.slang.externalreport.androidlint.AndroidLintRulesDefinition.isTextFile;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AndroidLintRulesDefinitionTest {
@@ -83,5 +84,23 @@ public class AndroidLintRulesDefinitionTest {
   public void rule_key_without_external_repository() {
     assertThat(AndroidLintRulesDefinition.ruleKey(null, "S123")).isEqualTo(RuleKey.of("android-lint", "S123"));
     assertThat(AndroidLintRulesDefinition.ruleKey("js", "S123")).isEqualTo(RuleKey.of("android-lint", "S123"));
+  }
+
+  @Test
+  public void text_files() {
+    assertThat(isTextFile("AndroidManifest.xml")).isTrue();
+    assertThat(isTextFile("Main.java")).isTrue();
+    assertThat(isTextFile("App.kt")).isTrue();
+    assertThat(isTextFile("default.properties")).isTrue();
+    assertThat(isTextFile("build.gradle")).isTrue();
+    assertThat(isTextFile("proguard.cfg")).isTrue();
+    assertThat(isTextFile("proguard-project.txt")).isTrue();
+  }
+
+  @Test
+  public void binary_files() {
+    assertThat(isTextFile("App.class")).isFalse();
+    assertThat(isTextFile("button.png")).isFalse();
+
   }
 }

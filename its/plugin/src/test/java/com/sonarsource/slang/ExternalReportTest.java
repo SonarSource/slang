@@ -57,7 +57,7 @@ public class ExternalReportTest extends TestBase {
   @Test
   public void android_lint() {
     SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "androidlint");
-    sonarScanner.setProperty("sonar.android.androidLint.reportPaths", "lint-results.xml");
+    sonarScanner.setProperty("sonar.androidLint.reportPaths", "lint-results.xml");
     ORCHESTRATOR.executeBuild(sonarScanner);
     List<Issue> issues = getExternalIssues();
     if (ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2)) {

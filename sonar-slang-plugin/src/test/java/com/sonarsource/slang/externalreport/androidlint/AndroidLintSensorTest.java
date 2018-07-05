@@ -59,7 +59,7 @@ public class AndroidLintSensorTest {
   @Test
   public void no_issues_with_sonarqube_71() throws IOException {
     SensorContextTester context = createContext(PROJECT_DIR, 7, 1);
-    context.settings().setProperty("sonar.android.androidLint.reportPaths", resolveInProject("lint-results.xml"));
+    context.settings().setProperty("sonar.androidLint.reportPaths", resolveInProject("lint-results.xml"));
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Import of external issues requires SonarQube 7.2 or greater.");
@@ -68,7 +68,7 @@ public class AndroidLintSensorTest {
   @Test
   public void issues_with_sonarqube_72() throws IOException {
     SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.android.androidLint.reportPaths", resolveInProject("lint-results.xml"));
+    context.settings().setProperty("sonar.androidLint.reportPaths", resolveInProject("lint-results.xml"));
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
     assertThat(externalIssues).hasSize(4);
 
@@ -110,7 +110,7 @@ public class AndroidLintSensorTest {
   @Test
   public void no_issues_with_invalid_report_path() throws IOException {
     SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.android.androidLint.reportPaths", resolveInProject("invalid-path.txt"));
+    context.settings().setProperty("sonar.androidLint.reportPaths", resolveInProject("invalid-path.txt"));
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
@@ -122,7 +122,7 @@ public class AndroidLintSensorTest {
   @Test
   public void no_issues_with_invalid_checkstyle_file() throws IOException {
     SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.android.androidLint.reportPaths", resolveInProject("not-android-lint-file.xml"));
+    context.settings().setProperty("sonar.androidLint.reportPaths", resolveInProject("not-android-lint-file.xml"));
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
@@ -134,7 +134,7 @@ public class AndroidLintSensorTest {
   @Test
   public void no_issues_with_invalid_xml_report() throws IOException {
     SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.android.androidLint.reportPaths", resolveInProject("invalid-file.xml"));
+    context.settings().setProperty("sonar.androidLint.reportPaths", resolveInProject("invalid-file.xml"));
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
@@ -146,7 +146,7 @@ public class AndroidLintSensorTest {
   @Test
   public void issues_when_xml_file_has_errors() throws IOException {
     SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.android.androidLint.reportPaths", resolveInProject("lint-results-with-errors.xml"));
+    context.settings().setProperty("sonar.androidLint.reportPaths", resolveInProject("lint-results-with-errors.xml"));
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
     assertThat(externalIssues).hasSize(1);
 
