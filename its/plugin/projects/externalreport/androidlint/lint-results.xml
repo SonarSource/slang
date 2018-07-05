@@ -18,4 +18,21 @@
                 column="9"/>
     </issue>
 
+    <issue
+            id="GradleDependency"
+            severity="Warning"
+            message="A newer version of com.android.support:recyclerview-v7 than 26.0.0 is available: 27.1.1"
+            category="Correctness"
+            priority="4"
+            summary="Obsolete Gradle Dependency"
+            explanation="This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+            errorLine1="    implementation &quot;com.android.support:recyclerview-v7:$android_support_version&quot;"
+            errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+            quickfix="studio">
+        <location
+                file="build.gradle"
+                line="3"
+                column="5"/>
+    </issue>
+
 </issues>

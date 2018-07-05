@@ -40,7 +40,8 @@ public class ExternalReportTest extends TestBase {
     sonarScanner.setProperty("sonar.kotlin.detekt.reportPaths", "detekt-checkstyle.xml");
     ORCHESTRATOR.executeBuild(sonarScanner);
     List<Issue> issues = getExternalIssues();
-    if (ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2)) {
+    boolean externalIssuesSupported = ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2);
+    if (externalIssuesSupported) {
       assertThat(issues).hasSize(1);
       Issue issue = issues.get(0);
       assertThat(issue.componentKey()).isEqualTo("project:main.kt");
@@ -60,15 +61,22 @@ public class ExternalReportTest extends TestBase {
     sonarScanner.setProperty("sonar.androidLint.reportPaths", "lint-results.xml");
     ORCHESTRATOR.executeBuild(sonarScanner);
     List<Issue> issues = getExternalIssues();
-    if (ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2)) {
-      assertThat(issues).hasSize(1);
-      Issue issue = issues.get(0);
-      assertThat(issue.componentKey()).isEqualTo("project:main.kt");
-      assertThat(issue.ruleKey()).isEqualTo("external_android-lint-kotlin:UnusedAttribute");
-      assertThat(issue.line()).isEqualTo(2);
-      assertThat(issue.message()).isEqualTo("Attribute `required` is only used in API level 5 and higher (current min is 1)");
-      assertThat(issue.severity()).isEqualTo("MINOR");
-      assertThat(issue.debt()).isEqualTo("5min");
+    boolean externalIssuesSupported = ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2);
+    if (externalIssuesSupported) {
+      assertThat(issues).hasSize(2);
+      Issue first = issues.stream().filter(issue -> "project:main.kt".equals(issue.componentKey())).findFirst().orElse(null);
+      assertThat(first.ruleKey()).isEqualTo("external_android-lint-kotlin:UnusedAttribute");
+      assertThat(first.line()).isEqualTo(2);
+      assertThat(first.message()).isEqualTo("Attribute `required` is only used in API level 5 and higher (current min is 1)");
+      assertThat(first.severity()).isEqualTo("MINOR");
+      assertThat(first.debt()).isEqualTo("5min");
+
+      Issue second = issues.stream().filter(issue -> "project:build.gradle".equals(issue.componentKey())).findFirst().orElse(null);
+      assertThat(second.ruleKey()).isEqualTo("external_android-lint:GradleDependency");
+      assertThat(second.line()).isEqualTo(3);
+      assertThat(second.message()).isEqualTo("A newer version of com.android.support:recyclerview-v7 than 26.0.0 is available: 27.1.1");
+      assertThat(second.severity()).isEqualTo("MINOR");
+      assertThat(second.debt()).isEqualTo("5min");
     } else {
       assertThat(issues).isEmpty();
     }
