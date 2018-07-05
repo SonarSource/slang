@@ -147,6 +147,8 @@ public class KotlinSensorTest {
     assertThat(context.cpdTokens(inputFile.key()).get(1).getValue()).isEqualTo("print(1==1);print(\"LITERAL\");}");
     assertThat(context.measure(inputFile.key(), CoreMetrics.COMPLEXITY).value()).isEqualTo(1);
     assertThat(context.measure(inputFile.key(), CoreMetrics.STATEMENTS).value()).isEqualTo(2);
+
+    assertThat(logTester.logs()).contains("1 source files to be analyzed");
   }
 
   @Test
