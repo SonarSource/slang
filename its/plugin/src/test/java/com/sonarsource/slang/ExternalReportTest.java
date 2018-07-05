@@ -54,6 +54,26 @@ public class ExternalReportTest extends TestBase {
     }
   }
 
+  @Test
+  public void android_lint() {
+    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "androidlint");
+    sonarScanner.setProperty("sonar.android.androidLint.reportPaths", "lint-results.xml");
+    ORCHESTRATOR.executeBuild(sonarScanner);
+    List<Issue> issues = getExternalIssues();
+    if (ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2)) {
+      assertThat(issues).hasSize(1);
+      Issue issue = issues.get(0);
+      assertThat(issue.componentKey()).isEqualTo("project:main.kt");
+      assertThat(issue.ruleKey()).isEqualTo("external_android-lint-kotlin:UnusedAttribute");
+      assertThat(issue.line()).isEqualTo(2);
+      assertThat(issue.message()).isEqualTo("Attribute `required` is only used in API level 5 and higher (current min is 1)");
+      assertThat(issue.severity()).isEqualTo("MINOR");
+      assertThat(issue.debt()).isEqualTo("5min");
+    } else {
+      assertThat(issues).isEmpty();
+    }
+  }
+
   private List<Issue> getExternalIssues() {
     Server server = ORCHESTRATOR.getServer();
     IssueClient issueClient = SonarClient.create(server.getUrl()).issueClient();

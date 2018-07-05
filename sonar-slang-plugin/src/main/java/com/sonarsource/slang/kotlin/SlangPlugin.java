@@ -19,6 +19,8 @@
  */
 package com.sonarsource.slang.kotlin;
 
+import com.sonarsource.slang.externalreport.androidlint.AndroidLintRulesDefinition;
+import com.sonarsource.slang.externalreport.androidlint.AndroidLintSensor;
 import com.sonarsource.slang.externalreport.detekt.DetektRulesDefinition;
 import com.sonarsource.slang.externalreport.detekt.DetektSensor;
 import org.sonar.api.Plugin;
@@ -31,6 +33,7 @@ public class SlangPlugin implements Plugin {
   // Subcategories
   private static final String GENERAL = "General";
   private static final String KOTLIN_CATEGORY = "Kotlin";
+  private static final String ANDROID_CATEGORY = "Android";
   private static final String EXTERNAL_LINTER_SUBCATEGORY = "Popular Rule Engines";
 
   // Global constants
@@ -53,6 +56,8 @@ public class SlangPlugin implements Plugin {
       KotlinRulesDefinition.class,
       new DetektRulesDefinition(externalIssuesSupported),
       DetektSensor.class,
+      new AndroidLintRulesDefinition(externalIssuesSupported),
+      AndroidLintSensor.class,
       KotlinProfileDefinition.class,
       PropertyDefinition.builder(KOTLIN_FILE_SUFFIXES_KEY)
         .defaultValue(KOTLIN_FILE_SUFFIXES_DEFAULT_VALUE)
@@ -65,13 +70,22 @@ public class SlangPlugin implements Plugin {
         .build());
 
     if (externalIssuesSupported) {
-      context.addExtension(
+      context.addExtensions(
         PropertyDefinition.builder(DetektSensor.REPORT_PROPERTY_KEY)
           .name("Detekt Report Files")
           .description("Paths (absolute or relative) to checkstyle xml files with detekt issues.")
           .category(KOTLIN_CATEGORY)
           .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
           .onQualifiers(Qualifiers.PROJECT)
+          .multiValues(true)
+          .build(),
+        PropertyDefinition.builder(AndroidLintSensor.REPORT_PROPERTY_KEY)
+          .name("Android Lint Report Files")
+          .description("Paths (absolute or relative) to xml files with android lint issues.")
+          .category(ANDROID_CATEGORY)
+          .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
+          .onQualifiers(Qualifiers.PROJECT)
+          .defaultValue("")
           .multiValues(true)
           .build());
     }

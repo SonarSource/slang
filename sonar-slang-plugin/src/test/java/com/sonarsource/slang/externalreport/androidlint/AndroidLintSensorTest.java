@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.sonarsource.slang.externalreport.detekt;
+package com.sonarsource.slang.externalreport.androidlint;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -38,11 +38,11 @@ import static com.sonarsource.slang.externalreport.ExternalReportTestUtils.creat
 import static com.sonarsource.slang.externalreport.ExternalReportTestUtils.executeSensor;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DetektSensorTest {
+public class AndroidLintSensorTest {
 
-  private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport", "detekt");
+  private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport", "androidlint");
 
-  private static DetektSensor detektSensor = new DetektSensor();
+  private static AndroidLintSensor detektSensor = new AndroidLintSensor();
 
   @Rule
   public LogTester logTester = new LogTester();
@@ -51,15 +51,15 @@ public class DetektSensorTest {
   public void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     detektSensor.describe(sensorDescriptor);
-    assertThat(sensorDescriptor.name()).isEqualTo("Import of detekt issues");
-    assertThat(sensorDescriptor.languages()).containsOnly("kotlin");
+    assertThat(sensorDescriptor.name()).isEqualTo("Import of Android Lint issues");
+    assertThat(sensorDescriptor.languages()).isEmpty();
     assertLogsContainOnlyInfo(logTester);
   }
 
   @Test
   public void no_issues_with_sonarqube_71() throws IOException {
     SensorContextTester context = createContext(PROJECT_DIR, 7, 1);
-    context.settings().setProperty("sonar.kotlin.detekt.reportPaths", resolveInProject("detekt-checkstyle.xml"));
+    context.settings().setProperty("sonar.android.androidLint.reportPaths", resolveInProject("lint-results.xml"));
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Import of external issues requires SonarQube 7.2 or greater.");
@@ -68,36 +68,35 @@ public class DetektSensorTest {
   @Test
   public void issues_with_sonarqube_72() throws IOException {
     SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.kotlin.detekt.reportPaths", resolveInProject("detekt-checkstyle.xml"));
+    context.settings().setProperty("sonar.android.androidLint.reportPaths", resolveInProject("lint-results.xml"));
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
-    assertThat(externalIssues).hasSize(3);
+    assertThat(externalIssues).hasSize(4);
 
     ExternalIssue first = externalIssues.get(0);
-    assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("detekt-project:main.kt");
-    assertThat(first.ruleKey().rule()).isEqualTo("EmptyIfBlock");
+    assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:AndroidManifest.xml");
+    assertThat(first.ruleKey().toString()).isEqualTo("android-lint-xml:AllowBackup");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MINOR);
-    assertThat(first.primaryLocation().message()).isEqualTo("This empty block of code can be removed.");
-    assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(3);
+    assertThat(first.primaryLocation().message()).isEqualTo(
+      "On SDK version 23 and up, your app data will be automatically backed up and restored on app install. Consider adding the attribute `android:fullBackupContent` to specify an `@xml` resource which configures which files to backup. More info: https://developer.android.com/training/backup/autosyncapi.html");
+    assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(2);
 
     ExternalIssue second = externalIssues.get(1);
-    assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("detekt-project:main.kt");
-    assertThat(second.ruleKey().rule()).isEqualTo("MagicNumber");
-    assertThat(second.type()).isEqualTo(RuleType.CODE_SMELL);
-    assertThat(second.severity()).isEqualTo(Severity.INFO);
-    assertThat(second.remediationEffort().longValue()).isEqualTo(10L);
-    assertThat(second.primaryLocation().message()).isEqualTo("This expression contains a magic number. Consider defining it to a well named constant.");
-    assertThat(second.primaryLocation().textRange().start().line()).isEqualTo(3);
+    assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:A.java");
+    assertThat(second.ruleKey().toString()).isEqualTo("android-lint-java:GoogleAppIndexingWarning");
+    assertThat(second.primaryLocation().textRange().start().line()).isEqualTo(1);
 
     ExternalIssue third = externalIssues.get(2);
-    assertThat(third.primaryLocation().inputComponent().key()).isEqualTo("detekt-project:A.kt");
-    assertThat(third.ruleKey().rule()).isEqualTo("EqualsWithHashCodeExist");
-    assertThat(third.type()).isEqualTo(RuleType.CODE_SMELL);
-    assertThat(third.severity()).isEqualTo(Severity.CRITICAL);
-    assertThat(third.primaryLocation().message()).isEqualTo("A class should always override hashCode when overriding equals and the other way around.");
-    assertThat(third.primaryLocation().textRange().start().line()).isEqualTo(3);
+    assertThat(third.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:B.kt");
+    assertThat(third.ruleKey().toString()).isEqualTo("android-lint-kotlin:GoogleAppIndexingWarning");
+    assertThat(third.primaryLocation().textRange().start().line()).isEqualTo(2);
 
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+    ExternalIssue fourth = externalIssues.get(3);
+    assertThat(fourth.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:build.gradle");
+    assertThat(fourth.ruleKey().toString()).isEqualTo("android-lint:GradleDependency");
+    assertThat(fourth.primaryLocation().textRange().start().line()).isEqualTo(3);
+
+    assertLogsContainOnlyInfo(logTester);
   }
 
   @Test
@@ -111,7 +110,7 @@ public class DetektSensorTest {
   @Test
   public void no_issues_with_invalid_report_path() throws IOException {
     SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.kotlin.detekt.reportPaths", resolveInProject("invalid-path.txt"));
+    context.settings().setProperty("sonar.android.androidLint.reportPaths", resolveInProject("invalid-path.txt"));
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
@@ -123,19 +122,19 @@ public class DetektSensorTest {
   @Test
   public void no_issues_with_invalid_checkstyle_file() throws IOException {
     SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.kotlin.detekt.reportPaths", resolveInProject("not-checkstyle-file.xml"));
+    context.settings().setProperty("sonar.android.androidLint.reportPaths", resolveInProject("not-android-lint-file.xml"));
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
     assertThat(logTester.logs(LoggerLevel.ERROR).get(0))
       .startsWith("No issues information will be saved as the report file '")
-      .endsWith("not-checkstyle-file.xml' can't be read.");
+      .endsWith("not-android-lint-file.xml' can't be read.");
   }
 
   @Test
   public void no_issues_with_invalid_xml_report() throws IOException {
     SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.kotlin.detekt.reportPaths", resolveInProject("invalid-file.xml"));
+    context.settings().setProperty("sonar.android.androidLint.reportPaths", resolveInProject("invalid-file.xml"));
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
@@ -147,27 +146,27 @@ public class DetektSensorTest {
   @Test
   public void issues_when_xml_file_has_errors() throws IOException {
     SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.kotlin.detekt.reportPaths", resolveInProject("detekt-checkstyle-with-errors.xml"));
+    context.settings().setProperty("sonar.android.androidLint.reportPaths", resolveInProject("lint-results-with-errors.xml"));
     List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
     assertThat(externalIssues).hasSize(1);
 
     ExternalIssue first = externalIssues.get(0);
-    assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("detekt-project:main.kt");
-    assertThat(first.ruleKey().rule()).isEqualTo("UnknownRuleKey");
+    assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:AndroidManifest.xml");
+    assertThat(first.ruleKey().toString()).isEqualTo("android-lint-xml:UnknownRuleKey");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
-    assertThat(first.primaryLocation().message()).isEqualTo("Error at file level with an unknown rule key.");
+    assertThat(first.primaryLocation().message()).isEqualTo("Unknown rule.");
     assertThat(first.primaryLocation().textRange()).isNull();
 
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.WARN)).containsExactlyInAnyOrder(
-      "No input file found for not-existing-file.kt. No detekt issues will be imported on this file.");
-    assertThat(logTester.logs(LoggerLevel.DEBUG)).containsExactlyInAnyOrder(
-      "Unexpected error without message for rule: 'detekt.EmptyIfBlock'",
-      "Unexpected rule key without 'detekt.' suffix: 'invalid-format'");
+      "No input file found for unknown-file.xml. No android lint issues will be imported on this file."
+    );
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
   }
 
   private static String resolveInProject(String fileName) {
     return PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();
   }
+
 }
