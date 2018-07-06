@@ -31,7 +31,7 @@ public class ReturnTreeImplTest {
   @Test
   public void test() {
     TreeMetaData meta = null;
-    TokenImpl returnKeyword = new TokenImpl(new TextRangeImpl(1, 0, 1, 3), "return", Token.Type.KEYWORD);
+    TokenImpl returnKeyword = new TokenImpl(new TextRangeImpl(1, 0, 1, 6), "return", Token.Type.KEYWORD);
     ReturnTreeImpl returnWithoutValue = new ReturnTreeImpl(meta, returnKeyword, null);
 
     assertThat(returnWithoutValue.children()).hasSize(0);

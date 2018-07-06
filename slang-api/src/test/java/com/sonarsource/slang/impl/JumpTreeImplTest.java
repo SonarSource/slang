@@ -68,6 +68,9 @@ public class JumpTreeImplTest {
 
     assertThat(areEquivalent(jumpTreeBreak, getJumpTree(JumpTree.JumpKind.BREAK, "bar"))).isFalse();
     assertThat(areEquivalent(jumpTreeContinue, getJumpTree(JumpTree.JumpKind.CONTINUE, "bar"))).isFalse();
+
+    assertThat(areEquivalent(jumpTreeBreak, getJumpTree(JumpTree.JumpKind.BREAK, null))).isFalse();
+    assertThat(areEquivalent(jumpTreeContinue, getJumpTree(JumpTree.JumpKind.CONTINUE, null))).isFalse();
   }
 
   private static JumpTree getJumpTree(JumpTree.JumpKind kind, @Nullable String labelText) {

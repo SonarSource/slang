@@ -131,8 +131,7 @@ atomicExpression
   |  returnExpression
   |  expressionName
   |  tryExpression
-  |  breakExpression
-  |  continueExpression
+  |  jumpExpression
   ;
 
 parenthesizedExpression
@@ -218,6 +217,11 @@ nativeBlock
 
 returnExpression
   :  RETURN statement?
+  ;
+
+jumpExpression
+  :  breakExpression
+  |  continueExpression
   ;
 
 breakExpression
