@@ -34,6 +34,7 @@ public class CommonCheckList {
       BadFunctionNameCheck.class,
       BooleanInversionCheck.class,
       BooleanLiteralCheck.class,
+      CodeAfterJumpCheck.class,
       CollapsibleIfStatementsCheck.class,
       DuplicateBranchCheck.class,
       DuplicatedFunctionImplementationCheck.class,
