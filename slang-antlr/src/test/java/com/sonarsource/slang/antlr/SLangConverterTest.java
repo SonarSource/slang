@@ -29,11 +29,13 @@ import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
+import com.sonarsource.slang.api.JumpTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.LoopTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.ParenthesizedExpressionTree;
+import com.sonarsource.slang.api.ReturnTree;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
@@ -470,6 +472,79 @@ public class SLangConverterTest {
       assertTree(topLevelTree.declarations().get(i)).isLiteral(values.get(i));
       assertTree(topLevelTree.declarations().get(i)).isStringLiteral(content.get(i));
     }
+  }
+
+  @Test
+  public void jump() {
+    String slangCode = "break foo";
+    Tree tree = converter.parse(slangCode + ";");
+
+    assertTree(tree).isNotNull();
+    assertTree(tree).isInstanceOf(TopLevelTree.class);
+    TopLevelTree topLevelTree = (TopLevelTree) tree;
+    assertThat(topLevelTree.declarations()).hasSize(1);
+
+    JumpTree jumpTree = (JumpTree) topLevelTree.declarations().get(0);
+    assertTree(jumpTree).isNotNull();
+    assertTree(jumpTree).isInstanceOf(JumpTree.class);
+    assertThat(jumpTree.label()).isInstanceOf(IdentifierTree.class);
+    assertThat(jumpTree.label().name()).isEqualTo("foo");
+    assertThat(jumpTree.kind()).isEqualTo(JumpTree.JumpKind.BREAK);
+
+    slangCode = "break";
+    tree = converter.parse(slangCode + ";");
+    assertTree(tree).isNotNull();
+    assertTree(tree).isInstanceOf(TopLevelTree.class);
+    topLevelTree = (TopLevelTree) tree;
+    assertThat(topLevelTree.declarations()).hasSize(1);
+
+    jumpTree = (JumpTree) topLevelTree.declarations().get(0);
+    assertTree(jumpTree).isNotNull();
+    assertTree(jumpTree).isInstanceOf(JumpTree.class);
+    assertThat(jumpTree.label()).isNull();
+    assertThat(jumpTree.kind()).isEqualTo(JumpTree.JumpKind.BREAK);
+
+    slangCode = "continue";
+    tree = converter.parse(slangCode + ";");
+    assertTree(tree).isNotNull();
+    assertTree(tree).isInstanceOf(TopLevelTree.class);
+    topLevelTree = (TopLevelTree) tree;
+    assertThat(topLevelTree.declarations()).hasSize(1);
+
+
+    jumpTree = (JumpTree) topLevelTree.declarations().get(0);
+    assertTree(jumpTree).isNotNull();
+    assertTree(jumpTree).isInstanceOf(JumpTree.class);
+    assertThat(jumpTree.label()).isNull();
+    assertThat(jumpTree.kind()).isEqualTo(JumpTree.JumpKind.CONTINUE);
+  }
+
+  @Test
+  public void returnTree() {
+    String slangCode = "return true";
+    Tree tree = converter.parse(slangCode + ";");
+
+    assertTree(tree).isNotNull();
+    assertTree(tree).isInstanceOf(TopLevelTree.class);
+    TopLevelTree topLevelTree = (TopLevelTree) tree;
+    assertThat(topLevelTree.declarations()).hasSize(1);
+
+    ReturnTree returnTree = (ReturnTree) topLevelTree.declarations().get(0);
+    assertTree(returnTree).isNotNull();
+    assertTree(returnTree).isInstanceOf(ReturnTree.class);
+    assertThat(returnTree.body()).isInstanceOf(LiteralTree.class);
+
+    slangCode = "return";
+    tree = converter.parse(slangCode + ";");
+    assertTree(tree).isNotNull();
+    assertTree(tree).isInstanceOf(TopLevelTree.class);
+    topLevelTree = (TopLevelTree) tree;
+    assertThat(topLevelTree.declarations()).hasSize(1);
+
+    returnTree = (ReturnTree) topLevelTree.declarations().get(0);
+    assertTree(returnTree).isNotNull();
+    assertTree(returnTree).isInstanceOf(ReturnTree.class);
+    assertThat(returnTree.body()).isNull();
   }
 
   @Test

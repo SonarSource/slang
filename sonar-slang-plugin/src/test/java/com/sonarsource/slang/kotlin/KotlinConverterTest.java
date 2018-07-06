@@ -28,6 +28,7 @@ import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
+import com.sonarsource.slang.api.JumpTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.LoopTree;
 import com.sonarsource.slang.api.MatchCaseTree;
@@ -35,6 +36,7 @@ import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.ParameterTree;
 import com.sonarsource.slang.api.ParenthesizedExpressionTree;
+import com.sonarsource.slang.api.ReturnTree;
 import com.sonarsource.slang.api.StringLiteralTree;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
@@ -616,6 +618,62 @@ public class KotlinConverterTest {
     assertTrees(kotlinStatements("x = 3\nx -= y + 3\n"))
       .isEquivalentTo(slangStatements("x = 3; x -= y + 3;"));
   }
+
+  @Test
+  public void testBreakContinue() {
+    LoopTree tree = (LoopTree) kotlinStatement("while(true)\nbreak;");
+    assertThat(tree.body()).isInstanceOf(JumpTree.class);
+    JumpTree jumpTree = (JumpTree) tree.body();
+    assertThat(jumpTree.kind()).isEqualTo(JumpTree.JumpKind.BREAK);
+    assertThat(jumpTree.keyword().text()).isEqualTo("break");
+    assertThat(jumpTree.label()).isNull();
+
+    tree = (LoopTree) kotlinStatement("while(true)\ncontinue;");
+    assertThat(tree.body()).isInstanceOf(JumpTree.class);
+    jumpTree = (JumpTree) tree.body();
+    assertThat(jumpTree.kind()).isEqualTo(JumpTree.JumpKind.CONTINUE);
+    assertThat(jumpTree.keyword().text()).isEqualTo("continue");
+    assertThat(jumpTree.label()).isNull();
+
+    assertTrees(kotlinStatements("while(true)\nbreak;"))
+      .isEquivalentTo(slangStatements("while(true)\nbreak;"));
+
+    assertTrees(kotlinStatements("while(true)\ncontinue;"))
+      .isEquivalentTo(slangStatements("while(true)\ncontinue;"));
+
+    assertTrees(kotlinStatements("while(true)\nbreak@foo;"))
+      .isEquivalentTo(slangStatements("while(true)\nbreak foo;"));
+
+    assertTrees(kotlinStatements("while(true)\ncontinue@foo;"))
+      .isEquivalentTo(slangStatements("while(true)\ncontinue foo;"));
+
+  }
+
+  @Test
+  public void testReturn() {
+    Tree tree = kotlinStatement("return 2;");
+    assertThat(tree).isInstanceOf(ReturnTree.class);
+    ReturnTree returnTree = (ReturnTree) tree;
+    assertThat(returnTree.keyword().text()).isEqualTo("return");
+    assertThat(returnTree.body()).isInstanceOf(LiteralTree.class);
+
+    tree = kotlinStatement("return;");
+    assertThat(tree).isInstanceOf(ReturnTree.class);
+    returnTree = (ReturnTree) tree;
+    assertThat(returnTree.keyword().text()).isEqualTo("return");
+    assertThat(returnTree.body()).isNull();
+
+    assertTree(kotlinStatement("return 2;"))
+      .isEquivalentTo(slangStatement("return 2;"));
+
+    assertTree(kotlinStatement("return;"))
+      .isEquivalentTo(slangStatement("return;"));
+
+    assertTree(kotlinStatement("return@foo;"))
+      .isEquivalentTo(slangStatement("return;"));
+
+  }
+
 
   @Test
   public void testTokens() {
