@@ -124,7 +124,6 @@ public class AndroidLintRuleDefinition {
         rule.type = mapType(severity, category, priority);
         rule.severity = mapSeverity(severity);
         rule.tags = new HashSet<>(mapTags(category));
-        rule.tags.add("android");
         rule.constantDebtMinutes = 5L;
         return rule;
       }

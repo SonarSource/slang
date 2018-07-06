@@ -22,7 +22,9 @@ package com.sonarsource.slang.externalreport.detekt;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.rule.Severity;
@@ -33,9 +35,9 @@ import org.sonar.api.rules.RuleType;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
 
-import static com.sonarsource.slang.externalreport.ExternalReportTestUtils.assertLogsContainOnlyInfo;
+import static com.sonarsource.slang.externalreport.ExternalReportTestUtils.assertNoErrorWarnDebugLogs;
 import static com.sonarsource.slang.externalreport.ExternalReportTestUtils.createContext;
-import static com.sonarsource.slang.externalreport.ExternalReportTestUtils.executeSensor;
+import static com.sonarsource.slang.externalreport.ExternalReportTestUtils.onlyOneLogElement;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DetektSensorTest {
@@ -53,23 +55,19 @@ public class DetektSensorTest {
     detektSensor.describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of detekt issues");
     assertThat(sensorDescriptor.languages()).containsOnly("kotlin");
-    assertLogsContainOnlyInfo(logTester);
+    assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
   public void no_issues_with_sonarqube_71() throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, 7, 1);
-    context.settings().setProperty("sonar.kotlin.detekt.reportPaths", resolveInProject("detekt-checkstyle.xml"));
-    List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 1, "detekt-checkstyle.xml");
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Import of external issues requires SonarQube 7.2 or greater.");
   }
 
   @Test
   public void issues_with_sonarqube_72() throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.kotlin.detekt.reportPaths", resolveInProject("detekt-checkstyle.xml"));
-    List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "detekt-checkstyle.xml");
     assertThat(externalIssues).hasSize(3);
 
     ExternalIssue first = externalIssues.get(0);
@@ -102,53 +100,41 @@ public class DetektSensorTest {
 
   @Test
   public void no_issues_without_report_paths_property() throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, null);
     assertThat(externalIssues).isEmpty();
-    assertLogsContainOnlyInfo(logTester);
+    assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
   public void no_issues_with_invalid_report_path() throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.kotlin.detekt.reportPaths", resolveInProject("invalid-path.txt"));
-    List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "invalid-path.txt");
     assertThat(externalIssues).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0))
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
       .startsWith("No issues information will be saved as the report file '")
       .endsWith("invalid-path.txt' can't be read.");
   }
 
   @Test
   public void no_issues_with_invalid_checkstyle_file() throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.kotlin.detekt.reportPaths", resolveInProject("not-checkstyle-file.xml"));
-    List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "not-checkstyle-file.xml");
     assertThat(externalIssues).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0))
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
       .startsWith("No issues information will be saved as the report file '")
       .endsWith("not-checkstyle-file.xml' can't be read.");
   }
 
   @Test
   public void no_issues_with_invalid_xml_report() throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.kotlin.detekt.reportPaths", resolveInProject("invalid-file.xml"));
-    List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "invalid-file.xml");
     assertThat(externalIssues).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0))
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
       .startsWith("No issues information will be saved as the report file '")
       .endsWith("invalid-file.xml' can't be read.");
   }
 
   @Test
   public void issues_when_xml_file_has_errors() throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.kotlin.detekt.reportPaths", resolveInProject("detekt-checkstyle-with-errors.xml"));
-    List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "detekt-checkstyle-with-errors.xml");
     assertThat(externalIssues).hasSize(1);
 
     ExternalIssue first = externalIssues.get(0);
@@ -167,7 +153,14 @@ public class DetektSensorTest {
       "Unexpected rule key without 'detekt.' suffix: 'invalid-format'");
   }
 
-  private static String resolveInProject(String fileName) {
-    return PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();
+  private List<ExternalIssue> executeSensorImporting(int majorVersion, int minorVersion, @Nullable String fileName) throws IOException {
+    SensorContextTester context = createContext(PROJECT_DIR, majorVersion, minorVersion);
+    if (fileName != null) {
+      String path = PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();
+      context.settings().setProperty("sonar.kotlin.detekt.reportPaths", path);
+    }
+    detektSensor.execute(context);
+    return new ArrayList<>(context.allExternalIssues());
   }
+
 }

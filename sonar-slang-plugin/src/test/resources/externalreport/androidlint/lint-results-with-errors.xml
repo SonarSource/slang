@@ -5,6 +5,7 @@
         id="UnknownRuleKey"
         message="Unknown rule.">
         <location file="AndroidManifest.xml"/>
+        <location line="2" file="A.java"/>
     </issue>
 
     <issue
@@ -15,7 +16,7 @@
     <issue
         id="UnusedAttribute"
         message="Valid rule key with binary file.">
-        <location file="dancing-puppets.gif"/>
+        <location file="binary-file.gif"/>
     </issue>
 
     <issue

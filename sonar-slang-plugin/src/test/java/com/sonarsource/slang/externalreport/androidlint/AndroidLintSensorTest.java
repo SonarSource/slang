@@ -22,7 +22,9 @@ package com.sonarsource.slang.externalreport.androidlint;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.rule.Severity;
@@ -33,16 +35,16 @@ import org.sonar.api.rules.RuleType;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
 
-import static com.sonarsource.slang.externalreport.ExternalReportTestUtils.assertLogsContainOnlyInfo;
+import static com.sonarsource.slang.externalreport.ExternalReportTestUtils.assertNoErrorWarnDebugLogs;
 import static com.sonarsource.slang.externalreport.ExternalReportTestUtils.createContext;
-import static com.sonarsource.slang.externalreport.ExternalReportTestUtils.executeSensor;
+import static com.sonarsource.slang.externalreport.ExternalReportTestUtils.onlyOneLogElement;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AndroidLintSensorTest {
 
   private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport", "androidlint");
 
-  private static AndroidLintSensor detektSensor = new AndroidLintSensor();
+  private static AndroidLintSensor androidLintSensor = new AndroidLintSensor();
 
   @Rule
   public LogTester logTester = new LogTester();
@@ -50,26 +52,22 @@ public class AndroidLintSensorTest {
   @Test
   public void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
-    detektSensor.describe(sensorDescriptor);
+    androidLintSensor.describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of Android Lint issues");
     assertThat(sensorDescriptor.languages()).isEmpty();
-    assertLogsContainOnlyInfo(logTester);
+    assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
   public void no_issues_with_sonarqube_71() throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, 7, 1);
-    context.settings().setProperty("sonar.androidLint.reportPaths", resolveInProject("lint-results.xml"));
-    List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7,1, "lint-results.xml");
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Import of external issues requires SonarQube 7.2 or greater.");
   }
 
   @Test
   public void issues_with_sonarqube_72() throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.androidLint.reportPaths", resolveInProject("lint-results.xml"));
-    List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"lint-results.xml");
     assertThat(externalIssues).hasSize(4);
 
     ExternalIssue first = externalIssues.get(0);
@@ -96,58 +94,46 @@ public class AndroidLintSensorTest {
     assertThat(fourth.ruleKey().toString()).isEqualTo("android-lint:GradleDependency");
     assertThat(fourth.primaryLocation().textRange().start().line()).isEqualTo(3);
 
-    assertLogsContainOnlyInfo(logTester);
+    assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
   public void no_issues_without_report_paths_property() throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,null);
     assertThat(externalIssues).isEmpty();
-    assertLogsContainOnlyInfo(logTester);
+    assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
   public void no_issues_with_invalid_report_path() throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.androidLint.reportPaths", resolveInProject("invalid-path.txt"));
-    List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"invalid-path.txt");
     assertThat(externalIssues).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0))
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
       .startsWith("No issues information will be saved as the report file '")
       .endsWith("invalid-path.txt' can't be read.");
   }
 
   @Test
   public void no_issues_with_invalid_checkstyle_file() throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.androidLint.reportPaths", resolveInProject("not-android-lint-file.xml"));
-    List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"not-android-lint-file.xml");
     assertThat(externalIssues).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0))
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
       .startsWith("No issues information will be saved as the report file '")
       .endsWith("not-android-lint-file.xml' can't be read.");
   }
 
   @Test
   public void no_issues_with_invalid_xml_report() throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.androidLint.reportPaths", resolveInProject("invalid-file.xml"));
-    List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"invalid-file.xml");
     assertThat(externalIssues).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0))
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
       .startsWith("No issues information will be saved as the report file '")
       .endsWith("invalid-file.xml' can't be read.");
   }
 
   @Test
   public void issues_when_xml_file_has_errors() throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, 7, 2);
-    context.settings().setProperty("sonar.androidLint.reportPaths", resolveInProject("lint-results-with-errors.xml"));
-    List<ExternalIssue> externalIssues = executeSensor(detektSensor, context);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"lint-results-with-errors.xml");
     assertThat(externalIssues).hasSize(1);
 
     ExternalIssue first = externalIssues.get(0);
@@ -160,19 +146,23 @@ public class AndroidLintSensorTest {
 
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.WARN)).containsExactlyInAnyOrder(
-      "No input file found for unknown-file.xml. No android lint issues will be imported on this file."
-    );
+      "No input file found for unknown-file.xml. No android lint issues will be imported on this file.");
     assertThat(logTester.logs(LoggerLevel.DEBUG)).containsExactlyInAnyOrder(
-      "Missing information or unsupported file type for:'', file:'AndroidManifest.xml', message:'Missing rule key.'",
-      "Missing information or unsupported file type for:'UnusedAttribute', file:'dancing-puppets.gif', message:'Valid rule key with binary file.'",
-      "Missing information or unsupported file type for:'UnusedAttribute', file:'', message:'Valid rule key without file path.'",
-      "Missing information or unsupported file type for:'UnusedAttribute', file:'', message:'Valid rule key with invalid location.'",
-      "Missing information or unsupported file type for:'', file:'', message:''"
-    );
+      "Missing information or unsupported file type for id:'', file:'AndroidManifest.xml', message:'Missing rule key.'",
+      "Missing information or unsupported file type for id:'UnusedAttribute', file:'binary-file.gif', message:'Valid rule key with binary file.'",
+      "Missing information or unsupported file type for id:'UnusedAttribute', file:'', message:'Valid rule key without file path.'",
+      "Missing information or unsupported file type for id:'UnusedAttribute', file:'', message:'Valid rule key with invalid location.'",
+      "Missing information or unsupported file type for id:'', file:'', message:''");
   }
 
-  private static String resolveInProject(String fileName) {
-    return PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();
+  private List<ExternalIssue> executeSensorImporting(int majorVersion, int minorVersion, @Nullable String fileName) throws IOException {
+    SensorContextTester context = createContext(PROJECT_DIR, majorVersion, minorVersion);
+    if (fileName != null) {
+      String path = PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();
+      context.settings().setProperty("sonar.androidLint.reportPaths", path);
+    }
+    androidLintSensor.execute(context);
+    return new ArrayList<>(context.allExternalIssues());
   }
 
 }

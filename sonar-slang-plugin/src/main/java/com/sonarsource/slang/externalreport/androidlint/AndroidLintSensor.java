@@ -72,7 +72,7 @@ public class AndroidLintSensor implements Sensor {
 
   private static void saveIssue(SensorContext context, String id, String file, String line, String message) {
     if (id.isEmpty() || message.isEmpty() || file.isEmpty() || !AndroidLintRulesDefinition.isTextFile(file)) {
-      LOG.debug("Missing information or unsupported file type for:'{}', file:'{}', message:'{}'", id, file, message);
+      LOG.debug("Missing information or unsupported file type for id:'{}', file:'{}', message:'{}'", id, file, message);
       return;
     }
     FilePredicates predicates = context.fileSystem().predicates();

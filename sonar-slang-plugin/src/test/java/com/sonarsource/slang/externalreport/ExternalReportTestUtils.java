@@ -23,14 +23,11 @@ import com.sonarsource.slang.kotlin.SlangPlugin;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
-import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
-import org.sonar.api.batch.sensor.issue.ExternalIssue;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.utils.Version;
 import org.sonar.api.utils.log.LogTester;
@@ -45,11 +42,6 @@ public final class ExternalReportTestUtils {
     // utility class
   }
 
-  public static List<ExternalIssue> executeSensor(Sensor sensor, SensorContextTester context) {
-    sensor.execute(context);
-    return new ArrayList<>(context.allExternalIssues());
-  }
-
   public static SensorContextTester createContext(Path projectDir, int majorVersion, int minorVersion) throws IOException {
     SensorContextTester context = SensorContextTester.create(projectDir);
     Files.list(projectDir)
@@ -58,10 +50,15 @@ public final class ExternalReportTestUtils {
     return context;
   }
 
-  public static void assertLogsContainOnlyInfo(LogTester logTester) {
+  public static void assertNoErrorWarnDebugLogs(LogTester logTester) {
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
+  }
+
+  public static String onlyOneLogElement(List<String> elements) {
+    assertThat(elements).hasSize(1);
+    return elements.get(0);
   }
 
   private static void addFileToContext(SensorContextTester context, Path projectDir, Path file) {
