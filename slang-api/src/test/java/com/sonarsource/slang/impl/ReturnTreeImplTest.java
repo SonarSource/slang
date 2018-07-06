@@ -32,19 +32,19 @@ public class ReturnTreeImplTest {
   public void test() {
     TreeMetaData meta = null;
     TokenImpl returnKeyword = new TokenImpl(new TextRangeImpl(1, 0, 1, 3), "return", Token.Type.KEYWORD);
-    ReturnTreeImpl returnTree = new ReturnTreeImpl(meta, returnKeyword, null);
+    ReturnTreeImpl returnWithoutValue = new ReturnTreeImpl(meta, returnKeyword, null);
 
-    assertThat(returnTree.children()).hasSize(0);
-    assertThat(returnTree.keyword().text()).isEqualTo("return");
-    assertThat(returnTree.body()).isNull();
+    assertThat(returnWithoutValue.children()).hasSize(0);
+    assertThat(returnWithoutValue.keyword().text()).isEqualTo("return");
+    assertThat(returnWithoutValue.body()).isNull();
 
-    ReturnTreeImpl returnTree2 = new ReturnTreeImpl(meta, returnKeyword, new LiteralTreeImpl(meta, "foo"));
-    assertThat(returnTree2.children()).hasSize(1);
-    assertThat(returnTree2.keyword().text()).isEqualTo("return");
-    assertThat(returnTree2.body()).isInstanceOf(LiteralTree.class);
+    ReturnTreeImpl returnWithValue = new ReturnTreeImpl(meta, returnKeyword, new LiteralTreeImpl(meta, "foo"));
+    assertThat(returnWithValue.children()).hasSize(1);
+    assertThat(returnWithValue.keyword().text()).isEqualTo("return");
+    assertThat(returnWithValue.body()).isInstanceOf(LiteralTree.class);
 
-    assertThat(areEquivalent(returnTree, new ReturnTreeImpl(meta, returnKeyword, null))).isTrue();
-    assertThat(areEquivalent(returnTree, returnTree2)).isFalse();
+    assertThat(areEquivalent(returnWithoutValue, new ReturnTreeImpl(meta, returnKeyword, null))).isTrue();
+    assertThat(areEquivalent(returnWithoutValue, returnWithValue)).isFalse();
 
   }
 }

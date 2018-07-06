@@ -628,12 +628,30 @@ public class KotlinConverterTest {
     assertThat(jumpTree.keyword().text()).isEqualTo("break");
     assertThat(jumpTree.label()).isNull();
 
+    tree = (LoopTree) kotlinStatement("while(true)\nbreak@foo;");
+    assertThat(tree.body()).isInstanceOf(JumpTree.class);
+    jumpTree = (JumpTree) tree.body();
+    assertThat(jumpTree.kind()).isEqualTo(JumpTree.JumpKind.BREAK);
+    assertThat(jumpTree.keyword().text()).isEqualTo("break");
+    assertThat(jumpTree.label().name()).isEqualTo("foo");
+    assertThat(jumpTree.metaData().tokens()).extracting(Token::text).containsExactly("break", "@", "foo");
+    assertThat(jumpTree.label().metaData().tokens()).extracting(Token::text).containsExactly("foo");
+
     tree = (LoopTree) kotlinStatement("while(true)\ncontinue;");
     assertThat(tree.body()).isInstanceOf(JumpTree.class);
     jumpTree = (JumpTree) tree.body();
     assertThat(jumpTree.kind()).isEqualTo(JumpTree.JumpKind.CONTINUE);
     assertThat(jumpTree.keyword().text()).isEqualTo("continue");
     assertThat(jumpTree.label()).isNull();
+
+    tree = (LoopTree) kotlinStatement("while(true)\ncontinue@foo;");
+    assertThat(tree.body()).isInstanceOf(JumpTree.class);
+    jumpTree = (JumpTree) tree.body();
+    assertThat(jumpTree.kind()).isEqualTo(JumpTree.JumpKind.CONTINUE);
+    assertThat(jumpTree.keyword().text()).isEqualTo("continue");
+    assertThat(jumpTree.label().name()).isEqualTo("foo");
+    assertThat(jumpTree.metaData().tokens()).extracting(Token::text).containsExactly("continue", "@", "foo");
+    assertThat(jumpTree.label().metaData().tokens()).extracting(Token::text).containsExactly("foo");
 
     assertTrees(kotlinStatements("while(true)\nbreak;"))
       .isEquivalentTo(slangStatements("while(true)\nbreak;"));
@@ -663,6 +681,9 @@ public class KotlinConverterTest {
     assertThat(returnTree.keyword().text()).isEqualTo("return");
     assertThat(returnTree.body()).isNull();
 
+    tree = kotlinStatement("return@foo 2;");
+    assertThat(tree).isInstanceOf(NativeTree.class);
+
     assertTree(kotlinStatement("return 2;"))
       .isEquivalentTo(slangStatement("return 2;"));
 
@@ -670,8 +691,10 @@ public class KotlinConverterTest {
       .isEquivalentTo(slangStatement("return;"));
 
     assertTree(kotlinStatement("return@foo;"))
-      .isEquivalentTo(slangStatement("return;"));
+      .isNotEquivalentTo(slangStatement("return;"));
 
+    assertTree(kotlinStatement("return@foo;"))
+      .isNotEquivalentTo(kotlinStatement("return@bar;"));
   }
 
 

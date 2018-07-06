@@ -92,6 +92,7 @@ import org.jetbrains.kotlin.psi.KtContinueExpression;
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry;
 import org.jetbrains.kotlin.psi.KtDoWhileExpression;
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry;
+import org.jetbrains.kotlin.psi.KtExpressionWithLabel;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFinallySection;
 import org.jetbrains.kotlin.psi.KtForExpression;
@@ -243,34 +244,40 @@ class KotlinTreeVisitor {
     Token rightParenthesis = toSlangToken(element.getLastChild());
     return new ParenthesizedExpressionTreeImpl(metaData, expression, leftParenthesis, rightParenthesis);
   }
-  private Tree createReturnTree(TreeMetaData metaData, KtReturnExpression element) {
-    Tree returnExpression = null;
-    if (element.getReturnedExpression() != null) {
-      returnExpression = createElement(element.getReturnedExpression());
+
+  private Tree createReturnTree(TreeMetaData metaData, KtReturnExpression ktReturnExpression) {
+    Tree returnBody = null;
+    // return statements with label are converted to NativeTree
+    IdentifierTree label = getLabel(ktReturnExpression);
+    if (label != null) {
+      return createNativeTree(metaData, new KotlinNativeKind(ktReturnExpression, label.name()), ktReturnExpression);
     }
-    return new ReturnTreeImpl(metaData, toSlangToken(element.getReturnKeyword()), returnExpression);
+    if (ktReturnExpression.getReturnedExpression() != null) {
+      returnBody = createElement(ktReturnExpression.getReturnedExpression());
+    }
+    return new ReturnTreeImpl(metaData, toSlangToken(ktReturnExpression.getReturnKeyword()), returnBody);
   }
 
   private Tree createBreakTree(TreeMetaData metaData, KtBreakExpression ktBreakExpression) {
-    IdentifierTree label = null;
-
-    KtSimpleNameExpression targetLabel = ktBreakExpression.getTargetLabel();
-    if (targetLabel != null && targetLabel.getIdentifier() != null) {
-      PsiElement identifier = targetLabel.getIdentifier();
-      label = createIdentifierTree(getTreeMetaData(identifier), identifier.getText());
-    }
-    return new JumpTreeImpl(metaData,toSlangToken(ktBreakExpression), JumpTree.JumpKind.BREAK, label);
+    PsiElement breakKeyword = ktBreakExpression.getFirstChild();
+    return new JumpTreeImpl(metaData, toSlangToken(breakKeyword), JumpTree.JumpKind.BREAK, getLabel(ktBreakExpression));
   }
 
   private Tree createContinueTree(TreeMetaData metaData, KtContinueExpression ktContinueExpression) {
+    PsiElement continueKeyword = ktContinueExpression.getFirstChild();
+    return new JumpTreeImpl(metaData, toSlangToken(continueKeyword), JumpTree.JumpKind.CONTINUE, getLabel(ktContinueExpression));
+  }
+
+  private IdentifierTree getLabel(KtExpressionWithLabel expressionWithLabel) {
     IdentifierTree label = null;
 
-    KtSimpleNameExpression targetLabel = ktContinueExpression.getTargetLabel();
+    KtSimpleNameExpression targetLabel = expressionWithLabel.getTargetLabel();
+    // there is no obvious way to test when targetLabel.getIdentifier() = null, despite being nullable in the API
     if (targetLabel != null && targetLabel.getIdentifier() != null) {
       PsiElement identifier = targetLabel.getIdentifier();
       label = createIdentifierTree(getTreeMetaData(identifier), identifier.getText());
     }
-    return new JumpTreeImpl(metaData,toSlangToken(ktContinueExpression), JumpTree.JumpKind.CONTINUE, label);
+    return label;
   }
 
   private Tree createClassDeclarationTree(TreeMetaData metaData, KtClass ktClass) {

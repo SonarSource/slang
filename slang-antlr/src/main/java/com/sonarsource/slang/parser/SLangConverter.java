@@ -482,21 +482,21 @@ public class SLangConverter implements ASTConverter {
     }
 
     @Override
-    public Tree visitBreakStatement(SLangParser.BreakStatementContext ctx) {
+    public Tree visitBreakExpression(SLangParser.BreakExpressionContext ctx) {
       IdentifierTree label = null;
       if (ctx.label() != null) {
         label = (IdentifierTree) visit(ctx.label());
       }
-      return new JumpTreeImpl(meta(ctx), toSlangToken(ctx.BREAK().getSymbol()),JumpTree.JumpKind.BREAK, label);
+      return new JumpTreeImpl(meta(ctx), toSlangToken(ctx.BREAK().getSymbol()), JumpTree.JumpKind.BREAK, label);
     }
 
     @Override
-    public Tree visitContinueStatement(SLangParser.ContinueStatementContext ctx) {
+    public Tree visitContinueExpression(SLangParser.ContinueExpressionContext ctx) {
       IdentifierTree label = null;
       if (ctx.label() != null) {
         label = (IdentifierTree) visit(ctx.label());
       }
-      return new JumpTreeImpl(meta(ctx), toSlangToken(ctx.CONTINUE().getSymbol()),JumpTree.JumpKind.CONTINUE, label);
+      return new JumpTreeImpl(meta(ctx), toSlangToken(ctx.CONTINUE().getSymbol()), JumpTree.JumpKind.CONTINUE, label);
     }
 
     @Override

@@ -131,7 +131,8 @@ atomicExpression
   |  returnExpression
   |  expressionName
   |  tryExpression
-  |  jumpStatement
+  |  breakExpression
+  |  continueExpression
   ;
 
 parenthesizedExpression
@@ -219,16 +220,11 @@ returnExpression
   :  RETURN statement?
   ;
 
-jumpStatement
-  :  breakStatement
-  |  continueStatement
-  ;
-
-breakStatement
+breakExpression
   : BREAK label?
   ;
 
-continueStatement
+continueExpression
   : CONTINUE label?
   ;
 
