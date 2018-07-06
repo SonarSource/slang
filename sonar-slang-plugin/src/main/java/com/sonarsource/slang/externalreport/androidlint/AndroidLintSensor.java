@@ -86,7 +86,13 @@ public class AndroidLintSensor implements Sensor {
     }
     RuleKey ruleKey = AndroidLintRulesDefinition.ruleKey(inputFile.language(), id);
     NewExternalIssue newExternalIssue = context.newExternalIssue();
-    setRulesDefinitionProperties(newExternalIssue, ruleKey.rule());
+    String ruleKey1 = ruleKey.rule();
+
+    ExternalRuleLoader externalRuleLoader = AndroidLintRulesDefinition.RULE_LOADERS.get(0);
+    newExternalIssue
+      .type(externalRuleLoader.ruleType(ruleKey1))
+      .severity(externalRuleLoader.ruleSeverity(ruleKey1))
+      .remediationEffortMinutes(externalRuleLoader.ruleConstantDebtMinutes(ruleKey1));
 
     NewIssueLocation primaryLocation = newExternalIssue.newLocation()
       .message(message)
@@ -100,14 +106,6 @@ public class AndroidLintSensor implements Sensor {
       .at(primaryLocation)
       .forRule(ruleKey)
       .save();
-  }
-
-  private static void setRulesDefinitionProperties(NewExternalIssue newExternalIssue, String ruleKey) {
-    ExternalRuleLoader externalRuleLoader = AndroidLintRulesDefinition.RULE_LOADERS.get(0);
-    newExternalIssue
-      .type(externalRuleLoader.ruleType(ruleKey))
-      .severity(externalRuleLoader.ruleSeverity(ruleKey))
-      .remediationEffortMinutes(externalRuleLoader.ruleConstantDebtMinutes(ruleKey));
   }
 
 }
