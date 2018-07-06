@@ -29,11 +29,13 @@ import com.sonarsource.slang.api.ExceptionHandlingTree;
 import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IdentifierTree;
 import com.sonarsource.slang.api.IfTree;
+import com.sonarsource.slang.api.JumpTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.LoopTree;
 import com.sonarsource.slang.api.MatchTree;
 import com.sonarsource.slang.api.NativeTree;
 import com.sonarsource.slang.api.ParenthesizedExpressionTree;
+import com.sonarsource.slang.api.ReturnTree;
 import com.sonarsource.slang.api.Token;
 import com.sonarsource.slang.api.TopLevelTree;
 import com.sonarsource.slang.api.Tree;
@@ -470,6 +472,34 @@ public class SLangConverterTest {
       assertTree(topLevelTree.declarations().get(i)).isLiteral(values.get(i));
       assertTree(topLevelTree.declarations().get(i)).isStringLiteral(content.get(i));
     }
+  }
+
+  @Test
+  public void jump() {
+    JumpTree jumpTree = (JumpTree) converter.parse("break foo;").children().get(0);
+    assertThat(jumpTree.label().name()).isEqualTo("foo");
+    assertThat(jumpTree.kind()).isEqualTo(JumpTree.JumpKind.BREAK);
+
+    jumpTree = (JumpTree) converter.parse("break;").children().get(0);
+    assertThat(jumpTree.label()).isNull();
+    assertThat(jumpTree.kind()).isEqualTo(JumpTree.JumpKind.BREAK);
+
+    jumpTree = (JumpTree) converter.parse("continue;").children().get(0);
+    assertThat(jumpTree.label()).isNull();
+    assertThat(jumpTree.kind()).isEqualTo(JumpTree.JumpKind.CONTINUE);
+
+    jumpTree = (JumpTree) converter.parse("continue foo;").children().get(0);
+    assertThat(jumpTree.label().name()).isEqualTo("foo");
+    assertThat(jumpTree.kind()).isEqualTo(JumpTree.JumpKind.CONTINUE);
+  }
+
+  @Test
+  public void returnTree() {
+    ReturnTree returnTree = (ReturnTree) converter.parse("return true;").children().get(0);
+    assertThat(returnTree.body()).isInstanceOf(LiteralTree.class);
+
+    returnTree = (ReturnTree) converter.parse("return;").children().get(0);
+    assertThat(returnTree.body()).isNull();
   }
 
   @Test

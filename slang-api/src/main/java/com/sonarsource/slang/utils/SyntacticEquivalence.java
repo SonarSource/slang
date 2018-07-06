@@ -22,6 +22,7 @@ package com.sonarsource.slang.utils;
 import com.sonarsource.slang.api.AssignmentExpressionTree;
 import com.sonarsource.slang.api.BinaryExpressionTree;
 import com.sonarsource.slang.api.IdentifierTree;
+import com.sonarsource.slang.api.JumpTree;
 import com.sonarsource.slang.api.LiteralTree;
 import com.sonarsource.slang.api.LoopTree;
 import com.sonarsource.slang.api.ModifierTree;
@@ -30,11 +31,10 @@ import com.sonarsource.slang.api.Tree;
 import com.sonarsource.slang.api.UnaryExpressionTree;
 import com.sonarsource.slang.api.VariableDeclarationTree;
 import com.sonarsource.slang.visitors.TreePrinter;
-
-import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 public class SyntacticEquivalence {
 
@@ -95,7 +95,8 @@ public class SyntacticEquivalence {
     boolean vardeclTreeCheck = (first instanceof VariableDeclarationTree) && (((VariableDeclarationTree) first).isVal() != ((VariableDeclarationTree) second).isVal());
     boolean loopTreeCheck = (first instanceof LoopTree) && (((LoopTree) first).kind() != ((LoopTree) second).kind());
     boolean modifierTreeCheck = (first instanceof ModifierTree) && (((ModifierTree) first).kind() != ((ModifierTree) second).kind());
-    return nativeTreeCheck || unaryTreeCheck || binaryTreeCheck || assignTreeCheck || vardeclTreeCheck || loopTreeCheck || modifierTreeCheck;
+    boolean jumpTreeCheck = (first instanceof JumpTree) && (((JumpTree) first).kind() != ((JumpTree) second).kind());
+    return nativeTreeCheck || unaryTreeCheck || binaryTreeCheck || assignTreeCheck || vardeclTreeCheck || loopTreeCheck || modifierTreeCheck || jumpTreeCheck;
   }
 
   public static List<List<Tree>> findDuplicatedGroups(List<Tree> list) {

@@ -131,6 +131,7 @@ atomicExpression
   |  returnExpression
   |  expressionName
   |  tryExpression
+  |  jumpExpression
   ;
 
 parenthesizedExpression
@@ -215,7 +216,24 @@ nativeBlock
   ;
 
 returnExpression
-  :  RETURN statement
+  :  RETURN statement?
+  ;
+
+jumpExpression
+  :  breakExpression
+  |  continueExpression
+  ;
+
+breakExpression
+  : BREAK label?
+  ;
+
+continueExpression
+  : CONTINUE label?
+  ;
+
+label
+  : identifier
   ;
 
 /* Operators */ 
@@ -295,6 +313,8 @@ TRY : 'try';
 VAL : 'val';
 VAR : 'var';
 WHILE : 'while';
+BREAK : 'break';
+CONTINUE: 'continue';
 
 
 // Integer Literals
