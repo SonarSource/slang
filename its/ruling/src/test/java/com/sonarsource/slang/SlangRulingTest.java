@@ -37,10 +37,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.sonarsource.analyzer.commons.ProfileGenerator;
 
-import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SlangRulingTest {
+
+  private static final String SQ_VERSION_PROPERTY = "sonar.runtimeVersion";
+  private static final String DEFAULT_SQ_VERSION = "7.2";
+
   private static Orchestrator orchestrator;
   private static boolean keepSonarqubeRunning = false;
 
@@ -57,7 +60,7 @@ public class SlangRulingTest {
     }
 
     OrchestratorBuilder builder = Orchestrator.builderEnv()
-      .setSonarVersion(requireNonNull(System.getProperty("sonar.runtimeVersion"), "Please set system property sonar.runtimeVersion"))
+      .setSonarVersion(System.getProperty(SQ_VERSION_PROPERTY, DEFAULT_SQ_VERSION))
       .addPlugin(MavenLocation.of("org.sonarsource.sonar-lits-plugin", "sonar-lits-plugin", "0.6"))
       .addPlugin(slangLocation);
 
