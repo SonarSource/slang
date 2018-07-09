@@ -77,7 +77,7 @@
         <configuration>
           <!-- This value shows up in the SonarQube GUI -->
           <pluginName>SonarSlang</pluginName>
-          <pluginClass>com.sonarsource.slang.kotlin.SlangPlugin</pluginClass>
+          <pluginClass>org.sonarsource.slang.kotlin.SlangPlugin</pluginClass>
           <skipDependenciesPackaging>true</skipDependenciesPackaging>
           <sonarLintSupported>true</sonarLintSupported>
           <addMavenDescriptor>false</addMavenDescriptor>
