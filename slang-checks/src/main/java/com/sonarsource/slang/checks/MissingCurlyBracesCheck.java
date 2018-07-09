@@ -20,6 +20,7 @@
 package com.sonarsource.slang.checks;
 
 import com.sonarsource.slang.api.BlockTree;
+import com.sonarsource.slang.api.FunctionDeclarationTree;
 import com.sonarsource.slang.api.IfTree;
 import com.sonarsource.slang.api.LoopTree;
 import com.sonarsource.slang.api.Token;
@@ -29,6 +30,7 @@ import com.sonarsource.slang.checks.api.CheckContext;
 import com.sonarsource.slang.checks.api.InitContext;
 import com.sonarsource.slang.checks.api.SlangCheck;
 import java.text.MessageFormat;
+import java.util.Iterator;
 import java.util.function.BiConsumer;
 import org.sonar.check.Rule;
 
@@ -45,7 +47,8 @@ public class MissingCurlyBracesCheck implements SlangCheck {
 
   private static <T extends Tree> BiConsumer<CheckContext, T> filterStatement(BiConsumer<CheckContext, T> consumer) {
     return (ctx, tree) -> {
-      if (ctx.parent() instanceof BlockTree || ctx.parent() instanceof TopLevelTree) {
+      // this way of guessing "statement" will be improved by SONARSLANG-93
+      if (parentIsBlockButNotLambda(ctx) || ctx.parent() instanceof TopLevelTree) {
         consumer.accept(ctx, tree);
       }
     };
@@ -68,6 +71,19 @@ public class MissingCurlyBracesCheck implements SlangCheck {
 
   private static boolean sameLine(Token reportToken, Tree statement) {
     return reportToken.textRange().end().line() == statement.metaData().textRange().start().line();
+  }
+
+  private static boolean parentIsBlockButNotLambda(CheckContext ctx) {
+    if (ctx.parent() instanceof BlockTree) {
+      Iterator<Tree> iterator = ctx.ancestors().iterator();
+      iterator.next();
+      return !isLambda(iterator.next());
+    }
+    return false;
+  }
+
+  private static boolean isLambda(Tree tree) {
+    return tree instanceof FunctionDeclarationTree && ((FunctionDeclarationTree) tree).name() == null;
   }
 
 }

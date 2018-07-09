@@ -53,4 +53,15 @@ void fun foo() {
   do {
     something();
   } while (condition);
+
+  // expressions
+  x = if (condition) 1 else 2;
+
+  x = if (condition)
+         1
+    else
+         2;
+
+  // lambdas are not yet supported by SLang, the coverage about "isLambda(...)" is done in KotlinSensorTest.test_missing_curly_braces_rule_in_lambda
+
 }

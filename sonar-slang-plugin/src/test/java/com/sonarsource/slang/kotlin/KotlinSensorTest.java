@@ -133,6 +133,29 @@ public class KotlinSensorTest {
   }
 
   @Test
+  public void test_missing_curly_braces_rule_in_lambda() {
+    InputFile inputFile = createInputFile("file1.kt", "" +
+      "fun main(args: Array<String>) {\n" +
+      "  if (condition)\n" +
+      "    foo()\n" +
+      "  val a = { i: Int -> if (i > 0)\n" +
+      "                  i - 1\n" +
+      "             else 0\n" +
+      "  }\n" +
+      "}\n"
+    );
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S121");
+    sensor(checkFactory).execute(context);
+    Collection<Issue> issues = context.allIssues();
+    // only one issue at line 2 and no issue at line 4 ("if" in a lambda)
+    assertThat(issues).hasSize(1);
+    Issue issue = issues.iterator().next();
+    assertThat(issue.ruleKey().rule()).isEqualTo("S121");
+    assertThat(issue.primaryLocation().textRange().start().line()).isEqualTo(2);
+  }
+
+  @Test
   public void simple_file() {
     InputFile inputFile = createInputFile("file1.kt", "" +
       "fun main(args: Array<String>) {\nprint (1 == 1); print(\"abc\"); }\ndata class A(val a: Int)");
