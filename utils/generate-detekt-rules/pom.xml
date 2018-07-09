@@ -62,7 +62,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.5.0</version>
                 <configuration>
-                    <mainClass>com.sonarsource.slang.externalreport.detekt.DetektRuleDefinition</mainClass>
+                    <mainClass>org.sonarsource.slang.externalreport.detekt.DetektRuleDefinition</mainClass>
                 </configuration>
             </plugin>
         </plugins>
