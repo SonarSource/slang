@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -130,6 +132,34 @@ public class KotlinSensorTest {
     IssueLocation location = issue.primaryLocation();
     assertThat(location.inputComponent()).isEqualTo(inputFile);
     assertThat(location.message()).isEqualTo("Remove this commented out code.");
+  }
+
+  @Test
+  public void test_missing_curly_braces_rule_in_lambda() {
+    InputFile inputFile = createInputFile("file1.kt", "" +
+      "class A {\n" +
+      "  fun main(args: Array<String>) {\n" +
+      "    if (condition)\n" +
+      "      foo()\n" +
+      "    val a = { i: Int -> if (i > 0)\n" +
+      "                    i - 1\n" +
+      "               else 0\n" +
+      "    }\n" +
+      "  }\n" +
+      "  override fun toString(): String = if (externalId != null)\n" +
+      "          \"${externalId}_$id\"\n" +
+      "     else id.toString()\n" +
+      "}\n");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S121");
+    sensor(checkFactory).execute(context);
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).hasSize(3);
+    Set<String> rules = issues.stream().map(issue -> issue.ruleKey().rule()).collect(Collectors.toSet());
+    assertThat(rules).containsExactlyInAnyOrder("S121");
+    Set<Integer> lines = issues.stream().map(issue -> issue.primaryLocation().textRange().start().line()).collect(Collectors.toSet());
+    // TODO: issues line 8 and 9 in "function literal" are false positives, see SONARSLANG-92
+    assertThat(lines).containsExactlyInAnyOrder(3, 10, 12);
   }
 
   @Test

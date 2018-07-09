@@ -51,6 +51,7 @@ public class CommonCheckList {
       IdenticalConditionsCheck.class,
       IfConditionalAlwaysTrueOrFalseCheck.class,
       MatchCaseTooBigCheck.class,
+      MissingCurlyBracesCheck.class,
       NestedMatchCheck.class,
       OneStatementPerLineCheck.class,
       RedundantParenthesesCheck.class,
