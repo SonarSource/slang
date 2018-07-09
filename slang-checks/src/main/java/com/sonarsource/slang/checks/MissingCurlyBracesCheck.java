@@ -47,7 +47,7 @@ public class MissingCurlyBracesCheck implements SlangCheck {
 
   private static <T extends Tree> BiConsumer<CheckContext, T> filterStatement(BiConsumer<CheckContext, T> consumer) {
     return (ctx, tree) -> {
-      // this way of guessing "statement" will be improved by SONARSLANG-93
+      // this way of guessing "statement" will be improved by SONARSLANG-92
       if (parentIsBlockButNotLambda(ctx) || ctx.parent() instanceof TopLevelTree) {
         consumer.accept(ctx, tree);
       }
@@ -64,13 +64,9 @@ public class MissingCurlyBracesCheck implements SlangCheck {
   }
 
   private static void checkStatement(CheckContext ctx, Token reportToken, Tree statement) {
-    if (!(statement instanceof BlockTree) && !sameLine(reportToken, statement)) {
+    if (!(statement instanceof BlockTree)) {
       ctx.reportIssue(reportToken, MessageFormat.format(MESSAGE, reportToken.text()));
     }
-  }
-
-  private static boolean sameLine(Token reportToken, Tree statement) {
-    return reportToken.textRange().end().line() == statement.metaData().textRange().start().line();
   }
 
   private static boolean parentIsBlockButNotLambda(CheckContext ctx) {

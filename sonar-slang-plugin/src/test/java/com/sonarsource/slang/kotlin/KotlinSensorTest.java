@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -135,24 +137,29 @@ public class KotlinSensorTest {
   @Test
   public void test_missing_curly_braces_rule_in_lambda() {
     InputFile inputFile = createInputFile("file1.kt", "" +
-      "fun main(args: Array<String>) {\n" +
-      "  if (condition)\n" +
-      "    foo()\n" +
-      "  val a = { i: Int -> if (i > 0)\n" +
-      "                  i - 1\n" +
-      "             else 0\n" +
+      "class A {\n" +
+      "  fun main(args: Array<String>) {\n" +
+      "    if (condition)\n" +
+      "      foo()\n" +
+      "    val a = { i: Int -> if (i > 0)\n" +
+      "                    i - 1\n" +
+      "               else 0\n" +
+      "    }\n" +
       "  }\n" +
-      "}\n"
-    );
+      "  override fun toString(): String = if (externalId != null)\n" +
+      "          \"${externalId}_$id\"\n" +
+      "     else id.toString()\n" +
+      "}\n");
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("S121");
     sensor(checkFactory).execute(context);
     Collection<Issue> issues = context.allIssues();
-    // only one issue at line 2 and no issue at line 4 ("if" in a lambda)
-    assertThat(issues).hasSize(1);
-    Issue issue = issues.iterator().next();
-    assertThat(issue.ruleKey().rule()).isEqualTo("S121");
-    assertThat(issue.primaryLocation().textRange().start().line()).isEqualTo(2);
+    assertThat(issues).hasSize(3);
+    Set<String> rules = issues.stream().map(issue -> issue.ruleKey().rule()).collect(Collectors.toSet());
+    assertThat(rules).containsExactlyInAnyOrder("S121");
+    Set<Integer> lines = issues.stream().map(issue -> issue.primaryLocation().textRange().start().line()).collect(Collectors.toSet());
+    // TODO: issues line 8 and 9 in "function literal" are false positives, see SONARSLANG-92
+    assertThat(lines).containsExactlyInAnyOrder(3, 10, 12);
   }
 
   @Test

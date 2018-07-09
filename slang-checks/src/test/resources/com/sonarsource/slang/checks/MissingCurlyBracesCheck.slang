@@ -3,7 +3,8 @@ if (condition) // Noncompliant {{Add curly braces around the nested statement(s)
    doSomething();
 
 void fun foo() {
-   if (condition) doSomething();
+   if (condition) doSomething(); // Noncompliant
+// ^^
 
    if (condition) // Noncompliant {{Add curly braces around the nested statement(s) in this "if" block.}}
 // ^^
