@@ -65,7 +65,7 @@ public class ExternalReportTest extends TestBase {
     if (externalIssuesSupported) {
       assertThat(issues).hasSize(2);
       Issue first = issues.stream().filter(issue -> "project:main.kt".equals(issue.componentKey())).findFirst().orElse(null);
-      assertThat(first.ruleKey()).isEqualTo("external_android-lint-kotlin:UnusedAttribute");
+      assertThat(first.ruleKey()).isEqualTo("external_android-lint:UnusedAttribute");
       assertThat(first.line()).isEqualTo(2);
       assertThat(first.message()).isEqualTo("Attribute `required` is only used in API level 5 and higher (current min is 1)");
       assertThat(first.severity()).isEqualTo("MINOR");

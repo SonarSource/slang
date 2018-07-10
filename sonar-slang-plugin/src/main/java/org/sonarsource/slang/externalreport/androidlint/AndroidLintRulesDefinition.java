@@ -19,14 +19,11 @@
  */
 package org.sonarsource.slang.externalreport.androidlint;
 
-import org.sonarsource.slang.kotlin.SlangPlugin;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import javax.annotation.Nullable;
-import org.sonar.api.rule.RuleKey;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.ExternalRuleLoader;
+import org.sonarsource.slang.kotlin.SlangPlugin;
 
 import static org.sonarsource.slang.externalreport.androidlint.AndroidLintSensor.LINTER_KEY;
 import static org.sonarsource.slang.externalreport.androidlint.AndroidLintSensor.LINTER_NAME;
@@ -40,15 +37,11 @@ public class AndroidLintRulesDefinition implements RulesDefinition {
    * ( https://android.googlesource.com/platform/tools/base/+/studio-master-dev/lint/libs/lint-api/src/main/java/com/android/tools/lint/detector/api/Scope.kt )
    * But this sensor provides rule descriptions only for ".xml", ".java", ".kt"
    */
-  private static final List<String> RULE_REPOSITORY_LANGUAGES = Arrays.asList("xml", "java", SlangPlugin.KOTLIN_LANGUAGE_KEY);
+  private static final String RULE_REPOSITORY_LANGUAGE = SlangPlugin.KOTLIN_LANGUAGE_KEY;
 
   private static final List<String> TEXT_FILE_EXTENSIONS = Arrays.asList(".xml", ".java", ".kt", ".kts", ".properties", ".gradle", ".cfg", ".txt");
 
-  static final List<ExternalRuleLoader> RULE_LOADERS = RULE_REPOSITORY_LANGUAGES.stream()
-    .map(language -> new ExternalRuleLoader(LINTER_KEY + "-" + language, LINTER_NAME, RULES_JSON, language))
-    .collect(Collectors.toList());
-
-  private static final String DEFAULT_REPOSITORY_KEY = LINTER_KEY;
+  static final ExternalRuleLoader RULE_LOADER = new ExternalRuleLoader(LINTER_KEY, LINTER_NAME, RULES_JSON, RULE_REPOSITORY_LANGUAGE);
 
   private final boolean externalIssuesSupported;
 
@@ -59,15 +52,8 @@ public class AndroidLintRulesDefinition implements RulesDefinition {
   @Override
   public void define(Context context) {
     if (externalIssuesSupported) {
-      RULE_LOADERS.forEach(loader -> loader.createExternalRuleRepository(context));
+      RULE_LOADER.createExternalRuleRepository(context);
     }
-  }
-
-  static RuleKey ruleKey(@Nullable String language, String ruleId) {
-    if (language == null || !RULE_REPOSITORY_LANGUAGES.contains(language)) {
-      return RuleKey.of(DEFAULT_REPOSITORY_KEY, ruleId);
-    }
-    return RuleKey.of(LINTER_KEY + "-" + language, ruleId);
   }
 
   static boolean isTextFile(String file) {
