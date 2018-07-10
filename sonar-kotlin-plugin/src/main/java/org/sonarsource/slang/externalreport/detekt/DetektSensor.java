@@ -19,7 +19,7 @@
  */
 package org.sonarsource.slang.externalreport.detekt;
 
-import org.sonarsource.slang.kotlin.SlangPlugin;
+import org.sonarsource.slang.kotlin.KotlinPlugin;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class DetektSensor implements Sensor {
   @Override
   public void describe(SensorDescriptor descriptor) {
     descriptor
-      .onlyOnLanguage(SlangPlugin.KOTLIN_LANGUAGE_KEY)
+      .onlyOnLanguage(KotlinPlugin.KOTLIN_LANGUAGE_KEY)
       .onlyWhenConfiguration(conf -> conf.hasKey(REPORT_PROPERTY_KEY))
       .name("Import of detekt issues");
   }

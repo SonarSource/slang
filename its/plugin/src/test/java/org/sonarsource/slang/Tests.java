@@ -52,10 +52,10 @@ public class Tests {
     String slangVersion = System.getProperty("slangVersion");
     if (StringUtils.isEmpty(slangVersion)) {
       // use the plugin that was built on local machine
-      return FileLocation.byWildcardMavenFilename(new File("../../sonar-slang-plugin/target"), "sonar-slang-plugin-*.jar");
+      return FileLocation.byWildcardMavenFilename(new File("../../sonar-kotlin-plugin/target"), "sonar-kotlin-plugin-*.jar");
     } else {
       // QA environment downloads the plugin built by the CI job
-      return MavenLocation.of("org.sonarsource.slang", "sonar-slang-plugin", slangVersion);
+      return MavenLocation.of("org.sonarsource.slang", "sonar-kotlin-plugin", slangVersion);
     }
   }
 

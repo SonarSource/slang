@@ -19,7 +19,7 @@
  */
 package org.sonarsource.slang.externalreport;
 
-import org.sonarsource.slang.kotlin.SlangPlugin;
+import org.sonarsource.slang.kotlin.KotlinPlugin;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -78,7 +78,7 @@ public final class ExternalReportTestUtils {
   private static String language(Path file) {
     String path = file.toString();
     if (path.endsWith(".kt")) {
-      return SlangPlugin.KOTLIN_LANGUAGE_KEY;
+      return KotlinPlugin.KOTLIN_LANGUAGE_KEY;
     }
     return path.substring(path.lastIndexOf('.') + 1);
   }

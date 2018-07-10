@@ -198,7 +198,7 @@ public class KotlinSensorTest {
     SlangCheck failingCheck = init ->
       init.register(TopLevelTree.class, (ctx, tree) -> { throw new IllegalStateException("BOUM"); });
     when(checks.ruleKey(failingCheck)).thenReturn(RuleKey.of("kotlin", "failing"));
-    when(checkFactory.create(SlangPlugin.KOTLIN_REPOSITORY_KEY)).thenReturn(checks);
+    when(checkFactory.create(KotlinPlugin.KOTLIN_REPOSITORY_KEY)).thenReturn(checks);
     when(checks.all()).thenReturn(Collections.singletonList(failingCheck));
     sensor(checkFactory).execute(context);
 
@@ -220,7 +220,7 @@ public class KotlinSensorTest {
     DefaultInputFile inputFile = new TestInputFileBuilder("moduleKey", relativePath)
       .setModuleBaseDir(baseDir.toPath())
       .setType(InputFile.Type.MAIN)
-      .setLanguage(SlangPlugin.KOTLIN_LANGUAGE_KEY)
+      .setLanguage(KotlinPlugin.KOTLIN_LANGUAGE_KEY)
       .setCharset(StandardCharsets.UTF_8)
       .setContents(content)
       .build();
@@ -231,7 +231,7 @@ public class KotlinSensorTest {
   private CheckFactory checkFactory(String... ruleKeys) {
     ActiveRulesBuilder builder = new ActiveRulesBuilder();
     for (String ruleKey : ruleKeys) {
-      builder.create(RuleKey.of(SlangPlugin.KOTLIN_REPOSITORY_KEY, ruleKey))
+      builder.create(RuleKey.of(KotlinPlugin.KOTLIN_REPOSITORY_KEY, ruleKey))
         .setName(ruleKey)
         .activate();
     }

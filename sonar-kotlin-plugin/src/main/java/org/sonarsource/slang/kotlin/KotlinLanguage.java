@@ -27,15 +27,15 @@ public class KotlinLanguage extends AbstractLanguage {
   private Configuration configuration;
 
   public KotlinLanguage(Configuration configuration) {
-    super(SlangPlugin.KOTLIN_LANGUAGE_KEY, SlangPlugin.KOTLIN_LANGUAGE_NAME);
+    super(KotlinPlugin.KOTLIN_LANGUAGE_KEY, KotlinPlugin.KOTLIN_LANGUAGE_NAME);
     this.configuration = configuration;
   }
 
   @Override
   public String[] getFileSuffixes() {
-    String[] suffixes = configuration.getStringArray(SlangPlugin.KOTLIN_FILE_SUFFIXES_KEY);
+    String[] suffixes = configuration.getStringArray(KotlinPlugin.KOTLIN_FILE_SUFFIXES_KEY);
     if (suffixes == null || suffixes.length == 0) {
-      suffixes = SlangPlugin.KOTLIN_FILE_SUFFIXES_DEFAULT_VALUE.split(",");
+      suffixes = KotlinPlugin.KOTLIN_FILE_SUFFIXES_DEFAULT_VALUE.split(",");
     }
     return suffixes;
   }

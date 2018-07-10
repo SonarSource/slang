@@ -58,7 +58,7 @@ public class KotlinSensor implements Sensor {
   private FileLinesContextFactory fileLinesContextFactory;
 
   public KotlinSensor(CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter) {
-    checks = checkFactory.create(SlangPlugin.KOTLIN_REPOSITORY_KEY);
+    checks = checkFactory.create(KotlinPlugin.KOTLIN_REPOSITORY_KEY);
     // TODO: Add logic for rules that require language specific configuration at construction time
     this.checks.addAnnotatedChecks(new CommentedCodeCheck(new KotlinCodeVerifier()));
     this.checks.addAnnotatedChecks((Iterable<?>) CommonCheckList.checks());
@@ -77,7 +77,7 @@ public class KotlinSensor implements Sensor {
   public void execute(SensorContext sensorContext) {
     FileSystem fileSystem = sensorContext.fileSystem();
     FilePredicate mainFilePredicate = fileSystem.predicates().and(
-      fileSystem.predicates().hasLanguage(SlangPlugin.KOTLIN_LANGUAGE_KEY),
+      fileSystem.predicates().hasLanguage(KotlinPlugin.KOTLIN_LANGUAGE_KEY),
       fileSystem.predicates().hasType(InputFile.Type.MAIN));
     Iterable<InputFile> inputFiles = fileSystem.inputFiles(mainFilePredicate);
     List<String> filenames = StreamSupport.stream(inputFiles.spliterator(), false).map(InputFile::toString).collect(Collectors.toList());

@@ -25,7 +25,7 @@
     <module>slang-testing</module>
     <module>slang-antlr</module>
     <module>slang-checks</module>
-    <module>sonar-slang-plugin</module>
+    <module>sonar-kotlin-plugin</module>
   </modules>
 
   <!--

@@ -53,10 +53,10 @@ public class SlangRulingTest {
     Location slangLocation;
     if (StringUtils.isEmpty(slangVersion)) {
       // use the plugin that was built on local machine
-      slangLocation = FileLocation.byWildcardMavenFilename(new File("../../sonar-slang-plugin/target"), "sonar-slang-plugin-*.jar");
+      slangLocation = FileLocation.byWildcardMavenFilename(new File("../../sonar-kotlin-plugin/target"), "sonar-kotlin-plugin-*.jar");
     } else {
       // QA environment downloads the plugin built by the CI job
-      slangLocation = MavenLocation.of("org.sonarsource.slang", "sonar-slang-plugin", slangVersion);
+      slangLocation = MavenLocation.of("org.sonarsource.slang", "sonar-kotlin-plugin", slangVersion);
     }
 
     OrchestratorBuilder builder = Orchestrator.builderEnv()
