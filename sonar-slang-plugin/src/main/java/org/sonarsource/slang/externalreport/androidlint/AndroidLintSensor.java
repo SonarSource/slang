@@ -84,11 +84,11 @@ public class AndroidLintSensor implements Sensor {
       LOG.warn("No input file found for {}. No android lint issues will be imported on this file.", file);
       return;
     }
-    RuleKey ruleKey = AndroidLintRulesDefinition.ruleKey(inputFile.language(), id);
+    RuleKey ruleKey = RuleKey.of(LINTER_KEY, id);
     NewExternalIssue newExternalIssue = context.newExternalIssue();
     String ruleKey1 = ruleKey.rule();
 
-    ExternalRuleLoader externalRuleLoader = AndroidLintRulesDefinition.RULE_LOADERS.get(0);
+    ExternalRuleLoader externalRuleLoader = AndroidLintRulesDefinition.RULE_LOADER;
     newExternalIssue
       .type(externalRuleLoader.ruleType(ruleKey1))
       .severity(externalRuleLoader.ruleSeverity(ruleKey1))

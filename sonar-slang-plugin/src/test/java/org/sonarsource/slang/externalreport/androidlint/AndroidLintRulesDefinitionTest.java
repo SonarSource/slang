@@ -20,12 +20,11 @@
 package org.sonarsource.slang.externalreport.androidlint;
 
 import org.junit.Test;
-import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
 
-import static org.sonarsource.slang.externalreport.androidlint.AndroidLintRulesDefinition.isTextFile;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.sonarsource.slang.externalreport.androidlint.AndroidLintRulesDefinition.isTextFile;
 
 public class AndroidLintRulesDefinitionTest {
 
@@ -43,26 +42,14 @@ public class AndroidLintRulesDefinitionTest {
     AndroidLintRulesDefinition rulesDefinition = new AndroidLintRulesDefinition(true);
     rulesDefinition.define(context);
 
-    assertThat(context.repositories()).hasSize(3);
-    RulesDefinition.Repository xmlRepository = context.repository("external_android-lint-xml");
-    assertThat(xmlRepository.name()).isEqualTo("Android Lint");
-    assertThat(xmlRepository.language()).isEqualTo("xml");
-    assertThat(xmlRepository.isExternal()).isEqualTo(true);
-    assertThat(xmlRepository.rules().size()).isEqualTo(313);
+    assertThat(context.repositories()).hasSize(1);
+    RulesDefinition.Repository repository = context.repository("external_android-lint");
+    assertThat(repository.name()).isEqualTo("Android Lint");
+    assertThat(repository.language()).isEqualTo("kotlin");
+    assertThat(repository.isExternal()).isEqualTo(true);
+    assertThat(repository.rules().size()).isEqualTo(313);
 
-    RulesDefinition.Repository javaRepository = context.repository("external_android-lint-java");
-    assertThat(javaRepository.name()).isEqualTo("Android Lint");
-    assertThat(javaRepository.language()).isEqualTo("java");
-    assertThat(javaRepository.isExternal()).isEqualTo(true);
-    assertThat(javaRepository.rules().size()).isEqualTo(313);
-
-    RulesDefinition.Repository kotlinRepository = context.repository("external_android-lint-kotlin");
-    assertThat(kotlinRepository.name()).isEqualTo("Android Lint");
-    assertThat(kotlinRepository.language()).isEqualTo("kotlin");
-    assertThat(kotlinRepository.isExternal()).isEqualTo(true);
-    assertThat(kotlinRepository.rules().size()).isEqualTo(313);
-
-    RulesDefinition.Rule rule = xmlRepository.rule("AaptCrash");
+    RulesDefinition.Rule rule = repository.rule("AaptCrash");
     assertThat(rule).isNotNull();
     assertThat(rule.name()).isEqualTo("Potential AAPT crash");
     assertThat(rule.type()).isEqualTo(RuleType.BUG);
@@ -79,19 +66,6 @@ public class AndroidLintRulesDefinitionTest {
         "</p>");
     assertThat(rule.tags()).containsExactlyInAnyOrder("android");
     assertThat(rule.debtRemediationFunction().baseEffort()).isEqualTo("5min");
-  }
-
-  @Test
-  public void rule_key_with_external_repository() {
-    assertThat(AndroidLintRulesDefinition.ruleKey("xml", "S123")).isEqualTo(RuleKey.of("android-lint-xml", "S123"));
-    assertThat(AndroidLintRulesDefinition.ruleKey("java", "S123")).isEqualTo(RuleKey.of("android-lint-java", "S123"));
-    assertThat(AndroidLintRulesDefinition.ruleKey("kotlin", "S123")).isEqualTo(RuleKey.of("android-lint-kotlin", "S123"));
-  }
-
-  @Test
-  public void rule_key_without_external_repository() {
-    assertThat(AndroidLintRulesDefinition.ruleKey(null, "S123")).isEqualTo(RuleKey.of("android-lint", "S123"));
-    assertThat(AndroidLintRulesDefinition.ruleKey("js", "S123")).isEqualTo(RuleKey.of("android-lint", "S123"));
   }
 
   @Test
