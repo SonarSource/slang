@@ -28,7 +28,7 @@ import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
 import org.sonar.api.utils.Version;
 
-public class SlangPlugin implements Plugin {
+public class KotlinPlugin implements Plugin {
 
   // Subcategories
   private static final String GENERAL = "General";

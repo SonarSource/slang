@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.ExternalRuleLoader;
-import org.sonarsource.slang.kotlin.SlangPlugin;
+import org.sonarsource.slang.kotlin.KotlinPlugin;
 
 import static org.sonarsource.slang.externalreport.androidlint.AndroidLintSensor.LINTER_KEY;
 import static org.sonarsource.slang.externalreport.androidlint.AndroidLintSensor.LINTER_NAME;
@@ -37,7 +37,7 @@ public class AndroidLintRulesDefinition implements RulesDefinition {
    * ( https://android.googlesource.com/platform/tools/base/+/studio-master-dev/lint/libs/lint-api/src/main/java/com/android/tools/lint/detector/api/Scope.kt )
    * But this sensor provides rule descriptions only for ".xml", ".java", ".kt"
    */
-  private static final String RULE_REPOSITORY_LANGUAGE = SlangPlugin.KOTLIN_LANGUAGE_KEY;
+  private static final String RULE_REPOSITORY_LANGUAGE = KotlinPlugin.KOTLIN_LANGUAGE_KEY;
 
   private static final List<String> TEXT_FILE_EXTENSIONS = Arrays.asList(".xml", ".java", ".kt", ".kts", ".properties", ".gradle", ".cfg", ".txt");
 

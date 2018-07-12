@@ -19,7 +19,7 @@
  */
 package org.sonarsource.slang.externalreport.detekt;
 
-import org.sonarsource.slang.kotlin.SlangPlugin;
+import org.sonarsource.slang.kotlin.KotlinPlugin;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.ExternalRuleLoader;
 
@@ -29,7 +29,7 @@ public class DetektRulesDefinition implements RulesDefinition {
     DetektSensor.LINTER_KEY,
     DetektSensor.LINTER_NAME,
     "org/sonar/l10n/kotlin/rules/detekt/rules.json",
-    SlangPlugin.KOTLIN_LANGUAGE_KEY);
+    KotlinPlugin.KOTLIN_LANGUAGE_KEY);
 
   private final boolean externalIssuesSupported;
 
