@@ -12,6 +12,10 @@
   <artifactId>slang</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
+
+  <organization>
+    <name>SonarSource</name>
+  </organization>
   <licenses>
     <license>
       <name>GNU LGPL 3</name>
@@ -28,7 +32,6 @@
     <module>sonar-kotlin-plugin</module>
   </modules>
 
-  <!--
   <scm>
     <connection>scm:git:git@github.com:SonarSource/slang.git</connection>
     <developerConnection>scm:git:git@github.com:SonarSource/slang.git</developerConnection>
@@ -37,13 +40,12 @@
   </scm>
   <issueManagement>
     <system>JIRA</system>
-    <url>https://jira.sonarsource.com/browse/SLANG</url>
+    <url>https://jira.sonarsource.com/browse/SONARSLANG</url>
   </issueManagement>
   <ciManagement>
     <system>Travis</system>
     <url>https://travis-ci.org/SonarSource/slang</url>
   </ciManagement>
-  -->
 
   <properties>
     <license.title>SonarSource SLang</license.title>
@@ -52,7 +54,7 @@
     <!-- used for deployment to SonarSource Artifactory -->
     <gitRepositoryName>slang</gitRepositoryName>
     <!-- Release: enable publication to Bintray -->
-    <artifactsToPublish>${project.groupId}:sonar-slang-plugin:jar</artifactsToPublish>
+    <artifactsToPublish>${project.groupId}:sonar-kotlin-plugin:jar</artifactsToPublish>
     <orchestrator.version>3.19.0.1641</orchestrator.version>
   </properties>
 
