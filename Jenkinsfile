@@ -32,6 +32,15 @@ pipeline {
           }
         }
 
+        stage('plugin-latest-windows') {
+          agent {
+            label 'windows'
+          }
+          steps {
+            runPlugin "LATEST_RELEASE"
+          }
+        }
+
         stage('plugin-lts') {
           agent {
             label 'linux'
