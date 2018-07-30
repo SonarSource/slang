@@ -19,6 +19,7 @@
  */
 package org.sonarsource.slang.kotlin;
 
+import org.jetbrains.annotations.NotNull;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.Tree;
@@ -111,7 +112,7 @@ public class KotlinConverter implements ASTConverter {
 
 
     public KotlinTree(String content) {
-      psiFile = psiFileFactory.createFileFromText(KotlinLanguage.INSTANCE, content);
+      psiFile = psiFileFactory.createFileFromText(KotlinLanguage.INSTANCE, normalizeEol(content));
       try {
         document = psiFile.getViewProvider().getDocument();
       } catch (AssertionError e) {
@@ -138,6 +139,10 @@ public class KotlinConverter implements ASTConverter {
     private static TextPointer getErrorLocation(Document document, TreeMetaDataProvider metaDataProvider, PsiElement element) {
       return metaDataProvider.metaData(KotlinTextRanges.textRange(document, element)).textRange().start();
     }
-  }
 
+    @NotNull
+    private static String normalizeEol(String content) {
+      return content.replaceAll("\\r\\n?", "\n");
+    }
+  }
 }

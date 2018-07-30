@@ -49,6 +49,15 @@ pipeline {
             runPlugin "DEV"
           }
         }
+
+        stage('plugin-latest-windows') {
+          agent {
+            label 'windows'
+          }
+          steps {
+            runPlugin "LATEST_RELEASE"
+          }
+        }
       }
       post {
         always {
@@ -69,13 +78,17 @@ pipeline {
   }
 }
 
+def mvnCommand() {
+  return isUnix() ? 'mvn' : 'mvn.cmd'
+}
+
 def runRuling(String sqRuntimeVersion) {
   withQAEnv {
     withMaven(maven: MAVEN_TOOL) {
       mavenSetBuildVersion()
       dir('its') {
         sh 'git submodule update --init --recursive'
-        sh "mvn -pl ruling ${itBuildArguments sqRuntimeVersion}"
+        sh "${mvnCommand()} -pl ruling ${itBuildArguments sqRuntimeVersion}"
       }
     }
   }
@@ -86,7 +99,7 @@ def runPlugin(String sqRuntimeVersion) {
     withMaven(maven: MAVEN_TOOL) {
       mavenSetBuildVersion()
       dir('its') {
-        sh "mvn -pl plugin ${itBuildArguments sqRuntimeVersion}"
+        sh "${mvnCommand()} -pl plugin ${itBuildArguments sqRuntimeVersion}"
       }
     }
   }
