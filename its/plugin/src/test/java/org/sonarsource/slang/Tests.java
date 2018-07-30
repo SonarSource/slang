@@ -31,9 +31,10 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-  MeasuresTest.class,
   DuplicationsTest.class,
-  FileSuffixesTest.class
+  ExternalReportTest.class,
+  FileSuffixesTest.class,
+  MeasuresTest.class,
 })
 public class Tests {
 
