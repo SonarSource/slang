@@ -38,7 +38,7 @@ import org.junit.runners.Suite;
 public class Tests {
 
   private static final String SQ_VERSION_PROPERTY = "sonar.runtimeVersion";
-  private static final String DEFAULT_SQ_VERSION = "7.2";
+  private static final String DEFAULT_SQ_VERSION = "LATEST_RELEASE";
 
   @ClassRule
   public static final Orchestrator ORCHESTRATOR = Orchestrator.builderEnv()
