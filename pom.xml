@@ -12,6 +12,7 @@
   <artifactId>slang</artifactId>
   <version>1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
+  <name>SLang</name>
 
   <organization>
     <name>SonarSource</name>
@@ -30,6 +31,7 @@
     <module>slang-antlr</module>
     <module>slang-checks</module>
     <module>sonar-kotlin-plugin</module>
+    <module>sonar-ruby-plugin</module>
   </modules>
 
   <scm>
@@ -54,7 +56,7 @@
     <!-- used for deployment to SonarSource Artifactory -->
     <gitRepositoryName>slang</gitRepositoryName>
     <!-- Release: enable publication to Bintray -->
-    <artifactsToPublish>${project.groupId}:sonar-kotlin-plugin:jar</artifactsToPublish>
+    <artifactsToPublish>${project.groupId}:sonar-kotlin-plugin:jar,${project.groupId}:sonar-ruby-plugin:jar</artifactsToPublish>
     <orchestrator.version>3.19.0.1641</orchestrator.version>
   </properties>
 

@@ -63,7 +63,7 @@ public class KotlinPlugin implements Plugin {
       PropertyDefinition.builder(KOTLIN_FILE_SUFFIXES_KEY)
         .defaultValue(KOTLIN_FILE_SUFFIXES_DEFAULT_VALUE)
         .name("File Suffixes")
-        .description("Comma-separated list of suffixes for files to analyze.")
+        .description("List of suffixes for files to analyze.")
         .subCategory(GENERAL)
         .category(KOTLIN_CATEGORY)
         .multiValues(true)
