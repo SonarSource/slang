@@ -95,7 +95,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
 
     FileLinesContext fileLinesContext = fileLinesContextFactory.createFor(ctx.inputFile);
     linesOfCode().forEach(line -> fileLinesContext.setIntValue(CoreMetrics.NCLOC_DATA_KEY, line, 1));
-    commentLines().forEach(line -> fileLinesContext.setIntValue(CoreMetrics.COMMENT_LINES_DATA_KEY, line, 1));
+
 
     fileLinesContext.save();
     noSonarFilter.noSonarInFile(ctx.inputFile, nosonarLines());
