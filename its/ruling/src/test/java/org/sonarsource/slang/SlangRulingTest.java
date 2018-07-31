@@ -19,6 +19,8 @@
  */
 package org.sonarsource.slang;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.OrchestratorBuilder;
 import com.sonar.orchestrator.build.SonarScanner;
@@ -29,7 +31,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -42,64 +46,92 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SlangRulingTest {
 
   private static final String SQ_VERSION_PROPERTY = "sonar.runtimeVersion";
-  private static final String DEFAULT_SQ_VERSION = "7.2";
+  private static final String DEFAULT_SQ_VERSION = "LATEST_RELEASE";
 
   private static Orchestrator orchestrator;
   private static boolean keepSonarqubeRunning = false;
 
+  private static final Set<String> LANGUAGES = ImmutableSet.of("kotlin" , "ruby");
+
   @BeforeClass
   public static void setUp() {
-    String slangVersion = System.getProperty("slangVersion");
-    Location slangLocation;
-    if (StringUtils.isEmpty(slangVersion)) {
-      // use the plugin that was built on local machine
-      slangLocation = FileLocation.byWildcardMavenFilename(new File("../../sonar-kotlin-plugin/target"), "sonar-kotlin-plugin-*.jar");
-    } else {
-      // QA environment downloads the plugin built by the CI job
-      slangLocation = MavenLocation.of("org.sonarsource.slang", "sonar-kotlin-plugin", slangVersion);
-    }
-
     OrchestratorBuilder builder = Orchestrator.builderEnv()
       .setSonarVersion(System.getProperty(SQ_VERSION_PROPERTY, DEFAULT_SQ_VERSION))
-      .addPlugin(MavenLocation.of("org.sonarsource.sonar-lits-plugin", "sonar-lits-plugin", "0.6"))
-      .addPlugin(slangLocation);
+      .addPlugin(MavenLocation.of("org.sonarsource.sonar-lits-plugin", "sonar-lits-plugin", "0.6"));
+
+    addLanguagePlugins(builder);
 
     orchestrator = builder.build();
     orchestrator.start();
-    ProfileGenerator.RulesConfiguration rulesConfiguration = new ProfileGenerator.RulesConfiguration();
-    rulesConfiguration.add("S1451", "headerFormat", "/\\*\n \\* Copyright \\d{4}-\\d{4} JetBrains s\\.r\\.o\\.");
-    rulesConfiguration.add("S1451", "isRegularExpression", "true");
-    File profile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "kotlin", "kotlin", rulesConfiguration, Collections.emptySet());
-    orchestrator.getServer().restoreProfile(FileLocation.of(profile));
+
+    ProfileGenerator.RulesConfiguration kotlinRulesConfiguration = new ProfileGenerator.RulesConfiguration();
+    kotlinRulesConfiguration.add("S1451", "headerFormat", "/\\*\n \\* Copyright \\d{4}-\\d{4} JetBrains s\\.r\\.o\\.");
+    kotlinRulesConfiguration.add("S1451", "isRegularExpression", "true");
+
+    File kotlinProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "kotlin", "kotlin", kotlinRulesConfiguration, Collections.emptySet());
+    File rubyProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "ruby", "ruby", new ProfileGenerator.RulesConfiguration(), Collections.emptySet());
+    orchestrator.getServer().restoreProfile(FileLocation.of(kotlinProfile));
+    orchestrator.getServer().restoreProfile(FileLocation.of(rubyProfile));
+  }
+
+  private static void addLanguagePlugins(OrchestratorBuilder builder) {
+    String slangVersion = System.getProperty("slangVersion");
+
+    LANGUAGES.forEach(language -> {
+      Location pluginLocation;
+      String plugin = "sonar-" + language +"-plugin";
+      if (StringUtils.isEmpty(slangVersion)) {
+        // use the plugin that was built on local machine
+        pluginLocation = FileLocation.byWildcardMavenFilename(new File("../../" + plugin + "/target"), plugin + "-*.jar");
+      } else {
+        // QA environment downloads the plugin built by the CI job
+        pluginLocation = MavenLocation.of("org.sonarsource.slang", plugin, slangVersion);
+      }
+
+      builder.addPlugin(pluginLocation);
+    });
   }
 
   @Test
   // @Ignore because it should only be run manually
   @Ignore
-  public void manual_keep_sonarqube_server_up() throws IOException {
+  public void kotlin_manual_keep_sonarqube_server_up() throws IOException {
     keepSonarqubeRunning = true;
-    test();
+    test_kotlin();
   }
 
   @Test
-  public void test() throws IOException {
-    orchestrator.getServer().provisionProject("kotlin-project", "kotlin-project");
-    orchestrator.getServer().associateProjectToQualityProfile("kotlin-project", "kotlin", "rules");
+  public void test_kotlin() throws IOException {
+    run_ruling_test("kotlin", ImmutableMap.of(
+      "sonar.inclusions", "**/*.kt",
+      "sonar.exclusions", "**/testData/**/*"));
+  }
+
+  @Test
+  public void test_ruby() throws IOException {
+    run_ruling_test("ruby", ImmutableMap.of(
+      "sonar.inclusions", "**/*.rb"));
+  }
+
+  private void run_ruling_test(String language, Map<String, String> properties) throws IOException {
+    String projectKey = language + "-project";
+    orchestrator.getServer().provisionProject(projectKey, projectKey);
+    orchestrator.getServer().associateProjectToQualityProfile(projectKey, language, "rules");
 
     File litsDifferencesFile = FileLocation.of("target/differences").getFile();
-    SonarScanner build = SonarScanner.create(FileLocation.of("../sources/kotlin").getFile())
-      .setProjectKey("kotlin-project")
-      .setProjectName("kotlin-project")
+    SonarScanner build = SonarScanner.create(FileLocation.of("../sources/" + language).getFile())
+      .setProjectKey(projectKey)
+      .setProjectName(projectKey)
       .setProjectVersion("1")
       .setSourceDirs("./")
       .setSourceEncoding("utf-8")
-      .setProperty("sonar.inclusions", "**/*.kt")
-      .setProperty("sonar.exclusions", "**/testData/**/*")
-      .setProperty("dump.old", FileLocation.of("src/test/resources/expected").getFile().getAbsolutePath())
-      .setProperty("dump.new", FileLocation.of("target/actual").getFile().getAbsolutePath())
+      .setProperties(properties)
+      .setProperty("dump.old", FileLocation.of("src/test/resources/expected/" + language).getFile().getAbsolutePath())
+      .setProperty("dump.new", FileLocation.of("target/actual/").getFile().getAbsolutePath())
       .setProperty("lits.differences", litsDifferencesFile.getAbsolutePath())
       .setProperty("sonar.cpd.skip", "true")
       .setProperty("sonar.scm.disabled", "true")
+      .setProperty("sonar.language", language)
       .setEnvironmentVariable("SONAR_RUNNER_OPTS", "-Xmx1024m");
 
     if (!keepSonarqubeRunning) {
