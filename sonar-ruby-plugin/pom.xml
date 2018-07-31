@@ -18,18 +18,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.sonarsource.slang</groupId>
-            <artifactId>slang-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.sonarsource.slang</groupId>
-            <artifactId>slang-checks</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.sonarsource.slang</groupId>
-            <artifactId>slang-antlr</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.sonarsource.sonarqube</groupId>
             <artifactId>sonar-plugin-api</artifactId>
             <scope>provided</scope>
@@ -46,14 +34,6 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.sonarsource.slang</groupId>
-            <artifactId>slang-testing</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
         </dependency>
     </dependencies>
 
@@ -110,8 +90,8 @@
                         <configuration>
                             <rules>
                                 <requireFilesSize>
-                                    <minsize>30000</minsize>
-                                    <maxsize>50000</maxsize>
+                                    <minsize>3000</minsize>
+                                    <maxsize>10000</maxsize>
                                     <files>
                                         <file>${project.build.directory}/${project.build.finalName}.jar</file>
                                     </files>

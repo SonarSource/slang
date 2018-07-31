@@ -20,6 +20,8 @@
 package org.sonarsource.slang.ruby;
 
 import org.sonar.api.Plugin;
+import org.sonar.api.config.PropertyDefinition;
+import org.sonar.api.resources.Qualifiers;
 
 public class RubyPlugin implements Plugin {
 
@@ -29,8 +31,22 @@ public class RubyPlugin implements Plugin {
   public static final String RUBY_FILE_SUFFIXES_DEFAULT_VALUE = ".rb";
   public static final String RUBY_FILE_SUFFIXES_KEY = "sonar.ruby.file.suffixes";
 
+  private static final String GENERAL = "General";
+  private static final String RUBY_CATEGORY = "Ruby";
+
   @Override
   public void define(Context context) {
-    context.addExtension(RubyLanguage.class);
+    context.addExtensions(
+      RubyLanguage.class,
+      PropertyDefinition.builder(RUBY_FILE_SUFFIXES_KEY)
+        .defaultValue(RUBY_FILE_SUFFIXES_DEFAULT_VALUE)
+        .name("File Suffixes")
+        .description("List of suffixes for files to analyze.")
+        .subCategory(GENERAL)
+        .category(RUBY_CATEGORY)
+        .multiValues(true)
+        .onQualifiers(Qualifiers.PROJECT)
+        .build()
+    );
   }
 }
