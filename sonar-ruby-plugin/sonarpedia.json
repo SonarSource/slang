@@ -1,0 +1,11 @@
+{
+  "rules-metadata-path": "./src/main/resources/org/sonar/l10n/ruby/rules/ruby",
+  "languages": [
+    "RUBY"
+  ],
+  "latest-update": "2018-07-31T09:19:26.182Z",
+  "options": {
+    "no-language-in-filenames": true,
+    "preserve-filenames": true
+  }
+}

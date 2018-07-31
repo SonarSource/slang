@@ -25,11 +25,15 @@ import org.sonar.api.resources.Qualifiers;
 
 public class RubyPlugin implements Plugin {
 
-  public static final String RUBY_LANGUAGE_KEY = "ruby";
-  public static final String RUBY_LANGUAGE_NAME = "Ruby";
+  static final String RUBY_LANGUAGE_KEY = "ruby";
+  static final String RUBY_LANGUAGE_NAME = "Ruby";
 
-  public static final String RUBY_FILE_SUFFIXES_DEFAULT_VALUE = ".rb";
-  public static final String RUBY_FILE_SUFFIXES_KEY = "sonar.ruby.file.suffixes";
+  static final String RUBY_FILE_SUFFIXES_DEFAULT_VALUE = ".rb";
+  static final String RUBY_FILE_SUFFIXES_KEY = "sonar.ruby.file.suffixes";
+
+  static final String RUBY_REPOSITORY_KEY = "ruby";
+  static final String REPOSITORY_NAME = "SonarAnalyzer";
+  static final String PROFILE_NAME = "Sonar way";
 
   private static final String GENERAL = "General";
   private static final String RUBY_CATEGORY = "Ruby";
@@ -38,6 +42,9 @@ public class RubyPlugin implements Plugin {
   public void define(Context context) {
     context.addExtensions(
       RubyLanguage.class,
+      RubyProfileDefinition.class,
+      RubyRulesDefinition.class,
+
       PropertyDefinition.builder(RUBY_FILE_SUFFIXES_KEY)
         .defaultValue(RUBY_FILE_SUFFIXES_DEFAULT_VALUE)
         .name("File Suffixes")
