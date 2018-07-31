@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class StatementsVisitorTest {
 
-  private int statements(String content) {
+  private static int statements(String content) {
     Tree root = new SLangConverter().parse(content);
     return new StatementsVisitor().statements(root);
   }

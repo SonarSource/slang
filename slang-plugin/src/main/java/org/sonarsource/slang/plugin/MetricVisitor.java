@@ -19,15 +19,6 @@
  */
 package org.sonarsource.slang.plugin;
 
-import org.sonarsource.slang.api.ClassDeclarationTree;
-import org.sonarsource.slang.api.Comment;
-import org.sonarsource.slang.api.FunctionDeclarationTree;
-import org.sonarsource.slang.api.TextRange;
-import org.sonarsource.slang.api.TopLevelTree;
-import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.checks.complexity.CognitiveComplexity;
-import org.sonarsource.slang.kotlin.InputFileContext;
-import org.sonarsource.slang.visitors.TreeVisitor;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -36,6 +27,14 @@ import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
+import org.sonarsource.slang.api.ClassDeclarationTree;
+import org.sonarsource.slang.api.Comment;
+import org.sonarsource.slang.api.FunctionDeclarationTree;
+import org.sonarsource.slang.api.TextRange;
+import org.sonarsource.slang.api.TopLevelTree;
+import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.checks.complexity.CognitiveComplexity;
+import org.sonarsource.slang.visitors.TreeVisitor;
 
 public class MetricVisitor extends TreeVisitor<InputFileContext> {
 

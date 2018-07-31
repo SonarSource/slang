@@ -26,6 +26,7 @@ import org.sonarsource.slang.checks.api.CheckContext;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SecondaryLocation;
 import org.sonarsource.slang.checks.api.SlangCheck;
+import org.sonarsource.slang.plugin.InputFileContext;
 import org.sonarsource.slang.visitors.TreeVisitor;
 import java.io.IOException;
 import java.util.Collection;

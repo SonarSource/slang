@@ -19,8 +19,6 @@
  */
 package org.sonarsource.slang.plugin;
 
-import org.sonarsource.slang.kotlin.InputFileContext;
-import org.sonarsource.slang.parser.SLangConverter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -33,6 +31,7 @@ import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
+import org.sonarsource.slang.parser.SLangConverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonar.api.batch.sensor.highlighting.TypeOfText.COMMENT;

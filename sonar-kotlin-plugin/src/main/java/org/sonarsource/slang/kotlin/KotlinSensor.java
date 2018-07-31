@@ -26,6 +26,7 @@ import org.sonarsource.slang.checks.CommentedCodeCheck;
 import org.sonarsource.slang.checks.CommonCheckList;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.plugin.CpdVisitor;
+import org.sonarsource.slang.plugin.InputFileContext;
 import org.sonarsource.slang.plugin.MetricVisitor;
 import org.sonarsource.slang.plugin.SyntaxHighlighter;
 import org.sonarsource.slang.visitors.TreeVisitor;

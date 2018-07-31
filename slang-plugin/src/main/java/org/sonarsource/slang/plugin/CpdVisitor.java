@@ -19,12 +19,11 @@
  */
 package org.sonarsource.slang.plugin;
 
+import org.sonar.api.batch.sensor.cpd.NewCpdTokens;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.kotlin.InputFileContext;
 import org.sonarsource.slang.visitors.TreeVisitor;
-import org.sonar.api.batch.sensor.cpd.NewCpdTokens;
 
 public class CpdVisitor extends TreeVisitor<InputFileContext> {
 

@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CyclomaticComplexityVisitorTest {
 
-  private List<HasTextRange> getComplexityTrees(String content) {
+  private static List<HasTextRange> getComplexityTrees(String content) {
     Tree root = new SLangConverter().parse(content);
     return new CyclomaticComplexityVisitor().complexityTrees(root);
   }

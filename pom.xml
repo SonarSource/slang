@@ -30,6 +30,7 @@
     <module>slang-testing</module>
     <module>slang-antlr</module>
     <module>slang-checks</module>
+    <module>slang-plugin</module>
     <module>sonar-kotlin-plugin</module>
     <module>sonar-ruby-plugin</module>
   </modules>
@@ -70,6 +71,11 @@
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>slang-checks</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.sonarsource.slang</groupId>
+        <artifactId>slang-plugin</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

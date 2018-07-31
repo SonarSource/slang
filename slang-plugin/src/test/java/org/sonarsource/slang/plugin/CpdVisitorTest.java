@@ -19,9 +19,6 @@
  */
 package org.sonarsource.slang.plugin;
 
-import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.kotlin.InputFileContext;
-import org.sonarsource.slang.parser.SLangConverter;
 import java.io.File;
 import java.util.List;
 import org.junit.Rule;
@@ -31,6 +28,8 @@ import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.duplications.internal.pmd.TokensLine;
+import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.parser.SLangConverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

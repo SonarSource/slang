@@ -19,16 +19,15 @@
  */
 package org.sonarsource.slang.plugin;
 
+import org.sonar.api.batch.sensor.highlighting.NewHighlighting;
+import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.StringLiteralTree;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.kotlin.InputFileContext;
 import org.sonarsource.slang.visitors.TreeVisitor;
-import org.sonar.api.batch.sensor.highlighting.NewHighlighting;
-import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 
 import static org.sonar.api.batch.sensor.highlighting.TypeOfText.COMMENT;
 import static org.sonar.api.batch.sensor.highlighting.TypeOfText.CONSTANT;
