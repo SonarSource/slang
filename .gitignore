@@ -29,5 +29,4 @@ Thumbs.db
 Desktop.ini
 
 .java-version
-its/plugin/projects/duplications/kotlin/.sonar/
-its/plugin/projects/measures/kotlin/.sonar/
+.sonar/
