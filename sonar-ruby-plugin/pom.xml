@@ -16,6 +16,19 @@
     <description>Code Analyzer for Ruby</description>
     <url>http://redirect.sonarsource.com/plugins/ruby.html</url>
 
+    <properties>
+      <jruby.version>9.2.0.0</jruby.version>
+      <rubygems.ast.version>2.4.0</rubygems.ast.version>
+      <rubygems.parser.version>2.5.1.2</rubygems.parser.version>
+    </properties>
+
+    <repositories>
+      <repository>
+        <id>rubygems-release</id>
+        <url>http://rubygems-proxy.torquebox.org/releases</url>
+      </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.sonarsource.sonarqube</groupId>
@@ -28,9 +41,40 @@
         </dependency>
         <dependency>
             <groupId>org.sonarsource.slang</groupId>
+            <artifactId>slang-plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.sonarsource.slang</groupId>
             <artifactId>slang-checks</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.sonarsource.slang</groupId>
+            <artifactId>slang-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jruby</groupId>
+            <artifactId>jruby-complete</artifactId>
+            <version>${jruby.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>rubygems</groupId>
+            <artifactId>ast</artifactId>
+            <version>${rubygems.ast.version}</version>
+            <type>gem</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>rubygems</groupId>
+            <artifactId>parser</artifactId>
+            <version>${rubygems.parser.version}</version>
+            <type>gem</type>
+            <scope>provided</scope>
+        </dependency>
 
+        <dependency>
+            <groupId>org.sonarsource.slang</groupId>
+            <artifactId>slang-testing</artifactId>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -42,7 +86,35 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>target/resources-provided/gems</directory>
+            </resource>
+        </resources>
+
         <plugins>
+
+            <plugin>
+                <groupId>de.saumya.mojo</groupId>
+                <artifactId>gem-maven-plugin</artifactId>
+                <version>1.1.5</version>
+                <configuration>
+                    <jrubyVersion>${jruby.version}</jrubyVersion>
+                    <gemHome>${project.build.directory}/resources</gemHome>
+                    <gemPath>${project.build.directory}/resources</gemPath>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>initialize</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
@@ -94,8 +166,8 @@
                         <configuration>
                             <rules>
                                 <requireFilesSize>
-                                    <minsize>100000</minsize>
-                                    <maxsize>300000</maxsize>
+                                    <minsize>10000000</minsize>
+                                    <maxsize>25000000</maxsize>
                                     <files>
                                         <file>${project.build.directory}/${project.build.finalName}.jar</file>
                                     </files>
