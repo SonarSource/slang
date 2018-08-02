@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.BuiltInActiveRule;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.BuiltInQualityProfile;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.Context;
+import org.sonarsource.slang.kotlin.plugin.KotlinProfileDefinition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

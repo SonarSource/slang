@@ -17,19 +17,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.kotlin;
+package org.sonarsource.slang.kotlin.plugin;
 
-import org.sonarsource.slang.api.ASTConverter;
-import org.sonarsource.slang.api.TextPointer;
-import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.checks.CommentedCodeCheck;
-import org.sonarsource.slang.checks.CommonCheckList;
-import org.sonarsource.slang.checks.api.SlangCheck;
-import org.sonarsource.slang.plugin.CpdVisitor;
-import org.sonarsource.slang.plugin.InputFileContext;
-import org.sonarsource.slang.plugin.MetricVisitor;
-import org.sonarsource.slang.plugin.SyntaxHighlighter;
-import org.sonarsource.slang.visitors.TreeVisitor;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +38,21 @@ import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ProgressReport;
+import org.sonarsource.slang.api.ASTConverter;
+import org.sonarsource.slang.api.TextPointer;
+import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.checks.CommentedCodeCheck;
+import org.sonarsource.slang.checks.CommonCheckList;
+import org.sonarsource.slang.checks.api.SlangCheck;
+import org.sonarsource.slang.kotlin.KotlinCodeVerifier;
+import org.sonarsource.slang.kotlin.KotlinConverter;
+import org.sonarsource.slang.plugin.ChecksVisitor;
+import org.sonarsource.slang.plugin.CpdVisitor;
+import org.sonarsource.slang.plugin.InputFileContext;
+import org.sonarsource.slang.plugin.MetricVisitor;
+import org.sonarsource.slang.plugin.ParseException;
+import org.sonarsource.slang.plugin.SyntaxHighlighter;
+import org.sonarsource.slang.visitors.TreeVisitor;
 
 public class KotlinSensor implements Sensor {
 

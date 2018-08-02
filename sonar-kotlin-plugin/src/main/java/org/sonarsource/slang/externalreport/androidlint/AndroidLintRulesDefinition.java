@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.ExternalRuleLoader;
-import org.sonarsource.slang.kotlin.KotlinPlugin;
+import org.sonarsource.slang.kotlin.plugin.KotlinPlugin;
 
 import static org.sonarsource.slang.externalreport.androidlint.AndroidLintSensor.LINTER_KEY;
 import static org.sonarsource.slang.externalreport.androidlint.AndroidLintSensor.LINTER_NAME;

@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider;
+import org.sonarsource.slang.plugin.ParseException;
 
 public class KotlinConverter implements ASTConverter {
   private static final PsiFileFactory psiFileFactory = psiFileFactory();

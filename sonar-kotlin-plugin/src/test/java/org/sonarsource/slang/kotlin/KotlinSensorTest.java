@@ -48,6 +48,8 @@ import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.LogTester;
+import org.sonarsource.slang.kotlin.plugin.KotlinPlugin;
+import org.sonarsource.slang.kotlin.plugin.KotlinSensor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

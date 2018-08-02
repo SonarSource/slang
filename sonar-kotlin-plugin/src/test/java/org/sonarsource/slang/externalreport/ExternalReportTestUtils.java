@@ -19,7 +19,7 @@
  */
 package org.sonarsource.slang.externalreport;
 
-import org.sonarsource.slang.kotlin.KotlinPlugin;
+import org.sonarsource.slang.kotlin.plugin.KotlinPlugin;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

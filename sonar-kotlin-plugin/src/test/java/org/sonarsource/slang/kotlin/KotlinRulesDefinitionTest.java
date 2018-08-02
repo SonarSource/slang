@@ -22,6 +22,7 @@ package org.sonarsource.slang.kotlin;
 import org.junit.Test;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
+import org.sonarsource.slang.kotlin.plugin.KotlinRulesDefinition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

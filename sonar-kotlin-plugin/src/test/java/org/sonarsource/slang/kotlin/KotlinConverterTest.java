@@ -50,6 +50,7 @@ import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.sonarsource.slang.plugin.ParseException;
 
 import static org.sonarsource.slang.api.BinaryExpressionTree.Operator.LESS_THAN;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;

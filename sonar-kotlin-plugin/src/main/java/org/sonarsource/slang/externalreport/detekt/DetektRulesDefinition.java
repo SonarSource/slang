@@ -19,7 +19,7 @@
  */
 package org.sonarsource.slang.externalreport.detekt;
 
-import org.sonarsource.slang.kotlin.KotlinPlugin;
+import org.sonarsource.slang.kotlin.plugin.KotlinPlugin;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.ExternalRuleLoader;
 

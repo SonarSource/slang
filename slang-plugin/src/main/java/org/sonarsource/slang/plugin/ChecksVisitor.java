@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.kotlin;
+package org.sonarsource.slang.plugin;
 
 import org.sonarsource.slang.api.HasTextRange;
 import org.sonarsource.slang.api.TextRange;
@@ -26,7 +26,6 @@ import org.sonarsource.slang.checks.api.CheckContext;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SecondaryLocation;
 import org.sonarsource.slang.checks.api.SlangCheck;
-import org.sonarsource.slang.plugin.InputFileContext;
 import org.sonarsource.slang.visitors.TreeVisitor;
 import java.io.IOException;
 import java.util.Collection;
