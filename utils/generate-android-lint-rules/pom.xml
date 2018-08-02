@@ -44,7 +44,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.5.0</version>
                 <configuration>
-                    <mainClass>org.sonarsource.slang.externalreport.androidlint.AndroidLintRuleDefinition</mainClass>
+                    <mainClass>org.sonarsource.kotlin.externalreport.androidlint.AndroidLintRuleDefinition</mainClass>
                 </configuration>
             </plugin>
         </plugins>

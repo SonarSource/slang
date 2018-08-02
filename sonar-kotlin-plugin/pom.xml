@@ -34,6 +34,10 @@
       <artifactId>slang-antlr</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.sonarsource.slang</groupId>
+      <artifactId>slang-plugin</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
       <scope>provided</scope>
@@ -79,7 +83,7 @@
         <configuration>
           <!-- This value shows up in the SonarQube GUI -->
           <pluginName>SonarKotlin</pluginName>
-          <pluginClass>org.sonarsource.slang.kotlin.KotlinPlugin</pluginClass>
+          <pluginClass>org.sonarsource.kotlin.plugin.KotlinPlugin</pluginClass>
           <skipDependenciesPackaging>true</skipDependenciesPackaging>
           <sonarLintSupported>true</sonarLintSupported>
           <addMavenDescriptor>false</addMavenDescriptor>

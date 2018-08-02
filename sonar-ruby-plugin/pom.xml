@@ -26,6 +26,10 @@
             <groupId>org.sonarsource.analyzer-commons</groupId>
             <artifactId>sonar-analyzer-commons</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.sonarsource.slang</groupId>
+            <artifactId>slang-checks</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
@@ -46,9 +50,9 @@
                 <configuration>
                     <!-- This value shows up in the SonarQube GUI -->
                     <pluginName>SonarRuby</pluginName>
-                    <pluginClass>org.sonarsource.slang.ruby.RubyPlugin</pluginClass>
+                    <pluginClass>org.sonarsource.ruby.plugin.RubyPlugin</pluginClass>
                     <skipDependenciesPackaging>true</skipDependenciesPackaging>
-                    <sonarLintSupported>true</sonarLintSupported>
+                    <sonarLintSupported>false</sonarLintSupported>
                     <addMavenDescriptor>false</addMavenDescriptor>
                     <sonarQubeMinVersion>6.7</sonarQubeMinVersion>
                 </configuration>
@@ -90,8 +94,8 @@
                         <configuration>
                             <rules>
                                 <requireFilesSize>
-                                    <minsize>3000</minsize>
-                                    <maxsize>10000</maxsize>
+                                    <minsize>100000</minsize>
+                                    <maxsize>300000</maxsize>
                                     <files>
                                         <file>${project.build.directory}/${project.build.finalName}.jar</file>
                                     </files>
