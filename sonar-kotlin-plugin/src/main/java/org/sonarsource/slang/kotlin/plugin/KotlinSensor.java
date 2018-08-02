@@ -19,133 +19,38 @@
  */
 package org.sonarsource.slang.kotlin.plugin;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-import org.sonar.api.batch.fs.FilePredicate;
-import org.sonar.api.batch.fs.FileSystem;
-import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
-import org.sonar.api.batch.sensor.Sensor;
-import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
-import org.sonarsource.analyzer.commons.ProgressReport;
 import org.sonarsource.slang.api.ASTConverter;
-import org.sonarsource.slang.api.TextPointer;
-import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.checks.CommentedCodeCheck;
 import org.sonarsource.slang.checks.CommonCheckList;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.kotlin.KotlinCodeVerifier;
 import org.sonarsource.slang.kotlin.KotlinConverter;
-import org.sonarsource.slang.plugin.ChecksVisitor;
-import org.sonarsource.slang.plugin.CpdVisitor;
-import org.sonarsource.slang.plugin.InputFileContext;
-import org.sonarsource.slang.plugin.MetricVisitor;
-import org.sonarsource.slang.plugin.ParseException;
-import org.sonarsource.slang.plugin.SyntaxHighlighter;
-import org.sonarsource.slang.visitors.TreeVisitor;
+import org.sonarsource.slang.plugin.SlangSensor;
 
-public class KotlinSensor implements Sensor {
-
-  private static final Logger LOG = Loggers.get(KotlinSensor.class);
+public class KotlinSensor extends SlangSensor {
 
   private final Checks<SlangCheck> checks;
-  private final NoSonarFilter noSonarFilter;
-  private FileLinesContextFactory fileLinesContextFactory;
 
-  public KotlinSensor(CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter) {
-    checks = checkFactory.create(KotlinPlugin.KOTLIN_REPOSITORY_KEY);
+  public KotlinSensor(CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter, KotlinLanguage language) {
+    super(noSonarFilter, fileLinesContextFactory, language);
     // TODO: Add logic for rules that require language specific configuration at construction time
+    this.checks = checkFactory.create(KotlinPlugin.KOTLIN_REPOSITORY_KEY);
     this.checks.addAnnotatedChecks(new CommentedCodeCheck(new KotlinCodeVerifier()));
     this.checks.addAnnotatedChecks((Iterable<?>) CommonCheckList.checks());
-    this.fileLinesContextFactory = fileLinesContextFactory;
-    this.noSonarFilter = noSonarFilter;
   }
 
   @Override
-  public void describe(SensorDescriptor descriptor) {
-    descriptor
-      .onlyOnLanguage("kotlin")
-      .name("Kotlin Sensor");
+  protected ASTConverter astConverter() {
+    return new KotlinConverter();
   }
 
   @Override
-  public void execute(SensorContext sensorContext) {
-    FileSystem fileSystem = sensorContext.fileSystem();
-    FilePredicate mainFilePredicate = fileSystem.predicates().and(
-      fileSystem.predicates().hasLanguage(KotlinPlugin.KOTLIN_LANGUAGE_KEY),
-      fileSystem.predicates().hasType(InputFile.Type.MAIN));
-    Iterable<InputFile> inputFiles = fileSystem.inputFiles(mainFilePredicate);
-    List<String> filenames = StreamSupport.stream(inputFiles.spliterator(), false).map(InputFile::toString).collect(Collectors.toList());
-    ProgressReport progressReport = new ProgressReport("Progress of the Kotlin analysis", TimeUnit.SECONDS.toMillis(10));
-    progressReport.start(filenames);
-    boolean success = false;
-    try {
-      success = analyseFiles(sensorContext, inputFiles, progressReport, Arrays.asList(
-        new ChecksVisitor(checks),
-        new MetricVisitor(fileLinesContextFactory, noSonarFilter),
-        new CpdVisitor(),
-        new SyntaxHighlighter()));
-    } finally {
-      if (success) {
-        progressReport.stop();
-      } else {
-        progressReport.cancel();
-      }
-    }
-  }
-
-  private static boolean analyseFiles(SensorContext sensorContext, Iterable<InputFile> inputFiles, ProgressReport progressReport, List<TreeVisitor<InputFileContext>> visitors) {
-    ASTConverter converter = new KotlinConverter();
-    for (InputFile inputFile : inputFiles) {
-      InputFileContext inputFileContext = new InputFileContext(sensorContext, inputFile);
-      try {
-        analyseFile(converter, inputFileContext, inputFile, visitors);
-      } catch (ParseException e) {
-        logParsingError(inputFile, e);
-        inputFileContext.reportError("Unable to parse file: " + inputFile, e.getPosition());
-      }
-      progressReport.nextFile();
-    }
-    return true;
-  }
-
-  private static void analyseFile(ASTConverter converter, InputFileContext inputFileContext, InputFile inputFile, List<TreeVisitor<InputFileContext>> visitors) {
-    String content;
-    try {
-      content = inputFile.contents();
-    } catch (IOException e) {
-      throw new ParseException("Cannot read " + inputFile);
-    }
-
-    Tree tree = converter.parse(content);
-    for (TreeVisitor<InputFileContext> visitor : visitors) {
-      try {
-        visitor.scan(inputFileContext, tree);
-      } catch (RuntimeException e) {
-        inputFileContext.reportError(e.getMessage(), null);
-        LOG.error("Cannot analyse " + inputFile, e);
-      }
-    }
-  }
-
-  private static void logParsingError(InputFile inputFile, ParseException e) {
-    TextPointer position = e.getPosition();
-    String positionMessage = "";
-    if (position != null) {
-      positionMessage = String.format("Parse error at position %s:%s", position.line(), position.lineOffset());
-    }
-    LOG.error(String.format("Unable to parse file: %s. %s", inputFile.uri(), positionMessage));
-    LOG.error(e.getMessage());
+  protected Checks<SlangCheck> checks() {
+    return checks;
   }
 
 }

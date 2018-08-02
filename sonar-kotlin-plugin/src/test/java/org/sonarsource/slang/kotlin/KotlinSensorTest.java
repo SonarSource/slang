@@ -19,6 +19,7 @@
  */
 package org.sonarsource.slang.kotlin;
 
+import org.sonar.api.config.internal.MapSettings;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import java.io.File;
@@ -48,6 +49,7 @@ import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.LogTester;
+import org.sonarsource.slang.kotlin.plugin.KotlinLanguage;
 import org.sonarsource.slang.kotlin.plugin.KotlinPlugin;
 import org.sonarsource.slang.kotlin.plugin.KotlinSensor;
 
@@ -242,7 +244,8 @@ public class KotlinSensorTest {
   }
 
   private KotlinSensor sensor(CheckFactory checkFactory) {
-    return new KotlinSensor(checkFactory, fileLinesContextFactory, new NoSonarFilter());
+    KotlinLanguage language = new KotlinLanguage(new MapSettings().asConfig());
+    return new KotlinSensor(checkFactory, fileLinesContextFactory, new NoSonarFilter(), language);
   }
 
 }
