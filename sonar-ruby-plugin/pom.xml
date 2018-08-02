@@ -50,7 +50,7 @@
                 <configuration>
                     <!-- This value shows up in the SonarQube GUI -->
                     <pluginName>SonarRuby</pluginName>
-                    <pluginClass>org.sonarsource.slang.ruby.plugin.RubyPlugin</pluginClass>
+                    <pluginClass>org.sonarsource.ruby.plugin.RubyPlugin</pluginClass>
                     <skipDependenciesPackaging>true</skipDependenciesPackaging>
                     <sonarLintSupported>false</sonarLintSupported>
                     <addMavenDescriptor>false</addMavenDescriptor>
