@@ -33,6 +33,8 @@ public class MeasuresTest extends TestBase {
   public void kotlin_measures() {
     ORCHESTRATOR.executeBuild(getSonarScanner(BASE_DIRECTORY, "kotlin"));
 
+    assertThat(getMeasureAsInt("files")).isEqualTo(3);
+
     assertThat(getMeasure("empty_file.kt", "ncloc")).isNull();
     assertThat(getMeasureAsInt("file1.kt", "ncloc")).isEqualTo(6);
     assertThat(getMeasureAsInt("file2.kt", "ncloc")).isEqualTo(8);
@@ -56,6 +58,13 @@ public class MeasuresTest extends TestBase {
     String file2Component = PROJECT_KEY + ":file2.kt";
     assertThat(issuesForRule).extracting(Issue::line).containsExactly(2, 7);
     assertThat(issuesForRule).extracting(Issue::componentKey).containsExactly(file2Component, file2Component);
+  }
+
+  @Test
+  public void ruby_measures() {
+    ORCHESTRATOR.executeBuild(getSonarScanner(BASE_DIRECTORY, "ruby"));
+
+    assertThat(getMeasureAsInt("files")).isEqualTo(1);
   }
 
 }

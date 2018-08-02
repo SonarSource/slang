@@ -19,11 +19,14 @@
  */
 package org.sonarsource.slang;
 
+import com.google.common.collect.ImmutableSet;
 import com.sonar.orchestrator.Orchestrator;
+import com.sonar.orchestrator.OrchestratorBuilder;
 import com.sonar.orchestrator.locator.FileLocation;
 import com.sonar.orchestrator.locator.Location;
 import com.sonar.orchestrator.locator.MavenLocation;
 import java.io.File;
+import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.junit.ClassRule;
 import org.junit.runner.RunWith;
@@ -33,7 +36,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
   DuplicationsTest.class,
   ExternalReportTest.class,
-  FileSuffixesTest.class,
   MeasuresTest.class,
 })
 public class Tests {
@@ -41,23 +43,37 @@ public class Tests {
   private static final String SQ_VERSION_PROPERTY = "sonar.runtimeVersion";
   private static final String DEFAULT_SQ_VERSION = "LATEST_RELEASE";
 
-  @ClassRule
-  public static final Orchestrator ORCHESTRATOR = Orchestrator.builderEnv()
-    .addPlugin(getSlangPluginLocation())
-    .setSonarVersion(System.getProperty(SQ_VERSION_PROPERTY, DEFAULT_SQ_VERSION))
-    .restoreProfileAtStartup(FileLocation.of("src/test/resources/nosonar.xml"))
-    .restoreProfileAtStartup(FileLocation.of("src/test/resources/norule.xml"))
-    .build();
+  private static final Set<String> LANGUAGES = ImmutableSet.of("kotlin" , "ruby");
 
-  private static Location getSlangPluginLocation() {
+  @ClassRule
+  public static final Orchestrator ORCHESTRATOR;
+
+  static {
+    OrchestratorBuilder orchestratorBuilder = Orchestrator.builderEnv();
+    addLanguagePlugins(orchestratorBuilder);
+    ORCHESTRATOR = orchestratorBuilder
+      .setSonarVersion(System.getProperty(SQ_VERSION_PROPERTY, DEFAULT_SQ_VERSION))
+      .restoreProfileAtStartup(FileLocation.of("src/test/resources/nosonar.xml"))
+      .restoreProfileAtStartup(FileLocation.of("src/test/resources/norule.xml"))
+      .build();
+  }
+
+  private static void addLanguagePlugins(OrchestratorBuilder builder) {
     String slangVersion = System.getProperty("slangVersion");
-    if (StringUtils.isEmpty(slangVersion)) {
-      // use the plugin that was built on local machine
-      return FileLocation.byWildcardMavenFilename(new File("../../sonar-kotlin-plugin/target"), "sonar-kotlin-plugin-*.jar");
-    } else {
-      // QA environment downloads the plugin built by the CI job
-      return MavenLocation.of("org.sonarsource.slang", "sonar-kotlin-plugin", slangVersion);
-    }
+
+    LANGUAGES.forEach(language -> {
+      Location pluginLocation;
+      String plugin = "sonar-" + language +"-plugin";
+      if (StringUtils.isEmpty(slangVersion)) {
+        // use the plugin that was built on local machine
+        pluginLocation = FileLocation.byWildcardMavenFilename(new File("../../" + plugin + "/target"), plugin + "-*.jar");
+      } else {
+        // QA environment downloads the plugin built by the CI job
+        pluginLocation = MavenLocation.of("org.sonarsource.slang", plugin, slangVersion);
+      }
+
+      builder.addPlugin(pluginLocation);
+    });
   }
 
 }
