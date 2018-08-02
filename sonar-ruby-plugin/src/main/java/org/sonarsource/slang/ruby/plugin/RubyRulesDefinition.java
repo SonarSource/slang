@@ -17,27 +17,28 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.ruby;
+package org.sonarsource.slang.ruby.plugin;
 
-import org.sonar.api.config.Configuration;
-import org.sonar.api.resources.AbstractLanguage;
+import java.util.List;
+import org.sonar.api.server.rule.RulesDefinition;
+import org.sonarsource.analyzer.commons.RuleMetadataLoader;
+import org.sonarsource.slang.checks.CommonCheckList;
 
-public class RubyLanguage extends AbstractLanguage {
+public class RubyRulesDefinition implements RulesDefinition {
 
-  private Configuration configuration;
-
-  public RubyLanguage(Configuration configuration) {
-    super(RubyPlugin.RUBY_LANGUAGE_KEY, RubyPlugin.RUBY_LANGUAGE_NAME);
-    this.configuration = configuration;
-  }
+  private static final String RESOURCE_FOLDER = "org/sonar/l10n/ruby/rules/ruby";
 
   @Override
-  public String[] getFileSuffixes() {
-    String[] suffixes = configuration.getStringArray(RubyPlugin.RUBY_FILE_SUFFIXES_KEY);
-    if (suffixes == null || suffixes.length == 0) {
-      suffixes = RubyPlugin.RUBY_FILE_SUFFIXES_DEFAULT_VALUE.split(",");
-    }
-    return suffixes;
+  public void define(Context context) {
+    NewRepository repository = context
+      .createRepository(RubyPlugin.RUBY_REPOSITORY_KEY, RubyPlugin.RUBY_LANGUAGE_KEY)
+      .setName(RubyPlugin.REPOSITORY_NAME);
+    RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER);
+
+
+    List<Class> checks = CommonCheckList.rubyChecks();
+    ruleMetadataLoader.addRulesByAnnotatedClass(repository, checks);
+    repository.done();
   }
 
 }

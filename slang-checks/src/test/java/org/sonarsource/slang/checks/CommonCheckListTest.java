@@ -21,9 +21,11 @@ package org.sonarsource.slang.checks;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CommonCheckListTest {
 
@@ -34,7 +36,15 @@ public class CommonCheckListTest {
     File directory = new File("src/main/java/org/sonarsource/slang/checks");
     File[] checkFiles = directory.listFiles((dir, name) ->
         name.endsWith("Check.java") && !name.startsWith("Abstract") && !CHECKS_WITH_CONFIG.contains(name));
-    Assertions.assertThat(CommonCheckList.checks().size()).isEqualTo(checkFiles.length);
+    assertThat(CommonCheckList.allChecks().size()).isEqualTo(checkFiles.length);
+  }
+
+  @Test
+  public void each_check_has_to_be_used() {
+    HashSet<Class> allChecks = new HashSet<>(CommonCheckList.allChecks());
+    allChecks.removeAll(CommonCheckList.kotlinChecks());
+    allChecks.removeAll(CommonCheckList.rubyChecks());
+    assertThat(allChecks).isEmpty();
   }
 
 }

@@ -40,7 +40,7 @@ public class KotlinSensor extends SlangSensor {
     // TODO: Add logic for rules that require language specific configuration at construction time
     this.checks = checkFactory.create(KotlinPlugin.KOTLIN_REPOSITORY_KEY);
     this.checks.addAnnotatedChecks(new CommentedCodeCheck(new KotlinCodeVerifier()));
-    this.checks.addAnnotatedChecks((Iterable<?>) CommonCheckList.checks());
+    this.checks.addAnnotatedChecks((Iterable<?>) CommonCheckList.kotlinChecks());
   }
 
   @Override

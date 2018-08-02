@@ -17,20 +17,5 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.ruby;
-
-import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition;
-import org.sonarsource.analyzer.commons.BuiltInQualityProfileJsonLoader;
-
-public class RubyProfileDefinition implements BuiltInQualityProfilesDefinition {
-
-  private static final String PATH_TO_JSON = "org/sonar/l10n/ruby/rules/ruby/Sonar_way_profile.json";
-
-  @Override
-  public void define(Context context) {
-    NewBuiltInQualityProfile profile = context.createBuiltInQualityProfile(RubyPlugin.PROFILE_NAME, RubyPlugin.RUBY_LANGUAGE_KEY);
-    BuiltInQualityProfileJsonLoader.load(profile, RubyPlugin.RUBY_REPOSITORY_KEY, PATH_TO_JSON);
-    profile.done();
-  }
-
-}
+@javax.annotation.ParametersAreNonnullByDefault
+package org.sonarsource.slang.ruby.plugin;

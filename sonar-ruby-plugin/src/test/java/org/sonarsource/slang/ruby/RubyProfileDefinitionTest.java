@@ -21,6 +21,7 @@ package org.sonarsource.slang.ruby;
 
 import org.junit.Test;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition;
+import org.sonarsource.slang.ruby.plugin.RubyProfileDefinition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

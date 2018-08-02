@@ -20,6 +20,7 @@
 package org.sonarsource.slang.checks;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class CommonCheckList {
@@ -27,7 +28,7 @@ public class CommonCheckList {
   private CommonCheckList() {
   }
 
-  public static List<Class> checks() {
+  static List<Class> allChecks() {
     return Arrays.asList(
       AllBranchesIdenticalCheck.class,
       BadClassNameCheck.class,
@@ -69,6 +70,14 @@ public class CommonCheckList {
       UnusedLocalVariableCheck.class,
       UnusedPrivateMethodCheck.class,
       VariableAndParameterNameCheck.class);
+  }
+
+  public static List<Class> kotlinChecks() {
+    return allChecks();
+  }
+
+  public static List<Class> rubyChecks() {
+    return Collections.emptyList();
   }
 
 }
