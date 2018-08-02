@@ -17,14 +17,19 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.api;
+package org.sonarsource.ruby.converter.adapter;
 
-public interface ASTConverter {
+import org.jruby.Ruby;
+import org.jruby.runtime.builtin.IRubyObject;
 
-  Tree parse(String content);
+public class SourceMapAdapter extends JRubyObjectAdapter<IRubyObject> {
 
-  default void terminate() {
-    // Nothing to do by default
+  public SourceMapAdapter(Ruby runtime, IRubyObject underlyingRubyObject) {
+    super(runtime, underlyingRubyObject);
+  }
+
+  public RangeAdapter getRange() {
+    return new RangeAdapter(runtime, getFromUnderlying("expression", IRubyObject.class));
   }
 
 }

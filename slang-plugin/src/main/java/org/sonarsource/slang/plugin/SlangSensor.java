@@ -68,8 +68,11 @@ public abstract class SlangSensor implements Sensor {
 
   protected abstract Checks<SlangCheck> checks();
 
-  private boolean analyseFiles(SensorContext sensorContext, Iterable<InputFile> inputFiles, ProgressReport progressReport, List<TreeVisitor<InputFileContext>> visitors) {
-    ASTConverter converter = astConverter();
+  private static boolean analyseFiles(ASTConverter converter,
+                                      SensorContext sensorContext,
+                                      Iterable<InputFile> inputFiles,
+                                      ProgressReport progressReport,
+                                      List<TreeVisitor<InputFileContext>> visitors) {
     for (InputFile inputFile : inputFiles) {
       InputFileContext inputFileContext = new InputFileContext(sensorContext, inputFile);
       try {
@@ -123,8 +126,9 @@ public abstract class SlangSensor implements Sensor {
     ProgressReport progressReport = new ProgressReport("Progress of the Kotlin analysis", TimeUnit.SECONDS.toMillis(10));
     progressReport.start(filenames);
     boolean success = false;
+    ASTConverter converter = astConverter();
     try {
-      success = analyseFiles(sensorContext, inputFiles, progressReport, Arrays.asList(
+      success = analyseFiles(converter, sensorContext, inputFiles, progressReport, Arrays.asList(
         new ChecksVisitor(checks()),
         new MetricVisitor(fileLinesContextFactory, noSonarFilter),
         new CpdVisitor(),
@@ -135,6 +139,7 @@ public abstract class SlangSensor implements Sensor {
       } else {
         progressReport.cancel();
       }
+      converter.terminate();
     }
   }
 }

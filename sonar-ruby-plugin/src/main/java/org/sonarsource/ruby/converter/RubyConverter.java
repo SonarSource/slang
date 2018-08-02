@@ -26,29 +26,41 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import org.jruby.Ruby;
 import org.jruby.RubyRuntimeAdapter;
 import org.jruby.exceptions.NoMethodError;
 import org.jruby.exceptions.StandardError;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.jruby.specialized.RubyArrayTwoObject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
+import org.sonarsource.ruby.converter.adapter.CommentAdapter;
+import org.sonarsource.ruby.converter.adapter.NodeAdapter;
 import org.sonarsource.ruby.converter.adapter.RangeAdapter;
+import org.sonarsource.ruby.converter.adapter.TokenAdapter;
 import org.sonarsource.slang.api.ASTConverter;
+import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.TextPointer;
+import org.sonarsource.slang.api.TextRange;
+import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.api.TreeMetaData;
+import org.sonarsource.slang.impl.TextRanges;
 import org.sonarsource.slang.impl.TopLevelTreeImpl;
+import org.sonarsource.slang.impl.TreeMetaDataProvider;
 import org.sonarsource.slang.plugin.ParseException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.emptyList;
 
 public class RubyConverter implements ASTConverter {
 
   private static final Logger LOG = Loggers.get(RubyConverter.class);
-
   private static final Path SETUP_SCRIPT_PATH = Paths.get("/whitequark_parser_init.rb");
   private static final Path AST_RUBYGEM_PATH = Paths.get("/ast-2.4.0", "lib");
   private static final Path PARSER_RUBYGEM_PATH = Paths.get("/parser-2.5.1.2", "lib");
@@ -64,6 +76,7 @@ public class RubyConverter implements ASTConverter {
     }
   }
 
+  @Override
   public void terminate() {
     // Shutdown and terminate ruby instance
     if (runtime != null) {
@@ -83,48 +96,79 @@ public class RubyConverter implements ASTConverter {
   private TextPointer getErrorLocation(StandardError e) {
     try {
       IRubyObject diagnostic = (IRubyObject) invokeMethod(e.getException(), "diagnostic", null);
-      if (diagnostic != null) {
-        IRubyObject location = (IRubyObject) invokeMethod(diagnostic, "location", null);
-        if (location != null) {
-          return new RangeAdapter(runtime, location).toTextRange().start();
-        }
+      IRubyObject location = (IRubyObject) invokeMethod(diagnostic, "location", null);
+      if (location != null) {
+        return new RangeAdapter(runtime, location).toTextRange().start();
       }
     } catch (NoMethodError nme) {
-      LOG.warn("No location information available for parsing error");
+      LOG.warn("No location information available for parse error");
     }
     return null;
   }
 
   private Tree parseContent(String content) {
-    List rubyParseResult = callRubyParser(content);
+    Object[] parameters = {content};
+    List rubyParseResult = (List) invokeMethod(runtime.getObject(), "parse_with_tokens", parameters);
+    if (rubyParseResult == null) {
+      throw new ParseException("Unable to parse file content");
+    }
 
     IRubyObject ast = (IRubyObject) rubyParseResult.get(0);
     List<IRubyObject> rubyComments = (List) rubyParseResult.get(1);
     List<IRubyObject> rubyTokens = (List) rubyParseResult.get(2);
-    // TODO map to slang AST
 
-    return new TopLevelTreeImpl(null, emptyList(), emptyList());
+    List<Comment> comments = rubyComments.stream()
+      .map(rubyComment -> new CommentAdapter(runtime, rubyComment))
+      .map(CommentAdapter::toSlangComment)
+      .collect(Collectors.toList());
+    List<Token> tokens = rubyTokens.stream()
+      .map(rubyToken -> new TokenAdapter(runtime, (RubyArrayTwoObject) rubyToken))
+      .map(TokenAdapter::toSlangToken)
+      .filter(Objects::nonNull)
+      .collect(Collectors.toList());
+    TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(comments, tokens);
+
+    RubyProcessor rubyProcessor = getRubyProcessor(metaDataProvider);
+
+    Object[] astProcessorParams = {ast};
+    NodeAdapter node = (NodeAdapter) invokeMethod(rubyProcessor, "process", astProcessorParams);
+
+    if (tokens.isEmpty() || node == null || node.getTree() == null) {
+      throw new ParseException("No AST node found");
+    }
+
+    Tree originalTree = node.getTree();
+    TextRange fullRange = TextRanges.merge(Arrays.asList(tokens.get(0).textRange(), tokens.get(tokens.size() - 1).textRange()));
+    TreeMetaData topTreeMetaData = metaDataProvider.metaData(fullRange);
+    if (originalTree.children().isEmpty()) {
+      // singleton expression: we wrap it around a top level tree
+      return new TopLevelTreeImpl(topTreeMetaData, Collections.singletonList(originalTree), comments);
+    } else {
+      // replace top level tree with correct range (including start and end comments)
+      return new TopLevelTreeImpl(topTreeMetaData, originalTree.children(), comments);
+    }
   }
 
-  private List callRubyParser(String content) {
-    Object[] parameters = {content};
-    return (List) invokeMethod(runtime.getObject(), "parse_with_tokens", parameters);
+  private RubyProcessor getRubyProcessor(TreeMetaDataProvider metaDataProvider) {
+    Object[] constructorParams = {metaDataProvider};
+    IRubyObject rubyProcessorClass = rubyRuntimeAdapter.eval(runtime, RubyProcessor.class.getSimpleName());
+    return (RubyProcessor) invokeMethod(rubyProcessorClass, "new", constructorParams);
   }
 
-  private Object invokeMethod(Object receiver, String methodName, Object[] args) {
+  @Nullable
+  private Object invokeMethod(@Nullable Object receiver, String methodName, @Nullable Object[] args) {
     return JavaEmbedUtils.invokeMethod(runtime, receiver, methodName, args, Object.class);
   }
 
   private static Ruby initializeRubyRuntime() throws URISyntaxException, IOException {
     URL astRubygem = RubyConverter.class.getResource(AST_RUBYGEM_PATH.toString());
     URL parserRubygem = RubyConverter.class.getResource(PARSER_RUBYGEM_PATH.toString());
-    if (astRubygem == null || parserRubygem == null) {
-      throw new IllegalStateException("Rubygems dependencies not found");
-    }
 
     Ruby runtime = JavaEmbedUtils.initialize(Arrays.asList(astRubygem.toString(), parserRubygem.toString()));
     String initParserScript = new String(Files.readAllBytes(Paths.get(RubyConverter.class.getResource(SETUP_SCRIPT_PATH.toString()).toURI())), UTF_8);
     rubyRuntimeAdapter.eval(runtime, initParserScript);
+    RubyProcessor.addToRuntime(runtime);
+    NodeAdapter.addToRuntime(runtime);
     return runtime;
   }
 
