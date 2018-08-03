@@ -20,13 +20,17 @@
 package org.sonarsource.ruby.converter;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
@@ -165,7 +169,16 @@ public class RubyConverter implements ASTConverter {
     URL initParserScriptUrl = RubyConverter.class.getResource(SETUP_SCRIPT_PATH);
 
     Ruby runtime = JavaEmbedUtils.initialize(Arrays.asList(astRubygem.toString(), parserRubygem.toString()));
-    String initParserScript = new String(Files.readAllBytes(Paths.get(initParserScriptUrl.toURI())), UTF_8);
+    URI initParserScriptUri = initParserScriptUrl.toURI();
+
+    if ("jar".equalsIgnoreCase(initParserScriptUri.getScheme())) {
+      // Need to init ZipFileSystem to read file
+      Map<String, String> env = new HashMap<>();
+      env.put("create", "true");
+      FileSystems.newFileSystem(initParserScriptUri, env);
+    }
+
+    String initParserScript = new String(Files.readAllBytes(Paths.get(initParserScriptUri)), UTF_8);
     rubyRuntimeAdapter.eval(runtime, initParserScript);
     RubyProcessor.addToRuntime(runtime);
     NodeAdapter.addToRuntime(runtime);

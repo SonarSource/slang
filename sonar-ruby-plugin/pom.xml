@@ -22,13 +22,6 @@
       <rubygems.parser.version>2.5.1.2</rubygems.parser.version>
     </properties>
 
-    <repositories>
-      <repository>
-        <id>rubygems-release</id>
-        <url>http://rubygems-proxy.torquebox.org/releases</url>
-      </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.sonarsource.sonarqube</groupId>
@@ -93,6 +86,13 @@
         </dependency>
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>rubygems-release</id>
+            <url>http://rubygems-proxy.torquebox.org/releases</url>
+        </repository>
+    </repositories>
+
     <build>
         <resources>
             <resource>
@@ -148,7 +148,7 @@
                         </goals>
                         <configuration>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
-                            <minimizeJar>true</minimizeJar>
+                            <minimizeJar>false</minimizeJar>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <filters>
                                 <filter>
@@ -175,7 +175,7 @@
                             <rules>
                                 <requireFilesSize>
                                     <minsize>10000000</minsize>
-                                    <maxsize>25000000</maxsize>
+                                    <maxsize>30000000</maxsize>
                                     <files>
                                         <file>${project.build.directory}/${project.build.finalName}.jar</file>
                                     </files>

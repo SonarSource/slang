@@ -42,6 +42,7 @@ public class RubyPlugin implements Plugin {
   public void define(Context context) {
     context.addExtensions(
       RubyLanguage.class,
+      RubySensor.class,
       RubyProfileDefinition.class,
       RubyRulesDefinition.class,
 
