@@ -44,7 +44,6 @@ import org.jruby.specialized.RubyArrayTwoObject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.ruby.converter.adapter.CommentAdapter;
-import org.sonarsource.ruby.converter.adapter.NodeAdapter;
 import org.sonarsource.ruby.converter.adapter.RangeAdapter;
 import org.sonarsource.ruby.converter.adapter.TokenAdapter;
 import org.sonarsource.slang.api.ASTConverter;
@@ -68,6 +67,7 @@ public class RubyConverter implements ASTConverter {
   private static final String AST_RUBYGEM_PATH = "/ast-2.4.0/lib";
   private static final String PARSER_RUBYGEM_PATH = "/parser-2.5.1.2/lib";
   private static final RubyRuntimeAdapter rubyRuntimeAdapter = JavaEmbedUtils.newRuntimeAdapter();
+  private static final String COMMENT_TOKEN_TYPE = "tCOMMENT";
 
   private final Ruby runtime;
 
@@ -116,7 +116,6 @@ public class RubyConverter implements ASTConverter {
       throw new ParseException("Unable to parse file content");
     }
 
-    IRubyObject ast = (IRubyObject) rubyParseResult.get(0);
     List<IRubyObject> rubyComments = (List) rubyParseResult.get(1);
     List<IRubyObject> rubyTokens = (List) rubyParseResult.get(2);
 
@@ -126,36 +125,29 @@ public class RubyConverter implements ASTConverter {
       .collect(Collectors.toList());
     List<Token> tokens = rubyTokens.stream()
       .map(rubyToken -> new TokenAdapter(runtime, (RubyArrayTwoObject) rubyToken))
+      .filter(tokenAdapter -> !COMMENT_TOKEN_TYPE.equals(tokenAdapter.getTokenType().asJavaString()))
       .map(TokenAdapter::toSlangToken)
       .filter(Objects::nonNull)
       .collect(Collectors.toList());
     TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(comments, tokens);
 
-    RubyProcessor rubyProcessor = getRubyProcessor(metaDataProvider);
-
-    Object[] astProcessorParams = {ast};
-    NodeAdapter node = (NodeAdapter) invokeMethod(rubyProcessor, "process", astProcessorParams);
-
-    if (tokens.isEmpty() || node == null || node.getTree() == null) {
+    if (tokens.isEmpty()) {
       throw new ParseException("No AST node found");
     }
 
-    Tree originalTree = node.getTree();
-    TextRange fullRange = TextRanges.merge(Arrays.asList(tokens.get(0).textRange(), tokens.get(tokens.size() - 1).textRange()));
-    TreeMetaData topTreeMetaData = metaDataProvider.metaData(fullRange);
-    if (originalTree.children().isEmpty()) {
-      // singleton expression: we wrap it around a top level tree
-      return new TopLevelTreeImpl(topTreeMetaData, Collections.singletonList(originalTree), comments);
-    } else {
-      // replace top level tree with correct range (including start and end comments)
-      return new TopLevelTreeImpl(topTreeMetaData, originalTree.children(), comments);
-    }
+    TreeMetaData topTreeMetaData = metaDataProvider.metaData(getFullRange(tokens, comments));
+    return new TopLevelTreeImpl(topTreeMetaData, Collections.emptyList(), comments);
   }
 
-  private RubyProcessor getRubyProcessor(TreeMetaDataProvider metaDataProvider) {
-    Object[] constructorParams = {metaDataProvider};
-    IRubyObject rubyProcessorClass = rubyRuntimeAdapter.eval(runtime, RubyProcessor.class.getSimpleName());
-    return (RubyProcessor) invokeMethod(rubyProcessorClass, "new", constructorParams);
+  private TextRange getFullRange(List<Token> tokens, List<Comment> comments) {
+    if (comments.isEmpty()) {
+      return TextRanges.merge(Arrays.asList(tokens.get(0).textRange(), tokens.get(tokens.size() - 1).textRange()));
+    }
+    return TextRanges.merge(Arrays.asList(
+      tokens.get(0).textRange(),
+      tokens.get(tokens.size() - 1).textRange(),
+      comments.get(0).textRange(),
+      comments.get(comments.size() - 1).textRange()));
   }
 
   @Nullable
@@ -180,8 +172,6 @@ public class RubyConverter implements ASTConverter {
 
     String initParserScript = new String(Files.readAllBytes(Paths.get(initParserScriptUri)), UTF_8);
     rubyRuntimeAdapter.eval(runtime, initParserScript);
-    RubyProcessor.addToRuntime(runtime);
-    NodeAdapter.addToRuntime(runtime);
     return runtime;
   }
 

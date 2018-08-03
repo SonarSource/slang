@@ -6,7 +6,9 @@ Parser::Builders::Default.emit_procarg0 = true
 Parser::Builders::Default.emit_encoding = true
 Parser::Builders::Default.emit_index    = true
 
-# Parser initialization for 'tokenize' method based on 'Parser::Base.parse' and 'Parser::Base.setup_source_buffer'
+# In order to retrieve AST, comments and tokens, we need to use the 'tokenize' method of the ruby Parser object.
+# However, the 'tokenize' method takes directly a Buffer object as parameter. Here, we map the string content to the Buffer object in the same way
+# it is done in the 'Parser::Base.parse' and 'Parser::Base.setup_source_buffer' methods.
 def parse_with_tokens(content, filename='(string)')
   parser = Parser::Ruby25.default_parser
   content = content.dup.force_encoding(parser.default_encoding)

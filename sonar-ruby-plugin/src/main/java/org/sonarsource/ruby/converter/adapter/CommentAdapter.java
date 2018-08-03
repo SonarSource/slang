@@ -36,12 +36,8 @@ public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
     super(runtime, underlyingRubyObject);
   }
 
-  public String getText() {
-    return getFromUnderlying("text", String.class);
-  }
-
   public Comment toSlangComment() {
-    String text = getText();
+    String text = getFromUnderlying("text", String.class);
     IRubyObject location = getFromUnderlying("location", IRubyObject.class);
     SourceMapAdapter sourceMapAdapter = new SourceMapAdapter(runtime, location);
     TextRange textRange = sourceMapAdapter.getRange().toTextRange();
@@ -56,7 +52,7 @@ public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
       int endIndex = text.lastIndexOf(MULTILINE_COMMENT_END_TAG);
       contentText = text.substring(MULTILINE_COMMENT_START_TAG.length(), endIndex);
       int newEndLineOffset = 0;
-      String[] lines = contentText.split("\n");
+      String[] lines = contentText.split(System.lineSeparator());
       if (lines.length > 0) {
         newEndLineOffset = lines[lines.length - 1].length();
       }

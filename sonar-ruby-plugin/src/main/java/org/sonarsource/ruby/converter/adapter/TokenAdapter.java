@@ -69,10 +69,10 @@ public class TokenAdapter extends JRubyObjectAdapter<RubyArrayTwoObject> {
     }
 
     String text = getText();
-    if (text != null) {
-      return new TokenImpl(getRange().toTextRange(), getText(), type);
+    if (text == null || text.length() == 0) {
+      return null;
     }
-    return null;
+    return new TokenImpl(getRange().toTextRange(), getText(), type);
   }
 
 }
