@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,9 +60,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class RubyConverter implements ASTConverter {
 
   private static final Logger LOG = Loggers.get(RubyConverter.class);
-  private static final Path SETUP_SCRIPT_PATH = Paths.get("/whitequark_parser_init.rb");
-  private static final Path AST_RUBYGEM_PATH = Paths.get("/ast-2.4.0", "lib");
-  private static final Path PARSER_RUBYGEM_PATH = Paths.get("/parser-2.5.1.2", "lib");
+  private static final String SETUP_SCRIPT_PATH = "/whitequark_parser_init.rb";
+  private static final String AST_RUBYGEM_PATH = "/ast-2.4.0/lib";
+  private static final String PARSER_RUBYGEM_PATH = "/parser-2.5.1.2/lib";
   private static final RubyRuntimeAdapter rubyRuntimeAdapter = JavaEmbedUtils.newRuntimeAdapter();
 
   private final Ruby runtime;
@@ -161,11 +160,12 @@ public class RubyConverter implements ASTConverter {
   }
 
   private static Ruby initializeRubyRuntime() throws URISyntaxException, IOException {
-    URL astRubygem = RubyConverter.class.getResource(AST_RUBYGEM_PATH.toString());
-    URL parserRubygem = RubyConverter.class.getResource(PARSER_RUBYGEM_PATH.toString());
+    URL astRubygem = RubyConverter.class.getResource(AST_RUBYGEM_PATH);
+    URL parserRubygem = RubyConverter.class.getResource(PARSER_RUBYGEM_PATH);
+    URL initParserScriptUrl = RubyConverter.class.getResource(SETUP_SCRIPT_PATH);
 
     Ruby runtime = JavaEmbedUtils.initialize(Arrays.asList(astRubygem.toString(), parserRubygem.toString()));
-    String initParserScript = new String(Files.readAllBytes(Paths.get(RubyConverter.class.getResource(SETUP_SCRIPT_PATH.toString()).toURI())), UTF_8);
+    String initParserScript = new String(Files.readAllBytes(Paths.get(initParserScriptUrl.toURI())), UTF_8);
     rubyRuntimeAdapter.eval(runtime, initParserScript);
     RubyProcessor.addToRuntime(runtime);
     NodeAdapter.addToRuntime(runtime);
