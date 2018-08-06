@@ -50,9 +50,11 @@ public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
       contentRange = TextRanges.range(textRange.start().line(), newStartLineOffset, textRange.end().line(), textRange.end().lineOffset());
     } else if (text.startsWith(MULTILINE_COMMENT_START_TAG)) {
       textRange = fixMultilineTextRange(text, textRange);
+      String separator = System.lineSeparator();
       int endIndex = text.lastIndexOf(MULTILINE_COMMENT_END_TAG);
-      contentText = text.substring(MULTILINE_COMMENT_START_TAG.length() + System.lineSeparator().length(), endIndex);
-      String[] lines = contentText.split(System.lineSeparator());
+      int separatorLength = separator.length();
+      contentText = text.substring(MULTILINE_COMMENT_START_TAG.length() + separatorLength, endIndex - separatorLength);
+      String[] lines = contentText.split(separator);
       int newEndLineOffset = 0;
       if (lines.length > 0) {
         newEndLineOffset = lines[lines.length - 1].length();
@@ -61,7 +63,7 @@ public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
         textRange.start().line() + 1,
         0,
         textRange.end().line() - 1,
-        newEndLineOffset + System.lineSeparator().length());
+        newEndLineOffset);
     }
 
     return new CommentImpl(text, contentText, textRange, contentRange);
@@ -70,12 +72,12 @@ public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
   private static TextRange fixMultilineTextRange(String text, TextRange textRange) {
     String lineSeparator = System.lineSeparator();
     if (text.substring(text.length() - lineSeparator.length()).equals(lineSeparator)) {
-      // If =end tag finished with a line separator fix the line ending position
+      // If =end tag finished with a line separator fix the end position
       return TextRanges.range(
         textRange.start().line(),
         textRange.start().lineOffset(),
         textRange.end().line() - 1,
-        MULTILINE_COMMENT_END_TAG.length() + lineSeparator.length());
+        MULTILINE_COMMENT_END_TAG.length());
     } else {
       // Fix for comment text range end tag followed by <EOF> character
       return TextRanges.range(

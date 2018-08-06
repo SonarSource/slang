@@ -137,23 +137,24 @@ public class RubyConverterTest {
       "end\n" +
       "result = obj.methodcall(argument) ; result\n" +
       "=begin\n" +
+      "First line\n" +
       "End multiline comment\n" +
       "=end\n");
 
     assertThat(tree.allComments()).extracting(Comment::text).containsExactly(
       "#start comment",
       "# line comment",
-      "=begin\nEnd multiline comment\n=end\n");
+      "=begin\nFirst line\nEnd multiline comment\n=end\n");
     assertThat(tree.allComments()).extracting(Comment::contentText).containsExactly(
       "start comment",
       " line comment",
-      "End multiline comment\n");
+      "First line\nEnd multiline comment");
     assertRange(tree.allComments().get(0).textRange()).hasRange(1, 0, 1, 14);
     assertRange(tree.allComments().get(1).textRange()).hasRange(5, 9, 5, 23);
-    assertRange(tree.allComments().get(2).textRange()).hasRange(8, 0, 10, 5);
+    assertRange(tree.allComments().get(2).textRange()).hasRange(8, 0, 11, 4);
     assertRange(tree.allComments().get(0).contentRange()).hasRange(1, 1, 1, 14);
     assertRange(tree.allComments().get(1).contentRange()).hasRange(5, 10, 5, 23);
-    assertRange(tree.allComments().get(2).contentRange()).hasRange(9, 0, 9, 22);
+    assertRange(tree.allComments().get(2).contentRange()).hasRange(9, 0, 10, 21);
 
     tree = (TopLevelTree) converter.parse("require 'stuff'\n" +
       "=begin\n" +
