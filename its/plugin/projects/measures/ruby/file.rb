@@ -15,4 +15,9 @@ def foo(args)
   return a
 end
 
+#TODO something
+
 foo(1)
+
+=begin comment
+=end
