@@ -20,8 +20,9 @@
 package org.sonarsource.ruby.plugin;
 
 import org.junit.Test;
+import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
-import org.sonarsource.ruby.plugin.RubyRulesDefinition;
+import org.sonar.api.server.rule.RulesDefinition.Rule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,9 +38,11 @@ public class RubyRulesDefinitionTest {
     assertThat(repository.name()).isEqualTo("SonarAnalyzer");
     assertThat(repository.language()).isEqualTo("ruby");
 
-    assertThat(repository.rules()).isEmpty();
-    // TODO once we have rules, assert here that metadata are loaded
+    Rule rule = repository.rule("S1135");
+    assertThat(rule).isNotNull();
+    assertThat(rule.name()).isEqualTo("Track uses of \"TODO\" tags");
+    assertThat(rule.debtRemediationFunction()).isNull();
+    assertThat(rule.type()).isEqualTo(RuleType.CODE_SMELL);
   }
-
 
 }

@@ -19,11 +19,54 @@
  */
 package org.sonarsource.slang.checks;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class CommonCheckList {
+
+  private static final Class[] RUBY_CHECK_BLACK_LIST = {
+    AllBranchesIdenticalCheck.class,
+    BadClassNameCheck.class,
+    BadFunctionNameCheck.class,
+    BooleanInversionCheck.class,
+    BooleanLiteralCheck.class,
+    CodeAfterJumpCheck.class,
+    CollapsibleIfStatementsCheck.class,
+    DuplicateBranchCheck.class,
+    DuplicatedFunctionImplementationCheck.class,
+    ElseIfWithoutElseCheck.class,
+    EmptyBlockCheck.class,
+    EmptyCommentCheck.class,
+    EmptyFunctionCheck.class,
+    FileHeaderCheck.class,
+    FunctionCognitiveComplexityCheck.class,
+    HardcodedCredentialsCheck.class,
+    HardcodedIpCheck.class,
+    IdenticalBinaryOperandCheck.class,
+    IdenticalConditionsCheck.class,
+    IfConditionalAlwaysTrueOrFalseCheck.class,
+    MatchCaseTooBigCheck.class,
+    NestedMatchCheck.class,
+    OneStatementPerLineCheck.class,
+    RedundantParenthesesCheck.class,
+    SelfAssignmentCheck.class,
+    StringLiteralDuplicatedCheck.class,
+    TabsCheck.class,
+    TooComplexExpressionCheck.class,
+    TooDeeplyNestedStatementsCheck.class,
+    TooLongFunctionCheck.class,
+    TooLongLineCheck.class,
+    TooManyLinesOfCodeFileCheck.class,
+    TooManyCasesCheck.class,
+    TooManyParametersCheck.class,
+    UnusedFunctionParameterCheck.class,
+    UnusedLocalVariableCheck.class,
+    UnusedPrivateMethodCheck.class,
+    VariableAndParameterNameCheck.class
+  };
+
+  private static final Class[] KOTLIN_CHECK_BLACK_LIST = {};
 
   private CommonCheckList() {
   }
@@ -73,11 +116,17 @@ public class CommonCheckList {
   }
 
   public static List<Class> kotlinChecks() {
-    return allChecks();
+    return excludeChecks(KOTLIN_CHECK_BLACK_LIST);
   }
 
   public static List<Class> rubyChecks() {
-    return Collections.emptyList();
+    return excludeChecks(RUBY_CHECK_BLACK_LIST);
+  }
+
+  private static List<Class> excludeChecks(Class[] blackList) {
+    List<Class> checks = new ArrayList<>(allChecks());
+    checks.removeAll(Arrays.asList(blackList));
+    return checks;
   }
 
 }

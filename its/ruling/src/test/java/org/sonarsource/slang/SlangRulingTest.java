@@ -101,6 +101,14 @@ public class SlangRulingTest {
   }
 
   @Test
+  // @Ignore because it should only be run manually
+  @Ignore
+  public void ruby_manual_keep_sonarqube_server_up() throws IOException {
+    keepSonarqubeRunning = true;
+    test_ruby();
+  }
+
+  @Test
   public void test_kotlin() throws IOException {
     run_ruling_test("kotlin", ImmutableMap.of(
       "sonar.inclusions", "**/*.kt",
