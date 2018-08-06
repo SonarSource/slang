@@ -150,10 +150,17 @@ public class RubyConverterTest {
       "End multiline comment\n");
     assertRange(tree.allComments().get(0).textRange()).hasRange(1, 0, 1, 14);
     assertRange(tree.allComments().get(1).textRange()).hasRange(5, 9, 5, 23);
-    assertRange(tree.allComments().get(2).textRange()).hasRange(8, 0, 11, 0);
+    assertRange(tree.allComments().get(2).textRange()).hasRange(8, 0, 10, 5);
     assertRange(tree.allComments().get(0).contentRange()).hasRange(1, 1, 1, 14);
     assertRange(tree.allComments().get(1).contentRange()).hasRange(5, 10, 5, 23);
     assertRange(tree.allComments().get(2).contentRange()).hasRange(9, 0, 9, 22);
+
+    tree = (TopLevelTree) converter.parse("require 'stuff'\n" +
+      "=begin\n" +
+      "End multiline comment\n" +
+      "=end");
+    assertRange(tree.allComments().get(0).textRange()).hasRange(2, 0, 4, 4);
+
   }
 
   @Test

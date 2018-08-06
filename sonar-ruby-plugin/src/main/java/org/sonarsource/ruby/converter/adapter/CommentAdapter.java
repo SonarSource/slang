@@ -49,29 +49,41 @@ public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
       int newStartLineOffset = textRange.start().lineOffset() + 1;
       contentRange = TextRanges.range(textRange.start().line(), newStartLineOffset, textRange.end().line(), textRange.end().lineOffset());
     } else if (text.startsWith(MULTILINE_COMMENT_START_TAG)) {
-      String separator = System.lineSeparator();
-      int separatorLength = separator.length();
+      textRange = fixMultilineTextRange(text, textRange);
       int endIndex = text.lastIndexOf(MULTILINE_COMMENT_END_TAG);
-      contentText = text.substring(MULTILINE_COMMENT_START_TAG.length() + separatorLength, endIndex);
+      contentText = text.substring(MULTILINE_COMMENT_START_TAG.length() + System.lineSeparator().length(), endIndex);
+      String[] lines = contentText.split(System.lineSeparator());
       int newEndLineOffset = 0;
-      String[] lines = contentText.split(separator);
       if (lines.length > 0) {
         newEndLineOffset = lines[lines.length - 1].length();
-      }
-      int endLineCorrection = 1;
-      if (text.length() >= separatorLength && text.substring(text.length() - separatorLength).equals(separator)) {
-        // end tag can be "=end" or "=end\n", so we need to correct content range by
-        // 2 lines in case closing tag has the new line character in it
-        endLineCorrection = 2;
       }
       contentRange = TextRanges.range(
         textRange.start().line() + 1,
         0,
-        textRange.end().line() - endLineCorrection,
-        newEndLineOffset + separatorLength);
+        textRange.end().line() - 1,
+        newEndLineOffset + System.lineSeparator().length());
     }
 
     return new CommentImpl(text, contentText, textRange, contentRange);
+  }
+
+  private static TextRange fixMultilineTextRange(String text, TextRange textRange) {
+    String lineSeparator = System.lineSeparator();
+    if (text.substring(text.length() - lineSeparator.length()).equals(lineSeparator)) {
+      // If =end tag finished with a line separator fix the line ending position
+      return TextRanges.range(
+        textRange.start().line(),
+        textRange.start().lineOffset(),
+        textRange.end().line() - 1,
+        MULTILINE_COMMENT_END_TAG.length() + lineSeparator.length());
+    } else {
+      // Fix for comment text range end tag followed by <EOF> character
+      return TextRanges.range(
+        textRange.start().line(),
+        textRange.start().lineOffset(),
+        textRange.end().line(),
+        textRange.end().lineOffset() - 2);
+    }
   }
 
 }
