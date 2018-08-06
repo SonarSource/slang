@@ -17,14 +17,24 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.api;
+package org.sonarsource.ruby.converter.adapter;
 
-public interface ASTConverter {
+import org.jruby.Ruby;
+import org.jruby.javasupport.JavaEmbedUtils;
+import org.jruby.runtime.builtin.IRubyObject;
 
-  Tree parse(String content);
+public abstract class JRubyObjectAdapter<T extends IRubyObject> {
 
-  default void terminate() {
-    // Nothing to do by default
+  protected final Ruby runtime;
+  protected final T underlyingRubyObject;
+
+  public JRubyObjectAdapter(Ruby runtime, T underlyingRubyObject) {
+    this.runtime = runtime;
+    this.underlyingRubyObject = underlyingRubyObject;
+  }
+
+  protected <U> U getFromUnderlying(String attribute, Class<U> clazz) {
+    return (U) JavaEmbedUtils.invokeMethod(runtime, underlyingRubyObject, attribute, null, clazz);
   }
 
 }
