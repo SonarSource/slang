@@ -19,6 +19,8 @@
  */
 package org.sonarsource.ruby.converter.adapter;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.sonarsource.slang.api.Comment;
@@ -28,9 +30,9 @@ import org.sonarsource.slang.impl.TextRanges;
 
 public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
 
-  private static final String MULTILINE_COMMENT_START_TAG = "=begin";
-  private static final String MULTILINE_COMMENT_END_TAG = "=end";
+  private static final Pattern MULTILINE_COMMENTS_PATTERN = Pattern.compile("(=begin\\s*\\r?\\n?)(.*)(=end\\r?\\n?)", Pattern.DOTALL);
   private static final String SINGLE_LINE_COMMENT_PREFIX = "#";
+  private static final String MULTILINE_COMMENT_END_TAG = "=end";
 
   public CommentAdapter(Ruby runtime, IRubyObject underlyingRubyObject) {
     super(runtime, underlyingRubyObject);
@@ -48,31 +50,20 @@ public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
       contentText = text.substring(1);
       int newStartLineOffset = textRange.start().lineOffset() + 1;
       contentRange = TextRanges.range(textRange.start().line(), newStartLineOffset, textRange.end().line(), textRange.end().lineOffset());
-    } else if (text.startsWith(MULTILINE_COMMENT_START_TAG)) {
-      textRange = fixMultilineTextRange(text, textRange);
-      String separator = System.lineSeparator();
-      int endIndex = text.lastIndexOf(MULTILINE_COMMENT_END_TAG);
-      int separatorLength = separator.length();
-      contentText = text.substring(MULTILINE_COMMENT_START_TAG.length() + separatorLength, endIndex - separatorLength);
-      String[] lines = contentText.split(separator);
-      int newEndLineOffset = 0;
-      if (lines.length > 0) {
-        newEndLineOffset = lines[lines.length - 1].length();
+    } else {
+      Matcher matcher = MULTILINE_COMMENTS_PATTERN.matcher(text);
+      if (matcher.find()) {
+        textRange = fixMultilineTextRange(textRange, matcher.group(3));
+        contentText = matcher.group(2);
+        contentRange = getContentRange(textRange, matcher.group(1));
       }
-      contentRange = TextRanges.range(
-        textRange.start().line() + 1,
-        0,
-        textRange.end().line() - 1,
-        newEndLineOffset);
     }
 
     return new CommentImpl(text, contentText, textRange, contentRange);
   }
 
-  private static TextRange fixMultilineTextRange(String text, TextRange textRange) {
-    String lineSeparator = System.lineSeparator();
-    if (text.substring(text.length() - lineSeparator.length()).equals(lineSeparator)) {
-      // If =end tag finished with a line separator fix the end position
+  private static TextRange fixMultilineTextRange(TextRange textRange, String endTag) {
+    if (endTag.contains("\r") || endTag.contains("\n")) {
       return TextRanges.range(
         textRange.start().line(),
         textRange.start().lineOffset(),
@@ -86,6 +77,24 @@ public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
         textRange.end().line(),
         textRange.end().lineOffset() - 2);
     }
+  }
+
+  private static TextRange getContentRange(TextRange textRange, String startTag) {
+    int contentRangeStartLine;
+    int contentRangeStartLineOffset;
+    if (startTag.contains("\r") || startTag.contains("\n")) {
+      contentRangeStartLine = textRange.start().line() + 1;
+      contentRangeStartLineOffset = 0;
+    } else {
+      contentRangeStartLine = textRange.start().line();
+      contentRangeStartLineOffset = startTag.length();
+    }
+
+    return TextRanges.range(
+      contentRangeStartLine,
+      contentRangeStartLineOffset,
+      textRange.end().line(),
+      0);
   }
 
 }
