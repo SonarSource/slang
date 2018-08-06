@@ -20,18 +20,29 @@
 package org.sonarsource.ruby.converter;
 
 
+import java.io.IOException;
 import java.util.List;
+import org.assertj.core.api.Condition;
+import org.jruby.Ruby;
+import org.jruby.RubyRuntimeAdapter;
+import org.jruby.exceptions.StandardError;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.sonar.api.utils.log.LogTester;
 import org.sonarsource.slang.api.Comment;
+import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.plugin.ParseException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.sonarsource.slang.api.Token.Type.KEYWORD;
 import static org.sonarsource.slang.api.Token.Type.OTHER;
 import static org.sonarsource.slang.api.Token.Type.STRING_LITERAL;
@@ -45,6 +56,9 @@ public class RubyConverterTest {
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
+  @Rule
+  public LogTester logTester = new LogTester();
+
   @BeforeClass
   public static void setUp() {
     converter = new RubyConverter();
@@ -57,9 +71,28 @@ public class RubyConverterTest {
 
   @Test
   public void exception() {
-    thrown.expect(ParseException.class);
-    thrown.expectMessage("(SyntaxError) unexpected token kEND");
-    converter.parse("true\nend");
+    Condition<ParseException> hasCorrectPosition = new Condition<>(e ->
+      e.getPosition() != null && e.getPosition().line() == 2 && e.getPosition().lineOffset() == 0, "");
+    assertThatThrownBy(() -> converter.parse("true\nend"))
+      .isInstanceOf(ParseException.class)
+      .hasMessage("(SyntaxError) unexpected token kEND")
+      .matches(e -> hasCorrectPosition.matches((ParseException) e));
+  }
+
+  @Test
+  public void error_location() {
+    TextPointer errorLocation = converter.getErrorLocation(mock(StandardError.class));
+    assertThat(errorLocation).isNull();
+    assertThat(logTester.logs()).contains("No location information available for parse error");
+  }
+
+  @Test
+  public void initialization_error() {
+    RubyRuntimeAdapter mockedAdapter = mock(RubyRuntimeAdapter.class);
+    when(mockedAdapter.eval(any(Ruby.class), any(String.class))).thenThrow(IOException.class);
+    assertThatThrownBy(() -> new RubyConverter(mockedAdapter))
+      .isInstanceOf(IllegalStateException.class)
+      .hasMessage("Failed to initialized ruby runtime");
   }
 
   @Test
@@ -71,7 +104,9 @@ public class RubyConverterTest {
 
   @Test
   public void top_level_tree() {
-    assertTree(converter.parse(("true"))).isInstanceOf(TopLevelTree.class);
+    assertTree(converter.parse(("true\nfalse"))).isInstanceOf(TopLevelTree.class);
+    assertTree(converter.parse(("true\r\nfalse"))).isInstanceOf(TopLevelTree.class);
+
   }
 
   @Test
@@ -87,6 +122,9 @@ public class RubyConverterTest {
       "end\n" +
       "result = obj.methodcall(argument) ; result");
     assertTree(tree).hasTextRange(1, 0, 7, 42);
+
+    tree = converter.parse("# only comment file\n# comment line 2");
+    assertTree(tree).hasTextRange(1, 0, 2, 16);
   }
 
   @Test
@@ -115,7 +153,7 @@ public class RubyConverterTest {
     assertRange(tree.allComments().get(2).textRange()).hasRange(8, 0, 11, 0);
     assertRange(tree.allComments().get(0).contentRange()).hasRange(1, 1, 1, 14);
     assertRange(tree.allComments().get(1).contentRange()).hasRange(5, 10, 5, 23);
-    assertRange(tree.allComments().get(2).contentRange()).hasRange(9, 0, 9, 21);
+    assertRange(tree.allComments().get(2).contentRange()).hasRange(9, 0, 9, 22);
   }
 
   @Test

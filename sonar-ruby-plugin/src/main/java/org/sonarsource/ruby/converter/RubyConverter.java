@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -66,17 +67,22 @@ public class RubyConverter implements ASTConverter {
   private static final String SETUP_SCRIPT_PATH = "/whitequark_parser_init.rb";
   private static final String AST_RUBYGEM_PATH = "/ast-2.4.0/lib";
   private static final String PARSER_RUBYGEM_PATH = "/parser-2.5.1.2/lib";
-  private static final RubyRuntimeAdapter rubyRuntimeAdapter = JavaEmbedUtils.newRuntimeAdapter();
   private static final String COMMENT_TOKEN_TYPE = "tCOMMENT";
 
+  private final RubyRuntimeAdapter rubyRuntimeAdapter;
   private final Ruby runtime;
 
-  public RubyConverter() {
+  RubyConverter(RubyRuntimeAdapter rubyRuntimeAdapter) {
+    this.rubyRuntimeAdapter = rubyRuntimeAdapter;
     try {
       runtime = initializeRubyRuntime();
     } catch (URISyntaxException | IOException e) {
       throw new IllegalStateException("Failed to initialized ruby runtime", e);
     }
+  }
+
+  public RubyConverter() {
+    this(JavaEmbedUtils.newRuntimeAdapter());
   }
 
   @Override
@@ -96,7 +102,7 @@ public class RubyConverter implements ASTConverter {
     }
   }
 
-  private TextPointer getErrorLocation(StandardError e) {
+  TextPointer getErrorLocation(StandardError e) {
     try {
       IRubyObject diagnostic = (IRubyObject) invokeMethod(e.getException(), "diagnostic", null);
       IRubyObject location = (IRubyObject) invokeMethod(diagnostic, "location", null);
@@ -131,7 +137,7 @@ public class RubyConverter implements ASTConverter {
       .collect(Collectors.toList());
     TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(comments, tokens);
 
-    if (tokens.isEmpty()) {
+    if (tokens.isEmpty() && comments.isEmpty()) {
       throw new ParseException("No AST node found");
     }
 
@@ -139,9 +145,11 @@ public class RubyConverter implements ASTConverter {
     return new TopLevelTreeImpl(topTreeMetaData, Collections.emptyList(), comments);
   }
 
-  private TextRange getFullRange(List<Token> tokens, List<Comment> comments) {
+  private static TextRange getFullRange(List<Token> tokens, List<Comment> comments) {
     if (comments.isEmpty()) {
       return TextRanges.merge(Arrays.asList(tokens.get(0).textRange(), tokens.get(tokens.size() - 1).textRange()));
+    } else if (tokens.isEmpty()) {
+      return TextRanges.merge(Arrays.asList(comments.get(0).textRange(), comments.get(comments.size() - 1).textRange()));
     }
     return TextRanges.merge(Arrays.asList(
       tokens.get(0).textRange(),
@@ -155,12 +163,12 @@ public class RubyConverter implements ASTConverter {
     return JavaEmbedUtils.invokeMethod(runtime, receiver, methodName, args, Object.class);
   }
 
-  private static Ruby initializeRubyRuntime() throws URISyntaxException, IOException {
+  private Ruby initializeRubyRuntime() throws URISyntaxException, IOException {
     URL astRubygem = RubyConverter.class.getResource(AST_RUBYGEM_PATH);
     URL parserRubygem = RubyConverter.class.getResource(PARSER_RUBYGEM_PATH);
     URL initParserScriptUrl = RubyConverter.class.getResource(SETUP_SCRIPT_PATH);
 
-    Ruby runtime = JavaEmbedUtils.initialize(Arrays.asList(astRubygem.toString(), parserRubygem.toString()));
+    Ruby rubyRuntime = JavaEmbedUtils.initialize(Arrays.asList(astRubygem.toString(), parserRubygem.toString()));
     URI initParserScriptUri = initParserScriptUrl.toURI();
 
     if ("jar".equalsIgnoreCase(initParserScriptUri.getScheme())) {
@@ -170,9 +178,10 @@ public class RubyConverter implements ASTConverter {
       FileSystems.newFileSystem(initParserScriptUri, env);
     }
 
-    String initParserScript = new String(Files.readAllBytes(Paths.get(initParserScriptUri)), UTF_8);
-    rubyRuntimeAdapter.eval(runtime, initParserScript);
-    return runtime;
+    Path initParserScriptPath = Paths.get(initParserScriptUri);
+    String initParserScript = new String(Files.readAllBytes(initParserScriptPath), UTF_8);
+    rubyRuntimeAdapter.eval(rubyRuntime, initParserScript);
+    return rubyRuntime;
   }
 
 }

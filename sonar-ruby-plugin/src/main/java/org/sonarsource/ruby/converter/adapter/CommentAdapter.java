@@ -28,7 +28,7 @@ import org.sonarsource.slang.impl.TextRanges;
 
 public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
 
-  private static final String MULTILINE_COMMENT_START_TAG = "=begin\n";
+  private static final String MULTILINE_COMMENT_START_TAG = "=begin";
   private static final String MULTILINE_COMMENT_END_TAG = "=end";
   private static final String SINGLE_LINE_COMMENT_PREFIX = "#";
 
@@ -49,15 +49,17 @@ public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
       int newStartLineOffset = textRange.start().lineOffset() + 1;
       contentRange = TextRanges.range(textRange.start().line(), newStartLineOffset, textRange.end().line(), textRange.end().lineOffset());
     } else if (text.startsWith(MULTILINE_COMMENT_START_TAG)) {
+      String separator = System.lineSeparator();
+      int separatorLength = separator.length();
       int endIndex = text.lastIndexOf(MULTILINE_COMMENT_END_TAG);
-      contentText = text.substring(MULTILINE_COMMENT_START_TAG.length(), endIndex);
+      contentText = text.substring(MULTILINE_COMMENT_START_TAG.length() + separatorLength, endIndex);
       int newEndLineOffset = 0;
-      String[] lines = contentText.split(System.lineSeparator());
+      String[] lines = contentText.split(separator);
       if (lines.length > 0) {
         newEndLineOffset = lines[lines.length - 1].length();
       }
       int endLineCorrection = 1;
-      if (text.charAt(text.length() - 1) == '\n') {
+      if (text.length() >= separatorLength && text.substring(text.length() - separatorLength).equals(separator)) {
         // end tag can be "=end" or "=end\n", so we need to correct content range by
         // 2 lines in case closing tag has the new line character in it
         endLineCorrection = 2;
@@ -66,7 +68,7 @@ public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
         textRange.start().line() + 1,
         0,
         textRange.end().line() - endLineCorrection,
-        newEndLineOffset);
+        newEndLineOffset + separatorLength);
     }
 
     return new CommentImpl(text, contentText, textRange, contentRange);
