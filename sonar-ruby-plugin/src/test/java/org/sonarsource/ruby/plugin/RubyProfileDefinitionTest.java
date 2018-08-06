@@ -21,7 +21,7 @@ package org.sonarsource.ruby.plugin;
 
 import org.junit.Test;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition;
-import org.sonarsource.ruby.plugin.RubyProfileDefinition;
+import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.BuiltInActiveRule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,7 +32,10 @@ public class RubyProfileDefinitionTest {
     BuiltInQualityProfilesDefinition.Context context = new BuiltInQualityProfilesDefinition.Context();
     new RubyProfileDefinition().define(context);
     BuiltInQualityProfilesDefinition.BuiltInQualityProfile profile = context.profile("ruby", "Sonar way");
-    assertThat(profile.rules().size()).isEqualTo(0);
+
+    assertThat(profile.rules()).extracting("repoKey").containsOnly("ruby");
+    assertThat(profile.rules().size()).isGreaterThan(1);
+    assertThat(profile.rules()).extracting(BuiltInActiveRule::ruleKey).contains("S1135");
   }
 
 }
