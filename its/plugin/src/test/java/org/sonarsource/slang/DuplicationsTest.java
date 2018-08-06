@@ -36,4 +36,14 @@ public class DuplicationsTest extends TestBase {
     assertThat(getMeasure("duplicated_lines_density").getValue()).isEqualTo("56.6");
   }
 
+  @Test
+  public void ruby_duplications() {
+    ORCHESTRATOR.executeBuild(getSonarScanner(BASE_DIRECTORY, "ruby"));
+
+    assertThat(getMeasureAsInt("duplicated_lines")).isEqualTo(95);
+    assertThat(getMeasureAsInt("duplicated_blocks")).isEqualTo(5);
+    assertThat(getMeasureAsInt("duplicated_files")).isEqualTo(2);
+    assertThat(getMeasure("duplicated_lines_density").getValue()).isEqualTo("57.9");
+  }
+
 }
