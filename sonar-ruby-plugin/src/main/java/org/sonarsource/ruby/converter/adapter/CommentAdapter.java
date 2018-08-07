@@ -55,7 +55,7 @@ public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
     }
   }
 
-  private TextRange getContentTextRange(String text, TokenLocation textLocation, String contentText) {
+  private static TextRange getContentTextRange(String text, TokenLocation textLocation, String contentText) {
     int contentStartIndex = text.indexOf(contentText);
     String whitespacesContentPrefix = text.substring(0, contentStartIndex);
     TokenLocation prefixLocation = new TokenLocation(textLocation.startLine(), textLocation.startLineOffset(), whitespacesContentPrefix);
@@ -64,7 +64,7 @@ public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
     return TextRanges.range(contentLocation.startLine(), contentLocation.startLineOffset(), contentLocation.endLine(), contentLocation.endLineOffset());
   }
 
-  private String getContentText(String text) {
+  private static String getContentText(String text) {
     String contentText = text.substring(6).trim();
     int endIndex = contentText.lastIndexOf("=end");
     contentText = contentText.substring(0, endIndex).trim();
