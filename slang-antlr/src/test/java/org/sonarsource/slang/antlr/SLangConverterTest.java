@@ -20,6 +20,12 @@
 
 package org.sonarsource.slang.antlr;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
@@ -35,6 +41,7 @@ import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.MatchTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.ParenthesizedExpressionTree;
+import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.ReturnTree;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
@@ -43,13 +50,8 @@ import org.sonarsource.slang.api.UnaryExpressionTree;
 import org.sonarsource.slang.api.VariableDeclarationTree;
 import org.sonarsource.slang.impl.ModifierTreeImpl;
 import org.sonarsource.slang.parser.SLangConverter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.api.BinaryExpressionTree.Operator.GREATER_THAN;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.FOR;
@@ -61,7 +63,6 @@ import static org.sonarsource.slang.api.Token.Type.OTHER;
 import static org.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class SLangConverterTest {
 
@@ -531,14 +532,14 @@ public class SLangConverterTest {
 
   @Test
   public void parse_failure_1() {
-    expected.expect(IllegalStateException.class);
+    expected.expect(ParseException.class);
     expected.expectMessage("missing ';' before '<EOF>' at position 1:5");
     converter.parse("x + 1");
   }
 
   @Test
   public void parse_failure_2() {
-    expected.expect(IllegalStateException.class);
+    expected.expect(ParseException.class);
     expected.expectMessage("Unexpected parsing error occurred. Last found valid token: 'private' at position 1:0");
     converter.parse("private fun fun foo() {}");
   }

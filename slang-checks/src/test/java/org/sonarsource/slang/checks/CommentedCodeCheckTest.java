@@ -19,8 +19,8 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.sonarsource.slang.checks.commentedcode.SlangCodeVerifier;
 import org.junit.Test;
+import org.sonarsource.slang.parser.SlangCodeVerifier;
 public class CommentedCodeCheckTest {
   @Test
   public void test() { Verifier.verify("CommentedCode.slang", new CommentedCodeCheck(new SlangCodeVerifier())); }

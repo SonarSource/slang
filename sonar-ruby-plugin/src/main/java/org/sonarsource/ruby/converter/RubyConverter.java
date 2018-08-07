@@ -49,6 +49,7 @@ import org.sonarsource.ruby.converter.adapter.RangeAdapter;
 import org.sonarsource.ruby.converter.adapter.TokenAdapter;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.Comment;
+import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
@@ -57,7 +58,6 @@ import org.sonarsource.slang.api.TreeMetaData;
 import org.sonarsource.slang.impl.TextRanges;
 import org.sonarsource.slang.impl.TopLevelTreeImpl;
 import org.sonarsource.slang.impl.TreeMetaDataProvider;
-import org.sonarsource.slang.plugin.ParseException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 

@@ -39,6 +39,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ProgressReport;
 import org.sonarsource.slang.api.ASTConverter;
+import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.checks.api.SlangCheck;

@@ -19,6 +19,12 @@
  */
 package org.sonarsource.kotlin.converter;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.CatchTree;
@@ -36,6 +42,7 @@ import org.sonarsource.slang.api.MatchTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.ParameterTree;
 import org.sonarsource.slang.api.ParenthesizedExpressionTree;
+import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.ReturnTree;
 import org.sonarsource.slang.api.StringLiteralTree;
 import org.sonarsource.slang.api.Token;
@@ -43,16 +50,9 @@ import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.VariableDeclarationTree;
 import org.sonarsource.slang.impl.ModifierTreeImpl;
-import org.sonarsource.kotlin.converter.KotlinConverter;
 import org.sonarsource.slang.parser.SLangConverter;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.sonarsource.slang.plugin.ParseException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.api.BinaryExpressionTree.Operator.LESS_THAN;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.FOR;
@@ -65,7 +65,6 @@ import static org.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 import static org.sonarsource.slang.testing.TreesAssert.assertTrees;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class KotlinConverterTest {
 
