@@ -54,7 +54,6 @@ public class CommonCheckList {
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
     TooLongFunctionCheck.class,
-    TooManyLinesOfCodeFileCheck.class,
     TooManyCasesCheck.class,
     TooManyParametersCheck.class,
     UnusedFunctionParameterCheck.class,
