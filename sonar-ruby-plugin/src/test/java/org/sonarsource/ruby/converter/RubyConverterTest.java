@@ -139,9 +139,9 @@ public class RubyConverterTest {
       "end\n" +
       "result = obj.methodcall(argument) ; result\n" +
       "=begin\n" +
-      "First line\r\n" +
+      "First line\n" +
       "End multiline comment\n" +
-      "=end\r\n");
+      "=end\n");
 
     assertThat(tree.allComments()).extracting(Comment::text).containsExactly(
       "#start comment",
