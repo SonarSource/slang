@@ -1,4 +1,7 @@
+require "java"
 require 'parser/ruby25'
+
+java_import "org.sonarsource.slang.impl.TextPointerImpl"
 
 # opt-in to most recent AST format (used for Backwards compatibility when breaking changes are introduced in AST format)
 # In order not to break backward compatibility, when breaking changes are introduced in a newer version of the parser AST, these new
@@ -16,5 +19,18 @@ def parse_with_tokens(content, filename='(string)')
   content = content.dup.force_encoding(parser.default_encoding)
   source_buffer = Parser::Source::Buffer.new(filename, 1)
   source_buffer.source = content
-  parser.tokenize(source_buffer)
+  result = parser.tokenize(source_buffer)
+  RubyProcessor.new.process(result[0])
+  result
+end
+
+class RubyProcessor < Parser::AST::Processor
+  def process(node)
+    #if node.location.respond_to?("begin")
+     # puts "#{node.location.begin}";
+      #puts "#{node.location.end}";
+    #end
+    puts "#{node.type} '#{node.to_s}'"
+    super node
+  end
 end
