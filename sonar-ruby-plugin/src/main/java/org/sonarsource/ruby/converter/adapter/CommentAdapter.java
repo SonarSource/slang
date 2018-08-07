@@ -21,6 +21,7 @@ package org.sonarsource.ruby.converter.adapter;
 
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.sonarsource.analyzer.commons.TokenLocation;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.impl.CommentImpl;
@@ -28,64 +29,52 @@ import org.sonarsource.slang.impl.TextRanges;
 
 public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
 
-  private static final String MULTILINE_COMMENT_START_TAG = "=begin";
-  private static final String MULTILINE_COMMENT_END_TAG = "=end";
-  private static final String SINGLE_LINE_COMMENT_PREFIX = "#";
-
   public CommentAdapter(Ruby runtime, IRubyObject underlyingRubyObject) {
     super(runtime, underlyingRubyObject);
   }
 
   public Comment toSlangComment() {
     String text = getFromUnderlying("text", String.class);
-    IRubyObject location = getFromUnderlying("location", IRubyObject.class);
-    SourceMapAdapter sourceMapAdapter = new SourceMapAdapter(runtime, location);
-    TextRange textRange = sourceMapAdapter.getRange().toTextRange();
-    String contentText = text;
-    TextRange contentRange = textRange;
+    TextRange initialTextRange = getTextRange();
 
-    if (text.startsWith(SINGLE_LINE_COMMENT_PREFIX)) {
-      contentText = text.substring(1);
-      int newStartLineOffset = textRange.start().lineOffset() + 1;
-      contentRange = TextRanges.range(textRange.start().line(), newStartLineOffset, textRange.end().line(), textRange.end().lineOffset());
-    } else if (text.startsWith(MULTILINE_COMMENT_START_TAG)) {
-      textRange = fixMultilineTextRange(text, textRange);
-      String separator = System.lineSeparator();
-      int endIndex = text.lastIndexOf(MULTILINE_COMMENT_END_TAG);
-      int separatorLength = separator.length();
-      contentText = text.substring(MULTILINE_COMMENT_START_TAG.length() + separatorLength, endIndex - separatorLength);
-      String[] lines = contentText.split(separator);
-      int newEndLineOffset = 0;
-      if (lines.length > 0) {
-        newEndLineOffset = lines[lines.length - 1].length();
-      }
-      contentRange = TextRanges.range(
-        textRange.start().line() + 1,
-        0,
-        textRange.end().line() - 1,
-        newEndLineOffset);
+    if (text.startsWith("#")) {
+      String contentText = text.substring(1);
+      int newStartLineOffset = initialTextRange.start().lineOffset() + 1;
+      TextRange contentRange = TextRanges.range(initialTextRange.start().line(), newStartLineOffset, initialTextRange.end().line(), initialTextRange.end().lineOffset());
+      return new CommentImpl(text, contentText, initialTextRange, contentRange);
+
+    } else {
+      // multi-line comment
+      text = text.trim();
+      TokenLocation textLocation = new TokenLocation(initialTextRange.start().line(), 0, text);
+      TextRange trimmedTextRange = TextRanges.range(textLocation.startLine(), textLocation.startLineOffset(), textLocation.endLine(), textLocation.endLineOffset());
+
+      String contentText = getContentText(text);
+      TextRange contentRange = getContentTextRange(text, textLocation, contentText);
+      return new CommentImpl(text, contentText, trimmedTextRange, contentRange);
     }
-
-    return new CommentImpl(text, contentText, textRange, contentRange);
   }
 
-  private static TextRange fixMultilineTextRange(String text, TextRange textRange) {
-    String lineSeparator = System.lineSeparator();
-    if (text.substring(text.length() - lineSeparator.length()).equals(lineSeparator)) {
-      // If =end tag finished with a line separator fix the end position
-      return TextRanges.range(
-        textRange.start().line(),
-        textRange.start().lineOffset(),
-        textRange.end().line() - 1,
-        MULTILINE_COMMENT_END_TAG.length());
-    } else {
-      // Fix for comment text range end tag followed by <EOF> character
-      return TextRanges.range(
-        textRange.start().line(),
-        textRange.start().lineOffset(),
-        textRange.end().line(),
-        textRange.end().lineOffset() - 2);
-    }
+  private static TextRange getContentTextRange(String text, TokenLocation textLocation, String contentText) {
+    int contentStartIndex = text.indexOf(contentText);
+    String whitespacesContentPrefix = text.substring(0, contentStartIndex);
+    TokenLocation prefixLocation = new TokenLocation(textLocation.startLine(), textLocation.startLineOffset(), whitespacesContentPrefix);
+
+    TokenLocation contentLocation = new TokenLocation(prefixLocation.endLine(), prefixLocation.endLineOffset(), contentText);
+    return TextRanges.range(contentLocation.startLine(), contentLocation.startLineOffset(), contentLocation.endLine(), contentLocation.endLineOffset());
+  }
+
+  private static String getContentText(String text) {
+    String contentText = text.substring(6).trim();
+    int endIndex = contentText.lastIndexOf("=end");
+    contentText = contentText.substring(0, endIndex).trim();
+    return contentText;
+  }
+
+  private TextRange getTextRange() {
+    IRubyObject location = getFromUnderlying("location", IRubyObject.class);
+    SourceMapAdapter sourceMapAdapter = new SourceMapAdapter(runtime, location);
+    return sourceMapAdapter.getRange().toTextRange();
   }
 
 }

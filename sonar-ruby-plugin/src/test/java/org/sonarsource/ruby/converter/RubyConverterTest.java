@@ -33,9 +33,11 @@ import org.junit.rules.ExpectedException;
 import org.sonar.api.utils.log.LogTester;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.TextPointer;
+import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.impl.TextRanges;
 import org.sonarsource.slang.plugin.ParseException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -144,7 +146,7 @@ public class RubyConverterTest {
     assertThat(tree.allComments()).extracting(Comment::text).containsExactly(
       "#start comment",
       "# line comment",
-      "=begin\nFirst line\nEnd multiline comment\n=end\n");
+      "=begin\nFirst line\nEnd multiline comment\n=end");
     assertThat(tree.allComments()).extracting(Comment::contentText).containsExactly(
       "start comment",
       " line comment",
@@ -155,13 +157,38 @@ public class RubyConverterTest {
     assertRange(tree.allComments().get(0).contentRange()).hasRange(1, 1, 1, 14);
     assertRange(tree.allComments().get(1).contentRange()).hasRange(5, 10, 5, 23);
     assertRange(tree.allComments().get(2).contentRange()).hasRange(9, 0, 10, 21);
+  }
 
-    tree = (TopLevelTree) converter.parse("require 'stuff'\n" +
-      "=begin\n" +
-      "End multiline comment\n" +
-      "=end");
-    assertRange(tree.allComments().get(0).textRange()).hasRange(2, 0, 4, 4);
+  @Test
+  public void multiline_comments() throws Exception {
+    assertComment("=begin\ncomment content\n=end\n", "=begin\ncomment content\n=end", "comment content",
+      TextRanges.range(1, 0, 3, 4),
+      TextRanges.range(2, 0, 2, 15));
 
+    assertComment("=begin prefix \ncomment content\n=end",
+      "=begin prefix \ncomment content\n=end",
+      "prefix \ncomment content",
+      TextRanges.range(1, 0, 3, 4),
+      TextRanges.range(1, 7, 2, 15));
+
+    assertComment("=begin \r\n comment \r\ncontent\r\n=end\r\n",
+      "=begin \n" +
+        " comment \n" +
+        "content\n" +
+        "=end",
+      "comment \n" +
+        "content",
+      TextRanges.range(1, 0, 4, 4),
+      TextRanges.range(2, 1, 3, 7));
+  }
+
+  private void assertComment(String input, String entireComment, String content, TextRange entireRange, TextRange contentRange) {
+    TopLevelTree tree = (TopLevelTree) converter.parse(input);
+    Comment comment = tree.allComments().get(0);
+    assertThat(comment.text()).isEqualTo(entireComment);
+    assertThat(comment.contentText()).isEqualTo(content);
+    assertThat(comment.textRange()).isEqualTo(entireRange);
+    assertThat(comment.contentRange()).isEqualTo(contentRange);
   }
 
   @Test
