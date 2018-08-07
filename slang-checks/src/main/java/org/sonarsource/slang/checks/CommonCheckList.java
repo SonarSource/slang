@@ -51,7 +51,6 @@ public class CommonCheckList {
     RedundantParenthesesCheck.class,
     SelfAssignmentCheck.class,
     StringLiteralDuplicatedCheck.class,
-    TabsCheck.class,
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
     TooLongFunctionCheck.class,
