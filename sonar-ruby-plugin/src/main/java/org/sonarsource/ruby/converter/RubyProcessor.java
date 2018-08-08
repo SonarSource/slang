@@ -21,6 +21,7 @@ package org.sonarsource.ruby.converter;
 
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Nullable;
 import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.RubyModule;
@@ -32,8 +33,8 @@ import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.sonarsource.ruby.converter.adapter.NodeAdapter;
+import org.sonarsource.ruby.converter.adapter.RangeAdapter;
 import org.sonarsource.ruby.converter.adapter.SourceMapAdapter;
-import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
@@ -74,7 +75,7 @@ public class RubyProcessor extends RubyObject {
   @JRubyMethod
   public IRubyObject process(ThreadContext context, IRubyObject arg1) {
     IRubyObject rubyObject = callSuperMethod(context, "process", arg1);
-    if (rubyObject instanceof NodeAdapter || rubyObject.isNil()) {
+    if (rubyObject == null || rubyObject instanceof NodeAdapter || rubyObject.isNil()) {
       // A more specific tree was already created by a specialized method (on_${type}, ex: on_int)
       return rubyObject;
     }
@@ -82,7 +83,9 @@ public class RubyProcessor extends RubyObject {
     // Create generic native tree
     NodeAdapter nodeAdapter = new NodeAdapter(getRuntime(), rubyObject);
     TreeMetaData metaData = getMetaData(rubyObject);
-    nodeAdapter.setTree(createNativeTree(metaData, nodeAdapter.nodeType(), nodeAdapter.getChildren(metaData)));
+    if (metaData != null) {
+      nodeAdapter.setTree(createNativeTree(metaData, nodeAdapter.nodeType(), nodeAdapter.getChildren(metaData)));
+    }
     return nodeAdapter;
   }
 
@@ -90,7 +93,10 @@ public class RubyProcessor extends RubyObject {
   public IRubyObject onInt(ThreadContext context, IRubyObject arg1) {
     NodeAdapter nodeAdapter = new NodeAdapter(getRuntime(), arg1);
     Long value = nodeAdapter.getLiteralValue();
-    nodeAdapter.setTree(new LiteralTreeImpl(getMetaData(arg1), String.valueOf(value)));
+    TreeMetaData metaData = getMetaData(arg1);
+    if (metaData != null) {
+      nodeAdapter.setTree(new LiteralTreeImpl(metaData, String.valueOf(value)));
+    }
     return nodeAdapter;
   }
 
@@ -98,11 +104,15 @@ public class RubyProcessor extends RubyObject {
     return new NativeTreeImpl(metaData, new RubyNativeKind(nodeType.asJavaString()), children);
   }
 
+  @Nullable
   private TreeMetaData getMetaData(IRubyObject rubyObject) {
     IRubyObject location = (IRubyObject) JavaEmbedUtils.invokeMethod(getRuntime(), rubyObject, "location", null, IRubyObject.class);
     SourceMapAdapter sourceMapAdapter = new SourceMapAdapter(getRuntime(), location);
-    TextRange textRange = sourceMapAdapter.getRange().toTextRange();
-    return metaDataProvider.metaData(textRange);
+    RangeAdapter rangeAdapter = sourceMapAdapter.getRange();
+    if (rangeAdapter.isNull()) {
+      return null;
+    }
+    return metaDataProvider.metaData(rangeAdapter.toTextRange());
   }
 
   private IRubyObject callSuperMethod(ThreadContext context, String methodName, IRubyObject arg1) {

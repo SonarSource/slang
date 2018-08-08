@@ -216,6 +216,12 @@ public class RubyConverterTest {
   }
 
   @Test
+  public void parse_with_missing_node() {
+    Tree tree = converter.parse("def is_root?\nend"); // method has null argument list
+    assertThat(tree).isNotNull();
+  }
+
+  @Test
   public void singletons() {
     assertTree(rubyStatement("true")).isEquivalentTo(nativeTree(nativeKind("true"), emptyList()));
     assertTree(rubyStatement("false")).isEquivalentTo(nativeTree(nativeKind("false"), emptyList()));
