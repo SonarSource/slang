@@ -68,8 +68,12 @@ public class SlangRulingTest {
     kotlinRulesConfiguration.add("S1451", "headerFormat", "/\\*\n \\* Copyright \\d{4}-\\d{4} JetBrains s\\.r\\.o\\.");
     kotlinRulesConfiguration.add("S1451", "isRegularExpression", "true");
 
+    ProfileGenerator.RulesConfiguration rubyRulesConfiguration = new ProfileGenerator.RulesConfiguration();
+    rubyRulesConfiguration.add("S1451", "headerFormat", "# Copyright 201\\d Twitch Interactive, Inc.  All Rights Reserved.");
+    rubyRulesConfiguration.add("S1451", "isRegularExpression", "true");
+
     File kotlinProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "kotlin", "kotlin", kotlinRulesConfiguration, Collections.emptySet());
-    File rubyProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "ruby", "ruby", new ProfileGenerator.RulesConfiguration(), Collections.emptySet());
+    File rubyProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "ruby", "ruby", rubyRulesConfiguration, Collections.emptySet());
     orchestrator.getServer().restoreProfile(FileLocation.of(kotlinProfile));
     orchestrator.getServer().restoreProfile(FileLocation.of(rubyProfile));
   }
