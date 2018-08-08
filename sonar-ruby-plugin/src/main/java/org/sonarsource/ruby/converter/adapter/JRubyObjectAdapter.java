@@ -37,4 +37,8 @@ public abstract class JRubyObjectAdapter<T extends IRubyObject> {
     return (U) JavaEmbedUtils.invokeMethod(runtime, underlyingRubyObject, attribute, null, clazz);
   }
 
+  public boolean isNull() {
+    return underlyingRubyObject == null;
+  }
+
 }
