@@ -28,7 +28,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +44,7 @@ import org.jruby.specialized.RubyArrayTwoObject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.ruby.converter.adapter.CommentAdapter;
+import org.sonarsource.ruby.converter.adapter.NodeAdapter;
 import org.sonarsource.ruby.converter.adapter.RangeAdapter;
 import org.sonarsource.ruby.converter.adapter.TokenAdapter;
 import org.sonarsource.slang.api.ASTConverter;
@@ -60,6 +60,8 @@ import org.sonarsource.slang.impl.TopLevelTreeImpl;
 import org.sonarsource.slang.impl.TreeMetaDataProvider;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 public class RubyConverter implements ASTConverter {
 
@@ -137,12 +139,28 @@ public class RubyConverter implements ASTConverter {
       .collect(Collectors.toList());
     TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(comments, tokens);
 
+    RubyVisitor rubyVisitor = getRubyVisitor(metaDataProvider);
+    Object[] astProcessorParams = {rubyParseResult.get(0)};
+    NodeAdapter node = (NodeAdapter) invokeMethod(rubyVisitor, "process", astProcessorParams);
+
     if (tokens.isEmpty() && comments.isEmpty()) {
       throw new ParseException("No AST node found");
     }
 
     TreeMetaData topTreeMetaData = metaDataProvider.metaData(getFullRange(tokens, comments));
-    return new TopLevelTreeImpl(topTreeMetaData, Collections.emptyList(), comments);
+    if (node == null || node.getTree() == null) {
+      // only comments
+      return new TopLevelTreeImpl(topTreeMetaData, emptyList(), comments);
+    } else {
+      // singleton expression: we wrap it around a top level tree
+      return new TopLevelTreeImpl(topTreeMetaData, singletonList(node.getTree()), comments);
+    }
+  }
+
+  private RubyVisitor getRubyVisitor(TreeMetaDataProvider metaDataProvider) {
+    Object[] constructorParams = {metaDataProvider};
+    IRubyObject rubyVisitorClass = rubyRuntimeAdapter.eval(runtime, RubyVisitor.class.getSimpleName());
+    return (RubyVisitor) invokeMethod(rubyVisitorClass, "new", constructorParams);
   }
 
   private static TextRange getFullRange(List<Token> tokens, List<Comment> comments) {
@@ -182,6 +200,8 @@ public class RubyConverter implements ASTConverter {
     Path initParserScriptPath = Paths.get(initParserScriptUri);
     String initParserScript = new String(Files.readAllBytes(initParserScriptPath), UTF_8);
     rubyRuntimeAdapter.eval(rubyRuntime, initParserScript);
+    RubyVisitor.addToRuntime(rubyRuntime);
+    NodeAdapter.addToRuntime(rubyRuntime);
     return rubyRuntime;
   }
 
