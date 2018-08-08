@@ -38,7 +38,6 @@ public class CommonCheckList {
     ElseIfWithoutElseCheck.class,
     EmptyBlockCheck.class,
     EmptyFunctionCheck.class,
-    FileHeaderCheck.class,
     FunctionCognitiveComplexityCheck.class,
     HardcodedCredentialsCheck.class,
     HardcodedIpCheck.class,
