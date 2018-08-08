@@ -19,24 +19,15 @@
  */
 package org.sonarsource.ruby.converter;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import org.sonarsource.slang.api.NativeKind;
 
 public class RubyNativeKind implements NativeKind {
 
-  private final Class<?> rubyObjectClass;
-  private final List<Object> differentiators;
+  private final String type;
 
-  public RubyNativeKind(Object element, Object... differentiatorObjs) {
-    this(element.getClass(), differentiatorObjs);
-  }
-
-  public RubyNativeKind(Class<?> rubyObjectClass, Object... differentiatorObjs) {
-    this.rubyObjectClass = rubyObjectClass;
-    this.differentiators = Arrays.asList(differentiatorObjs);
+  public RubyNativeKind(String type) {
+    this.type = type;
   }
 
   @Override
@@ -48,23 +39,12 @@ public class RubyNativeKind implements NativeKind {
       return false;
     }
     RubyNativeKind that = (RubyNativeKind) o;
-    return Objects.equals(rubyObjectClass, that.rubyObjectClass) &&
-      Objects.equals(differentiators, that.differentiators);
+    return Objects.equals(type, that.type);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(rubyObjectClass, differentiators);
-  }
-
-  @Override
-  public String toString() {
-    if (differentiators.isEmpty()) {
-      return rubyObjectClass.getSimpleName();
-    } else {
-      return rubyObjectClass.getSimpleName()
-        + differentiators.stream().map(Object::toString).collect(Collectors.joining(", ", "[", "]"));
-    }
+    return Objects.hash(type);
   }
 
 }

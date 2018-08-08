@@ -141,8 +141,11 @@ public class RubyConverter implements ASTConverter {
       throw new ParseException("No AST node found");
     }
 
+    Object[] processorParameters = { rubyParseResult.get(0), metaDataProvider };
+    Tree slangTree = (Tree) invokeMethod(runtime.getObject(), "convert_to_slang", processorParameters);
+
     TreeMetaData topTreeMetaData = metaDataProvider.metaData(getFullRange(tokens, comments));
-    return new TopLevelTreeImpl(topTreeMetaData, Collections.emptyList(), comments);
+    return new TopLevelTreeImpl(topTreeMetaData, Collections.singletonList(slangTree), comments);
   }
 
   private static TextRange getFullRange(List<Token> tokens, List<Comment> comments) {
