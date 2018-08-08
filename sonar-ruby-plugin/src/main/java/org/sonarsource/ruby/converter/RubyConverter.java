@@ -28,7 +28,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +44,7 @@ import org.jruby.specialized.RubyArrayTwoObject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.ruby.converter.adapter.CommentAdapter;
+import org.sonarsource.ruby.converter.adapter.NodeAdapter;
 import org.sonarsource.ruby.converter.adapter.RangeAdapter;
 import org.sonarsource.ruby.converter.adapter.TokenAdapter;
 import org.sonarsource.slang.api.ASTConverter;
@@ -60,6 +60,8 @@ import org.sonarsource.slang.impl.TreeMetaDataProvider;
 import org.sonarsource.slang.plugin.ParseException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 public class RubyConverter implements ASTConverter {
 
@@ -137,12 +139,31 @@ public class RubyConverter implements ASTConverter {
       .collect(Collectors.toList());
     TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(comments, tokens);
 
+    RubyProcessor rubyProcessor = getRubyProcessor(metaDataProvider);
+    Object[] astProcessorParams = {rubyParseResult.get(0)};
+    NodeAdapter node = (NodeAdapter) invokeMethod(rubyProcessor, "process", astProcessorParams);
+
     if (tokens.isEmpty() && comments.isEmpty()) {
       throw new ParseException("No AST node found");
     }
 
     TreeMetaData topTreeMetaData = metaDataProvider.metaData(getFullRange(tokens, comments));
-    return new TopLevelTreeImpl(topTreeMetaData, Collections.emptyList(), comments);
+    if (node == null || node.getTree() == null) {
+      // only comments
+      return new TopLevelTreeImpl(topTreeMetaData, emptyList(), comments);
+    } else if (node.getTree().children().isEmpty()) {
+      // singleton expression: we wrap it around a top level tree
+      return new TopLevelTreeImpl(topTreeMetaData, singletonList(node.getTree()), comments);
+    } else {
+      // replace top level tree with correct range (including start and end comments)
+      return new TopLevelTreeImpl(topTreeMetaData, node.getTree().children(), comments);
+    }
+  }
+
+  private RubyProcessor getRubyProcessor(TreeMetaDataProvider metaDataProvider) {
+    Object[] constructorParams = {metaDataProvider};
+    IRubyObject rubyProcessorClass = rubyRuntimeAdapter.eval(runtime, RubyProcessor.class.getSimpleName());
+    return (RubyProcessor) invokeMethod(rubyProcessorClass, "new", constructorParams);
   }
 
   private static TextRange getFullRange(List<Token> tokens, List<Comment> comments) {
@@ -182,6 +203,8 @@ public class RubyConverter implements ASTConverter {
     Path initParserScriptPath = Paths.get(initParserScriptUri);
     String initParserScript = new String(Files.readAllBytes(initParserScriptPath), UTF_8);
     rubyRuntimeAdapter.eval(rubyRuntime, initParserScript);
+    RubyProcessor.addToRuntime(rubyRuntime);
+    NodeAdapter.addToRuntime(rubyRuntime);
     return rubyRuntime;
   }
 
