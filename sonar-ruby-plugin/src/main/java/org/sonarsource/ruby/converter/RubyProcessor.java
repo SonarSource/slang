@@ -92,7 +92,7 @@ public class RubyProcessor extends RubyObject {
   @JRubyMethod(name = "on_int")
   public IRubyObject onInt(ThreadContext context, IRubyObject arg1) {
     NodeAdapter nodeAdapter = new NodeAdapter(getRuntime(), arg1);
-    Long value = nodeAdapter.getLiteralValue();
+    Object value = nodeAdapter.getFirstChild();
     TreeMetaData metaData = getMetaData(arg1);
     if (metaData != null) {
       nodeAdapter.setTree(new LiteralTreeImpl(metaData, String.valueOf(value)));

@@ -102,8 +102,8 @@ public class NodeAdapter extends RubyObject {
       .collect(Collectors.toList());
   }
 
-  public <T> T getLiteralValue() {
-    return (T) ((List) JavaEmbedUtils.invokeMethod(getRuntime(), underlyingNode, "to_a", null, List.class)).get(0);
+  public Object getFirstChild() {
+    return ((List) JavaEmbedUtils.invokeMethod(getRuntime(), underlyingNode, "to_a", null, List.class)).get(0);
   }
 
   @Override

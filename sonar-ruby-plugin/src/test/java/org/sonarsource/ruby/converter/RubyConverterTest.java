@@ -233,6 +233,9 @@ public class RubyConverterTest {
     assertTrees(rubyStatements("2; 512; 4\n2431323"))
       .isEquivalentTo(slangStatements("2; 512; 4; 2431323;"));
     assertTree(rubyStatement("2")).isLiteral("2");
+
+    // literal bigger than Long.MAX_VALUE are returned as BigInteger by JRuby
+    assertTree(rubyStatement("10000000000000000000")).isLiteral("10000000000000000000");
   }
 
   @Test
