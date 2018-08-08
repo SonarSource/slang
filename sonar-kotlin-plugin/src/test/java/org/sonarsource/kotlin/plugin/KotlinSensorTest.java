@@ -19,57 +19,24 @@
  */
 package org.sonarsource.kotlin.plugin;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
-import org.sonar.api.batch.fs.TextRange;
-import org.sonar.api.batch.fs.internal.DefaultInputFile;
-import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.CheckFactory;
-import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.sensor.error.AnalysisError;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
-import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.batch.sensor.issue.IssueLocation;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
-import org.sonar.api.measures.FileLinesContext;
-import org.sonar.api.measures.FileLinesContextFactory;
-import org.sonar.api.rule.RuleKey;
-import org.sonar.api.utils.internal.JUnitTempFolder;
-import org.sonar.api.utils.log.LogTester;
+import org.sonarsource.slang.testing.AbstractSensorTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.sonarsource.slang.testing.TextRangeAssert.assertTextRange;
 
-public class KotlinSensorTest {
-
-  @org.junit.Rule
-  public JUnitTempFolder temp = new JUnitTempFolder();
-
-  private File baseDir;
-  private SensorContextTester context;
-  private FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
-
-  @Rule
-  public LogTester logTester = new LogTester();
-
-  @Before
-  public void setup() {
-    baseDir = temp.newDir();
-    context = SensorContextTester.create(baseDir);
-    FileLinesContext fileLinesContext = mock(FileLinesContext.class);
-    when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
-  }
+public class KotlinSensorTest extends AbstractSensorTest {
 
   @Test
   public void test_one_rule() {
@@ -85,7 +52,7 @@ public class KotlinSensorTest {
     IssueLocation location = issue.primaryLocation();
     assertThat(location.inputComponent()).isEqualTo(inputFile);
     assertThat(location.message()).isEqualTo("Correct one of the identical sub-expressions on both sides this operator");
-    assertTextRange(location.textRange(), 2, 12, 2, 13);
+    assertTextRange(location.textRange()).hasRange(2, 12, 2, 13);
   }
 
   @Test
@@ -153,39 +120,18 @@ public class KotlinSensorTest {
     assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. Parse error at position 1:14", inputFile.uri()));
   }
 
-  private void assertTextRange(TextRange textRange, int startLine, int startLineOffset, int endLine, int endLineOffset) {
-    assertThat(textRange.start().line()).isEqualTo(startLine);
-    assertThat(textRange.start().lineOffset()).isEqualTo(startLineOffset);
-    assertThat(textRange.end().line()).isEqualTo(endLine);
-    assertThat(textRange.end().lineOffset()).isEqualTo(endLineOffset);
+  @Override
+  protected String repositoryKey() {
+    return KotlinPlugin.KOTLIN_REPOSITORY_KEY;
   }
 
-  private InputFile createInputFile(String relativePath, String content) {
-    DefaultInputFile inputFile = new TestInputFileBuilder("moduleKey", relativePath)
-      .setModuleBaseDir(baseDir.toPath())
-      .setType(InputFile.Type.MAIN)
-      .setLanguage(KotlinPlugin.KOTLIN_LANGUAGE_KEY)
-      .setCharset(StandardCharsets.UTF_8)
-      .setContents(content)
-      .build();
-
-    return inputFile;
-  }
-
-  private CheckFactory checkFactory(String... ruleKeys) {
-    ActiveRulesBuilder builder = new ActiveRulesBuilder();
-    for (String ruleKey : ruleKeys) {
-      builder.create(RuleKey.of(KotlinPlugin.KOTLIN_REPOSITORY_KEY, ruleKey))
-        .setName(ruleKey)
-        .activate();
-    }
-    context.setActiveRules(builder.build());
-    return new CheckFactory(context.activeRules());
+  @Override
+  protected KotlinLanguage language() {
+    return new KotlinLanguage(new MapSettings().asConfig());
   }
 
   private KotlinSensor sensor(CheckFactory checkFactory) {
-    KotlinLanguage language = new KotlinLanguage(new MapSettings().asConfig());
-    return new KotlinSensor(checkFactory, fileLinesContextFactory, new NoSonarFilter(), language);
+    return new KotlinSensor(checkFactory, fileLinesContextFactory, new NoSonarFilter(), language());
   }
 
 }

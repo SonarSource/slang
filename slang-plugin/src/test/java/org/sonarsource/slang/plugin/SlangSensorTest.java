@@ -19,35 +19,23 @@
  */
 package org.sonarsource.slang.plugin;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
-import org.sonar.api.batch.fs.TextRange;
-import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
-import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.sensor.error.AnalysisError;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
-import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.batch.sensor.issue.IssueLocation;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
-import org.sonar.api.measures.FileLinesContext;
-import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.resources.Language;
 import org.sonar.api.rule.RuleKey;
-import org.sonar.api.utils.internal.JUnitTempFolder;
-import org.sonar.api.utils.log.LogTester;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.checks.CommentedCodeCheck;
@@ -56,34 +44,16 @@ import org.sonarsource.slang.checks.StringLiteralDuplicatedCheck;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.parser.SLangConverter;
 import org.sonarsource.slang.parser.SlangCodeVerifier;
+import org.sonarsource.slang.testing.AbstractSensorTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.sonarsource.slang.plugin.SlangSensorTest.SlangLanguage.SLANG;
+import static org.sonarsource.slang.testing.TextRangeAssert.assertTextRange;
 
-public class SlangSensorTest {
-
-  private static final String REPOSITORY_KEY = "slang";
-
-  @org.junit.Rule
-  public JUnitTempFolder temp = new JUnitTempFolder();
-
-  private File baseDir;
-  private SensorContextTester context;
-  private FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
-
-  @Rule
-  public LogTester logTester = new LogTester();
-
-  @Before
-  public void setup() {
-    baseDir = temp.newDir();
-    context = SensorContextTester.create(baseDir);
-    FileLinesContext fileLinesContext = mock(FileLinesContext.class);
-    when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
-  }
+public class SlangSensorTest extends AbstractSensorTest {
 
   @Test
   public void test_one_rule() {
@@ -99,7 +69,7 @@ public class SlangSensorTest {
     IssueLocation location = issue.primaryLocation();
     assertThat(location.inputComponent()).isEqualTo(inputFile);
     assertThat(location.message()).isEqualTo("Correct one of the identical sub-expressions on both sides this operator");
-    assertTextRange(location.textRange(), 2, 12, 2, 13);
+    assertTextRange(location.textRange()).hasRange(2, 12, 2, 13);
   }
 
   @Test
@@ -116,7 +86,7 @@ public class SlangSensorTest {
     IssueLocation location = issue.primaryLocation();
     assertThat(location.inputComponent()).isEqualTo(inputFile);
     assertThat(location.message()).isEqualTo("Define a constant instead of duplicating this literal \"string literal\" 3 times.");
-    assertTextRange(location.textRange(), 1, 16, 1, 32);
+    assertTextRange(location.textRange()).hasRange(1, 16, 1, 32);
     assertThat(issue.gap()).isEqualTo(2.0);
   }
 
@@ -215,8 +185,8 @@ public class SlangSensorTest {
       init.register(TopLevelTree.class, (ctx, tree) -> {
         throw new IllegalStateException("BOUM");
       });
-    when(checks.ruleKey(failingCheck)).thenReturn(RuleKey.of("slang", "failing"));
-    when(checkFactory.create(REPOSITORY_KEY)).thenReturn(checks);
+    when(checks.ruleKey(failingCheck)).thenReturn(RuleKey.of(repositoryKey(), "failing"));
+    when(checkFactory.create(repositoryKey())).thenReturn(checks);
     when(checks.all()).thenReturn(Collections.singletonList(failingCheck));
     sensor(checkFactory).execute(context);
 
@@ -237,36 +207,18 @@ public class SlangSensorTest {
     assertThat(sensorDescriptor.name()).isEqualTo("SLang Sensor");
   }
 
-  private void assertTextRange(TextRange textRange, int startLine, int startLineOffset, int endLine, int endLineOffset) {
-    assertThat(textRange.start().line()).isEqualTo(startLine);
-    assertThat(textRange.start().lineOffset()).isEqualTo(startLineOffset);
-    assertThat(textRange.end().line()).isEqualTo(endLine);
-    assertThat(textRange.end().lineOffset()).isEqualTo(endLineOffset);
+  @Override
+  protected String repositoryKey() {
+    return "slang";
   }
 
-  private InputFile createInputFile(String relativePath, String content) {
-    return new TestInputFileBuilder("moduleKey", relativePath)
-      .setModuleBaseDir(baseDir.toPath())
-      .setType(InputFile.Type.MAIN)
-      .setLanguage(SlangLanguage.SLANG.getKey())
-      .setCharset(StandardCharsets.UTF_8)
-      .setContents(content)
-      .build();
-  }
-
-  private CheckFactory checkFactory(String... ruleKeys) {
-    ActiveRulesBuilder builder = new ActiveRulesBuilder();
-    for (String ruleKey : ruleKeys) {
-      builder.create(RuleKey.of(REPOSITORY_KEY, ruleKey))
-        .setName(ruleKey)
-        .activate();
-    }
-    context.setActiveRules(builder.build());
-    return new CheckFactory(context.activeRules());
+  @Override
+  protected Language language() {
+    return SLANG;
   }
 
   private SlangSensor sensor(CheckFactory checkFactory) {
-    return new SlangSensor(new NoSonarFilter(), fileLinesContextFactory, SlangLanguage.SLANG) {
+    return new SlangSensor(new NoSonarFilter(), fileLinesContextFactory, SLANG) {
       @Override
       protected ASTConverter astConverter() {
         return new SLangConverter();
@@ -274,7 +226,7 @@ public class SlangSensorTest {
 
       @Override
       protected Checks<SlangCheck> checks() {
-        Checks<SlangCheck> checks = checkFactory.create(REPOSITORY_KEY);
+        Checks<SlangCheck> checks = checkFactory.create(repositoryKey());
         checks.addAnnotatedChecks(
           StringLiteralDuplicatedCheck.class,
           new CommentedCodeCheck(new SlangCodeVerifier()),
