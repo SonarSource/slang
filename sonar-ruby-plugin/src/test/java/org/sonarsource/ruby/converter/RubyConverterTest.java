@@ -32,13 +32,13 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.sonar.api.utils.log.LogTester;
 import org.sonarsource.slang.api.Comment;
+import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.impl.TextRanges;
-import org.sonarsource.slang.plugin.ParseException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

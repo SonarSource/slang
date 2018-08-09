@@ -17,14 +17,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.checks.commentedcode;
+package org.sonarsource.slang.parser;
 
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.CodeVerifier;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.parser.SLangConverter;
 
 public class SlangCodeVerifier implements CodeVerifier {
   @Override

@@ -24,6 +24,9 @@ import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.IntervalSet;
+import org.sonarsource.slang.api.ParseException;
+import org.sonarsource.slang.api.TextPointer;
+import org.sonarsource.slang.impl.TextPointerImpl;
 
 public class ErrorStrategy extends DefaultErrorStrategy {
 
@@ -35,7 +38,8 @@ public class ErrorStrategy extends DefaultErrorStrategy {
       getTokenErrorDisplay(t),
       t.getLine(),
       t.getCharPositionInLine());
-    throw new IllegalStateException(errorMessage, e);
+    TextPointer textPointer = new TextPointerImpl(t.getLine(), t.getCharPositionInLine());
+    throw new ParseException(errorMessage, textPointer);
   }
 
   @Override
@@ -47,12 +51,12 @@ public class ErrorStrategy extends DefaultErrorStrategy {
         matchedSymbol.getText(),
         matchedSymbol.getLine(),
         matchedSymbol.getCharPositionInLine());
-      throw new IllegalStateException(errorMessage);
+      throw new ParseException(errorMessage);
     }
 
     singleTokenInsertion(recognizer);
 
-    throw new IllegalStateException("Unexpected parsing error");
+    throw new ParseException("Unexpected parsing error");
   }
 
   @Override
@@ -65,7 +69,7 @@ public class ErrorStrategy extends DefaultErrorStrategy {
       getTokenErrorDisplay(t),
       t.getLine(),
       t.getCharPositionInLine());
-    throw new IllegalStateException(errorMessage);
+    throw new ParseException(errorMessage);
   }
 
 }

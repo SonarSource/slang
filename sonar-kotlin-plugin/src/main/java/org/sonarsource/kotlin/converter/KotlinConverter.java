@@ -19,13 +19,9 @@
  */
 package org.sonarsource.kotlin.converter;
 
-import org.jetbrains.annotations.NotNull;
-import org.sonarsource.slang.api.ASTConverter;
-import org.sonarsource.slang.api.TextPointer;
-import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.impl.TreeMetaDataProvider;
 import java.util.Arrays;
 import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.script.CliScriptDefinitionProvider;
 import org.jetbrains.kotlin.com.intellij.core.CoreASTFactory;
 import org.jetbrains.kotlin.com.intellij.core.CoreFileTypeRegistry;
@@ -59,7 +55,11 @@ import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider;
-import org.sonarsource.slang.plugin.ParseException;
+import org.sonarsource.slang.api.ASTConverter;
+import org.sonarsource.slang.api.ParseException;
+import org.sonarsource.slang.api.TextPointer;
+import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.impl.TreeMetaDataProvider;
 
 public class KotlinConverter implements ASTConverter {
   private static final PsiFileFactory psiFileFactory = psiFileFactory();

@@ -19,7 +19,6 @@
  */
 package org.sonarsource.kotlin.converter;
 
-import org.sonarsource.slang.api.CodeVerifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -38,7 +37,8 @@ import org.jetbrains.kotlin.psi.KtPostfixExpression;
 import org.jetbrains.kotlin.psi.KtPrefixExpression;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtThisExpression;
-import org.sonarsource.slang.plugin.ParseException;
+import org.sonarsource.slang.api.CodeVerifier;
+import org.sonarsource.slang.api.ParseException;
 
 public class KotlinCodeVerifier implements CodeVerifier {
   private static final List<String> KDOC_TAGS = Arrays.asList(
