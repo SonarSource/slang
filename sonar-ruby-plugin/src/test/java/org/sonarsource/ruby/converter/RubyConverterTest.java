@@ -26,26 +26,15 @@ import org.assertj.core.api.Condition;
 import org.jruby.Ruby;
 import org.jruby.RubyRuntimeAdapter;
 import org.jruby.exceptions.StandardError;
-import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.sonar.api.utils.log.LogTester;
-import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.Comment;
-import org.sonarsource.slang.api.LiteralTree;
-import org.sonarsource.slang.api.NativeKind;
-import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.impl.LiteralTreeImpl;
-import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.TextRanges;
-import org.sonarsource.slang.parser.SLangConverter;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -62,25 +51,7 @@ import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 import static org.sonarsource.slang.testing.TreesAssert.assertTrees;
 
-public class RubyConverterTest {
-
-  private static RubyConverter converter;
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
-
-  @Rule
-  public LogTester logTester = new LogTester();
-
-  @BeforeClass
-  public static void setUp() {
-    converter = new RubyConverter();
-  }
-
-  @BeforeClass
-  public static void tearDown() {
-    converter.terminate();
-  }
+public class RubyConverterTest extends AbstractRubyConverterTest {
 
   @Test
   public void exception() {
@@ -97,26 +68,6 @@ public class RubyConverterTest {
     TextPointer errorLocation = converter.getErrorLocation(mock(StandardError.class));
     assertThat(errorLocation).isNull();
     assertThat(logTester.logs()).contains("No location information available for parse error");
-  }
-
-  @Test
-  public void simple_class() {
-    ClassDeclarationTree tree = (ClassDeclarationTree) rubyStatement("class A\ndef foo()\nend\nend");
-    assertTree(tree.identifier()).isIdentifier("A");
-    NativeTree nativeClassTree = (NativeTree) tree.children().get(0);
-    assertThat(nativeClassTree).isInstanceOf(NativeTree.class);
-    assertThat(nativeClassTree.nativeKind()).isEqualTo(nativeKind("class"));
-    assertThat(nativeClassTree.children().get(0)).isEqualTo(tree.identifier());
-  }
-
-  @Test
-  public void complex_class() {
-    ClassDeclarationTree tree = (ClassDeclarationTree) rubyStatement("class A < B::C\ndef foo()\nend\nend");
-    assertTree(tree.identifier()).isIdentifier("A");
-    NativeTree nativeClassTree = (NativeTree) tree.children().get(0);
-    assertThat(nativeClassTree).isInstanceOf(NativeTree.class);
-    assertThat(nativeClassTree.nativeKind()).isEqualTo(nativeKind("class"));
-    assertThat(nativeClassTree.children().get(0)).isEqualTo(tree.identifier());
   }
 
   @Test
@@ -138,12 +89,6 @@ public class RubyConverterTest {
   @Test
   public void invalid_escape_sequence() {
     assertThat(converter.parse("\"\\xff\"")).isNotNull();
-  }
-
-  @Test
-  public void top_level_tree() {
-    assertTree(converter.parse(("true\nfalse"))).isInstanceOf(TopLevelTree.class);
-    assertTree(converter.parse(("true\r\nfalse"))).isInstanceOf(TopLevelTree.class);
   }
 
   @Test
@@ -241,29 +186,6 @@ public class RubyConverterTest {
   }
 
   @Test
-  public void parse_with_missing_node() {
-    Tree tree = converter.parse("def is_root?\nend"); // method has null argument list
-    assertThat(tree).isNotNull();
-  }
-
-  @Test
-  public void singletons() {
-    assertTree(rubyStatement("true")).isEquivalentTo(nativeTree(nativeKind("true"), emptyList()));
-    assertTree(rubyStatement("false")).isEquivalentTo(nativeTree(nativeKind("false"), emptyList()));
-    assertTree(rubyStatement("nil")).isEquivalentTo(nativeTree(nativeKind("nil"), emptyList()));
-  }
-
-  @Test
-  public void int_literals() {
-    assertTrees(rubyStatements("2; 512; 4\n2431323"))
-      .isEquivalentTo(slangStatements("2; 512; 4; 2431323;"));
-    assertTree(rubyStatement("2")).isLiteral("2");
-
-    // literal bigger than Long.MAX_VALUE are returned as BigInteger by JRuby
-    assertTree(rubyStatement("10000000000000000000")).isLiteral("10000000000000000000");
-  }
-
-  @Test
   public void tokens() {
     Tree tree = converter.parse("# line comment\n" +
       "if a == 1\n" +
@@ -277,7 +199,6 @@ public class RubyConverterTest {
     assertThat(tokens).extracting(Token::type).containsExactly(KEYWORD, OTHER, OTHER, OTHER, OTHER, OTHER, STRING_LITERAL, KEYWORD);
   }
 
-
   private void assertComment(String input, String entireComment, String content, TextRange entireRange, TextRange contentRange) {
     TopLevelTree tree = (TopLevelTree) converter.parse(input);
     Comment comment = tree.allComments().get(0);
@@ -285,41 +206,6 @@ public class RubyConverterTest {
     assertThat(comment.contentText()).isEqualTo(content);
     assertThat(comment.textRange()).isEqualTo(entireRange);
     assertThat(comment.contentRange()).isEqualTo(contentRange);
-  }
-
-  private List<Tree> slangStatements(String innerCode) {
-    Tree tree = new SLangConverter().parse(innerCode);
-    assertThat(tree).isInstanceOf(TopLevelTree.class);
-    return tree.children();
-  }
-
-  private Tree rubyStatement(String innerCode) {
-    Tree tree = converter.parse(innerCode);
-    assertThat(tree).isInstanceOf(TopLevelTree.class);
-    assertThat(tree.children()).hasSize(1);
-    return tree.children().get(0);
-  }
-
-  private List<Tree> rubyStatements(String innerCode) {
-    Tree tree = converter.parse(innerCode);
-    assertThat(tree).isInstanceOf(TopLevelTree.class);
-    return tree.children().get(0).children();
-  }
-
-  private static LiteralTree literal(String value) {
-    return new LiteralTreeImpl(null, value);
-  }
-
-  private static NativeTree nativeTree(NativeKind kind, List<Tree> children) {
-    return new NativeTreeImpl(null, kind, children);
-  }
-
-  private static NativeTree nativeTree(NativeKind kind) {
-    return new NativeTreeImpl(null, kind, emptyList());
-  }
-
-  private static NativeKind nativeKind(String type) {
-    return new RubyNativeKind(type);
   }
 
 }

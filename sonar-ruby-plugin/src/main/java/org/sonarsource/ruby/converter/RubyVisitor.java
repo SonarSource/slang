@@ -39,10 +39,13 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.sonarsource.ruby.converter.adapter.NodeAdapter;
 import org.sonarsource.ruby.converter.adapter.RangeAdapter;
 import org.sonarsource.ruby.converter.adapter.SourceMapAdapter;
+import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
+import org.sonarsource.slang.impl.BlockTreeImpl;
 import org.sonarsource.slang.impl.ClassDeclarationTreeImpl;
+import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
@@ -106,6 +109,63 @@ public class RubyVisitor extends RubyObject {
       new ClassDeclarationTreeImpl(metaData, identifier, createNativeTree(updatedNode)));
   }
 
+  @JRubyMethod(name = "on_def")
+  public IRubyObject onDef(ThreadContext context, IRubyObject node) {
+    return createFunctionDeclaration(context, node);
+  }
+
+  @JRubyMethod(name = "on_defs")
+  public IRubyObject onDefs(ThreadContext context, IRubyObject node) {
+    return createFunctionDeclaration(context, node);
+  }
+
+  private IRubyObject createFunctionDeclaration(ThreadContext context, IRubyObject node) {
+    String type = nodeType(node);
+    boolean isSingletonMethod = type.equals("defs");
+
+    IRubyObject updatedNode = visitNode(context, "on_" + type, node);
+
+    List<Tree> nativeChildren;
+    if (isSingletonMethod) {
+      nativeChildren = Collections.singletonList(((NodeAdapter) getChild(updatedNode, 0)).getTree());
+    } else {
+      nativeChildren = Collections.emptyList();
+    }
+
+    int childrenIndexShift = isSingletonMethod ? 1 : 0;
+
+    Object name = getChild(updatedNode, 0 + childrenIndexShift);
+    IdentifierTree identifier = new IdentifierTreeImpl(getMetaData(updatedNode, "name"), String.valueOf(name));
+
+    List<Tree> parameters;
+    IRubyObject args = (IRubyObject) getChild(updatedNode, 1 + childrenIndexShift);
+    if (args != null) {
+      parameters = getChildren(((NodeAdapter) args).getUnderlyingNode());
+    } else {
+      parameters = Collections.emptyList();
+    }
+
+    BlockTree body;
+    IRubyObject rubyBodyBlock = (IRubyObject) getChild(updatedNode, 2 + childrenIndexShift);
+    if (rubyBodyBlock != null) {
+      List<Tree> statements = Collections.singletonList(((NodeAdapter) rubyBodyBlock).getTree());
+      body = new BlockTreeImpl(getMetaData(((NodeAdapter) rubyBodyBlock).getUnderlyingNode()), statements);
+    } else {
+      body = null;
+    }
+
+    return convertToNodeAdapter(updatedNode, metaData ->
+      new FunctionDeclarationTreeImpl(
+        metaData,
+        Collections.emptyList(),
+        null,
+        identifier,
+        parameters,
+        body,
+        nativeChildren));
+  }
+
+
   @JRubyMethod(name = "on_const")
   public IRubyObject onConst(ThreadContext context, IRubyObject node) {
     // FIXME add scope node child to current node
@@ -130,7 +190,7 @@ public class RubyVisitor extends RubyObject {
 
   private Tree createNativeTree(IRubyObject node) {
     TreeMetaData metaData = getMetaData(node);
-    return new NativeTreeImpl(metaData, new RubyNativeKind(nodeType(node).asJavaString()), getChildren(node, metaData));
+    return new NativeTreeImpl(metaData, new RubyNativeKind(nodeType(node)), getChildrenForNative(node, metaData));
   }
 
   private boolean noLocation(IRubyObject node) {
@@ -146,9 +206,13 @@ public class RubyVisitor extends RubyObject {
   }
 
   private TreeMetaData getMetaData(IRubyObject node) {
+    return getMetaData(node, "expression");
+  }
+
+  private TreeMetaData getMetaData(IRubyObject node, String attribute) {
     IRubyObject location = (IRubyObject) JavaEmbedUtils.invokeMethod(getRuntime(), node, "location", null, IRubyObject.class);
     SourceMapAdapter sourceMapAdapter = new SourceMapAdapter(getRuntime(), location);
-    RangeAdapter rangeAdapter = sourceMapAdapter.getRange();
+    RangeAdapter rangeAdapter = sourceMapAdapter.getRange(attribute);
     return metaDataProvider.metaData(rangeAdapter.toTextRange());
   }
 
@@ -161,11 +225,11 @@ public class RubyVisitor extends RubyObject {
     return ((List) JavaEmbedUtils.invokeMethod(getRuntime(), node, "to_a", null, List.class)).get(index);
   }
 
-  private IRubyObject nodeType(IRubyObject node) {
-    return (IRubyObject) JavaEmbedUtils.invokeMethod(getRuntime(), node, "type", null, IRubyObject.class);
+  private String nodeType(IRubyObject node) {
+    return (String) JavaEmbedUtils.invokeMethod(getRuntime(), node, "type", null, String.class);
   }
 
-  private List<Tree> getChildren(IRubyObject node, TreeMetaData metaData) {
+  private List<Tree> getChildrenForNative(IRubyObject node, TreeMetaData metaData) {
     List<Object> children = (List) JavaEmbedUtils.invokeMethod(getRuntime(), node, "to_a", null, List.class);
     return children.stream()
       .filter(Objects::nonNull)
@@ -174,6 +238,7 @@ public class RubyVisitor extends RubyObject {
           return ((NodeAdapter) child).getTree();
         }
 
+        // fixme: avoid this hack
         // The following node would normally not appear in the AST, as it represents the value of a specialized node (Ex: the string
         // value of a string literal, the operator name of a binary operation, ...). However we are dealing with a partially mapped
         // AST in SLang, and these nodes must appear syntactically different, so we add these values as children of native trees.
@@ -186,6 +251,13 @@ public class RubyVisitor extends RubyObject {
       .collect(Collectors.toList());
   }
 
+  private List<Tree> getChildren(IRubyObject node) {
+    List<Object> children = (List) JavaEmbedUtils.invokeMethod(getRuntime(), node, "to_a", null, List.class);
+    return children.stream()
+      .filter(Objects::nonNull)
+      .map(child -> ((NodeAdapter) child).getTree())
+      .collect(Collectors.toList());
+  }
 
   @Override
   public boolean equals(Object o) {
