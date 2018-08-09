@@ -27,13 +27,13 @@ public class CommonCheckList {
 
   private static final Class[] RUBY_CHECK_BLACK_LIST = {
     AllBranchesIdenticalCheck.class,
-    BadClassNameCheck.class,
     BadFunctionNameCheck.class,
     BooleanInversionCheck.class,
     BooleanLiteralCheck.class,
     CodeAfterJumpCheck.class,
     CollapsibleIfStatementsCheck.class,
     DuplicateBranchCheck.class,
+    // FIXME fix on_const for equivalence in RubyVisitor
     DuplicatedFunctionImplementationCheck.class,
     ElseIfWithoutElseCheck.class,
     EmptyBlockCheck.class,

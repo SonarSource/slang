@@ -99,7 +99,7 @@ public class RubyVisitor extends RubyObject {
 
   @JRubyMethod(name = "on_class")
   public IRubyObject onClass(ThreadContext context, IRubyObject node) {
-    IRubyObject updatedNode = callSuperMethod(context, "on_class", node);
+    IRubyObject updatedNode = visitNode(context, "on_class", node);
 
     IdentifierTree identifier = (IdentifierTree) ((NodeAdapter) getChild(updatedNode, 0)).getTree();
     return convertToNodeAdapter(updatedNode, metaData ->
