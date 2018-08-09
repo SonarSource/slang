@@ -189,10 +189,10 @@ public class RubyConverter implements ASTConverter {
     URL parserRubygem = RubyConverter.class.getResource(PARSER_RUBYGEM_PATH);
     URL initParserScriptUrl = RubyConverter.class.getResource(SETUP_SCRIPT_PATH);
 
+    System.setProperty("jruby.compile.mode", "FORCE");
     Ruby rubyRuntime = JavaEmbedUtils.initialize(Arrays.asList(astRubygem.toString(), parserRubygem.toString()));
     URI initParserScriptUri = initParserScriptUrl.toURI();
 
-    System.setProperty("jruby.thread.pool.enabled", "true");
     if ("jar".equalsIgnoreCase(initParserScriptUri.getScheme())) {
       // Need to init ZipFileSystem to read file
       Map<String, String> env = new HashMap<>();
