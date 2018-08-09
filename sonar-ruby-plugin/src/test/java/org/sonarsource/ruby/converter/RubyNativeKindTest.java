@@ -27,32 +27,18 @@ public class RubyNativeKindTest {
 
   @Test
   public void kinds() {
-    String obj = "test";
-    RubyNativeKind nativeKind0 = new RubyNativeKind(obj);
-    RubyNativeKind nativeKind1 = new RubyNativeKind(String.class);
-    RubyNativeKind nativeKind2 = new RubyNativeKind(Object.class);
-    RubyNativeKind nativeKind3 = new RubyNativeKind(obj, obj);
-    RubyNativeKind nativeKind4 = new RubyNativeKind(String.class, obj);
-    RubyNativeKind nativeKind5 = new RubyNativeKind(String.class, "test2");
-    RubyNativeKind nativeKind6 = new RubyNativeKind(String.class, "test", "test2");
+    RubyNativeKind nativeKind = new RubyNativeKind("test");
 
-    assertThat(nativeKind0).isEqualTo(nativeKind0);
-    assertThat(nativeKind0).isEqualTo(nativeKind1);
-    assertThat(nativeKind0).isNotEqualTo(nativeKind2);
-    assertThat(nativeKind0).isNotEqualTo(nativeKind3);
-    assertThat(nativeKind0).isNotEqualTo(obj);
-    assertThat(nativeKind0).isNotEqualTo(null);
-    assertThat(nativeKind3).isEqualTo(nativeKind4);
-    assertThat(nativeKind3).isNotEqualTo(nativeKind5);
-    assertThat(nativeKind3).isNotEqualTo(nativeKind6);
+    assertThat(nativeKind).isEqualTo(nativeKind);
+    assertThat(nativeKind).isEqualTo(new RubyNativeKind("test"));
+    assertThat(nativeKind).isNotEqualTo(new RubyNativeKind("test_other"));
+    assertThat(nativeKind).isNotEqualTo(null);
+    assertThat(nativeKind).isNotEqualTo(new Object());
 
-    assertThat(nativeKind0.hashCode()).isEqualTo(nativeKind1.hashCode());
-    assertThat(nativeKind0.hashCode()).isNotEqualTo(nativeKind2.hashCode());
-    assertThat(nativeKind0.hashCode()).isNotEqualTo(nativeKind3.hashCode());
-    assertThat(nativeKind5.hashCode()).isNotEqualTo(nativeKind6.hashCode());
+    assertThat(nativeKind.hashCode()).isEqualTo(nativeKind.hashCode());
+    assertThat(nativeKind.hashCode()).isNotEqualTo(new RubyNativeKind("test_other").hashCode());
 
-    assertThat(nativeKind0.toString()).isEqualTo("String");
-    assertThat(nativeKind3.toString()).isEqualTo("String[test]");
+    assertThat(nativeKind.toString()).isEqualTo("test");
   }
 
 }
