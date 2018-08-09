@@ -105,10 +105,14 @@ public class RubyConverterTest {
   }
 
   @Test
+  public void invalid_escape_sequence() {
+    assertThat(converter.parse("\"\\xff\"")).isNotNull();
+  }
+
+  @Test
   public void top_level_tree() {
     assertTree(converter.parse(("true\nfalse"))).isInstanceOf(TopLevelTree.class);
     assertTree(converter.parse(("true\r\nfalse"))).isInstanceOf(TopLevelTree.class);
-
   }
 
   @Test
