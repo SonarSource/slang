@@ -37,8 +37,8 @@ public class NodeAdapter extends RubyObject {
   private static RubyClass metaclass;
 
   private transient IRubyObject underlyingNode;
-  private transient Tree tree;
 
+  private transient Tree tree;
   private NodeAdapter(Ruby runtime, IRubyObject underlyingNode) {
     super(runtime, metaclass);
     this.underlyingNode = underlyingNode;
@@ -48,6 +48,10 @@ public class NodeAdapter extends RubyObject {
     NodeAdapter nodeAdapter = new NodeAdapter(runtime, underlyingNode);
     nodeAdapter.tree =  tree;
     return nodeAdapter;
+  }
+
+  public IRubyObject getUnderlyingNode() {
+    return underlyingNode;
   }
 
   public static void addToRuntime(final Ruby runtime) {

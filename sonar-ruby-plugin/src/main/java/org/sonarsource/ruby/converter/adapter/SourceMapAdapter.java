@@ -29,7 +29,11 @@ public class SourceMapAdapter extends JRubyObjectAdapter<IRubyObject> {
   }
 
   public RangeAdapter getRange() {
-    return new RangeAdapter(runtime, getFromUnderlying("expression", IRubyObject.class));
+    return getRange("expression");
+  }
+
+  public RangeAdapter getRange(String attribute) {
+    return new RangeAdapter(runtime, getFromUnderlying(attribute, IRubyObject.class));
   }
 
 }
