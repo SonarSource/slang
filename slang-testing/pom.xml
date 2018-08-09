@@ -12,6 +12,11 @@
 
   <name>SLang :: TESTING</name>
 
+  <properties>
+    <!-- This is a superclass of sensor tests we are not interested in coverage of test code -->
+    <sonar.coverage.exclusions>**/AbstractSensorTest.java</sonar.coverage.exclusions>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
