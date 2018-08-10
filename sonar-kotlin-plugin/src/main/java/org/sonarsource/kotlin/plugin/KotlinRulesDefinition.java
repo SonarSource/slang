@@ -19,11 +19,12 @@
  */
 package org.sonarsource.kotlin.plugin;
 
-import org.sonarsource.slang.checks.CommentedCodeCheck;
-import org.sonarsource.slang.checks.CommonCheckList;
 import java.util.ArrayList;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
+import org.sonarsource.slang.checks.BadFunctionNameCheck;
+import org.sonarsource.slang.checks.CheckList;
+import org.sonarsource.slang.checks.CommentedCodeCheck;
 
 public class KotlinRulesDefinition implements RulesDefinition {
 
@@ -35,10 +36,15 @@ public class KotlinRulesDefinition implements RulesDefinition {
       .createRepository(KotlinPlugin.KOTLIN_REPOSITORY_KEY, KotlinPlugin.KOTLIN_LANGUAGE_KEY)
       .setName(KotlinPlugin.REPOSITORY_NAME);
     RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER);
-// TODO: Add logic for rules that require language specific configuration at construction time
-    ArrayList<Class> checks = new ArrayList<>(CommonCheckList.kotlinChecks());
+
+    ArrayList<Class> checks = new ArrayList<>(CheckList.kotlinChecks());
     checks.add(CommentedCodeCheck.class);
     ruleMetadataLoader.addRulesByAnnotatedClass(repository, checks);
+
+    repository.rule("S100")
+      .param("format")
+      .setDefaultValue(BadFunctionNameCheck.getDefaultFormat(KotlinPlugin.KOTLIN_LANGUAGE_KEY));
+
     repository.done();
   }
 

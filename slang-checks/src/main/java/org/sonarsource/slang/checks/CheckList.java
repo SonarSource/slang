@@ -23,11 +23,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CommonCheckList {
+public class CheckList {
+
+  // these checks should be explicitly added to 'checks' in Sensor constructor
+  // and language RulesDefinition
+  // this list should be maintained only for documentation purposes (keep the track of all existing checks in this class) and for testing
+  static final Class[] ALL_CHECKS_WITH_LANGUAGE_CONFIG = {
+    CommentedCodeCheck.class,
+  };
 
   private static final Class[] RUBY_CHECK_BLACK_LIST = {
     AllBranchesIdenticalCheck.class,
-    BadFunctionNameCheck.class,
     BooleanInversionCheck.class,
     BooleanLiteralCheck.class,
     CodeAfterJumpCheck.class,
@@ -62,7 +68,7 @@ public class CommonCheckList {
 
   private static final Class[] KOTLIN_CHECK_BLACK_LIST = {};
 
-  private CommonCheckList() {
+  private CheckList() {
   }
 
   static List<Class> allChecks() {

@@ -23,12 +23,12 @@ import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
-import org.sonarsource.slang.api.ASTConverter;
-import org.sonarsource.slang.checks.CommentedCodeCheck;
-import org.sonarsource.slang.checks.CommonCheckList;
-import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.kotlin.converter.KotlinCodeVerifier;
 import org.sonarsource.kotlin.converter.KotlinConverter;
+import org.sonarsource.slang.api.ASTConverter;
+import org.sonarsource.slang.checks.CheckList;
+import org.sonarsource.slang.checks.CommentedCodeCheck;
+import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.plugin.SlangSensor;
 
 public class KotlinSensor extends SlangSensor {
@@ -37,10 +37,10 @@ public class KotlinSensor extends SlangSensor {
 
   public KotlinSensor(CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter, KotlinLanguage language) {
     super(noSonarFilter, fileLinesContextFactory, language);
-    // TODO: Add logic for rules that require language specific configuration at construction time
-    this.checks = checkFactory.create(KotlinPlugin.KOTLIN_REPOSITORY_KEY);
-    this.checks.addAnnotatedChecks(new CommentedCodeCheck(new KotlinCodeVerifier()));
-    this.checks.addAnnotatedChecks((Iterable<?>) CommonCheckList.kotlinChecks());
+
+    checks = checkFactory.create(KotlinPlugin.KOTLIN_REPOSITORY_KEY);
+    checks.addAnnotatedChecks((Iterable<?>) CheckList.kotlinChecks());
+    checks.addAnnotatedChecks(new CommentedCodeCheck(new KotlinCodeVerifier()));
   }
 
   @Override

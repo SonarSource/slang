@@ -22,6 +22,7 @@ package org.sonarsource.ruby.plugin;
 import org.junit.Test;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
+import org.sonar.api.server.rule.RulesDefinition.Param;
 import org.sonar.api.server.rule.RulesDefinition.Rule;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,6 +44,10 @@ public class RubyRulesDefinitionTest {
     assertThat(rule.name()).isEqualTo("Track uses of \"TODO\" tags");
     assertThat(rule.debtRemediationFunction()).isNull();
     assertThat(rule.type()).isEqualTo(RuleType.CODE_SMELL);
+
+    Rule ruleWithConfig = repository.rule("S100");
+    Param param = ruleWithConfig.param("format");
+    assertThat(param.defaultValue()).isEqualTo("^(@{0,2}[\\da-z_]+[!?=]?)|([*+-/%=!><~]+)|(\\[]=?)$");
   }
 
 }
