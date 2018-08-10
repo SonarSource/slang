@@ -42,6 +42,10 @@ public class KotlinRulesDefinitionTest {
     assertThat(rule.name()).isEqualTo("Identical expressions should not be used on both sides of a binary operator");
     assertThat(rule.type()).isEqualTo(RuleType.BUG);
     assertThat(rule.htmlDescription()).startsWith("<p>Using the same value on either side");
+
+    RulesDefinition.Rule ruleWithConfig = repository.rule("S100");
+    RulesDefinition.Param param = ruleWithConfig.param("format");
+    assertThat(param.defaultValue()).isEqualTo("^[a-z][a-zA-Z0-9]*$");
   }
 
 }

@@ -22,7 +22,8 @@ package org.sonarsource.ruby.plugin;
 import java.util.List;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
-import org.sonarsource.slang.checks.CommonCheckList;
+import org.sonarsource.slang.checks.BadFunctionNameCheck;
+import org.sonarsource.slang.checks.CheckList;
 
 public class RubyRulesDefinition implements RulesDefinition {
 
@@ -35,9 +36,12 @@ public class RubyRulesDefinition implements RulesDefinition {
       .setName(RubyPlugin.REPOSITORY_NAME);
     RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER);
 
-
-    List<Class> checks = CommonCheckList.rubyChecks();
+    List<Class> checks = CheckList.rubyChecks();
     ruleMetadataLoader.addRulesByAnnotatedClass(repository, checks);
+    repository.rule("S100")
+      .param("format")
+      .setDefaultValue(BadFunctionNameCheck.getDefaultFormat(RubyPlugin.RUBY_LANGUAGE_KEY));
+
     repository.done();
   }
 

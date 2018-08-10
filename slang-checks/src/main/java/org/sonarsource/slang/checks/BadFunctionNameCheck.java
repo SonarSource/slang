@@ -19,28 +19,42 @@
  */
 package org.sonarsource.slang.checks;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+import org.sonar.check.Rule;
+import org.sonar.check.RuleProperty;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
-import java.util.regex.Pattern;
-import org.sonar.check.Rule;
-import org.sonar.check.RuleProperty;
 
 @Rule(key = "S100")
 public class BadFunctionNameCheck implements SlangCheck {
 
-  private static final String DEFAULT_FORMAT = "^[a-z][a-zA-Z0-9]*$";
+  public static final String DEFAULT_FORMAT = "^[a-z][a-zA-Z0-9]*$";
+
+  private static final Map<String, String> DEFAULT_BY_LANGUAGE;
+  static {
+    HashMap<String, String> defaults = new HashMap<>();
+    defaults.put("kotlin", DEFAULT_FORMAT);
+    defaults.put("ruby", "^(@{0,2}[\\da-z_]+[!?=]?)|([*+-/%=!><~]+)|(\\[]=?)$");
+    DEFAULT_BY_LANGUAGE = Collections.unmodifiableMap(defaults);
+  }
+
+  public static String getDefaultFormat(String language) {
+    return DEFAULT_BY_LANGUAGE.get(language);
+  }
 
   @RuleProperty(
     key = "format",
-    description = "Regular expression used to check the function names against.",
-    defaultValue = DEFAULT_FORMAT
+    description = "Regular expression used to check the function names against."
   )
   public String format = DEFAULT_FORMAT;
 
   private String message(String name) {
-    return "Rename function " + name + " to match the regular expression " + format;
+    return "Rename function '" + name + "' to match the regular expression " + format;
   }
 
   @Override

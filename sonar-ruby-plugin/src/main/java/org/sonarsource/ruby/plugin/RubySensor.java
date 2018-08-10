@@ -25,7 +25,7 @@ import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonarsource.ruby.converter.RubyConverter;
 import org.sonarsource.slang.api.ASTConverter;
-import org.sonarsource.slang.checks.CommonCheckList;
+import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.plugin.SlangSensor;
 
@@ -35,9 +35,8 @@ public class RubySensor extends SlangSensor {
 
   public RubySensor(CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter, RubyLanguage language) {
     super(noSonarFilter, fileLinesContextFactory, language);
-    // TODO: Add logic for rules that require language specific configuration at construction time
-    this.checks = checkFactory.create(RubyPlugin.RUBY_REPOSITORY_KEY);
-    this.checks.addAnnotatedChecks((Iterable<?>) CommonCheckList.rubyChecks());
+    checks = checkFactory.create(RubyPlugin.RUBY_REPOSITORY_KEY);
+    checks.addAnnotatedChecks((Iterable<?>) CheckList.rubyChecks());
   }
 
   @Override
