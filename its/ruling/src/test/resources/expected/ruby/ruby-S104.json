@@ -86,10 +86,16 @@
 'ruby-project:metasploit-framework/lib/rex/proto/smb/constants.rb':[
 0,
 ],
+'ruby-project:metasploit-framework/modules/exploits/windows/backupexec/ssl_uaf.rb':[
+0,
+],
 'ruby-project:metasploit-framework/plugins/nessus.rb':[
 0,
 ],
 'ruby-project:metasploit-framework/plugins/wmap.rb':[
+0,
+],
+'ruby-project:metasploit-framework/spec/lib/msf/core/payload_generator_spec.rb':[
 0,
 ],
 'ruby-project:metasploit-framework/spec/modules/payloads_spec.rb':[
@@ -105,6 +111,9 @@
 0,
 ],
 'ruby-project:rails/actionpack/test/dispatch/cookies_test.rb':[
+0,
+],
+'ruby-project:rails/actionpack/test/dispatch/request_test.rb':[
 0,
 ],
 'ruby-project:rails/actionpack/test/dispatch/routing_test.rb':[
