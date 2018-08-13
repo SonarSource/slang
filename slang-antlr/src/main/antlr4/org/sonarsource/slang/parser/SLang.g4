@@ -164,7 +164,7 @@ ifExpression
   ;
 
 matchExpression
-  : MATCH LPAREN statement RPAREN LCURLY matchCase* RCURLY
+  : MATCH LPAREN statement? RPAREN LCURLY matchCase* RCURLY
   ;
 
 matchCase

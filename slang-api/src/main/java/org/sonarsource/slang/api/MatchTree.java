@@ -20,9 +20,11 @@
 package org.sonarsource.slang.api;
 
 import java.util.List;
+import javax.annotation.CheckForNull;
 
 public interface MatchTree extends Tree {
 
+  @CheckForNull
   Tree expression();
 
   List<MatchCaseTree> cases();
