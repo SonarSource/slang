@@ -24,6 +24,7 @@ import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
 import org.sonarsource.slang.checks.BadFunctionNameCheck;
 import org.sonarsource.slang.checks.CheckList;
+import org.sonarsource.slang.checks.utils.Language;
 
 public class RubyRulesDefinition implements RulesDefinition {
 
@@ -40,7 +41,7 @@ public class RubyRulesDefinition implements RulesDefinition {
     ruleMetadataLoader.addRulesByAnnotatedClass(repository, checks);
     repository.rule("S100")
       .param("format")
-      .setDefaultValue(BadFunctionNameCheck.getDefaultFormat(RubyPlugin.RUBY_LANGUAGE_KEY));
+      .setDefaultValue(BadFunctionNameCheck.getDefaultFormat(Language.RUBY));
 
     repository.done();
   }

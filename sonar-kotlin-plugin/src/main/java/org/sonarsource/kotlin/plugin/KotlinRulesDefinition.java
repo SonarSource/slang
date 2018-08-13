@@ -25,6 +25,7 @@ import org.sonarsource.analyzer.commons.RuleMetadataLoader;
 import org.sonarsource.slang.checks.BadFunctionNameCheck;
 import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.CommentedCodeCheck;
+import org.sonarsource.slang.checks.utils.Language;
 
 public class KotlinRulesDefinition implements RulesDefinition {
 
@@ -43,7 +44,7 @@ public class KotlinRulesDefinition implements RulesDefinition {
 
     repository.rule("S100")
       .param("format")
-      .setDefaultValue(BadFunctionNameCheck.getDefaultFormat(KotlinPlugin.KOTLIN_LANGUAGE_KEY));
+      .setDefaultValue(BadFunctionNameCheck.getDefaultFormat(Language.KOTLIN));
 
     repository.done();
   }
