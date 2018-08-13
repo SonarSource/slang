@@ -19,7 +19,6 @@
  */
 package org.sonarsource.ruby.converter.adapter;
 
-import java.util.Objects;
 import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.RubyFixnum;
@@ -39,6 +38,7 @@ public class NodeAdapter extends RubyObject {
   private transient IRubyObject underlyingNode;
 
   private transient Tree tree;
+
   private NodeAdapter(Ruby runtime, IRubyObject underlyingNode) {
     super(runtime, metaclass);
     this.underlyingNode = underlyingNode;
@@ -46,7 +46,7 @@ public class NodeAdapter extends RubyObject {
 
   public static NodeAdapter create(Ruby runtime, IRubyObject underlyingNode, Tree tree) {
     NodeAdapter nodeAdapter = new NodeAdapter(runtime, underlyingNode);
-    nodeAdapter.tree =  tree;
+    nodeAdapter.tree = tree;
     return nodeAdapter;
   }
 
@@ -72,27 +72,6 @@ public class NodeAdapter extends RubyObject {
   @JRubyMethod
   public RubyFixnum hash(ThreadContext context) {
     return (RubyFixnum) JavaEmbedUtils.invokeMethod(getRuntime(), underlyingNode, "hash", null, RubyFixnum.class);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    if (!super.equals(o)) {
-      return false;
-    }
-    NodeAdapter that = (NodeAdapter) o;
-    return Objects.equals(underlyingNode, that.underlyingNode) &&
-      Objects.equals(tree, that.tree);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), underlyingNode, tree);
   }
 
 }

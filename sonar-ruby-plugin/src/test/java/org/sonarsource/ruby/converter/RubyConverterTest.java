@@ -42,7 +42,9 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.sonarsource.slang.api.Token.Type.KEYWORD;
 import static org.sonarsource.slang.api.Token.Type.OTHER;
@@ -54,7 +56,7 @@ import static org.sonarsource.slang.testing.TreesAssert.assertTrees;
 public class RubyConverterTest extends AbstractRubyConverterTest {
 
   @Test
-  public void exception() {
+  public void syntax_exception() {
     Condition<ParseException> hasCorrectPosition = new Condition<>(e ->
       e.getPosition() != null && e.getPosition().line() == 2 && e.getPosition().lineOffset() == 0, "");
     assertThatThrownBy(() -> converter.parse("true\nend"))
@@ -64,10 +66,30 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void error_location() {
-    TextPointer errorLocation = converter.getErrorLocation(mock(StandardError.class));
-    assertThat(errorLocation).isNull();
+  public void parser_error() {
+    RubyConverter rubyConverter = spy(new RubyConverter());
+    doReturn(null).when(rubyConverter).invokeMethod(any(), any(), any());
+    assertThatThrownBy(() -> rubyConverter.parse("true;"))
+      .isInstanceOf(ParseException.class)
+      .hasMessage("Unable to parse file content");
+    rubyConverter.terminate();
+  }
+
+  @Test
+  public void error_location_method_exception() {
+    TextPointer errorLocation1 = converter.getErrorLocation(mock(StandardError.class));
+    assertThat(errorLocation1).isNull();
     assertThat(logTester.logs()).contains("No location information available for parse error");
+  }
+
+  @Test
+  public void error_location_null_result() {
+    RubyConverter rubyConverter = spy(new RubyConverter());
+    doReturn(null).when(rubyConverter).invokeMethod(any(), any(), any());
+    TextPointer errorLocation2 = rubyConverter.getErrorLocation(mock(StandardError.class));
+    assertThat(errorLocation2).isNull();
+    assertThat(logTester.logs()).contains("No location information available for parse error");
+    rubyConverter.terminate();
   }
 
   @Test
