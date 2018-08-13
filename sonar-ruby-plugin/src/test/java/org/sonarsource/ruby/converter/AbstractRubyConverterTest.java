@@ -34,6 +34,7 @@ import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.parser.SLangConverter;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -90,6 +91,10 @@ public abstract class AbstractRubyConverterTest {
 
   protected static NativeKind nativeKind(String type) {
     return new RubyNativeKind(type);
+  }
+
+  protected static NativeTree getNativeForVar(String identifierName) {
+    return nativeTree(nativeKind("send"), asList(nativeTree(nativeKind(identifierName))));
   }
 
 }
