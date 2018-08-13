@@ -115,14 +115,14 @@ public class SlangRulingTest {
   @Test
   public void test_kotlin() throws IOException {
     run_ruling_test("kotlin", ImmutableMap.of(
-      "sonar.inclusions", "**/*.kt",
+      "sonar.inclusions", "sources/kotlin/**/*.kt, ruling/src/test/resources/sources/kotlin/**/*.kt",
       "sonar.exclusions", "**/testData/**/*"));
   }
 
   @Test
   public void test_ruby() throws IOException {
     run_ruling_test("ruby", ImmutableMap.of(
-      "sonar.inclusions", "**/*.rb"));
+      "sonar.inclusions", "sources/ruby/**/*.rb, ruling/src/test/resources/sources/ruby/**/*.rb"));
   }
 
   private void run_ruling_test(String language, Map<String, String> properties) throws IOException {
@@ -131,7 +131,7 @@ public class SlangRulingTest {
     orchestrator.getServer().associateProjectToQualityProfile(projectKey, language, "rules");
 
     File litsDifferencesFile = FileLocation.of("target/differences").getFile();
-    SonarScanner build = SonarScanner.create(FileLocation.of("../sources/" + language).getFile())
+    SonarScanner build = SonarScanner.create(FileLocation.of("../").getFile())
       .setProjectKey(projectKey)
       .setProjectName(projectKey)
       .setProjectVersion("1")

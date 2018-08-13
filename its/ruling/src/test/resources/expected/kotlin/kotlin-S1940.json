@@ -1,8 +1,8 @@
 {
-'kotlin-project:kotlin/libraries/stdlib/jvm/src/kotlin/ranges/RangesJVM.kt':[
+'kotlin-project:sources/kotlin/kotlin/libraries/stdlib/jvm/src/kotlin/ranges/RangesJVM.kt':[
 30,
 ],
-'kotlin-project:kotlin/libraries/stdlib/src/kotlin/ranges/Ranges.kt':[
+'kotlin-project:sources/kotlin/kotlin/libraries/stdlib/src/kotlin/ranges/Ranges.kt':[
 68,
 ],
 }
