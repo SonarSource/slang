@@ -44,4 +44,14 @@ public class MatchTreeImplTest {
     assertThat(tree.keyword().text()).isEqualTo("match");
   }
 
+  @Test
+  public void without_expression() {
+    TreeMetaData meta = null;
+    MatchCaseTree case1 = new MatchCaseTreeImpl(null, null, new LiteralTreeImpl(meta, "42"));
+    Token keywordToken = new TokenImpl(new TextRangeImpl(1,0,1,20), "match", Token.Type.KEYWORD);
+    MatchTree tree = new MatchTreeImpl(meta, null, Collections.singletonList(case1), keywordToken);
+    assertThat(tree.children()).containsExactly(case1);
+    assertThat(tree.expression()).isNull();
+  }
+
 }

@@ -360,9 +360,10 @@ public class SLangConverter implements ASTConverter {
         cases.add((MatchCaseTree) visit(matchCaseContext));
       }
       TreeMetaData meta = meta(ctx);
+      Tree expression = ctx.statement() == null ? null : visit(ctx.statement());
       return new MatchTreeImpl(
         meta,
-        visit(ctx.statement()),
+        expression,
         cases,
         toSlangToken(ctx.MATCH().getSymbol()));
     }

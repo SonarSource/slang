@@ -314,6 +314,13 @@ public class SLangConverterTest {
   }
 
   @Test
+  public void match_without_expression() {
+    Tree tree = converter.parse("match() { 1 -> a; else -> b; };").children().get(0);
+    MatchTree matchTree = (MatchTree) tree;
+    assertTree(matchTree.expression()).isNull();
+  }
+
+  @Test
   public void for_loop() {
     Tree tree = converter.parse("for (var x = list) { x; };").children().get(0);
     assertTree(tree).isInstanceOf(LoopTree.class).hasTextRange(1, 0, 1, 25);
