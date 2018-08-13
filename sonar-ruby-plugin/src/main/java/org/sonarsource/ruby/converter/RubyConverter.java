@@ -112,8 +112,9 @@ public class RubyConverter implements ASTConverter {
         return new RangeAdapter(runtime, location).toTextRange().start();
       }
     } catch (NoMethodError nme) {
-      LOG.warn("No location information available for parse error");
+      // location information could not be retrieved from ruby object
     }
+    LOG.warn("No location information available for parse error");
     return null;
   }
 
@@ -177,7 +178,7 @@ public class RubyConverter implements ASTConverter {
   }
 
   @Nullable
-  private Object invokeMethod(@Nullable Object receiver, String methodName, @Nullable Object[] args) {
+  Object invokeMethod(@Nullable Object receiver, String methodName, @Nullable Object[] args) {
     return JavaEmbedUtils.invokeMethod(runtime, receiver, methodName, args, Object.class);
   }
 
