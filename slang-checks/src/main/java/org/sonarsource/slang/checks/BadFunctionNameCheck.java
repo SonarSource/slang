@@ -20,7 +20,7 @@
 package org.sonarsource.slang.checks;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.sonar.check.Rule;
@@ -29,21 +29,22 @@ import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
+import org.sonarsource.slang.checks.utils.Language;
 
 @Rule(key = "S100")
 public class BadFunctionNameCheck implements SlangCheck {
 
   public static final String DEFAULT_FORMAT = "^[a-z][a-zA-Z0-9]*$";
 
-  private static final Map<String, String> DEFAULT_BY_LANGUAGE;
+  private static final Map<Language, String> DEFAULT_BY_LANGUAGE;
   static {
-    HashMap<String, String> defaults = new HashMap<>();
-    defaults.put("kotlin", DEFAULT_FORMAT);
-    defaults.put("ruby", "^(@{0,2}[\\da-z_]+[!?=]?)|([*+-/%=!><~]+)|(\\[]=?)$");
+    EnumMap<Language, String> defaults = new EnumMap<>(Language.class);
+    defaults.put(Language.KOTLIN, DEFAULT_FORMAT);
+    defaults.put(Language.RUBY, "^(@{0,2}[\\da-z_]+[!?=]?)|([*+-/%=!><~]+)|(\\[]=?)$");
     DEFAULT_BY_LANGUAGE = Collections.unmodifiableMap(defaults);
   }
 
-  public static String getDefaultFormat(String language) {
+  public static String getDefaultFormat(Language language) {
     return DEFAULT_BY_LANGUAGE.get(language);
   }
 
