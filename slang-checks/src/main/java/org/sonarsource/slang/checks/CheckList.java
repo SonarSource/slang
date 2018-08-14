@@ -37,7 +37,6 @@ public class CheckList {
     BooleanInversionCheck.class,
     BooleanLiteralCheck.class,
     CodeAfterJumpCheck.class,
-    CollapsibleIfStatementsCheck.class,
     DuplicateBranchCheck.class,
     // FIXME fix on_const for equivalence in RubyVisitor
     DuplicatedFunctionImplementationCheck.class,

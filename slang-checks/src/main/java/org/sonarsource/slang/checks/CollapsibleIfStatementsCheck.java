@@ -31,7 +31,7 @@ import org.sonar.check.Rule;
 
 @Rule(key = "S1066")
 public class CollapsibleIfStatementsCheck implements SlangCheck {
-  private static final String MESSAGE_TEMPLATE = "Merge this %s statement with the nested one.";
+  private static final String MESSAGE_TEMPLATE = "Merge this \"%s\" statement with the nested one.";
   private static final String SECONDARY_MESSAGE_TEMPLATE = "Nested \"%s\" statement";
 
   @Override
