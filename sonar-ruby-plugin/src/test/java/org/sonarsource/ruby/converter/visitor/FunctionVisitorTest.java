@@ -27,6 +27,7 @@ import org.sonarsource.slang.api.NativeTree;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
 public class FunctionVisitorTest extends AbstractRubyConverterTest {
@@ -51,7 +52,9 @@ public class FunctionVisitorTest extends AbstractRubyConverterTest {
     assertThat(tree.modifiers()).isEmpty();
     assertThat(tree.returnType()).isNull();
     assertThat(tree.formalParameters()).isEmpty();
-    assertThat(tree.body()).isNull();
+    assertThat(tree.body()).isNotNull();
+    assertThat(tree.body().statementOrExpressions()).isEmpty();
+    assertRange(tree.body().textRange()).hasRange(1,0,1,12);
     assertThat(tree.nativeChildren()).isEmpty();
   }
 

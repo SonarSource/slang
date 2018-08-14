@@ -19,6 +19,7 @@
  */
 package org.sonarsource.ruby.converter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -151,7 +152,7 @@ public class RubyVisitor extends RubyObject {
       List<Tree> statements = Collections.singletonList(((NodeAdapter) rubyBodyBlock).getTree());
       body = new BlockTreeImpl(getMetaData(((NodeAdapter) rubyBodyBlock).getUnderlyingNode()), statements);
     } else {
-      body = null;
+      body = new BlockTreeImpl(getMetaData(node), new ArrayList<>());
     }
 
     return convertToNodeAdapter(updatedNode, metaData ->
