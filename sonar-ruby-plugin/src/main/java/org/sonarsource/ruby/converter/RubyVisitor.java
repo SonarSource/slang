@@ -29,19 +29,24 @@ import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
+import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.TextRange;
+import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
 import org.sonarsource.slang.impl.BlockTreeImpl;
 import org.sonarsource.slang.impl.ClassDeclarationTreeImpl;
 import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
+import org.sonarsource.slang.impl.IfTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
+import org.sonarsource.slang.impl.TextRanges;
 import org.sonarsource.slang.impl.TreeMetaDataProvider;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
@@ -64,6 +69,8 @@ public class RubyVisitor {
         return createFunctionDeclarationTree(node, children);
       case "int":
         return createLiteralTree(node, children);
+      case "if":
+        return createIfTree(node, children);
       default:
         return createNativeTree(node, children);
     }
@@ -71,7 +78,6 @@ public class RubyVisitor {
 
   private FunctionDeclarationTree createFunctionDeclarationTree(AstNode node, List<Object> children) {
     boolean isSingletonMethod = node.type().equals("defs");
-
     List<Tree> nativeChildren;
     if (isSingletonMethod) {
       nativeChildren = singletonList((Tree) children.get(0));
@@ -133,6 +139,55 @@ public class RubyVisitor {
     return new IdentifierTreeImpl(metaData(node), name);
   }
 
+
+  private Tree createIfTree(AstNode node, List<Object> children) {
+    Token mainKeyword = tokenForAttribute(node, "keyword");
+    if (mainKeyword == null || mainKeyword.text().equals("unless")) {
+      // Ternary operator and "unless" are not considered as "IfTree" for now
+      return createNativeTree(node, children);
+    }
+
+    Token elseKeyword = tokenForAttribute(node, "else");
+    Tree condition = (Tree) children.get(0);
+    Tree thenBranch = getThenBranch(node, mainKeyword, elseKeyword, (Tree) children.get(1));
+    Tree elseBranch = getElseBranch(node, elseKeyword, (Tree) children.get(2));
+
+    return new IfTreeImpl(metaData(node), condition, thenBranch, elseBranch, mainKeyword, elseKeyword);
+  }
+
+  private Tree getThenBranch(AstNode node, Token mainKeyword, @Nullable Token elseKeyword, @Nullable Tree thenBranch) {
+    if (thenBranch != null) {
+      return thenBranch;
+    } else if (elseKeyword == null) {
+      // empty "then" branch body and no "else" branch
+      return new BlockTreeImpl(metaData(node), emptyList());
+    } else {
+      // empty "then" branch, with a "else" branch. Meta for empty "then" block will be "if...else" part
+      TreeMetaData emptyIfMetadata = metaDataProvider.metaData(TextRanges.merge(asList(mainKeyword.textRange(), elseKeyword.textRange())));
+      return new BlockTreeImpl(emptyIfMetadata, emptyList());
+    }
+  }
+
+  private Tree getElseBranch(AstNode node, @Nullable Token elseKeyword, @Nullable Tree elseBranch) {
+    if (elseBranch != null) {
+      // "else" branch has normal body
+      boolean isFinalElseBranch = elseKeyword != null && elseKeyword.text().equals("else");
+      if (isFinalElseBranch && elseBranch instanceof IfTree) {
+        // This is not an "elsif" statement so we wrap the tree in a block to differentiate between "else; if" and "elsif"
+        return new BlockTreeImpl(elseBranch.metaData(), singletonList(elseBranch));
+      }
+      return elseBranch;
+    } else if (elseKeyword != null) {
+      // "else" branch present but with empty body. Meta for empty "else" block will be "else...end" part
+      TextRange endRange = node.textRangeForAttribute("end");
+      TreeMetaData emptyElseMetadata = metaDataProvider.metaData(TextRanges.merge(asList(elseKeyword.textRange(), endRange)));
+      return new BlockTreeImpl(emptyElseMetadata, emptyList());
+    } else {
+      // no "else" branch
+      return null;
+    }
+  }
+
   @CheckForNull
   private NativeTree createNativeTree(AstNode node, List<Object> children) {
     // when node has no location it means that it is not present in the tree
@@ -165,4 +220,14 @@ public class RubyVisitor {
     }
     return metaDataProvider.metaData(textRange);
   }
+
+  @Nullable
+  private Token tokenForAttribute(AstNode node, String attribute) {
+    TextRange mainKeywordTextRange = node.textRangeForAttribute(attribute);
+    if (mainKeywordTextRange != null) {
+      return metaDataProvider.metaData(mainKeywordTextRange).tokens().get(0);
+    }
+    return null;
+  }
+
 }
