@@ -15,7 +15,7 @@ if (a)
   } else {
   };
 
-   if (a) { // Noncompliant {{Merge this if statement with the nested one.}}
+   if (a) { // Noncompliant {{Merge this "if" statement with the nested one.}}
 // ^^
      if (b) {}
 //   ^^<
@@ -23,12 +23,12 @@ if (a)
 
 if (a) {
 } else {
-    if (c) { // Noncompliant {{Merge this if statement with the nested one.}}
+    if (c) { // Noncompliant {{Merge this "if" statement with the nested one.}}
       if (b) {}
     }
 };
 
-if (a) // Noncompliant {{Merge this if statement with the nested one.}}
+if (a) // Noncompliant {{Merge this "if" statement with the nested one.}}
  if (b)
     print();
 
