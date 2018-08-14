@@ -47,7 +47,6 @@ public class CheckList {
     IdenticalConditionsCheck.class,
     IfConditionalAlwaysTrueOrFalseCheck.class,
     OneStatementPerLineCheck.class,
-    RedundantParenthesesCheck.class,
     SelfAssignmentCheck.class,
     StringLiteralDuplicatedCheck.class,
     TooComplexExpressionCheck.class,
