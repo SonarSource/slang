@@ -19,6 +19,7 @@
  */
 package org.sonarsource.slang.checks;
 
+import org.sonar.check.Rule;
 import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
@@ -26,12 +27,11 @@ import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.impl.TextRangeImpl;
-import org.sonar.check.Rule;
 
 @Rule(key = "S126")
 public class ElseIfWithoutElseCheck implements SlangCheck {
 
-  private static final String MESSAGE_TEMPLATE = "Add the missing \"%s\" clause.";
+  private static final String MESSAGE = "Add the missing \"else\" clause.";
 
   @Override
   public void initialize(InitContext init) {
@@ -46,8 +46,7 @@ public class ElseIfWithoutElseCheck implements SlangCheck {
             elseToken.textRange().start(),
             ifToken.textRange().end()
           );
-          String message = String.format(MESSAGE_TEMPLATE, elseToken.text());
-          ctx.reportIssue(textRange, message);
+          ctx.reportIssue(textRange, MESSAGE);
         }
       }
     });
