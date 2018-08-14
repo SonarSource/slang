@@ -41,7 +41,6 @@ public class CheckList {
     DuplicateBranchCheck.class,
     // FIXME fix on_const for equivalence in RubyVisitor
     DuplicatedFunctionImplementationCheck.class,
-    ElseIfWithoutElseCheck.class,
     EmptyBlockCheck.class,
     FunctionCognitiveComplexityCheck.class,
     HardcodedCredentialsCheck.class,
