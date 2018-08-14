@@ -78,9 +78,11 @@ class AstNode
   end
 
   def textRangeForAttribute(attr)
-    loc = @node.location.public_send(attr)
-    return if loc.nil?
-    textRangeFromLocation(loc)
+    if @node.location.respond_to?(attr)
+      loc = @node.location.public_send(attr)
+      return if loc.nil?
+      textRangeFromLocation(loc)
+    end
   end
 
   def textRangeFromLocation(loc)
