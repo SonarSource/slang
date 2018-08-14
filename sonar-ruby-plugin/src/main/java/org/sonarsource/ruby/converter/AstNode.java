@@ -17,31 +17,19 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.api;
+package org.sonarsource.ruby.converter;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
+import org.jruby.runtime.builtin.IRubyObject;
+import org.sonarsource.slang.api.TextRange;
 
-public class ParseException extends RuntimeException {
+public interface AstNode {
+  String type();
 
-  private final transient TextPointer position;
+  TextRange textRange();
 
-  public ParseException(String message) {
-    this(message, null);
-  }
+  TextRange textRangeForAttribute(String attribute);
 
-  public ParseException(String message, @Nullable TextPointer position) {
-    this(message, position, null);
-  }
+  String asString();
 
-  public ParseException(String message, @Nullable TextPointer position, @Nullable Throwable cause) {
-    super(message, cause);
-    this.position = position;
-  }
-
-  @CheckForNull
-  public TextPointer getPosition() {
-    return position;
-  }
-
+  IRubyObject node();
 }
