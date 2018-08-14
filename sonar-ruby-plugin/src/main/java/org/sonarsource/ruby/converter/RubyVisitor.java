@@ -21,13 +21,17 @@ package org.sonarsource.ruby.converter;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 import org.jruby.RubySymbol;
+import org.sonarsource.slang.api.BinaryExpressionTree;
+import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
@@ -40,6 +44,8 @@ import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
+import org.sonarsource.slang.api.UnaryExpressionTree;
+import org.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import org.sonarsource.slang.impl.BlockTreeImpl;
 import org.sonarsource.slang.impl.ClassDeclarationTreeImpl;
 import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
@@ -50,7 +56,9 @@ import org.sonarsource.slang.impl.MatchCaseTreeImpl;
 import org.sonarsource.slang.impl.MatchTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.TextRanges;
+import org.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
 import org.sonarsource.slang.impl.TreeMetaDataProvider;
+import org.sonarsource.slang.impl.UnaryExpressionTreeImpl;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -60,12 +68,39 @@ public class RubyVisitor {
 
   private final TreeMetaDataProvider metaDataProvider;
 
+  private static final Map<String, Operator> BINARY_OPERATOR_MAP;
+  private static final Map<String, UnaryExpressionTree.Operator> UNARY_OPERATOR_MAP;
+
+  static {
+    BINARY_OPERATOR_MAP = new HashMap<>();
+    BINARY_OPERATOR_MAP.put("==", BinaryExpressionTree.Operator.EQUAL_TO);
+    BINARY_OPERATOR_MAP.put("!=", BinaryExpressionTree.Operator.NOT_EQUAL_TO);
+    BINARY_OPERATOR_MAP.put("<", BinaryExpressionTree.Operator.LESS_THAN);
+    BINARY_OPERATOR_MAP.put(">", BinaryExpressionTree.Operator.GREATER_THAN);
+    BINARY_OPERATOR_MAP.put("<=", BinaryExpressionTree.Operator.LESS_THAN_OR_EQUAL_TO);
+    BINARY_OPERATOR_MAP.put(">=", BinaryExpressionTree.Operator.GREATER_THAN_OR_EQUAL_TO);
+    BINARY_OPERATOR_MAP.put("||", BinaryExpressionTree.Operator.CONDITIONAL_OR);
+    BINARY_OPERATOR_MAP.put("&&", BinaryExpressionTree.Operator.CONDITIONAL_AND);
+    BINARY_OPERATOR_MAP.put("+", BinaryExpressionTree.Operator.PLUS);
+    BINARY_OPERATOR_MAP.put("-", BinaryExpressionTree.Operator.MINUS);
+    BINARY_OPERATOR_MAP.put("*", BinaryExpressionTree.Operator.TIMES);
+    BINARY_OPERATOR_MAP.put("/", BinaryExpressionTree.Operator.DIVIDED_BY);
+
+    UNARY_OPERATOR_MAP = new HashMap<>();
+    UNARY_OPERATOR_MAP.put("!", UnaryExpressionTree.Operator.NEGATE);
+    UNARY_OPERATOR_MAP.put("not", UnaryExpressionTree.Operator.NEGATE);
+  }
+
   public RubyVisitor(TreeMetaDataProvider metaDataProvider) {
     this.metaDataProvider = metaDataProvider;
   }
 
   public Tree visitNode(AstNode node, List<Object> children) {
     switch (node.type()) {
+      case "and":
+        return createLogicalOperation(node, children, Operator.CONDITIONAL_AND);
+      case "begin":
+        return createFromBeginNode(node, children);
       case "case":
         return createMatchTree(node, children);
       case "const":
@@ -75,10 +110,17 @@ public class RubyVisitor {
       case "def":
       case "defs":
         return createFunctionDeclarationTree(node, children);
-      case "int":
-        return createLiteralTree(node, children);
       case "if":
         return createIfTree(node, children);
+      case "int":
+        return createLiteralTree(node, children);
+      case "send":
+        return createFromSendNode(node, children);
+      case "or":
+        return createLogicalOperation(node, children, Operator.CONDITIONAL_OR);
+      case "true":
+      case "false":
+        return new LiteralTreeImpl(metaData(node), node.type());
       case "when":
         return createCaseTree(node, children);
       default:
@@ -96,11 +138,11 @@ public class RubyVisitor {
   }
 
   private Tree createMatchTree(AstNode node, List<Object> children) {
-    Token caseKeywordToken = getTokenByAttribute(node,"keyword");
+    Token caseKeywordToken = getTokenByAttribute(node, "keyword");
 
     List<MatchCaseTree> whens = children.stream()
       .filter(tree -> tree instanceof MatchCaseTree)
-      .map(tree -> (MatchCaseTree)tree)
+      .map(tree -> (MatchCaseTree) tree)
       .collect(Collectors.toList());
 
     Tree lastClause = (Tree) children.get(children.size() - 1);
@@ -112,6 +154,42 @@ public class RubyVisitor {
     }
 
     return new MatchTreeImpl(metaData(node), (Tree) children.get(0), whens, caseKeywordToken);
+  }
+
+  private Tree createLogicalOperation(AstNode node, List<Object> children, Operator operator) {
+    Tree left = (Tree) children.get(0);
+    Tree right = (Tree) children.get(1);
+    Token operatorToken = getTokenByAttribute(node, "operator");
+    return new BinaryExpressionTreeImpl(metaData(node), operator, operatorToken, left, right);
+  }
+
+  private Tree createFromBeginNode(AstNode node, List<Object> children) {
+    Optional<Token> beginToken = lookForTokenByAttribute(node, "begin");
+    Optional<Token> endToken = lookForTokenByAttribute(node, "end");
+    if (beginToken.isPresent() && endToken.isPresent() && children.size() == 1 && beginToken.get().text().equals("(")) {
+      return new ParenthesizedExpressionTreeImpl(metaData(node), ((Tree) children.get(0)), beginToken.get(), endToken.get());
+    }
+
+    return createNativeTree(node, children);
+  }
+
+  private Tree createFromSendNode(AstNode node, List<Object> children) {
+    Object callee = children.get(1);
+    if (callee instanceof RubySymbol) {
+      String calleeSymbol = ((RubySymbol) callee).asJavaString();
+      if (UNARY_OPERATOR_MAP.containsKey(calleeSymbol)) {
+        Tree argument = (Tree) children.get(0);
+        return new UnaryExpressionTreeImpl(metaData(node), UNARY_OPERATOR_MAP.get(calleeSymbol), argument);
+
+      } else if (BINARY_OPERATOR_MAP.containsKey(calleeSymbol)) {
+        Tree left = (Tree) children.get(0);
+        Tree right = (Tree) children.get(2);
+        Token operatorToken = getTokenByAttribute(node, "selector");
+        return new BinaryExpressionTreeImpl(metaData(node), BINARY_OPERATOR_MAP.get(calleeSymbol), operatorToken, left, right);
+      }
+    }
+
+    return createNativeTree(node, children);
   }
 
   private FunctionDeclarationTree createFunctionDeclarationTree(AstNode node, List<Object> children) {
@@ -180,7 +258,7 @@ public class RubyVisitor {
 
   private Tree createIfTree(AstNode node, List<Object> children) {
     Optional<Token> mainKeyword = lookForTokenByAttribute(node, "keyword");
-    if (!mainKeyword.isPresent()|| mainKeyword.get().text().equals("unless")) {
+    if (!mainKeyword.isPresent() || mainKeyword.get().text().equals("unless")) {
       // Ternary operator and "unless" are not considered as "IfTree" for now
       return createNativeTree(node, children);
     }
@@ -269,11 +347,8 @@ public class RubyVisitor {
 
   private Token getTokenByAttribute(AstNode node, String attribute) {
     Optional<Token> token = lookForTokenByAttribute(node, attribute);
-    if (token.isPresent()) {
-      return token.get();
-    } else {
-      throw new IllegalStateException(String.format("No attribute '%s' found for node of type '%s'", attribute, node.type()));
-    }
+    return token.orElseThrow(() ->
+      new IllegalStateException(String.format("No attribute '%s' found for node of type '%s'", attribute, node.type())));
   }
 
 }
