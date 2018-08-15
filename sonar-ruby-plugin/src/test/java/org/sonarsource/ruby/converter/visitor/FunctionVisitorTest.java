@@ -36,6 +36,7 @@ public class FunctionVisitorTest extends AbstractRubyConverterTest {
   public void simple_function() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo(p)\n puts 'hello'\nend");
     assertTree(tree.name()).isIdentifier("foo");
+    assertTree(tree.name()).hasTextRange(1,4,1,7);
     assertThat(tree.modifiers()).isEmpty();
     assertThat(tree.returnType()).isNull();
     assertThat(tree.formalParameters()).hasSize(1);
