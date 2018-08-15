@@ -59,6 +59,11 @@ public class MatchCaseTreeImpl extends BaseTreeImpl implements MatchCaseTree {
       .map(Token::textRange)
       .filter(t -> t.start().compareTo(bodyRange.start()) < 0)
       .collect(Collectors.toList());
+
+    // for ruby when body is empty, "when expr" is body meta, so there is nothing before
+    if (tokenRangesBeforeBody.isEmpty()) {
+      return bodyRange;
+    }
     return TextRanges.merge(tokenRangesBeforeBody);
   }
 

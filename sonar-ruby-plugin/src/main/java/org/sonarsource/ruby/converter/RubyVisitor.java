@@ -19,7 +19,10 @@
  */
 package org.sonarsource.ruby.converter;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
@@ -31,6 +34,7 @@ import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.LiteralTree;
+import org.sonarsource.slang.api.MatchCaseTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
@@ -42,6 +46,8 @@ import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.IfTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
+import org.sonarsource.slang.impl.MatchCaseTreeImpl;
+import org.sonarsource.slang.impl.MatchTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.TextRanges;
 import org.sonarsource.slang.impl.TreeMetaDataProvider;
@@ -60,6 +66,8 @@ public class RubyVisitor {
 
   public Tree visitNode(AstNode node, List<Object> children) {
     switch (node.type()) {
+      case "case":
+        return createMatchTree(node, children);
       case "const":
         return createIdentifierTree(node, children);
       case "class":
@@ -71,9 +79,39 @@ public class RubyVisitor {
         return createLiteralTree(node, children);
       case "if":
         return createIfTree(node, children);
+      case "when":
+        return createCaseTree(node, children);
       default:
         return createNativeTree(node, children);
     }
+  }
+
+  private Tree createCaseTree(AstNode node, List<Object> children) {
+    Tree expression = ((Tree) children.get(0));
+    Tree body = ((Tree) children.get(1));
+    if (body == null) {
+      body = new BlockTreeImpl(metaData(node), Collections.emptyList());
+    }
+    return new MatchCaseTreeImpl(metaData(node), expression, body);
+  }
+
+  private Tree createMatchTree(AstNode node, List<Object> children) {
+    Token caseKeywordToken = getTokenByAttribute(node,"keyword");
+
+    List<MatchCaseTree> whens = children.stream()
+      .filter(tree -> tree instanceof MatchCaseTree)
+      .map(tree -> (MatchCaseTree)tree)
+      .collect(Collectors.toList());
+
+    Tree lastClause = (Tree) children.get(children.size() - 1);
+
+    if (lastClause != null) {
+      Token elseKeywordToken = getTokenByAttribute(node, "else");
+      TreeMetaData fullElseClauseMeta = metaDataProvider.metaData(TextRanges.merge(Arrays.asList(elseKeywordToken.textRange(), lastClause.textRange())));
+      whens.add(new MatchCaseTreeImpl(fullElseClauseMeta, null, lastClause));
+    }
+
+    return new MatchTreeImpl(metaData(node), (Tree) children.get(0), whens, caseKeywordToken);
   }
 
   private FunctionDeclarationTree createFunctionDeclarationTree(AstNode node, List<Object> children) {
@@ -141,18 +179,18 @@ public class RubyVisitor {
 
 
   private Tree createIfTree(AstNode node, List<Object> children) {
-    Token mainKeyword = tokenForAttribute(node, "keyword");
-    if (mainKeyword == null || mainKeyword.text().equals("unless")) {
+    Optional<Token> mainKeyword = lookForTokenByAttribute(node, "keyword");
+    if (!mainKeyword.isPresent()|| mainKeyword.get().text().equals("unless")) {
       // Ternary operator and "unless" are not considered as "IfTree" for now
       return createNativeTree(node, children);
     }
 
-    Token elseKeyword = tokenForAttribute(node, "else");
-    Tree condition = (Tree) children.get(0);
-    Tree thenBranch = getThenBranch(node, mainKeyword, elseKeyword, (Tree) children.get(1));
+    Optional<Token> elseKeywordOptional = lookForTokenByAttribute(node, "else");
+    Token elseKeyword = elseKeywordOptional.orElse(null);
+    Tree thenBranch = getThenBranch(node, mainKeyword.get(), elseKeyword, (Tree) children.get(1));
     Tree elseBranch = getElseBranch(node, elseKeyword, (Tree) children.get(2));
 
-    return new IfTreeImpl(metaData(node), condition, thenBranch, elseBranch, mainKeyword, elseKeyword);
+    return new IfTreeImpl(metaData(node), (Tree) children.get(0), thenBranch, elseBranch, mainKeyword.get(), elseKeyword);
   }
 
   private Tree getThenBranch(AstNode node, Token mainKeyword, @Nullable Token elseKeyword, @Nullable Tree thenBranch) {
@@ -221,13 +259,21 @@ public class RubyVisitor {
     return metaDataProvider.metaData(textRange);
   }
 
-  @Nullable
-  private Token tokenForAttribute(AstNode node, String attribute) {
+  private Optional<Token> lookForTokenByAttribute(AstNode node, String attribute) {
     TextRange mainKeywordTextRange = node.textRangeForAttribute(attribute);
     if (mainKeywordTextRange != null) {
-      return metaDataProvider.metaData(mainKeywordTextRange).tokens().get(0);
+      return Optional.of(metaDataProvider.metaData(mainKeywordTextRange).tokens().get(0));
     }
-    return null;
+    return Optional.empty();
+  }
+
+  private Token getTokenByAttribute(AstNode node, String attribute) {
+    Optional<Token> token = lookForTokenByAttribute(node, attribute);
+    if (token.isPresent()) {
+      return token.get();
+    } else {
+      throw new IllegalStateException(String.format("No attribute '%s' found for node of type '%s'", attribute, node.type()));
+    }
   }
 
 }
