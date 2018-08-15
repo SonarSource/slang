@@ -23,8 +23,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
@@ -40,6 +40,7 @@ import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.MatchCaseTree;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
@@ -55,12 +56,12 @@ import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.MatchCaseTreeImpl;
 import org.sonarsource.slang.impl.MatchTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
-import org.sonarsource.slang.impl.TextRanges;
 import org.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
+import org.sonarsource.slang.impl.TextRangeImpl;
+import org.sonarsource.slang.impl.TextRanges;
 import org.sonarsource.slang.impl.TreeMetaDataProvider;
 import org.sonarsource.slang.impl.UnaryExpressionTreeImpl;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
@@ -100,6 +101,7 @@ public class RubyVisitor {
       case "and":
         return createLogicalOperation(node, children, Operator.CONDITIONAL_AND);
       case "begin":
+      case "kwbegin":
         return createFromBeginNode(node, children);
       case "case":
         return createMatchTree(node, children);
@@ -153,7 +155,23 @@ public class RubyVisitor {
       whens.add(new MatchCaseTreeImpl(fullElseClauseMeta, null, lastClause));
     }
 
-    return new MatchTreeImpl(metaData(node), (Tree) children.get(0), whens, caseKeywordToken);
+    TreeMetaData treeMetaData = metaData(node);
+    if (!treeMetaData.commentsInside().isEmpty()) {
+      // Fix range for empty "when" clauses that have potential comments inside them
+      TextRange nextRange = node.textRangeForAttribute("end");
+      for (int i = whens.size() - 1; i >= 0; i--) {
+        MatchCaseTree caseTree = whens.get(i);
+        if (nextRange != null && caseTree.body() instanceof BlockTree && ((BlockTree) caseTree.body()).statementOrExpressions().isEmpty()) {
+          // update range of empty "when" clauses to include potential following comments
+          Tree newBody = createEmptyBlockTree(caseTree.textRange().start(), nextRange.start());
+          MatchCaseTree newCaseTree = new MatchCaseTreeImpl(newBody.metaData(), caseTree.expression(), newBody);
+          whens.set(i, newCaseTree);
+        }
+        nextRange = caseTree.textRange();
+      }
+    }
+
+    return new MatchTreeImpl(treeMetaData, (Tree) children.get(0), whens, caseKeywordToken);
   }
 
   private Tree createLogicalOperation(AstNode node, List<Object> children, Operator operator) {
@@ -170,7 +188,8 @@ public class RubyVisitor {
       return new ParenthesizedExpressionTreeImpl(metaData(node), ((Tree) children.get(0)), beginToken.get(), endToken.get());
     }
 
-    return createNativeTree(node, children);
+    List<Tree> nonNullChildren = children.stream().flatMap(child -> treeForChild(child, metaData(node))).collect(Collectors.toList());
+    return new BlockTreeImpl(metaData(node), nonNullChildren);
   }
 
   private Tree createFromSendNode(AstNode node, List<Object> children) {
@@ -221,7 +240,9 @@ public class RubyVisitor {
 
     BlockTree body;
     Tree rubyBodyBlock = (Tree) children.get(2 + childrenIndexShift);
-    if (rubyBodyBlock != null) {
+    if (rubyBodyBlock instanceof BlockTree) {
+      body = (BlockTree) rubyBodyBlock;
+    } else if (rubyBodyBlock != null) {
       List<Tree> statements = singletonList(rubyBodyBlock);
       body = new BlockTreeImpl(rubyBodyBlock.metaData(), statements);
     } else {
@@ -278,9 +299,8 @@ public class RubyVisitor {
       // empty "then" branch body and no "else" branch
       return new BlockTreeImpl(metaData(node), emptyList());
     } else {
-      // empty "then" branch, with a "else" branch. Meta for empty "then" block will be "if...else" part
-      TreeMetaData emptyIfMetadata = metaDataProvider.metaData(TextRanges.merge(asList(mainKeyword.textRange(), elseKeyword.textRange())));
-      return new BlockTreeImpl(emptyIfMetadata, emptyList());
+      // empty "then" branch, with a "else" branch. Meta for empty "then" block will be "if..." until next "else" keyword
+      return createEmptyBlockTree(mainKeyword.textRange().start(), elseKeyword.textRange().start());
     }
   }
 
@@ -295,13 +315,16 @@ public class RubyVisitor {
       return elseBranch;
     } else if (elseKeyword != null) {
       // "else" branch present but with empty body. Meta for empty "else" block will be "else...end" part
-      TextRange endRange = node.textRangeForAttribute("end");
-      TreeMetaData emptyElseMetadata = metaDataProvider.metaData(TextRanges.merge(asList(elseKeyword.textRange(), endRange)));
-      return new BlockTreeImpl(emptyElseMetadata, emptyList());
+      return createEmptyBlockTree(elseKeyword.textRange().start(), metaData(node).textRange().end());
     } else {
       // no "else" branch
       return null;
     }
+  }
+
+  private BlockTree createEmptyBlockTree(TextPointer from, TextPointer to) {
+    TextRange emptyBlockRange = new TextRangeImpl(from, to);
+    return new BlockTreeImpl(metaDataProvider.metaData(emptyBlockRange), emptyList());
   }
 
   @CheckForNull

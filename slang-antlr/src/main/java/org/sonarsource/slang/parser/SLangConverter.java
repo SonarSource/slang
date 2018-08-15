@@ -207,7 +207,7 @@ public class SLangConverter implements ASTConverter {
       } else if (ctx.classDeclaration() != null) {
         return visit(ctx.classDeclaration());
       } else {
-        return visit(ctx.statement());
+        return visit(ctx.controlBlock());
       }
     }
 

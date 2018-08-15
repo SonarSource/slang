@@ -43,7 +43,7 @@ public class StatementsVisitor extends TreeVisitor<TreeContext> {
 
     register(TopLevelTree.class, (ctx, tree) ->
       tree.declarations().forEach(decl -> {
-        if (!isDeclaration(decl) && !isNative(decl)) {
+        if (!isDeclaration(decl) && !isNative(decl) && !isBlock(decl)) {
           statements++;
         }
       }));
@@ -67,4 +67,9 @@ public class StatementsVisitor extends TreeVisitor<TreeContext> {
   private static boolean isNative(Tree tree) {
     return tree instanceof NativeTree;
   }
+
+  private static boolean isBlock(Tree tree) {
+    return tree instanceof BlockTree;
+  }
+
 }

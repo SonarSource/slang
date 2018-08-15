@@ -7,7 +7,7 @@ slangFile
 typeDeclaration
   :  classDeclaration
   |  methodDeclaration
-  |  statement SEMICOLON
+  |  controlBlock SEMICOLON
   ;
 
 classDeclaration
