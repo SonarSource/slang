@@ -47,7 +47,6 @@ public class CheckList {
     IdenticalBinaryOperandCheck.class,
     IdenticalConditionsCheck.class,
     IfConditionalAlwaysTrueOrFalseCheck.class,
-    MatchCaseTooBigCheck.class,
     OneStatementPerLineCheck.class,
     RedundantParenthesesCheck.class,
     SelfAssignmentCheck.class,
