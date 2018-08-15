@@ -21,33 +21,42 @@ package org.sonarsource.ruby.converter.visitor;
 
 import org.junit.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
-import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
+import org.sonarsource.slang.api.BlockTree;
+import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.NativeTree;
-import org.sonarsource.slang.api.ParenthesizedExpressionTree;
 import org.sonarsource.slang.api.Tree;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class ParenthesizedVisitorTest extends AbstractRubyConverterTest {
+public class BlockVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void test() {
-    ParenthesizedExpressionTree parenthesizedTree = (ParenthesizedExpressionTree) rubyStatement("(a + b)");
-    assertTree(parenthesizedTree.expression()).isBinaryExpression(Operator.PLUS);
-    assertThat(parenthesizedTree.leftParenthesis().text()).isEqualTo("(");
-    assertThat(parenthesizedTree.rightParenthesis().text()).isEqualTo(")");
+  public void explicit_begin_block() {
+    BlockTree tree = (BlockTree) rubyStatement("" +
+      "begin\n" +
+      "  1\n" +
+      "  begin\n" +
+      "    2; 3;\n" +
+      "  end\n" +
+      "end");
 
-    parenthesizedTree = (ParenthesizedExpressionTree) rubyStatement("(1)");
-    assertTree(parenthesizedTree.expression()).isLiteral("1");
-    assertThat(parenthesizedTree.leftParenthesis().text()).isEqualTo("(");
-    assertThat(parenthesizedTree.rightParenthesis().text()).isEqualTo(")");
+    assertTree(tree).isBlock(LiteralTree.class, BlockTree.class);
+    assertRange(tree.textRange()).hasRange(1, 0, 6, 3);
+
+    BlockTree innerBlock = (BlockTree) tree.children().get(1);
+    assertRange(innerBlock.textRange()).hasRange(3, 2, 5, 5);
+    assertThat(innerBlock.statementOrExpressions()).hasSize(2);
+    assertTree(innerBlock.statementOrExpressions().get(0)).isLiteral("2");
+    assertTree(innerBlock.statementOrExpressions().get(1)).isLiteral("3");
   }
 
   @Test
-  public void not_expression_if_multiple_elements() {
-    Tree beginAsStatementList = rubyStatement("(a; b;)");
-    assertTree(beginAsStatementList).isBlock(NativeTree.class, NativeTree.class);
+  public void implicit_begin_block() {
+    Tree beginAsStatementList = rubyStatement("1; b;");
+    assertTree(beginAsStatementList).isBlock(LiteralTree.class, NativeTree.class);
+    assertTree(beginAsStatementList.children().get(0)).isLiteral("1");
   }
 
 }

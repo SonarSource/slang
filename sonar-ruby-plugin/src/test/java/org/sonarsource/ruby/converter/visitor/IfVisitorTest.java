@@ -21,6 +21,7 @@ package org.sonarsource.ruby.converter.visitor;
 
 import org.junit.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
+import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.Token;
@@ -34,13 +35,14 @@ public class IfVisitorTest extends AbstractRubyConverterTest {
 
   @Test
   public void if_statements_without_else() {
-    IfTree emptyIfTree = (IfTree) rubyStatement("if 1\nend");
+    IfTree emptyIfTree = (IfTree) rubyStatement("if 1\n# comment\nend");
     assertTree(emptyIfTree.condition()).isLiteral("1");
     assertTree(emptyIfTree.thenBranch()).isBlock();
     assertThat(emptyIfTree.thenBranch().metaData().tokens())
       .extracting(Token::text)
       .containsExactly("if", "1", "end");
-    assertRange(emptyIfTree.thenBranch().textRange()).hasRange(1, 0, 2, 3);
+    assertThat(emptyIfTree.thenBranch().metaData().commentsInside()).extracting(Comment::text).containsExactly("# comment");
+    assertRange(emptyIfTree.thenBranch().textRange()).hasRange(1, 0, 3, 3);
     assertTree(emptyIfTree.elseBranch()).isNull();
     assertThat(emptyIfTree.ifKeyword().text()).isEqualTo("if");
     assertThat(emptyIfTree.elseKeyword()).isNull();
@@ -66,16 +68,19 @@ public class IfVisitorTest extends AbstractRubyConverterTest {
 
   @Test
   public void chained_if_statements() {
-    IfTree ifElseTree = (IfTree) rubyStatement("if 1\nelse\nend");
+    IfTree ifElseTree = (IfTree) rubyStatement("if 1\nelse\n# comment in else\nend");
     assertTree(ifElseTree.condition()).isLiteral("1");
     assertTree(ifElseTree.thenBranch()).isBlock();
     assertThat(ifElseTree.thenBranch().metaData().tokens())
       .extracting(Token::text)
-      .containsExactly("if", "1", "else");
+      .containsExactly("if", "1");
     assertTree(ifElseTree.elseBranch()).isBlock();
     assertThat(ifElseTree.elseBranch().metaData().tokens())
       .extracting(Token::text)
       .containsExactly("else", "end");
+    assertThat(ifElseTree.elseBranch().metaData().commentsInside())
+      .extracting(Comment::text)
+      .containsExactly("# comment in else");
     assertThat(ifElseTree.ifKeyword().text()).isEqualTo("if");
     assertThat(ifElseTree.elseKeyword().text()).isEqualTo("else");
 

@@ -36,7 +36,7 @@ public class FunctionVisitorTest extends AbstractRubyConverterTest {
   public void simple_function() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo(p)\n puts 'hello'\nend");
     assertTree(tree.name()).isIdentifier("foo");
-    assertTree(tree.name()).hasTextRange(1,4,1,7);
+    assertTree(tree.name()).hasTextRange(1, 4, 1, 7);
     assertThat(tree.modifiers()).isEmpty();
     assertThat(tree.returnType()).isNull();
     assertThat(tree.formalParameters()).hasSize(1);
@@ -55,7 +55,7 @@ public class FunctionVisitorTest extends AbstractRubyConverterTest {
     assertThat(tree.formalParameters()).isEmpty();
     assertThat(tree.body()).isNotNull();
     assertThat(tree.body().statementOrExpressions()).isEmpty();
-    assertRange(tree.body().textRange()).hasRange(1,0,1,12);
+    assertRange(tree.body().textRange()).hasRange(1, 0, 1, 12);
     assertThat(tree.nativeChildren()).isEmpty();
   }
 
@@ -66,8 +66,8 @@ public class FunctionVisitorTest extends AbstractRubyConverterTest {
     assertThat(tree.modifiers()).isEmpty();
     assertThat(tree.returnType()).isNull();
     assertThat(tree.formalParameters()).isEmpty();
-    assertThat(tree.body().statementOrExpressions()).hasSize(1);
-    assertThat(((NativeTree) tree.body().statementOrExpressions().get(0)).nativeKind()).isEqualTo(nativeKind("begin"));
+    assertThat(tree.body().statementOrExpressions()).hasSize(2);
+    assertTree(tree.body()).isBlock(NativeTree.class, NativeTree.class);
     assertThat(tree.nativeChildren()).hasSize(1);
     assertTree(tree.nativeChildren().get(0)).isEquivalentTo(getNativeForVar("a"));
   }

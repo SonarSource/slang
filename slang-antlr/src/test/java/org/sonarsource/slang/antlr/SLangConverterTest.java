@@ -71,6 +71,12 @@ public class SLangConverterTest {
   private SLangConverter converter = new SLangConverter();
 
   @Test
+  public void top_level_block() {
+    Tree tree = converter.parse("{ 2; };").children().get(0);
+    assertTree(tree).isBlock(LiteralTree.class);
+  }
+
+  @Test
   public void simple_binary_expression() {
     BinaryExpressionTree binary = parseBinary("x + 1;");
     assertTree(binary).isBinaryExpression(Operator.PLUS).hasTextRange(1, 0, 1, 5);

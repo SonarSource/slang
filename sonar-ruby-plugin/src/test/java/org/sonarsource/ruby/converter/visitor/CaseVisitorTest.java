@@ -55,8 +55,7 @@ public class CaseVisitorTest extends AbstractRubyConverterTest {
     assertThat(((NativeTree) tree.cases().get(1).body()).nativeKind()).isEqualTo(nativeKind("send"));
 
     assertThat(tree.cases().get(2).expression()).isNotNull();
-    assertThat(tree.cases().get(2).body()).isInstanceOf(NativeTree.class);
-    assertThat(((NativeTree) tree.cases().get(2).body()).nativeKind()).isEqualTo(nativeKind("begin"));
+    assertTree(tree.cases().get(2).body()).isBlock(NativeTree.class, NativeTree.class);
 
     MatchCaseTree elseMatchCase = tree.cases().get(3);
     assertThat(elseMatchCase.expression()).isNull();

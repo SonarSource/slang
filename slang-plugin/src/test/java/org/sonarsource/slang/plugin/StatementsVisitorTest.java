@@ -19,9 +19,9 @@
  */
 package org.sonarsource.slang.plugin;
 
+import org.junit.Test;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.parser.SLangConverter;
-import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,12 +33,13 @@ public class StatementsVisitorTest {
   }
 
   @Test
-  public void should_count_top_level_without_natives() throws Exception {
+  public void should_count_top_level_without_natives_and_blocks() throws Exception {
     String content = "native[] { };" +
       "foo;" + // +1
       "class A{};" +
       "if (a) {};" + // +1
-      "fun foo() {};";
+      "fun foo() {};" +
+      "{};";
     assertThat(statements(content)).isEqualTo(2);
   }
 
@@ -50,8 +51,9 @@ public class StatementsVisitorTest {
       "if (a) { foo; bar; };" + // +1 +1 +1
       "class A{};" +
       "fun bar(){};" +
-      "};";
-    assertThat(statements(content)).isEqualTo(5);
+      "};" +
+      "{ 2; 3; };"; // +1 +1
+    assertThat(statements(content)).isEqualTo(7);
   }
 
 }

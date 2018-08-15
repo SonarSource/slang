@@ -67,7 +67,7 @@ public class MeasuresTest extends TestBase {
     assertThat(getMeasureAsInt("files")).isEqualTo(1);
     assertThat(getMeasureAsInt("file.rb", "ncloc")).isEqualTo(8);
     assertThat(getMeasureAsInt("file.rb", "comment_lines")).isEqualTo(12);
-    assertThat(getMeasureAsInt("file.rb", "statements")).isEqualTo(1);
+    assertThat(getMeasureAsInt("file.rb", "statements")).isEqualTo(5);
     assertThat(getMeasureAsInt("file.rb", "cognitive_complexity")).isEqualTo(0);
     assertThat(getMeasure("file.rb", "ncloc_data").getValue()).isEqualTo("16=1;2=1;3=1;20=1;6=1;7=1;14=1;15=1");
 
