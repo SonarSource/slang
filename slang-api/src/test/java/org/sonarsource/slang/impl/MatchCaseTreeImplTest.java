@@ -19,14 +19,27 @@
  */
 package org.sonarsource.slang.impl;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import org.junit.Test;
+import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.MatchCaseTree;
+import org.sonarsource.slang.api.Token;
+import org.sonarsource.slang.api.Token.Type;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
-import org.junit.Test;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.sonarsource.slang.impl.TextRanges.range;
 
 public class MatchCaseTreeImplTest {
+
+  private static final List<Token> TOKENS = Arrays.asList(
+    new TokenImpl(range(1, 1, 1, 5), "when", Type.OTHER),
+    new TokenImpl(range(1, 7, 1, 8), "1", Type.OTHER),
+    new TokenImpl(range(1, 9, 1, 10), "a", Type.OTHER));
 
   @Test
   public void test() {
@@ -40,4 +53,28 @@ public class MatchCaseTreeImplTest {
 
     assertThat(new MatchCaseTreeImpl(meta, null, body).children()).containsExactly(body);
   }
+
+  @Test
+  public void rangeToHighlight() {
+    TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(emptyList(), TOKENS);
+    TreeMetaData matchCaseMetaData = metaDataProvider.metaData(range(1, 1, 1, 10));
+    TreeMetaData bodyMetaData = metaDataProvider.metaData(range(1, 9, 1, 10));
+    BlockTree body = new BlockTreeImpl(bodyMetaData, Collections.singletonList(new IdentifierTreeImpl(bodyMetaData, "a")));
+
+    assertThat(new MatchCaseTreeImpl(matchCaseMetaData, null, body).rangeToHighlight())
+      .isEqualTo(range(1, 1, 1, 8));
+  }
+
+  @Test
+  public void rangeToHighlight_with_empty_body() {
+    TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(emptyList(), TOKENS);
+    TreeMetaData matchCaseMetaData = metaDataProvider.metaData(range(1, 1, 1, 8));
+    TreeMetaData bodyMetaData = metaDataProvider.metaData(range(1, 1, 1, 8));
+    BlockTree body = new BlockTreeImpl(bodyMetaData, emptyList());
+
+    assertThat(new MatchCaseTreeImpl(matchCaseMetaData, null, body).rangeToHighlight())
+      .isEqualTo(range(1, 1, 1, 8));
+  }
+
+
 }
