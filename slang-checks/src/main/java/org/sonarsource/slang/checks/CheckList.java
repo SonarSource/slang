@@ -55,7 +55,6 @@ public class CheckList {
     StringLiteralDuplicatedCheck.class,
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
-    TooManyCasesCheck.class,
     UnusedFunctionParameterCheck.class,
     UnusedLocalVariableCheck.class,
     UnusedPrivateMethodCheck.class,
