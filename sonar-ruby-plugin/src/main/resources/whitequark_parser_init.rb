@@ -69,10 +69,6 @@ class AstNode
     end
   end
 
-  def name
-    @node.name
-  end
-
   def asString
     @node.to_s
   end

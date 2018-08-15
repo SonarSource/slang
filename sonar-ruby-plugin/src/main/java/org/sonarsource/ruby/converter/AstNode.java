@@ -19,14 +19,17 @@
  */
 package org.sonarsource.ruby.converter;
 
+import javax.annotation.CheckForNull;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.sonarsource.slang.api.TextRange;
 
 public interface AstNode {
   String type();
 
+  @CheckForNull
   TextRange textRange();
 
+  @CheckForNull
   TextRange textRangeForAttribute(String attribute);
 
   String asString();

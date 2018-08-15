@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import org.jruby.RubySymbol;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.ClassDeclarationTree;
@@ -30,6 +31,7 @@ import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
 import org.sonarsource.slang.impl.BlockTreeImpl;
@@ -80,7 +82,11 @@ public class RubyVisitor {
     int childrenIndexShift = isSingletonMethod ? 1 : 0;
 
     Object name = children.get(0 + childrenIndexShift);
-    TreeMetaData metaData = metaDataProvider.metaData(node.textRangeForAttribute("name"));
+    TextRange nameRange = node.textRangeForAttribute("name");
+    if (nameRange == null) {
+      throw new IllegalStateException("Missing range for function name. Node: " + node.asString());
+    }
+    TreeMetaData metaData = metaDataProvider.metaData(nameRange);
     IdentifierTree identifier = new IdentifierTreeImpl(metaData, String.valueOf(name));
 
     List<Tree> parameters;
@@ -109,7 +115,11 @@ public class RubyVisitor {
   }
 
   private ClassDeclarationTree createClassDeclarationTree(AstNode node, List<Object> children) {
-    return new ClassDeclarationTreeImpl(metaData(node), (IdentifierTree) children.get(0), createNativeTree(node, children));
+    NativeTree nativeTree = createNativeTree(node, children);
+    if (nativeTree == null) {
+      throw new IllegalStateException("Failed to create ClassDeclarationTree for node " + node.asString());
+    }
+    return new ClassDeclarationTreeImpl(metaData(node), (IdentifierTree) children.get(0), nativeTree);
   }
 
   private LiteralTree createLiteralTree(AstNode node, List<Object> children) {
@@ -118,6 +128,7 @@ public class RubyVisitor {
   }
 
   private IdentifierTree createIdentifierTree(AstNode node, List<Object> children) {
+    // FIXME add scope node child to current node
     String name = ((RubySymbol) children.get(1)).asJavaString();
     return new IdentifierTreeImpl(metaData(node), name);
   }
@@ -132,19 +143,26 @@ public class RubyVisitor {
     return new NativeTreeImpl(metaData(node), new RubyNativeKind(node.type()), nonNullChildren);
   }
 
-  private static Stream<Tree> treeForChild(Object child, TreeMetaData treeMetaData) {
+  private static Stream<Tree> treeForChild(@Nullable Object child, TreeMetaData treeMetaData) {
     if (child instanceof Tree) {
       return Stream.of((Tree) child);
     } else if (child instanceof RubySymbol) {
-      return Stream.of(new NativeTreeImpl(treeMetaData, new RubyNativeKind(String.valueOf(child)), emptyList()));
+      String type = ((RubySymbol) child).asJavaString();
+      return Stream.of(new NativeTreeImpl(treeMetaData, new RubyNativeKind(type), emptyList()));
     } else if (child instanceof String) {
       return Stream.of(new NativeTreeImpl(treeMetaData, new RubyNativeKind((String) child), emptyList()));
+    } else if (child != null) {
+      return Stream.of(new NativeTreeImpl(treeMetaData, new RubyNativeKind(String.valueOf(child)), emptyList()));
     } else {
       return Stream.empty();
     }
   }
 
   private TreeMetaData metaData(AstNode node) {
-    return metaDataProvider.metaData(node.textRange());
+    TextRange textRange = node.textRange();
+    if (textRange == null) {
+      throw new IllegalStateException("Attempt to retrieve metadata for null location. Node: " + node.asString());
+    }
+    return metaDataProvider.metaData(textRange);
   }
 }
