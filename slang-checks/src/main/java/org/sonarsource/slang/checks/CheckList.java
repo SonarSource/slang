@@ -42,7 +42,6 @@ public class CheckList {
     FunctionCognitiveComplexityCheck.class,
     HardcodedCredentialsCheck.class,
     HardcodedIpCheck.class,
-    IdenticalBinaryOperandCheck.class,
     IdenticalConditionsCheck.class,
     SelfAssignmentCheck.class,
     TooComplexExpressionCheck.class,
