@@ -105,13 +105,11 @@ public class RubyVisitor {
     nodeTypeStack.push(node.type());
   }
 
-  public Tree afterVisit(AstNode node, List<Object> children) {
-    Tree result = visitNode(node, children);
+  public void afterVisit(Tree tree) {
     nodeTypeStack.pop();
-    return result;
   }
 
-  private Tree visitNode(AstNode node, List<Object> children) {
+  public Tree visitNode(AstNode node, List<Object> children) {
     switch (node.type()) {
       case "and":
         return createLogicalOperation(node, children, Operator.CONDITIONAL_AND);

@@ -19,9 +19,9 @@
  */
 package org.sonarsource.ruby.converter.visitor;
 
-import java.util.Arrays;
 import org.junit.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
+import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.StringLiteralTree;
 
@@ -50,9 +50,21 @@ public class StringLiteralVisitorTest extends AbstractRubyConverterTest {
       "      end\n" +
       "    CODE\n");
     assertTree(tree).hasChildren(7);
-    Class[] childrenClasses = new Class[7];
-    Arrays.fill(childrenClasses, NativeTree.class);
-    assertTree(tree).hasChildren(childrenClasses);
+    assertTree(tree).hasChildren(
+      NativeTree.class,
+      BlockTree.class,
+      NativeTree.class,
+      NativeTree.class,
+      BlockTree.class,
+      NativeTree.class,
+      NativeTree.class);
+  }
+
+  @Test
+  public void interpolated_string() {
+    NativeTree tree =  (NativeTree) rubyStatement("\"foo#{bar}baz\"");
+    assertTree(tree).hasChildren(3);
+    assertTree(tree).hasChildren(NativeTree.class, BlockTree.class, NativeTree.class);
   }
 
 

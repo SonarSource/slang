@@ -83,10 +83,6 @@ public abstract class AbstractRubyConverterTest {
     return new LiteralTreeImpl(null, value);
   }
 
-  protected static StringLiteralTree stringLiteral(String value) {
-    return new StringLiteralTreeImpl(null, value);
-  }
-
   protected static StringLiteralTree stringLiteral(String value, String content) {
     return new StringLiteralTreeImpl(null, value, content);
   }

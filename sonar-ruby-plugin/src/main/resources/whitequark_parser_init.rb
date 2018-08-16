@@ -49,7 +49,9 @@ class ProcessorBridge < Parser::AST::Processor
     return if node.nil?
     @visitor.beforeVisit(AstNode.new(node))
     node = super
-    @visitor.afterVisit(AstNode.new(node), node.to_a)
+    tree = @visitor.visitNode(AstNode.new(node), node.to_a)
+    @visitor.afterVisit(tree)
+    tree
   end
 
 end
