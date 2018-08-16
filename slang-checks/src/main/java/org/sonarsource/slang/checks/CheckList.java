@@ -44,7 +44,6 @@ public class CheckList {
     HardcodedIpCheck.class,
     IdenticalBinaryOperandCheck.class,
     IdenticalConditionsCheck.class,
-    OneStatementPerLineCheck.class,
     SelfAssignmentCheck.class,
     StringLiteralDuplicatedCheck.class,
     TooComplexExpressionCheck.class,
