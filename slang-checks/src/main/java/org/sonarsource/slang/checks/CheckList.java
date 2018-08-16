@@ -37,7 +37,6 @@ public class CheckList {
     CodeAfterJumpCheck.class,
     DuplicatedFunctionImplementationCheck.class,
     FunctionCognitiveComplexityCheck.class,
-    HardcodedCredentialsCheck.class,
     SelfAssignmentCheck.class,
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
