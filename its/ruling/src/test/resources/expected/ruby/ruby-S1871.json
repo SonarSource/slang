@@ -1,0 +1,11 @@
+{
+'ruby-project:sources/ruby/discourse/app/controllers/admin/users_controller.rb':[
+265,
+],
+'ruby-project:sources/ruby/discourse/lib/search.rb':[
+560,
+],
+'ruby-project:sources/ruby/vagrant/plugins/communicators/winrm/shell.rb':[
+172,
+],
+}
