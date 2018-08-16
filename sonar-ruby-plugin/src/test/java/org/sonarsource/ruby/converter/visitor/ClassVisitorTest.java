@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.Tree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
@@ -37,7 +38,7 @@ public class ClassVisitorTest extends AbstractRubyConverterTest {
     NativeTree nativeClassTree = (NativeTree) tree.children().get(0);
     assertThat(nativeClassTree).isInstanceOf(NativeTree.class);
     assertThat(nativeClassTree.nativeKind()).isEqualTo(nativeKind("class"));
-    assertThat(nativeClassTree.children().get(0)).isEqualTo(tree.identifier());
+    assertThat(nativeClassTree.children().get(0).children().get(0)).isEqualTo(tree.identifier());
   }
 
   @Test
@@ -47,7 +48,19 @@ public class ClassVisitorTest extends AbstractRubyConverterTest {
     NativeTree nativeClassTree = (NativeTree) tree.children().get(0);
     assertThat(nativeClassTree).isInstanceOf(NativeTree.class);
     assertThat(nativeClassTree.nativeKind()).isEqualTo(nativeKind("class"));
-    assertThat(nativeClassTree.children().get(0)).isEqualTo(tree.identifier());
+    assertThat(nativeClassTree.children().get(0).children().get(0)).isEqualTo(tree.identifier());
+  }
+
+  @Test
+  public void namespaced_name() {
+    ClassDeclarationTree tree = (ClassDeclarationTree) rubyStatement("class A::B\nend");
+    assertTree(tree.identifier()).isIdentifier("B");
+    Tree nativeClassTree = tree.children().get(0);
+    Tree nativeForClassName = nativeClassTree.children().get(0);
+    assertThat(nativeForClassName.children().get(1)).isEqualTo(tree.identifier());
+
+    Tree topTreeForScope = nativeForClassName.children().get(0);
+    assertTree(topTreeForScope.children().get(0)).isIdentifier("A");
   }
 
 }

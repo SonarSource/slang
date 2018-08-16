@@ -20,6 +20,7 @@
 package org.sonarsource.ruby.converter;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
@@ -119,7 +120,7 @@ public class RubyVisitor {
       case "case":
         return createMatchTree(node, children);
       case "const":
-        return createIdentifierTree(node, children);
+        return createFromConst(node, children);
       case "class":
         return createClassDeclarationTree(node, children);
       case "def":
@@ -293,7 +294,10 @@ public class RubyVisitor {
     if (nativeTree == null) {
       throw new IllegalStateException("Failed to create ClassDeclarationTree for node " + node.asString());
     }
-    return new ClassDeclarationTreeImpl(metaData(node), (IdentifierTree) children.get(0), nativeTree);
+
+    List<Tree> nameChildren = ((Tree) children.get(0)).children();
+    IdentifierTree classNameIdentifier = (IdentifierTree) nameChildren.get(nameChildren.size() - 1);
+    return new ClassDeclarationTreeImpl(metaData(node), classNameIdentifier, nativeTree);
   }
 
   private LiteralTree createLiteralTree(AstNode node, List<Object> children) {
@@ -301,12 +305,14 @@ public class RubyVisitor {
     return new LiteralTreeImpl(metaData(node), value);
   }
 
-  private IdentifierTree createIdentifierTree(AstNode node, List<Object> children) {
-    // FIXME add scope node child to current node
-    String name = ((RubySymbol) children.get(1)).asJavaString();
-    return new IdentifierTreeImpl(metaData(node), name);
-  }
+  private Tree createFromConst(AstNode node, List<Object> children) {
+    Token nameToken = getTokenByAttribute(node, "name");
+    IdentifierTreeImpl identifierTree = new IdentifierTreeImpl(metaDataProvider.metaData(nameToken.textRange()), nameToken.text());
 
+    ArrayList<Object> newChildren = new ArrayList<>(children);
+    newChildren.set(newChildren.size() - 1, identifierTree);
+    return createNativeTree(node, newChildren);
+  }
 
   private Tree createIfTree(AstNode node, List<Object> children) {
     Optional<Token> mainKeyword = lookForTokenByAttribute(node, "keyword");
