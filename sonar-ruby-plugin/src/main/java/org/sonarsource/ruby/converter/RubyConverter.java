@@ -69,6 +69,7 @@ public class RubyConverter implements ASTConverter {
   private static final String AST_RUBYGEM_PATH = "/ast-2.4.0/lib";
   private static final String PARSER_RUBYGEM_PATH = "/parser-2.5.1.2/lib";
   private static final String COMMENT_TOKEN_TYPE = "tCOMMENT";
+  static final String FILENAME = "(SonarRuby analysis)";
 
   private final RubyRuntimeAdapter rubyRuntimeAdapter;
   private final Ruby runtime;
@@ -118,7 +119,7 @@ public class RubyConverter implements ASTConverter {
   }
 
   private Tree parseContent(String content) {
-    Object[] parameters = {content};
+    Object[] parameters = {content, FILENAME};
     List rubyParseResult = (List) invokeMethod(runtime.getObject(), "parse_with_tokens", parameters);
     if (rubyParseResult == null) {
       throw new ParseException("Unable to parse file content");

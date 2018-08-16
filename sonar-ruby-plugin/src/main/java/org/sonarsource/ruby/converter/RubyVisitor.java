@@ -19,8 +19,10 @@
  */
 package org.sonarsource.ruby.converter;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +59,7 @@ import org.sonarsource.slang.impl.MatchCaseTreeImpl;
 import org.sonarsource.slang.impl.MatchTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
+import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 import org.sonarsource.slang.impl.TextRangeImpl;
 import org.sonarsource.slang.impl.TextRanges;
 import org.sonarsource.slang.impl.TreeMetaDataProvider;
@@ -92,11 +95,23 @@ public class RubyVisitor {
     UNARY_OPERATOR_MAP.put("not", UnaryExpressionTree.Operator.NEGATE);
   }
 
+  private Deque<String> nodeTypeStack = new ArrayDeque<>();
+
   public RubyVisitor(TreeMetaDataProvider metaDataProvider) {
     this.metaDataProvider = metaDataProvider;
   }
 
-  public Tree visitNode(AstNode node, List<Object> children) {
+  public void beforeVisit(AstNode node) {
+    nodeTypeStack.push(node.type());
+  }
+
+  public Tree afterVisit(AstNode node, List<Object> children) {
+    Tree result = visitNode(node, children);
+    nodeTypeStack.pop();
+    return result;
+  }
+
+  private Tree visitNode(AstNode node, List<Object> children) {
     switch (node.type()) {
       case "and":
         return createLogicalOperation(node, children, Operator.CONDITIONAL_AND);
@@ -125,6 +140,8 @@ public class RubyVisitor {
         return new LiteralTreeImpl(metaData(node), node.type());
       case "when":
         return createCaseTree(node, children);
+      case "str":
+        return createStringLiteralTree(node, children);
       default:
         return createNativeTree(node, children);
     }
@@ -172,6 +189,22 @@ public class RubyVisitor {
     }
 
     return new MatchTreeImpl(treeMetaData, (Tree) children.get(0), whens, caseKeywordToken);
+  }
+
+  private Tree createStringLiteralTree(AstNode node, List<Object> children) {
+    if (hasDynamicStringParent()) {
+      return createNativeTree(node, children);
+    }
+    String value = (String) children.get(0);
+    // __FILE__ macro is resolved to filename we set when calling ruby parser
+    if (RubyConverter.FILENAME.equals(value)) {
+      return createNativeTree(node, children);
+    }
+    return new StringLiteralTreeImpl(metaData(node), value, value);
+  }
+
+  private boolean hasDynamicStringParent() {
+    return nodeTypeStack.stream().anyMatch("dstr"::equals);
   }
 
   private Tree createLogicalOperation(AstNode node, List<Object> children, Operator operator) {

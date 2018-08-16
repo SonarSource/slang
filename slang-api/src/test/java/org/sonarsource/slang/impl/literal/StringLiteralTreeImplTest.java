@@ -19,8 +19,8 @@
  */
 package org.sonarsource.slang.impl.literal;
 
-import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 import org.junit.Test;
+import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,6 +37,14 @@ public class StringLiteralTreeImplTest {
   @Test(expected = IllegalArgumentException.class)
   public void test_failure() {
     new StringLiteralTreeImpl(null, "abc");
+  }
+
+  @Test
+  public void test_explicit_content() {
+    StringLiteralTreeImpl stringLiteral = new StringLiteralTreeImpl(null, "abc", "abc");
+    assertThat(stringLiteral.value()).isEqualTo("abc");
+    assertThat(stringLiteral.content()).isEqualTo("abc");
+    assertThat(stringLiteral.children()).isEmpty();
   }
 
 }

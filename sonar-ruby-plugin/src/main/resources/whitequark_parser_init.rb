@@ -22,7 +22,7 @@ end
 # In order to retrieve AST, comments, and tokens, we need to use the 'tokenize' method of the ruby Parser object.
 # However, the 'tokenize' method takes directly a Buffer object as parameter. Here, we map the string content to the Buffer object the
 # same way it is done in the 'Parser::Base.parse' and 'Parser::Base.setup_source_buffer' methods.
-def parse_with_tokens(content, filename = '(string)')
+def parse_with_tokens(content, filename)
   parser = Parser::Ruby25.new(Builder.new)
   parser.diagnostics.all_errors_are_fatal = true
   parser.diagnostics.ignore_warnings = true
@@ -47,8 +47,9 @@ class ProcessorBridge < Parser::AST::Processor
 
   def process(node)
     return if node.nil?
+    @visitor.beforeVisit(AstNode.new(node))
     node = super
-    @visitor.visitNode(AstNode.new(node), node.to_a)
+    @visitor.afterVisit(AstNode.new(node), node.to_a)
   end
 
 end
