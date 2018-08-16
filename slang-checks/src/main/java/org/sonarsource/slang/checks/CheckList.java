@@ -33,11 +33,9 @@ public class CheckList {
   };
 
   private static final Class[] RUBY_CHECK_BLACK_LIST = {
-    AllBranchesIdenticalCheck.class,
     BooleanLiteralCheck.class,
     CodeAfterJumpCheck.class,
     DuplicateBranchCheck.class,
-    // FIXME fix on_const for equivalence in RubyVisitor
     DuplicatedFunctionImplementationCheck.class,
     FunctionCognitiveComplexityCheck.class,
     HardcodedCredentialsCheck.class,
