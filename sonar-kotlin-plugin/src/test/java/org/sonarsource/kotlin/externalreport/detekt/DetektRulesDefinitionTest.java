@@ -55,7 +55,7 @@ public class DetektRulesDefinitionTest {
     assertThat(classNaming.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(classNaming.severity()).isEqualTo("INFO");
     assertThat(classNaming.htmlDescription()).isEqualTo("<p>A classes name should fit the naming pattern defined in the projects configuration.</p> " +
-      "<p>See more at <a href=\"https://arturbosch.github.io/detekt/naming.html#classnaming\">detekt website</a>.</p>");
+      "<p>See more at the <a href=\"https://arturbosch.github.io/detekt/naming.html#classnaming\">detekt website</a>.</p>");
     assertThat(classNaming.tags()).containsExactlyInAnyOrder("style");
     assertThat(classNaming.debtRemediationFunction().baseEffort()).isEqualTo("5min");
   }
