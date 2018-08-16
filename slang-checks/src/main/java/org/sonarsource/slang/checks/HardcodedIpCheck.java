@@ -19,14 +19,14 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.sonarsource.slang.api.StringLiteralTree;
-import org.sonarsource.slang.checks.api.InitContext;
-import org.sonarsource.slang.checks.api.SlangCheck;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.sonar.check.Rule;
+import org.sonarsource.slang.api.StringLiteralTree;
+import org.sonarsource.slang.checks.api.InitContext;
+import org.sonarsource.slang.checks.api.SlangCheck;
 
 @Rule(key = "S1313")
 public class HardcodedIpCheck implements SlangCheck {
@@ -44,12 +44,19 @@ public class HardcodedIpCheck implements SlangCheck {
       Matcher matcher = pattern.matcher(tree.content());
       if (matcher.matches()) {
         String ip = matcher.group("ip");
-        if (areAllBelow256(ip.split("\\."))) {
+        if (areAllBelow256(ip.split("\\.")) && !isException(ip)) {
           ctx.reportIssue(tree, MessageFormat.format(MESSAGE, ip));
         }
       }
     });
 
+  }
+
+  private static boolean isException(String ip) {
+    return ip.startsWith("127.")
+      || "255.255.255.255".equals(ip)
+      || "0.0.0.0".equals(ip)
+      || ip.startsWith("2.5.");
   }
 
   private static boolean areAllBelow256(String[] numbersAsStrings) {
