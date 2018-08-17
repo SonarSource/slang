@@ -38,7 +38,6 @@ public class CheckList {
     DuplicatedFunctionImplementationCheck.class,
     SelfAssignmentCheck.class,
     TooComplexExpressionCheck.class,
-    TooDeeplyNestedStatementsCheck.class,
     UnusedFunctionParameterCheck.class,
     UnusedLocalVariableCheck.class,
     UnusedPrivateMethodCheck.class,
