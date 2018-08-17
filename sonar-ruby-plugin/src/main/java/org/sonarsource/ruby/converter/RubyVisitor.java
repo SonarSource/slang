@@ -21,21 +21,27 @@ package org.sonarsource.ruby.converter;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 import org.jruby.RubySymbol;
+import org.sonarsource.ruby.converter.impl.RubyPartialExceptionHandlingTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import org.sonarsource.slang.api.BlockTree;
+import org.sonarsource.slang.api.CatchTree;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
@@ -51,7 +57,9 @@ import org.sonarsource.slang.api.TreeMetaData;
 import org.sonarsource.slang.api.UnaryExpressionTree;
 import org.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import org.sonarsource.slang.impl.BlockTreeImpl;
+import org.sonarsource.slang.impl.CatchTreeImpl;
 import org.sonarsource.slang.impl.ClassDeclarationTreeImpl;
+import org.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.IfTreeImpl;
@@ -66,13 +74,14 @@ import org.sonarsource.slang.impl.TextRanges;
 import org.sonarsource.slang.impl.TreeMetaDataProvider;
 import org.sonarsource.slang.impl.UnaryExpressionTreeImpl;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class RubyVisitor {
 
-  private final TreeMetaDataProvider metaDataProvider;
-
+  private static final String KEYWORD_ATTRIBUTE = "keyword";
+  private static final List<String> EXCEPTION_BLOCK_TYPES = asList("resbody", "rescue", "ensure");
   private static final Map<String, Operator> BINARY_OPERATOR_MAP;
   private static final Map<String, UnaryExpressionTree.Operator> UNARY_OPERATOR_MAP;
 
@@ -96,6 +105,7 @@ public class RubyVisitor {
     UNARY_OPERATOR_MAP.put("not", UnaryExpressionTree.Operator.NEGATE);
   }
 
+  private final TreeMetaDataProvider metaDataProvider;
   private Deque<String> nodeTypeStack = new ArrayDeque<>();
 
   public RubyVisitor(TreeMetaDataProvider metaDataProvider) {
@@ -115,8 +125,9 @@ public class RubyVisitor {
       case "and":
         return createLogicalOperation(node, children, Operator.CONDITIONAL_AND);
       case "begin":
-      case "kwbegin":
         return createFromBeginNode(node, children);
+      case "kwbegin":
+        return createFromKwBeginNode(node, children);
       case "case":
         return createMatchTree(node, children);
       case "const":
@@ -141,9 +152,139 @@ public class RubyVisitor {
         return createCaseTree(node, children);
       case "str":
         return createStringLiteralTree(node, children);
+      case "rescue":
+        return createExceptionHandlingTree(node, children);
+      case "resbody":
+        return createCatchTree(node, children);
+      case "ensure":
+        return updateExceptionHandlingWithFinally(node, children);
       default:
         return createNativeTree(node, children);
     }
+  }
+
+  private Tree createFromKwBeginNode(AstNode node, List<Object> children) {
+    if (children.size() == 1 && children.get(0) instanceof RubyPartialExceptionHandlingTree) {
+      // this begin is used as a "begin...rescue...end" or "begin...ensure...end" block
+      RubyPartialExceptionHandlingTree partialExceptionTree = (RubyPartialExceptionHandlingTree) children.get(0);
+      TreeMetaData treeMetaData = metaData(node);
+      List<CatchTree> catchTrees = partialExceptionTree.catchBlocks();
+      Tree tryBlock = partialExceptionTree.tryBlock();
+      if (tryBlock == null) {
+        List<Tree> exceptionChildren = partialExceptionTree.children();
+        TextPointer to = exceptionChildren.isEmpty() ? treeMetaData.textRange().end() : exceptionChildren.get(0).textRange().start();
+        tryBlock = createEmptyBlockTree(treeMetaData.textRange().start(), to);
+      }
+
+      Tree finallyBlock = partialExceptionTree.finallyBlock();
+      if (!treeMetaData.commentsInside().isEmpty()) {
+        // Update range for empty "rescue" and "ensure" clauses that have potential comments inside them
+        TextRange endRange = getTokenByAttribute(node, "end").textRange();
+        if (finallyBlock instanceof BlockTree && ((BlockTree) finallyBlock).statementOrExpressions().isEmpty()) {
+          TextPointer from = finallyBlock.metaData().textRange().start();
+          finallyBlock = createEmptyBlockTree(from, endRange.start());
+          endRange = finallyBlock.textRange();
+        }
+
+        catchTrees = updateEmptyBlockRanges(
+          catchTrees,
+          endRange,
+          catchTree -> catchTree.catchBlock() instanceof BlockTree && ((BlockTree) catchTree.catchBlock()).statementOrExpressions().isEmpty(),
+          (catchTree, newBlockTree) -> new CatchTreeImpl(newBlockTree.metaData(), catchTree.catchParameter(), newBlockTree, catchTree.keyword()));
+      }
+
+      return new ExceptionHandlingTreeImpl(treeMetaData,
+        tryBlock,
+        treeMetaData.tokens().get(0),
+        catchTrees,
+        finallyBlock);
+    }
+    return createFromBeginNode(node, children);
+  }
+
+
+  private Tree updateExceptionHandlingWithFinally(AstNode node, List<Object> children) {
+    if (!isValidTryCatchBlock()) {
+      // Ignore "ensure" clauses that are not part of a "begin...ensure...end" block
+      return createNativeTree(node, children);
+    }
+
+    Tree finallyBlock = (Tree) children.get(1);
+    if (finallyBlock == null) {
+      Token keyword = getTokenByAttribute(node, KEYWORD_ATTRIBUTE);
+      finallyBlock = createEmptyBlockTree(keyword.textRange().start(), metaData(node).textRange().end());
+    }
+
+    Tree body = (Tree) children.get(0);
+    RubyPartialExceptionHandlingTree exceptionHandlingTree;
+    if (body instanceof RubyPartialExceptionHandlingTree) {
+      exceptionHandlingTree = (RubyPartialExceptionHandlingTree) body;
+    } else {
+      exceptionHandlingTree = new RubyPartialExceptionHandlingTree(body, emptyList());
+    }
+    exceptionHandlingTree.setFinallyBlock(finallyBlock);
+
+    return exceptionHandlingTree;
+  }
+
+  private Tree createExceptionHandlingTree(AstNode node, List<Object> children) {
+    if (!isValidTryCatchBlock()) {
+      // Ignore "rescue" clauses that are not part of "begin...rescue...end" or "begin...rescue...ensure...end" blocks
+      return createNativeTree(node, children);
+    }
+
+    List<CatchTree> catchTrees = children.stream()
+      .skip(1)
+      .filter(tree -> tree instanceof CatchTree)
+      .map(CatchTree.class::cast)
+      .collect(Collectors.toList());
+
+    TreeMetaData treeMetaData = metaData(node);
+    lookForTokenByAttribute(node, "else")
+      .map(elseToken -> {
+          Tree lastClause = (Tree) children.get(children.size() - 1);
+          if (lastClause == null) {
+            lastClause = createEmptyBlockTree(elseToken.textRange().start(), treeMetaData.textRange().end());
+          }
+          TreeMetaData fullElseClauseMeta = metaDataProvider.metaData(TextRanges.merge(asList(elseToken.textRange(), lastClause.textRange())));
+          return new CatchTreeImpl(fullElseClauseMeta, null, lastClause, elseToken);
+        }
+      )
+      .ifPresent(catchTrees::add);
+
+    Tree tryBlock = ((Tree) children.get(0));
+    return new RubyPartialExceptionHandlingTree(tryBlock, catchTrees);
+  }
+
+  private Tree createCatchTree(AstNode node, List<Object> children) {
+    if (!isValidTryCatchBlock()) {
+      // Ignore "rescue" clauses that are not part of "begin...rescue...end" or "begin...rescue...ensure...end" blocks
+      return createNativeTree(node, children);
+    }
+
+    Token keyword = getTokenByAttribute(node, KEYWORD_ATTRIBUTE);
+
+    List<Tree> catchParameterChildren = children.stream()
+      .limit(2)
+      .filter(Objects::nonNull)
+      .map(Tree.class::cast)
+      .collect(Collectors.toList());
+
+    Tree catchParameter = null;
+    if (catchParameterChildren.size() == 1) {
+      catchParameter = catchParameterChildren.get(0);
+    } else if (!catchParameterChildren.isEmpty()) {
+      List<TextRange> textRanges = catchParameterChildren.stream().map(Tree::textRange).collect(Collectors.toList());
+      TextRange catchParameterRange = TextRanges.merge(textRanges);
+      catchParameter = new NativeTreeImpl(metaDataProvider.metaData(catchParameterRange), new RubyNativeKind(node.type()), catchParameterChildren);
+    }
+
+    Tree body = (Tree) children.get(2);
+    if (body == null) {
+      body = new BlockTreeImpl(metaData(node), emptyList());
+    }
+
+    return new CatchTreeImpl(metaData(node), catchParameter, body, keyword);
   }
 
   private Tree createCaseTree(AstNode node, List<Object> children) {
@@ -156,7 +297,7 @@ public class RubyVisitor {
   }
 
   private Tree createMatchTree(AstNode node, List<Object> children) {
-    Token caseKeywordToken = getTokenByAttribute(node, "keyword");
+    Token caseKeywordToken = getTokenByAttribute(node, KEYWORD_ATTRIBUTE);
 
     List<MatchCaseTree> whens = children.stream()
       .filter(tree -> tree instanceof MatchCaseTree)
@@ -164,27 +305,21 @@ public class RubyVisitor {
       .collect(Collectors.toList());
 
     Tree lastClause = (Tree) children.get(children.size() - 1);
-
     if (lastClause != null) {
       Token elseKeywordToken = getTokenByAttribute(node, "else");
-      TreeMetaData fullElseClauseMeta = metaDataProvider.metaData(TextRanges.merge(Arrays.asList(elseKeywordToken.textRange(), lastClause.textRange())));
+      TreeMetaData fullElseClauseMeta = metaDataProvider.metaData(TextRanges.merge(asList(elseKeywordToken.textRange(), lastClause.textRange())));
       whens.add(new MatchCaseTreeImpl(fullElseClauseMeta, null, lastClause));
     }
 
     TreeMetaData treeMetaData = metaData(node);
     if (!treeMetaData.commentsInside().isEmpty()) {
-      // Fix range for empty "when" clauses that have potential comments inside them
-      TextRange nextRange = node.textRangeForAttribute("end");
-      for (int i = whens.size() - 1; i >= 0; i--) {
-        MatchCaseTree caseTree = whens.get(i);
-        if (nextRange != null && caseTree.body() instanceof BlockTree && ((BlockTree) caseTree.body()).statementOrExpressions().isEmpty()) {
-          // update range of empty "when" clauses to include potential following comments
-          Tree newBody = createEmptyBlockTree(caseTree.textRange().start(), nextRange.start());
-          MatchCaseTree newCaseTree = new MatchCaseTreeImpl(newBody.metaData(), caseTree.expression(), newBody);
-          whens.set(i, newCaseTree);
-        }
-        nextRange = caseTree.textRange();
-      }
+      // Update range for empty "when" clauses that have potential comments inside them
+      TextRange endRange = node.textRangeForAttribute("end");
+      whens = updateEmptyBlockRanges(
+        whens,
+        endRange,
+        caseTree -> caseTree.body() instanceof BlockTree && ((BlockTree) caseTree.body()).statementOrExpressions().isEmpty(),
+        (caseTree, newBlockTree) -> new MatchCaseTreeImpl(newBlockTree.metaData(), caseTree.expression(), newBlockTree));
     }
 
     return new MatchTreeImpl(treeMetaData, (Tree) children.get(0), whens, caseKeywordToken);
@@ -204,6 +339,40 @@ public class RubyVisitor {
 
   private boolean hasDynamicStringParent() {
     return nodeTypeStack.stream().anyMatch("dstr"::equals);
+  }
+
+  private boolean isValidTryCatchBlock() {
+    Iterator<String> iterator = nodeTypeStack.iterator();
+    while (iterator.hasNext()) {
+      String parentType = iterator.next();
+      if (!EXCEPTION_BLOCK_TYPES.contains(parentType)) {
+        return "kwbegin".equals(parentType);
+      }
+    }
+    return false;
+  }
+
+  private <T extends Tree> List<T> updateEmptyBlockRanges(List<T> trees,
+                                                          @Nullable TextRange endRange,
+                                                          Predicate<T> hasEmptyBlock,
+                                                          BiFunction<T, BlockTree, T> createNewTree) {
+    TextRange nextRange = endRange;
+    List<T> newTrees = new ArrayList<>(trees.size());
+    ListIterator<T> iterator = trees.listIterator(trees.size());
+    while (iterator.hasPrevious()) {
+      T tree = iterator.previous();
+      if (nextRange != null && hasEmptyBlock.test(tree)) {
+        // update range of empty blocks to include potential following comments
+        BlockTree newBlockTree = createEmptyBlockTree(tree.textRange().start(), nextRange.start());
+        T newCatchTree = createNewTree.apply(tree, newBlockTree);
+        newTrees.add(newCatchTree);
+      } else {
+        newTrees.add(tree);
+      }
+      nextRange = tree.textRange();
+    }
+    Collections.reverse(newTrees);
+    return newTrees;
   }
 
   private Tree createLogicalOperation(AstNode node, List<Object> children, Operator operator) {
@@ -315,7 +484,7 @@ public class RubyVisitor {
   }
 
   private Tree createIfTree(AstNode node, List<Object> children) {
-    Optional<Token> mainKeyword = lookForTokenByAttribute(node, "keyword");
+    Optional<Token> mainKeyword = lookForTokenByAttribute(node, KEYWORD_ATTRIBUTE);
     if (!mainKeyword.isPresent() || mainKeyword.get().text().equals("unless")) {
       // Ternary operator and "unless" are not considered as "IfTree" for now
       return createNativeTree(node, children);
