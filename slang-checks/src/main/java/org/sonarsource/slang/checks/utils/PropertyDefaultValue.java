@@ -19,12 +19,18 @@
  */
 package org.sonarsource.slang.checks.utils;
 
-/**
- * This enum is used only to distinguish default values for rule parameters. This should be the sole exception in otherwise
- * language agnostic module
- */
-public enum Language {
-  KOTLIN, RUBY;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-  public static final String RUBY_NAMING_DEFAULT = "^(@{0,2}[\\da-z_]+[!?=]?)|([*+-/%=!><~]+)|(\\[]=?)$";
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD})
+@Repeatable(PropertyDefaultValues.class)
+public @interface PropertyDefaultValue {
+
+  Language language();
+
+  String defaultValue();
 }

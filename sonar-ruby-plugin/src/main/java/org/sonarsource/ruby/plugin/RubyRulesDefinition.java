@@ -22,9 +22,9 @@ package org.sonarsource.ruby.plugin;
 import java.util.List;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
-import org.sonarsource.slang.checks.BadFunctionNameCheck;
 import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.utils.Language;
+import org.sonarsource.slang.plugin.RulesDefinitionUtils;
 
 public class RubyRulesDefinition implements RulesDefinition {
 
@@ -39,11 +39,9 @@ public class RubyRulesDefinition implements RulesDefinition {
 
     List<Class> checks = CheckList.rubyChecks();
     ruleMetadataLoader.addRulesByAnnotatedClass(repository, checks);
-    repository.rule("S100")
-      .param("format")
-      .setDefaultValue(BadFunctionNameCheck.getDefaultFormat(Language.RUBY));
+
+    RulesDefinitionUtils.setDefaultValuesForParameters(repository, checks, Language.RUBY);
 
     repository.done();
   }
-
 }
