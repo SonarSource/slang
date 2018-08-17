@@ -28,10 +28,12 @@ import org.sonar.api.utils.log.LogTester;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.StringLiteralTree;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
+import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 import org.sonarsource.slang.parser.SLangConverter;
 
 import static java.util.Arrays.asList;
@@ -79,6 +81,10 @@ public abstract class AbstractRubyConverterTest {
 
   protected static LiteralTree literal(String value) {
     return new LiteralTreeImpl(null, value);
+  }
+
+  protected static StringLiteralTree stringLiteral(String value, String content) {
+    return new StringLiteralTreeImpl(null, value, content);
   }
 
   protected static NativeTree nativeTree(NativeKind kind, List<Tree> children) {

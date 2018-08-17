@@ -45,7 +45,6 @@ public class CheckList {
     IdenticalBinaryOperandCheck.class,
     IdenticalConditionsCheck.class,
     SelfAssignmentCheck.class,
-    StringLiteralDuplicatedCheck.class,
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
     UnusedFunctionParameterCheck.class,
