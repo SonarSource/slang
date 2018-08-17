@@ -47,6 +47,7 @@ import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.LiteralTree;
+import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.MatchCaseTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.TextPointer;
@@ -64,6 +65,7 @@ import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.IfTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
+import org.sonarsource.slang.impl.LoopTreeImpl;
 import org.sonarsource.slang.impl.MatchCaseTreeImpl;
 import org.sonarsource.slang.impl.MatchTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
@@ -158,9 +160,52 @@ public class RubyVisitor {
         return createCatchTree(node, children);
       case "ensure":
         return updateExceptionHandlingWithFinally(node, children);
+      case "while_post":
+      case "until_post":
+        return createLoopTree(node, children, LoopTree.LoopKind.DOWHILE);
+      case "while":
+      case "until":
+        return createLoopTree(node, children, LoopTree.LoopKind.WHILE);
+      case "for":
+        return createForLoopTree(node, children);
       default:
         return createNativeTree(node, children);
     }
+  }
+
+  private Tree createLoopTree(AstNode node, List<Object> children, LoopTree.LoopKind kind) {
+    Tree condition = (Tree) children.get(0);
+    Tree body = (Tree) children.get(1);
+    if (body == null) {
+      TextRange endRange = getTokenByAttribute(node, "end").textRange();
+      body = createEmptyBlockTree(condition.textRange().end(), endRange.start());
+    }
+
+    return new LoopTreeImpl(metaData(node),
+      condition,
+      body,
+      kind,
+      getTokenByAttribute(node, KEYWORD_ATTRIBUTE));
+  }
+
+  private Tree createForLoopTree(AstNode node, List<Object> children) {
+    Tree variables = (Tree) children.get(0);
+    Tree expression = (Tree) children.get(1);
+    TextRange conditionRange = TextRanges.merge(asList(variables.textRange(), expression.textRange()));
+    RubyNativeKind nativeKind = new RubyNativeKind(node.type());
+
+    Tree condition = new NativeTreeImpl(metaDataProvider.metaData(conditionRange), nativeKind, asList(variables, expression));
+    Tree body = (Tree) children.get(2);
+    if (body == null) {
+      TextRange endRange = getTokenByAttribute(node, "end").textRange();
+      body = createEmptyBlockTree(condition.textRange().end(), endRange.start());
+    }
+
+    return new LoopTreeImpl(metaData(node),
+      condition,
+      body,
+      LoopTree.LoopKind.FOR,
+      getTokenByAttribute(node, KEYWORD_ATTRIBUTE));
   }
 
   private Tree createFromKwBeginNode(AstNode node, List<Object> children) {

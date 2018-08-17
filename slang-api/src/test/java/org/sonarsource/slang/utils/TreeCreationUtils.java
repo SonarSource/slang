@@ -25,9 +25,11 @@ import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.LiteralTree;
+import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.VariableDeclarationTree;
@@ -37,8 +39,10 @@ import org.sonarsource.slang.impl.BlockTreeImpl;
 import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
+import org.sonarsource.slang.impl.LoopTreeImpl;
 import org.sonarsource.slang.impl.ModifierTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
+import org.sonarsource.slang.impl.TokenImpl;
 import org.sonarsource.slang.impl.TopLevelTreeImpl;
 import org.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 import java.util.Collections;
@@ -48,6 +52,11 @@ import static java.util.Collections.emptyList;
 
 public class TreeCreationUtils {
   private TreeCreationUtils() {
+  }
+
+  public static LoopTree loop(Tree condition, Tree body, LoopTree.LoopKind kind, String keyword) {
+    Token tokenKeyword = new TokenImpl(null, keyword, Token.Type.KEYWORD);
+    return new LoopTreeImpl(null, condition, body, kind, tokenKeyword);
   }
 
   public static LiteralTree literal(String value) {
