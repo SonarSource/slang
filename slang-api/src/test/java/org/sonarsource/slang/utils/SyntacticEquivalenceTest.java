@@ -21,6 +21,7 @@ package org.sonarsource.slang.utils;
 
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
+import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.Tree;
 import java.util.Arrays;
@@ -28,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PUBLIC;
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
@@ -36,11 +38,11 @@ import static org.sonarsource.slang.utils.TreeCreationUtils.assignment;
 import static org.sonarsource.slang.utils.TreeCreationUtils.binary;
 import static org.sonarsource.slang.utils.TreeCreationUtils.identifier;
 import static org.sonarsource.slang.utils.TreeCreationUtils.literal;
+import static org.sonarsource.slang.utils.TreeCreationUtils.loop;
 import static org.sonarsource.slang.utils.TreeCreationUtils.simpleModifier;
 import static org.sonarsource.slang.utils.TreeCreationUtils.simpleNative;
 import static org.sonarsource.slang.utils.TreeCreationUtils.value;
 import static org.sonarsource.slang.utils.TreeCreationUtils.variable;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class SyntacticEquivalenceTest {
   private static NativeKind KIND = new NativeKind() {
@@ -130,6 +132,23 @@ public class SyntacticEquivalenceTest {
     Tree b1 = identifier("b");
     assertThat(findDuplicatedGroups(Arrays.asList(a1, b1, a2, a3))).containsExactly(Arrays.asList(a1, a2, a3));
     assertThat(findDuplicatedGroups(Arrays.asList(a1, b1, null))).isEmpty();
+  }
+
+  @Test
+  public void loops() {
+    Tree condition1 = literal("true");
+    Tree condition2 = literal("false");
+    Tree body1 = literal("1");
+    Tree body2 = literal("2");
+
+    LoopTree loop1 = loop(condition1, body1, LoopTree.LoopKind.WHILE, "while");
+
+    assertThat(areEquivalent(loop1, loop1)).isTrue();
+    assertThat(areEquivalent(loop1, loop(condition1, body1, LoopTree.LoopKind.WHILE, "while"))).isTrue();
+    assertThat(areEquivalent(loop1, loop(condition2, body1, LoopTree.LoopKind.WHILE, "while"))).isFalse();
+    assertThat(areEquivalent(loop1, loop(condition1, body2, LoopTree.LoopKind.WHILE, "while"))).isFalse();
+    assertThat(areEquivalent(loop1, loop(condition1, body1, LoopTree.LoopKind.FOR, "while"))).isFalse();
+    assertThat(areEquivalent(loop1, loop(condition1, body1, LoopTree.LoopKind.WHILE, "until"))).isFalse();
   }
 
 }

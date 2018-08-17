@@ -93,7 +93,8 @@ public class SyntacticEquivalence {
     boolean binaryTreeCheck = (first instanceof BinaryExpressionTree) && (((BinaryExpressionTree) first).operator() != ((BinaryExpressionTree) second).operator());
     boolean assignTreeCheck = (first instanceof AssignmentExpressionTree) && (((AssignmentExpressionTree) first).operator() != ((AssignmentExpressionTree) second).operator());
     boolean vardeclTreeCheck = (first instanceof VariableDeclarationTree) && (((VariableDeclarationTree) first).isVal() != ((VariableDeclarationTree) second).isVal());
-    boolean loopTreeCheck = (first instanceof LoopTree) && (((LoopTree) first).kind() != ((LoopTree) second).kind());
+    boolean loopTreeCheck = (first instanceof LoopTree)
+      && ((((LoopTree) first).kind() != ((LoopTree) second).kind()) || !(((LoopTree) first).keyword().text().equals(((LoopTree) second).keyword().text())));
     boolean modifierTreeCheck = (first instanceof ModifierTree) && (((ModifierTree) first).kind() != ((ModifierTree) second).kind());
     boolean jumpTreeCheck = (first instanceof JumpTree) && (((JumpTree) first).kind() != ((JumpTree) second).kind());
     return nativeTreeCheck || unaryTreeCheck || binaryTreeCheck || assignTreeCheck || vardeclTreeCheck || loopTreeCheck || modifierTreeCheck || jumpTreeCheck;
