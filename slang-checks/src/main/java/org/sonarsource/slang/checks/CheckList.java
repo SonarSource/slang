@@ -36,7 +36,6 @@ public class CheckList {
     BooleanLiteralCheck.class,
     CodeAfterJumpCheck.class,
     DuplicatedFunctionImplementationCheck.class,
-    FunctionCognitiveComplexityCheck.class,
     SelfAssignmentCheck.class,
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
