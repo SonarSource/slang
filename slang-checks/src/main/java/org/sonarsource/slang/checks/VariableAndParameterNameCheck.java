@@ -19,6 +19,9 @@
  */
 package org.sonarsource.slang.checks;
 
+import java.util.regex.Pattern;
+import org.sonar.check.Rule;
+import org.sonar.check.RuleProperty;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.ParameterTree;
@@ -26,9 +29,8 @@ import org.sonarsource.slang.api.VariableDeclarationTree;
 import org.sonarsource.slang.checks.api.CheckContext;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
-import java.util.regex.Pattern;
-import org.sonar.check.Rule;
-import org.sonar.check.RuleProperty;
+import org.sonarsource.slang.checks.utils.Language;
+import org.sonarsource.slang.checks.utils.PropertyDefaultValue;
 
 @Rule(key = "S117")
 public class VariableAndParameterNameCheck implements SlangCheck {
@@ -37,9 +39,10 @@ public class VariableAndParameterNameCheck implements SlangCheck {
 
   @RuleProperty(
     key = "format",
-    description = "Regular expression used to check the names against.",
-    defaultValue = DEFAULT_FORMAT
+    description = "Regular expression used to check the names against."
   )
+  @PropertyDefaultValue(language = Language.KOTLIN, defaultValue = DEFAULT_FORMAT)
+  @PropertyDefaultValue(language = Language.RUBY, defaultValue = Language.RUBY_NAMING_DEFAULT)
   public String format = DEFAULT_FORMAT;
 
   @Override

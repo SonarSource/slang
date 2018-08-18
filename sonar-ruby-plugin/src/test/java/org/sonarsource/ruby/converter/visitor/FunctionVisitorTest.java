@@ -25,7 +25,6 @@ import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.NativeTree;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
@@ -40,7 +39,7 @@ public class FunctionVisitorTest extends AbstractRubyConverterTest {
     assertThat(tree.modifiers()).isEmpty();
     assertThat(tree.returnType()).isNull();
     assertThat(tree.formalParameters()).hasSize(1);
-    assertTree(tree.formalParameters().get(0)).isEquivalentTo(nativeTree(nativeKind("arg"), asList(nativeTree(nativeKind("p")))));
+    assertTree(tree.formalParameters().get(0)).isEquivalentTo(parameter("p"));
     assertThat(tree.body().statementOrExpressions()).hasSize(1);
     assertThat(((NativeTree) tree.body().statementOrExpressions().get(0)).nativeKind()).isEqualTo(nativeKind("send"));
     assertThat(tree.nativeChildren()).isEmpty();
@@ -69,7 +68,7 @@ public class FunctionVisitorTest extends AbstractRubyConverterTest {
     assertThat(tree.body().statementOrExpressions()).hasSize(2);
     assertTree(tree.body()).isBlock(NativeTree.class, NativeTree.class);
     assertThat(tree.nativeChildren()).hasSize(1);
-    assertTree(tree.nativeChildren().get(0)).isEquivalentTo(getNativeForVar("a"));
+    assertTree(tree.nativeChildren().get(0)).isEquivalentTo(sendToIdentifier("a"));
   }
 
 }

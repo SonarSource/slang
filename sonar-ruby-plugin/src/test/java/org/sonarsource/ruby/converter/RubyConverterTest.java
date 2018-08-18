@@ -42,7 +42,6 @@ import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.TextRanges;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -201,7 +200,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
     List<Tree> tree = rubyStatements("require 'stuff'\n" +
       "a = 2 && 1.0");
     Tree stringLiteral = stringLiteral("stuff", "stuff");
-    Tree require = nativeTree(nativeKind("require"), emptyList());
+    Tree require = identifier("require");
     Tree requireCall = nativeTree(nativeKind("send"), asList(require, stringLiteral));
     Tree literal1 = nativeTree(nativeKind("float"), singletonList(nativeTree(nativeKind("1.0"))));
     Tree literal2 = literal("2");
