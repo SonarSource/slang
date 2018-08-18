@@ -28,11 +28,14 @@ import org.sonar.api.utils.log.LogTester;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.ParameterTree;
 import org.sonarsource.slang.api.StringLiteralTree;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
+import org.sonarsource.slang.impl.ParameterTreeImpl;
 import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 import org.sonarsource.slang.parser.SLangConverter;
 
@@ -91,16 +94,28 @@ public abstract class AbstractRubyConverterTest {
     return new NativeTreeImpl(null, kind, children);
   }
 
+  protected static ParameterTree parameter(String name) {
+    return new ParameterTreeImpl(null, identifier(name), null);
+  }
+
+  protected static IdentifierTreeImpl identifier(String name) {
+    return new IdentifierTreeImpl(null, name);
+  }
+
   protected static NativeTree nativeTree(NativeKind kind) {
     return new NativeTreeImpl(null, kind, emptyList());
+  }
+
+  protected static NativeTree nativeTree(String nativeKind) {
+    return nativeTree(nativeKind(nativeKind));
   }
 
   protected static NativeKind nativeKind(String type) {
     return new RubyNativeKind(type);
   }
 
-  protected static NativeTree getNativeForVar(String identifierName) {
-    return nativeTree(nativeKind("send"), asList(nativeTree(nativeKind(identifierName))));
+  protected static NativeTree sendToIdentifier(String identifierName) {
+    return nativeTree(nativeKind("send"), asList(identifier(identifierName)));
   }
 
 }

@@ -39,7 +39,6 @@ public class CheckList {
     UnusedFunctionParameterCheck.class,
     UnusedLocalVariableCheck.class,
     UnusedPrivateMethodCheck.class,
-    VariableAndParameterNameCheck.class
   };
 
   private static final Class[] KOTLIN_CHECK_BLACK_LIST = {};

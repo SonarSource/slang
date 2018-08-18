@@ -42,7 +42,7 @@ public class CaseVisitorTest extends AbstractRubyConverterTest {
       "\nend");
 
     assertThat(tree.keyword().text()).isEqualTo("case");
-    assertTree(tree.expression()).isEquivalentTo(getNativeForVar("x"));
+    assertTree(tree.expression()).isEquivalentTo(sendToIdentifier("x"));
     assertThat(tree.cases()).hasSize(4);
     MatchCaseTree matchCase0 = tree.cases().get(0);
     assertThat(matchCase0.expression()).isNotNull();

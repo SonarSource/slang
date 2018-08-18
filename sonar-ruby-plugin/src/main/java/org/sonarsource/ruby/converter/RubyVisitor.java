@@ -72,6 +72,7 @@ import org.sonarsource.slang.impl.LoopTreeImpl;
 import org.sonarsource.slang.impl.MatchCaseTreeImpl;
 import org.sonarsource.slang.impl.MatchTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
+import org.sonarsource.slang.impl.ParameterTreeImpl;
 import org.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
 import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 import org.sonarsource.slang.impl.TextRangeImpl;
@@ -129,6 +130,17 @@ public class RubyVisitor {
     switch (node.type()) {
       case "and":
         return createLogicalOperation(node, children, Operator.CONDITIONAL_AND);
+      case "arg":
+      case "optarg":
+      case "restarg":
+      case "kwarg":
+      case "kwoptarg":
+      case "kwrestarg":
+      case "blockarg":
+      case "procarg0":
+      case "shadowarg":
+        // note obj-c arguments are not supported https://github.com/whitequark/parser/blob/master/doc/AST_FORMAT.md#objective-c-arguments
+        return createParameterTree(node, children);
       case "begin":
         return createFromBeginNode(node, children);
       case "kwbegin":
@@ -402,7 +414,7 @@ public class RubyVisitor {
 
   private Tree createFromMlhs(AstNode node, List<?> children) {
     // replacing native kind to support tree equivalence
-    return createNativeTree(children, "array", metaData(node));
+    return createNativeTree(node, children, "array");
   }
 
   private Tree createFromMasgn(AstNode node, List<?> children) {
@@ -418,28 +430,48 @@ public class RubyVisitor {
   }
 
   private Tree createFromIndexasgn(AstNode node, List<?> children) {
-    TreeMetaData metaData = metaData(node);
     if (children.size() > 2) {
+      TreeMetaData metaData = metaData(node);
       Token firstToken = metaData.tokens().get(0);
       TextRange closeBracketRange = node.textRangeForAttribute("end");
 
-      List<?> lhsChildren = children.subList(0, children.size() - 1);
       TextRange lhsRange = TextRanges.merge(Arrays.asList(firstToken.textRange(), closeBracketRange));
-
       TreeMetaData lhsMeta = metaDataProvider.metaData(lhsRange);
 
+      // we will assume that all children are trees on LHS, this should always be the case
+      // if not, we might miss some part of the tree, but it should not matter much
+      List<Tree> lhsChildren = children.subList(0, children.size() - 1).stream()
+        .filter(child -> child instanceof Tree)
+        .map(child -> (Tree) child)
+        .collect(Collectors.toList());
+
       // such ruby native kind is required to have tree equivalence
-      Tree lhs = createNativeTree(lhsChildren, "index", lhsMeta);
+      Tree lhs = new NativeTreeImpl(lhsMeta, new RubyNativeKind("index"), lhsChildren);
 
       return new AssignmentExpressionTreeImpl(
         metaData,
         AssignmentExpressionTree.Operator.EQUAL,
         lhs,
         (Tree) children.get(children.size() - 1));
-
     }
 
-    return createNativeTree(children, "index", metaData);
+    return createNativeTree(node, children, "index");
+  }
+
+  private Tree createParameterTree(AstNode node, List<?> children) {
+    if (children.isEmpty() || !(children.get(0) instanceof RubySymbol)) {
+      // unnamed splat argument
+      return createNativeTree(node, children);
+    }
+    IdentifierTree identifierTree = identifierFromSymbol(node, (RubySymbol) children.get(0));
+    ParameterTreeImpl parameterTree = new ParameterTreeImpl(metaData(node), identifierTree, null);
+    if ("optarg".equals(node.type()) || "kwoptarg".equals(node.type())) {
+      List<Tree> nativeChildren = new ArrayList<>();
+      nativeChildren.add(parameterTree);
+      nativeChildren.add((Tree) children.get(1));
+      return createNativeTree(node, nativeChildren);
+    }
+    return parameterTree;
   }
 
   private Tree createCaseTree(AstNode node, List<?> children) {
@@ -544,7 +576,7 @@ public class RubyVisitor {
       return new ParenthesizedExpressionTreeImpl(metaData(node), ((Tree) children.get(0)), beginToken.get(), endToken.get());
     }
 
-    List<Tree> nonNullChildren = children.stream().flatMap(child -> treeForChild(child, metaData(node))).collect(Collectors.toList());
+    List<Tree> nonNullChildren = children.stream().flatMap(child -> treeForChild(node, child)).collect(Collectors.toList());
     return new BlockTreeImpl(metaData(node), nonNullChildren);
   }
 
@@ -578,13 +610,7 @@ public class RubyVisitor {
 
     int childrenIndexShift = isSingletonMethod ? 1 : 0;
 
-    Object name = children.get(0 + childrenIndexShift);
-    TextRange nameRange = node.textRangeForAttribute("name");
-    if (nameRange == null) {
-      throw new IllegalStateException("Missing range for function name. Node: " + node.asString());
-    }
-    TreeMetaData metaData = metaDataProvider.metaData(nameRange);
-    IdentifierTree identifier = new IdentifierTreeImpl(metaData, String.valueOf(name));
+    IdentifierTree name = identifierFromSymbol(node, (RubySymbol) children.get(0 + childrenIndexShift));
 
     List<Tree> parameters;
     Object args = children.get(1 + childrenIndexShift);
@@ -607,7 +633,7 @@ public class RubyVisitor {
     return new FunctionDeclarationTreeImpl(metaData(node),
       emptyList(),
       null,
-      identifier,
+      name,
       parameters,
       body,
       nativeChildren);
@@ -637,7 +663,7 @@ public class RubyVisitor {
   }
 
   private Tree createFromConst(AstNode node, List<?> children) {
-    IdentifierTree identifier = identifierFromSymbol(node, (RubySymbol) children.get(children.size() - 1));
+    IdentifierTree identifier = identifierFromSymbol(node, (RubySymbol) children.get(1));
 
     if (children.get(0) == null) {
       return identifier;
@@ -699,29 +725,27 @@ public class RubyVisitor {
   }
 
   @CheckForNull
+  private NativeTree createNativeTree(AstNode node, List<?> children, String type) {
+    List<Tree> nonNullChildren = children.stream().flatMap(child -> treeForChild(node, child)).collect(Collectors.toList());
+    return new NativeTreeImpl(metaData(node), new RubyNativeKind(type), nonNullChildren);
+  }
+
+  @CheckForNull
   private NativeTree createNativeTree(AstNode node, List<?> children) {
     // when node has no location it means that it is not present in the tree
     if (node.textRange() == null) {
       return null;
     }
-    return createNativeTree(children, node.type(), metaData(node));
+    return createNativeTree(node, children, node.type());
   }
 
-  private NativeTree createNativeTree(List<?> children, String type, TreeMetaData metaData) {
-    List<Tree> nonNullChildren = children.stream().flatMap(child -> treeForChild(child, metaData)).collect(Collectors.toList());
-    return new NativeTreeImpl(metaData, new RubyNativeKind(type), nonNullChildren);
-  }
-
-  private static Stream<Tree> treeForChild(@Nullable Object child, TreeMetaData treeMetaData) {
+  private Stream<Tree> treeForChild(AstNode node, @Nullable Object child) {
     if (child instanceof Tree) {
       return Stream.of((Tree) child);
     } else if (child instanceof RubySymbol) {
-      String type = ((RubySymbol) child).asJavaString();
-      return Stream.of(new NativeTreeImpl(treeMetaData, new RubyNativeKind(type), emptyList()));
-    } else if (child instanceof String) {
-      return Stream.of(new NativeTreeImpl(treeMetaData, new RubyNativeKind((String) child), emptyList()));
+      return Stream.of(identifierFromSymbol(node, (RubySymbol) child));
     } else if (child != null) {
-      return Stream.of(new NativeTreeImpl(treeMetaData, new RubyNativeKind(String.valueOf(child)), emptyList()));
+      return Stream.of(createNativeTree(node, emptyList(), String.valueOf(child)));
     } else {
       return Stream.empty();
     }
@@ -752,6 +776,13 @@ public class RubyVisitor {
   private IdentifierTree identifierFromSymbol(AstNode node, RubySymbol rubySymbol) {
     String name = rubySymbol.asJavaString();
     TextRange textRange = node.textRangeForAttribute("name");
+    if (textRange == null) {
+      textRange = node.textRange();
+    }
+    if (textRange == null) {
+      throw new IllegalStateException("Missing range for identifier. Node: " + node.asString());
+    }
     return new IdentifierTreeImpl(metaDataProvider.metaData(textRange), name);
   }
+
 }
