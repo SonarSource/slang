@@ -39,6 +39,7 @@ import static org.sonarsource.slang.utils.TreeCreationUtils.binary;
 import static org.sonarsource.slang.utils.TreeCreationUtils.identifier;
 import static org.sonarsource.slang.utils.TreeCreationUtils.literal;
 import static org.sonarsource.slang.utils.TreeCreationUtils.loop;
+import static org.sonarsource.slang.utils.TreeCreationUtils.integerLiteral;
 import static org.sonarsource.slang.utils.TreeCreationUtils.simpleModifier;
 import static org.sonarsource.slang.utils.TreeCreationUtils.simpleNative;
 import static org.sonarsource.slang.utils.TreeCreationUtils.value;
@@ -54,13 +55,13 @@ public class SyntacticEquivalenceTest {
 
   @Test
   public void test_equivalence() {
-    Tree literal1 = literal("1");
-    Tree literal2 = literal("2");
+    Tree literal1 = integerLiteral("1");
+    Tree literal2 = integerLiteral("2");
     assertThat(areEquivalent((Tree) null, null)).isTrue();
     assertThat(areEquivalent(literal1, null)).isFalse();
     assertThat(areEquivalent(null, literal1)).isFalse();
     assertThat(areEquivalent(literal1, literal1)).isTrue();
-    assertThat(areEquivalent(literal1, literal("1"))).isTrue();
+    assertThat(areEquivalent(literal1, integerLiteral("1"))).isTrue();
     assertThat(areEquivalent(literal1, literal2)).isFalse();
 
     Tree identifierA = identifier("a");
@@ -110,9 +111,9 @@ public class SyntacticEquivalenceTest {
 
   @Test
   public void test_equivalence_list() {
-    List<Tree> list1 = Arrays.asList(identifier("a"), literal("2"));
-    List<Tree> list2 = Arrays.asList(identifier("a"), literal("2"));
-    List<Tree> list3 = Arrays.asList(identifier("a"), literal("3"));
+    List<Tree> list1 = Arrays.asList(identifier("a"), integerLiteral("2"));
+    List<Tree> list2 = Arrays.asList(identifier("a"), integerLiteral("2"));
+    List<Tree> list3 = Arrays.asList(identifier("a"), integerLiteral("3"));
     List<Tree> list4 = Collections.singletonList(identifier("a"));
 
     assertThat(areEquivalent((List<Tree>) null, null)).isTrue();
@@ -138,8 +139,8 @@ public class SyntacticEquivalenceTest {
   public void loops() {
     Tree condition1 = literal("true");
     Tree condition2 = literal("false");
-    Tree body1 = literal("1");
-    Tree body2 = literal("2");
+    Tree body1 = integerLiteral("1");
+    Tree body2 = integerLiteral("2");
 
     LoopTree loop1 = loop(condition1, body1, LoopTree.LoopKind.WHILE, "while");
 

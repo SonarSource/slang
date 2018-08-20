@@ -68,6 +68,7 @@ import org.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.IfTreeImpl;
+import org.sonarsource.slang.impl.IntegerLiteralTreeImpl;
 import org.sonarsource.slang.impl.JumpTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.LoopTreeImpl;
@@ -169,7 +170,7 @@ public class RubyVisitor {
       case "indexasgn":
         return createFromIndexasgn(node, children);
       case "int":
-        return createLiteralTree(node, children);
+        return createIntegerLiteralTree(node, children);
       case "cvar":
       case "lvar":
       case "ivar":
@@ -666,9 +667,9 @@ public class RubyVisitor {
     return new ClassDeclarationTreeImpl(metaData(node), classNameIdentifier, nativeTree);
   }
 
-  private LiteralTree createLiteralTree(AstNode node, List<?> children) {
+  private LiteralTree createIntegerLiteralTree(AstNode node, List<?> children) {
     String value = String.valueOf(children.get(0));
-    return new LiteralTreeImpl(metaData(node), value);
+    return new IntegerLiteralTreeImpl(metaData(node), value);
   }
 
   private Tree createFromConst(AstNode node, List<?> children) {

@@ -321,6 +321,7 @@ CONTINUE: 'continue';
 
 IntegerLiteral
   :  DecimalIntegerLiteral
+  |  OctalIntegerLiteral
   ;
 
 fragment
@@ -343,6 +344,23 @@ Digit
 fragment
 NonZeroDigit
   :  [1-9]
+  ;
+
+fragment
+OctalIntegerLiteral
+  :  OctalPrefix OctalDigit+
+  ;
+
+fragment
+OctalPrefix
+  :  '0'
+  |  '0o'
+  |  '0O'
+  ;
+
+fragment
+OctalDigit
+  :  [0-7]
   ;
 
 // Boolean Literals

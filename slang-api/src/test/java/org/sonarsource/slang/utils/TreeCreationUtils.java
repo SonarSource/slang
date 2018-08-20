@@ -24,6 +24,7 @@ import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
+import org.sonarsource.slang.api.IntegerLiteralTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.ModifierTree;
@@ -38,6 +39,7 @@ import org.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import org.sonarsource.slang.impl.BlockTreeImpl;
 import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
+import org.sonarsource.slang.impl.IntegerLiteralTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.LoopTreeImpl;
 import org.sonarsource.slang.impl.ModifierTreeImpl;
@@ -57,6 +59,10 @@ public class TreeCreationUtils {
   public static LoopTree loop(Tree condition, Tree body, LoopTree.LoopKind kind, String keyword) {
     Token tokenKeyword = new TokenImpl(null, keyword, Token.Type.KEYWORD);
     return new LoopTreeImpl(null, condition, body, kind, tokenKeyword);
+  }
+
+  public static IntegerLiteralTree integerLiteral(String value) {
+    return new IntegerLiteralTreeImpl(null, value);
   }
 
   public static LiteralTree literal(String value) {

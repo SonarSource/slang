@@ -34,6 +34,7 @@ import org.sonarsource.slang.api.ExceptionHandlingTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.IfTree;
+import org.sonarsource.slang.api.IntegerLiteralTree;
 import org.sonarsource.slang.api.JumpTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.LoopTree;
@@ -716,6 +717,17 @@ public class KotlinConverterTest {
       "private", "fun", "foo", "(", ")", "{", "42", "+", "\"", "a", "\"", "}");
     assertThat(tokens).extracting(Token::type).containsExactly(
       KEYWORD, KEYWORD, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, STRING_LITERAL, OTHER, OTHER);
+  }
+
+  @Test
+  public void testIntegerLiterals() {
+    Tree integerLiteral1 = kotlinStatement("123");
+    assertTree(integerLiteral1).isLiteral("123");
+    assertThat(integerLiteral1).isInstanceOf(IntegerLiteralTree.class);
+
+    Tree integerLiteral2 = kotlinStatement("0b00001011");
+    assertTree(integerLiteral2).isLiteral("0b00001011");
+    assertThat(integerLiteral2).isInstanceOf(IntegerLiteralTree.class);
   }
 
   private static String createString(String s) {

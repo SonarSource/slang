@@ -25,7 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import org.sonar.api.utils.log.LogTester;
-import org.sonarsource.slang.api.LiteralTree;
+import org.sonarsource.slang.api.IntegerLiteralTree;
 import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.ParameterTree;
@@ -33,7 +33,7 @@ import org.sonarsource.slang.api.StringLiteralTree;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
-import org.sonarsource.slang.impl.LiteralTreeImpl;
+import org.sonarsource.slang.impl.IntegerLiteralTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.ParameterTreeImpl;
 import org.sonarsource.slang.impl.StringLiteralTreeImpl;
@@ -88,8 +88,8 @@ public abstract class AbstractRubyConverterTest {
     return tree.children().get(0).children();
   }
 
-  protected static LiteralTree literal(String value) {
-    return new LiteralTreeImpl(null, value);
+  protected static IntegerLiteralTree integerLiteral(String value) {
+    return new IntegerLiteralTreeImpl(null, value);
   }
 
   protected static StringLiteralTree stringLiteral(String value, String content) {

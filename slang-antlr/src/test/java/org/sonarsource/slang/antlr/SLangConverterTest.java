@@ -35,6 +35,7 @@ import org.sonarsource.slang.api.ExceptionHandlingTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.IfTree;
+import org.sonarsource.slang.api.IntegerLiteralTree;
 import org.sonarsource.slang.api.JumpTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.LoopTree;
@@ -541,6 +542,23 @@ public class SLangConverterTest {
 
     assertThat(functionInvocationNoArgument.descendants()
       .anyMatch(e -> e instanceof IdentifierTree && ((IdentifierTree) e).name().equals("function"))).isTrue();
+  }
+
+  @Test
+  public void integerLiterals() {
+    Tree tree = converter.parse("0252; 0o252; 0O252; 170;");
+    IntegerLiteralTree literal0 = (IntegerLiteralTree) tree.children().get(0);
+    assertTree(literal0).isLiteral("0252");
+    assertThat(literal0.isOctal()).isTrue();
+    IntegerLiteralTree literal1 = (IntegerLiteralTree) tree.children().get(1);
+    assertTree(literal1).isLiteral("0o252");
+    assertThat(literal1.isOctal()).isTrue();
+    IntegerLiteralTree literal2 = (IntegerLiteralTree) tree.children().get(2);
+    assertTree(literal2).isLiteral("0O252");
+    assertThat(literal2.isOctal()).isTrue();
+    IntegerLiteralTree literal3 = (IntegerLiteralTree) tree.children().get(3);
+    assertTree(literal3).isLiteral("170");
+    assertThat(literal3.isOctal()).isFalse();
   }
 
   @Test

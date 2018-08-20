@@ -29,6 +29,7 @@ import static org.sonarsource.slang.impl.TextRanges.range;
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static org.sonarsource.slang.utils.TreeCreationUtils.binary;
 import static org.sonarsource.slang.utils.TreeCreationUtils.identifier;
+import static org.sonarsource.slang.utils.TreeCreationUtils.integerLiteral;
 import static org.sonarsource.slang.utils.TreeCreationUtils.literal;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,7 +38,7 @@ public class ParenthesizedExpressionTreeImplTest {
   @Test
   public void test() {
     Tree identifier = identifier("value");
-    Tree literalInt2 = literal("2");
+    Tree literalInt2 = integerLiteral("2");
     Tree literalTrue = literal("true");
     Tree binary1 = binary(BinaryExpressionTree.Operator.GREATER_THAN, identifier, literalInt2);
     Token leftParenthesis1 = new TokenImpl(range(5, 1, 5, 2), "(", Token.Type.OTHER);
