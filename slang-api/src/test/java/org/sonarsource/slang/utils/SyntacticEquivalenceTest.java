@@ -91,7 +91,7 @@ public class SyntacticEquivalenceTest {
     assertThat(areEquivalent(assignmentAPlusEqual1, assignmentAPlusEqual1)).isTrue();
     assertThat(areEquivalent(assignmentAPlusEqual1, assignment(plusEqualOperator, identifierA, literal1))).isTrue();
     assertThat(areEquivalent(assignmentAPlusEqual1, assignment(plusEqualOperator, identifierA, literal2))).isFalse();
-    assertThat(areEquivalent(assignmentAPlusEqual1, assignment(AssignmentExpressionTree.Operator.TIMES_EQUAL, identifierA, literal1))).isFalse();
+    assertThat(areEquivalent(assignmentAPlusEqual1, assignment(AssignmentExpressionTree.Operator.EQUAL, identifierA, literal1))).isFalse();
     assertThat(areEquivalent(assignmentAPlusEqual1, binaryAEquals1)).isFalse();
 
     Tree native1 = simpleNative(KIND, Collections.emptyList());

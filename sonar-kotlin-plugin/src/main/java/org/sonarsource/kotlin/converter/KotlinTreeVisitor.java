@@ -146,11 +146,8 @@ class KotlinTreeVisitor {
 
   private static final Map<KtToken, AssignmentExpressionTree.Operator> ASSIGNMENTS_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
     new SimpleEntry<>(KtTokens.EQ, AssignmentExpressionTree.Operator.EQUAL),
-    new SimpleEntry<>(KtTokens.PLUSEQ, AssignmentExpressionTree.Operator.PLUS_EQUAL),
-    new SimpleEntry<>(KtTokens.MINUSEQ, AssignmentExpressionTree.Operator.MINUS_EQUAL),
-    new SimpleEntry<>(KtTokens.MULTEQ, AssignmentExpressionTree.Operator.TIMES_EQUAL),
-    new SimpleEntry<>(KtTokens.PERCEQ, AssignmentExpressionTree.Operator.MODULO_EQUAL))
-    // FIXME missing '/=' operator in grammar
+    new SimpleEntry<>(KtTokens.PLUSEQ, AssignmentExpressionTree.Operator.PLUS_EQUAL))
+    // we create native for other kinds of compound assignment
     .collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue)));
 
   private final Document psiDocument;

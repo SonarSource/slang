@@ -414,8 +414,8 @@ public class SLangConverterTest {
 
   @Test
   public void nested_assignments() {
-    Tree tree = converter.parse("x -= y += 2;").children().get(0);
-    assertTree(tree).isAssignmentExpression(AssignmentExpressionTree.Operator.MINUS_EQUAL).hasTextRange(1, 0, 1, 11);
+    Tree tree = converter.parse("x += y += 2;").children().get(0);
+    assertTree(tree).isAssignmentExpression(AssignmentExpressionTree.Operator.PLUS_EQUAL).hasTextRange(1, 0, 1, 11);
     AssignmentExpressionTree assignment = (AssignmentExpressionTree) tree;
     assertTree(assignment.leftHandSide()).isIdentifier("x");
     assertTree(assignment.statementOrExpression()).isAssignmentExpression(AssignmentExpressionTree.Operator.PLUS_EQUAL).hasTextRange(1, 5, 1, 11);

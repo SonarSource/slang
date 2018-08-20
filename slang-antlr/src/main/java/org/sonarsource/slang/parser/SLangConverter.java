@@ -174,9 +174,6 @@ public class SLangConverter implements ASTConverter {
     Map<String, AssignmentExpressionTree.Operator> map = new HashMap<>();
     map.put("=", AssignmentExpressionTree.Operator.EQUAL);
     map.put("+=", AssignmentExpressionTree.Operator.PLUS_EQUAL);
-    map.put("-=", AssignmentExpressionTree.Operator.MINUS_EQUAL);
-    map.put("*=", AssignmentExpressionTree.Operator.TIMES_EQUAL);
-    map.put("%=", AssignmentExpressionTree.Operator.MODULO_EQUAL);
     return Collections.unmodifiableMap(map);
   }
 
