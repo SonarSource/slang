@@ -49,7 +49,7 @@ class ProcessorBridge < Parser::AST::Processor
     return if node.nil?
     @visitor.beforeVisit(AstNode.new(node))
     node = super
-    tree = @visitor.visitNode(AstNode.new(node), node.to_a)
+    tree = @visitor.visitNode(AstNode.new(node), java.util.ArrayList.new(node.to_a))
     @visitor.afterVisit(tree)
     tree
   end
@@ -96,4 +96,7 @@ class AstNode
     @node
   end
 
+  def availableAttributes
+    node.location.instance_variables
+  end
 end
