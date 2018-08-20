@@ -24,10 +24,7 @@ public interface AssignmentExpressionTree extends Tree {
   public enum Operator {
     EQUAL,
     PLUS_EQUAL,
-    MINUS_EQUAL,
-    TIMES_EQUAL,
-    MODULO_EQUAL
-    // FIXME no '/=' in slang grammar ?
+    // for other compound assignments a native tree should be created
   }
 
   Operator operator();

@@ -254,7 +254,7 @@ equalityOperator
   ;
  
 assignmentOperator
-  :  '=' | '+=' | '-=' | '*=' | '%='
+  :  '=' | '+='
   ;
 
 unaryOperator

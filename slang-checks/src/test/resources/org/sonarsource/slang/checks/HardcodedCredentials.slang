@@ -14,6 +14,7 @@ x = "login=a&password=xxx"; // Noncompliant {{'password' detected in this expres
   variableNameWithPasswordInIt = "xxx"; // Noncompliant {{'Password' detected in this expression, review this potentially hardcoded credential.}}
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 variableNameWithPasswdInIt = "xxx"; // Noncompliant
+variableNameWithPasswdInIt += "xxx"; // Noncompliant
 variableNameWithPwdInIt = "xxx";  // Noncompliant {{'Pwd' detected in this expression, review this potentially hardcoded credential.}}
 otherVariableNameWithPasswordInIt;
 variableNameWithPasswordInIt = native[] { [ "NativeFunctionCall" ] };

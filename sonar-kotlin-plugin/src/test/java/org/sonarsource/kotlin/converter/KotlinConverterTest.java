@@ -626,8 +626,8 @@ public class KotlinConverterTest {
 
   @Test
   public void testAssignments() {
-    assertTrees(kotlinStatements("x = 3\nx -= y + 3\n"))
-      .isEquivalentTo(slangStatements("x = 3; x -= y + 3;"));
+    assertTrees(kotlinStatements("x = 3\nx += y + 3\n"))
+      .isEquivalentTo(slangStatements("x = 3; x += y + 3;"));
   }
 
   @Test
