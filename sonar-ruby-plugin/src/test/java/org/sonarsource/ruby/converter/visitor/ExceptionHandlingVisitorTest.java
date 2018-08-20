@@ -63,7 +63,7 @@ public class ExceptionHandlingVisitorTest extends AbstractRubyConverterTest {
       .filter(IdentifierTree.class::isInstance)
       .map(IdentifierTree.class::cast)
       .collect(Collectors.toList());
-    assertThat(exceptionIdentifierTrees).extracting(IdentifierTree::name).containsExactly("A", "B", "C");
+    assertThat(exceptionIdentifierTrees).extracting(IdentifierTree::name).containsExactly("A", "B", "C", "a");
 
     CatchTree rescueClause2 = exceptionHandlingTree.catchBlocks().get(1);
     assertRange(rescueClause2.textRange()).hasRange(6, 0, 8, 0);

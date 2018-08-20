@@ -19,6 +19,7 @@
  */
 package org.sonarsource.ruby.converter;
 
+import java.util.List;
 import javax.annotation.CheckForNull;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.sonarsource.slang.api.TextRange;
@@ -35,4 +36,6 @@ public interface AstNode {
   String asString();
 
   IRubyObject node();
+
+  List availableAttributes();
 }
