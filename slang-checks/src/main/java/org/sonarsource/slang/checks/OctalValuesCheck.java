@@ -17,27 +17,25 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.ruby.converter;
+package org.sonarsource.slang.checks;
 
-import java.util.List;
-import javax.annotation.CheckForNull;
-import org.jruby.runtime.builtin.IRubyObject;
-import org.sonarsource.slang.api.TextRange;
+import org.sonar.check.Rule;
+import org.sonarsource.slang.api.IntegerLiteralTree;
+import org.sonarsource.slang.checks.api.InitContext;
+import org.sonarsource.slang.checks.api.SlangCheck;
 
-public interface AstNode {
-  String type();
+@Rule(key = "S1314")
+public class OctalValuesCheck implements SlangCheck {
 
-  @CheckForNull
-  TextRange textRange();
+  private static final String MESSAGE = "Use decimal values instead of octal ones.";
 
-  @CheckForNull
-  TextRange textRangeForAttribute(String attribute);
+  @Override
+  public void initialize(InitContext init) {
+    init.register(IntegerLiteralTree.class, (ctx, literal) -> {
+      if (literal.isOctal()) {
+        ctx.reportIssue(literal, MESSAGE);
+      }
+    });
+  }
 
-  String asString();
-
-  String source();
-
-  IRubyObject node();
-
-  List availableAttributes();
 }

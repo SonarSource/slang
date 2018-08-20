@@ -170,7 +170,7 @@ public class RubyVisitor {
       case "indexasgn":
         return createFromIndexasgn(node, children);
       case "int":
-        return createIntegerLiteralTree(node, children);
+        return createIntegerLiteralTree(node);
       case "cvar":
       case "lvar":
       case "ivar":
@@ -666,10 +666,9 @@ public class RubyVisitor {
 
     return new ClassDeclarationTreeImpl(metaData(node), classNameIdentifier, nativeTree);
   }
-
-  private LiteralTree createIntegerLiteralTree(AstNode node, List<?> children) {
-    String value = String.valueOf(children.get(0));
-    return new IntegerLiteralTreeImpl(metaData(node), value);
+  
+  private LiteralTree createIntegerLiteralTree(AstNode node) {
+    return new IntegerLiteralTreeImpl(metaData(node), node.source());
   }
 
   private Tree createFromConst(AstNode node, List<?> children) {

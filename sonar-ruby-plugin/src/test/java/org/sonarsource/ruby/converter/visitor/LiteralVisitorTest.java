@@ -44,4 +44,14 @@ public class LiteralVisitorTest extends AbstractRubyConverterTest {
     assertTree(rubyStatement("10000000000000000000")).isLiteral("10000000000000000000");
   }
 
+  @Test
+  public void int_literals_other_bases() {
+    assertTree(rubyStatement("0252")).isLiteral("0252");
+    assertTree(rubyStatement("0o252")).isLiteral("0o252");
+    assertTree(rubyStatement("0O252")).isLiteral("0O252");
+    assertTree(rubyStatement("0xaa")).isLiteral("0xaa");
+    assertTree(rubyStatement("0D123")).isLiteral("0D123");
+    assertTree(rubyStatement("123")).isLiteral("123");
+  }
+
 }
