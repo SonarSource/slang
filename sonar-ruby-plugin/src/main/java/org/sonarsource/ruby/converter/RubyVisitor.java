@@ -125,7 +125,7 @@ public class RubyVisitor {
     nodeTypeStack.pop();
   }
 
-  public Tree visitNode(AstNode node, List<Object> children) {
+  public Tree visitNode(AstNode node, List<?> children) {
     switch (node.type()) {
       case "and":
         return createLogicalOperation(node, children, Operator.CONDITIONAL_AND);
@@ -195,7 +195,7 @@ public class RubyVisitor {
     }
   }
 
-  private Tree createLoopTree(AstNode node, List<Object> children, LoopTree.LoopKind kind) {
+  private Tree createLoopTree(AstNode node, List<?> children, LoopTree.LoopKind kind) {
     Tree condition = (Tree) children.get(0);
     Tree body = (Tree) children.get(1);
     if (body == null) {
@@ -210,7 +210,7 @@ public class RubyVisitor {
       getTokenByAttribute(node, KEYWORD_ATTRIBUTE));
   }
 
-  private Tree createForLoopTree(AstNode node, List<Object> children) {
+  private Tree createForLoopTree(AstNode node, List<?> children) {
     Tree variables = (Tree) children.get(0);
     Tree expression = (Tree) children.get(1);
     TextRange conditionRange = TextRanges.merge(asList(variables.textRange(), expression.textRange()));
@@ -230,7 +230,7 @@ public class RubyVisitor {
       getTokenByAttribute(node, KEYWORD_ATTRIBUTE));
   }
 
-  private Tree createFromKwBeginNode(AstNode node, List<Object> children) {
+  private Tree createFromKwBeginNode(AstNode node, List<?> children) {
     if (children.size() == 1 && children.get(0) instanceof RubyPartialExceptionHandlingTree) {
       // this begin is used as a "begin...rescue...end" or "begin...ensure...end" block
       RubyPartialExceptionHandlingTree partialExceptionTree = (RubyPartialExceptionHandlingTree) children.get(0);
@@ -270,7 +270,7 @@ public class RubyVisitor {
   }
 
 
-  private Tree updateExceptionHandlingWithFinally(AstNode node, List<Object> children) {
+  private Tree updateExceptionHandlingWithFinally(AstNode node, List<?> children) {
     if (!isValidTryCatchBlock()) {
       // Ignore "ensure" clauses that are not part of a "begin...ensure...end" block
       return createNativeTree(node, children);
@@ -294,7 +294,7 @@ public class RubyVisitor {
     return exceptionHandlingTree;
   }
 
-  private Tree createExceptionHandlingTree(AstNode node, List<Object> children) {
+  private Tree createExceptionHandlingTree(AstNode node, List<?> children) {
     if (!isValidTryCatchBlock()) {
       // Ignore "rescue" clauses that are not part of "begin...rescue...end" or "begin...rescue...ensure...end" blocks
       return createNativeTree(node, children);
@@ -323,7 +323,7 @@ public class RubyVisitor {
     return new RubyPartialExceptionHandlingTree(tryBlock, catchTrees);
   }
 
-  private Tree createCatchTree(AstNode node, List<Object> children) {
+  private Tree createCatchTree(AstNode node, List<?> children) {
     if (!isValidTryCatchBlock()) {
       // Ignore "rescue" clauses that are not part of "begin...rescue...end" or "begin...rescue...ensure...end" blocks
       return createNativeTree(node, children);
@@ -354,7 +354,7 @@ public class RubyVisitor {
     return new CatchTreeImpl(metaData(node), catchParameter, body, keyword);
   }
 
-  private Tree createFromAssign(AstNode node, List<Object> children) {
+  private Tree createFromAssign(AstNode node, List<?> children) {
     IdentifierTree identifier = identifierFromSymbol(node, (RubySymbol) children.get(0));
 
     if (children.size() == 2) {
@@ -368,7 +368,7 @@ public class RubyVisitor {
     return identifier;
   }
 
-  private Tree createFromCasgn(AstNode node, List<Object> children) {
+  private Tree createFromCasgn(AstNode node, List<?> children) {
     IdentifierTree identifier = identifierFromSymbol(node, (RubySymbol) children.get(1));
 
     if (children.get(0) == null) {
@@ -387,7 +387,7 @@ public class RubyVisitor {
     return createNativeTree(node, children);
   }
 
-  private Tree createFromOpAsgn(AstNode node, List<Object> children) {
+  private Tree createFromOpAsgn(AstNode node, List<?> children) {
     Token operatorToken = getTokenByAttribute(node, "operator");
     if (operatorToken.text().equals("+")) {
       return new AssignmentExpressionTreeImpl(
@@ -400,12 +400,12 @@ public class RubyVisitor {
     return createNativeTree(node, children);
   }
 
-  private Tree createFromMlhs(AstNode node, List<Object> children) {
+  private Tree createFromMlhs(AstNode node, List<?> children) {
     // replacing native kind to support tree equivalence
     return createNativeTree(children, "array", metaData(node));
   }
 
-  private Tree createFromMasgn(AstNode node, List<Object> children) {
+  private Tree createFromMasgn(AstNode node, List<?> children) {
     return new AssignmentExpressionTreeImpl(
       metaData(node),
       AssignmentExpressionTree.Operator.EQUAL,
@@ -413,17 +413,17 @@ public class RubyVisitor {
       (Tree) children.get(1));
   }
 
-  private Tree createFromVar(AstNode node, List<Object> children) {
+  private Tree createFromVar(AstNode node, List<?> children) {
     return identifierFromSymbol(node, (RubySymbol) children.get(0));
   }
 
-  private Tree createFromIndexasgn(AstNode node, List<Object> children) {
+  private Tree createFromIndexasgn(AstNode node, List<?> children) {
     TreeMetaData metaData = metaData(node);
     if (children.size() > 2) {
       Token firstToken = metaData.tokens().get(0);
       TextRange closeBracketRange = node.textRangeForAttribute("end");
 
-      List<Object> lhsChildren = children.subList(0, children.size() - 1);
+      List<?> lhsChildren = children.subList(0, children.size() - 1);
       TextRange lhsRange = TextRanges.merge(Arrays.asList(firstToken.textRange(), closeBracketRange));
 
       TreeMetaData lhsMeta = metaDataProvider.metaData(lhsRange);
@@ -442,7 +442,7 @@ public class RubyVisitor {
     return createNativeTree(children, "index", metaData);
   }
 
-  private Tree createCaseTree(AstNode node, List<Object> children) {
+  private Tree createCaseTree(AstNode node, List<?> children) {
     Tree expression = ((Tree) children.get(0));
     Tree body = ((Tree) children.get(1));
     if (body == null) {
@@ -451,7 +451,7 @@ public class RubyVisitor {
     return new MatchCaseTreeImpl(metaData(node), expression, body);
   }
 
-  private Tree createMatchTree(AstNode node, List<Object> children) {
+  private Tree createMatchTree(AstNode node, List<?> children) {
     Token caseKeywordToken = getTokenByAttribute(node, KEYWORD_ATTRIBUTE);
 
     List<MatchCaseTree> whens = children.stream()
@@ -480,7 +480,7 @@ public class RubyVisitor {
     return new MatchTreeImpl(treeMetaData, (Tree) children.get(0), whens, caseKeywordToken);
   }
 
-  private Tree createStringLiteralTree(AstNode node, List<Object> children) {
+  private Tree createStringLiteralTree(AstNode node, List<?> children) {
     if (hasDynamicStringParent()) {
       return createNativeTree(node, children);
     }
@@ -530,14 +530,14 @@ public class RubyVisitor {
     return newTrees;
   }
 
-  private Tree createLogicalOperation(AstNode node, List<Object> children, Operator operator) {
+  private Tree createLogicalOperation(AstNode node, List<?> children, Operator operator) {
     Tree left = (Tree) children.get(0);
     Tree right = (Tree) children.get(1);
     Token operatorToken = getTokenByAttribute(node, "operator");
     return new BinaryExpressionTreeImpl(metaData(node), operator, operatorToken, left, right);
   }
 
-  private Tree createFromBeginNode(AstNode node, List<Object> children) {
+  private Tree createFromBeginNode(AstNode node, List<?> children) {
     Optional<Token> beginToken = lookForTokenByAttribute(node, "begin");
     Optional<Token> endToken = lookForTokenByAttribute(node, "end");
     if (beginToken.isPresent() && endToken.isPresent() && children.size() == 1 && beginToken.get().text().equals("(")) {
@@ -548,7 +548,7 @@ public class RubyVisitor {
     return new BlockTreeImpl(metaData(node), nonNullChildren);
   }
 
-  private Tree createFromSendNode(AstNode node, List<Object> children) {
+  private Tree createFromSendNode(AstNode node, List<?> children) {
     Object callee = children.get(1);
     if (callee instanceof RubySymbol) {
       String calleeSymbol = ((RubySymbol) callee).asJavaString();
@@ -567,7 +567,7 @@ public class RubyVisitor {
     return createNativeTree(node, children);
   }
 
-  private FunctionDeclarationTree createFunctionDeclarationTree(AstNode node, List<Object> children) {
+  private FunctionDeclarationTree createFunctionDeclarationTree(AstNode node, List<?> children) {
     boolean isSingletonMethod = node.type().equals("defs");
     List<Tree> nativeChildren;
     if (isSingletonMethod) {
@@ -613,7 +613,7 @@ public class RubyVisitor {
       nativeChildren);
   }
 
-  private ClassDeclarationTree createClassDeclarationTree(AstNode node, List<Object> children) {
+  private ClassDeclarationTree createClassDeclarationTree(AstNode node, List<?> children) {
     NativeTree nativeTree = createNativeTree(node, children);
     if (nativeTree == null) {
       throw new IllegalStateException("Failed to create ClassDeclarationTree for node " + node.asString());
@@ -631,12 +631,12 @@ public class RubyVisitor {
     return new ClassDeclarationTreeImpl(metaData(node), classNameIdentifier, nativeTree);
   }
 
-  private LiteralTree createLiteralTree(AstNode node, List<Object> children) {
+  private LiteralTree createLiteralTree(AstNode node, List<?> children) {
     String value = String.valueOf(children.get(0));
     return new LiteralTreeImpl(metaData(node), value);
   }
 
-  private Tree createFromConst(AstNode node, List<Object> children) {
+  private Tree createFromConst(AstNode node, List<?> children) {
     IdentifierTree identifier = identifierFromSymbol(node, (RubySymbol) children.get(children.size() - 1));
 
     if (children.get(0) == null) {
@@ -648,7 +648,7 @@ public class RubyVisitor {
     }
   }
 
-  private Tree createIfTree(AstNode node, List<Object> children) {
+  private Tree createIfTree(AstNode node, List<?> children) {
     Optional<Token> mainKeyword = lookForTokenByAttribute(node, KEYWORD_ATTRIBUTE);
     if (!mainKeyword.isPresent() || mainKeyword.get().text().equals("unless")) {
       // Ternary operator and "unless" are not considered as "IfTree" for now
@@ -699,7 +699,7 @@ public class RubyVisitor {
   }
 
   @CheckForNull
-  private NativeTree createNativeTree(AstNode node, List<Object> children) {
+  private NativeTree createNativeTree(AstNode node, List<?> children) {
     // when node has no location it means that it is not present in the tree
     if (node.textRange() == null) {
       return null;
@@ -707,7 +707,7 @@ public class RubyVisitor {
     return createNativeTree(children, node.type(), metaData(node));
   }
 
-  private NativeTree createNativeTree(List<Object> children, String type, TreeMetaData metaData) {
+  private NativeTree createNativeTree(List<?> children, String type, TreeMetaData metaData) {
     List<Tree> nonNullChildren = children.stream().flatMap(child -> treeForChild(child, metaData)).collect(Collectors.toList());
     return new NativeTreeImpl(metaData, new RubyNativeKind(type), nonNullChildren);
   }
