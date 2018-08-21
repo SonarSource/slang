@@ -54,6 +54,8 @@ public class MeasuresTest extends TestBase {
     assertThat(getMeasure("file1.kt", "ncloc_data").getValue()).isEqualTo("2=1;3=1;6=1;7=1;12=1;13=1");
     assertThat(getMeasure("file2.kt", "ncloc_data").getValue()).isEqualTo("1=1;2=1;3=1;4=1;5=1;7=1;10=1;11=1");
 
+    assertThat(getMeasure("file1.kt", "executable_lines_data").getValue()).isEqualTo("3=1;7=1;12=1");
+
     List<Issue> issuesForRule = getIssuesForRule("kotlin:S100");
     String file2Component = PROJECT_KEY + ":file2.kt";
     assertThat(issuesForRule).extracting(Issue::line).containsExactly(2, 7);

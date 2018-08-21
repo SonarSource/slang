@@ -169,6 +169,19 @@ public class MetricVisitorTest {
     assertThat(visitor.cognitiveComplexity()).isEqualTo(7);
   }
 
+  @Test
+  public void executable_lines() throws Exception {
+    scan("" +
+      "class A {" +
+      "  fun foo() {\n" +
+      "    statementOnSeveralLines(a,\n" +
+      "      b);\n" +
+      "  };\n" +
+      "}\n" +
+      "x = 42;");
+    assertThat(visitor.executableLines()).containsExactly(2, 6);
+  }
+
   private void scan(String code) throws IOException {
     inputFile = new TestInputFileBuilder("moduleKey", tempFolder.newFile().getName())
       .setCharset(StandardCharsets.UTF_8)
