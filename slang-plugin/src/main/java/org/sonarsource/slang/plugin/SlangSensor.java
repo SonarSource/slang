@@ -124,7 +124,7 @@ public abstract class SlangSensor implements Sensor {
       fileSystem.predicates().hasType(InputFile.Type.MAIN));
     Iterable<InputFile> inputFiles = fileSystem.inputFiles(mainFilePredicate);
     List<String> filenames = StreamSupport.stream(inputFiles.spliterator(), false).map(InputFile::toString).collect(Collectors.toList());
-    ProgressReport progressReport = new ProgressReport("Progress of the Kotlin analysis", TimeUnit.SECONDS.toMillis(10));
+    ProgressReport progressReport = new ProgressReport("Progress of the " + language.getName() + " analysis", TimeUnit.SECONDS.toMillis(10));
     progressReport.start(filenames);
     boolean success = false;
     ASTConverter converter = astConverter();
