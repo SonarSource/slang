@@ -48,6 +48,7 @@ import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.IfTree;
+import org.sonarsource.slang.api.JumpTree.JumpKind;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.MatchCaseTree;
@@ -67,12 +68,14 @@ import org.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.IfTreeImpl;
+import org.sonarsource.slang.impl.JumpTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.LoopTreeImpl;
 import org.sonarsource.slang.impl.MatchCaseTreeImpl;
 import org.sonarsource.slang.impl.MatchTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
+import org.sonarsource.slang.impl.ReturnTreeImpl;
 import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 import org.sonarsource.slang.impl.TextRangeImpl;
 import org.sonarsource.slang.impl.TextRanges;
@@ -165,6 +168,12 @@ public class RubyVisitor {
         return createFromMlhs(node, children);
       case "op_asgn":
         return createFromOpAsgn(node, children);
+      case "break":
+        return createJumpTree(node, children, JumpKind.BREAK);
+      case "next":
+        return createJumpTree(node, children, JumpKind.CONTINUE);
+      case "return":
+        return createReturnTree(node, children);
       case "or":
         return createLogicalOperation(node, children, Operator.CONDITIONAL_OR);
       case "send":
@@ -696,6 +705,19 @@ public class RubyVisitor {
   private BlockTree createEmptyBlockTree(TextPointer from, TextPointer to) {
     TextRange emptyBlockRange = new TextRangeImpl(from, to);
     return new BlockTreeImpl(metaDataProvider.metaData(emptyBlockRange), emptyList());
+  }
+
+  private Tree createJumpTree(AstNode node, List<Object> children, JumpKind kind) {
+    if (!children.isEmpty()) {
+      return createNativeTree(node, children);
+    }
+    Token keyword = getTokenByAttribute(node, KEYWORD_ATTRIBUTE);
+    return new JumpTreeImpl(metaData(node), keyword, kind, null);
+  }
+
+  private Tree createReturnTree(AstNode node, List<Object> children) {
+    Token keyword = getTokenByAttribute(node, KEYWORD_ATTRIBUTE);
+    return new ReturnTreeImpl(metaData(node), keyword, children.isEmpty() ? null : (Tree) children.get(0));
   }
 
   @CheckForNull
