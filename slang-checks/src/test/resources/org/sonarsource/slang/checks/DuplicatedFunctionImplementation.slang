@@ -59,9 +59,7 @@ fun f8(int a) { // Compliant
 }
 
 fun f9(int a) { // Noncompliant
-  foobar = "abc";
-  foo = 1;
-  bar = foo > 3 || bar
+  foobar = "abc"; foo = 1; bar = foo > 3 || bar
 }
 
 fun f10(string a) { // Compliant - not same parameter type
@@ -76,12 +74,14 @@ fun(int a, int b) { // Compliant - not same parameters
   bar = foo > 3 || bar
 }
 
-fun f11(int a, int b) { // Noncompliant  {{Update this function so that its implementation is not identical to the one on line 73.}}
+fun f11(int a, int b) {
   foobar = "abcdefg";
   foo = 1;
-  bar = foo > 34 || bar
+  bar = foo > 3 || bar
 }
 
-fun f11(int a, int b) { // Noncompliant  {{Update this function so that its implementation is not identical to the one on line 73.}}
-  foobar = "abcdefg"; foo = 1; bar = foo > 34 || bar
+fun f12(int a, int b) {
+  foobar = "abc";
+  foo = 2;
+  bar = foo > 3 || bar
 }

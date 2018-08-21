@@ -42,10 +42,6 @@ public class SyntacticEquivalence {
   }
 
   public static boolean areEquivalent(@Nullable List<? extends Tree> first, @Nullable List<? extends Tree> second) {
-    return areEquivalent(first, second, false);
-  }
-
-  public static boolean areEquivalent(@Nullable List<? extends Tree> first, @Nullable List<? extends Tree> second, boolean ignoreLiteralValues) {
     if (first == second) {
       return true;
     }
@@ -55,7 +51,7 @@ public class SyntacticEquivalence {
     }
 
     for (int i = 0; i < first.size(); i++) {
-      if (!areEquivalent(first.get(i), second.get(i), ignoreLiteralValues)) {
+      if (!areEquivalent(first.get(i), second.get(i))) {
         return false;
       }
     }
@@ -64,10 +60,6 @@ public class SyntacticEquivalence {
   }
 
   public static boolean areEquivalent(@Nullable Tree first, @Nullable Tree second) {
-    return areEquivalent(first, second, false);
-  }
-
-  public static boolean areEquivalent(@Nullable Tree first, @Nullable Tree second, boolean ignoreLiteralValues) {
     if (first == second) {
       return true;
     }
@@ -79,12 +71,12 @@ public class SyntacticEquivalence {
     if (first instanceof IdentifierTree) {
       return ((IdentifierTree) first).name().equals(((IdentifierTree) second).name());
     } else if (first instanceof LiteralTree) {
-      return ignoreLiteralValues || ((LiteralTree) first).value().equals(((LiteralTree) second).value());
+      return ((LiteralTree) first).value().equals(((LiteralTree) second).value());
     } else if (hasDifferentFields(first, second)) {
       return false;
     }
 
-    return areEquivalent(first.children(), second.children(), ignoreLiteralValues);
+    return areEquivalent(first.children(), second.children());
   }
 
   private static boolean hasDifferentFields(Tree first, Tree second) {
