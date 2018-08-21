@@ -63,6 +63,12 @@ public abstract class AbstractRubyConverterTest {
     converter.terminate();
   }
 
+  protected Tree slangStatement(String innerCode) {
+    List<Tree> statements = slangStatements(innerCode);
+    assertThat(statements).hasSize(1);
+    return statements.get(0);
+  }
+
   protected List<Tree> slangStatements(String innerCode) {
     Tree tree = new SLangConverter().parse(innerCode);
     assertThat(tree).isInstanceOf(TopLevelTree.class);
