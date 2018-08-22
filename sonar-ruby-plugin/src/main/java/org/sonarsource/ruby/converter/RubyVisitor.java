@@ -733,7 +733,7 @@ public class RubyVisitor {
     return new BlockTreeImpl(metaDataProvider.metaData(emptyBlockRange), emptyList());
   }
 
-  private Tree createJumpTree(AstNode node, List<Object> children, JumpKind kind) {
+  private Tree createJumpTree(AstNode node, List<?> children, JumpKind kind) {
     if (!children.isEmpty()) {
       return createNativeTree(node, children);
     }
@@ -741,7 +741,7 @@ public class RubyVisitor {
     return new JumpTreeImpl(metaData(node), keyword, kind, null);
   }
 
-  private Tree createReturnTree(AstNode node, List<Object> children) {
+  private Tree createReturnTree(AstNode node, List<?> children) {
     Token keyword = getTokenByAttribute(node, KEYWORD_ATTRIBUTE);
     return new ReturnTreeImpl(metaData(node), keyword, children.isEmpty() ? null : (Tree) children.get(0));
   }
