@@ -1,0 +1,14 @@
+{
+  "coverage": {
+    "/Absolute/Path/To/file1.rb": [
+      1,
+      1,
+      2,
+      null,
+      null,
+      1,
+      0
+    ]
+  },
+  "timestamp": 1
+}

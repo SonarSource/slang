@@ -1,0 +1,14 @@
+{
+  "RSpec": {
+    "coverage": {
+      "/Absolute/Path/To/file2.rb": [
+        5
+      ],
+      "/Absolute/Path/To/file3.rb": [
+        1,
+        2
+      ]
+    },
+    "timestamp": 1
+  }
+}

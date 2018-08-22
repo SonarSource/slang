@@ -66,7 +66,7 @@ public class MeasuresTest extends TestBase {
   public void ruby_measures() {
     ORCHESTRATOR.executeBuild(getSonarScanner(BASE_DIRECTORY, "ruby"));
 
-    assertThat(getMeasureAsInt("files")).isEqualTo(1);
+    assertThat(getMeasureAsInt("files")).isEqualTo(2);
     assertThat(getMeasureAsInt("file.rb", "ncloc")).isEqualTo(8);
     assertThat(getMeasureAsInt("file.rb", "comment_lines")).isEqualTo(12);
     assertThat(getMeasureAsInt("file.rb", "statements")).isEqualTo(5);
