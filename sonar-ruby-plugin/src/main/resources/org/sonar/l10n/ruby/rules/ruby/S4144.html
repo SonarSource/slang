@@ -1,0 +1,39 @@
+<p>When two methods have the same implementation, either it was a mistake - something else was intended - or the duplication was intentional, but may
+be confusing to maintainers. In the latter case, one implementation should invoke the other.</p>
+<h2>Noncompliant Code Example</h2>
+<pre>
+class Box
+  def initialize(length, width, height)
+    @length, @width, @height = length, width, height
+  end
+
+  def getVolume
+    area = @length * @width
+    return area * @height
+  end
+
+  def getArea                  # Noncompliant, implementation is identical to "getVolume"
+    area = @length * @width
+    return area * @height
+  end
+end
+</pre>
+<h2>Compliant Solution</h2>
+<pre>
+class Box
+  def initialize(length, width, height)
+    @length, @width, @height = length, width, height
+  end
+
+  def getVolume
+    return getArea * @height
+  end
+
+  def getArea
+    return @length * @width
+  end
+end
+</pre>
+<h2>Exceptions</h2>
+<p>Methods with fewer than 2 statements are ignored.</p>
+
