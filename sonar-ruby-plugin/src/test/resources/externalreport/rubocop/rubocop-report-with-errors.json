@@ -1,0 +1,136 @@
+{
+  "files": [
+    {
+      "path": "useless-assignment.rb",
+      "offenses": [
+        {
+          "message": "message 1",
+          "cop_name": "ruleKey1",
+          "location": {
+            "start_line": 3,
+            "start_column": 3,
+            "last_line": 3,
+            "last_column": 7
+          }
+        }
+      ]
+    },
+    {
+      "path": "useless-assignment.rb",
+      "offenses": [
+        {
+          "message": "message 2",
+          "cop_name": "ruleKey2",
+          "location": {
+            "start_line": 3,
+            "start_column": 3,
+            "last_line": 3,
+            "length": 5,
+            "line": 3,
+            "column": 3
+          }
+        }
+      ]
+    },
+    {
+      "path": "useless-assignment.rb",
+      "offenses": [
+        {
+          "message": "message 3",
+          "cop_name": "ruleKey3",
+          "location": {
+            "start_line": 3,
+            "start_column": 3,
+            "length": 5,
+            "line": 3,
+            "column": 3
+          }
+        }
+      ]
+    },
+    {
+      "path": "useless-assignment.rb",
+      "offenses": [
+        {
+          "message": "message 4",
+          "cop_name": "ruleKey4",
+          "location": {
+            "start_line": 3,
+            "length": 5,
+            "line": 3,
+            "column": 3
+          }
+        }
+      ]
+    },
+    {
+      "path": "useless-assignment.rb",
+      "offenses": [
+        {
+          "message": "message 5",
+          "cop_name": "ruleKey5",
+          "location": {
+            "length": 5,
+            "line": 3,
+            "column": 3
+          }
+        }
+      ]
+    },
+    {
+      "path": "useless-assignment.rb",
+      "offenses": [
+        {
+          "message": "message 6",
+          "cop_name": "ruleKey6",
+          "location": {
+          }
+        }
+      ]
+    },
+    {
+      "path": "useless-assignment.rb",
+      "offenses": [
+        {
+          "message": "message 7",
+          "cop_name": "ruleKey7"
+        }
+      ]
+    },
+    {
+      "path": "useless-assignment.rb",
+      "offenses": [
+        {
+          "message": null,
+          "cop_name": "NotEmptyRuleKey",
+          "location": { }
+        },
+        {
+          "message": "Valid message.",
+          "cop_name": "",
+          "location": null
+        }
+      ]
+    },
+    {
+      "path": "invalid-path.json",
+      "offenses": [
+        {
+          "message": "Valid message.",
+          "cop_name": "NotEmptyRuleKey",
+          "location": { "line": 3 }
+        }
+      ]
+    },
+    {
+      "path": null,
+      "offenses": [
+        {
+          "message": "Valid message.",
+          "cop_name": "NotEmptyRuleKey",
+          "location": { "line": 3 }
+        }
+      ]
+    }
+  ]
+}

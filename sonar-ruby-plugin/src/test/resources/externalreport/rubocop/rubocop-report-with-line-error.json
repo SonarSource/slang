@@ -1,0 +1,16 @@
+{
+  "files": [
+    {
+      "path": "useless-assignment.rb",
+      "offenses": [
+        {
+          "message": "message 1",
+          "cop_name": "ruleKey1",
+          "location": {
+            "line": 100
+          }
+        }
+      ]
+    }
+  ]
+}
