@@ -19,8 +19,31 @@
  */
 package org.sonarsource.slang.api;
 
+import java.math.BigInteger;
+
 public interface IntegerLiteralTree extends LiteralTree {
 
-  boolean isOctal();
+  enum Base {
+    BINARY(2),
+    OCTAL(8),
+    DECIMAL(10),
+    HEXADECIMAL(16);
+
+    private int radix;
+
+    Base(int i) {
+      radix = i;
+    }
+
+    public int getRadix() {
+      return radix;
+    }
+  }
+
+  Base getBase();
+
+  BigInteger getIntegerValue();
+
+  String getNumericPart();
 
 }

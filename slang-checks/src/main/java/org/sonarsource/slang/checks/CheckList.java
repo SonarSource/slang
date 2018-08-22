@@ -39,6 +39,7 @@ public class CheckList {
   };
 
   private static final Class[] KOTLIN_CHECK_BLACK_LIST = {
+    // Rule does not apply here as octal values do not exist in Kotlin
     OctalValuesCheck.class
   };
 

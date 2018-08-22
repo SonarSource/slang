@@ -19,40 +19,72 @@
  */
 package org.sonarsource.slang.impl;
 
+import java.math.BigInteger;
 import org.sonarsource.slang.api.IntegerLiteralTree;
 import org.sonarsource.slang.api.TreeMetaData;
 
+/**
+ * Languages that can have integer literal with other bases, or who use a different syntax for binary/octal/decimal/hexadecimal
+ * values, specific plugins should provide its own implementation of {@link org.sonarsource.slang.api.IntegerLiteralTree}
+ */
 public class IntegerLiteralTreeImpl extends LiteralTreeImpl implements IntegerLiteralTree {
 
-  public IntegerLiteralTreeImpl(TreeMetaData metaData, String value) {
-    super(metaData, value);
+  private final Base base;
+  private final String numericPart;
+
+  public IntegerLiteralTreeImpl(TreeMetaData metaData, String stringValue) {
+    super(metaData, stringValue);
+
+    if (hasExplicitHexadecimalPrefix(stringValue)) {
+      base = IntegerLiteralTree.Base.HEXADECIMAL;
+      numericPart = stringValue.substring(2);
+    } else if (hasExplicitBinaryPrefix(stringValue)) {
+      base = IntegerLiteralTree.Base.BINARY;
+      numericPart = stringValue.substring(2);
+    } else if (hasExplicitDecimalPrefix(stringValue)) {
+      base = IntegerLiteralTree.Base.DECIMAL;
+      numericPart = stringValue.substring(2);
+    } else if (hasExplicitOctalPrefix(stringValue)) {
+      base = IntegerLiteralTree.Base.OCTAL;
+      numericPart = stringValue.substring(2);
+    } else if (!stringValue.equals("0") && stringValue.startsWith("0")) {
+      base = IntegerLiteralTree.Base.OCTAL;
+      numericPart = stringValue.substring(1);
+    } else {
+      base = Base.DECIMAL;
+      numericPart = stringValue;
+    }
   }
 
   @Override
-  public boolean isOctal() {
-    String value = value();
-    if (isExplicitOctal(value)) {
-      return true;
-    } else if (!"0".equals(value) && value.startsWith("0")) {
-      return !isHexadecimal(value) && !isBinary(value) && !isExplicitDecimal(value);
-    }
-    return false;
+  public Base getBase() {
+    return base;
   }
 
-  private static boolean isExplicitOctal(String value) {
+  @Override
+  public BigInteger getIntegerValue() {
+    return new BigInteger(numericPart, base.getRadix());
+  }
+
+  @Override
+  public String getNumericPart() {
+    return numericPart;
+  }
+
+  private static boolean hasExplicitOctalPrefix(String value) {
     return value.startsWith("0o") || value.startsWith("0O");
   }
 
-  private static boolean isExplicitDecimal(String value) {
-    return value.startsWith("0d") || value.startsWith("0D");
-  }
-
-  private static boolean isHexadecimal(String value) {
+  private static boolean hasExplicitHexadecimalPrefix(String value) {
     return value.startsWith("0x") || value.startsWith("0X");
   }
 
-  private static boolean isBinary(String value) {
+  private static boolean hasExplicitBinaryPrefix(String value) {
     return value.startsWith("0b") || value.startsWith("0B");
+  }
+
+  private static boolean hasExplicitDecimalPrefix(String value) {
+    return value.startsWith("0d") || value.startsWith("0D");
   }
 
 }

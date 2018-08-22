@@ -546,19 +546,31 @@ public class SLangConverterTest {
 
   @Test
   public void integerLiterals() {
-    Tree tree = converter.parse("0252; 0o252; 0O252; 170;");
+    Tree tree = converter.parse("0252; 0o252; 0O252; 170; 0xaa; 0B10;");
     IntegerLiteralTree literal0 = (IntegerLiteralTree) tree.children().get(0);
     assertTree(literal0).isLiteral("0252");
-    assertThat(literal0.isOctal()).isTrue();
+    assertThat(literal0.getBase()).isEqualTo(IntegerLiteralTree.Base.OCTAL);
+    assertThat(literal0.getIntegerValue().intValue()).isEqualTo(170);
     IntegerLiteralTree literal1 = (IntegerLiteralTree) tree.children().get(1);
     assertTree(literal1).isLiteral("0o252");
-    assertThat(literal1.isOctal()).isTrue();
+    assertThat(literal1.getBase()).isEqualTo(IntegerLiteralTree.Base.OCTAL);
+    assertThat(literal1.getIntegerValue().intValue()).isEqualTo(170);
     IntegerLiteralTree literal2 = (IntegerLiteralTree) tree.children().get(2);
     assertTree(literal2).isLiteral("0O252");
-    assertThat(literal2.isOctal()).isTrue();
+    assertThat(literal2.getBase()).isEqualTo(IntegerLiteralTree.Base.OCTAL);
+    assertThat(literal2.getIntegerValue().intValue()).isEqualTo(170);
     IntegerLiteralTree literal3 = (IntegerLiteralTree) tree.children().get(3);
     assertTree(literal3).isLiteral("170");
-    assertThat(literal3.isOctal()).isFalse();
+    assertThat(literal3.getBase()).isEqualTo(IntegerLiteralTree.Base.DECIMAL);
+    assertThat(literal3.getIntegerValue().intValue()).isEqualTo(170);
+    IntegerLiteralTree literal4 = (IntegerLiteralTree) tree.children().get(4);
+    assertTree(literal4).isLiteral("0xaa");
+    assertThat(literal4.getBase()).isEqualTo(IntegerLiteralTree.Base.HEXADECIMAL);
+    assertThat(literal4.getIntegerValue().intValue()).isEqualTo(170);
+    IntegerLiteralTree literal5 = (IntegerLiteralTree) tree.children().get(5);
+    assertTree(literal5).isLiteral("0B10");
+    assertThat(literal5.getBase()).isEqualTo(IntegerLiteralTree.Base.BINARY);
+    assertThat(literal5.getIntegerValue().intValue()).isEqualTo(2);
   }
 
   @Test
