@@ -1,5 +1,5 @@
 
 
 def foo(wrongNameConvention)
-  puts 'Hello'
+  puts wrongNameConvention
 end
