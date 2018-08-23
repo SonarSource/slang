@@ -23,6 +23,8 @@ import java.util.List;
 
 public interface TopLevelTree extends Tree {
 
+  List<Tree> preambleDeclarations();
+
   List<Tree> declarations();
 
   List<Comment> allComments();

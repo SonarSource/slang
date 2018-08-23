@@ -72,6 +72,16 @@ public class SLangConverterTest {
   private SLangConverter converter = new SLangConverter();
 
   @Test
+  public void imports() {
+    TopLevelTree tree = (TopLevelTree) converter.parse("import x; import y; import x;");
+    assertThat(tree.declarations()).isEmpty();
+    List<Tree> preambleTrees = tree.preambleDeclarations();
+    assertThat(preambleTrees).hasSize(3);
+    assertTree(preambleTrees.get(0)).isEquivalentTo(preambleTrees.get(2));
+    assertTree(preambleTrees.get(0)).isNotEquivalentTo(preambleTrees.get(1));
+  }
+
+  @Test
   public void top_level_block() {
     Tree tree = converter.parse("{ 2; };").children().get(0);
     assertTree(tree).isBlock(LiteralTree.class);

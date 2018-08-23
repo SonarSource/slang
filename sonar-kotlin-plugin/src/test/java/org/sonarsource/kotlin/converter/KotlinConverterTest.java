@@ -109,6 +109,18 @@ public class KotlinConverterTest {
   }
 
   @Test
+  public void testPreamble() {
+    TopLevelTree topLevel = (TopLevelTree) converter.parse("" +
+      "@file:JvmName(\"xxx\")\n" +
+      "package com.example\n" +
+      "import com.example.MyClass\n" +
+      "fun main(args: Array<String>) {}");
+    assertThat(topLevel.preambleDeclarations()).hasSize(3);
+    assertThat(topLevel.declarations()).hasSize(1);
+    assertThat(topLevel.declarations().get(0)).isInstanceOf(FunctionDeclarationTree.class);
+  }
+
+  @Test
   public void testBinaryExpression() {
     assertTrees(kotlinStatements("x + 2; x - 2; x * 2; x / 2; x == 2; x != 2; x > 2; x >= 2; x < 2; x <= 2; x && y; x || y;"))
       .isEquivalentTo(slangStatements("x + 2; x - 2; x * 2; x / 2; x == 2; x != 2; x > 2; x >= 2; x < 2; x <= 2; x && y; x || y;"));

@@ -19,6 +19,7 @@
  */
 package org.sonarsource.slang.plugin;
 
+import java.util.List;
 import org.sonar.api.batch.sensor.cpd.NewCpdTokens;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
@@ -31,7 +32,17 @@ public class CpdVisitor extends TreeVisitor<InputFileContext> {
 
   public CpdVisitor() {
     register(TopLevelTree.class, (ctx, tree) -> {
-      for (Token token : tree.metaData().tokens()) {
+      List<Token> tokens = tree.metaData().tokens();
+
+      List<Tree> preambleTrees = tree.preambleDeclarations();
+      if (!preambleTrees.isEmpty()) {
+        Tree lastPreambleTree = preambleTrees.get(preambleTrees.size() - 1);
+        List<Token> lastPreambleTokens = lastPreambleTree.metaData().tokens();
+        Token lastPreambleToken = lastPreambleTokens.get(lastPreambleTokens.size() - 1);
+        tokens = tokens.subList(tokens.indexOf(lastPreambleToken) + 1, tokens.size());
+      }
+
+      for (Token token : tokens) {
         String text = token.type() == Token.Type.STRING_LITERAL ? "LITERAL" : token.text();
         cpdTokens.addToken(ctx.textRange(token.textRange()), text);
       }

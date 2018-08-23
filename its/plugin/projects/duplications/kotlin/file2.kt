@@ -1,3 +1,7 @@
+package com.example.mypackage
+
+import com.example.somewhere.MyClass
+
 fun function1(args: Array<String>) {
     println("hello")
     var a = 0
