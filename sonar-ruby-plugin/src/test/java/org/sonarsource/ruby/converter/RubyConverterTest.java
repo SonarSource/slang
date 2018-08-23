@@ -47,6 +47,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -76,6 +77,16 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
     assertThatThrownBy(() -> rubyConverter.parse("true;"))
       .isInstanceOf(ParseException.class)
       .hasMessage("Unable to parse file content");
+    rubyConverter.terminate();
+  }
+
+  @Test
+  public void parser_runtime_exception() {
+    RubyConverter rubyConverter = spy(new RubyConverter());
+    doThrow(new RuntimeException("Runtime exception message")).when(rubyConverter).parseContent(any());
+    assertThatThrownBy(() -> rubyConverter.parse(""))
+      .isInstanceOf(ParseException.class)
+      .hasMessage("Runtime exception message");
     rubyConverter.terminate();
   }
 
