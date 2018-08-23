@@ -17,27 +17,33 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.ruby.converter;
+package org.sonarsource.slang.api;
 
-import java.util.List;
-import javax.annotation.CheckForNull;
-import org.jruby.runtime.builtin.IRubyObject;
-import org.sonarsource.slang.api.TextRange;
+import java.math.BigInteger;
 
-public interface AstNode {
-  String type();
+public interface IntegerLiteralTree extends LiteralTree {
 
-  @CheckForNull
-  TextRange textRange();
+  enum Base {
+    BINARY(2),
+    OCTAL(8),
+    DECIMAL(10),
+    HEXADECIMAL(16);
 
-  @CheckForNull
-  TextRange textRangeForAttribute(String attribute);
+    private int radix;
 
-  String asString();
+    Base(int i) {
+      radix = i;
+    }
 
-  String source();
+    public int getRadix() {
+      return radix;
+    }
+  }
 
-  IRubyObject node();
+  Base getBase();
 
-  List availableAttributes();
+  BigInteger getIntegerValue();
+
+  String getNumericPart();
+
 }

@@ -22,7 +22,13 @@ package org.sonarsource.ruby.converter.visitor;
 
 import org.junit.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
+import org.sonarsource.slang.api.IntegerLiteralTree;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.sonarsource.slang.api.IntegerLiteralTree.Base.BINARY;
+import static org.sonarsource.slang.api.IntegerLiteralTree.Base.DECIMAL;
+import static org.sonarsource.slang.api.IntegerLiteralTree.Base.HEXADECIMAL;
+import static org.sonarsource.slang.api.IntegerLiteralTree.Base.OCTAL;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 import static org.sonarsource.slang.testing.TreesAssert.assertTrees;
 
@@ -42,6 +48,51 @@ public class LiteralVisitorTest extends AbstractRubyConverterTest {
 
     // literal bigger than Long.MAX_VALUE are returned as BigInteger by JRuby
     assertTree(rubyStatement("10000000000000000000")).isLiteral("10000000000000000000");
+  }
+
+  @Test
+  public void octal_int_literals() {
+    IntegerLiteralTree literal0 = (IntegerLiteralTree) rubyStatement("0252");
+    assertTree(literal0).isLiteral("0252");
+    assertThat(literal0.getBase()).isEqualTo(OCTAL);
+    assertThat(literal0.getIntegerValue().intValue()).isEqualTo(170);
+
+    IntegerLiteralTree literal1 = (IntegerLiteralTree) rubyStatement("0o252");
+    assertTree(literal1).isLiteral("0o252");
+    assertThat(literal1.getBase()).isEqualTo(OCTAL);
+    assertThat(literal1.getIntegerValue().intValue()).isEqualTo(170);
+
+    IntegerLiteralTree literal2 = (IntegerLiteralTree) rubyStatement("0O252");
+    assertTree(literal2).isLiteral("0O252");
+    assertThat(literal2.getBase()).isEqualTo(OCTAL);
+    assertThat(literal2.getIntegerValue().intValue()).isEqualTo(170);
+  }
+
+  @Test
+  public void other_int_literals() {
+    IntegerLiteralTree literal0 = (IntegerLiteralTree) rubyStatement("0xaa");
+    assertTree(literal0).isLiteral("0xaa");
+    assertThat(literal0.getBase()).isEqualTo(HEXADECIMAL);
+    assertThat(literal0.getIntegerValue().intValue()).isEqualTo(170);
+    assertThat(literal0.getNumericPart()).isEqualTo("aa");
+
+    IntegerLiteralTree literal1 = (IntegerLiteralTree) rubyStatement("0D123");
+    assertTree(literal1).isLiteral("0D123");
+    assertThat(literal1.getBase()).isEqualTo(DECIMAL);
+    assertThat(literal1.getIntegerValue().intValue()).isEqualTo(123);
+    assertThat(literal1.getNumericPart()).isEqualTo("123");
+
+    IntegerLiteralTree literal2 = (IntegerLiteralTree) rubyStatement("123");
+    assertTree(literal2).isLiteral("123");
+    assertThat(literal2.getBase()).isEqualTo(DECIMAL);
+    assertThat(literal2.getIntegerValue().intValue()).isEqualTo(123);
+    assertThat(literal2.getNumericPart()).isEqualTo("123");
+
+    IntegerLiteralTree literal3 = (IntegerLiteralTree) rubyStatement("0b101");
+    assertTree(literal3).isLiteral("0b101");
+    assertThat(literal3.getBase()).isEqualTo(BINARY);
+    assertThat(literal3.getIntegerValue().intValue()).isEqualTo(5);
+    assertThat(literal3.getNumericPart()).isEqualTo("101");
   }
 
 }

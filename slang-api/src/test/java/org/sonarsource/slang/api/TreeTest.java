@@ -28,7 +28,7 @@ import static org.sonarsource.slang.utils.TreeCreationUtils.assignment;
 import static org.sonarsource.slang.utils.TreeCreationUtils.binary;
 import static org.sonarsource.slang.utils.TreeCreationUtils.block;
 import static org.sonarsource.slang.utils.TreeCreationUtils.identifier;
-import static org.sonarsource.slang.utils.TreeCreationUtils.literal;
+import static org.sonarsource.slang.utils.TreeCreationUtils.integerLiteral;
 import static org.sonarsource.slang.utils.TreeCreationUtils.simpleFunction;
 import static org.sonarsource.slang.utils.TreeCreationUtils.simpleNative;
 import static org.sonarsource.slang.utils.TreeCreationUtils.topLevel;
@@ -44,7 +44,7 @@ public class TreeTest {
     Tree x = identifier("x");
     Tree y = identifier("y");
     Tree z = identifier("z");
-    Tree int1 = literal("1");
+    Tree int1 = integerLiteral("1");
     Tree xEqualTo1 = binary(EQUAL_TO, x, int1);
     Tree yEqualsXEqualTo1 = assignment(y, xEqualTo1);
     IdentifierTree functionName = identifier("x");

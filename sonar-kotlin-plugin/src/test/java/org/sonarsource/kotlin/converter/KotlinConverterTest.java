@@ -34,6 +34,7 @@ import org.sonarsource.slang.api.ExceptionHandlingTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.IfTree;
+import org.sonarsource.slang.api.IntegerLiteralTree;
 import org.sonarsource.slang.api.JumpTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.LoopTree;
@@ -54,6 +55,9 @@ import org.sonarsource.slang.parser.SLangConverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.api.BinaryExpressionTree.Operator.LESS_THAN;
+import static org.sonarsource.slang.api.IntegerLiteralTree.Base.BINARY;
+import static org.sonarsource.slang.api.IntegerLiteralTree.Base.DECIMAL;
+import static org.sonarsource.slang.api.IntegerLiteralTree.Base.HEXADECIMAL;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
@@ -84,8 +88,8 @@ public class KotlinConverterTest {
   public void testWinEOL() {
     Tree tree = converter.parse(
       "fun main(args: Array<String>) {\r\n" +
-      "\r\n" +
-      "}\r\n");
+        "\r\n" +
+        "}\r\n");
     assertThat(tree.children()).hasSize(1);
   }
 
@@ -716,6 +720,27 @@ public class KotlinConverterTest {
       "private", "fun", "foo", "(", ")", "{", "42", "+", "\"", "a", "\"", "}");
     assertThat(tokens).extracting(Token::type).containsExactly(
       KEYWORD, KEYWORD, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, STRING_LITERAL, OTHER, OTHER);
+  }
+
+  @Test
+  public void testIntegerLiterals() {
+    IntegerLiteralTree literal0 = (IntegerLiteralTree) kotlinStatement("0Xaa");
+    assertTree(literal0).isLiteral("0Xaa");
+    assertThat(literal0.getBase()).isEqualTo(HEXADECIMAL);
+    assertThat(literal0.getIntegerValue().intValue()).isEqualTo(170);
+    assertThat(literal0.getNumericPart()).isEqualTo("aa");
+
+    IntegerLiteralTree literal2 = (IntegerLiteralTree) kotlinStatement("123");
+    assertTree(literal2).isLiteral("123");
+    assertThat(literal2.getBase()).isEqualTo(DECIMAL);
+    assertThat(literal2.getIntegerValue().intValue()).isEqualTo(123);
+    assertThat(literal2.getNumericPart()).isEqualTo("123");
+
+    IntegerLiteralTree literal3 = (IntegerLiteralTree) kotlinStatement("0b101");
+    assertTree(literal3).isLiteral("0b101");
+    assertThat(literal3.getBase()).isEqualTo(BINARY);
+    assertThat(literal3.getIntegerValue().intValue()).isEqualTo(5);
+    assertThat(literal3.getNumericPart()).isEqualTo("101");
   }
 
   private static String createString(String s) {

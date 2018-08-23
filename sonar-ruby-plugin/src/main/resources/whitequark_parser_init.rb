@@ -76,6 +76,10 @@ class AstNode
     @node.to_s
   end
 
+  def source
+    @node.location.expression.source
+  end
+
   def textRange()
     textRangeForAttribute('expression')
   end

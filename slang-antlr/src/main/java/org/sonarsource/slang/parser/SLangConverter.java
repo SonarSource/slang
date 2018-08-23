@@ -47,6 +47,7 @@ import org.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.IfTreeImpl;
+import org.sonarsource.slang.impl.IntegerLiteralTreeImpl;
 import org.sonarsource.slang.impl.JumpTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.LoopTreeImpl;
@@ -469,6 +470,8 @@ public class SLangConverter implements ASTConverter {
     public Tree visitLiteral(SLangParser.LiteralContext ctx) {
       if (ctx.StringLiteral() != null) {
         return new StringLiteralTreeImpl(meta(ctx), ctx.getText());
+      } else if (ctx.IntegerLiteral() != null) {
+        return new IntegerLiteralTreeImpl(meta(ctx), ctx.getText());
       } else {
         return new LiteralTreeImpl(meta(ctx), ctx.getText());
       }

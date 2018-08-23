@@ -38,7 +38,10 @@ public class CheckList {
     UnusedPrivateMethodCheck.class,
   };
 
-  private static final Class[] KOTLIN_CHECK_BLACK_LIST = {};
+  private static final Class[] KOTLIN_CHECK_BLACK_LIST = {
+    // Rule does not apply here as octal values do not exist in Kotlin
+    OctalValuesCheck.class
+  };
 
   private CheckList() {
   }
@@ -68,6 +71,7 @@ public class CheckList {
       IfConditionalAlwaysTrueOrFalseCheck.class,
       MatchCaseTooBigCheck.class,
       NestedMatchCheck.class,
+      OctalValuesCheck.class,
       OneStatementPerLineCheck.class,
       RedundantParenthesesCheck.class,
       SelfAssignmentCheck.class,

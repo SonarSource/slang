@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
@@ -100,6 +101,7 @@ import org.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.IfTreeImpl;
+import org.sonarsource.slang.impl.IntegerLiteralTreeImpl;
 import org.sonarsource.slang.impl.JumpTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.LoopTreeImpl;
@@ -563,6 +565,8 @@ class KotlinTreeVisitor {
   private static Tree createLiteral(TreeMetaData metaData, PsiElement element) {
     if (isSimpleStringLiteral(element)) {
       return new StringLiteralTreeImpl(metaData, element.getText());
+    } else if (element.getNode().getElementType() == KtNodeTypes.INTEGER_CONSTANT) {
+      return new IntegerLiteralTreeImpl(metaData, element.getText());
     }
     return new LiteralTreeImpl(metaData, element.getText());
   }

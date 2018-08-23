@@ -17,27 +17,15 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.ruby.converter;
+package org.sonarsource.slang.checks;
 
-import java.util.List;
-import javax.annotation.CheckForNull;
-import org.jruby.runtime.builtin.IRubyObject;
-import org.sonarsource.slang.api.TextRange;
+import org.junit.Test;
 
-public interface AstNode {
-  String type();
+public class OctalValuesCheckTest {
 
-  @CheckForNull
-  TextRange textRange();
+  @Test
+  public void test() {
+    Verifier.verify("OctalValues.slang", new OctalValuesCheck());
+  }
 
-  @CheckForNull
-  TextRange textRangeForAttribute(String attribute);
-
-  String asString();
-
-  String source();
-
-  IRubyObject node();
-
-  List availableAttributes();
 }

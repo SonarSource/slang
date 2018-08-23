@@ -321,6 +321,9 @@ CONTINUE: 'continue';
 
 IntegerLiteral
   :  DecimalIntegerLiteral
+  |  HexadecimalIntegerLiteral
+  |  OctalIntegerLiteral
+  |  BinaryIntegerLiteral
   ;
 
 fragment
@@ -343,6 +346,56 @@ Digit
 fragment
 NonZeroDigit
   :  [1-9]
+  ;
+
+fragment
+HexadecimalIntegerLiteral
+  :  HexadecimalPrefix HexadecimalDigit+
+  ;
+
+fragment
+HexadecimalPrefix
+  :  '0x'
+  |  '0X'
+  ;
+
+fragment
+HexadecimalDigit
+  :  [0-9a-fA-F]
+  ;
+
+fragment
+OctalIntegerLiteral
+  :  OctalPrefix OctalDigit+
+  ;
+
+fragment
+OctalPrefix
+  :  '0'
+  |  '0o'
+  |  '0O'
+  ;
+
+fragment
+OctalDigit
+  :  [0-7]
+  ;
+
+fragment
+BinaryIntegerLiteral
+  :  BinaryPrefix BinaryDigit+
+  ;
+
+fragment
+BinaryPrefix
+  :  '0b'
+  |  '0B'
+  ;
+
+fragment
+BinaryDigit
+  :  '0'
+  |  '1'
   ;
 
 // Boolean Literals

@@ -203,7 +203,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
     Tree require = identifier("require");
     Tree requireCall = nativeTree(nativeKind("send"), asList(require, stringLiteral));
     Tree literal1 = nativeTree(nativeKind("float"), singletonList(nativeTree(nativeKind("1.0"))));
-    Tree literal2 = literal("2");
+    Tree literal2 = integerLiteral("2");
     Tree lit2AndLit1 = new BinaryExpressionTreeImpl(null, Operator.CONDITIONAL_AND,null, literal2, literal1);
     Tree identifierA = new IdentifierTreeImpl(null, "a");
     Tree assignA = new AssignmentExpressionTreeImpl(null, AssignmentExpressionTree.Operator.EQUAL, identifierA, lit2AndLit1);

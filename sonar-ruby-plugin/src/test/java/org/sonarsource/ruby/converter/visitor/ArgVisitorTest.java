@@ -45,7 +45,7 @@ public class ArgVisitorTest extends AbstractRubyConverterTest {
     assertTree(firstParameter).isEquivalentTo(
       nativeTree(nativeKind("optarg"), asList(
         parameter("x"),
-        literal("1")
+        integerLiteral("1")
       )));
   }
 
