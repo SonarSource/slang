@@ -101,6 +101,8 @@ public class RubyConverter implements ASTConverter {
       return parseContent(content);
     } catch (StandardError e) {
       throw new ParseException(e.getMessage(), getErrorLocation(e), e);
+    } catch (Exception e) {
+      throw new ParseException(e.getMessage(), null, e);
     }
   }
 
@@ -118,7 +120,7 @@ public class RubyConverter implements ASTConverter {
     return null;
   }
 
-  private Tree parseContent(String content) {
+  Tree parseContent(String content) {
     Object[] parameters = {content, FILENAME};
     List rubyParseResult = (List) invokeMethod(runtime.getObject(), "parse_with_tokens", parameters);
     if (rubyParseResult == null) {
