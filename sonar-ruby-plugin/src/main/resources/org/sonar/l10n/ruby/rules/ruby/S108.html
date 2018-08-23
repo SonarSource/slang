@@ -20,4 +20,8 @@ end
 </pre>
 <h2>Exceptions</h2>
 <p>When a block contains a comment, this block is not considered to be empty.</p>
+<p><code>while</code> and <code>unless</code> loops are also exception to the rule.</p>
+<pre>
+while @order.process_next; end # Compliant
+</pre>
 

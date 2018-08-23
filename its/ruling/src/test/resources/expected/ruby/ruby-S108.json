@@ -1,7 +1,4 @@
 {
-'ruby-project:sources/ruby/devdocs/lib/docs/filters/core/clean_text.rb':[
-9,
-],
 'ruby-project:sources/ruby/discourse/app/controllers/admin/users_controller.rb':[
 446,
 ],
@@ -43,9 +40,6 @@
 48,
 67,
 ],
-'ruby-project:sources/ruby/discourse/db/migrate/20140715055242_add_quoted_posts.rb':[
-14,
-],
 'ruby-project:sources/ruby/discourse/lib/discourse.rb':[
 134,
 245,
@@ -58,10 +52,6 @@
 ],
 'ruby-project:sources/ruby/discourse/lib/inline_oneboxer.rb':[
 49,
-],
-'ruby-project:sources/ruby/discourse/lib/score_calculator.rb':[
-50,
-79,
 ],
 'ruby-project:sources/ruby/discourse/lib/search.rb':[
 80,
@@ -122,9 +112,6 @@
 ],
 'ruby-project:sources/ruby/rails/actioncable/test/test_helper.rb':[
 12,
-],
-'ruby-project:sources/ruby/rails/actionpack/lib/action_dispatch/journey/scanner.rb':[
-31,
 ],
 'ruby-project:sources/ruby/rails/actionpack/lib/action_dispatch/middleware/callbacks.rb':[
 29,
