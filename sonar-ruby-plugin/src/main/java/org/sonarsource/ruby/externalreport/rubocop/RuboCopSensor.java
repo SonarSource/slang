@@ -98,7 +98,9 @@ public class RuboCopSensor implements Sensor {
       .on(inputFile);
 
     if (issue.startLine !=null) {
-      if (issue.startColumn !=null && issue.lastLine !=null && issue.lastColumn !=null) {
+      boolean rangeIsProvided = issue.startColumn != null && issue.lastLine != null && issue.lastColumn != null;
+      boolean rangeIsValid = rangeIsProvided && (issue.startLine < issue.lastLine || (issue.startLine == issue.lastLine && issue.startColumn <= issue.lastColumn));
+      if (rangeIsValid) {
         primaryLocation.at(inputFile.newRange(issue.startLine, issue.startColumn - 1, issue.lastLine, issue.lastColumn));
       } else {
         primaryLocation.at(inputFile.selectLine(issue.startLine));

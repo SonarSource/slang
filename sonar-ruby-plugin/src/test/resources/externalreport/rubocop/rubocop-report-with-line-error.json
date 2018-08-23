@@ -4,8 +4,48 @@
       "path": "useless-assignment.rb",
       "offenses": [
         {
-          "message": "message 1",
-          "cop_name": "ruleKey1",
+          "message": "Good location",
+          "cop_name": "RuleKey",
+          "location": {
+            "start_line": 3,
+            "start_column": 3,
+            "last_line": 3,
+            "last_column": 7
+          }
+        },
+        {
+          "message": "Good location",
+          "cop_name": "RuleKey",
+          "location": {
+            "start_line": 3,
+            "start_column": 7,
+            "last_line": 4,
+            "last_column": 3
+          }
+        },
+        {
+          "message": "Ignore last_line: last_line < start_line",
+          "cop_name": "RuleKey",
+          "location": {
+            "start_line": 3,
+            "start_column": 3,
+            "last_line": 2,
+            "last_column": 7
+          }
+        },
+        {
+          "message": "Ignore last_column: last_column < start_column",
+          "cop_name": "RuleKey",
+          "location": {
+            "start_line": 3,
+            "start_column": 3,
+            "last_line": 3,
+            "last_column": 2
+          }
+        },
+        {
+          "message": "Line out of range",
+          "cop_name": "RuleKey",
           "location": {
             "line": 100
           }

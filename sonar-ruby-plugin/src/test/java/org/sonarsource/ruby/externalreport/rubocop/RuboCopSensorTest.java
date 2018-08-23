@@ -176,7 +176,17 @@ public class RuboCopSensorTest {
   @Test
   public void issues_when_rubocop_file_line_error() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"rubocop-report-with-line-error.json");
-    assertThat(externalIssues).hasSize(0);
+    assertThat(externalIssues).hasSize(4);
+
+    assertThat(externalIssues.get(0).primaryLocation().textRange().start().line()).isEqualTo(3);
+    assertThat(externalIssues.get(1).primaryLocation().textRange().start().line()).isEqualTo(3);
+    assertThat(externalIssues.get(2).primaryLocation().textRange().start().line()).isEqualTo(3);
+    assertThat(externalIssues.get(3).primaryLocation().textRange().start().line()).isEqualTo(3);
+
+    assertThat(externalIssues.get(0).primaryLocation().textRange().start().lineOffset()).isEqualTo(2);
+    assertThat(externalIssues.get(1).primaryLocation().textRange().start().lineOffset()).isEqualTo(6);
+    assertThat(externalIssues.get(2).primaryLocation().textRange().start().lineOffset()).isEqualTo(0);
+    assertThat(externalIssues.get(3).primaryLocation().textRange().start().lineOffset()).isEqualTo(0);
 
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR))).contains("100 is not a valid line for pointer. File useless-assignment.rb has 5 line(s)");
     assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
