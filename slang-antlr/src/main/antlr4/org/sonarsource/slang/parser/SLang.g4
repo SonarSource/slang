@@ -1,7 +1,11 @@
 grammar SLang;
 
 slangFile
-  :  typeDeclaration* EOF
+  :  importDeclaration* typeDeclaration* EOF
+  ;
+
+importDeclaration
+  : IMPORT identifier SEMICOLON
   ;
 
 typeDeclaration
@@ -315,6 +319,7 @@ VAR : 'var';
 WHILE : 'while';
 BREAK : 'break';
 CONTINUE: 'continue';
+IMPORT: 'import';
 
 
 // Integer Literals

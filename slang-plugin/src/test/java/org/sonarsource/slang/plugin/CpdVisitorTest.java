@@ -41,7 +41,7 @@ public class CpdVisitorTest {
   @Test
   public void test() throws Exception {
     File file = tempFolder.newFile();
-    String content = "foo(x\n * 42 \n+ \"abc\");";
+    String content = "import util; foo(x\n * 42 \n+ \"abc\");";
     SensorContextTester sensorContext = SensorContextTester.create(tempFolder.getRoot());
     DefaultInputFile inputFile = new TestInputFileBuilder("moduleKey", file.getName())
       .setContents(content)
@@ -67,7 +67,6 @@ public class CpdVisitorTest {
     assertThat(cpdTokenLines.get(2).getStartLine()).isEqualTo(3);
     assertThat(cpdTokenLines.get(2).getStartUnit()).isEqualTo(6);
     assertThat(cpdTokenLines.get(2).getEndUnit()).isEqualTo(9);
-
   }
 
 }

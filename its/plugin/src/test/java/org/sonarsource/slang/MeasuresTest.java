@@ -36,7 +36,7 @@ public class MeasuresTest extends TestBase {
     assertThat(getMeasureAsInt("files")).isEqualTo(3);
 
     assertThat(getMeasure("empty_file.kt", "ncloc")).isNull();
-    assertThat(getMeasureAsInt("file1.kt", "ncloc")).isEqualTo(6);
+    assertThat(getMeasureAsInt("file1.kt", "ncloc")).isEqualTo(7);
     assertThat(getMeasureAsInt("file2.kt", "ncloc")).isEqualTo(8);
 
     assertThat(getMeasure("empty_file.kt", "comment_lines")).isNull();
@@ -51,10 +51,10 @@ public class MeasuresTest extends TestBase {
     assertThat(getMeasureAsInt("file2.kt", "cognitive_complexity")).isEqualTo(3);
 
     assertThat(getMeasure("empty_file.kt", "ncloc_data")).isNull();
-    assertThat(getMeasure("file1.kt", "ncloc_data").getValue()).isEqualTo("2=1;3=1;6=1;7=1;12=1;13=1");
+    assertThat(getMeasure("file1.kt", "ncloc_data").getValue()).isEqualTo("1=1;3=1;4=1;7=1;8=1;13=1;14=1");
     assertThat(getMeasure("file2.kt", "ncloc_data").getValue()).isEqualTo("1=1;2=1;3=1;4=1;5=1;7=1;10=1;11=1");
 
-    assertThat(getMeasure("file1.kt", "executable_lines_data").getValue()).isEqualTo("3=1;7=1;12=1");
+    assertThat(getMeasure("file1.kt", "executable_lines_data").getValue()).isEqualTo("4=1;8=1;13=1");
 
     List<Issue> issuesForRule = getIssuesForRule("kotlin:S100");
     String file2Component = PROJECT_KEY + ":file2.kt";

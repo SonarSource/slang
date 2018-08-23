@@ -21,15 +21,18 @@ package org.sonarsource.kotlin.converter;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.com.intellij.openapi.editor.Document;
@@ -53,15 +56,18 @@ import org.jetbrains.kotlin.psi.KtDoWhileExpression;
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry;
 import org.jetbrains.kotlin.psi.KtExpressionWithLabel;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtFileAnnotationList;
 import org.jetbrains.kotlin.psi.KtFinallySection;
 import org.jetbrains.kotlin.psi.KtForExpression;
 import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.KtIfExpression;
+import org.jetbrains.kotlin.psi.KtImportList;
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry;
 import org.jetbrains.kotlin.psi.KtLoopExpression;
 import org.jetbrains.kotlin.psi.KtModifierList;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.KtOperationExpression;
+import org.jetbrains.kotlin.psi.KtPackageDirective;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.KtParenthesizedExpression;
 import org.jetbrains.kotlin.psi.KtProperty;
@@ -85,6 +91,7 @@ import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.JumpTree;
 import org.sonarsource.slang.api.MatchCaseTree;
 import org.sonarsource.slang.api.NativeKind;
+import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.TextRange;
@@ -152,6 +159,12 @@ class KotlinTreeVisitor {
     // we create native for other kinds of compound assignment
     .collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue)));
 
+  private static final Set<NativeKind> PREAMBLE_KINDS =
+    Stream.of(
+      KtFileAnnotationList.class, KtPackageDirective.class, KtImportList.class)
+      .map(KotlinNativeKind::new)
+      .collect(Collectors.toSet());
+
   private final Document psiDocument;
   private final TreeMetaDataProvider metaDataProvider;
   private final Tree sLangAST;
@@ -196,7 +209,7 @@ class KotlinTreeVisitor {
       List<Tree> statementOrExpressions = list(((KtBlockExpression) element).getStatements().stream());
       return new BlockTreeImpl(metaData, statementOrExpressions);
     } else if (element instanceof KtFile) {
-      return new TopLevelTreeImpl(metaData, list(Arrays.stream(element.getChildren())), metaDataProvider.allComments());
+      return createTopLevelTree(element, metaData);
     } else if (element instanceof KtClass) {
       return createClassDeclarationTree(metaData, (KtClass) element);
     } else if (element instanceof KtFunction) {
@@ -232,6 +245,21 @@ class KotlinTreeVisitor {
     } else {
       return convertElementToNative(element, metaData);
     }
+  }
+
+  @NotNull
+  private Tree createTopLevelTree(PsiElement element, TreeMetaData metaData) {
+    List<Tree> allDeclarations = list(Arrays.stream(element.getChildren()));
+    List<Tree> preambleDeclarations = new ArrayList<>();
+    for (Tree declaration : allDeclarations) {
+      if (declaration instanceof NativeTree && PREAMBLE_KINDS.contains(((NativeTree) declaration).nativeKind())) {
+        preambleDeclarations.add(declaration);
+      } else {
+        break;
+      }
+    }
+    List<Tree> declarations = allDeclarations.subList(preambleDeclarations.size(), allDeclarations.size());
+    return new TopLevelTreeImpl(metaData, preambleDeclarations, declarations, metaDataProvider.allComments());
   }
 
   private Tree createParenthesizedExpression(TreeMetaData metaData, KtParenthesizedExpression element) {

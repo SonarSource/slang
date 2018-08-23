@@ -33,7 +33,7 @@ public class DuplicationsTest extends TestBase {
     assertThat(getMeasureAsInt("duplicated_lines")).isEqualTo(77);
     assertThat(getMeasureAsInt("duplicated_blocks")).isEqualTo(5);
     assertThat(getMeasureAsInt("duplicated_files")).isEqualTo(2);
-    assertThat(getMeasure("duplicated_lines_density").getValue()).isEqualTo("56.6");
+    assertThat(getMeasure("duplicated_lines_density").getValue()).isEqualTo("53.5");
   }
 
   @Test
