@@ -26,14 +26,33 @@ import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.StringLiteralTree;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
 public class StringLiteralVisitorTest extends AbstractRubyConverterTest {
 
   @Test
   public void plain_string_literal() {
-    StringLiteralTree tree = (StringLiteralTree) rubyStatement("'foo'");
-    assertTree(tree).isStringLiteral("foo");
+    StringLiteralTree singleQuoteString = (StringLiteralTree) rubyStatement("'foo'");
+    assertTree(singleQuoteString).isStringLiteral("foo");
+    assertThat(singleQuoteString.value()).isEqualTo("'foo'");
+
+    StringLiteralTree doubleQuoteString = (StringLiteralTree) rubyStatement("\"foo\"");
+    assertTree(doubleQuoteString).isStringLiteral("foo");
+    assertThat(doubleQuoteString.value()).isEqualTo("\"foo\"");
+  }
+
+  @Test
+  public void empty_string_literals() {
+    StringLiteralTree empty1 = (StringLiteralTree) rubyStatement("''");
+    assertTree(empty1).isStringLiteral("");
+    assertThat(empty1.value()).isEqualTo("''");
+    assertThat(empty1.metaData().tokens()).hasSize(1);
+    assertRange(empty1.metaData().tokens().get(0).textRange()).hasRange(1, 0, 1, 2);
+
+    StringLiteralTree empty2 = (StringLiteralTree) rubyStatement("\"\"");
+    assertTree(empty2).isStringLiteral("");
+    assertThat(empty2.value()).isEqualTo("\"\"");
   }
 
   @Test
@@ -44,7 +63,7 @@ public class StringLiteralVisitorTest extends AbstractRubyConverterTest {
 
   @Test
   public void heredoc_literal() {
-    NativeTree tree =  (NativeTree) rubyStatement("<<-CODE\n" +
+    NativeTree tree = (NativeTree) rubyStatement("<<-CODE\n" +
       "      get '/#{asset}' do\n" +
       "        redirect asset_path('#{asset}', protocol: 'http')\n" +
       "      end\n" +
@@ -62,11 +81,10 @@ public class StringLiteralVisitorTest extends AbstractRubyConverterTest {
 
   @Test
   public void interpolated_string() {
-    NativeTree tree =  (NativeTree) rubyStatement("\"foo#{bar}baz\"");
+    NativeTree tree = (NativeTree) rubyStatement("\"foo#{bar}baz\"");
     assertTree(tree).hasChildren(3);
     assertTree(tree).hasChildren(NativeTree.class, BlockTree.class, NativeTree.class);
   }
-
 
 
 }

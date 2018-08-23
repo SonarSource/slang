@@ -210,7 +210,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   public void ast() {
     List<Tree> tree = rubyStatements("require 'stuff'\n" +
       "a = 2 && 1.0");
-    Tree stringLiteral = stringLiteral("stuff", "stuff");
+    Tree stringLiteral = stringLiteral("'stuff'", "stuff");
     Tree require = identifier("require");
     Tree requireCall = nativeTree(nativeKind("send"), asList(require, stringLiteral));
     Tree literal1 = nativeTree(nativeKind("float"), singletonList(nativeTree(nativeKind("1.0"))));

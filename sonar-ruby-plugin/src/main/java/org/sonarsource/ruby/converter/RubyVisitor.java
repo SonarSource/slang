@@ -572,7 +572,15 @@ public class RubyVisitor {
     if (RubyConverter.FILENAME.equals(value)) {
       return createNativeTree(node, children);
     }
-    return new StringLiteralTreeImpl(metaData(node), value, value);
+    TextRange begin = node.textRangeForAttribute("begin");
+    TextRange end = node.textRangeForAttribute("end");
+    TreeMetaData treeMetaData;
+    if (begin != null && end != null) {
+      treeMetaData = metaDataProvider.metaData(new TextRangeImpl(begin.start(), end.end()));
+    } else {
+      treeMetaData = metaData(node);
+    }
+    return new StringLiteralTreeImpl(treeMetaData, node.source(), value);
   }
 
   private boolean hasDynamicStringParent() {
