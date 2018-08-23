@@ -178,8 +178,10 @@ public class MetricVisitorTest {
       "      b);\n" +
       "  };\n" +
       "}\n" +
-      "x = 42;");
-    assertThat(visitor.executableLines()).containsExactly(3, 7);
+      "{\n" +
+      "  x = 42;\n" +
+      "};");
+    assertThat(visitor.executableLines()).containsExactly(3, 8);
   }
 
   private void scan(String code) throws IOException {

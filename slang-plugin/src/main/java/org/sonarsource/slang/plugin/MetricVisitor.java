@@ -83,6 +83,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
     trees.stream()
       .filter(t -> !(t instanceof ClassDeclarationTree))
       .filter(t -> !(t instanceof FunctionDeclarationTree))
+      .filter(t -> !(t instanceof BlockTree))
       .forEach(t -> executableLines.add(t.metaData().textRange().start().line()));
   }
 
