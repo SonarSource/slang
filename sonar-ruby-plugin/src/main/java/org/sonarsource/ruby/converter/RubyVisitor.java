@@ -501,14 +501,19 @@ public class RubyVisitor {
       .map(tree -> (MatchCaseTree) tree)
       .collect(Collectors.toList());
 
-    Tree lastClause = (Tree) children.get(children.size() - 1);
-    if (lastClause != null) {
-      Token elseKeywordToken = getTokenByAttribute(node, "else");
-      TreeMetaData fullElseClauseMeta = metaDataProvider.metaData(TextRanges.merge(asList(elseKeywordToken.textRange(), lastClause.textRange())));
-      whens.add(new MatchCaseTreeImpl(fullElseClauseMeta, null, lastClause));
-    }
-
     TreeMetaData treeMetaData = metaData(node);
+
+    lookForTokenByAttribute(node, "else")
+      .map(elseKeywordToken -> {
+        Tree elseBody = (Tree) children.get(children.size() - 1);
+        if (elseBody == null) {
+          elseBody = createEmptyBlockTree(elseKeywordToken.textRange().end(), treeMetaData.textRange().end());
+        }
+        TextRange textRange = new TextRangeImpl(elseKeywordToken.textRange().start(), elseBody.textRange().end());
+        return new MatchCaseTreeImpl(metaDataProvider.metaData(textRange), null, elseBody);
+      })
+      .ifPresent(whens::add);
+
     if (!treeMetaData.commentsInside().isEmpty()) {
       // Update range for empty "when" clauses that have potential comments inside them
       TextRange endRange = node.textRangeForAttribute("end");
@@ -666,7 +671,7 @@ public class RubyVisitor {
 
     return new ClassDeclarationTreeImpl(metaData(node), classNameIdentifier, nativeTree);
   }
-  
+
   private LiteralTree createIntegerLiteralTree(AstNode node) {
     return new IntegerLiteralTreeImpl(metaData(node), node.source());
   }

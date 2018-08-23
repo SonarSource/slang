@@ -22,6 +22,7 @@ package org.sonarsource.ruby.converter.visitor;
 
 import org.junit.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
+import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.MatchCaseTree;
 import org.sonarsource.slang.api.MatchTree;
 import org.sonarsource.slang.api.NativeTree;
@@ -61,6 +62,23 @@ public class CaseVisitorTest extends AbstractRubyConverterTest {
     assertThat(elseMatchCase.expression()).isNull();
     assertThat(elseMatchCase.body()).isNotNull();
     assertRange(elseMatchCase.rangeToHighlight()).hasRange(5, 1, 5, 5);
+  }
+
+  @Test
+  public void case_when_with_empty_else() {
+    MatchTree tree = (MatchTree) rubyStatement("case x\n " +
+      "when a\n" +
+      "else\n" +
+      "  # comment" +
+      "\nend");
+
+    assertThat(tree.cases()).hasSize(2);
+    assertThat(tree.cases().get(0).expression()).isNotNull();
+    assertThat(tree.cases().get(0).body()).isNotNull();
+    assertThat(tree.cases().get(1).expression()).isNull();
+    assertThat(tree.cases().get(1).body()).isNotNull();
+    assertThat(tree.cases().get(1).metaData().commentsInside()).extracting(Comment::text).containsExactly("# comment");
+    assertThat(tree.cases().get(1).body().metaData().commentsInside()).extracting(Comment::text).containsExactly("# comment");
   }
 
   @Test
