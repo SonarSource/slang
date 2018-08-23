@@ -19,18 +19,15 @@
  */
 package org.sonarsource.ruby.plugin;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.ArgumentMatcher;
-import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
@@ -41,17 +38,14 @@ import org.sonar.api.utils.log.LogTester;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 public class SimpleCovReportTest {
 
   private static final Path COVERAGE_DIR = Paths.get("src", "test", "resources", "coverage");
+  private static final String MODULE_KEY = "/Absolute/Path/To/";
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
@@ -64,7 +58,7 @@ public class SimpleCovReportTest {
     SensorContextTester context = getSensorContext("resultset.json", "file1.rb");
     SimpleCovReport.saveCoverageReports(context);
 
-    String fileKey = "moduleKey:file1.rb";
+    String fileKey = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(fileKey, 1)).isEqualTo(1);
     assertThat(context.lineHits(fileKey, 2)).isEqualTo(1);
     assertThat(context.lineHits(fileKey, 3)).isEqualTo(2);
@@ -81,7 +75,7 @@ public class SimpleCovReportTest {
     SensorContextTester context = getSensorContext(reportPath.toString(), "file1.rb");
     SimpleCovReport.saveCoverageReports(context);
 
-    String fileKey = "moduleKey:file1.rb";
+    String fileKey = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(fileKey, 1)).isEqualTo(1);
     assertThat(context.lineHits(fileKey, 3)).isEqualTo(2);
     assertThat(context.lineHits(fileKey, 4)).isNull();
@@ -93,7 +87,7 @@ public class SimpleCovReportTest {
     SensorContextTester context = getSensorContext("merged_resultset.json", "file1.rb", "file2.rb");
     SimpleCovReport.saveCoverageReports(context);
 
-    String file1Key = "moduleKey:file1.rb";
+    String file1Key = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(file1Key, 1)).isEqualTo(0);
     assertThat(context.lineHits(file1Key, 2)).isEqualTo(0);
     assertThat(context.lineHits(file1Key, 3)).isEqualTo(1);
@@ -104,7 +98,7 @@ public class SimpleCovReportTest {
     assertThat(context.lineHits(file1Key, 8)).isEqualTo(1);
     assertThat(context.lineHits(file1Key, 9)).isEqualTo(2);
 
-    String file2Key = "moduleKey:file2.rb";
+    String file2Key = MODULE_KEY + ":file2.rb";
     assertThat(context.lineHits(file2Key, 1)).isEqualTo(3);
   }
 
@@ -113,7 +107,7 @@ public class SimpleCovReportTest {
     SensorContextTester context = getSensorContext("resultset_1.json, resultset_2.json", "file1.rb", "file2.rb");
     SimpleCovReport.saveCoverageReports(context);
 
-    String file1Key = "moduleKey:file1.rb";
+    String file1Key = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(file1Key, 1)).isEqualTo(0);
     assertThat(context.lineHits(file1Key, 2)).isEqualTo(0);
     assertThat(context.lineHits(file1Key, 3)).isEqualTo(1);
@@ -124,7 +118,7 @@ public class SimpleCovReportTest {
     assertThat(context.lineHits(file1Key, 8)).isEqualTo(1);
     assertThat(context.lineHits(file1Key, 9)).isEqualTo(2);
 
-    String file2Key = "moduleKey:file2.rb";
+    String file2Key = MODULE_KEY + ":file2.rb";
     assertThat(context.lineHits(file2Key, 1)).isEqualTo(3);
   }
 
@@ -135,7 +129,7 @@ public class SimpleCovReportTest {
 
     // assert that newCoverage method is called only once on file2
     verify(context, times(1)).newCoverage();
-    assertThat(context.lineHits("moduleKey:file2.rb", 1)).isEqualTo(5);
+    assertThat(context.lineHits(MODULE_KEY + ":file2.rb", 1)).isEqualTo(5);
   }
 
   @Test
@@ -153,8 +147,7 @@ public class SimpleCovReportTest {
     SimpleCovReport.saveCoverageReports(context);
 
     String expectedMessage = String.format(
-      "Cannot read coverage report file, expecting standard SimpleCov resultset JSON format: '%s/invalid_resultset.json'",
-      COVERAGE_DIR.toAbsolutePath().toString());
+      "Cannot read coverage report file, expecting standard SimpleCov resultset JSON format: 'invalid_resultset.json'");
     assertThat(logTester.logs().contains(expectedMessage)).isTrue();
   }
 
@@ -173,8 +166,8 @@ public class SimpleCovReportTest {
 
     assertThat(logTester.logs().contains("SimpleCov report not found: 'noFile2.json'")).isTrue();
 
-    assertThat(context.lineHits("moduleKey:file1.rb", 9)).isEqualTo(1);
-    assertThat(context.lineHits("moduleKey:file2.rb", 1)).isEqualTo(3);
+    assertThat(context.lineHits(MODULE_KEY + ":file1.rb", 9)).isEqualTo(1);
+    assertThat(context.lineHits(MODULE_KEY + ":file2.rb", 1)).isEqualTo(3);
   }
 
   private SensorContextTester getSensorContext(String coverageReportPath, String... fileNames) throws IOException {
@@ -183,52 +176,45 @@ public class SimpleCovReportTest {
     context.setSettings(new MapSettings());
     context.settings().setProperty("sonar.ruby.coverage.reportPaths", coverageReportPath);
 
-    DefaultFileSystem defaultFileSystem = spy(new DefaultFileSystem(baseDir)).setEncoding(Charset.defaultCharset());
-    Map<String, InputFile> inputFilesMap = new HashMap<>();
-
+    DefaultFileSystem defaultFileSystem = new DefaultFileSystem(new File(MODULE_KEY));
+    createReportFiles(coverageReportPath, baseDir, defaultFileSystem);
     for (String fileName : fileNames) {
-      DefaultInputFile inputFile = getDefaultInputFile(baseDir, fileName);
+      DefaultInputFile inputFile = createInputFile(fileName, fileContent(baseDir, fileName));
       defaultFileSystem.add(inputFile);
-      inputFilesMap.put("/Absolute/Path/To/" + fileName, inputFile);
     }
-
-    doAnswer(invocationOnMock ->
-      inputFilesMap.entrySet().stream()
-        .filter(entry -> new FilePredicateMatcher(entry.getKey()).matches(invocationOnMock.getArgument(0)))
-        .findFirst()
-        .map(Map.Entry::getValue)
-        .orElse(null))
-      .when(defaultFileSystem)
-      .inputFile(any());
 
     context.setFileSystem(defaultFileSystem);
     return context;
   }
 
+  private void createReportFiles(String coverageReportPath, Path baseDir, DefaultFileSystem defaultFileSystem) throws IOException {
+    String[] coverageReportPaths = coverageReportPath.split(",");
+    for (String reportPath : coverageReportPaths) {
+      reportPath = reportPath.trim();
+      // if report is relative path we create it under fake filesystem
+      if (!Paths.get(coverageReportPath).isAbsolute()) {
+        try {
+          DefaultInputFile coverageFile = createInputFile(reportPath, fileContent(baseDir, reportPath));
+          defaultFileSystem.add(coverageFile);
+        } catch (NoSuchFileException e) {
+          // tests can simulate non-existing file, this is OK
+        }
+      }
+    }
+  }
 
-  private DefaultInputFile getDefaultInputFile(Path baseDir, String fileName) throws IOException {
-    Path filePath = baseDir.resolve(fileName);
-    String content = new String(Files.readAllBytes(filePath), UTF_8);
-    return TestInputFileBuilder.create("moduleKey", baseDir.toFile(), filePath.toFile())
-      .setLanguage("ruby")
+
+  private DefaultInputFile createInputFile(String fileName, String content) {
+    return TestInputFileBuilder.create(MODULE_KEY, fileName)
       .setType(InputFile.Type.MAIN)
       .initMetadata(content)
       .setContents(content)
       .build();
   }
 
-  class FilePredicateMatcher implements ArgumentMatcher<FilePredicate> {
-    private String absolutePath;
-
-    FilePredicateMatcher(String absolutePath) {
-      this.absolutePath = absolutePath;
-    }
-
-    public boolean matches(FilePredicate filePredicate) {
-      InputFile mockInputFile = mock(InputFile.class);
-      when(mockInputFile.absolutePath()).thenReturn(absolutePath);
-      return filePredicate.apply(mockInputFile);
-    }
+  private String fileContent(Path baseDir, String fileName) throws IOException {
+    Path filePath = baseDir.resolve(fileName);
+    return new String(Files.readAllBytes(filePath), UTF_8);
   }
 
 }

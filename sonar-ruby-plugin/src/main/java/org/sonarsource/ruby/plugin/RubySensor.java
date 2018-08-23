@@ -19,6 +19,7 @@
  */
 package org.sonarsource.ruby.plugin;
 
+import java.io.IOException;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -53,7 +54,11 @@ public class RubySensor extends SlangSensor {
   @Override
   public void execute(SensorContext sensorContext) {
     super.execute(sensorContext);
-    SimpleCovReport.saveCoverageReports(sensorContext);
+    try {
+      SimpleCovReport.saveCoverageReports(sensorContext);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 }

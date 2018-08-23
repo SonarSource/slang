@@ -20,14 +20,15 @@
 package org.sonarsource.ruby.plugin;
 
 import java.io.File;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import javax.annotation.CheckForNull;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
@@ -47,20 +48,20 @@ public class SimpleCovReport {
   private SimpleCovReport() {
   }
 
-  public static void saveCoverageReports(SensorContext context) {
-    Set<File> reports = getReportFiles(context);
+  public static void saveCoverageReports(SensorContext context) throws IOException {
+    Map<Path, String> reports = getReportFilesAndContents(context);
     if (reports.isEmpty()) {
       return;
     }
 
     JSONParser parser = new JSONParser();
     Map<String, Map<Integer, Integer>> mergedCoverages = new HashMap<>();
-    for (File report : reports) {
+    for (Entry<Path, String> report : reports.entrySet()) {
       try {
-        JSONObject parseResult = (JSONObject) parser.parse(new InputStreamReader(Files.newInputStream(report.toPath()), StandardCharsets.UTF_8));
+        JSONObject parseResult = (JSONObject) parser.parse(report.getValue());
         mergeFileCoverages(mergedCoverages, parseResult.entrySet());
       } catch (Exception e) {
-        LOG.error("Cannot read coverage report file, expecting standard SimpleCov resultset JSON format: '{}'", report.toPath(), e);
+        LOG.error("Cannot read coverage report file, expecting standard SimpleCov resultset JSON format: '{}'", report.getKey(), e);
       }
     }
 
@@ -73,7 +74,7 @@ public class SimpleCovReport {
 
     for (Entry<String, Map<Integer, Integer>> coverageForFile : mergedCoverages.entrySet()) {
       String filePath = coverageForFile.getKey();
-      InputFile inputFile = fileSystem.inputFile(predicates.hasPath(filePath));
+      InputFile inputFile = fileSystem.inputFile(predicates.hasAbsolutePath(filePath));
       if (inputFile != null) {
         try {
           saveNewCoverage(context, coverageForFile.getValue(), inputFile);
@@ -117,22 +118,33 @@ public class SimpleCovReport {
     }
   }
 
-  private static Set<File> getReportFiles(SensorContext context) {
-    Set<File> reportFiles = new HashSet<>();
+  private static Map<Path, String> getReportFilesAndContents(SensorContext context) throws IOException {
+    Map<Path, String> reports = new HashMap<>();
     Configuration config = context.config();
     FileSystem fs = context.fileSystem();
     for (String reportPath : config.getStringArray(RubyPlugin.REPORT_PATHS_KEY)) {
       String trimmedPath = reportPath.trim();
-      File report = fs.resolvePath(trimmedPath);
-      if (!report.isFile()) {
-        if (config.hasKey(RubyPlugin.REPORT_PATHS_KEY)) {
-          LOG.error("SimpleCov report not found: '{}'", trimmedPath);
-        }
-      } else {
-        reportFiles.add(report);
+      String report = fileContent(fs, trimmedPath);
+      if (report != null) {
+        reports.put(Paths.get(trimmedPath), report);
+      } else if (config.hasKey(RubyPlugin.REPORT_PATHS_KEY)) {
+        LOG.error("SimpleCov report not found: '{}'", trimmedPath);
       }
     }
-    return reportFiles;
+    return reports;
+  }
+
+  @CheckForNull
+  private static String fileContent(FileSystem fs, String reportPath) throws IOException {
+    InputFile report = fs.inputFile(fs.predicates().hasPath(reportPath));
+    if (report != null && report.isFile()) {
+      return report.contents();
+    }
+    File reportFile = fs.resolvePath(reportPath);
+    if (reportFile.isFile()) {
+      return new String(Files.readAllBytes(reportFile.toPath()));
+    }
+    return null;
   }
 
 }
