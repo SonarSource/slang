@@ -172,14 +172,14 @@ public class MetricVisitorTest {
   @Test
   public void executable_lines() throws Exception {
     scan("" +
-      "class A {" +
+      "class A {\n" +
       "  fun foo() {\n" +
       "    statementOnSeveralLines(a,\n" +
       "      b);\n" +
       "  };\n" +
       "}\n" +
       "x = 42;");
-    assertThat(visitor.executableLines()).containsExactly(2, 6);
+    assertThat(visitor.executableLines()).containsExactly(3, 7);
   }
 
   private void scan(String code) throws IOException {
