@@ -258,7 +258,7 @@ assignmentOperator
   ;
 
 unaryOperator
-  :  '!'
+  :  '!' | '++' | '--' | '+' | '-'
   ;
 
 disjunctionOperator

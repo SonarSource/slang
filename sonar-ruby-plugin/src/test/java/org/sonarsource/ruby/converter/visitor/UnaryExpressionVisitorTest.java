@@ -22,8 +22,6 @@ package org.sonarsource.ruby.converter.visitor;
 
 import org.junit.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
-import org.sonarsource.slang.api.NativeTree;
-import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.UnaryExpressionTree;
 import org.sonarsource.slang.api.UnaryExpressionTree.Operator;
 
@@ -32,25 +30,31 @@ import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 public class UnaryExpressionVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void negation() {
-    UnaryExpressionTree unaryTree = (UnaryExpressionTree) rubyStatement("!a");
-    assertTree(unaryTree).isUnaryExpression(Operator.NEGATE);
-    assertTree(unaryTree).isEquivalentTo(rubyStatement("not a"));
+  public void test() {
+    UnaryExpressionTree negation = (UnaryExpressionTree) rubyStatement("!a");
+    assertTree(negation).isUnaryExpression(Operator.NEGATE);
+    assertTree(negation).isEquivalentTo(rubyStatement("not a"));
 
     assertTree(rubyStatement("not 2")).isEquivalentTo(slangStatements("!2;").get(0));
-  }
 
-  @Test
-  public void unary_minus() throws Exception {
-    Tree tree = rubyStatement("-a");
-    assertTree(tree).isInstanceOf(NativeTree.class);
-  }
+    UnaryExpressionTree doubleNegation = (UnaryExpressionTree) rubyStatement("!!a");
+    assertTree(doubleNegation).isUnaryExpression(Operator.NEGATE);
+    assertTree(doubleNegation.operand()).isUnaryExpression(Operator.NEGATE);
 
-  @Test
-  public void doubleNegation() throws Exception {
-    UnaryExpressionTree unaryTree = (UnaryExpressionTree) rubyStatement("!!a");
-    assertTree(unaryTree).isUnaryExpression(Operator.NEGATE);
-    assertTree(unaryTree.operand()).isUnaryExpression(Operator.NEGATE);
+    UnaryExpressionTree unaryPlus = (UnaryExpressionTree) rubyStatement("+a");
+    assertTree(unaryPlus).isUnaryExpression(Operator.PLUS);
+    assertTree(unaryPlus).isNotEquivalentTo(rubyStatement("-a"));
+
+    UnaryExpressionTree unaryMinus = (UnaryExpressionTree) rubyStatement("-a");
+    assertTree(unaryMinus).isUnaryExpression(Operator.MINUS);
+
+    UnaryExpressionTree doublePlus = (UnaryExpressionTree) rubyStatement("++a");
+    assertTree(doublePlus).isUnaryExpression(Operator.PLUS);
+    assertTree(doublePlus.operand()).isUnaryExpression(Operator.PLUS);
+
+    UnaryExpressionTree doubleMinus = (UnaryExpressionTree) rubyStatement("--a");
+    assertTree(doubleMinus).isUnaryExpression(Operator.MINUS);
+    assertTree(doubleMinus.operand()).isUnaryExpression(Operator.MINUS);
   }
 
 }

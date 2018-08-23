@@ -115,6 +115,9 @@ public class RubyVisitor {
 
     UNARY_OPERATOR_MAP = new HashMap<>();
     UNARY_OPERATOR_MAP.put("!", UnaryExpressionTree.Operator.NEGATE);
+    UNARY_OPERATOR_MAP.put("+@", UnaryExpressionTree.Operator.PLUS);
+    UNARY_OPERATOR_MAP.put("-@", UnaryExpressionTree.Operator.MINUS);
+    // Note: Ruby has no decrement/increment operator
   }
 
   private static final Set<String> LOCAL_SCOPE_TYPES = Collections.unmodifiableSet(

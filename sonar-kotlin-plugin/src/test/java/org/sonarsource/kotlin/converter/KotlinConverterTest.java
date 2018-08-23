@@ -141,9 +141,12 @@ public class KotlinConverterTest {
     assertTree(kotlinStatement("!x")).isEquivalentTo(kotlinStatement("!x"));
     assertTree(kotlinStatement("!x")).isEquivalentTo(slangStatement("!x;"));
     assertTree(kotlinStatement("!!x")).isEquivalentTo(slangStatement("!!x;"));
+    assertTree(kotlinStatement("++x")).isEquivalentTo(slangStatement("++x;"));
+    assertTree(kotlinStatement("--x")).isEquivalentTo(slangStatement("--x;"));
     assertTree(kotlinStatement("+1")).isEquivalentTo(kotlinStatement("+1"));
     assertTree(kotlinStatement("+1")).isNotEquivalentTo(kotlinStatement("+2"));
     assertTree(kotlinStatement("+1")).isNotEquivalentTo(kotlinStatement("-1"));
+    assertTree(kotlinStatement("++x")).isNotEquivalentTo(kotlinStatement("--x"));
   }
 
   @Test

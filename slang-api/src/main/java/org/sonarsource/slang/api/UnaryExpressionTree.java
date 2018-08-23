@@ -22,7 +22,11 @@ package org.sonarsource.slang.api;
 public interface UnaryExpressionTree extends Tree {
 
   public enum Operator {
-    NEGATE
+    NEGATE,
+    PLUS,
+    MINUS,
+    INCREMENT,
+    DECREMENT
   }
 
   Operator operator();
