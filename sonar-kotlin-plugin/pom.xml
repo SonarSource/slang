@@ -15,6 +15,12 @@
   <name>SLang :: SonarKotlin</name>
   <description>Code Analyzer for Kotlin</description>
   <url>http://redirect.sonarsource.com/plugins/kotlin.html</url>
+  <scm>
+    <connection>scm:git:git@github.com:SonarSource/slang.git</connection>
+    <developerConnection>scm:git:git@github.com:SonarSource/slang.git</developerConnection>
+    <url>https://github.com/SonarSource/slang</url>
+    <tag>HEAD</tag>
+  </scm>
 
   <properties>
     <kotlin.version>1.2.41</kotlin.version>

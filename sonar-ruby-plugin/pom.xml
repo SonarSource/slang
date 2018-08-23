@@ -15,6 +15,12 @@
     <name>SLang :: SonarRuby</name>
     <description>Code Analyzer for Ruby</description>
     <url>http://redirect.sonarsource.com/plugins/ruby.html</url>
+    <scm>
+        <connection>scm:git:git@github.com:SonarSource/slang.git</connection>
+        <developerConnection>scm:git:git@github.com:SonarSource/slang.git</developerConnection>
+        <url>https://github.com/SonarSource/slang</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <properties>
       <jruby.version>9.2.0.0</jruby.version>
