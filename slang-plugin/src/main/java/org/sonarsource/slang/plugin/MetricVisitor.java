@@ -20,6 +20,7 @@
 package org.sonarsource.slang.plugin;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import org.sonar.api.batch.measure.Metric;
@@ -27,6 +28,7 @@ import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
+import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
@@ -45,6 +47,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
   private Set<Integer> linesOfCode;
   private Set<Integer> commentLines;
   private Set<Integer> nosonarLines;
+  private Set<Integer> executableLines;
   private int numberOfFunctions;
   private int numberOfClasses;
   private int complexity;
@@ -58,17 +61,30 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
     register(TopLevelTree.class, (ctx, tree) -> {
       tree.allComments().forEach(
         comment -> addCommentMetrics(comment, commentLines, nosonarLines));
+      addExecutableLines(tree.declarations());
       linesOfCode.addAll(tree.metaData().linesOfCode());
       complexity = new CyclomaticComplexityVisitor().complexityTrees(tree).size();
       statements = new StatementsVisitor().statements(tree);
       cognitiveComplexity = new CognitiveComplexity(tree).value();
     });
+
     register(FunctionDeclarationTree.class, (ctx, tree) -> {
       if (tree.name() != null && tree.body() != null) {
         numberOfFunctions++;
       }
     });
+
     register(ClassDeclarationTree.class, (ctx, tree) -> numberOfClasses++);
+
+    register(BlockTree.class, (ctx, tree) -> addExecutableLines(tree.statementOrExpressions()));
+  }
+
+  private void addExecutableLines(List<Tree> trees) {
+    trees.stream()
+      .filter(t -> !(t instanceof ClassDeclarationTree))
+      .filter(t -> !(t instanceof FunctionDeclarationTree))
+      .filter(t -> !(t instanceof BlockTree))
+      .forEach(t -> executableLines.add(t.metaData().textRange().start().line()));
   }
 
   @Override
@@ -76,6 +92,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
     linesOfCode = new HashSet<>();
     commentLines = new HashSet<>();
     nosonarLines = new HashSet<>();
+    executableLines = new HashSet<>();
     numberOfFunctions = 0;
     numberOfClasses = 0;
     complexity = 0;
@@ -94,8 +111,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
 
     FileLinesContext fileLinesContext = fileLinesContextFactory.createFor(ctx.inputFile);
     linesOfCode().forEach(line -> fileLinesContext.setIntValue(CoreMetrics.NCLOC_DATA_KEY, line, 1));
-
-
+    executableLines().forEach(line -> fileLinesContext.setIntValue(CoreMetrics.EXECUTABLE_LINES_DATA_KEY, line, 1));
     fileLinesContext.save();
     noSonarFilter.noSonarInFile(ctx.inputFile, nosonarLines());
   }
@@ -135,6 +151,10 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
 
   public Set<Integer> nosonarLines() {
     return nosonarLines;
+  }
+
+  public Set<Integer> executableLines() {
+    return executableLines;
   }
 
   public int numberOfFunctions() {
