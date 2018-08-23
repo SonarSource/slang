@@ -42,7 +42,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-public class SimpleCovReportTest {
+public class SimpleCovSensorTest {
 
   private static final Path COVERAGE_DIR = Paths.get("src", "test", "resources", "coverage");
   private static final String MODULE_KEY = "/Absolute/Path/To/";
@@ -56,7 +56,7 @@ public class SimpleCovReportTest {
   @Test
   public void test_relative_report_path() throws IOException {
     SensorContextTester context = getSensorContext("resultset.json", "file1.rb");
-    SimpleCovReport.saveCoverageReports(context);
+    new SimpleCovSensor().execute(context);
 
     String fileKey = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(fileKey, 1)).isEqualTo(1);
@@ -73,7 +73,7 @@ public class SimpleCovReportTest {
     Path baseDir = COVERAGE_DIR.toAbsolutePath();
     Path reportPath = baseDir.resolve("resultset.json");
     SensorContextTester context = getSensorContext(reportPath.toString(), "file1.rb");
-    SimpleCovReport.saveCoverageReports(context);
+    new SimpleCovSensor().execute(context);
 
     String fileKey = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(fileKey, 1)).isEqualTo(1);
@@ -85,7 +85,7 @@ public class SimpleCovReportTest {
   @Test
   public void test_merged_resultset() throws IOException {
     SensorContextTester context = getSensorContext("merged_resultset.json", "file1.rb", "file2.rb");
-    SimpleCovReport.saveCoverageReports(context);
+    new SimpleCovSensor().execute(context);
 
     String file1Key = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(file1Key, 1)).isEqualTo(0);
@@ -105,7 +105,7 @@ public class SimpleCovReportTest {
   @Test
   public void test_multi_resultsets() throws IOException {
     SensorContextTester context = getSensorContext("resultset_1.json, resultset_2.json", "file1.rb", "file2.rb");
-    SimpleCovReport.saveCoverageReports(context);
+    new SimpleCovSensor().execute(context);
 
     String file1Key = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(file1Key, 1)).isEqualTo(0);
@@ -125,7 +125,7 @@ public class SimpleCovReportTest {
   @Test
   public void no_measure_on_files_not_in_context() throws IOException {
     SensorContextTester context = spy(getSensorContext("additional_file_resultset.json", "file2.rb"));
-    SimpleCovReport.saveCoverageReports(context);
+    new SimpleCovSensor().execute(context);
 
     // assert that newCoverage method is called only once on file2
     verify(context, times(1)).newCoverage();
@@ -135,7 +135,7 @@ public class SimpleCovReportTest {
   @Test
   public void log_when_wrong_line_numbers() throws IOException {
     SensorContextTester context = getSensorContext("wrong_lines_resultset.json", "file2.rb");
-    SimpleCovReport.saveCoverageReports(context);
+    new SimpleCovSensor().execute(context);
 
     String expectedMessage = "Invalid coverage information on file: '/Absolute/Path/To/file2.rb'";
     assertThat(logTester.logs().contains(expectedMessage)).isTrue();
@@ -144,7 +144,7 @@ public class SimpleCovReportTest {
   @Test
   public void log_when_invalid_format() throws IOException {
     SensorContextTester context = getSensorContext("invalid_resultset.json", "file1.rb");
-    SimpleCovReport.saveCoverageReports(context);
+    new SimpleCovSensor().execute(context);
 
     String expectedMessage = String.format(
       "Cannot read coverage report file, expecting standard SimpleCov resultset JSON format: 'invalid_resultset.json'");
@@ -154,7 +154,7 @@ public class SimpleCovReportTest {
   @Test
   public void log_when_invalid_report_path() throws IOException {
     SensorContextTester context = getSensorContext("noFile.json", "file1.rb");
-    SimpleCovReport.saveCoverageReports(context);
+    new SimpleCovSensor().execute(context);
 
     assertThat(logTester.logs().contains("SimpleCov report not found: 'noFile.json'")).isTrue();
   }
@@ -162,7 +162,7 @@ public class SimpleCovReportTest {
   @Test
   public void success_for_report_present() throws IOException {
     SensorContextTester context = getSensorContext("noFile2.json,resultset_2.json", "file1.rb", "file2.rb");
-    SimpleCovReport.saveCoverageReports(context);
+    new SimpleCovSensor().execute(context);
 
     assertThat(logTester.logs().contains("SimpleCov report not found: 'noFile2.json'")).isTrue();
 

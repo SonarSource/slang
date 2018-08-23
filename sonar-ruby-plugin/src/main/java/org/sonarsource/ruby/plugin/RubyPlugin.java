@@ -57,6 +57,7 @@ public class RubyPlugin implements Plugin {
       RubyRulesDefinition.class,
       new RuboCopRulesDefinition(externalIssuesSupported),
       RuboCopSensor.class,
+      SimpleCovSensor.class,
 
       PropertyDefinition.builder(RUBY_FILE_SUFFIXES_KEY)
         .defaultValue(RUBY_FILE_SUFFIXES_DEFAULT_VALUE)

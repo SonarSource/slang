@@ -21,6 +21,7 @@ package org.sonarsource.ruby.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,7 +33,9 @@ import javax.annotation.CheckForNull;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
+import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.coverage.NewCoverage;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.log.Logger;
@@ -41,31 +44,41 @@ import org.sonarsource.analyzer.commons.internal.json.simple.JSONArray;
 import org.sonarsource.analyzer.commons.internal.json.simple.JSONObject;
 import org.sonarsource.analyzer.commons.internal.json.simple.parser.JSONParser;
 
-public class SimpleCovReport {
+public class SimpleCovSensor implements Sensor {
 
-  private static final Logger LOG = Loggers.get(SimpleCovReport.class);
+  private static final Logger LOG = Loggers.get(SimpleCovSensor.class);
 
-  private SimpleCovReport() {
+
+  @Override
+  public void describe(SensorDescriptor descriptor) {
+    descriptor.name("SimpleCov Sensor for Ruby coverage")
+      .onlyOnLanguage(RubyPlugin.RUBY_LANGUAGE_KEY)
+      .onlyWhenConfiguration(conf -> conf.hasKey(RubyPlugin.REPORT_PATHS_KEY));
   }
 
-  public static void saveCoverageReports(SensorContext context) throws IOException {
-    Map<Path, String> reports = getReportFilesAndContents(context);
-    if (reports.isEmpty()) {
-      return;
-    }
-
-    JSONParser parser = new JSONParser();
-    Map<String, Map<Integer, Integer>> mergedCoverages = new HashMap<>();
-    for (Entry<Path, String> report : reports.entrySet()) {
-      try {
-        JSONObject parseResult = (JSONObject) parser.parse(report.getValue());
-        mergeFileCoverages(mergedCoverages, parseResult.entrySet());
-      } catch (Exception e) {
-        LOG.error("Cannot read coverage report file, expecting standard SimpleCov resultset JSON format: '{}'", report.getKey(), e);
+  @Override
+  public void execute(SensorContext context) {
+    try {
+      Map<Path, String> reports = getReportFilesAndContents(context);
+      if (reports.isEmpty()) {
+        return;
       }
-    }
 
-    saveCoverage(context, mergedCoverages);
+      JSONParser parser = new JSONParser();
+      Map<String, Map<Integer, Integer>> mergedCoverages = new HashMap<>();
+      for (Entry<Path, String> report : reports.entrySet()) {
+        try {
+          JSONObject parseResult = (JSONObject) parser.parse(report.getValue());
+          mergeFileCoverages(mergedCoverages, parseResult.entrySet());
+        } catch (Exception e) {
+          LOG.error("Cannot read coverage report file, expecting standard SimpleCov resultset JSON format: '{}'", report.getKey(), e);
+        }
+      }
+
+      saveCoverage(context, mergedCoverages);
+    } catch (IOException e) {
+      LOG.error("Error reading coverage reports", e);
+    }
   }
 
   private static void saveCoverage(SensorContext context, Map<String, Map<Integer, Integer>> mergedCoverages) {
@@ -127,7 +140,7 @@ public class SimpleCovReport {
       String report = fileContent(fs, trimmedPath);
       if (report != null) {
         reports.put(Paths.get(trimmedPath), report);
-      } else if (config.hasKey(RubyPlugin.REPORT_PATHS_KEY)) {
+      } else {
         LOG.error("SimpleCov report not found: '{}'", trimmedPath);
       }
     }
@@ -142,7 +155,7 @@ public class SimpleCovReport {
     }
     File reportFile = fs.resolvePath(reportPath);
     if (reportFile.isFile()) {
-      return new String(Files.readAllBytes(reportFile.toPath()));
+      return new String(Files.readAllBytes(reportFile.toPath()), Charset.defaultCharset());
     }
     return null;
   }

@@ -19,10 +19,8 @@
  */
 package org.sonarsource.ruby.plugin;
 
-import java.io.IOException;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
-import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonarsource.ruby.converter.RubyConverter;
@@ -49,16 +47,6 @@ public class RubySensor extends SlangSensor {
   @Override
   protected Checks<SlangCheck> checks() {
     return checks;
-  }
-
-  @Override
-  public void execute(SensorContext sensorContext) {
-    super.execute(sensorContext);
-    try {
-      SimpleCovReport.saveCoverageReports(sensorContext);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
   }
 
 }
