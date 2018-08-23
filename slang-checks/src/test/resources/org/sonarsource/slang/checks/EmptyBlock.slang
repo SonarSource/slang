@@ -36,4 +36,6 @@ void fun c(int x) {
     2 -> x;
     else -> { x; };
   };
+
+  while (cond) {} // Compliant - exception to the rule
 }
