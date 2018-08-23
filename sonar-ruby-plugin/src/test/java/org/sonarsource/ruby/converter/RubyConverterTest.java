@@ -27,19 +27,19 @@ import org.jruby.Ruby;
 import org.jruby.RubyRuntimeAdapter;
 import org.jruby.exceptions.StandardError;
 import org.junit.Test;
-import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import org.sonarsource.slang.api.Comment;
+import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import org.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.TextRanges;
+import org.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -216,8 +216,8 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
     Tree literal1 = nativeTree(nativeKind("float"), singletonList(nativeTree(nativeKind("1.0"))));
     Tree literal2 = integerLiteral("2");
     Tree lit2AndLit1 = new BinaryExpressionTreeImpl(null, Operator.CONDITIONAL_AND,null, literal2, literal1);
-    Tree identifierA = new IdentifierTreeImpl(null, "a");
-    Tree assignA = new AssignmentExpressionTreeImpl(null, AssignmentExpressionTree.Operator.EQUAL, identifierA, lit2AndLit1);
+    IdentifierTree identifierA = new IdentifierTreeImpl(null, "a");
+    Tree assignA = new VariableDeclarationTreeImpl(null, identifierA, null, lit2AndLit1, false);
     assertTrees(tree).isEquivalentTo(asList(requireCall, assignA));
   }
 

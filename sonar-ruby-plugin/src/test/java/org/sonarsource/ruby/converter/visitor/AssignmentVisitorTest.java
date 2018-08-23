@@ -26,6 +26,7 @@ import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.AssignmentExpressionTree.Operator;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.api.VariableDeclarationTree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
@@ -34,10 +35,10 @@ public class AssignmentVisitorTest extends AbstractRubyConverterTest {
 
   @Test
   public void test() throws Exception {
-    assertTree(rubyStatement("a = 1")).isInstanceOf(AssignmentExpressionTree.class);
-    assertTree(rubyStatement("a = b")).isInstanceOf(AssignmentExpressionTree.class);
+    assertTree(rubyStatement("a = 1")).isInstanceOf(VariableDeclarationTree.class);
+    assertTree(rubyStatement("a = b")).isInstanceOf(VariableDeclarationTree.class);
 
-    assertTree(rubyStatement("A = 1")).isInstanceOf(AssignmentExpressionTree.class);
+    assertTree(rubyStatement("A = 1")).isInstanceOf(VariableDeclarationTree.class);
     assertTree(rubyStatement("A += 1")).isInstanceOf(AssignmentExpressionTree.class);
 
     assertTree(rubyStatement("a[A] = 1")).isInstanceOf(AssignmentExpressionTree.class);
@@ -55,10 +56,10 @@ public class AssignmentVisitorTest extends AbstractRubyConverterTest {
 
   @Test
   public void self_assignment() throws Exception {
-    AssignmentExpressionTree tree = (AssignmentExpressionTree) rubyStatement("a = a");
-    assertTree(tree.leftHandSide()).isEquivalentTo(tree.statementOrExpression());
+    VariableDeclarationTree var = (VariableDeclarationTree) rubyStatement("a = a");
+    assertTree(var.identifier()).isEquivalentTo(var.initializer());
 
-    tree = (AssignmentExpressionTree) rubyStatement("A = A");
+    AssignmentExpressionTree tree = (AssignmentExpressionTree) rubyStatement("A = 1\nA = A").children().get(1);
     assertTree(tree.leftHandSide()).isEquivalentTo(tree.statementOrExpression());
 
     tree = (AssignmentExpressionTree) rubyStatement("@a = @a");
@@ -79,13 +80,15 @@ public class AssignmentVisitorTest extends AbstractRubyConverterTest {
 
   @Test
   public void lhs_location() throws Exception {
-    assertTree(rubyStatement("a = 1")).isInstanceOf(AssignmentExpressionTree.class);
+    assertTree(rubyStatement("a = 1")).isInstanceOf(VariableDeclarationTree.class);
+    assertTree(rubyStatement("a = 0;a = 1").children().get(1)).isInstanceOf(AssignmentExpressionTree.class);
     assertTree(rubyStatement("a[1, 2] = 1")).isInstanceOf(AssignmentExpressionTree.class);
   }
 
   @Test
   public void test_operator() throws Exception {
-    Tree tree = rubyStatement("a = 1");
+    Tree block = rubyStatement("a = 0\na = 1");
+    Tree tree = block.children().get(1);
     assertTree(tree).isInstanceOf(AssignmentExpressionTree.class);
     AssignmentExpressionTree assignment = (AssignmentExpressionTree) tree;
     assertThat(assignment.operator()).isEqualTo(Operator.EQUAL);
@@ -104,8 +107,8 @@ public class AssignmentVisitorTest extends AbstractRubyConverterTest {
   public void nestedAssignment() throws Exception {
     Tree nestedAssignment = rubyStatement("x = y = 1");
 
-    assertTree(nestedAssignment).isInstanceOf(AssignmentExpressionTree.class);
-    assertTree(((AssignmentExpressionTree) nestedAssignment).statementOrExpression()).isInstanceOf(AssignmentExpressionTree.class);
+    assertTree(nestedAssignment).isInstanceOf(VariableDeclarationTree.class);
+    assertTree(((VariableDeclarationTree) nestedAssignment).initializer()).isInstanceOf(VariableDeclarationTree.class);
   }
 
   @Test
@@ -119,7 +122,7 @@ public class AssignmentVisitorTest extends AbstractRubyConverterTest {
     assertThat(((NativeTree) rubyStatement("a >>= 1")).nativeKind()).isEqualTo(nativeKind("op_asgn"));
     assertThat(((NativeTree) rubyStatement("a |= 1")).nativeKind()).isEqualTo(nativeKind("op_asgn"));
     assertThat(((NativeTree) rubyStatement("a ^= 1")).nativeKind()).isEqualTo(nativeKind("op_asgn"));
-    
+
     assertThat(((NativeTree) rubyStatement("a &&= 1")).nativeKind()).isEqualTo(nativeKind("and_asgn"));
     assertThat(((NativeTree) rubyStatement("a ||= 1")).nativeKind()).isEqualTo(nativeKind("or_asgn"));
 

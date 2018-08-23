@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.VariableDeclarationTree;
 
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
@@ -34,14 +35,14 @@ public class IdentifierVisitorTest extends AbstractRubyConverterTest {
     assertTree(((AssignmentExpressionTree) rubyStatement("$a = 1")).leftHandSide()).isIdentifier("$a");
     assertTree(((AssignmentExpressionTree) rubyStatement("@a = 1")).leftHandSide()).isIdentifier("@a");
     assertTree(((AssignmentExpressionTree) rubyStatement("@@a = 1")).leftHandSide()).isIdentifier("@@a");
-    assertTree(((AssignmentExpressionTree) rubyStatement("A = 1")).leftHandSide()).isIdentifier("A");
+    assertTree(((VariableDeclarationTree) rubyStatement("A = 1")).identifier()).isIdentifier("A");
 
-    assertTree(((AssignmentExpressionTree) rubyStatement("a = a")).statementOrExpression()).isIdentifier("a");
-    assertTree(((AssignmentExpressionTree) rubyStatement("a = b")).statementOrExpression()).isInstanceOf(NativeTree.class);
+    assertTree(((VariableDeclarationTree) rubyStatement("a = a")).initializer()).isIdentifier("a");
+    assertTree(((VariableDeclarationTree) rubyStatement("a = b")).initializer()).isInstanceOf(NativeTree.class);
 
-    assertTree(((AssignmentExpressionTree) rubyStatement("a = @b")).statementOrExpression()).isIdentifier("@b");
-    assertTree(((AssignmentExpressionTree) rubyStatement("a = @@b")).statementOrExpression()).isIdentifier("@@b");
-    assertTree(((AssignmentExpressionTree) rubyStatement("a = B")).statementOrExpression()).isIdentifier("B");
+    assertTree(((VariableDeclarationTree) rubyStatement("a = @b")).initializer()).isIdentifier("@b");
+    assertTree(((VariableDeclarationTree) rubyStatement("a = @@b")).initializer()).isIdentifier("@@b");
+    assertTree(((VariableDeclarationTree) rubyStatement("a = B")).initializer()).isIdentifier("B");
 
   }
 }
