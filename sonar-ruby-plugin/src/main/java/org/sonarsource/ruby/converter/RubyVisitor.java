@@ -413,6 +413,11 @@ public class RubyVisitor {
     return createNativeTree(node, children);
   }
 
+  /**
+   *
+   * @return if this is the first time we see this identifier in current scope we create {@link org.sonarsource.slang.api.VariableDeclarationTree}
+   * otherwise {@link AssignmentExpressionTree} is created
+   */
   private Tree assignmentOrDeclaration(AstNode node, IdentifierTree identifier, Tree rhs) {
     if (isLocalVariable(identifier) && localVariables.peek().add(identifier.name())) {
       return new VariableDeclarationTreeImpl(

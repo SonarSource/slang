@@ -28,7 +28,6 @@ import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.VariableDeclarationTree;
-import org.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
@@ -39,14 +38,9 @@ public class VariableDeclarationVisitorTest extends AbstractRubyConverterTest {
     Tree tree = rubyStatement("def foo; a = 1; end; def self.bar; a = 1; end");
     assertTree(tree).isInstanceOf(BlockTree.class);
     FunctionDeclarationTree fooFunction = ((FunctionDeclarationTree) tree.children().get(0));
-    VariableDeclarationTreeImpl variableDeclarationTree = new VariableDeclarationTreeImpl(null,
-      identifier("a"),
-      null,
-      integerLiteral("1"),
-      false);
-    assertTree(fooFunction.body().children().get(0)).isEquivalentTo(variableDeclarationTree);
+    assertTree(fooFunction.body().children().get(0)).isEquivalentTo(slangStatement("var a = 1;"));
     FunctionDeclarationTree barFunction = ((FunctionDeclarationTree) tree.children().get(1));
-    assertTree(barFunction.body().children().get(0)).isEquivalentTo(variableDeclarationTree);
+    assertTree(barFunction.body().children().get(0)).isEquivalentTo(slangStatement("var a = 1;"));
   }
 
   @Test
