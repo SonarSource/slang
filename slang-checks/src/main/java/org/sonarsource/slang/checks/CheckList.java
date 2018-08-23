@@ -90,7 +90,8 @@ public class CheckList {
       UnusedFunctionParameterCheck.class,
       UnusedLocalVariableCheck.class,
       UnusedPrivateMethodCheck.class,
-      VariableAndParameterNameCheck.class);
+      VariableAndParameterNameCheck.class,
+      WrongAssignmentOperatorCheck.class);
   }
 
   public static List<Class> kotlinChecks() {
