@@ -23,7 +23,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
@@ -49,6 +52,8 @@ public class RuboCopSensor implements Sensor {
 
   public static final String REPORT_PROPERTY_KEY = "sonar.ruby.rubocop.reportPaths";
 
+  private static final int MAX_LOGGED_FILE_NAMES = 20;
+
   @Override
   public void describe(SensorDescriptor descriptor) {
     descriptor
@@ -59,19 +64,32 @@ public class RuboCopSensor implements Sensor {
   @Override
   public void execute(SensorContext context) {
     List<File> reportFiles = ExternalReportProvider.getReportFiles(context, REPORT_PROPERTY_KEY);
-    reportFiles.forEach(report -> importReport(report, context));
+    Set<String> unresolvedInputFile = new HashSet<>();
+    reportFiles.forEach(report -> importReport(report, context, unresolvedInputFile));
+    logUnresolvedInputFiles(unresolvedInputFile);
   }
 
-  private static void importReport(File reportPath, SensorContext context) {
+  private static void logUnresolvedInputFiles(Set<String> unresolvedInputFile) {
+    if (unresolvedInputFile.isEmpty()) {
+      return;
+    }
+    String fileList = unresolvedInputFile.stream().sorted().limit(MAX_LOGGED_FILE_NAMES).collect(Collectors.joining(";"));
+    if (unresolvedInputFile.size() > MAX_LOGGED_FILE_NAMES) {
+      fileList += ";...";
+    }
+    LOG.warn("Fail to resolve {} file(s). No RuboCop issues will be imported on the following file(s): {}", unresolvedInputFile.size(), fileList);
+  }
+
+  private static void importReport(File reportPath, SensorContext context, Set<String> unresolvedInputFile) {
     try (InputStream in = new FileInputStream(reportPath)) {
       LOG.info("Importing {}", reportPath);
-      RuboCopJsonReportReader.read(in, issue -> saveIssue(context, issue));
+      RuboCopJsonReportReader.read(in, issue -> saveIssue(context, issue, unresolvedInputFile));
     } catch (IOException | RuntimeException | ParseException e) {
       LOG.error("No issues information will be saved as the report file '{}' can't be read. " + e.getMessage(), reportPath, e);
     }
   }
 
-  private static void saveIssue(SensorContext context, RuboCopJsonReportReader.Issue issue) {
+  private static void saveIssue(SensorContext context, RuboCopJsonReportReader.Issue issue, Set<String> unresolvedInputFile) {
     if (isEmpty(issue.ruleKey) || isEmpty(issue.filePath) || isEmpty(issue.message)) {
       LOG.debug("Missing information or unsupported file type for ruleKey:'{}', filePath:'{}', message:'{}'",
         issue.ruleKey, issue.filePath, issue.message);
@@ -80,7 +98,7 @@ public class RuboCopSensor implements Sensor {
     FilePredicates predicates = context.fileSystem().predicates();
     InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(issue.filePath));
     if (inputFile == null) {
-      LOG.warn("No input file found for {}. No RuboCop issues will be imported on this file.", issue.filePath);
+      unresolvedInputFile.add(issue.filePath);
       return;
     }
     RuleKey qualifiedRuleKey = RuleKey.of(LINTER_KEY, issue.ruleKey);

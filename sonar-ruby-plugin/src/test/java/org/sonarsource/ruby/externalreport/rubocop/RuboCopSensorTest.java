@@ -82,11 +82,7 @@ public class RuboCopSensorTest {
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("Lint/UselessAssignment: Useless assignment to variable - `param`.");
-    TextRange firstRange = first.primaryLocation().textRange();
-    assertThat(firstRange.start().line()).isEqualTo(3);
-    assertThat(firstRange.start().lineOffset()).isEqualTo(2);
-    assertThat(firstRange.end().line()).isEqualTo(3);
-    assertThat(firstRange.end().lineOffset()).isEqualTo(7);
+    assertThat(location(first)).isEqualTo("from line 3 offset 2 to line 3 offset 7");
 
     ExternalIssue second = externalIssues.get(1);
     assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:yaml-issue.rb");
@@ -94,11 +90,7 @@ public class RuboCopSensorTest {
     assertThat(second.type()).isEqualTo(RuleType.VULNERABILITY);
     assertThat(second.severity()).isEqualTo(Severity.MAJOR);
     assertThat(second.primaryLocation().message()).isEqualTo("Security/YAMLLoad: Prefer using `YAML.safe_load` over `YAML.load`.");
-    TextRange secondRange = second.primaryLocation().textRange();
-    assertThat(secondRange.start().line()).isEqualTo(2);
-    assertThat(secondRange.start().lineOffset()).isEqualTo(7);
-    assertThat(secondRange.end().line()).isEqualTo(2);
-    assertThat(secondRange.end().lineOffset()).isEqualTo(11);
+    assertThat(location(second)).isEqualTo("from line 2 offset 7 to line 2 offset 11");
 
     ExternalIssue third = externalIssues.get(2);
     assertThat(third.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:yaml-issue.rb");
@@ -106,25 +98,21 @@ public class RuboCopSensorTest {
     assertThat(third.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(third.severity()).isEqualTo(Severity.MINOR);
     assertThat(third.primaryLocation().message()).isEqualTo("Style/StringLiterals: Prefer single-quoted strings when you don't need string interpolation or special symbols.");
-    TextRange thirdRange = third.primaryLocation().textRange();
-    assertThat(thirdRange.start().line()).isEqualTo(2);
-    assertThat(thirdRange.start().lineOffset()).isEqualTo(12);
-    assertThat(thirdRange.end().line()).isEqualTo(2);
-    assertThat(thirdRange.end().lineOffset()).isEqualTo(21);
+    assertThat(location(third)).isEqualTo("from line 2 offset 12 to line 2 offset 21");
 
     assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
   public void no_issues_without_report_paths_property() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,null);
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, null);
     assertThat(externalIssues).isEmpty();
     assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
   public void no_issues_with_invalid_report_path() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"invalid-path.txt");
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "invalid-path.txt");
     assertThat(externalIssues).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
       .startsWith("No issues information will be saved as the report file '")
@@ -133,7 +121,7 @@ public class RuboCopSensorTest {
 
   @Test
   public void no_issues_with_invalid_rubocop_file() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"not-rubocop-file.json");
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "not-rubocop-file.json");
     assertThat(externalIssues).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
       .startsWith("No issues information will be saved as the report file '")
@@ -142,14 +130,14 @@ public class RuboCopSensorTest {
 
   @Test
   public void no_issues_with_empty_rubocop_file() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"rubocop-report-empty.json");
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "rubocop-report-empty.json");
     assertThat(externalIssues).isEmpty();
     assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
   public void issues_when_rubocop_file_has_errors() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"rubocop-report-with-errors.json");
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "rubocop-report-with-errors.json");
     assertThat(externalIssues).hasSize(7);
 
     ExternalIssue first = externalIssues.get(0);
@@ -158,15 +146,15 @@ public class RuboCopSensorTest {
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("message 1");
-    TextRange firstRange = first.primaryLocation().textRange();
-    assertThat(firstRange.start().line()).isEqualTo(3);
-    assertThat(firstRange.start().lineOffset()).isEqualTo(2);
-    assertThat(firstRange.end().line()).isEqualTo(3);
-    assertThat(firstRange.end().lineOffset()).isEqualTo(7);
+    assertThat(location(first)).isEqualTo("from line 3 offset 2 to line 3 offset 7");
 
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.WARN)))
-      .isEqualTo("No input file found for invalid-path.json. No RuboCop issues will be imported on this file.");
+      .isEqualTo("Fail to resolve 26 file(s). No RuboCop issues will be imported on the following file(s): " +
+        "invalid-path-a.json;invalid-path-b.json;invalid-path-c.json;invalid-path-d.json;invalid-path-e.json;" +
+        "invalid-path-f.json;invalid-path-g.json;invalid-path-h.json;invalid-path-i.json;invalid-path-j.json;" +
+        "invalid-path-k.json;invalid-path-l.json;invalid-path-m.json;invalid-path-n.json;invalid-path-o.json;" +
+        "invalid-path-p.json;invalid-path-q.json;invalid-path-r.json;invalid-path-s.json;invalid-path-t.json;...");
     assertThat(logTester.logs(LoggerLevel.DEBUG)).containsExactlyInAnyOrder(
       "Missing information or unsupported file type for ruleKey:'NotEmptyRuleKey', filePath:'useless-assignment.rb', message:'null'",
       "Missing information or unsupported file type for ruleKey:'', filePath:'useless-assignment.rb', message:'Valid message.'",
@@ -174,22 +162,18 @@ public class RuboCopSensorTest {
   }
 
   @Test
-  public void issues_when_rubocop_file_line_error() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"rubocop-report-with-line-error.json");
+  public void issues_when_rubocop_file_and_line_errors() throws IOException {
+    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "rubocop-report-with-file-and-line-errors.json");
     assertThat(externalIssues).hasSize(4);
 
-    assertThat(externalIssues.get(0).primaryLocation().textRange().start().line()).isEqualTo(3);
-    assertThat(externalIssues.get(1).primaryLocation().textRange().start().line()).isEqualTo(3);
-    assertThat(externalIssues.get(2).primaryLocation().textRange().start().line()).isEqualTo(3);
-    assertThat(externalIssues.get(3).primaryLocation().textRange().start().line()).isEqualTo(3);
-
-    assertThat(externalIssues.get(0).primaryLocation().textRange().start().lineOffset()).isEqualTo(2);
-    assertThat(externalIssues.get(1).primaryLocation().textRange().start().lineOffset()).isEqualTo(6);
-    assertThat(externalIssues.get(2).primaryLocation().textRange().start().lineOffset()).isEqualTo(0);
-    assertThat(externalIssues.get(3).primaryLocation().textRange().start().lineOffset()).isEqualTo(0);
+    assertThat(location(externalIssues.get(0))).isEqualTo("from line 3 offset 2 to line 3 offset 7");
+    assertThat(location(externalIssues.get(1))).isEqualTo("from line 3 offset 6 to line 4 offset 3");
+    assertThat(location(externalIssues.get(2))).isEqualTo("from line 3 offset 0 to line 3 offset 15");
+    assertThat(location(externalIssues.get(3))).isEqualTo("from line 3 offset 0 to line 3 offset 15");
 
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR))).contains("100 is not a valid line for pointer. File useless-assignment.rb has 5 line(s)");
-    assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.WARN)))
+      .isEqualTo("Fail to resolve 1 file(s). No RuboCop issues will be imported on the following file(s): invalid-path.json");
     assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
   }
 
@@ -237,6 +221,15 @@ public class RuboCopSensorTest {
       return RubyPlugin.RUBY_LANGUAGE_KEY;
     }
     return path.substring(path.lastIndexOf('.') + 1);
+  }
+
+  private static String location(ExternalIssue issue) {
+    TextRange range = issue.primaryLocation().textRange();
+    if (range == null) {
+      return "null";
+    }
+    return "from line " + range.start().line() + " offset " + range.start().lineOffset()
+      + " to line " + range.end().line() + " offset " + range.end().lineOffset();
   }
 
 }

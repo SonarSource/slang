@@ -41,11 +41,11 @@ public class RuboCopRuleDefinition {
   private static final Path RULES_FILE = Paths.get("sonar-ruby-plugin", "src", "main", "resources",
     "org", "sonar", "l10n", "ruby", "rules", "rubocop", "rules.json");
 
-  private static final Path RUBOCOP_HELP = Paths.get("utils", "generate-rubocop-rules",
+  private static final Path RUBOCOP_RULES_YAML_FILE = Paths.get("utils", "generate-rubocop-rules",
     "src", "main", "resources", "rubocop.yml");
 
   public static void main(String[] args) throws IOException {
-    String rules = RuboCopRuleDefinitionGenerator.generateRuleDefinitionJson(resolve(RUBOCOP_HELP));
+    String rules = RuboCopRuleDefinitionGenerator.generateRuleDefinitionJson(resolve(RUBOCOP_RULES_YAML_FILE));
     Files.write(resolve(RULES_FILE), rules.getBytes(UTF_8));
   }
 
@@ -63,8 +63,8 @@ public class RuboCopRuleDefinition {
       // Utility class
     }
 
-    static String generateRuleDefinitionJson(Path ruboCopHelpPath) throws IOException {
-      RuboCopHelp help = new RuboCopHelp(ruboCopHelpPath);
+    static String generateRuleDefinitionJson(Path ruboCopRulesYamlFilePath) throws IOException {
+      RuboCopRulesYamlFile help = new RuboCopRulesYamlFile(ruboCopRulesYamlFilePath);
       help.rules.sort(Comparator.comparing(a -> a.key));
       Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
       return gson.toJson(help.rules) + "\n";
@@ -80,16 +80,16 @@ public class RuboCopRuleDefinition {
     String url;
   }
 
-  private static class RuboCopHelp {
+  private static class RuboCopRulesYamlFile {
 
     private static final String BASE_URL = "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/";
 
     private List<ExternalRule> rules;
 
-    private RuboCopHelp(Path ruboCopHelpPath) throws IOException {
+    private RuboCopRulesYamlFile(Path yamlFilePath) throws IOException {
       this.rules = new ArrayList<>();
       ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-      mapper.readTree(ruboCopHelpPath.toFile()).fields().forEachRemaining(this::addRule);
+      mapper.readTree(yamlFilePath.toFile()).fields().forEachRemaining(this::addRule);
     }
 
     private void addRule(Map.Entry<String, JsonNode> entry) {

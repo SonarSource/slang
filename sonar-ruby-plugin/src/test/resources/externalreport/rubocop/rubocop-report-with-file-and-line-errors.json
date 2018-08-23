@@ -1,6 +1,16 @@
 {
   "files": [
     {
+      "path": "invalid-path.json",
+      "offenses": [
+        {
+          "message": "Valid message.",
+          "cop_name": "NotEmptyRuleKey",
+          "location": { "line": 3 }
+        }
+      ]
+    },
+    {
       "path": "useless-assignment.rb",
       "offenses": [
         {
