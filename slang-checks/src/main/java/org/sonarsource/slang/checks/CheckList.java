@@ -39,6 +39,8 @@ public class CheckList {
   };
 
   private static final Class[] KOTLIN_CHECK_BLACK_LIST = {
+    // FP rate too high for now in Kotlin on 'when' statements due to enum/sealed class that have all branches covered
+    MatchWithoutElseCheck.class,
     // Rule does not apply here as octal values do not exist in Kotlin
     OctalValuesCheck.class
   };
@@ -70,6 +72,7 @@ public class CheckList {
       IdenticalConditionsCheck.class,
       IfConditionalAlwaysTrueOrFalseCheck.class,
       MatchCaseTooBigCheck.class,
+      MatchWithoutElseCheck.class,
       NestedMatchCheck.class,
       OctalValuesCheck.class,
       OneStatementPerLineCheck.class,
