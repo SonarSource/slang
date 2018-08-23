@@ -25,12 +25,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -83,6 +85,7 @@ import org.sonarsource.slang.impl.TextRangeImpl;
 import org.sonarsource.slang.impl.TextRanges;
 import org.sonarsource.slang.impl.TreeMetaDataProvider;
 import org.sonarsource.slang.impl.UnaryExpressionTreeImpl;
+import org.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -112,22 +115,32 @@ public class RubyVisitor {
 
     UNARY_OPERATOR_MAP = new HashMap<>();
     UNARY_OPERATOR_MAP.put("!", UnaryExpressionTree.Operator.NEGATE);
-    UNARY_OPERATOR_MAP.put("not", UnaryExpressionTree.Operator.NEGATE);
   }
+
+  private static final Set<String> LOCAL_SCOPE_TYPES = Collections.unmodifiableSet(
+    new HashSet<>(Arrays.asList("def", "defs", "class")));
 
   private final TreeMetaDataProvider metaDataProvider;
   private Deque<String> nodeTypeStack = new ArrayDeque<>();
+  private Deque<Set<String>> localVariables = new ArrayDeque<>();
 
   public RubyVisitor(TreeMetaDataProvider metaDataProvider) {
     this.metaDataProvider = metaDataProvider;
+    localVariables.push(new HashSet<>());
   }
 
   public void beforeVisit(AstNode node) {
     nodeTypeStack.push(node.type());
+    if (LOCAL_SCOPE_TYPES.contains(node.type())) {
+      localVariables.push(new HashSet<>());
+    }
   }
 
-  public void afterVisit(Tree tree) {
+  public void afterVisit(AstNode node) {
     nodeTypeStack.pop();
+    if (LOCAL_SCOPE_TYPES.contains(node.type())) {
+      localVariables.pop();
+    }
   }
 
   public Tree visitNode(AstNode node, List<?> children) {
@@ -380,11 +393,7 @@ public class RubyVisitor {
     IdentifierTree identifier = identifierFromSymbol(node, (RubySymbol) children.get(0));
 
     if (children.size() == 2) {
-      return new AssignmentExpressionTreeImpl(
-        metaData(node),
-        AssignmentExpressionTree.Operator.EQUAL,
-        identifier,
-        (Tree) children.get(1));
+      return assignmentOrDeclaration(node, identifier, (Tree) children.get(1));
     }
 
     return identifier;
@@ -395,12 +404,7 @@ public class RubyVisitor {
 
     if (children.get(0) == null) {
       if (children.size() == 3) {
-        return new AssignmentExpressionTreeImpl(
-          metaData(node),
-          AssignmentExpressionTree.Operator.EQUAL,
-          identifier,
-          (Tree) children.get(2));
-
+        return assignmentOrDeclaration(node, identifier, (Tree) children.get(2));
       } else {
         return identifier;
       }
@@ -408,6 +412,35 @@ public class RubyVisitor {
 
     return createNativeTree(node, children);
   }
+
+  /**
+   *
+   * @return if this is the first time we see this identifier in current scope we create {@link org.sonarsource.slang.api.VariableDeclarationTree}
+   * otherwise {@link AssignmentExpressionTree} is created
+   */
+  private Tree assignmentOrDeclaration(AstNode node, IdentifierTree identifier, Tree rhs) {
+    if (isLocalVariable(identifier) && localVariables.peek().add(identifier.name())) {
+      return new VariableDeclarationTreeImpl(
+        metaData(node),
+        identifier,
+        null,
+        rhs, false);
+    } else {
+      return new AssignmentExpressionTreeImpl(
+        metaData(node),
+        AssignmentExpressionTree.Operator.EQUAL,
+        identifier,
+        rhs);
+    }
+  }
+
+  private static boolean isLocalVariable(IdentifierTree identifier) {
+    return !identifier.name().startsWith("@")
+      && !identifier.name().startsWith("$")
+      // by convention unused variables are prefixed by "_", we want to ignore them
+      && !identifier.name().startsWith("_");
+  }
+
 
   private Tree createFromOpAsgn(AstNode node, List<?> children) {
     Token operatorToken = getTokenByAttribute(node, "operator");
@@ -602,7 +635,6 @@ public class RubyVisitor {
       if (UNARY_OPERATOR_MAP.containsKey(calleeSymbol)) {
         Tree argument = (Tree) children.get(0);
         return new UnaryExpressionTreeImpl(metaData(node), UNARY_OPERATOR_MAP.get(calleeSymbol), argument);
-
       } else if (BINARY_OPERATOR_MAP.containsKey(calleeSymbol)) {
         Tree left = (Tree) children.get(0);
         Tree right = (Tree) children.get(2);

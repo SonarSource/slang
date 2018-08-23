@@ -34,7 +34,6 @@ public class CheckList {
 
   private static final Class[] RUBY_CHECK_BLACK_LIST = {
     BooleanLiteralCheck.class,
-    UnusedLocalVariableCheck.class,
     UnusedPrivateMethodCheck.class,
   };
 
