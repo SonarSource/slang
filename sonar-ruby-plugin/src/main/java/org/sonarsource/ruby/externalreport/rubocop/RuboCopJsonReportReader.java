@@ -19,19 +19,22 @@
  */
 package org.sonarsource.ruby.externalreport.rubocop;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import org.sonarsource.analyzer.commons.internal.json.simple.JSONArray;
+import org.sonarsource.analyzer.commons.internal.json.simple.JSONObject;
+import org.sonarsource.analyzer.commons.internal.json.simple.parser.JSONParser;
+import org.sonarsource.analyzer.commons.internal.json.simple.parser.ParseException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class RuboCopJsonReportReader {
 
+  private final JSONParser jsonParser = new JSONParser();
   private final Consumer<Issue> consumer;
 
   public static class Issue {
@@ -55,70 +58,49 @@ public class RuboCopJsonReportReader {
     this.consumer = consumer;
   }
 
-  static void read(InputStream in, Consumer<Issue> consumer) {
+  static void read(InputStream in, Consumer<Issue> consumer) throws IOException, ParseException {
     new RuboCopJsonReportReader(consumer).read(in);
   }
 
-  private void read(InputStream in) {
-    Gson gson = new GsonBuilder()
-      .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-      .create();
-    Report report = gson.fromJson(new InputStreamReader(in, UTF_8), Report.class);
-    report.files.forEach(this::onFile);
+  private void read(InputStream in) throws IOException, ParseException {
+    JSONObject rootObject = (JSONObject) jsonParser.parse(new InputStreamReader(in, UTF_8));
+    JSONArray files = (JSONArray) rootObject.get("files");
+    if (files != null) {
+      ((Stream<JSONObject>) files.stream()).forEach(this::onFile);
+    }
   }
 
-  private void onFile(Report.File file) {
-    file.offenses.forEach(offense -> onOffense(file.path, offense));
+  private void onFile(JSONObject file) {
+    String filePath = (String) file.get("path");
+    JSONArray offenses = (JSONArray) file.get("offenses");
+    if (offenses != null) {
+      ((Stream<JSONObject>) offenses.stream()).forEach(offense -> onOffense(filePath, offense));
+    }
   }
 
-  private void onOffense(@Nullable String filePath, Report.Offense offense) {
+  private void onOffense(@Nullable String filePath, JSONObject offense) {
     Issue issue = new Issue();
     issue.filePath = filePath;
-    issue.ruleKey = offense.copName;
-    issue.message = offense.message;
-    if (offense.location != null) {
-      issue.startLine = offense.location.startLine;
-      issue.startColumn = offense.location.startColumn;
-      issue.lastLine = offense.location.lastLine;
-      issue.lastColumn = offense.location.lastColumn;
+    issue.ruleKey = (String) offense.get("cop_name");
+    issue.message = (String) offense.get("message");
+    JSONObject location = (JSONObject) offense.get("location");
+    if (location != null) {
+      issue.startLine = toInteger(location.get("start_line"));
+      issue.startColumn = toInteger(location.get("start_column"));
+      issue.lastLine = toInteger(location.get("last_line"));
+      issue.lastColumn = toInteger(location.get("last_column"));
       if (issue.startLine == null) {
-        issue.startLine = offense.location.line;
+        issue.startLine = toInteger(location.get("line"));
       }
     }
     consumer.accept(issue);
   }
 
-  private static class Report {
-
-    List<Report.File> files;
-
-    private static class File {
-      @Nullable
-      String path;
-      List<Report.Offense> offenses;
+  private static Integer toInteger(Object value) {
+    if (value instanceof Number) {
+      return ((Number) value).intValue();
     }
-
-    private static class Offense {
-      @Nullable
-      String message;
-      @Nullable
-      String copName;
-      @Nullable
-      Report.Location location;
-    }
-
-    private static class Location {
-      @Nullable
-      Integer line;
-      @Nullable
-      Integer startLine;
-      @Nullable
-      Integer startColumn;
-      @Nullable
-      Integer lastLine;
-      @Nullable
-      Integer lastColumn;
-    }
+    return null;
   }
 
 }

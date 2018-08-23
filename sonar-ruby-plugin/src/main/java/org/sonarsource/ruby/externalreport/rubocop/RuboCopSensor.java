@@ -37,6 +37,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ExternalReportProvider;
 import org.sonarsource.analyzer.commons.ExternalRuleLoader;
+import org.sonarsource.analyzer.commons.internal.json.simple.parser.ParseException;
 
 public class RuboCopSensor implements Sensor {
 
@@ -65,7 +66,7 @@ public class RuboCopSensor implements Sensor {
     try (InputStream in = new FileInputStream(reportPath)) {
       LOG.info("Importing {}", reportPath);
       RuboCopJsonReportReader.read(in, issue -> saveIssue(context, issue));
-    } catch (IOException | RuntimeException e) {
+    } catch (IOException | RuntimeException | ParseException e) {
       LOG.error("No issues information will be saved as the report file '{}' can't be read. " + e.getMessage(), reportPath, e);
     }
   }
@@ -77,10 +78,7 @@ public class RuboCopSensor implements Sensor {
       return;
     }
     FilePredicates predicates = context.fileSystem().predicates();
-    InputFile inputFile = context.fileSystem().inputFile(predicates.or(
-      predicates.hasAbsolutePath(issue.filePath),
-      predicates.hasRelativePath(issue.filePath)));
-
+    InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(issue.filePath));
     if (inputFile == null) {
       LOG.warn("No input file found for {}. No RuboCop issues will be imported on this file.", issue.filePath);
       return;

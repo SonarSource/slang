@@ -131,6 +131,10 @@
           "location": { "line": 3 }
         }
       ]
+    },
+    {
+      "path": "useless-assignment.rb",
+      "offenses": null
     }
   ]
 }

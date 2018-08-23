@@ -141,6 +141,13 @@ public class RuboCopSensorTest {
   }
 
   @Test
+  public void no_issues_with_empty_rubocop_file() throws IOException {
+    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"rubocop-report-empty.json");
+    assertThat(externalIssues).isEmpty();
+    assertNoErrorWarnDebugLogs(logTester);
+  }
+
+  @Test
   public void issues_when_rubocop_file_has_errors() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"rubocop-report-with-errors.json");
     assertThat(externalIssues).hasSize(7);
