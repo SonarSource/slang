@@ -23,3 +23,29 @@
 /*
   FiXmE Multiline comment */
 //^^^^^
+
+// Noncompliant@+2
+/*
+fixme Multiline comment */
+
+// Noncompliant@+1
+//fixme comment
+//^^^^^
+
+// notafixme comment
+
+// not2fixme comment
+
+// a fixmelist
+
+// Noncompliant@+1
+// fixme: things to do
+
+// Noncompliant@+1
+// :fixme: things to do
+
+// Noncompliant@+1
+// valid end of line fixme
+
+// Noncompliant@+1
+// valid end of file fixme

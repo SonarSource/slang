@@ -34,7 +34,7 @@ import org.sonarsource.analyzer.commons.TokenLocation;
 @Rule(key = "S1134")
 public class FixMeCommentCheck implements SlangCheck {
 
-  private final Pattern fixMePattern = Pattern.compile("(?i)(^|[^\\p{L}])(fixme)");
+  private final Pattern fixMePattern = Pattern.compile("(?i)(^|[^\\p{L}&&\\D])(fixme)($|[^\\p{L}&&\\D])");
 
   @Override
   public void initialize(InitContext init) {
