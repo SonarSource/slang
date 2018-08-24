@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.sonar.api.batch.fs.FilePredicate;
@@ -47,6 +48,7 @@ import org.sonarsource.slang.visitors.TreeVisitor;
 
 public abstract class SlangSensor implements Sensor {
   private static final Logger LOG = Loggers.get(SlangSensor.class);
+  private static final Pattern EMPTY_FILE_CONTENT_PATTERN = Pattern.compile("\\s*+");
 
   private final NoSonarFilter noSonarFilter;
   private final Language language;
@@ -93,6 +95,10 @@ public abstract class SlangSensor implements Sensor {
       content = inputFile.contents();
     } catch (IOException e) {
       throw new ParseException("Cannot read " + inputFile);
+    }
+
+    if (EMPTY_FILE_CONTENT_PATTERN.matcher(content).matches()) {
+      return;
     }
 
     Tree tree = converter.parse(content);
