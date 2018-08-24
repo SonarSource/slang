@@ -256,11 +256,6 @@
 'ruby-project:sources/ruby/rails/actionpack/test/abstract_unit.rb':[
 10,
 ],
-'ruby-project:sources/ruby/rails/actionview/lib/action_view/helpers/cache_helper.rb':[
-99,
-103,
-104,
-],
 'ruby-project:sources/ruby/rails/actionview/lib/action_view/renderer/streaming_template_renderer.rb':[
 6,
 ],
@@ -282,7 +277,6 @@
 ],
 'ruby-project:sources/ruby/rails/activerecord/lib/active_record/persistence.rb':[
 141,
-144,
 145,
 168,
 171,
@@ -306,7 +300,6 @@
 45,
 71,
 72,
-75,
 83,
 84,
 100,

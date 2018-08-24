@@ -23,3 +23,29 @@
 /*
   TODO Multiline comment */
 //^^^^
+
+// Noncompliant@+2
+/*
+TODO Multiline comment */
+
+// Noncompliant@+1
+//todo comment
+//^^^^
+
+// notatodo comment
+
+// not2todo comment
+
+// a todolist
+
+// Noncompliant@+1
+// todo: things to do
+
+// Noncompliant@+1
+// :TODO: things to do
+
+// Noncompliant@+1
+// valid end of line todo
+
+// Noncompliant@+1
+// valid end of file todo
