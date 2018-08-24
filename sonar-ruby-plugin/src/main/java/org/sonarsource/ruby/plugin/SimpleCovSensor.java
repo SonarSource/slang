@@ -21,7 +21,7 @@ package org.sonarsource.ruby.plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -52,8 +52,7 @@ public class SimpleCovSensor implements Sensor {
   @Override
   public void describe(SensorDescriptor descriptor) {
     descriptor.name("SimpleCov Sensor for Ruby coverage")
-      .onlyOnLanguage(RubyPlugin.RUBY_LANGUAGE_KEY)
-      .onlyWhenConfiguration(conf -> conf.hasKey(RubyPlugin.REPORT_PATHS_KEY));
+      .onlyOnLanguage(RubyPlugin.RUBY_LANGUAGE_KEY);
   }
 
   @Override
@@ -140,7 +139,7 @@ public class SimpleCovSensor implements Sensor {
       String report = fileContent(fs, trimmedPath);
       if (report != null) {
         reports.put(Paths.get(trimmedPath), report);
-      } else {
+      } else if (config.hasKey(RubyPlugin.REPORT_PATHS_KEY)) {
         LOG.error("SimpleCov report not found: '{}'", trimmedPath);
       }
     }
@@ -155,7 +154,7 @@ public class SimpleCovSensor implements Sensor {
     }
     File reportFile = fs.resolvePath(reportPath);
     if (reportFile.isFile()) {
-      return new String(Files.readAllBytes(reportFile.toPath()), Charset.defaultCharset());
+      return new String(Files.readAllBytes(reportFile.toPath()), StandardCharsets.UTF_8);
     }
     return null;
   }

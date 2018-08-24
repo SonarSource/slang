@@ -69,6 +69,26 @@ public class SimpleCovSensorTest {
   }
 
   @Test
+  public void test_reportPath_property_default() throws IOException {
+    SensorContextTester context = getSensorContext("resultset.json", "file1.rb");
+    // unset reportPaths value
+    context.setSettings(new MapSettings());
+    // simulate default value being set
+    context.settings().setProperty(RubyPlugin.REPORT_PATHS_KEY, RubyPlugin.REPORT_PATHS_DEFAULT_VALUE);
+    context.fileSystem().add(createInputFile("coverage/.resultset.json", fileContent(COVERAGE_DIR, "resultset.json")));
+    new SimpleCovSensor().execute(context);
+
+    String fileKey = MODULE_KEY + ":file1.rb";
+    assertThat(context.lineHits(fileKey, 1)).isEqualTo(1);
+    assertThat(context.lineHits(fileKey, 2)).isEqualTo(1);
+    assertThat(context.lineHits(fileKey, 3)).isEqualTo(2);
+    assertThat(context.lineHits(fileKey, 4)).isNull();
+    assertThat(context.lineHits(fileKey, 5)).isNull();
+    assertThat(context.lineHits(fileKey, 6)).isEqualTo(1);
+    assertThat(context.lineHits(fileKey, 7)).isEqualTo(0);
+  }
+
+  @Test
   public void test_absolute_report_path() throws IOException {
     Path baseDir = COVERAGE_DIR.toAbsolutePath();
     Path reportPath = baseDir.resolve("resultset.json");

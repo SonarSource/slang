@@ -19,34 +19,45 @@
  */
 package org.sonarsource.slang;
 
-import com.google.common.io.Files;
 import com.sonar.orchestrator.build.SonarScanner;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import org.junit.After;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CoverageTest extends TestBase {
 
-  private static final String BASE_DIRECTORY = "projects/measures/";
+  private static final Path BASE_DIRECTORY = Paths.get("projects","measures");
   private static final String ABSOLUTE_PATH_PLACEHOLDER = "{ABSOLUTE_PATH_PLACEHOLDER}";
+
+  @Rule
+  public TemporaryFolder tmpDir = new TemporaryFolder();
+  private Path workDir;
 
   @Before
   public void setUp() throws Exception {
-    File file = new File(BASE_DIRECTORY + "ruby/file.rb");
-    File report = new File(BASE_DIRECTORY + "ruby/resultset.json");
-    String reportContent = Files.toString(report, StandardCharsets.UTF_8);
-    reportContent = reportContent.replace(ABSOLUTE_PATH_PLACEHOLDER, file.getAbsolutePath());
-    Files.write(reportContent, report, StandardCharsets.UTF_8);
+    workDir = tmpDir.newFolder("ruby").toPath().toAbsolutePath();
+    Path src = BASE_DIRECTORY.resolve("ruby/file.rb");
+    Path srcCopy = workDir.resolve(src.getFileName()).toAbsolutePath();
+    Files.copy(src, srcCopy);
+    Files.copy(BASE_DIRECTORY.resolve("ruby/file_not_in_report.rb"), workDir.resolve("file_not_in_report.rb"));
+    Path report = BASE_DIRECTORY.resolve("ruby/resultset.json");
+    String reportContent = new String(Files.readAllBytes(report), UTF_8);
+    reportContent = reportContent.replace(ABSOLUTE_PATH_PLACEHOLDER, srcCopy.toString().replace("\\", "\\\\"));
+    Path reportCopy = workDir.resolve("coverage/.resultset.json");
+    Files.createDirectories(reportCopy.getParent());
+    Files.write(reportCopy, reportContent.getBytes(UTF_8));
   }
 
   @Test
   public void ruby_coverage() {
-    SonarScanner rubyScanner = getSonarScanner(BASE_DIRECTORY, "ruby");
-    rubyScanner.setProperty("sonar.ruby.coverage.reportPaths", "resultset.json");
+    SonarScanner rubyScanner = getSonarScanner(workDir.getParent().toString(), "ruby");
     ORCHESTRATOR.executeBuild(rubyScanner);
 
     assertThat(getMeasureAsInt("file.rb", "lines_to_cover")).isEqualTo(7);
@@ -58,15 +69,6 @@ public class CoverageTest extends TestBase {
     assertThat(getMeasureAsInt("file_not_in_report.rb", "uncovered_lines")).isEqualTo(3);
     assertThat(getMeasureAsInt("file_not_in_report.rb", "conditions_to_cover")).isNull();
     assertThat(getMeasureAsInt("file_not_in_report.rb", "uncovered_conditions")).isNull();
-  }
-
-  @After
-  public void tearDown() throws Exception {
-    File file = new File(BASE_DIRECTORY + "ruby/file.rb");
-    File report = new File(BASE_DIRECTORY + "ruby/resultset.json");
-    String reportContent = Files.toString(report, StandardCharsets.UTF_8);
-    reportContent = reportContent.replace(file.getAbsolutePath(), ABSOLUTE_PATH_PLACEHOLDER);
-    Files.write(reportContent, report, StandardCharsets.UTF_8);
   }
 
 }

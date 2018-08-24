@@ -59,7 +59,7 @@ public abstract class TestBase {
       ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY, languageKey, profileName);
     }
     return SonarScanner.create()
-      .setProjectDir(new File(directoryToScan + languageKey))
+      .setProjectDir(new File(directoryToScan, languageKey))
       .setProjectKey(PROJECT_KEY)
       .setProjectName(PROJECT_KEY)
       .setProjectVersion("1")
