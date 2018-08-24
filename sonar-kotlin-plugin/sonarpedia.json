@@ -1,7 +1,7 @@
 {
   "rules-metadata-path": "./src/main/resources/org/sonar/l10n/kotlin/rules/kotlin",
   "languages": [
-    "Kotlin"
+    "KOTLIN"
   ],
   "latest-update": "2018-03-26T13:55:57.678Z",
   "options": {
