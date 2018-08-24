@@ -36,6 +36,7 @@ import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.resources.Language;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.utils.log.LoggerLevel;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.checks.CommentedCodeCheck;
@@ -173,6 +174,18 @@ public class SlangSensorTest extends AbstractSensorTest {
     assertThat(textPointer.lineOffset()).isEqualTo(1);
 
     assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. Parse error at position 2:1", inputFile.uri()));
+  }
+
+  @Test
+  public void test_empty_file() {
+    InputFile inputFile = createInputFile("empty.slang", "\t\t  \r\n  \n ");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S1764");
+    sensor(checkFactory).execute(context);
+    Collection<AnalysisError> analysisErrors = context.allAnalysisErrors();
+    assertThat(analysisErrors).hasSize(0);
+    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
   }
 
   @Test
