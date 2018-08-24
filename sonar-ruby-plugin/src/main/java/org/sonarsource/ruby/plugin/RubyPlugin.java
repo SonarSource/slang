@@ -22,10 +22,13 @@ package org.sonarsource.ruby.plugin;
 import org.sonar.api.Plugin;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
+import org.sonar.api.utils.Version;
+import org.sonarsource.ruby.externalreport.rubocop.RuboCopRulesDefinition;
+import org.sonarsource.ruby.externalreport.rubocop.RuboCopSensor;
 
 public class RubyPlugin implements Plugin {
 
-  static final String RUBY_LANGUAGE_KEY = "ruby";
+  public static final String RUBY_LANGUAGE_KEY = "ruby";
   static final String RUBY_LANGUAGE_NAME = "Ruby";
 
   static final String RUBY_FILE_SUFFIXES_DEFAULT_VALUE = ".rb";
@@ -37,14 +40,19 @@ public class RubyPlugin implements Plugin {
 
   private static final String GENERAL = "General";
   private static final String RUBY_CATEGORY = "Ruby";
+  private static final String EXTERNAL_ANALYZERS_CATEGORY = "External Analyzers";
 
   @Override
   public void define(Context context) {
+    boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
+
     context.addExtensions(
       RubyLanguage.class,
       RubySensor.class,
       RubyProfileDefinition.class,
       RubyRulesDefinition.class,
+      new RuboCopRulesDefinition(externalIssuesSupported),
+      RuboCopSensor.class,
 
       PropertyDefinition.builder(RUBY_FILE_SUFFIXES_KEY)
         .defaultValue(RUBY_FILE_SUFFIXES_DEFAULT_VALUE)
@@ -56,5 +64,17 @@ public class RubyPlugin implements Plugin {
         .onQualifiers(Qualifiers.PROJECT)
         .build()
     );
+
+    if (externalIssuesSupported) {
+      context.addExtension(
+        PropertyDefinition.builder(RuboCopSensor.REPORT_PROPERTY_KEY)
+          .name("RuboCop Report Files")
+          .description("Paths (absolute or relative) to json files with RuboCop issues.")
+          .category(EXTERNAL_ANALYZERS_CATEGORY)
+          .subCategory(RUBY_CATEGORY)
+          .onQualifiers(Qualifiers.PROJECT)
+          .multiValues(true)
+          .build());
+    }
   }
 }

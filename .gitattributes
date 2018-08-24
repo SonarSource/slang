@@ -1,0 +1,4 @@
+* text eol=lf
+its/sources/** -text
+its/plugin/projects/** -text
+**/src/test/resources/** -text

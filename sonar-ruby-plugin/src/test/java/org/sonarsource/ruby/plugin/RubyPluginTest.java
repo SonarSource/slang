@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class RubyPluginTest {
 
   private static final Version VERSION_6_7 = Version.create(6, 7);
+  private static final Version VERSION_7_2 = Version.create(7, 2);
   private RubyPlugin rubyPlugin = new RubyPlugin();
 
   @Test
@@ -38,7 +39,15 @@ public class RubyPluginTest {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(VERSION_6_7, SonarQubeSide.SERVER);
     Plugin.Context context = new Plugin.Context(runtime);
     rubyPlugin.define(context);
-    assertThat(context.getExtensions()).hasSize(5);
+    assertThat(context.getExtensions()).hasSize(7);
+  }
+
+  @Test
+  public void sonarqube_7_2_extensions() {
+    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(VERSION_7_2, SonarQubeSide.SERVER);
+    Plugin.Context context = new Plugin.Context(runtime);
+    rubyPlugin.define(context);
+    assertThat(context.getExtensions()).hasSize(8);
   }
 
 }

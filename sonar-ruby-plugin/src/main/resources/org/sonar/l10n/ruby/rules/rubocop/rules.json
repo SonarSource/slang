@@ -1,0 +1,3402 @@
+[
+  {
+    "key": "Bundler/DuplicatedGem",
+    "name": "Duplicated Gem (Bundler)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for duplicate gem entries in Gemfile.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Bundler/DuplicatedGem"
+  },
+  {
+    "key": "Bundler/InsecureProtocolSource",
+    "name": "Insecure Protocol Source (Bundler)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "The source `:gemcutter`, `:rubygems` and `:rubyforge` are deprecated because HTTP requests are insecure. Please change your source to 'https://rubygems.org' if possible, or 'http://rubygems.org' if not.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Bundler/InsecureProtocolSource"
+  },
+  {
+    "key": "Bundler/OrderedGems",
+    "name": "Ordered Gems (Bundler)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Gems within groups in the Gemfile should be alphabetically sorted.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Bundler/OrderedGems"
+  },
+  {
+    "key": "Gemspec/DuplicatedAssignment",
+    "name": "Duplicated Assignment (Gemspec)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "An attribute assignment method calls should be listed only once in a gemspec.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Gemspec/DuplicatedAssignment"
+  },
+  {
+    "key": "Gemspec/OrderedDependencies",
+    "name": "Ordered Dependencies (Gemspec)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Dependencies in the gemspec should be alphabetically sorted.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Gemspec/OrderedDependencies"
+  },
+  {
+    "key": "Gemspec/RequiredRubyVersion",
+    "name": "Required Ruby Version (Gemspec)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks that `required_ruby_version` of gemspec and `TargetRubyVersion` of .rubocop.yml are equal.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Gemspec/RequiredRubyVersion"
+  },
+  {
+    "key": "Layout/AccessModifierIndentation",
+    "name": "Access Modifier Indentation (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Check indentation of private/protected visibility modifiers.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/AccessModifierIndentation"
+  },
+  {
+    "key": "Layout/AlignArray",
+    "name": "Align Array (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Align the elements of an array literal if they span more than one line.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/AlignArray"
+  },
+  {
+    "key": "Layout/AlignHash",
+    "name": "Align Hash (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Align the elements of a hash literal if they span more than one line.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/AlignHash"
+  },
+  {
+    "key": "Layout/AlignParameters",
+    "name": "Align Parameters (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Align the parameters of a method call if they span more than one line.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/AlignParameters"
+  },
+  {
+    "key": "Layout/BlockAlignment",
+    "name": "Block Alignment (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Align block ends correctly.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/BlockAlignment"
+  },
+  {
+    "key": "Layout/BlockEndNewline",
+    "name": "Block End Newline (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Put end statement of multiline block on its own line.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/BlockEndNewline"
+  },
+  {
+    "key": "Layout/CaseIndentation",
+    "name": "Case Indentation (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Indentation of when in a case/when/[else/]end.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/CaseIndentation"
+  },
+  {
+    "key": "Layout/ClassStructure",
+    "name": "Class Structure (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Enforces a configured order of definitions within a class body.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/ClassStructure"
+  },
+  {
+    "key": "Layout/ClosingHeredocIndentation",
+    "name": "Closing Heredoc Indentation (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks the indentation of here document closings.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/ClosingHeredocIndentation"
+  },
+  {
+    "key": "Layout/ClosingParenthesisIndentation",
+    "name": "Closing Parenthesis Indentation (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks the indentation of hanging closing parentheses.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/ClosingParenthesisIndentation"
+  },
+  {
+    "key": "Layout/CommentIndentation",
+    "name": "Comment Indentation (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Indentation of comments.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/CommentIndentation"
+  },
+  {
+    "key": "Layout/ConditionPosition",
+    "name": "Condition Position (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks for condition placed in a confusing position relative to the keyword.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/ConditionPosition"
+  },
+  {
+    "key": "Layout/DefEndAlignment",
+    "name": "Def End Alignment (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Align ends corresponding to defs correctly.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/DefEndAlignment"
+  },
+  {
+    "key": "Layout/DotPosition",
+    "name": "Dot Position (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks the position of the dot in multi-line method calls.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/DotPosition"
+  },
+  {
+    "key": "Layout/ElseAlignment",
+    "name": "Else Alignment (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Align elses and elsifs correctly.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/ElseAlignment"
+  },
+  {
+    "key": "Layout/EmptyComment",
+    "name": "Empty Comment (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks empty comment.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EmptyComment"
+  },
+  {
+    "key": "Layout/EmptyLineAfterGuardClause",
+    "name": "Empty Line After Guard Clause (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Add empty line after guard clause.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EmptyLineAfterGuardClause"
+  },
+  {
+    "key": "Layout/EmptyLineAfterMagicComment",
+    "name": "Empty Line After Magic Comment (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Add an empty line after magic comments to separate them from code.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EmptyLineAfterMagicComment"
+  },
+  {
+    "key": "Layout/EmptyLineBetweenDefs",
+    "name": "Empty Line Between Defs (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use empty lines between defs.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EmptyLineBetweenDefs"
+  },
+  {
+    "key": "Layout/EmptyLines",
+    "name": "Empty Lines (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Don't use several empty lines in a row.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EmptyLines"
+  },
+  {
+    "key": "Layout/EmptyLinesAroundAccessModifier",
+    "name": "Empty Lines Around Access Modifier (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Keep blank lines around access modifiers.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EmptyLinesAroundAccessModifier"
+  },
+  {
+    "key": "Layout/EmptyLinesAroundArguments",
+    "name": "Empty Lines Around Arguments (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Keeps track of empty lines around method arguments.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EmptyLinesAroundArguments"
+  },
+  {
+    "key": "Layout/EmptyLinesAroundBeginBody",
+    "name": "Empty Lines Around Begin Body (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Keeps track of empty lines around begin-end bodies.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EmptyLinesAroundBeginBody"
+  },
+  {
+    "key": "Layout/EmptyLinesAroundBlockBody",
+    "name": "Empty Lines Around Block Body (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Keeps track of empty lines around block bodies.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EmptyLinesAroundBlockBody"
+  },
+  {
+    "key": "Layout/EmptyLinesAroundClassBody",
+    "name": "Empty Lines Around Class Body (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Keeps track of empty lines around class bodies.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EmptyLinesAroundClassBody"
+  },
+  {
+    "key": "Layout/EmptyLinesAroundExceptionHandlingKeywords",
+    "name": "Empty Lines Around Exception Handling Keywords (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Keeps track of empty lines around exception handling keywords.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EmptyLinesAroundExceptionHandlingKeywords"
+  },
+  {
+    "key": "Layout/EmptyLinesAroundMethodBody",
+    "name": "Empty Lines Around Method Body (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Keeps track of empty lines around method bodies.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EmptyLinesAroundMethodBody"
+  },
+  {
+    "key": "Layout/EmptyLinesAroundModuleBody",
+    "name": "Empty Lines Around Module Body (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Keeps track of empty lines around module bodies.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EmptyLinesAroundModuleBody"
+  },
+  {
+    "key": "Layout/EndAlignment",
+    "name": "End Alignment (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Align ends correctly.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EndAlignment"
+  },
+  {
+    "key": "Layout/EndOfLine",
+    "name": "End Of Line (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use Unix-style line endings.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/EndOfLine"
+  },
+  {
+    "key": "Layout/ExtraSpacing",
+    "name": "Extra Spacing (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Do not use unnecessary spacing.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/ExtraSpacing"
+  },
+  {
+    "key": "Layout/FirstArrayElementLineBreak",
+    "name": "First Array Element Line Break (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks for a line break before the first element in a multi-line array.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/FirstArrayElementLineBreak"
+  },
+  {
+    "key": "Layout/FirstHashElementLineBreak",
+    "name": "First Hash Element Line Break (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks for a line break before the first element in a multi-line hash.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/FirstHashElementLineBreak"
+  },
+  {
+    "key": "Layout/FirstMethodArgumentLineBreak",
+    "name": "First Method Argument Line Break (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks for a line break before the first argument in a multi-line method call.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/FirstMethodArgumentLineBreak"
+  },
+  {
+    "key": "Layout/FirstMethodParameterLineBreak",
+    "name": "First Method Parameter Line Break (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks for a line break before the first parameter in a multi-line method parameter definition.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/FirstMethodParameterLineBreak"
+  },
+  {
+    "key": "Layout/FirstParameterIndentation",
+    "name": "First Parameter Indentation (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks the indentation of the first parameter in a method call.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/FirstParameterIndentation"
+  },
+  {
+    "key": "Layout/IndentArray",
+    "name": "Indent Array (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks the indentation of the first element in an array literal.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/IndentArray"
+  },
+  {
+    "key": "Layout/IndentAssignment",
+    "name": "Indent Assignment (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks the indentation of the first line of the right-hand-side of a multi-line assignment.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/IndentAssignment"
+  },
+  {
+    "key": "Layout/IndentHash",
+    "name": "Indent Hash (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks the indentation of the first key in a hash literal.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/IndentHash"
+  },
+  {
+    "key": "Layout/IndentHeredoc",
+    "name": "Indent Heredoc (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "This cops checks the indentation of the here document bodies.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/IndentHeredoc"
+  },
+  {
+    "key": "Layout/IndentationConsistency",
+    "name": "Indentation Consistency (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Keep indentation straight.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/IndentationConsistency"
+  },
+  {
+    "key": "Layout/IndentationWidth",
+    "name": "Indentation Width (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use 2 spaces for indentation.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/IndentationWidth"
+  },
+  {
+    "key": "Layout/InitialIndentation",
+    "name": "Initial Indentation (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks the indentation of the first non-blank non-comment line in a file.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/InitialIndentation"
+  },
+  {
+    "key": "Layout/LeadingBlankLines",
+    "name": "Leading Blank Lines (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Check for unnecessary blank lines at the beginning of a file.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/LeadingBlankLines"
+  },
+  {
+    "key": "Layout/LeadingCommentSpace",
+    "name": "Leading Comment Space (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Comments should start with a space.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/LeadingCommentSpace"
+  },
+  {
+    "key": "Layout/MultilineArrayBraceLayout",
+    "name": "Multiline Array Brace Layout (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks that the closing brace in an array literal is either on the same line as the last array element, or a new line.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/MultilineArrayBraceLayout"
+  },
+  {
+    "key": "Layout/MultilineAssignmentLayout",
+    "name": "Multiline Assignment Layout (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Check for a newline after the assignment operator in multi-line assignments.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/MultilineAssignmentLayout"
+  },
+  {
+    "key": "Layout/MultilineBlockLayout",
+    "name": "Multiline Block Layout (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Ensures newlines after multiline block do statements.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/MultilineBlockLayout"
+  },
+  {
+    "key": "Layout/MultilineHashBraceLayout",
+    "name": "Multiline Hash Brace Layout (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks that the closing brace in a hash literal is either on the same line as the last hash element, or a new line.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/MultilineHashBraceLayout"
+  },
+  {
+    "key": "Layout/MultilineMethodCallBraceLayout",
+    "name": "Multiline Method Call Brace Layout (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks that the closing brace in a method call is either on the same line as the last method argument, or a new line.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/MultilineMethodCallBraceLayout"
+  },
+  {
+    "key": "Layout/MultilineMethodCallIndentation",
+    "name": "Multiline Method Call Indentation (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks indentation of method calls with the dot operator that span more than one line.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/MultilineMethodCallIndentation"
+  },
+  {
+    "key": "Layout/MultilineMethodDefinitionBraceLayout",
+    "name": "Multiline Method Definition Brace Layout (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks that the closing brace in a method definition is either on the same line as the last method parameter, or a new line.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/MultilineMethodDefinitionBraceLayout"
+  },
+  {
+    "key": "Layout/MultilineOperationIndentation",
+    "name": "Multiline Operation Indentation (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks indentation of binary operations that span more than one line.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/MultilineOperationIndentation"
+  },
+  {
+    "key": "Layout/RescueEnsureAlignment",
+    "name": "Rescue Ensure Alignment (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Align rescues and ensures correctly.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/RescueEnsureAlignment"
+  },
+  {
+    "key": "Layout/SpaceAfterColon",
+    "name": "Space After Colon (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use spaces after colons.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceAfterColon"
+  },
+  {
+    "key": "Layout/SpaceAfterComma",
+    "name": "Space After Comma (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use spaces after commas.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceAfterComma"
+  },
+  {
+    "key": "Layout/SpaceAfterMethodName",
+    "name": "Space After Method Name (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Do not put a space between a method name and the opening parenthesis in a method definition.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceAfterMethodName"
+  },
+  {
+    "key": "Layout/SpaceAfterNot",
+    "name": "Space After Not (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Tracks redundant space after the ! operator.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceAfterNot"
+  },
+  {
+    "key": "Layout/SpaceAfterSemicolon",
+    "name": "Space After Semicolon (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use spaces after semicolons.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceAfterSemicolon"
+  },
+  {
+    "key": "Layout/SpaceAroundBlockParameters",
+    "name": "Space Around Block Parameters (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks the spacing inside and after block parameters pipes.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceAroundBlockParameters"
+  },
+  {
+    "key": "Layout/SpaceAroundEqualsInParameterDefault",
+    "name": "Space Around Equals In Parameter Default (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks that the equals signs in parameter default assignments have or don't have surrounding space depending on configuration.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceAroundEqualsInParameterDefault"
+  },
+  {
+    "key": "Layout/SpaceAroundKeyword",
+    "name": "Space Around Keyword (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use a space around keywords if appropriate.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceAroundKeyword"
+  },
+  {
+    "key": "Layout/SpaceAroundOperators",
+    "name": "Space Around Operators (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use a single space around operators.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceAroundOperators"
+  },
+  {
+    "key": "Layout/SpaceBeforeBlockBraces",
+    "name": "Space Before Block Braces (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks that the left block brace has or doesn't have space before it.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceBeforeBlockBraces"
+  },
+  {
+    "key": "Layout/SpaceBeforeComma",
+    "name": "Space Before Comma (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "No spaces before commas.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceBeforeComma"
+  },
+  {
+    "key": "Layout/SpaceBeforeComment",
+    "name": "Space Before Comment (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks for missing space between code and a comment on the same line.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceBeforeComment"
+  },
+  {
+    "key": "Layout/SpaceBeforeFirstArg",
+    "name": "Space Before First Arg (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks that exactly one space is used between a method name and the first argument for method calls without parentheses.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceBeforeFirstArg"
+  },
+  {
+    "key": "Layout/SpaceBeforeSemicolon",
+    "name": "Space Before Semicolon (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "No spaces before semicolons.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceBeforeSemicolon"
+  },
+  {
+    "key": "Layout/SpaceInLambdaLiteral",
+    "name": "Space In Lambda Literal (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks for spaces in lambda literals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceInLambdaLiteral"
+  },
+  {
+    "key": "Layout/SpaceInsideArrayLiteralBrackets",
+    "name": "Space Inside Array Literal Brackets (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks the spacing inside array literal brackets.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceInsideArrayLiteralBrackets"
+  },
+  {
+    "key": "Layout/SpaceInsideArrayPercentLiteral",
+    "name": "Space Inside Array Percent Literal (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "No unnecessary additional spaces between elements in %i/%w literals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceInsideArrayPercentLiteral"
+  },
+  {
+    "key": "Layout/SpaceInsideBlockBraces",
+    "name": "Space Inside Block Braces (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks that block braces have or don't have surrounding space. For blocks taking parameters, checks that the left brace has or doesn't have trailing space.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceInsideBlockBraces"
+  },
+  {
+    "key": "Layout/SpaceInsideHashLiteralBraces",
+    "name": "Space Inside Hash Literal Braces (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use spaces inside hash literal braces - or don't.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceInsideHashLiteralBraces"
+  },
+  {
+    "key": "Layout/SpaceInsideParens",
+    "name": "Space Inside Parens (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "No spaces after ( or before ).",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceInsideParens"
+  },
+  {
+    "key": "Layout/SpaceInsidePercentLiteralDelimiters",
+    "name": "Space Inside Percent Literal Delimiters (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "No unnecessary spaces inside delimiters of %i/%w/%x literals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceInsidePercentLiteralDelimiters"
+  },
+  {
+    "key": "Layout/SpaceInsideRangeLiteral",
+    "name": "Space Inside Range Literal (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "No spaces inside range literals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceInsideRangeLiteral"
+  },
+  {
+    "key": "Layout/SpaceInsideReferenceBrackets",
+    "name": "Space Inside Reference Brackets (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks the spacing inside referential brackets.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceInsideReferenceBrackets"
+  },
+  {
+    "key": "Layout/SpaceInsideStringInterpolation",
+    "name": "Space Inside String Interpolation (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks for padding/surrounding spaces inside string interpolation.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/SpaceInsideStringInterpolation"
+  },
+  {
+    "key": "Layout/Tab",
+    "name": "Tab (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "No hard tabs.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/Tab"
+  },
+  {
+    "key": "Layout/TrailingBlankLines",
+    "name": "Trailing Blank Lines (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks trailing blank lines and final newline.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/TrailingBlankLines"
+  },
+  {
+    "key": "Layout/TrailingWhitespace",
+    "name": "Trailing Whitespace (Layout)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Avoid trailing whitespace.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Layout/TrailingWhitespace"
+  },
+  {
+    "key": "Lint/AmbiguousBlockAssociation",
+    "name": "Ambiguous Block Association (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for ambiguous block association with method when param passed without parentheses.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/AmbiguousBlockAssociation"
+  },
+  {
+    "key": "Lint/AmbiguousOperator",
+    "name": "Ambiguous Operator (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for ambiguous operators in the first argument of a method invocation without parentheses.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/AmbiguousOperator"
+  },
+  {
+    "key": "Lint/AmbiguousRegexpLiteral",
+    "name": "Ambiguous Regexp Literal (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for ambiguous regexp literals in the first argument of a method invocation without parentheses.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/AmbiguousRegexpLiteral"
+  },
+  {
+    "key": "Lint/AssignmentInCondition",
+    "name": "Assignment In Condition (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Don't use assignment in conditions.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/AssignmentInCondition"
+  },
+  {
+    "key": "Lint/BigDecimalNew",
+    "name": "Big Decimal New (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "`BigDecimal.new()` is deprecated. Use `BigDecimal()` instead.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/BigDecimalNew"
+  },
+  {
+    "key": "Lint/BooleanSymbol",
+    "name": "Boolean Symbol (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Check for `:true` and `:false` symbols.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/BooleanSymbol"
+  },
+  {
+    "key": "Lint/CircularArgumentReference",
+    "name": "Circular Argument Reference (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Default values in optional keyword arguments and optional ordinal arguments should not refer back to the name of the argument.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/CircularArgumentReference"
+  },
+  {
+    "key": "Lint/Debugger",
+    "name": "Debugger (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Check for debugger calls.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/Debugger"
+  },
+  {
+    "key": "Lint/DeprecatedClassMethods",
+    "name": "Deprecated Class Methods (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Check for deprecated class method calls.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/DeprecatedClassMethods"
+  },
+  {
+    "key": "Lint/DuplicateCaseCondition",
+    "name": "Duplicate Case Condition (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Do not repeat values in case conditionals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/DuplicateCaseCondition"
+  },
+  {
+    "key": "Lint/DuplicateMethods",
+    "name": "Duplicate Methods (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Check for duplicate method definitions.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/DuplicateMethods"
+  },
+  {
+    "key": "Lint/DuplicatedKey",
+    "name": "Duplicated Key (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Check for duplicate keys in hash literals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/DuplicatedKey"
+  },
+  {
+    "key": "Lint/EachWithObjectArgument",
+    "name": "Each With Object Argument (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Check for immutable argument given to each_with_object.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/EachWithObjectArgument"
+  },
+  {
+    "key": "Lint/ElseLayout",
+    "name": "Else Layout (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Check for odd code arrangement in an else block.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/ElseLayout"
+  },
+  {
+    "key": "Lint/EmptyEnsure",
+    "name": "Empty Ensure (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for empty ensure block.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/EmptyEnsure"
+  },
+  {
+    "key": "Lint/EmptyExpression",
+    "name": "Empty Expression (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for empty expressions.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/EmptyExpression"
+  },
+  {
+    "key": "Lint/EmptyInterpolation",
+    "name": "Empty Interpolation (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for empty string interpolation.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/EmptyInterpolation"
+  },
+  {
+    "key": "Lint/EmptyWhen",
+    "name": "Empty When (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for `when` branches with empty bodies.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/EmptyWhen"
+  },
+  {
+    "key": "Lint/EndInMethod",
+    "name": "End In Method (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "END blocks should not be placed inside method definitions.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/EndInMethod"
+  },
+  {
+    "key": "Lint/EnsureReturn",
+    "name": "Ensure Return (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Do not use return in an ensure block.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/EnsureReturn"
+  },
+  {
+    "key": "Lint/ErbNewArguments",
+    "name": "Erb New Arguments (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `:trim_mode` and `:eoutvar` keyword arguments to `ERB.new`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/ErbNewArguments"
+  },
+  {
+    "key": "Lint/FloatOutOfRange",
+    "name": "Float Out Of Range (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Catches floating-point literals too large or small for Ruby to represent.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/FloatOutOfRange"
+  },
+  {
+    "key": "Lint/FormatParameterMismatch",
+    "name": "Format Parameter Mismatch (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "The number of parameters to format/sprint must match the fields.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/FormatParameterMismatch"
+  },
+  {
+    "key": "Lint/HandleExceptions",
+    "name": "Handle Exceptions (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Don't suppress exception.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/HandleExceptions"
+  },
+  {
+    "key": "Lint/ImplicitStringConcatenation",
+    "name": "Implicit String Concatenation (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for adjacent string literals on the same line, which could better be represented as a single string literal.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/ImplicitStringConcatenation"
+  },
+  {
+    "key": "Lint/IneffectiveAccessModifier",
+    "name": "Ineffective Access Modifier (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for attempts to use `private` or `protected` to set the visibility of a class method, which does not work.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/IneffectiveAccessModifier"
+  },
+  {
+    "key": "Lint/InheritException",
+    "name": "Inherit Exception (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Avoid inheriting from the `Exception` class.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/InheritException"
+  },
+  {
+    "key": "Lint/InterpolationCheck",
+    "name": "Interpolation Check (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Raise warning for interpolation in single q strs",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/InterpolationCheck"
+  },
+  {
+    "key": "Lint/LiteralAsCondition",
+    "name": "Literal As Condition (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks of literals used in conditions.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/LiteralAsCondition"
+  },
+  {
+    "key": "Lint/LiteralInInterpolation",
+    "name": "Literal In Interpolation (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for literals used in interpolation.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/LiteralInInterpolation"
+  },
+  {
+    "key": "Lint/Loop",
+    "name": "Loop (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use Kernel#loop with break rather than begin/end/until or begin/end/while for post-loop tests.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/Loop"
+  },
+  {
+    "key": "Lint/MissingCopEnableDirective",
+    "name": "Missing Cop Enable Directive (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for a `# rubocop:enable` after `# rubocop:disable`",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/MissingCopEnableDirective"
+  },
+  {
+    "key": "Lint/MultipleCompare",
+    "name": "Multiple Compare (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `&amp;&amp;` operator to compare multiple value.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/MultipleCompare"
+  },
+  {
+    "key": "Lint/NestedMethodDefinition",
+    "name": "Nested Method Definition (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Do not use nested method definitions.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/NestedMethodDefinition"
+  },
+  {
+    "key": "Lint/NestedPercentLiteral",
+    "name": "Nested Percent Literal (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for nested percent literals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/NestedPercentLiteral"
+  },
+  {
+    "key": "Lint/NextWithoutAccumulator",
+    "name": "Next Without Accumulator (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Do not omit the accumulator when calling `next` in a `reduce`/`inject` block.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/NextWithoutAccumulator"
+  },
+  {
+    "key": "Lint/NonLocalExitFromIterator",
+    "name": "Non Local Exit From Iterator (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Do not use return in iterator to cause non-local exit.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/NonLocalExitFromIterator"
+  },
+  {
+    "key": "Lint/NumberConversion",
+    "name": "Number Conversion (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks unsafe usage of number conversion methods.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/NumberConversion"
+  },
+  {
+    "key": "Lint/OrderedMagicComments",
+    "name": "Ordered Magic Comments (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks the proper ordering of magic comments and whether a magic comment is not placed before a shebang.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/OrderedMagicComments"
+  },
+  {
+    "key": "Lint/ParenthesesAsGroupedExpression",
+    "name": "Parentheses As Grouped Expression (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for method calls with a space before the opening parenthesis.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/ParenthesesAsGroupedExpression"
+  },
+  {
+    "key": "Lint/PercentStringArray",
+    "name": "Percent String Array (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for unwanted commas and quotes in %w/%W literals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/PercentStringArray"
+  },
+  {
+    "key": "Lint/PercentSymbolArray",
+    "name": "Percent Symbol Array (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for unwanted commas and colons in %i/%I literals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/PercentSymbolArray"
+  },
+  {
+    "key": "Lint/RandOne",
+    "name": "Rand One (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for `rand(1)` calls. Such calls always return `0` and most likely a mistake.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/RandOne"
+  },
+  {
+    "key": "Lint/RedundantWithIndex",
+    "name": "Redundant With Index (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for redundant `with_index`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/RedundantWithIndex"
+  },
+  {
+    "key": "Lint/RedundantWithObject",
+    "name": "Redundant With Object (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for redundant `with_object`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/RedundantWithObject"
+  },
+  {
+    "key": "Lint/RegexpAsCondition",
+    "name": "Regexp As Condition (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Do not use regexp literal as a condition. The regexp literal matches `$_` implicitly.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/RegexpAsCondition"
+  },
+  {
+    "key": "Lint/RequireParentheses",
+    "name": "Require Parentheses (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use parentheses in the method call to avoid confusion about precedence.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/RequireParentheses"
+  },
+  {
+    "key": "Lint/RescueException",
+    "name": "Rescue Exception (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Avoid rescuing the Exception class.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/RescueException"
+  },
+  {
+    "key": "Lint/RescueType",
+    "name": "Rescue Type (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Avoid rescuing from non constants that could result in a `TypeError`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/RescueType"
+  },
+  {
+    "key": "Lint/ReturnInVoidContext",
+    "name": "Return In Void Context (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for return in void context.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/ReturnInVoidContext"
+  },
+  {
+    "key": "Lint/SafeNavigationChain",
+    "name": "Safe Navigation Chain (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Do not chain ordinary method call after safe navigation operator.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/SafeNavigationChain"
+  },
+  {
+    "key": "Lint/SafeNavigationConsistency",
+    "name": "Safe Navigation Consistency (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Check to make sure that if safe navigation is used for a method call in an `&amp;&amp;` or `||` condition that safe navigation is used for all method calls on that same object.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/SafeNavigationConsistency"
+  },
+  {
+    "key": "Lint/ScriptPermission",
+    "name": "Script Permission (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Grant script file execute permission.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/ScriptPermission"
+  },
+  {
+    "key": "Lint/ShadowedArgument",
+    "name": "Shadowed Argument (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Avoid reassigning arguments before they were used.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/ShadowedArgument"
+  },
+  {
+    "key": "Lint/ShadowedException",
+    "name": "Shadowed Exception (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Avoid rescuing a higher level exception before a lower level exception.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/ShadowedException"
+  },
+  {
+    "key": "Lint/ShadowingOuterLocalVariable",
+    "name": "Shadowing Outer Local Variable (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Do not use the same name as outer local variable for block arguments or block local variables.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/ShadowingOuterLocalVariable"
+  },
+  {
+    "key": "Lint/StringConversionInInterpolation",
+    "name": "String Conversion In Interpolation (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for Object#to_s usage in string interpolation.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/StringConversionInInterpolation"
+  },
+  {
+    "key": "Lint/Syntax",
+    "name": "Syntax (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks syntax error",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/Syntax"
+  },
+  {
+    "key": "Lint/UnderscorePrefixedVariableName",
+    "name": "Underscore Prefixed Variable Name (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Do not use prefix `_` for a variable that is used.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UnderscorePrefixedVariableName"
+  },
+  {
+    "key": "Lint/UnifiedInteger",
+    "name": "Unified Integer (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use Integer instead of Fixnum or Bignum",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UnifiedInteger"
+  },
+  {
+    "key": "Lint/UnneededCopDisableDirective",
+    "name": "Unneeded Cop Disable Directive (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for rubocop:disable comments that can be removed. Note: this cop is not disabled when disabling all cops. It must be explicitly disabled.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UnneededCopDisableDirective"
+  },
+  {
+    "key": "Lint/UnneededCopEnableDirective",
+    "name": "Unneeded Cop Enable Directive (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for rubocop:enable comments that can be removed.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UnneededCopEnableDirective"
+  },
+  {
+    "key": "Lint/UnneededRequireStatement",
+    "name": "Unneeded Require Statement (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for unnecessary `require` statement.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UnneededRequireStatement"
+  },
+  {
+    "key": "Lint/UnneededSplatExpansion",
+    "name": "Unneeded Splat Expansion (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for splat unnecessarily being called on literals",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UnneededSplatExpansion"
+  },
+  {
+    "key": "Lint/UnreachableCode",
+    "name": "Unreachable Code (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Unreachable code.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UnreachableCode"
+  },
+  {
+    "key": "Lint/UnusedBlockArgument",
+    "name": "Unused Block Argument (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for unused block arguments.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UnusedBlockArgument"
+  },
+  {
+    "key": "Lint/UnusedMethodArgument",
+    "name": "Unused Method Argument (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for unused method arguments.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UnusedMethodArgument"
+  },
+  {
+    "key": "Lint/UriEscapeUnescape",
+    "name": "Uri Escape Unescape (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "`URI.escape` method is obsolete and should not be used. Instead, use `CGI.escape`, `URI.encode_www_form` or `URI.encode_www_form_component` depending on your specific use case. Also `URI.unescape` method is obsolete and should not be used. Instead, use `CGI.unescape`, `URI.decode_www_form` or `URI.decode_www_form_component` depending on your specific use case.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UriEscapeUnescape"
+  },
+  {
+    "key": "Lint/UriRegexp",
+    "name": "Uri Regexp (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `URI::DEFAULT_PARSER.make_regexp` instead of `URI.regexp`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UriRegexp"
+  },
+  {
+    "key": "Lint/UselessAccessModifier",
+    "name": "Useless Access Modifier (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for useless access modifiers.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UselessAccessModifier"
+  },
+  {
+    "key": "Lint/UselessAssignment",
+    "name": "Useless Assignment (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for useless assignment to a local variable.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UselessAssignment"
+  },
+  {
+    "key": "Lint/UselessComparison",
+    "name": "Useless Comparison (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for comparison of something with itself.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UselessComparison"
+  },
+  {
+    "key": "Lint/UselessElseWithoutRescue",
+    "name": "Useless Else Without Rescue (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for useless `else` in `begin..end` without `rescue`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UselessElseWithoutRescue"
+  },
+  {
+    "key": "Lint/UselessSetterCall",
+    "name": "Useless Setter Call (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for useless setter call to a local variable.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/UselessSetterCall"
+  },
+  {
+    "key": "Lint/Void",
+    "name": "Void (Lint)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Possible use of operator/literal/variable in void context.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/Void"
+  },
+  {
+    "key": "Metrics/AbcSize",
+    "name": "Abc Size (Metrics)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "A calculated magnitude based on number of assignments, branches, and conditions.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Metrics/AbcSize"
+  },
+  {
+    "key": "Metrics/BlockLength",
+    "name": "Block Length (Metrics)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid long blocks with many lines.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Metrics/BlockLength"
+  },
+  {
+    "key": "Metrics/BlockNesting",
+    "name": "Block Nesting (Metrics)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid excessive block nesting",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Metrics/BlockNesting"
+  },
+  {
+    "key": "Metrics/ClassLength",
+    "name": "Class Length (Metrics)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid classes longer than 100 lines of code.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Metrics/ClassLength"
+  },
+  {
+    "key": "Metrics/CyclomaticComplexity",
+    "name": "Cyclomatic Complexity (Metrics)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "A complexity metric that is strongly correlated to the number of test cases needed to validate a method.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Metrics/CyclomaticComplexity"
+  },
+  {
+    "key": "Metrics/LineLength",
+    "name": "Line Length (Metrics)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Limit lines to 80 characters.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Metrics/LineLength"
+  },
+  {
+    "key": "Metrics/MethodLength",
+    "name": "Method Length (Metrics)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid methods longer than 10 lines of code.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Metrics/MethodLength"
+  },
+  {
+    "key": "Metrics/ModuleLength",
+    "name": "Module Length (Metrics)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid modules longer than 100 lines of code.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Metrics/ModuleLength"
+  },
+  {
+    "key": "Metrics/ParameterLists",
+    "name": "Parameter Lists (Metrics)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid parameter lists longer than three or four parameters.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Metrics/ParameterLists"
+  },
+  {
+    "key": "Metrics/PerceivedComplexity",
+    "name": "Perceived Complexity (Metrics)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "A complexity metric geared towards measuring complexity for a human reader.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Metrics/PerceivedComplexity"
+  },
+  {
+    "key": "Naming/AccessorMethodName",
+    "name": "Accessor Method Name (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Check the naming of accessor methods for get_/set_.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/AccessorMethodName"
+  },
+  {
+    "key": "Naming/AsciiIdentifiers",
+    "name": "Ascii Identifiers (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use only ascii symbols in identifiers.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/AsciiIdentifiers"
+  },
+  {
+    "key": "Naming/BinaryOperatorParameterName",
+    "name": "Binary Operator Parameter Name (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "When defining binary operators, name the argument other.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/BinaryOperatorParameterName"
+  },
+  {
+    "key": "Naming/ClassAndModuleCamelCase",
+    "name": "Class And Module Camel Case (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use CamelCase for classes and modules.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/ClassAndModuleCamelCase"
+  },
+  {
+    "key": "Naming/ConstantName",
+    "name": "Constant Name (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Constants should use SCREAMING_SNAKE_CASE.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/ConstantName"
+  },
+  {
+    "key": "Naming/FileName",
+    "name": "File Name (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use snake_case for source file names.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/FileName"
+  },
+  {
+    "key": "Naming/HeredocDelimiterCase",
+    "name": "Heredoc Delimiter Case (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use configured case for heredoc delimiters.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/HeredocDelimiterCase"
+  },
+  {
+    "key": "Naming/HeredocDelimiterNaming",
+    "name": "Heredoc Delimiter Naming (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use descriptive heredoc delimiters.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/HeredocDelimiterNaming"
+  },
+  {
+    "key": "Naming/MemoizedInstanceVariableName",
+    "name": "Memoized Instance Variable Name (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Memoized method name should match memo instance variable name.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/MemoizedInstanceVariableName"
+  },
+  {
+    "key": "Naming/MethodName",
+    "name": "Method Name (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use the configured style when naming methods.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/MethodName"
+  },
+  {
+    "key": "Naming/PredicateName",
+    "name": "Predicate Name (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Check the names of predicate methods.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/PredicateName"
+  },
+  {
+    "key": "Naming/UncommunicativeBlockParamName",
+    "name": "Uncommunicative Block Param Name (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks for block parameter names that contain capital letters, end in numbers, or do not meet a minimal length.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/UncommunicativeBlockParamName"
+  },
+  {
+    "key": "Naming/UncommunicativeMethodParamName",
+    "name": "Uncommunicative Method Param Name (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Checks for method parameter names that contain capital letters, end in numbers, or do not meet a minimal length.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/UncommunicativeMethodParamName"
+  },
+  {
+    "key": "Naming/VariableName",
+    "name": "Variable Name (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use the configured style when naming variables.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/VariableName"
+  },
+  {
+    "key": "Naming/VariableNumber",
+    "name": "Variable Number (Naming)",
+    "type": "CODE_SMELL",
+    "severity": "INFO",
+    "description": "Use the configured style when numbering variables.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Naming/VariableNumber"
+  },
+  {
+    "key": "Performance/Caller",
+    "name": "Caller (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `caller(n..n)` instead of `caller`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/Caller"
+  },
+  {
+    "key": "Performance/CaseWhenSplat",
+    "name": "Case When Splat (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Place `when` conditions that use splat at the end of the list of `when` branches.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/CaseWhenSplat"
+  },
+  {
+    "key": "Performance/Casecmp",
+    "name": "Casecmp (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `casecmp` rather than `downcase ==`, `upcase ==`, `== downcase`, or `== upcase`..",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/Casecmp"
+  },
+  {
+    "key": "Performance/CompareWithBlock",
+    "name": "Compare With Block (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `sort_by(&amp;:foo)` instead of `sort { |a, b| a.foo &lt;=&gt; b.foo }`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/CompareWithBlock"
+  },
+  {
+    "key": "Performance/Count",
+    "name": "Count (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `count` instead of `select...size`, `reject...size`, `select...count`, `reject...count`, `select...length`, and `reject...length`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/Count"
+  },
+  {
+    "key": "Performance/Detect",
+    "name": "Detect (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `detect` instead of `select.first`, `find_all.first`, `select.last`, and `find_all.last`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/Detect"
+  },
+  {
+    "key": "Performance/DoubleStartEndWith",
+    "name": "Double Start End With (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `str.{start,end}_with?(x, ..., y, ...)` instead of `str.{start,end}_with?(x, ...) || str.{start,end}_with?(y, ...)`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/DoubleStartEndWith"
+  },
+  {
+    "key": "Performance/EndWith",
+    "name": "End With (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `end_with?` instead of a regex match anchored to the end of a string.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/EndWith"
+  },
+  {
+    "key": "Performance/FixedSize",
+    "name": "Fixed Size (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Do not compute the size of statically sized objects except in constants",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/FixedSize"
+  },
+  {
+    "key": "Performance/FlatMap",
+    "name": "Flat Map (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `Enumerable#flat_map` instead of `Enumerable#map...Array#flatten(1)` or `Enumberable#collect..Array#flatten(1)`",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/FlatMap"
+  },
+  {
+    "key": "Performance/InefficientHashSearch",
+    "name": "Inefficient Hash Search (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `key?` or `value?` instead of `keys.include?` or `values.include?`",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/InefficientHashSearch"
+  },
+  {
+    "key": "Performance/LstripRstrip",
+    "name": "Lstrip Rstrip (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `strip` instead of `lstrip.rstrip`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/LstripRstrip"
+  },
+  {
+    "key": "Performance/RangeInclude",
+    "name": "Range Include (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `Range#cover?` instead of `Range#include?`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/RangeInclude"
+  },
+  {
+    "key": "Performance/RedundantBlockCall",
+    "name": "Redundant Block Call (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `yield` instead of `block.call`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/RedundantBlockCall"
+  },
+  {
+    "key": "Performance/RedundantMatch",
+    "name": "Redundant Match (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `=~` instead of `String#match` or `Regexp#match` in a context where the returned `MatchData` is not needed.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/RedundantMatch"
+  },
+  {
+    "key": "Performance/RedundantMerge",
+    "name": "Redundant Merge (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use Hash#[]=, rather than Hash#merge! with a single key-value pair.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/RedundantMerge"
+  },
+  {
+    "key": "Performance/RedundantSortBy",
+    "name": "Redundant Sort By (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `sort` instead of `sort_by { |x| x }`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/RedundantSortBy"
+  },
+  {
+    "key": "Performance/RegexpMatch",
+    "name": "Regexp Match (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `match?` instead of `Regexp#match`, `String#match`, `Symbol#match`, `Regexp#===`, or `=~` when `MatchData` is not used.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/RegexpMatch"
+  },
+  {
+    "key": "Performance/ReverseEach",
+    "name": "Reverse Each (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `reverse_each` instead of `reverse.each`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/ReverseEach"
+  },
+  {
+    "key": "Performance/Sample",
+    "name": "Sample (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `sample` instead of `shuffle.first`, `shuffle.last`, and `shuffle[Integer]`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/Sample"
+  },
+  {
+    "key": "Performance/Size",
+    "name": "Size (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `size` instead of `count` for counting the number of elements in `Array` and `Hash`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/Size"
+  },
+  {
+    "key": "Performance/StartWith",
+    "name": "Start With (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `start_with?` instead of a regex match anchored to the beginning of a string.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/StartWith"
+  },
+  {
+    "key": "Performance/StringReplacement",
+    "name": "String Replacement (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `tr` instead of `gsub` when you are replacing the same number of characters. Use `delete` instead of `gsub` when you are deleting characters.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/StringReplacement"
+  },
+  {
+    "key": "Performance/TimesMap",
+    "name": "Times Map (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for .times.map calls.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/TimesMap"
+  },
+  {
+    "key": "Performance/UnfreezeString",
+    "name": "Unfreeze String (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use unary plus to get an unfrozen string literal.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/UnfreezeString"
+  },
+  {
+    "key": "Performance/UnneededSort",
+    "name": "Unneeded Sort (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `min` instead of `sort.first`, `max_by` instead of `sort_by...last`, etc.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/UnneededSort"
+  },
+  {
+    "key": "Performance/UriDefaultParser",
+    "name": "Uri Default Parser (Performance)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `URI::DEFAULT_PARSER` instead of `URI::Parser.new`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Performance/UriDefaultParser"
+  },
+  {
+    "key": "Rails/ActionFilter",
+    "name": "Action Filter (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Enforces consistent use of action filter methods.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/ActionFilter"
+  },
+  {
+    "key": "Rails/ActiveRecordAliases",
+    "name": "Active Record Aliases (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Avoid Active Record aliases: Use `update` instead of `update_attributes`. Use `update!` instead of `update_attributes!`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/ActiveRecordAliases"
+  },
+  {
+    "key": "Rails/ActiveSupportAliases",
+    "name": "Active Support Aliases (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Avoid ActiveSupport aliases of standard ruby methods: `String#starts_with?`, `String#ends_with?`, `Array#append`, `Array#prepend`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/ActiveSupportAliases"
+  },
+  {
+    "key": "Rails/ApplicationJob",
+    "name": "Application Job (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Check that jobs subclass ApplicationJob.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/ApplicationJob"
+  },
+  {
+    "key": "Rails/ApplicationRecord",
+    "name": "Application Record (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Check that models subclass ApplicationRecord.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/ApplicationRecord"
+  },
+  {
+    "key": "Rails/AssertNot",
+    "name": "Assert Not (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `assert_not` instead of `assert !`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/AssertNot"
+  },
+  {
+    "key": "Rails/Blank",
+    "name": "Blank (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Enforces use of `blank?`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/Blank"
+  },
+  {
+    "key": "Rails/BulkChangeTable",
+    "name": "Bulk Change Table (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Check whether alter queries are combinable.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/BulkChangeTable"
+  },
+  {
+    "key": "Rails/CreateTableWithTimestamps",
+    "name": "Create Table With Timestamps (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks the migration for which timestamps are not included when creating a new table.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/CreateTableWithTimestamps"
+  },
+  {
+    "key": "Rails/Date",
+    "name": "Date (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks the correct usage of date aware methods, such as Date.today, Date.current etc.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/Date"
+  },
+  {
+    "key": "Rails/Delegate",
+    "name": "Delegate (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Prefer delegate method for delegations.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/Delegate"
+  },
+  {
+    "key": "Rails/DelegateAllowBlank",
+    "name": "Delegate Allow Blank (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Do not use allow_blank as an option to delegate.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/DelegateAllowBlank"
+  },
+  {
+    "key": "Rails/DynamicFindBy",
+    "name": "Dynamic Find By (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `find_by` instead of dynamic `find_by_*`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/DynamicFindBy"
+  },
+  {
+    "key": "Rails/EnumUniqueness",
+    "name": "Enum Uniqueness (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Avoid duplicate integers in hash-syntax `enum` declaration.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/EnumUniqueness"
+  },
+  {
+    "key": "Rails/EnvironmentComparison",
+    "name": "Environment Comparison (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Favor `Rails.env.production?` over `Rails.env == 'production'`",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/EnvironmentComparison"
+  },
+  {
+    "key": "Rails/Exit",
+    "name": "Exit (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Favor `fail`, `break`, `return`, etc. over `exit` in application or library code outside of Rake files to avoid exits during unit testing or running in production.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/Exit"
+  },
+  {
+    "key": "Rails/FilePath",
+    "name": "File Path (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `Rails.root.join` for file path joining.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/FilePath"
+  },
+  {
+    "key": "Rails/FindBy",
+    "name": "Find By (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Prefer find_by over where.first.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/FindBy"
+  },
+  {
+    "key": "Rails/FindEach",
+    "name": "Find Each (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Prefer all.find_each over all.find.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/FindEach"
+  },
+  {
+    "key": "Rails/HasAndBelongsToMany",
+    "name": "Has And Belongs To Many (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Prefer has_many :through to has_and_belongs_to_many.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/HasAndBelongsToMany"
+  },
+  {
+    "key": "Rails/HasManyOrHasOneDependent",
+    "name": "Has Many Or Has One Dependent (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Define the dependent option to the has_many and has_one associations.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/HasManyOrHasOneDependent"
+  },
+  {
+    "key": "Rails/HttpPositionalArguments",
+    "name": "Http Positional Arguments (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use keyword arguments instead of positional arguments in http method calls.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/HttpPositionalArguments"
+  },
+  {
+    "key": "Rails/HttpStatus",
+    "name": "Http Status (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Enforces use of symbolic or numeric value to define HTTP status.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/HttpStatus"
+  },
+  {
+    "key": "Rails/InverseOf",
+    "name": "Inverse Of (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for associations where the inverse cannot be determined automatically.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/InverseOf"
+  },
+  {
+    "key": "Rails/LexicallyScopedActionFilter",
+    "name": "Lexically Scoped Action Filter (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks that methods specified in the filter's `only` or `except` options are explicitly defined in the controller.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/LexicallyScopedActionFilter"
+  },
+  {
+    "key": "Rails/NotNullColumn",
+    "name": "Not Null Column (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Do not add a NOT NULL column without a default value",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/NotNullColumn"
+  },
+  {
+    "key": "Rails/Output",
+    "name": "Output (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for calls to puts, print, etc.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/Output"
+  },
+  {
+    "key": "Rails/OutputSafety",
+    "name": "Output Safety (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "The use of `html_safe` or `raw` may be a security risk.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/OutputSafety"
+  },
+  {
+    "key": "Rails/PluralizationGrammar",
+    "name": "Pluralization Grammar (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for incorrect grammar when using methods like `3.day.ago`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/PluralizationGrammar"
+  },
+  {
+    "key": "Rails/Presence",
+    "name": "Presence (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks code that can be written more easily using `Object#presence` defined by Active Support.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/Presence"
+  },
+  {
+    "key": "Rails/Present",
+    "name": "Present (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Enforces use of `present?`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/Present"
+  },
+  {
+    "key": "Rails/ReadWriteAttribute",
+    "name": "Read Write Attribute (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for read_attribute(:attr) and write_attribute(:attr, val).",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/ReadWriteAttribute"
+  },
+  {
+    "key": "Rails/RedundantReceiverInWithOptions",
+    "name": "Redundant Receiver In With Options (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks for redundant receiver in `with_options`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/RedundantReceiverInWithOptions"
+  },
+  {
+    "key": "Rails/RefuteMethods",
+    "name": "Refute Methods (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use `assert_not` methods instead of `refute` methods.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/RefuteMethods"
+  },
+  {
+    "key": "Rails/RelativeDateConstant",
+    "name": "Relative Date Constant (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Do not assign relative date to constants.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/RelativeDateConstant"
+  },
+  {
+    "key": "Rails/RequestReferer",
+    "name": "Request Referer (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use consistent syntax for request.referer.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/RequestReferer"
+  },
+  {
+    "key": "Rails/ReversibleMigration",
+    "name": "Reversible Migration (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks whether the change method of the migration file is reversible.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/ReversibleMigration"
+  },
+  {
+    "key": "Rails/SafeNavigation",
+    "name": "Safe Navigation (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use Ruby's safe navigation operator (`&amp;.`) instead of `try!`",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/SafeNavigation"
+  },
+  {
+    "key": "Rails/SaveBang",
+    "name": "Save Bang (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Identifies possible cases where Active Record save! or related should be used.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/SaveBang"
+  },
+  {
+    "key": "Rails/ScopeArgs",
+    "name": "Scope Args (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks the arguments of ActiveRecord scopes.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/ScopeArgs"
+  },
+  {
+    "key": "Rails/SkipsModelValidations",
+    "name": "Skips Model Validations (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use methods that skips model validations with caution. See reference for more information.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/SkipsModelValidations"
+  },
+  {
+    "key": "Rails/TimeZone",
+    "name": "Time Zone (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Checks the correct usage of time zone aware methods.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/TimeZone"
+  },
+  {
+    "key": "Rails/UniqBeforePluck",
+    "name": "Uniq Before Pluck (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Prefer the use of uniq or distinct before pluck.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/UniqBeforePluck"
+  },
+  {
+    "key": "Rails/UnknownEnv",
+    "name": "Unknown Env (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use correct environment name.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/UnknownEnv"
+  },
+  {
+    "key": "Rails/Validation",
+    "name": "Validation (Rails)",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "description": "Use validates :attribute, hash of validations.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Rails/Validation"
+  },
+  {
+    "key": "Security/Eval",
+    "name": "Eval (Security)",
+    "type": "VULNERABILITY",
+    "severity": "MAJOR",
+    "description": "The use of eval represents a serious security risk.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Security/Eval"
+  },
+  {
+    "key": "Security/JSONLoad",
+    "name": "JSONLoad (Security)",
+    "type": "VULNERABILITY",
+    "severity": "MAJOR",
+    "description": "Prefer usage of `JSON.parse` over `JSON.load` due to potential security issues. See reference for more information.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Security/JSONLoad"
+  },
+  {
+    "key": "Security/MarshalLoad",
+    "name": "Marshal Load (Security)",
+    "type": "VULNERABILITY",
+    "severity": "MAJOR",
+    "description": "Avoid using of `Marshal.load` or `Marshal.restore` due to potential security issues. See reference for more information.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Security/MarshalLoad"
+  },
+  {
+    "key": "Security/Open",
+    "name": "Open (Security)",
+    "type": "VULNERABILITY",
+    "severity": "MAJOR",
+    "description": "The use of Kernel#open represents a serious security risk.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Security/Open"
+  },
+  {
+    "key": "Security/YAMLLoad",
+    "name": "YAMLLoad (Security)",
+    "type": "VULNERABILITY",
+    "severity": "MAJOR",
+    "description": "Prefer usage of `YAML.safe_load` over `YAML.load` due to potential security issues. See reference for more information.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Security/YAMLLoad"
+  },
+  {
+    "key": "Style/AccessModifierDeclarations",
+    "name": "Access Modifier Declarations (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks style of how access modifiers are used.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/AccessModifierDeclarations"
+  },
+  {
+    "key": "Style/Alias",
+    "name": "Alias (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use alias instead of alias_method.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/Alias"
+  },
+  {
+    "key": "Style/AndOr",
+    "name": "And Or (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use &amp;&amp;/|| instead of and/or.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/AndOr"
+  },
+  {
+    "key": "Style/ArrayJoin",
+    "name": "Array Join (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use Array#join instead of Array#*.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ArrayJoin"
+  },
+  {
+    "key": "Style/AsciiComments",
+    "name": "Ascii Comments (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use only ascii symbols in comments.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/AsciiComments"
+  },
+  {
+    "key": "Style/Attr",
+    "name": "Attr (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for uses of Module#attr.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/Attr"
+  },
+  {
+    "key": "Style/AutoResourceCleanup",
+    "name": "Auto Resource Cleanup (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Suggests the usage of an auto resource cleanup version of a method (if available).",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/AutoResourceCleanup"
+  },
+  {
+    "key": "Style/BarePercentLiterals",
+    "name": "Bare Percent Literals (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks if usage of %() or %Q() matches configuration.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/BarePercentLiterals"
+  },
+  {
+    "key": "Style/BeginBlock",
+    "name": "Begin Block (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid the use of BEGIN blocks.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/BeginBlock"
+  },
+  {
+    "key": "Style/BlockComments",
+    "name": "Block Comments (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Do not use block comments.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/BlockComments"
+  },
+  {
+    "key": "Style/BlockDelimiters",
+    "name": "Block Delimiters (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid using {...} for multi-line blocks (multiline chaining is always ugly). Prefer {...} over do...end for single-line blocks.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/BlockDelimiters"
+  },
+  {
+    "key": "Style/BracesAroundHashParameters",
+    "name": "Braces Around Hash Parameters (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Enforce braces style around hash parameters.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/BracesAroundHashParameters"
+  },
+  {
+    "key": "Style/CaseEquality",
+    "name": "Case Equality (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid explicit use of the case equality operator(===).",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/CaseEquality"
+  },
+  {
+    "key": "Style/CharacterLiteral",
+    "name": "Character Literal (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for uses of character literals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/CharacterLiteral"
+  },
+  {
+    "key": "Style/ClassAndModuleChildren",
+    "name": "Class And Module Children (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks style of children classes and modules.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ClassAndModuleChildren"
+  },
+  {
+    "key": "Style/ClassCheck",
+    "name": "Class Check (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Enforces consistent use of `Object#is_a?` or `Object#kind_of?`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ClassCheck"
+  },
+  {
+    "key": "Style/ClassMethods",
+    "name": "Class Methods (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use self when defining module/class methods.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ClassMethods"
+  },
+  {
+    "key": "Style/ClassVars",
+    "name": "Class Vars (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid the use of class variables.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ClassVars"
+  },
+  {
+    "key": "Style/CollectionMethods",
+    "name": "Collection Methods (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Preferred collection methods.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/CollectionMethods"
+  },
+  {
+    "key": "Style/ColonMethodCall",
+    "name": "Colon Method Call (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Do not use :: for method call.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ColonMethodCall"
+  },
+  {
+    "key": "Style/ColonMethodDefinition",
+    "name": "Colon Method Definition (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Do not use :: for defining class methods.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ColonMethodDefinition"
+  },
+  {
+    "key": "Style/CommandLiteral",
+    "name": "Command Literal (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use `` or %x around command literals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/CommandLiteral"
+  },
+  {
+    "key": "Style/CommentAnnotation",
+    "name": "Comment Annotation (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks formatting of special comments (TODO, FIXME, OPTIMIZE, HACK, REVIEW).",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/CommentAnnotation"
+  },
+  {
+    "key": "Style/CommentedKeyword",
+    "name": "Commented Keyword (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Do not place comments on the same line as certain keywords.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/CommentedKeyword"
+  },
+  {
+    "key": "Style/ConditionalAssignment",
+    "name": "Conditional Assignment (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use the return value of `if` and `case` statements for assignment to a variable and variable comparison instead of assigning that variable inside of each branch.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ConditionalAssignment"
+  },
+  {
+    "key": "Style/Copyright",
+    "name": "Copyright (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Include a copyright notice in each file before any code.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/Copyright"
+  },
+  {
+    "key": "Style/DateTime",
+    "name": "Date Time (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use Date or Time over DateTime.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/DateTime"
+  },
+  {
+    "key": "Style/DefWithParentheses",
+    "name": "Def With Parentheses (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use def with parentheses when there are arguments.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/DefWithParentheses"
+  },
+  {
+    "key": "Style/Dir",
+    "name": "Dir (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use the `__dir__` method to retrieve the canonicalized absolute path to the current file.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/Dir"
+  },
+  {
+    "key": "Style/Documentation",
+    "name": "Documentation (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Document classes and non-namespace modules.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/Documentation"
+  },
+  {
+    "key": "Style/DocumentationMethod",
+    "name": "Documentation Method (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Public methods.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/DocumentationMethod"
+  },
+  {
+    "key": "Style/DoubleNegation",
+    "name": "Double Negation (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for uses of double negation (!!).",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/DoubleNegation"
+  },
+  {
+    "key": "Style/EachForSimpleLoop",
+    "name": "Each For Simple Loop (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use `Integer#times` for a simple loop which iterates a fixed number of times.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/EachForSimpleLoop"
+  },
+  {
+    "key": "Style/EachWithObject",
+    "name": "Each With Object (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Prefer `each_with_object` over `inject` or `reduce`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/EachWithObject"
+  },
+  {
+    "key": "Style/EmptyBlockParameter",
+    "name": "Empty Block Parameter (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Omit pipes for empty block parameters.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/EmptyBlockParameter"
+  },
+  {
+    "key": "Style/EmptyCaseCondition",
+    "name": "Empty Case Condition (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid empty condition in case statements.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/EmptyCaseCondition"
+  },
+  {
+    "key": "Style/EmptyElse",
+    "name": "Empty Else (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid empty else-clauses.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/EmptyElse"
+  },
+  {
+    "key": "Style/EmptyLambdaParameter",
+    "name": "Empty Lambda Parameter (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Omit parens for empty lambda parameters.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/EmptyLambdaParameter"
+  },
+  {
+    "key": "Style/EmptyLiteral",
+    "name": "Empty Literal (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Prefer literals to Array.new/Hash.new/String.new.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/EmptyLiteral"
+  },
+  {
+    "key": "Style/EmptyMethod",
+    "name": "Empty Method (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks the formatting of empty method definitions.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/EmptyMethod"
+  },
+  {
+    "key": "Style/Encoding",
+    "name": "Encoding (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use UTF-8 as the source file encoding.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/Encoding"
+  },
+  {
+    "key": "Style/EndBlock",
+    "name": "End Block (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid the use of END blocks.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/EndBlock"
+  },
+  {
+    "key": "Style/EvalWithLocation",
+    "name": "Eval With Location (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Pass `__FILE__` and `__LINE__` to `eval` method, as they are used by backtraces.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/EvalWithLocation"
+  },
+  {
+    "key": "Style/EvenOdd",
+    "name": "Even Odd (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Favor the use of Integer#even? &amp;&amp; Integer#odd?",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/EvenOdd"
+  },
+  {
+    "key": "Style/ExpandPathArguments",
+    "name": "Expand Path Arguments (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use `expand_path(__dir__)` instead of `expand_path('..', __FILE__)`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ExpandPathArguments"
+  },
+  {
+    "key": "Style/FlipFlop",
+    "name": "Flip Flop (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for flip flops",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/FlipFlop"
+  },
+  {
+    "key": "Style/For",
+    "name": "For (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks use of for or each in multiline loops.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/For"
+  },
+  {
+    "key": "Style/FormatString",
+    "name": "Format String (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Enforce the use of Kernel#sprintf, Kernel#format or String#%.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/FormatString"
+  },
+  {
+    "key": "Style/FormatStringToken",
+    "name": "Format String Token (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use a consistent style for format string tokens.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/FormatStringToken"
+  },
+  {
+    "key": "Style/FrozenStringLiteralComment",
+    "name": "Frozen String Literal Comment (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Add the frozen_string_literal comment to the top of files to help transition from Ruby 2.3.0 to Ruby 3.0.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/FrozenStringLiteralComment"
+  },
+  {
+    "key": "Style/GlobalVars",
+    "name": "Global Vars (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Do not introduce global variables.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/GlobalVars"
+  },
+  {
+    "key": "Style/GuardClause",
+    "name": "Guard Clause (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Check for conditionals that can be replaced with guard clauses",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/GuardClause"
+  },
+  {
+    "key": "Style/HashSyntax",
+    "name": "Hash Syntax (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Prefer Ruby 1.9 hash syntax { a: 1, b: 2 } over 1.8 syntax { :a =&gt; 1, :b =&gt; 2 }.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/HashSyntax"
+  },
+  {
+    "key": "Style/IdenticalConditionalBranches",
+    "name": "Identical Conditional Branches (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks that conditional statements do not have an identical line at the end of each branch, which can validly be moved out of the conditional.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/IdenticalConditionalBranches"
+  },
+  {
+    "key": "Style/IfInsideElse",
+    "name": "If Inside Else (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Finds if nodes inside else, which can be converted to elsif.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/IfInsideElse"
+  },
+  {
+    "key": "Style/IfUnlessModifier",
+    "name": "If Unless Modifier (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Favor modifier if/unless usage when you have a single-line body.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/IfUnlessModifier"
+  },
+  {
+    "key": "Style/IfUnlessModifierOfIfUnless",
+    "name": "If Unless Modifier Of If Unless (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid modifier if/unless usage on conditionals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/IfUnlessModifierOfIfUnless"
+  },
+  {
+    "key": "Style/IfWithSemicolon",
+    "name": "If With Semicolon (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Do not use if x; .... Use the ternary operator instead.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/IfWithSemicolon"
+  },
+  {
+    "key": "Style/ImplicitRuntimeError",
+    "name": "Implicit Runtime Error (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use `raise` or `fail` with an explicit exception class and message, rather than just a message.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ImplicitRuntimeError"
+  },
+  {
+    "key": "Style/InfiniteLoop",
+    "name": "Infinite Loop (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use Kernel#loop for infinite loops.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/InfiniteLoop"
+  },
+  {
+    "key": "Style/InlineComment",
+    "name": "Inline Comment (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid trailing inline comments.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/InlineComment"
+  },
+  {
+    "key": "Style/InverseMethods",
+    "name": "Inverse Methods (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use the inverse method instead of `!.method` if an inverse method is defined.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/InverseMethods"
+  },
+  {
+    "key": "Style/IpAddresses",
+    "name": "Ip Addresses (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Don't include literal IP addresses in code.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/IpAddresses"
+  },
+  {
+    "key": "Style/Lambda",
+    "name": "Lambda (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use the new lambda literal syntax for single-line blocks.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/Lambda"
+  },
+  {
+    "key": "Style/LambdaCall",
+    "name": "Lambda Call (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use lambda.call(...) instead of lambda.(...).",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/LambdaCall"
+  },
+  {
+    "key": "Style/LineEndConcatenation",
+    "name": "Line End Concatenation (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use \\ instead of + or &lt;&lt; to concatenate two string literals at line end.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/LineEndConcatenation"
+  },
+  {
+    "key": "Style/MethodCallWithArgsParentheses",
+    "name": "Method Call With Args Parentheses (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use parentheses for method calls with arguments.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MethodCallWithArgsParentheses"
+  },
+  {
+    "key": "Style/MethodCallWithoutArgsParentheses",
+    "name": "Method Call Without Args Parentheses (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Do not use parentheses for method calls with no arguments.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MethodCallWithoutArgsParentheses"
+  },
+  {
+    "key": "Style/MethodCalledOnDoEndBlock",
+    "name": "Method Called On Do End Block (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid chaining a method call on a do...end block.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MethodCalledOnDoEndBlock"
+  },
+  {
+    "key": "Style/MethodDefParentheses",
+    "name": "Method Def Parentheses (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks if the method definitions have or don't have parentheses.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MethodDefParentheses"
+  },
+  {
+    "key": "Style/MethodMissingSuper",
+    "name": "Method Missing Super (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for `method_missing` to call `super`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MethodMissingSuper"
+  },
+  {
+    "key": "Style/MinMax",
+    "name": "Min Max (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use `Enumerable#minmax` instead of `Enumerable#min` and `Enumerable#max` in conjunction.'",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MinMax"
+  },
+  {
+    "key": "Style/MissingElse",
+    "name": "Missing Else (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Require if/case expressions to have an else branches. If enabled, it is recommended that Style/UnlessElse and Style/EmptyElse be enabled. This will conflict with Style/EmptyElse if Style/EmptyElse is configured to style &quot;both&quot;",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MissingElse"
+  },
+  {
+    "key": "Style/MissingRespondToMissing",
+    "name": "Missing Respond To Missing (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks if `method_missing` is implemented without implementing `respond_to_missing`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MissingRespondToMissing"
+  },
+  {
+    "key": "Style/MixinGrouping",
+    "name": "Mixin Grouping (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for grouping of mixins in `class` and `module` bodies.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MixinGrouping"
+  },
+  {
+    "key": "Style/MixinUsage",
+    "name": "Mixin Usage (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks that `include`, `extend` and `prepend` exists at the top level.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MixinUsage"
+  },
+  {
+    "key": "Style/ModuleFunction",
+    "name": "Module Function (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for usage of `extend self` in modules.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ModuleFunction"
+  },
+  {
+    "key": "Style/MultilineBlockChain",
+    "name": "Multiline Block Chain (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid multi-line chains of blocks.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MultilineBlockChain"
+  },
+  {
+    "key": "Style/MultilineIfModifier",
+    "name": "Multiline If Modifier (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Only use if/unless modifiers on single line statements.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MultilineIfModifier"
+  },
+  {
+    "key": "Style/MultilineIfThen",
+    "name": "Multiline If Then (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Do not use then for multi-line if/unless.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MultilineIfThen"
+  },
+  {
+    "key": "Style/MultilineMemoization",
+    "name": "Multiline Memoization (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Wrap multiline memoizations in a `begin` and `end` block.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MultilineMemoization"
+  },
+  {
+    "key": "Style/MultilineTernaryOperator",
+    "name": "Multiline Ternary Operator (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid multi-line ?: (the ternary operator); use if/unless instead.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MultilineTernaryOperator"
+  },
+  {
+    "key": "Style/MultipleComparison",
+    "name": "Multiple Comparison (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid comparing a variable with multiple items in a conditional, use Array#include? instead.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MultipleComparison"
+  },
+  {
+    "key": "Style/MutableConstant",
+    "name": "Mutable Constant (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Do not assign mutable objects to constants.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/MutableConstant"
+  },
+  {
+    "key": "Style/NegatedIf",
+    "name": "Negated If (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Favor unless over if for negative conditions (or control flow or).",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/NegatedIf"
+  },
+  {
+    "key": "Style/NegatedWhile",
+    "name": "Negated While (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Favor until over while for negative conditions.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/NegatedWhile"
+  },
+  {
+    "key": "Style/NestedModifier",
+    "name": "Nested Modifier (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid using nested modifiers.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/NestedModifier"
+  },
+  {
+    "key": "Style/NestedParenthesizedCalls",
+    "name": "Nested Parenthesized Calls (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Parenthesize method calls which are nested inside the argument list of another parenthesized method call.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/NestedParenthesizedCalls"
+  },
+  {
+    "key": "Style/NestedTernaryOperator",
+    "name": "Nested Ternary Operator (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use one expression per branch in a ternary operator.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/NestedTernaryOperator"
+  },
+  {
+    "key": "Style/Next",
+    "name": "Next (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use `next` to skip iteration instead of a condition at the end.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/Next"
+  },
+  {
+    "key": "Style/NilComparison",
+    "name": "Nil Comparison (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Prefer x.nil? to x == nil.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/NilComparison"
+  },
+  {
+    "key": "Style/NonNilCheck",
+    "name": "Non Nil Check (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for redundant nil checks.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/NonNilCheck"
+  },
+  {
+    "key": "Style/Not",
+    "name": "Not (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use ! instead of not.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/Not"
+  },
+  {
+    "key": "Style/NumericLiteralPrefix",
+    "name": "Numeric Literal Prefix (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use smallcase prefixes for numeric literals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/NumericLiteralPrefix"
+  },
+  {
+    "key": "Style/NumericLiterals",
+    "name": "Numeric Literals (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Add underscores to large numeric literals to improve their readability.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/NumericLiterals"
+  },
+  {
+    "key": "Style/NumericPredicate",
+    "name": "Numeric Predicate (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for the use of predicate- or comparison methods for numeric comparisons.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/NumericPredicate"
+  },
+  {
+    "key": "Style/OneLineConditional",
+    "name": "One Line Conditional (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Favor the ternary operator(?:) over if/then/else/end constructs.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/OneLineConditional"
+  },
+  {
+    "key": "Style/OptionHash",
+    "name": "Option Hash (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Don't use option hashes when you can use keyword arguments.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/OptionHash"
+  },
+  {
+    "key": "Style/OptionalArguments",
+    "name": "Optional Arguments (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for optional arguments that do not appear at the end of the argument list",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/OptionalArguments"
+  },
+  {
+    "key": "Style/OrAssignment",
+    "name": "Or Assignment (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Recommend usage of double pipe equals (||=) where applicable.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/OrAssignment"
+  },
+  {
+    "key": "Style/ParallelAssignment",
+    "name": "Parallel Assignment (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Check for simple usages of parallel assignment. It will only warn when the number of variables matches on both sides of the assignment.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ParallelAssignment"
+  },
+  {
+    "key": "Style/ParenthesesAroundCondition",
+    "name": "Parentheses Around Condition (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Don't use parentheses around the condition of an if/unless/while.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ParenthesesAroundCondition"
+  },
+  {
+    "key": "Style/PercentLiteralDelimiters",
+    "name": "Percent Literal Delimiters (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use `%`-literal delimiters consistently",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/PercentLiteralDelimiters"
+  },
+  {
+    "key": "Style/PercentQLiterals",
+    "name": "Percent QLiterals (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks if uses of %Q/%q match the configured preference.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/PercentQLiterals"
+  },
+  {
+    "key": "Style/PerlBackrefs",
+    "name": "Perl Backrefs (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid Perl-style regex back references.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/PerlBackrefs"
+  },
+  {
+    "key": "Style/PreferredHashMethods",
+    "name": "Preferred Hash Methods (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks use of `has_key?` and `has_value?` Hash methods.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/PreferredHashMethods"
+  },
+  {
+    "key": "Style/Proc",
+    "name": "Proc (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use proc instead of Proc.new.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/Proc"
+  },
+  {
+    "key": "Style/RaiseArgs",
+    "name": "Raise Args (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks the arguments passed to raise/fail.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/RaiseArgs"
+  },
+  {
+    "key": "Style/RandomWithOffset",
+    "name": "Random With Offset (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Prefer to use ranges when generating random numbers instead of integers with offsets.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/RandomWithOffset"
+  },
+  {
+    "key": "Style/RedundantBegin",
+    "name": "Redundant Begin (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Don't use begin blocks when they are not needed.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/RedundantBegin"
+  },
+  {
+    "key": "Style/RedundantConditional",
+    "name": "Redundant Conditional (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Don't return true/false from a conditional.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/RedundantConditional"
+  },
+  {
+    "key": "Style/RedundantException",
+    "name": "Redundant Exception (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for an obsolete RuntimeException argument in raise/fail.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/RedundantException"
+  },
+  {
+    "key": "Style/RedundantFreeze",
+    "name": "Redundant Freeze (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks usages of Object#freeze on immutable objects.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/RedundantFreeze"
+  },
+  {
+    "key": "Style/RedundantParentheses",
+    "name": "Redundant Parentheses (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for parentheses that seem not to serve any purpose.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/RedundantParentheses"
+  },
+  {
+    "key": "Style/RedundantReturn",
+    "name": "Redundant Return (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Don't use return where it's not required.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/RedundantReturn"
+  },
+  {
+    "key": "Style/RedundantSelf",
+    "name": "Redundant Self (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Don't use self where it's not needed.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/RedundantSelf"
+  },
+  {
+    "key": "Style/RegexpLiteral",
+    "name": "Regexp Literal (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use / or %r around regular expressions.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/RegexpLiteral"
+  },
+  {
+    "key": "Style/RescueModifier",
+    "name": "Rescue Modifier (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid using rescue in its modifier form.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/RescueModifier"
+  },
+  {
+    "key": "Style/RescueStandardError",
+    "name": "Rescue Standard Error (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid rescuing without specifying an error class.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/RescueStandardError"
+  },
+  {
+    "key": "Style/ReturnNil",
+    "name": "Return Nil (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use return instead of return nil.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ReturnNil"
+  },
+  {
+    "key": "Style/SafeNavigation",
+    "name": "Safe Navigation (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "This cop transforms usages of a method call safeguarded by a check for the existence of the object to safe navigation (`&amp;.`).",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/SafeNavigation"
+  },
+  {
+    "key": "Style/SelfAssignment",
+    "name": "Self Assignment (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for places where self-assignment shorthand should have been used.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/SelfAssignment"
+  },
+  {
+    "key": "Style/Semicolon",
+    "name": "Semicolon (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Don't use semicolons to terminate expressions.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/Semicolon"
+  },
+  {
+    "key": "Style/Send",
+    "name": "Send (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Prefer `Object#__send__` or `Object#public_send` to `send`, as `send` may overlap with existing methods.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/Send"
+  },
+  {
+    "key": "Style/SignalException",
+    "name": "Signal Exception (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for proper usage of fail and raise.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/SignalException"
+  },
+  {
+    "key": "Style/SingleLineBlockParams",
+    "name": "Single Line Block Params (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Enforces the names of some block params.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/SingleLineBlockParams"
+  },
+  {
+    "key": "Style/SingleLineMethods",
+    "name": "Single Line Methods (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid single-line methods.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/SingleLineMethods"
+  },
+  {
+    "key": "Style/SpecialGlobalVars",
+    "name": "Special Global Vars (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Avoid Perl-style global variables.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/SpecialGlobalVars"
+  },
+  {
+    "key": "Style/StabbyLambdaParentheses",
+    "name": "Stabby Lambda Parentheses (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Check for the usage of parentheses around stabby lambda arguments.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/StabbyLambdaParentheses"
+  },
+  {
+    "key": "Style/StderrPuts",
+    "name": "Stderr Puts (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use `warn` instead of `$stderr.puts`.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/StderrPuts"
+  },
+  {
+    "key": "Style/StringHashKeys",
+    "name": "String Hash Keys (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Prefer symbols instead of strings as hash keys.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/StringHashKeys"
+  },
+  {
+    "key": "Style/StringLiterals",
+    "name": "String Literals (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks if uses of quotes match the configured preference.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/StringLiterals"
+  },
+  {
+    "key": "Style/StringLiteralsInInterpolation",
+    "name": "String Literals In Interpolation (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks if uses of quotes inside expressions in interpolated strings match the configured preference.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/StringLiteralsInInterpolation"
+  },
+  {
+    "key": "Style/StringMethods",
+    "name": "String Methods (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks if configured preferred methods are used over non-preferred.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/StringMethods"
+  },
+  {
+    "key": "Style/StructInheritance",
+    "name": "Struct Inheritance (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for inheritance from Struct.new.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/StructInheritance"
+  },
+  {
+    "key": "Style/SymbolArray",
+    "name": "Symbol Array (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use %i or %I for arrays of symbols.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/SymbolArray"
+  },
+  {
+    "key": "Style/SymbolLiteral",
+    "name": "Symbol Literal (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use plain symbols instead of string symbols when possible.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/SymbolLiteral"
+  },
+  {
+    "key": "Style/SymbolProc",
+    "name": "Symbol Proc (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use symbols as procs instead of blocks when possible.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/SymbolProc"
+  },
+  {
+    "key": "Style/TernaryParentheses",
+    "name": "Ternary Parentheses (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for use of parentheses around ternary conditions.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/TernaryParentheses"
+  },
+  {
+    "key": "Style/TrailingBodyOnClass",
+    "name": "Trailing Body On Class (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Class body goes below class statement.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/TrailingBodyOnClass"
+  },
+  {
+    "key": "Style/TrailingBodyOnMethodDefinition",
+    "name": "Trailing Body On Method Definition (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Method body goes below definition.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/TrailingBodyOnMethodDefinition"
+  },
+  {
+    "key": "Style/TrailingBodyOnModule",
+    "name": "Trailing Body On Module (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Module body goes below module statement.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/TrailingBodyOnModule"
+  },
+  {
+    "key": "Style/TrailingCommaInArguments",
+    "name": "Trailing Comma In Arguments (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for trailing comma in argument lists.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/TrailingCommaInArguments"
+  },
+  {
+    "key": "Style/TrailingCommaInArrayLiteral",
+    "name": "Trailing Comma In Array Literal (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for trailing comma in array literals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/TrailingCommaInArrayLiteral"
+  },
+  {
+    "key": "Style/TrailingCommaInHashLiteral",
+    "name": "Trailing Comma In Hash Literal (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for trailing comma in hash literals.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/TrailingCommaInHashLiteral"
+  },
+  {
+    "key": "Style/TrailingMethodEndStatement",
+    "name": "Trailing Method End Statement (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for trailing end statement on line of method body.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/TrailingMethodEndStatement"
+  },
+  {
+    "key": "Style/TrailingUnderscoreVariable",
+    "name": "Trailing Underscore Variable (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for the usage of unneeded trailing underscores at the end of parallel variable assignment.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/TrailingUnderscoreVariable"
+  },
+  {
+    "key": "Style/TrivialAccessors",
+    "name": "Trivial Accessors (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Prefer attr_* methods to trivial readers/writers.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/TrivialAccessors"
+  },
+  {
+    "key": "Style/UnlessElse",
+    "name": "Unless Else (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Do not use unless with else. Rewrite these with the positive case first.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/UnlessElse"
+  },
+  {
+    "key": "Style/UnneededCapitalW",
+    "name": "Unneeded Capital W (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for %W when interpolation is not needed.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/UnneededCapitalW"
+  },
+  {
+    "key": "Style/UnneededCondition",
+    "name": "Unneeded Condition (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for unnecessary conditional expressions.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/UnneededCondition"
+  },
+  {
+    "key": "Style/UnneededInterpolation",
+    "name": "Unneeded Interpolation (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for strings that are just an interpolated expression.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/UnneededInterpolation"
+  },
+  {
+    "key": "Style/UnneededPercentQ",
+    "name": "Unneeded Percent Q (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for %q/%Q when single quotes or double quotes would do.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/UnneededPercentQ"
+  },
+  {
+    "key": "Style/UnpackFirst",
+    "name": "Unpack First (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for accessing the first element of `String#unpack` instead of using `unpack1`",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/UnpackFirst"
+  },
+  {
+    "key": "Style/VariableInterpolation",
+    "name": "Variable Interpolation (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Don't interpolate global, instance and class variables directly in strings.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/VariableInterpolation"
+  },
+  {
+    "key": "Style/WhenThen",
+    "name": "When Then (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use when x then ... for one-line cases.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/WhenThen"
+  },
+  {
+    "key": "Style/WhileUntilDo",
+    "name": "While Until Do (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Checks for redundant do after while or until.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/WhileUntilDo"
+  },
+  {
+    "key": "Style/WhileUntilModifier",
+    "name": "While Until Modifier (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Favor modifier while/until usage when you have a single-line body.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/WhileUntilModifier"
+  },
+  {
+    "key": "Style/WordArray",
+    "name": "Word Array (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use %w or %W for arrays of words.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/WordArray"
+  },
+  {
+    "key": "Style/YodaCondition",
+    "name": "Yoda Condition (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Do not use literals as the first operand of a comparison.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/YodaCondition"
+  },
+  {
+    "key": "Style/ZeroLengthPredicate",
+    "name": "Zero Length Predicate (Style)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "description": "Use #empty? when testing for objects of length 0.",
+    "url": "https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Style/ZeroLengthPredicate"
+  }
+]

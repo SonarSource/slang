@@ -82,6 +82,26 @@ public class ExternalReportTest extends TestBase {
     }
   }
 
+  @Test
+  public void rubocop() {
+    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "rubocop");
+    sonarScanner.setProperty("sonar.ruby.rubocop.reportPaths", "rubocop-report.json");
+    ORCHESTRATOR.executeBuild(sonarScanner);
+    List<Issue> issues = getExternalIssues();
+    boolean externalIssuesSupported = ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2);
+    if (externalIssuesSupported) {
+      assertThat(issues).hasSize(1);
+      Issue first = issues.get(0);
+      assertThat(first.ruleKey()).isEqualTo("external_rubocop:Security/YAMLLoad");
+      assertThat(first.line()).isEqualTo(2);
+      assertThat(first.message()).isEqualTo("Security/YAMLLoad: Prefer using `YAML.safe_load` over `YAML.load`.");
+      assertThat(first.severity()).isEqualTo("MAJOR");
+      assertThat(first.debt()).isEqualTo("5min");
+    } else {
+      assertThat(issues).isEmpty();
+    }
+  }
+
   private List<Issue> getExternalIssues() {
     Server server = ORCHESTRATOR.getServer();
     IssueClient issueClient = SonarClient.create(server.getUrl()).issueClient();
