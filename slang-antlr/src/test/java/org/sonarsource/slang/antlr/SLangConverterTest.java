@@ -105,6 +105,15 @@ public class SLangConverterTest {
   }
 
   @Test
+  public void other_unary_expression() {
+    assertTree(parseUnary("+ 2;")).isUnaryExpression(UnaryExpressionTree.Operator.PLUS);
+    assertTree(parseUnary("+ +2;")).isUnaryExpression(UnaryExpressionTree.Operator.PLUS);
+    assertTree(parseUnary("- 2;")).isUnaryExpression(UnaryExpressionTree.Operator.MINUS);
+    assertTree(parseUnary("++2;")).isUnaryExpression(UnaryExpressionTree.Operator.INCREMENT);
+    assertTree(parseUnary("-- 2;")).isUnaryExpression(UnaryExpressionTree.Operator.DECREMENT);
+  }
+
+  @Test
   public void parenthesized_expression() {
     BinaryExpressionTree binary = parseBinary("((a && b) && (c || d)) || (y\n|| z);");
     assertTree(binary.leftOperand()).isInstanceOf(ParenthesizedExpressionTree.class);
@@ -589,6 +598,10 @@ public class SLangConverterTest {
 
   private BinaryExpressionTree parseBinary(String code) {
     return (BinaryExpressionTree) parseExpressionOrStatement(code);
+  }
+
+  private UnaryExpressionTree parseUnary(String code) {
+    return (UnaryExpressionTree) parseExpressionOrStatement(code);
   }
 
   private Tree parseExpressionOrStatement(String code) {

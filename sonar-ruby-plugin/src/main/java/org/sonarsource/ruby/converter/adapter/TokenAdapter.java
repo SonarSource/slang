@@ -69,7 +69,9 @@ public class TokenAdapter extends JRubyObjectAdapter<RubyArrayTwoObject> {
     }
 
     String text = getText();
-    if (text == null || text.length() == 0) {
+    // String literals are allowed to be empty here, as the parser consider only the content of the string as text.
+    // So, although the string content is empty (empty string), there is actually some text here, which are the surrounding quotes.
+    if (text == null || (text.length() == 0 && type != Token.Type.STRING_LITERAL)) {
       return null;
     }
     return new TokenImpl(getRange().toTextRange(), getText(), type);

@@ -143,7 +143,11 @@ class KotlinTreeVisitor {
     .collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue)));
 
   private static final Map<KtToken, UnaryExpressionTree.Operator> UNARY_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(
-    new SimpleEntry<>(KtTokens.EXCL, UnaryExpressionTree.Operator.NEGATE))
+    new SimpleEntry<>(KtTokens.EXCL, UnaryExpressionTree.Operator.NEGATE),
+    new SimpleEntry<>(KtTokens.PLUS, UnaryExpressionTree.Operator.PLUS),
+    new SimpleEntry<>(KtTokens.MINUS, UnaryExpressionTree.Operator.MINUS),
+    new SimpleEntry<>(KtTokens.PLUSPLUS, UnaryExpressionTree.Operator.INCREMENT),
+    new SimpleEntry<>(KtTokens.MINUSMINUS, UnaryExpressionTree.Operator.DECREMENT))
     .collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue)));
 
   private static final Map<KtToken, AssignmentExpressionTree.Operator> ASSIGNMENTS_OPERATOR_MAP = Collections.unmodifiableMap(Stream.of(

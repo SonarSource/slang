@@ -17,20 +17,15 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.api;
+package org.sonarsource.slang.checks;
 
-public interface UnaryExpressionTree extends Tree {
+import org.junit.Test;
 
-  public enum Operator {
-    NEGATE,
-    PLUS,
-    MINUS,
-    INCREMENT,
-    DECREMENT
+public class WrongAssignmentOperatorCheckTest {
+
+  @Test
+  public void test() {
+    Verifier.verify("WrongAssignmentOperator.slang", new WrongAssignmentOperatorCheck());
   }
-
-  Operator operator();
-
-  Tree operand();
 
 }

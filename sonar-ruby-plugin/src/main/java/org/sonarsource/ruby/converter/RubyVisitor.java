@@ -115,6 +115,9 @@ public class RubyVisitor {
 
     UNARY_OPERATOR_MAP = new HashMap<>();
     UNARY_OPERATOR_MAP.put("!", UnaryExpressionTree.Operator.NEGATE);
+    UNARY_OPERATOR_MAP.put("+@", UnaryExpressionTree.Operator.PLUS);
+    UNARY_OPERATOR_MAP.put("-@", UnaryExpressionTree.Operator.MINUS);
+    // Note: Ruby has no decrement/increment operator
   }
 
   private static final Set<String> LOCAL_SCOPE_TYPES = Collections.unmodifiableSet(
@@ -569,7 +572,15 @@ public class RubyVisitor {
     if (RubyConverter.FILENAME.equals(value)) {
       return createNativeTree(node, children);
     }
-    return new StringLiteralTreeImpl(metaData(node), value, value);
+    TextRange begin = node.textRangeForAttribute("begin");
+    TextRange end = node.textRangeForAttribute("end");
+    TreeMetaData treeMetaData;
+    if (begin != null && end != null) {
+      treeMetaData = metaDataProvider.metaData(new TextRangeImpl(begin.start(), end.end()));
+    } else {
+      treeMetaData = metaData(node);
+    }
+    return new StringLiteralTreeImpl(treeMetaData, node.source(), value);
   }
 
   private boolean hasDynamicStringParent() {

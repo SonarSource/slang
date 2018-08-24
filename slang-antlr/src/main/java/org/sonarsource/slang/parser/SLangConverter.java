@@ -87,6 +87,11 @@ import static org.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PUBLIC;
+import static org.sonarsource.slang.api.UnaryExpressionTree.Operator.DECREMENT;
+import static org.sonarsource.slang.api.UnaryExpressionTree.Operator.INCREMENT;
+import static org.sonarsource.slang.api.UnaryExpressionTree.Operator.MINUS;
+import static org.sonarsource.slang.api.UnaryExpressionTree.Operator.NEGATE;
+import static org.sonarsource.slang.api.UnaryExpressionTree.Operator.PLUS;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
@@ -151,8 +156,19 @@ public class SLangConverter implements ASTConverter {
     return new CommentImpl(token.getText(), contentText, range, new TextRangeImpl(contentStart, contentEnd));
   }
 
+  private static final Map<String, UnaryExpressionTree.Operator> UNARY_OPERATOR_MAP = unaryOperatorMap();
   private static final Map<String, Operator> BINARY_OPERATOR_MAP = binaryOperatorMap();
   private static final Map<String, AssignmentExpressionTree.Operator> ASSIGNMENT_OPERATOR_MAP = assignmentOperatorMap();
+
+  private static Map<String, UnaryExpressionTree.Operator> unaryOperatorMap() {
+    Map<String, UnaryExpressionTree.Operator> map = new HashMap<>();
+    map.put("!", NEGATE);
+    map.put("+", PLUS);
+    map.put("-", MINUS);
+    map.put("++", INCREMENT);
+    map.put("--", DECREMENT);
+    return Collections.unmodifiableMap(map);
+  }
 
   private static Map<String, Operator> binaryOperatorMap() {
     Map<String, Operator> map = new HashMap<>();
@@ -462,7 +478,7 @@ public class SLangConverter implements ASTConverter {
         return visit(ctx.atomicExpression());
       } else {
         Tree operand = visit(ctx.unaryExpression());
-        return new UnaryExpressionTreeImpl(meta(ctx), UnaryExpressionTree.Operator.NEGATE, operand);
+        return new UnaryExpressionTreeImpl(meta(ctx), UNARY_OPERATOR_MAP.get(ctx.unaryOperator().getText()), operand);
       }
     }
 

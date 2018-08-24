@@ -71,7 +71,7 @@ public class ArgVisitorTest extends AbstractRubyConverterTest {
     assertTree(param1).isEquivalentTo(parameter("arg"));
     Tree param2 = tree.formalParameters().get(1);
     assertTree(param2).isEquivalentTo(nativeTree(nativeKind("kwoptarg"),
-      asList(parameter("bar"), stringLiteral("default", "default"))));
+      asList(parameter("bar"), stringLiteral("'default'", "default"))));
     Tree param3 = tree.formalParameters().get(2);
     assertTree(param3).isEquivalentTo(parameter("splat"));
 
