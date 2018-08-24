@@ -24,6 +24,9 @@ import org.sonar.check.Rule;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
+import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.api.UnaryExpressionTree;
+import org.sonarsource.slang.api.UnaryExpressionTree.Operator;
 import org.sonarsource.slang.checks.api.CheckContext;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
@@ -36,12 +39,13 @@ import static org.sonarsource.slang.api.AssignmentExpressionTree.Operator.EQUAL;
 @Rule(key = "S2757")
 public class WrongAssignmentOperatorCheck implements SlangCheck {
 
-  private static final List<String> SUSPICIOUS_TOKEN_VALUES = asList("!", "+", "-");
+  private static final List<Operator> SUSPICIOUS_UNARY_OPERATORS = asList(Operator.NEGATE, Operator.PLUS, Operator.MINUS);
 
   @Override
   public void initialize(InitContext init) {
     init.register(AssignmentExpressionTree.class, (ctx, assignment) -> {
-      if (assignment.operator() != EQUAL) {
+      Tree rightHandSide = assignment.statementOrExpression();
+      if (assignment.operator() != EQUAL || !isSuspiciousUnaryExpression(rightHandSide)) {
         return;
       }
 
@@ -51,11 +55,9 @@ public class WrongAssignmentOperatorCheck implements SlangCheck {
       List<Token> allTokens = assignment.metaData().tokens();
       Token operatorToken = allTokens.get(allTokens.indexOf(variableLastToken) + 1);
 
-      Token expressionFirstToken = assignment.statementOrExpression().metaData().tokens().get(0);
+      Token expressionFirstToken = rightHandSide.metaData().tokens().get(0);
 
-      if (isSuspiciousToken(expressionFirstToken)
-        && noSpacingBetween(operatorToken, expressionFirstToken)
-        && !noSpacingBetween(variableLastToken, operatorToken)) {
+      if (!hasSpacingBetween(operatorToken, expressionFirstToken) && hasSpacingBetween(variableLastToken, operatorToken)) {
         TextRange range = TextRanges.merge(asList(operatorToken.textRange(), expressionFirstToken.textRange()));
         ctx.reportIssue(range, getMessage(expressionFirstToken, ctx));
       }
@@ -74,13 +76,13 @@ public class WrongAssignmentOperatorCheck implements SlangCheck {
     return "!".equals(firstToken.text()) && !(aeTree.parent() instanceof AssignmentExpressionTree);
   }
 
-  private static boolean noSpacingBetween(Token firstToken, Token secondToken) {
-    return firstToken.textRange().end().line() == secondToken.textRange().start().line()
-      && firstToken.textRange().end().lineOffset() == secondToken.textRange().start().lineOffset();
+  private static boolean hasSpacingBetween(Token firstToken, Token secondToken) {
+    return firstToken.textRange().end().line() != secondToken.textRange().start().line()
+      || firstToken.textRange().end().lineOffset() != secondToken.textRange().start().lineOffset();
   }
 
-  private static boolean isSuspiciousToken(Token firstToken) {
-    return SUSPICIOUS_TOKEN_VALUES.contains(firstToken.text());
+  private static boolean isSuspiciousUnaryExpression(Tree tree) {
+    return tree instanceof UnaryExpressionTree && SUSPICIOUS_UNARY_OPERATORS.contains(((UnaryExpressionTree) tree).operator());
   }
 
 }
