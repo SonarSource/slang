@@ -24,7 +24,7 @@ import org.sonarsource.analyzer.commons.BuiltInQualityProfileJsonLoader;
 
 public class RubyProfileDefinition implements BuiltInQualityProfilesDefinition {
 
-  private static final String PATH_TO_JSON = "org/sonar/l10n/ruby/rules/ruby/Sonar_way_profile.json";
+  static final String PATH_TO_JSON = "org/sonar/l10n/ruby/rules/ruby/Sonar_way_profile.json";
 
   @Override
   public void define(Context context) {

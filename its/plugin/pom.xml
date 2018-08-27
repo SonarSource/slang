@@ -19,6 +19,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.sonarsource.sonarlint.core</groupId>
+      <artifactId>sonarlint-core</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.sonarsource.orchestrator</groupId>
       <artifactId>sonar-orchestrator</artifactId>
     </dependency>
@@ -45,6 +49,7 @@
           <configuration>
             <includes>
               <include>**/Tests.java</include>
+              <include>**/SonarLintTest.java</include>
             </includes>
           </configuration>
         </plugin>

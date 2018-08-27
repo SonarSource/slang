@@ -41,8 +41,8 @@ import org.junit.runners.Suite;
 })
 public class Tests {
 
-  private static final String SQ_VERSION_PROPERTY = "sonar.runtimeVersion";
-  private static final String DEFAULT_SQ_VERSION = "LATEST_RELEASE";
+  static final String SQ_VERSION_PROPERTY = "sonar.runtimeVersion";
+  static final String DEFAULT_SQ_VERSION = "LATEST_RELEASE";
 
   private static final Set<String> LANGUAGES = ImmutableSet.of("kotlin" , "ruby");
 
@@ -59,7 +59,7 @@ public class Tests {
       .build();
   }
 
-  private static void addLanguagePlugins(OrchestratorBuilder builder) {
+  static void addLanguagePlugins(OrchestratorBuilder builder) {
     String slangVersion = System.getProperty("slangVersion");
 
     LANGUAGES.forEach(language -> {

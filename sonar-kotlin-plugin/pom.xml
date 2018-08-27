@@ -91,7 +91,7 @@
           <pluginName>SonarKotlin</pluginName>
           <pluginClass>org.sonarsource.kotlin.plugin.KotlinPlugin</pluginClass>
           <skipDependenciesPackaging>true</skipDependenciesPackaging>
-          <sonarLintSupported>false</sonarLintSupported>
+          <sonarLintSupported>true</sonarLintSupported>
           <addMavenDescriptor>false</addMavenDescriptor>
           <sonarQubeMinVersion>6.7</sonarQubeMinVersion>
         </configuration>

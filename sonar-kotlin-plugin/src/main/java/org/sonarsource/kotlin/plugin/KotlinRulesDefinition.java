@@ -20,6 +20,7 @@
 package org.sonarsource.kotlin.plugin;
 
 import java.util.ArrayList;
+import org.sonar.api.SonarRuntime;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
 import org.sonarsource.slang.checks.CheckList;
@@ -30,13 +31,18 @@ import org.sonarsource.slang.plugin.RulesDefinitionUtils;
 public class KotlinRulesDefinition implements RulesDefinition {
 
   private static final String RESOURCE_FOLDER = "org/sonar/l10n/kotlin/rules/kotlin";
+  private final SonarRuntime sonarRuntime;
+
+  public KotlinRulesDefinition(SonarRuntime sonarRuntime) {
+    this.sonarRuntime = sonarRuntime;
+  }
 
   @Override
   public void define(Context context) {
     NewRepository repository = context
       .createRepository(KotlinPlugin.KOTLIN_REPOSITORY_KEY, KotlinPlugin.KOTLIN_LANGUAGE_KEY)
       .setName(KotlinPlugin.REPOSITORY_NAME);
-    RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER);
+    RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER, KotlinProfileDefinition.PATH_TO_JSON, sonarRuntime);
 
     ArrayList<Class> checks = new ArrayList<>(CheckList.kotlinChecks());
     checks.add(CommentedCodeCheck.class);
