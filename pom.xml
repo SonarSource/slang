@@ -59,6 +59,8 @@
     <!-- Release: enable publication to Bintray -->
     <artifactsToPublish>${project.groupId}:sonar-kotlin-plugin:jar,${project.groupId}:sonar-ruby-plugin:jar</artifactsToPublish>
     <orchestrator.version>3.21.0.1721</orchestrator.version>
+    <!-- TODO replace this PR build with released build -->
+    <sonarlint.version>3.9.0.1909</sonarlint.version>
   </properties>
 
   <dependencyManagement>
@@ -138,6 +140,12 @@
         <groupId>org.sonarsource.orchestrator</groupId>
         <artifactId>sonar-orchestrator</artifactId>
         <version>${orchestrator.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.sonarsource.sonarlint.core</groupId>
+        <artifactId>sonarlint-core</artifactId>
+        <version>${sonarlint.version}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>

@@ -24,7 +24,7 @@ import org.sonarsource.analyzer.commons.BuiltInQualityProfileJsonLoader;
 
 public class KotlinProfileDefinition implements BuiltInQualityProfilesDefinition {
 
-  private static final String PATH_TO_JSON = "org/sonar/l10n/kotlin/rules/kotlin/Sonar_way_profile.json";
+  static final String PATH_TO_JSON = "org/sonar/l10n/kotlin/rules/kotlin/Sonar_way_profile.json";
 
   @Override
   public void define(Context context) {

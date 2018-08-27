@@ -20,8 +20,11 @@
 package org.sonarsource.kotlin.plugin;
 
 import org.junit.Test;
+import org.sonar.api.SonarQubeSide;
+import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
+import org.sonar.api.utils.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,7 +32,7 @@ public class KotlinRulesDefinitionTest {
 
   @Test
   public void rules() {
-    RulesDefinition rulesDefinition = new KotlinRulesDefinition();
+    RulesDefinition rulesDefinition = new KotlinRulesDefinition(SonarRuntimeImpl.forSonarQube(Version.create(7,2), SonarQubeSide.SERVER));
     RulesDefinition.Context context = new RulesDefinition.Context();
     rulesDefinition.define(context);
 
