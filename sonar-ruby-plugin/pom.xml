@@ -24,6 +24,7 @@
 
     <properties>
       <jruby.version>9.2.0.0</jruby.version>
+      <rubygems.racc.version>1.4.13</rubygems.racc.version>
       <rubygems.ast.version>2.4.0</rubygems.ast.version>
       <rubygems.parser.version>2.5.1.2</rubygems.parser.version>
     </properties>
@@ -52,8 +53,15 @@
         </dependency>
         <dependency>
             <groupId>org.jruby</groupId>
-            <artifactId>jruby-complete</artifactId>
+            <artifactId>jruby-core</artifactId>
             <version>${jruby.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>rubygems</groupId>
+            <artifactId>racc</artifactId>
+            <version>${rubygems.racc.version}</version>
+            <type>gem</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>rubygems</groupId>
@@ -159,7 +167,124 @@
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
+                                    <!-- not listed items are implicitly excluded -->
+                                    <includes>
+                                        <include>org/sonar/l10n/**</include>
+                                        <include>org/sonarsource/**</include>
+                                        <include>whitequark_parser_init.rb</include>
+
+                                        <!-- from rubygems:racc -->
+                                        <include>racc-${rubygems.racc.version}-java/lib/**</include>
+
+                                        <!-- from rubygems:ast -->
+                                        <include>ast-${rubygems.ast.version}/lib/**</include>
+
+                                        <!-- from rubygems:parser -->
+                                        <include>parser-${rubygems.parser.version}/lib/**</include>
+
+                                        <!-- from org.jruby:jruby-complete -->
+                                        <include>com/headius/**</include>
+                                        <include>jnr/constants/**</include>
+                                        <include>jnr/enxio/**</include>
+                                        <include>jnr/ffi/mapper/FunctionMapper.class</include>
+                                        <include>jnr/ffi/Pointer.class</include>
+                                        <include>jnr/ffi/Struct.class</include>
+                                        <include>jnr/posix/**</include>
+                                        <include>jnr/unixsocket/**</include>
+                                        <include>jruby/**</include>
+                                        <include>META-INF/**</include>
+                                        <include>org/jcodings/**</include>
+                                        <include>org/joda/**</include>
+                                        <include>org/joni/**</include>
+                                        <include>org/jruby/**</include>
+                                        <include>tables/CR_*.bin</include>
+                                        <include>tables/Transcoder_Utf1632_ByteArray.bin</include>
+                                        <include>tables/Transcoder_Utf1632_WordArray.bin</include>
+                                    </includes>
                                     <excludes>
+                                        <!-- rubygems:parser -->
+                                        <include>parser-${rubygems.parser.version}/lib/parser/runner/**</include>
+                                        <!-- from org.jruby:jruby-complete -->
+                                        <exclude>com/headius/options/example/**</exclude>
+                                        <exclude>com/jcraft/**</exclude>
+                                        <exclude>com/jcraft/**</exclude>
+                                        <exclude>com/kenai/**</exclude>
+                                        <exclude>com/kenai/**</exclude>
+                                        <exclude>com/martiansoftware/**</exclude>
+                                        <exclude>com/martiansoftware/**</exclude>
+                                        <exclude>jni/**</exclude>
+                                        <exclude>jnr/ffi/annotations/**</exclude>
+                                        <exclude>jnr/ffi/annotations/**</exclude>
+                                        <exclude>jnr/ffi/byref/**</exclude>
+                                        <exclude>jnr/ffi/provider/**</exclude>
+                                        <exclude>jnr/ffi/types/**</exclude>
+                                        <exclude>jnr/ffi/util/**</exclude>
+                                        <exclude>jnr/netdb/**</exclude>
+                                        <exclude>jnr/netdb/**</exclude>
+                                        <exclude>jnr/x86asm/**</exclude>
+                                        <exclude>jnr/x86asm/**</exclude>
+                                        <exclude>jruby/bundler/**</exclude>
+                                        <exclude>jruby/java/java_ext/**</exclude>
+                                        <exclude>org/joda/time/convert/**</exclude>
+                                        <exclude>org/joda/time/tz/data/**</exclude>
+                                        <exclude>org/joni/bench/**</exclude>
+                                        <exclude>org/jruby/ant/**</exclude>
+                                        <exclude>org/jruby/api/**</exclude>
+                                        <exclude>org/jruby/ast/java_signature/**</exclude>
+                                        <exclude>org/jruby/compiler/util/**</exclude>
+                                        <exclude>org/jruby/embed/**</exclude>
+                                        <exclude>org/jruby/ext/api/**</exclude>
+                                        <exclude>org/jruby/ext/bigdecimal/**</exclude>
+                                        <exclude>org/jruby/ext/cgi/**</exclude>
+                                        <exclude>org/jruby/ext/date/**</exclude>
+                                        <exclude>org/jruby/ext/digest/**</exclude>
+                                        <exclude>org/jruby/ext/etc/**</exclude>
+                                        <exclude>org/jruby/ext/fcntl/**</exclude>
+                                        <exclude>org/jruby/ext/ffi/io/**</exclude>
+                                        <exclude>org/jruby/ext/ffi/jffi/**</exclude>
+                                        <exclude>org/jruby/ext/io/**</exclude>
+                                        <exclude>org/jruby/ext/mathn/**</exclude>
+                                        <exclude>org/jruby/ext/net/**</exclude>
+                                        <exclude>org/jruby/ext/nkf/**</exclude>
+                                        <exclude>org/jruby/ext/pathname/**</exclude>
+                                        <exclude>org/jruby/ext/ripper/**</exclude>
+                                        <exclude>org/jruby/ext/securerandom/**</exclude>
+                                        <exclude>org/jruby/ext/socket/**</exclude>
+                                        <exclude>org/jruby/ext/strscan/**</exclude>
+                                        <exclude>org/jruby/ext/tempfile/**</exclude>
+                                        <exclude>org/jruby/ext/timeout/**</exclude>
+                                        <exclude>org/jruby/ext/zlib/**</exclude>
+                                        <exclude>org/jruby/ir/instructions/boxing/**</exclude>
+                                        <exclude>org/jruby/ir/persistence/util/**</exclude>
+                                        <exclude>org/jruby/ir/util/**</exclude>
+                                        <exclude>org/jruby/javasupport/bsf/**</exclude>
+                                        <exclude>org/jruby/main/**</exclude>
+                                        <exclude>org/jruby/org/objectweb/asm/signature/**</exclude>
+                                        <exclude>org/jruby/org/objectweb/asm/tree/analysis/**</exclude>
+                                        <exclude>org/jruby/runtime/callback/**</exclude>
+                                        <exclude>org/jruby/runtime/component/**</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/lexer.rl</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/macruby.rb</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/macruby.y</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby18.rb</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby18.y</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby19.rb</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby19.y</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby20.rb</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby20.y</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby21.rb</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby21.y</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby22.rb</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby22.y</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby23.rb</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby23.y</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby24.rb</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby24.y</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby25.y</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby26.rb</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/ruby26.y</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/rubymotion.rb</exclude>
+                                        <exclude>parser-2.5.1.2/lib/parser/rubymotion.y</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -180,8 +305,8 @@
                         <configuration>
                             <rules>
                                 <requireFilesSize>
-                                    <minsize>10000000</minsize>
-                                    <maxsize>30000000</maxsize>
+                                    <minsize>9000000</minsize>
+                                    <maxsize>11000000</maxsize>
                                     <files>
                                         <file>${project.build.directory}/${project.build.finalName}.jar</file>
                                     </files>
