@@ -19,14 +19,15 @@
  */
 package org.sonarsource.kotlin.plugin;
 
+import org.sonar.api.Plugin;
+import org.sonar.api.SonarProduct;
+import org.sonar.api.config.PropertyDefinition;
+import org.sonar.api.resources.Qualifiers;
+import org.sonar.api.utils.Version;
 import org.sonarsource.kotlin.externalreport.androidlint.AndroidLintRulesDefinition;
 import org.sonarsource.kotlin.externalreport.androidlint.AndroidLintSensor;
 import org.sonarsource.kotlin.externalreport.detekt.DetektRulesDefinition;
 import org.sonarsource.kotlin.externalreport.detekt.DetektSensor;
-import org.sonar.api.Plugin;
-import org.sonar.api.config.PropertyDefinition;
-import org.sonar.api.resources.Qualifiers;
-import org.sonar.api.utils.Version;
 
 public class KotlinPlugin implements Plugin {
 
@@ -49,46 +50,48 @@ public class KotlinPlugin implements Plugin {
 
   @Override
   public void define(Context context) {
-    boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
-
     context.addExtensions(
       KotlinLanguage.class,
       KotlinSensor.class,
       KotlinRulesDefinition.class,
-      new DetektRulesDefinition(externalIssuesSupported),
-      DetektSensor.class,
-      new AndroidLintRulesDefinition(externalIssuesSupported),
-      AndroidLintSensor.class,
-      KotlinProfileDefinition.class,
-      PropertyDefinition.builder(KOTLIN_FILE_SUFFIXES_KEY)
-        .defaultValue(KOTLIN_FILE_SUFFIXES_DEFAULT_VALUE)
-        .name("File Suffixes")
-        .description("List of suffixes for files to analyze.")
-        .subCategory(GENERAL)
-        .category(KOTLIN_CATEGORY)
-        .multiValues(true)
-        .onQualifiers(Qualifiers.PROJECT)
-        .build());
+      KotlinProfileDefinition.class);
 
-    if (externalIssuesSupported) {
+    boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
+    if (context.getRuntime().getProduct() != SonarProduct.SONARLINT) {
       context.addExtensions(
-        PropertyDefinition.builder(DetektSensor.REPORT_PROPERTY_KEY)
-          .name("Detekt Report Files")
-          .description("Paths (absolute or relative) to checkstyle xml files with detekt issues.")
-          .category(EXTERNAL_ANALYZERS_CATEGORY)
-          .subCategory(KOTLIN_SUBCATEGORY)
-          .onQualifiers(Qualifiers.PROJECT)
+        new DetektRulesDefinition(externalIssuesSupported),
+        DetektSensor.class,
+        new AndroidLintRulesDefinition(externalIssuesSupported),
+        AndroidLintSensor.class,
+        PropertyDefinition.builder(KOTLIN_FILE_SUFFIXES_KEY)
+          .defaultValue(KOTLIN_FILE_SUFFIXES_DEFAULT_VALUE)
+          .name("File Suffixes")
+          .description("List of suffixes for files to analyze.")
+          .subCategory(GENERAL)
+          .category(KOTLIN_CATEGORY)
           .multiValues(true)
-          .build(),
-        PropertyDefinition.builder(AndroidLintSensor.REPORT_PROPERTY_KEY)
-          .name("Android Lint Report Files")
-          .description("Paths (absolute or relative) to xml files with Android Lint issues.")
-          .category(EXTERNAL_ANALYZERS_CATEGORY)
-          .subCategory(ANDROID_SUBCATEGORY)
           .onQualifiers(Qualifiers.PROJECT)
-          .multiValues(true)
           .build());
+
+      if (externalIssuesSupported) {
+        context.addExtensions(
+          PropertyDefinition.builder(DetektSensor.REPORT_PROPERTY_KEY)
+            .name("Detekt Report Files")
+            .description("Paths (absolute or relative) to checkstyle xml files with detekt issues.")
+            .category(EXTERNAL_ANALYZERS_CATEGORY)
+            .subCategory(KOTLIN_SUBCATEGORY)
+            .onQualifiers(Qualifiers.PROJECT)
+            .multiValues(true)
+            .build(),
+          PropertyDefinition.builder(AndroidLintSensor.REPORT_PROPERTY_KEY)
+            .name("Android Lint Report Files")
+            .description("Paths (absolute or relative) to xml files with Android Lint issues.")
+            .category(EXTERNAL_ANALYZERS_CATEGORY)
+            .subCategory(ANDROID_SUBCATEGORY)
+            .onQualifiers(Qualifiers.PROJECT)
+            .multiValues(true)
+            .build());
+      }
     }
   }
-
 }

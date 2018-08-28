@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.ruby.plugin;
+package org.sonarsource.kotlin.plugin;
 
 import org.junit.Test;
 import org.sonar.api.Plugin;
@@ -29,34 +29,37 @@ import org.sonar.api.utils.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RubyPluginTest {
-
-  private static final Version VERSION_6_7 = Version.create(6, 7);
-  private static final Version VERSION_7_2 = Version.create(7, 2);
-  private RubyPlugin rubyPlugin = new RubyPlugin();
+public class KotlinPluginTest {
 
   @Test
-  public void sonarqube_6_7_extensions() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(VERSION_6_7, SonarQubeSide.SERVER);
-    Plugin.Context context = new Plugin.Context(runtime);
-    rubyPlugin.define(context);
-    assertThat(context.getExtensions()).hasSize(9);
+  public void test() {
+    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 3), SonarQubeSide.SCANNER);
+    Plugin.Context context = new PluginContextImpl.Builder().setSonarRuntime(runtime).build();
+    KotlinPlugin kotlinPlugin = new KotlinPlugin();
+
+    kotlinPlugin.define(context);
+
+    assertThat(context.getExtensions()).hasSize(11);
   }
 
   @Test
-  public void sonarqube_7_2_extensions() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(VERSION_7_2, SonarQubeSide.SERVER);
-    Plugin.Context context = new Plugin.Context(runtime);
-    rubyPlugin.define(context);
-    assertThat(context.getExtensions()).hasSize(10);
+  public void test_SQ_67() {
+    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(6, 7), SonarQubeSide.SCANNER);
+    Plugin.Context context = new PluginContextImpl.Builder().setSonarRuntime(runtime).build();
+    KotlinPlugin kotlinPlugin = new KotlinPlugin();
+
+    kotlinPlugin.define(context);
+
+    assertThat(context.getExtensions()).hasSize(9);
   }
 
   @Test
   public void test_sonarlint() {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarLint(Version.create(3, 9));
     Plugin.Context context = new PluginContextImpl.Builder().setSonarRuntime(runtime).build();
+    KotlinPlugin kotlinPlugin = new KotlinPlugin();
 
-    rubyPlugin.define(context);
+    kotlinPlugin.define(context);
 
     assertThat(context.getExtensions()).hasSize(4);
   }

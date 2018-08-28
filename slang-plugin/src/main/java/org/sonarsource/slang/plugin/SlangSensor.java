@@ -21,11 +21,13 @@ package org.sonarsource.slang.plugin;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.sonar.api.SonarProduct;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
@@ -138,11 +140,7 @@ public abstract class SlangSensor implements Sensor {
     boolean success = false;
     ASTConverter converter = astConverter();
     try {
-      success = analyseFiles(converter, sensorContext, inputFiles, progressReport, Arrays.asList(
-        new ChecksVisitor(checks()),
-        new MetricVisitor(fileLinesContextFactory, noSonarFilter),
-        new CpdVisitor(),
-        new SyntaxHighlighter()));
+      success = analyseFiles(converter, sensorContext, inputFiles, progressReport, visitors(sensorContext));
     } finally {
       if (success) {
         progressReport.stop();
@@ -150,6 +148,18 @@ public abstract class SlangSensor implements Sensor {
         progressReport.cancel();
       }
       converter.terminate();
+    }
+  }
+
+  private List<TreeVisitor<InputFileContext>> visitors(SensorContext sensorContext) {
+    if (sensorContext.runtime().getProduct() == SonarProduct.SONARLINT) {
+      return Collections.singletonList(new ChecksVisitor(checks()));
+    } else {
+      return Arrays.asList(
+        new ChecksVisitor(checks()),
+        new MetricVisitor(fileLinesContextFactory, noSonarFilter),
+        new CpdVisitor(),
+        new SyntaxHighlighter());
     }
   }
 }
