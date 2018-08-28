@@ -220,6 +220,18 @@ public class SlangSensorTest extends AbstractSensorTest {
     assertThat(sensorDescriptor.name()).isEqualTo("SLang Sensor");
   }
 
+  @Test
+  public void test_cancellation() {
+    InputFile inputFile = createInputFile("file1.slang", "" +
+      "fun main() {\nprint (1 == 1);}");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S1764");
+    context.setCancelled(true);
+    sensor(checkFactory).execute(context);
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).isEmpty();
+  }
+
   @Override
   protected String repositoryKey() {
     return "slang";

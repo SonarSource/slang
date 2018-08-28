@@ -77,6 +77,9 @@ public abstract class SlangSensor implements Sensor {
                                       ProgressReport progressReport,
                                       List<TreeVisitor<InputFileContext>> visitors) {
     for (InputFile inputFile : inputFiles) {
+      if (sensorContext.isCancelled()) {
+        return false;
+      }
       InputFileContext inputFileContext = new InputFileContext(sensorContext, inputFile);
       try {
         analyseFile(converter, inputFileContext, inputFile, visitors);
