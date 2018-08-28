@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import org.junit.Test;
+import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
 import org.sonar.api.batch.rule.CheckFactory;
@@ -30,12 +31,15 @@ import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.error.AnalysisError;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
+import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.batch.sensor.issue.IssueLocation;
+import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.resources.Language;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.utils.Version;
 import org.sonar.api.utils.log.LoggerLevel;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.TopLevelTree;
@@ -230,6 +234,26 @@ public class SlangSensorTest extends AbstractSensorTest {
     sensor(checkFactory).execute(context);
     Collection<Issue> issues = context.allIssues();
     assertThat(issues).isEmpty();
+  }
+
+  @Test
+  public void test_sonarlint_context() {
+    SonarRuntime sonarLintRuntime = SonarRuntimeImpl.forSonarLint(Version.create(3, 9));
+    SensorContextTester context = SensorContextTester.create(baseDir);
+    InputFile inputFile = createInputFile("file1.slang", "" +
+      "fun main(int x) {\nprint (1 == 1); print(\"abc\"); }\nclass A {}");
+    context.fileSystem().add(inputFile);
+    context.setRuntime(sonarLintRuntime);
+    sensor(checkFactory("S1764")).execute(context);
+
+    assertThat(context.allIssues()).hasSize(1);
+
+    // No CPD, highlighting and metrics in SonarLint
+    assertThat(context.highlightingTypeAt(inputFile.key(), 1, 0)).isEmpty();
+    assertThat(context.measure(inputFile.key(), CoreMetrics.NCLOC)).isNull();
+    assertThat(context.cpdTokens(inputFile.key())).isNull();
+
+    assertThat(logTester.logs()).contains("1 source files to be analyzed");
   }
 
   @Override
