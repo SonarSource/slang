@@ -21,7 +21,7 @@
   "scope": "All",
   "securityStandards": {
     "CWE": [
-      "CWE-561"
+      561
     ]
   }
 }
