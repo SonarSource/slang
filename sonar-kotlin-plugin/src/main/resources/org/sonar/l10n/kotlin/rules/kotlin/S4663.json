@@ -1,5 +1,5 @@
 {
-  "title": "Comments should not be empty",
+  "title": "Multi-line comments should not be empty",
   "type": "CODE_SMELL",
   "status": "ready",
   "remediation": {
