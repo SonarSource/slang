@@ -87,7 +87,7 @@ public abstract class SlangSensor implements Sensor {
         analyseFile(converter, inputFileContext, inputFile, visitors);
       } catch (ParseException e) {
         logParsingError(inputFile, e);
-        inputFileContext.reportError("Unable to parse file: " + inputFile, e.getPosition());
+        inputFileContext.reportParseError(inputFile, e.getPosition());
       }
       progressReport.nextFile();
     }
