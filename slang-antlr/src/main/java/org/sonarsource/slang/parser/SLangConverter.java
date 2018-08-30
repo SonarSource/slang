@@ -19,6 +19,20 @@
  */
 package org.sonarsource.slang.parser;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.sonarsource.analyzer.commons.TokenLocation;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
@@ -62,26 +76,15 @@ import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 import org.sonarsource.slang.impl.TextPointerImpl;
 import org.sonarsource.slang.impl.TextRangeImpl;
 import org.sonarsource.slang.impl.TextRanges;
+import org.sonarsource.slang.impl.ThrowTreeImpl;
 import org.sonarsource.slang.impl.TokenImpl;
 import org.sonarsource.slang.impl.TopLevelTreeImpl;
 import org.sonarsource.slang.impl.TreeMetaDataProvider;
 import org.sonarsource.slang.impl.UnaryExpressionTreeImpl;
 import org.sonarsource.slang.impl.VariableDeclarationTreeImpl;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.sonarsource.analyzer.commons.TokenLocation;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
@@ -92,8 +95,6 @@ import static org.sonarsource.slang.api.UnaryExpressionTree.Operator.INCREMENT;
 import static org.sonarsource.slang.api.UnaryExpressionTree.Operator.MINUS;
 import static org.sonarsource.slang.api.UnaryExpressionTree.Operator.NEGATE;
 import static org.sonarsource.slang.api.UnaryExpressionTree.Operator.PLUS;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 
 public class SLangConverter implements ASTConverter {
 
@@ -528,6 +529,15 @@ public class SLangConverter implements ASTConverter {
         returnBody = visit(ctx.statement());
       }
       return new ReturnTreeImpl(meta(ctx), toSlangToken(ctx.RETURN().getSymbol()), returnBody);
+    }
+
+    @Override
+    public Tree visitThrowExpression(SLangParser.ThrowExpressionContext ctx) {
+      Tree throwBody = null;
+      if (ctx.statement() != null) {
+        throwBody = visit(ctx.statement());
+      }
+      return new ThrowTreeImpl(meta(ctx), toSlangToken(ctx.THROW().getSymbol()), throwBody);
     }
 
     private static TextPointer startOf(Token token) {

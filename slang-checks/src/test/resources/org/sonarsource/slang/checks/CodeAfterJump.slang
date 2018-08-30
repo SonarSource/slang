@@ -46,3 +46,8 @@ fun fnRequiresCfg() {
 
   42;
 }
+
+fun testThrow() {
+  throw 42; // Noncompliant {{Refactor this piece of code to not have any dead code after this "throw".}}
+  42;
+}

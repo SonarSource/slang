@@ -21,7 +21,7 @@ package org.sonarsource.slang.api;
 
 import javax.annotation.CheckForNull;
 
-public interface ReturnTree extends Tree, HasKeyword {
+public interface ThrowTree extends Tree, HasKeyword {
   @CheckForNull
   Tree body();
 

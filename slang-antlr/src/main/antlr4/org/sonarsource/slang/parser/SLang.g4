@@ -136,6 +136,7 @@ atomicExpression
   |  expressionName
   |  tryExpression
   |  jumpExpression
+  |  throwExpression
   ;
 
 parenthesizedExpression
@@ -221,6 +222,10 @@ nativeBlock
 
 returnExpression
   :  RETURN statement?
+  ;
+
+throwExpression
+  : THROW statement?
   ;
 
 jumpExpression
@@ -320,6 +325,7 @@ WHILE : 'while';
 BREAK : 'break';
 CONTINUE: 'continue';
 IMPORT: 'import';
+THROW: 'throw';
 
 
 // Integer Literals
