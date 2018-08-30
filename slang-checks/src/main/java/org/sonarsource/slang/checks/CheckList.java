@@ -75,6 +75,7 @@ public class CheckList {
       NestedMatchCheck.class,
       OctalValuesCheck.class,
       OneStatementPerLineCheck.class,
+      ParsingErrorCheck.class,
       RedundantParenthesesCheck.class,
       SelfAssignmentCheck.class,
       StringLiteralDuplicatedCheck.class,

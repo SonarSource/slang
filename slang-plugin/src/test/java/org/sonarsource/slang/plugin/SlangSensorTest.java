@@ -165,8 +165,18 @@ public class SlangSensorTest extends AbstractSensorTest {
       " fun x() {}\n" +
       " fun y() {}");
     context.fileSystem().add(inputFile);
-    CheckFactory checkFactory = checkFactory("S1764");
+    CheckFactory checkFactory = checkFactory("ParsingError");
     sensor(checkFactory).execute(context);
+
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).hasSize(1);
+    Issue issue = issues.iterator().next();
+    assertThat(issue.ruleKey().rule()).isEqualTo("ParsingError");
+    IssueLocation location = issue.primaryLocation();
+    assertThat(location.inputComponent()).isEqualTo(inputFile);
+    assertThat(location.message()).isEqualTo("A parsing error occurred in this file.");
+    assertTextRange(location.textRange()).hasRange(2, 0, 2, 10);
+
     Collection<AnalysisError> analysisErrors = context.allAnalysisErrors();
     assertThat(analysisErrors).hasSize(1);
     AnalysisError analysisError = analysisErrors.iterator().next();
@@ -178,6 +188,16 @@ public class SlangSensorTest extends AbstractSensorTest {
     assertThat(textPointer.lineOffset()).isEqualTo(1);
 
     assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. Parse error at position 2:1", inputFile.uri()));
+  }
+
+  @Test
+  public void test_fail_parsing_without_parsing_error_rule_activated() {
+    InputFile inputFile = createInputFile("file1.slang", "{");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S1764");
+    sensor(checkFactory).execute(context);
+    assertThat(context.allIssues()).isEmpty();
+    assertThat(context.allAnalysisErrors()).hasSize(1);
   }
 
   @Test
