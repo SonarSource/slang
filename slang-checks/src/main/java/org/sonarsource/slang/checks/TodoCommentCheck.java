@@ -34,7 +34,7 @@ import org.sonarsource.analyzer.commons.TokenLocation;
 @Rule(key = "S1135")
 public class TodoCommentCheck implements SlangCheck {
 
-  private final Pattern todoPattern = Pattern.compile("(?i)(^|[^\\p{L}&&\\D])(todo)($|[^\\p{L}&&\\D])");
+  private final Pattern todoPattern = Pattern.compile("(?i)(^|[[^\\p{L}]&&\\D])(todo)($|[[^\\p{L}]&&\\D])");
 
   @Override
   public void initialize(InitContext init) {
