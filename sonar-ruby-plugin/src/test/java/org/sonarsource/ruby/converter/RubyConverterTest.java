@@ -110,7 +110,9 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   @Test
   public void initialization_error() {
     RubyRuntimeAdapter mockedAdapter = mock(RubyRuntimeAdapter.class);
-    when(mockedAdapter.eval(any(Ruby.class), any(String.class))).thenThrow(IOException.class);
+    when(mockedAdapter.eval(any(Ruby.class), any(String.class))).thenAnswer(invocationOnMock -> {
+      throw new IOException();
+    });
     assertThatThrownBy(() -> new RubyConverter(mockedAdapter))
       .isInstanceOf(IllegalStateException.class)
       .hasMessage("Failed to initialized ruby runtime");
@@ -215,7 +217,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
     Tree requireCall = nativeTree(nativeKind("send"), asList(require, stringLiteral));
     Tree literal1 = nativeTree(nativeKind("float"), singletonList(nativeTree(nativeKind("1.0"))));
     Tree literal2 = integerLiteral("2");
-    Tree lit2AndLit1 = new BinaryExpressionTreeImpl(null, Operator.CONDITIONAL_AND,null, literal2, literal1);
+    Tree lit2AndLit1 = new BinaryExpressionTreeImpl(null, Operator.CONDITIONAL_AND, null, literal2, literal1);
     IdentifierTree identifierA = new IdentifierTreeImpl(null, "a");
     Tree assignA = new VariableDeclarationTreeImpl(null, identifierA, null, lit2AndLit1, false);
     assertTrees(tree).isEquivalentTo(asList(requireCall, assignA));
