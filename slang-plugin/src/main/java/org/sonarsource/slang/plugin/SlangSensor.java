@@ -87,7 +87,7 @@ public abstract class SlangSensor implements Sensor {
         analyseFile(converter, inputFileContext, inputFile, visitors);
       } catch (ParseException e) {
         logParsingError(inputFile, e);
-        inputFileContext.reportParseError(inputFile, e.getPosition());
+        inputFileContext.reportAnalysisParseError(inputFile, e.getPosition());
       }
       progressReport.nextFile();
     }
@@ -111,7 +111,7 @@ public abstract class SlangSensor implements Sensor {
       try {
         visitor.scan(inputFileContext, tree);
       } catch (RuntimeException e) {
-        inputFileContext.reportError(e.getMessage(), null);
+        inputFileContext.reportAnalysisError(e.getMessage(), null);
         LOG.error("Cannot analyse " + inputFile, e);
       }
     }

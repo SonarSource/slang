@@ -81,8 +81,8 @@ public class InputFileContext extends TreeContext {
     issue.save();
   }
 
-  public void reportParseError(InputFile inputFile, @Nullable org.sonarsource.slang.api.TextPointer location) {
-    reportError("Unable to parse file: " + inputFile, location);
+  public void reportAnalysisParseError(InputFile inputFile, @Nullable org.sonarsource.slang.api.TextPointer location) {
+    reportAnalysisError("Unable to parse file: " + inputFile, location);
     Optional<RuleKey> ruleKey = lookupParseErrorRuleKey();
     if (ruleKey.isPresent()) {
       NewIssue parseError = sensorContext.newIssue();
@@ -109,7 +109,7 @@ public class InputFileContext extends TreeContext {
       .findFirst();
   }
 
-  public void reportError(String message, @Nullable org.sonarsource.slang.api.TextPointer location) {
+  public void reportAnalysisError(String message, @Nullable org.sonarsource.slang.api.TextPointer location) {
     NewAnalysisError error = sensorContext.newAnalysisError();
     error
       .message(message)
