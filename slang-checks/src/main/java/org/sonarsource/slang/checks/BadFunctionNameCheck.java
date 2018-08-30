@@ -43,7 +43,7 @@ public class BadFunctionNameCheck implements SlangCheck {
   public String format = DEFAULT_FORMAT;
 
   private String message(String name) {
-    return "Rename function '" + name + "' to match the regular expression " + format;
+    return "Rename function \"" + name + "\" to match the regular expression " + format;
   }
 
   @Override
