@@ -19,11 +19,8 @@
  */
 package org.sonarsource.slang.api;
 
-import javax.annotation.CheckForNull;
-
-public interface ReturnTree extends Tree, HasKeyword {
-  @CheckForNull
-  Tree body();
+public interface HasKeyword {
 
   Token keyword();
+
 }

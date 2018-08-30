@@ -19,15 +19,17 @@
  */
 package org.sonarsource.slang.checks;
 
+import java.util.List;
+import org.sonar.check.Rule;
+import org.sonarsource.slang.api.BlockTree;
+import org.sonarsource.slang.api.HasKeyword;
+import org.sonarsource.slang.api.JumpTree;
 import org.sonarsource.slang.api.ReturnTree;
+import org.sonarsource.slang.api.ThrowTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.checks.api.CheckContext;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
-import java.util.List;
-import org.sonar.check.Rule;
-import org.sonarsource.slang.api.BlockTree;
-import org.sonarsource.slang.api.JumpTree;
 
 
 @Rule(key = "S1763")
@@ -44,14 +46,8 @@ public class CodeAfterJumpCheck implements SlangCheck {
       return;
     }
     statementsOrExpressions.subList(0, statementsOrExpressions.size() - 1).stream()
-      .filter(tree -> tree instanceof JumpTree || tree instanceof ReturnTree)
-      .forEach(tree -> ctx.reportIssue(tree, String.format(MESSAGE, keyword(tree))));
+      .filter(tree -> tree instanceof JumpTree || tree instanceof ReturnTree || tree instanceof ThrowTree)
+      .forEach(tree -> ctx.reportIssue(tree, String.format(MESSAGE, ((HasKeyword) tree).keyword().text())));
   }
 
-  private static String keyword(Tree jumpOrReturn) {
-    if (jumpOrReturn instanceof JumpTree) {
-      return ((JumpTree) jumpOrReturn).keyword().text();
-    }
-    return ((ReturnTree) jumpOrReturn).keyword().text();
-  }
 }

@@ -21,7 +21,7 @@ package org.sonarsource.slang.api;
 
 import javax.annotation.CheckForNull;
 
-public interface JumpTree extends Tree {
+public interface JumpTree extends Tree, HasKeyword {
   enum JumpKind {
     BREAK,
     CONTINUE

@@ -17,13 +17,40 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.api;
+package org.sonarsource.slang.impl;
 
+import java.util.Collections;
+import java.util.List;
 import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
+import org.sonarsource.slang.api.ThrowTree;
+import org.sonarsource.slang.api.Token;
+import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.api.TreeMetaData;
 
-public interface ReturnTree extends Tree, HasKeyword {
+public class ThrowTreeImpl extends BaseTreeImpl implements ThrowTree {
+  private final Tree body;
+  private final Token keyword;
+
+  public ThrowTreeImpl(TreeMetaData metaData, Token keyword, @Nullable Tree body) {
+    super(metaData);
+    this.body = body;
+    this.keyword = keyword;
+  }
+
   @CheckForNull
-  Tree body();
+  @Override
+  public Tree body() {
+    return body;
+  }
 
-  Token keyword();
+  @Override
+  public Token keyword() {
+    return keyword;
+  }
+
+  @Override
+  public List<Tree> children() {
+    return body == null ? Collections.emptyList() : Collections.singletonList(body);
+  }
 }
