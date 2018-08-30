@@ -46,6 +46,7 @@ import org.sonarsource.slang.api.ParenthesizedExpressionTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.ReturnTree;
 import org.sonarsource.slang.api.StringLiteralTree;
+import org.sonarsource.slang.api.ThrowTree;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
@@ -725,6 +726,15 @@ public class KotlinConverterTest {
 
     assertTree(kotlinStatement("return@foo;"))
       .isNotEquivalentTo(kotlinStatement("return@bar;"));
+  }
+
+  @Test
+  public void testThrow() {
+    Tree tree = kotlinStatement("throw Exception();");
+    assertThat(tree).isInstanceOf(ThrowTree.class);
+    ThrowTree throwTree = (ThrowTree) tree;
+    assertThat(throwTree.keyword().text()).isEqualTo("throw");
+    assertTree(throwTree.body()).isInstanceOf(NativeTree.class);
   }
 
 
