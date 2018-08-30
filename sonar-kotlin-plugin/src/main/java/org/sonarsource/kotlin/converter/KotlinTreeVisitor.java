@@ -74,6 +74,7 @@ import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.psi.KtReturnExpression;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
+import org.jetbrains.kotlin.psi.KtThrowExpression;
 import org.jetbrains.kotlin.psi.KtTryExpression;
 import org.jetbrains.kotlin.psi.KtTypeElement;
 import org.jetbrains.kotlin.psi.KtTypeParameterList;
@@ -121,6 +122,7 @@ import org.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
 import org.sonarsource.slang.impl.ReturnTreeImpl;
 import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 import org.sonarsource.slang.impl.TextRangeImpl;
+import org.sonarsource.slang.impl.ThrowTreeImpl;
 import org.sonarsource.slang.impl.TokenImpl;
 import org.sonarsource.slang.impl.TopLevelTreeImpl;
 import org.sonarsource.slang.impl.TreeMetaDataProvider;
@@ -246,9 +248,19 @@ class KotlinTreeVisitor {
       return createContinueTree(metaData, (KtContinueExpression) element);
     } else if (element instanceof KtReturnExpression) {
       return createReturnTree(metaData, (KtReturnExpression) element);
+    } else if (element instanceof KtThrowExpression) {
+      return createThrowTree(metaData, (KtThrowExpression) element);
     } else {
       return convertElementToNative(element, metaData);
     }
+  }
+
+  private Tree createThrowTree(TreeMetaData metaData, KtThrowExpression ktThrowExpression) {
+    Tree throwBody = null;
+    if (ktThrowExpression.getThrownExpression() != null) {
+      throwBody = createElement(ktThrowExpression.getThrownExpression());
+    }
+    return new ThrowTreeImpl(metaData, toSlangToken(ktThrowExpression.findElementAt(0)), throwBody);
   }
 
   @NotNull
