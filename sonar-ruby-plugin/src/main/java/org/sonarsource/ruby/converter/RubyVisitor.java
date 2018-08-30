@@ -83,6 +83,7 @@ import org.sonarsource.slang.impl.ReturnTreeImpl;
 import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 import org.sonarsource.slang.impl.TextRangeImpl;
 import org.sonarsource.slang.impl.TextRanges;
+import org.sonarsource.slang.impl.ThrowTreeImpl;
 import org.sonarsource.slang.impl.TreeMetaDataProvider;
 import org.sonarsource.slang.impl.UnaryExpressionTreeImpl;
 import org.sonarsource.slang.impl.VariableDeclarationTreeImpl;
@@ -651,10 +652,23 @@ public class RubyVisitor {
         Tree right = (Tree) children.get(2);
         Token operatorToken = getTokenByAttribute(node, "selector");
         return new BinaryExpressionTreeImpl(metaData(node), BINARY_OPERATOR_MAP.get(calleeSymbol), operatorToken, left, right);
+      } else if ("raise".equals(calleeSymbol)) {
+        return createThrowTree(node, children);
       }
     }
 
     return createNativeTree(node, children);
+  }
+
+  private Tree createThrowTree(AstNode node, List<?> children) {
+    Tree body = null;
+    if (children.size() > 3) {
+      List<Tree> raiseChildren = convertChildren(node, children.subList(2, children.size()));
+      body = new NativeTreeImpl(metaData(node), new RubyNativeKind("raise"), raiseChildren);
+    } else if (children.size() > 2) {
+      body = (Tree) children.get(2);
+    }
+    return new ThrowTreeImpl(metaData(node), getTokenByAttribute(node, "selector"), body);
   }
 
   private FunctionDeclarationTree createFunctionDeclarationTree(AstNode node, List<?> children) {
