@@ -19,6 +19,10 @@
  */
 package org.sonarsource.slang.checks;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import org.sonar.check.Rule;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.Tree;
@@ -26,18 +30,12 @@ import org.sonarsource.slang.api.UnaryExpressionTree;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.checks.utils.ExpressionUtils;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import org.sonar.check.Rule;
 
 @Rule(key = "S1125")
 public class BooleanLiteralCheck implements SlangCheck {
   private static final List<BinaryExpressionTree.Operator> CONDITIONAL_BINARY_OPERATORS = Arrays.asList(
     BinaryExpressionTree.Operator.CONDITIONAL_AND,
-    BinaryExpressionTree.Operator.CONDITIONAL_OR,
-    BinaryExpressionTree.Operator.EQUAL_TO,
-    BinaryExpressionTree.Operator.NOT_EQUAL_TO);
+    BinaryExpressionTree.Operator.CONDITIONAL_OR);
 
   private static final String MESSAGE = "Remove the unnecessary Boolean literal.";
 
