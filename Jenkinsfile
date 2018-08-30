@@ -58,6 +58,20 @@ pipeline {
             runPlugin "LATEST_RELEASE"
           }
         }
+
+        stage('ci-windows') {
+          agent {
+            label 'windows'
+          }
+          steps {
+             withQAEnv {
+                withMaven(maven: MAVEN_TOOL) {
+                  mavenSetBuildVersion()
+                    sh "${mvnCommand()} clean verify"
+                }
+              }
+          }
+        }
       }
       post {
         always {
