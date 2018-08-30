@@ -66,7 +66,7 @@ public class StringLiteralDuplicatedCheck implements SlangCheck {
       int size = occurrences.size();
       if (size >= threshold) {
         StringLiteralTree first = occurrences.get(0);
-        String message = String.format("Define a constant instead of duplicating this literal %s %s times.", first.value(), size);
+        String message = String.format("Define a constant instead of duplicating this literal \"%s\" %s times.", first.content(), size);
         List<SecondaryLocation> secondaryLocations = occurrences.stream()
           .skip(1)
           .map(stringLiteral -> new SecondaryLocation(stringLiteral.metaData().textRange(), "Duplication"))
