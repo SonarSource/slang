@@ -22,11 +22,11 @@ package org.sonarsource.ruby.converter.visitor;
 import org.junit.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.IfTree;
+import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.ReturnTree;
 import org.sonarsource.slang.api.Tree;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
 public class ReturnVisitorTest extends AbstractRubyConverterTest {
@@ -42,6 +42,11 @@ public class ReturnVisitorTest extends AbstractRubyConverterTest {
   public void return_with_expression() {
     assertTree(rubyStatement("return 42")).isEquivalentTo(slangStatement("return 42;"));
     assertTree(rubyStatement("return 42,43")).isInstanceOf(ReturnTree.class);
+    assertThat(rubyStatement("return 42,43").descendants()
+      .filter(LiteralTree.class::isInstance)
+      .map(l -> ((LiteralTree) l).value()))
+      .containsExactly("42", "43");
+    assertTree(((ReturnTree) rubyStatement("return 42,43")).body()).hasTextRange(1, 7, 1, 12);
   }
 
   @Test
