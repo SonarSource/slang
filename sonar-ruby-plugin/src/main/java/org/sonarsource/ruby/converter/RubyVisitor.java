@@ -635,7 +635,7 @@ public class RubyVisitor {
       return new ParenthesizedExpressionTreeImpl(metaData(node), ((Tree) children.get(0)), beginToken.get(), endToken.get());
     }
 
-    List<Tree> nonNullChildren = children.stream().flatMap(child -> treeForChild(node, child)).collect(Collectors.toList());
+    List<Tree> nonNullChildren = convertChildren(node, children);
     return new BlockTreeImpl(metaData(node), nonNullChildren);
   }
 
@@ -791,13 +791,25 @@ public class RubyVisitor {
 
   private Tree createReturnTree(AstNode node, List<?> children) {
     Token keyword = getTokenByAttribute(node, KEYWORD_ATTRIBUTE);
-    return new ReturnTreeImpl(metaData(node), keyword, children.isEmpty() ? null : (Tree) children.get(0));
+    Tree expression = null;
+    if (children.size() == 1) {
+      expression = (Tree) children.get(0);
+    } else if (!children.isEmpty()) {
+      List<Tree> childTrees = convertChildren(node, children);
+      TextRange childRange = TextRanges.merge(childTrees.stream().map(Tree::textRange).collect(Collectors.toList()));
+      expression = new NativeTreeImpl(metaDataProvider.metaData(childRange), new RubyNativeKind("returnExpression"), childTrees);
+    }
+    return new ReturnTreeImpl(metaData(node), keyword, expression);
   }
 
   @CheckForNull
   private NativeTree createNativeTree(AstNode node, List<?> children, String type) {
-    List<Tree> nonNullChildren = children.stream().flatMap(child -> treeForChild(node, child)).collect(Collectors.toList());
+    List<Tree> nonNullChildren = convertChildren(node, children);
     return new NativeTreeImpl(metaData(node), new RubyNativeKind(type), nonNullChildren);
+  }
+
+  private List<Tree> convertChildren(AstNode node, List<?> children) {
+    return children.stream().flatMap(child -> treeForChild(node, child)).collect(Collectors.toList());
   }
 
   @CheckForNull
