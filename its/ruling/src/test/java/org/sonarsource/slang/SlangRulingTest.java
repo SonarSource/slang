@@ -123,7 +123,8 @@ public class SlangRulingTest {
   @Test
   public void test_ruby() throws IOException {
     run_ruling_test("ruby", ImmutableMap.of(
-      "sonar.inclusions", "sources/ruby/**/*.rb, ruling/src/test/resources/sources/ruby/**/*.rb"));
+      "sonar.inclusions", "sources/ruby/**/*.rb, ruling/src/test/resources/sources/ruby/**/*.rb",
+      "sonar.ruby.converter.validation", "true"));
   }
 
   private void run_ruling_test(String language, Map<String, String> properties) throws IOException {

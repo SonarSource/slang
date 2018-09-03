@@ -70,6 +70,9 @@ public class RubyConverter implements ASTConverter {
   private static final String AST_RUBYGEM_PATH = "/ast-2.4.0/lib";
   private static final String PARSER_RUBYGEM_PATH = "/parser-2.5.1.2/lib";
   private static final String COMMENT_TOKEN_TYPE = "tCOMMENT";
+
+  private static final boolean RUBY_CONVERTER_VALIDATION = "true".equals(System.getProperty("sonar.ruby.converter.validation"));
+
   static final String FILENAME = "(SonarRuby analysis)";
 
   private final RubyRuntimeAdapter rubyRuntimeAdapter;
@@ -99,7 +102,11 @@ public class RubyConverter implements ASTConverter {
   @Override
   public Tree parse(String content) {
     try {
-      return parseContent(content);
+      Tree tree = parseContent(content);
+      if (RUBY_CONVERTER_VALIDATION) {
+        RubyTreeValidation.validateCompleteness(tree, null);
+      }
+      return tree;
     } catch (StandardError e) {
       throw new ParseException(e.getMessage(), getErrorLocation(e), e);
     } catch (Exception e) {
