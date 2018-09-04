@@ -63,6 +63,7 @@ public abstract class TestBase {
       .setProjectKey(PROJECT_KEY)
       .setProjectName(PROJECT_KEY)
       .setProjectVersion("1")
+      .setProperty("sonar.ruby.converter.validation", "true")
       .setSourceDirs(".");
   }
 

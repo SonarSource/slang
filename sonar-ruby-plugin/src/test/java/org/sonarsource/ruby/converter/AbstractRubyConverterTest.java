@@ -55,6 +55,7 @@ public abstract class AbstractRubyConverterTest {
 
   @BeforeClass
   public static void setUp() {
+    System.setProperty("sonar.ruby.converter.validation", "true");
     converter = new RubyConverter();
   }
 

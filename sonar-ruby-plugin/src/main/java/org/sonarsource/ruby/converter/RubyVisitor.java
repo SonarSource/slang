@@ -215,6 +215,8 @@ public class RubyVisitor {
         return createCaseTree(node, children);
       case "str":
         return createStringLiteralTree(node, children);
+      case "dstr":
+        return createDocStringLiteralTree(node, children);
       case "rescue":
         return createExceptionHandlingTree(node, children);
       case "resbody":
@@ -582,6 +584,17 @@ public class RubyVisitor {
       treeMetaData = metaData(node);
     }
     return new StringLiteralTreeImpl(treeMetaData, node.source(), value);
+  }
+
+  private Tree createDocStringLiteralTree(AstNode node, List<?> children) {
+    TreeMetaData metaData;
+    TextRange heredocEndRange = node.textRangeForAttribute("heredoc_end");
+    if (heredocEndRange != null) {
+      metaData = metaDataProvider.metaData(TextRanges.merge(asList(node.textRange(), heredocEndRange)));
+    } else {
+      metaData = metaData(node);
+    }
+    return new NativeTreeImpl(metaData, new RubyNativeKind(node.type()), convertChildren(node, children));
   }
 
   private boolean hasDynamicStringParent() {
