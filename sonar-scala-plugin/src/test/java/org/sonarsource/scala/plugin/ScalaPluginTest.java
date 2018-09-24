@@ -46,7 +46,7 @@ public class ScalaPluginTest {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarLint(Version.create(3, 9));
     Plugin.Context context = new PluginContextImpl.Builder().setSonarRuntime(runtime).build();
     scalaPlugin.define(context);
-    assertThat(context.getExtensions()).hasSize(4);
+    assertThat(context.getExtensions()).hasSize(3);
   }
 
 }

@@ -44,11 +44,11 @@ public class ScalaPlugin implements Plugin {
     context.addExtensions(
       ScalaLanguage.class,
       ScalaSensor.class,
-      ScalaProfileDefinition.class,
       ScalaRulesDefinition.class);
 
     if (context.getRuntime().getProduct() != SonarProduct.SONARLINT) {
-      context.addExtension(
+      context.addExtensions(
+        ScalaProfileDefinition.class,
         PropertyDefinition.builder(SCALA_FILE_SUFFIXES_KEY)
           .defaultValue(SCALA_FILE_SUFFIXES_DEFAULT_VALUE)
           .name("File Suffixes")

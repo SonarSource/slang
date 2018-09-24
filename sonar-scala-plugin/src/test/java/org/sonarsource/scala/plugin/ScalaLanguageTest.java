@@ -38,4 +38,10 @@ public class ScalaLanguageTest {
     assertThat(scalaLanguage.getFileSuffixes()).containsExactly(".scala");
   }
 
+  @Test
+  public void test_suffixes_custom() {
+    ScalaLanguage scalaLanguage = new ScalaLanguage(new MapSettings().setProperty(ScalaPlugin.SCALA_FILE_SUFFIXES_KEY, ".custom").asConfig());
+    assertThat(scalaLanguage.getFileSuffixes()).containsExactly(".custom");
+  }
+
 }
