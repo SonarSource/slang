@@ -47,9 +47,9 @@ public class ScalaSensorTest extends AbstractSensorTest {
     TextPointer textPointer = analysisError.location();
     assertThat(textPointer).isNotNull();
     assertThat(textPointer.line()).isEqualTo(1);
-    assertThat(textPointer.lineOffset()).isEqualTo(1);
+    assertThat(textPointer.lineOffset()).isEqualTo(0);
 
-    assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. Parse error at position 1:1", inputFile.uri()));
+    assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. Parse error at position 1:0", inputFile.uri()));
   }
 
   @Override

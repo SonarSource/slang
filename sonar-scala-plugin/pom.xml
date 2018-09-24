@@ -53,6 +53,11 @@
             <artifactId>slang-antlr</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.scalameta</groupId>
+            <artifactId>scalameta_2.12</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
@@ -64,6 +69,28 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.3.2</version>
+                <executions>
+                    <execution>
+                        <id>scala-compile-first</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>scala-test-compile</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
                 <artifactId>sonar-packaging-maven-plugin</artifactId>
@@ -107,8 +134,8 @@
                         <configuration>
                             <rules>
                                 <requireFilesSize>
-                                    <minsize>200000</minsize>
-                                    <maxsize>600000</maxsize>
+                                    <minsize>11000000</minsize>
+                                    <maxsize>13000000</maxsize>
                                     <files>
                                         <file>${project.build.directory}/${project.build.finalName}.jar</file>
                                     </files>
@@ -120,5 +147,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
