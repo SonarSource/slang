@@ -1,0 +1,11 @@
+{
+  "rules-metadata-path": "./src/main/resources/org/sonar/l10n/scala/rules/scala",
+  "languages": [
+    "SCALA"
+  ],
+  "latest-update": "2018-08-31T14:15:17.897Z",
+  "options": {
+    "no-language-in-filenames": true,
+    "preserve-filenames": true
+  }
+}

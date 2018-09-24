@@ -44,6 +44,7 @@ public class CheckListTest {
     Set<Class> allChecks = new HashSet<>(CheckList.allChecks());
     allChecks.removeAll(CheckList.kotlinChecks());
     allChecks.removeAll(CheckList.rubyChecks());
+    allChecks.removeAll(CheckList.scalaChecks());
     assertThat(allChecks).isEmpty();
   }
 

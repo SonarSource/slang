@@ -17,14 +17,23 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.checks.utils;
+package org.sonarsource.scala.converter;
 
-/**
- * This enum is used only to distinguish default values for rule parameters. This should be the sole exception in otherwise
- * language agnostic module
- */
-public enum Language {
-  KOTLIN, RUBY, SCALA;
+import org.junit.Test;
+import org.sonarsource.slang.api.ParseException;
 
-  public static final String RUBY_NAMING_DEFAULT = "^(@{0,2}[\\da-z_]+[!?=]?)|([*+-/%=!><~]+)|(\\[]=?)$";
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+public class ScalaConverterTest {
+
+  @Test
+  public void parser_error() {
+    ScalaConverter scalaConverter = new ScalaConverter();
+    assertThatThrownBy(() -> scalaConverter.parse("invalid scala code"))
+      .isInstanceOf(ParseException.class)
+      .hasMessage("Unable to parse file content.");
+    scalaConverter.terminate();
+  }
+
+
 }

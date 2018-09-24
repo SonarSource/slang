@@ -3,11 +3,14 @@
 [![Build Status](https://travis-ci.org/SonarSource/slang.svg?branch=master)](https://travis-ci.org/SonarSource/slang)
 [![Quality Gate](https://next.sonarqube.com/sonarqube/api/project_badges/measure?project=org.sonarsource.slang%3Aslang&metric=alert_status)](https://next.sonarqube.com/sonarqube/dashboard?id=org.sonarsource.slang%3Aslang) [![Coverage](https://next.sonarqube.com/sonarqube/api/project_badges/measure?project=org.sonarsource.slang%3Aslang&metric=coverage)](https://next.sonarqube.com/sonarqube/component_measures/domain/Coverage?id=org.sonarsource.slang%3Aslang)
 
-This is a developer documentation. If you want to analyze Kotlin in SonarQube read [SonarKotlin plugin documentation](https://docs.sonarqube.org/display/PLUG/SonarKotlin). 
-If you want to analyze Ruby in SonarQube read [SonarRuby documentation](https://docs.sonarqube.org/display/PLUG/SonarRuby).
+This is a developer documentation. If you want to analyze source code in SonarQube read one of the following documentations:
+
+* Kotlin language: [SonarKotlin documentation](https://docs.sonarqube.org/display/PLUG/SonarKotlin)
+* Ruby language: [SonarRuby documentation](https://docs.sonarqube.org/display/PLUG/SonarRuby)
+* Scala language: [SonarScala documentation](https://docs.sonarqube.org/display/PLUG/SonarRuby)
 
 SLang (SonarSource Language) is a framework to quickly develop code analyzers for SonarQube. SLang defines language agnostic AST. Using this AST
-we can develop simple syntax based rules. Then we use parser for real language to create this AST. Currently Kotlin and Ruby 
+we can develop simple syntax based rules. Then we use parser for real language to create this AST. Currently Kotlin, Ruby and Scala 
 analyzers use this approach.
 
 ## Kotlin
@@ -20,6 +23,10 @@ We use [whitequark parser](https://github.com/whitequark/parser) to parse Ruby l
 
 * AST documentation for the parser can be found [here](https://github.com/whitequark/parser/blob/master/doc/AST_FORMAT.md)
 * We use simple [Ruby script](sonar-ruby-plugin/src/main/resources/whitequark_parser_init.rb) to call the parser and invoke our [visitor](sonar-ruby-plugin/src/main/java/org/sonarsource/ruby/converter/RubyVisitor.java) written in Java 
+
+## Scala
+
+We use [Scalameta](https://scalameta.org/) to parse Scala language.
 
 ## Building
 

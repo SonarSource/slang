@@ -17,14 +17,18 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.checks.utils;
+package org.sonarsource.scala.converter;
 
-/**
- * This enum is used only to distinguish default values for rule parameters. This should be the sole exception in otherwise
- * language agnostic module
- */
-public enum Language {
-  KOTLIN, RUBY, SCALA;
+import org.sonarsource.slang.api.ASTConverter;
+import org.sonarsource.slang.api.ParseException;
+import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.impl.TextPointerImpl;
 
-  public static final String RUBY_NAMING_DEFAULT = "^(@{0,2}[\\da-z_]+[!?=]?)|([*+-/%=!><~]+)|(\\[]=?)$";
+public class ScalaConverter implements ASTConverter {
+
+  @Override
+  public Tree parse(String content) {
+    throw new ParseException("Unable to parse file content.", new TextPointerImpl(1,1));
+  }
+
 }

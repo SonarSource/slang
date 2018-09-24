@@ -44,6 +44,52 @@ public class CheckList {
     OctalValuesCheck.class
   };
 
+  private static final Class[] SCALA_CHECK_BLACK_LIST = {
+    AllBranchesIdenticalCheck.class,
+    BadClassNameCheck.class,
+    BadFunctionNameCheck.class,
+    BooleanInversionCheck.class,
+    BooleanLiteralCheck.class,
+    CodeAfterJumpCheck.class,
+    CollapsibleIfStatementsCheck.class,
+    DuplicateBranchCheck.class,
+    DuplicatedFunctionImplementationCheck.class,
+    ElseIfWithoutElseCheck.class,
+    EmptyBlockCheck.class,
+    EmptyCommentCheck.class,
+    EmptyFunctionCheck.class,
+    FileHeaderCheck.class,
+    FixMeCommentCheck.class,
+    FunctionCognitiveComplexityCheck.class,
+    HardcodedCredentialsCheck.class,
+    HardcodedIpCheck.class,
+    IdenticalBinaryOperandCheck.class,
+    IdenticalConditionsCheck.class,
+    IfConditionalAlwaysTrueOrFalseCheck.class,
+    MatchCaseTooBigCheck.class,
+    MatchWithoutElseCheck.class,
+    NestedMatchCheck.class,
+    OctalValuesCheck.class,
+    OneStatementPerLineCheck.class,
+    RedundantParenthesesCheck.class,
+    SelfAssignmentCheck.class,
+    StringLiteralDuplicatedCheck.class,
+    TabsCheck.class,
+    TodoCommentCheck.class,
+    TooComplexExpressionCheck.class,
+    TooDeeplyNestedStatementsCheck.class,
+    TooLongFunctionCheck.class,
+    TooLongLineCheck.class,
+    TooManyLinesOfCodeFileCheck.class,
+    TooManyCasesCheck.class,
+    TooManyParametersCheck.class,
+    UnusedFunctionParameterCheck.class,
+    UnusedLocalVariableCheck.class,
+    UnusedPrivateMethodCheck.class,
+    VariableAndParameterNameCheck.class,
+    WrongAssignmentOperatorCheck.class
+  };
+
   private CheckList() {
   }
 
@@ -101,6 +147,10 @@ public class CheckList {
 
   public static List<Class> rubyChecks() {
     return excludeChecks(RUBY_CHECK_BLACK_LIST);
+  }
+
+  public static List<Class> scalaChecks() {
+    return excludeChecks(SCALA_CHECK_BLACK_LIST);
   }
 
   private static List<Class> excludeChecks(Class[] blackList) {

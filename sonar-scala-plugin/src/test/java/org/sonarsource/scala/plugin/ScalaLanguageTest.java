@@ -17,14 +17,25 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.checks.utils;
+package org.sonarsource.scala.plugin;
 
-/**
- * This enum is used only to distinguish default values for rule parameters. This should be the sole exception in otherwise
- * language agnostic module
- */
-public enum Language {
-  KOTLIN, RUBY, SCALA;
+import org.junit.Test;
+import org.sonar.api.config.internal.MapSettings;
 
-  public static final String RUBY_NAMING_DEFAULT = "^(@{0,2}[\\da-z_]+[!?=]?)|([*+-/%=!><~]+)|(\\[]=?)$";
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class ScalaLanguageTest {
+
+  @Test
+  public void test_suffixes_default() {
+    ScalaLanguage scalaLanguage = new ScalaLanguage(new MapSettings().asConfig());
+    assertThat(scalaLanguage.getFileSuffixes()).containsExactly(".scala");
+  }
+
+  @Test
+  public void test_suffixes_empty() {
+    ScalaLanguage scalaLanguage = new ScalaLanguage(new MapSettings().setProperty(ScalaPlugin.SCALA_FILE_SUFFIXES_KEY, "").asConfig());
+    assertThat(scalaLanguage.getFileSuffixes()).containsExactly(".scala");
+  }
+
 }
