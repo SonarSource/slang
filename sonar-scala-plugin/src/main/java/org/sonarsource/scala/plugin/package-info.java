@@ -17,14 +17,5 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.checks.utils;
-
-/**
- * This enum is used only to distinguish default values for rule parameters. This should be the sole exception in otherwise
- * language agnostic module
- */
-public enum Language {
-  KOTLIN, RUBY, SCALA;
-
-  public static final String RUBY_NAMING_DEFAULT = "^(@{0,2}[\\da-z_]+[!?=]?)|([*+-/%=!><~]+)|(\\[]=?)$";
-}
+@javax.annotation.ParametersAreNonnullByDefault
+package org.sonarsource.scala.plugin;

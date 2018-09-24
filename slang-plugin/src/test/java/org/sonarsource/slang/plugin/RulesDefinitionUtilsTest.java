@@ -63,6 +63,18 @@ public class RulesDefinitionUtilsTest {
     assertThat(param.defaultValue()).isEqualTo("ruby");
   }
 
+  @Test
+  public void test_setDefaultValuesForParameters_scala() {
+    initRepository();
+
+    RulesDefinitionUtils.setDefaultValuesForParameters(repository, Collections.singletonList(Check.class), Language.SCALA);
+    repository.done();
+
+    RulesDefinition.Repository repository = context.repository(REPOSITORY);
+    RulesDefinition.Rule check = repository.rule("check");
+    RulesDefinition.Param param = check.param("param");
+    assertThat(param.defaultValue()).isEqualTo("scala");
+  }
 
   @Test
   public void wrong_annotation() {
@@ -91,6 +103,7 @@ public class RulesDefinitionUtilsTest {
     @RuleProperty(key = "param")
     @PropertyDefaultValue(language = Language.KOTLIN, defaultValue = "kotlin")
     @PropertyDefaultValue(language = Language.RUBY, defaultValue = "ruby")
+    @PropertyDefaultValue(language = Language.SCALA, defaultValue = "scala")
     String param;
 
     String notAParamField;

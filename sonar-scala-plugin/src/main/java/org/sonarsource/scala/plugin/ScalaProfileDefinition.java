@@ -17,14 +17,20 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.checks.utils;
+package org.sonarsource.scala.plugin;
 
-/**
- * This enum is used only to distinguish default values for rule parameters. This should be the sole exception in otherwise
- * language agnostic module
- */
-public enum Language {
-  KOTLIN, RUBY, SCALA;
+import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition;
+import org.sonarsource.analyzer.commons.BuiltInQualityProfileJsonLoader;
 
-  public static final String RUBY_NAMING_DEFAULT = "^(@{0,2}[\\da-z_]+[!?=]?)|([*+-/%=!><~]+)|(\\[]=?)$";
+public class ScalaProfileDefinition implements BuiltInQualityProfilesDefinition {
+
+  static final String PATH_TO_JSON = "org/sonar/l10n/scala/rules/scala/Sonar_way_profile.json";
+
+  @Override
+  public void define(BuiltInQualityProfilesDefinition.Context context) {
+    NewBuiltInQualityProfile profile = context.createBuiltInQualityProfile(ScalaPlugin.PROFILE_NAME, ScalaPlugin.SCALA_LANGUAGE_KEY);
+    BuiltInQualityProfileJsonLoader.load(profile, ScalaPlugin.SCALA_REPOSITORY_KEY, PATH_TO_JSON);
+    profile.done();
+  }
+
 }
