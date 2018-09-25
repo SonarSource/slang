@@ -39,7 +39,7 @@ public abstract class AbstractScalaConverterTest {
     TopLevelTree topLevel = (TopLevelTree) converter.parse("object Main { def foo():Unit={ " + scalaCode + "} }");
     NativeTree objectDefn = (NativeTree) topLevel.children().get(0);
     NativeTree template = (NativeTree) objectDefn.children().get(1);
-    NativeTree functionDefn = (NativeTree) template.children().get(1);
+    NativeTree functionDefn = (NativeTree) template.children().get(template.children().size() - 1);
     NativeTree functionBlock = (NativeTree) functionDefn.children().get(2);
     return functionBlock.children().get(0);
   }

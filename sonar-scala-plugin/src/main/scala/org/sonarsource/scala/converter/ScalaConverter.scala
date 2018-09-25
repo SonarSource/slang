@@ -74,7 +74,9 @@ class ScalaConverter extends slang.api.ASTConverter {
     }
 
     def convert(trees: scala.List[scala.meta.Tree]): java.util.List[slang.api.Tree] = {
-      trees.map(t => convert(t)).asJava
+      trees.filter(t => t.pos.start != t.pos.end)
+        .map(t => convert(t))
+        .asJava
     }
 
   }

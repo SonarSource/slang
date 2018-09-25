@@ -22,6 +22,7 @@ package org.sonarsource.scala.converter;
 import java.util.List;
 import org.junit.Test;
 import org.sonarsource.slang.api.Comment;
+import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.Token;
@@ -75,4 +76,9 @@ public class ScalaConverterTest extends AbstractScalaConverterTest {
     assertRange(comments.get(1).contentRange()).hasRange(3, 18, 3, 24);
   }
 
+  @Test
+  public void empty_scalameta_literal_node_in_if_without_else() {
+    Tree tree = scalaStatement("if (x) { y }");
+    assertThat(tree.descendants().filter(t -> t instanceof LiteralTree)).isEmpty();
+  }
 }
