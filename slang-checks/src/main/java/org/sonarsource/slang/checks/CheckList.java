@@ -59,7 +59,6 @@ public class CheckList {
     EmptyCommentCheck.class,
     EmptyFunctionCheck.class,
     FileHeaderCheck.class,
-    FixMeCommentCheck.class,
     FunctionCognitiveComplexityCheck.class,
     HardcodedCredentialsCheck.class,
     HardcodedIpCheck.class,
