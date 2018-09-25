@@ -62,7 +62,7 @@ class ScalaConverter extends slang.api.ASTConverter {
         case scala.meta.Source(stats) =>
           new TopLevelTreeImpl(metaData, convert(stats), metaDataProvider.allComments())
         case lit: scala.meta.Lit.String =>
-          new StringLiteralTreeImpl(metaData, lit.syntax)
+          new StringLiteralTreeImpl(metaData, "\"" + lit.value + "\"")
         case lit: scala.meta.Lit.Int =>
           new IntegerLiteralTreeImpl(metaData, lit.syntax)
         case lit: scala.meta.Lit =>

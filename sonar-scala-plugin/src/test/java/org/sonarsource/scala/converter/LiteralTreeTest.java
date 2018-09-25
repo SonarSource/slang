@@ -20,7 +20,10 @@
 package org.sonarsource.scala.converter;
 
 import org.junit.Test;
+import org.sonarsource.slang.api.LiteralTree;
+import org.sonarsource.slang.api.Tree;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
 public class LiteralTreeTest extends AbstractScalaConverterTest {
@@ -28,6 +31,16 @@ public class LiteralTreeTest extends AbstractScalaConverterTest {
   @Test
   public void string_literal() {
     assertTree(scalaStatement("\"Hello\"")).isEquivalentTo(slangStatement("\"Hello\";"));
+  }
+
+  @Test
+  public void string_with_interpolation() {
+    Tree tree = scalaStatement("raw\"abc\"");
+    assertTree(tree).isNotInstanceOf(LiteralTree.class);
+    assertThat(tree.descendants()
+      .filter(LiteralTree.class::isInstance)
+      .map(LiteralTree.class::cast)
+      .map(LiteralTree::value)).containsExactly("\"abc\"");
   }
 
   @Test
