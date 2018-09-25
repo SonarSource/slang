@@ -51,7 +51,7 @@ public class SlangRulingTest {
   private static Orchestrator orchestrator;
   private static boolean keepSonarqubeRunning = false;
 
-  private static final Set<String> LANGUAGES = ImmutableSet.of("kotlin" , "ruby");
+  private static final Set<String> LANGUAGES = ImmutableSet.of("kotlin" , "ruby" , "scala");
 
   @BeforeClass
   public static void setUp() {
@@ -73,10 +73,14 @@ public class SlangRulingTest {
     rubyRulesConfiguration.add("S1451", "isRegularExpression", "true");
     rubyRulesConfiguration.add("S1479", "maximum", "10");
 
+    ProfileGenerator.RulesConfiguration scalaRulesConfiguration = new ProfileGenerator.RulesConfiguration();
+
     File kotlinProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "kotlin", "kotlin", kotlinRulesConfiguration, Collections.emptySet());
     File rubyProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "ruby", "ruby", rubyRulesConfiguration, Collections.emptySet());
+    File scalaProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "scala", "scala", scalaRulesConfiguration, Collections.emptySet());
     orchestrator.getServer().restoreProfile(FileLocation.of(kotlinProfile));
     orchestrator.getServer().restoreProfile(FileLocation.of(rubyProfile));
+    orchestrator.getServer().restoreProfile(FileLocation.of(scalaProfile));
   }
 
   private static void addLanguagePlugins(OrchestratorBuilder builder) {
@@ -114,6 +118,14 @@ public class SlangRulingTest {
   }
 
   @Test
+  // @Ignore because it should only be run manually
+  @Ignore
+  public void scala_manual_keep_sonarqube_server_up() throws IOException {
+    keepSonarqubeRunning = true;
+    test_scala();
+  }
+
+  @Test
   public void test_kotlin() throws IOException {
     run_ruling_test("kotlin", ImmutableMap.of(
       "sonar.inclusions", "sources/kotlin/**/*.kt, ruling/src/test/resources/sources/kotlin/**/*.kt",
@@ -126,10 +138,19 @@ public class SlangRulingTest {
       "sonar.inclusions", "sources/ruby/**/*.rb, ruling/src/test/resources/sources/ruby/**/*.rb"));
   }
 
+  @Test
+  public void test_scala() throws IOException {
+    run_ruling_test("scala", ImmutableMap.of(
+      "sonar.inclusions", "sources/scala/**/*.scala, ruling/src/test/resources/sources/scala/**/*.scala"));
+  }
+
   private void run_ruling_test(String language, Map<String, String> properties) throws IOException {
     String projectKey = language + "-project";
     orchestrator.getServer().provisionProject(projectKey, projectKey);
     orchestrator.getServer().associateProjectToQualityProfile(projectKey, language, "rules");
+
+    File actualDirectory = FileLocation.of("target/actual/" + language).getFile();
+    actualDirectory.mkdirs();
 
     File litsDifferencesFile = FileLocation.of("target/differences").getFile();
     SonarScanner build = SonarScanner.create(FileLocation.of("../").getFile())
@@ -140,7 +161,7 @@ public class SlangRulingTest {
       .setSourceEncoding("utf-8")
       .setProperties(properties)
       .setProperty("dump.old", FileLocation.of("src/test/resources/expected/" + language).getFile().getAbsolutePath())
-      .setProperty("dump.new", FileLocation.of("target/actual/").getFile().getAbsolutePath())
+      .setProperty("dump.new", actualDirectory.getAbsolutePath())
       .setProperty("lits.differences", litsDifferencesFile.getAbsolutePath())
       .setProperty("sonar.cpd.skip", "true")
       .setProperty("sonar.scm.disabled", "true")
