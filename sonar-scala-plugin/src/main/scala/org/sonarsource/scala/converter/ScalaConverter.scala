@@ -19,8 +19,6 @@
  */
 package org.sonarsource.scala.converter
 
-import java.util.Collections
-
 import org.sonarsource.slang
 import org.sonarsource.slang.api.TextRange
 import org.sonarsource.slang.api.Token
@@ -34,26 +32,54 @@ import scala.meta.tokens.Token.Comment
 class ScalaConverter extends slang.api.ASTConverter {
 
   def parse(code: String): slang.api.Tree = {
-    val ast = code.parse[Source] match {
+    val metaTree: scala.meta.Tree = code.parse[Source] match {
       case scala.meta.parsers.Parsed.Success(tree) => tree
       case scala.meta.parsers.Parsed.Error(pos, _, _) =>
         throw new slang.api.ParseException("Unable to parse file content.", textRange(pos).start())
     }
 
-    val allTokens = ast.tokens
+    val allTokens = metaTree.tokens
       .filter(t => !t.is[Comment])
       .filter(t => t.text.trim.nonEmpty)
       .map(t => new TokenImpl(textRange(t.pos), t.text, tokenType(t)))
       .asInstanceOf[IndexedSeq[Token]]
       .asJava
 
-    val allComments = ast.tokens
+    val allComments = metaTree.tokens
       .filter(t => t.is[Comment])
       .map(t => createComment(t))
       .asJava
 
     val metaDataProvider = new TreeMetaDataProvider(allComments, allTokens)
-    new TopLevelTreeImpl(metaDataProvider.metaData(textRange(ast)), Collections.emptyList(), allComments)
+    new TreeConversion(metaDataProvider).convert(metaTree)
+  }
+
+  private class TreeConversion(metaDataProvider: TreeMetaDataProvider) {
+
+    def convert(metaTree: scala.meta.Tree): slang.api.Tree = {
+      val metaData = metaDataProvider.metaData(textRange(metaTree))
+      metaTree match {
+        case scala.meta.Source(stats) =>
+          new TopLevelTreeImpl(metaData, convert(stats), metaDataProvider.allComments())
+        case lit: scala.meta.Lit.String =>
+          new StringLiteralTreeImpl(metaData, lit.syntax)
+        case lit: scala.meta.Lit.Int =>
+          new IntegerLiteralTreeImpl(metaData, lit.syntax)
+        case lit: scala.meta.Lit =>
+          new LiteralTreeImpl(metaData, lit.syntax)
+        case _ =>
+          val nativeKind = ScalaNativeKind(metaTree.getClass)
+          new NativeTreeImpl(metaData, nativeKind, convert(metaTree.children))
+      }
+    }
+
+    def convert(trees: scala.List[scala.meta.Tree]): java.util.List[slang.api.Tree] = {
+      trees.map(t => convert(t)).asJava
+    }
+
+  }
+
+  case class ScalaNativeKind(treeClass: Class[_ <: scala.meta.Tree]) extends slang.api.NativeKind {
   }
 
   def tokenType(token: scala.meta.tokens.Token): Token.Type = {

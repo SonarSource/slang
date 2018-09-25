@@ -35,13 +35,11 @@ import static org.sonarsource.slang.api.Token.Type.OTHER;
 import static org.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 
-public class ScalaConverterTest {
-
-  private final ScalaConverter converter = new ScalaConverter();
+public class ScalaConverterTest extends AbstractScalaConverterTest {
 
   @Test
   public void parser_error() {
-    assertThatThrownBy(() -> converter.parse("object Main {..."))
+    assertThatThrownBy(() -> parse("object Main {..."))
       .isInstanceOf(ParseException.class)
       .hasMessage("Unable to parse file content.")
       .matches(e -> {
@@ -52,13 +50,13 @@ public class ScalaConverterTest {
 
   @Test
   public void top_level_tree() {
-    Tree tree = converter.parse("object Main { print(\"Hello!\") }");
+    Tree tree = parse("object Main { print(\"Hello!\") }");
     assertThat(tree).isInstanceOf(TopLevelTree.class);
   }
 
   @Test
   public void tokens() {
-    Tree tree = converter.parse("object Main /* comment */ { print(\"Hello!\") }");
+    Tree tree = parse("object Main /* comment */ { print(\"Hello!\") }");
     List<Token> tokens = tree.metaData().tokens();
     assertThat(tokens).extracting(Token::text).containsExactly("object", "Main", "{", "print", "(", "\"Hello!\"", ")", "}");
     assertThat(tokens).extracting(Token::type).containsExactly(KEYWORD, OTHER, OTHER, OTHER, OTHER, STRING_LITERAL, OTHER, OTHER);
@@ -67,7 +65,7 @@ public class ScalaConverterTest {
 
   @Test
   public void comments() {
-    Tree tree = converter.parse("object Main /* multi\n line */ {\nprint(\"Hello!\") //inline\n }");
+    Tree tree = parse("object Main /* multi\n line */ {\nprint(\"Hello!\") //inline\n }");
     List<Comment> comments = tree.metaData().commentsInside();
     assertThat(comments).extracting(Comment::text).containsExactly("/* multi\n line */", "//inline");
     assertThat(comments).extracting(Comment::contentText).containsExactly(" multi\n line ", "inline");
