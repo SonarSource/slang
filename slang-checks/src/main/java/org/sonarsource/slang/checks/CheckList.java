@@ -75,7 +75,6 @@ public class CheckList {
     SelfAssignmentCheck.class,
     StringLiteralDuplicatedCheck.class,
     TabsCheck.class,
-    TodoCommentCheck.class,
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
     TooLongFunctionCheck.class,
