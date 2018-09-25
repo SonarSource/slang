@@ -41,14 +41,14 @@ class ScalaConverter extends slang.api.ASTConverter {
     }
 
     val allTokens = ast.tokens
-      .filter(t => !t.isInstanceOf[Comment])
-      .filter(t => !t.text.trim.isEmpty)
+      .filter(t => !t.is[Comment])
+      .filter(t => t.text.trim.nonEmpty)
       .map(t => new TokenImpl(textRange(t.pos), t.text, tokenType(t)))
       .asInstanceOf[IndexedSeq[Token]]
       .asJava
 
     val allComments = ast.tokens
-      .filter(t => t.isInstanceOf[Comment])
+      .filter(t => t.is[Comment])
       .map(t => createComment(t))
       .asJava
 
@@ -57,7 +57,7 @@ class ScalaConverter extends slang.api.ASTConverter {
   }
 
   def tokenType(token: scala.meta.tokens.Token): Token.Type = {
-    if (token.text.startsWith("\"")) {
+    if (token.is[scala.meta.tokens.Token.Constant.String]) {
       return Token.Type.STRING_LITERAL
     }
     if (keywords.contains(token.text)) {
@@ -73,9 +73,9 @@ class ScalaConverter extends slang.api.ASTConverter {
     }
     val contentText = t.text.substring(2, t.text.length - suffixLength)
     val range = textRange(t.pos)
-    val start = range.start()
-    val end = range.end()
-    val contentRange = TextRanges.range(start.line(), start.lineOffset() + 2, end.line(), end.lineOffset() - suffixLength)
+    val start = range.start
+    val end = range.end
+    val contentRange = TextRanges.range(start.line, start.lineOffset + 2, end.line, end.lineOffset - suffixLength)
     new CommentImpl(t.text, contentText, range, contentRange)
   }
 
