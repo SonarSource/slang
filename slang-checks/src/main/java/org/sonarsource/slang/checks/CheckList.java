@@ -72,7 +72,6 @@ public class CheckList {
     RedundantParenthesesCheck.class,
     SelfAssignmentCheck.class,
     StringLiteralDuplicatedCheck.class,
-    TabsCheck.class,
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
     TooLongFunctionCheck.class,
