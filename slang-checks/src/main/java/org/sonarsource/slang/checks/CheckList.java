@@ -56,7 +56,6 @@ public class CheckList {
     DuplicatedFunctionImplementationCheck.class,
     ElseIfWithoutElseCheck.class,
     EmptyBlockCheck.class,
-    EmptyCommentCheck.class,
     EmptyFunctionCheck.class,
     FileHeaderCheck.class,
     FunctionCognitiveComplexityCheck.class,
