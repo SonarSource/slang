@@ -152,7 +152,7 @@ public class SlangRulingTest {
     File actualDirectory = FileLocation.of("target/actual/" + language).getFile();
     actualDirectory.mkdirs();
 
-    File litsDifferencesFile = FileLocation.of("target/differences").getFile();
+    File litsDifferencesFile = FileLocation.of("target/" + language + "-differences").getFile();
     SonarScanner build = SonarScanner.create(FileLocation.of("../").getFile())
       .setProjectKey(projectKey)
       .setProjectName(projectKey)

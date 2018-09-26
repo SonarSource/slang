@@ -49,4 +49,9 @@ public class RubySensor extends SlangSensor {
     return checks;
   }
 
+  @Override
+  protected String repositoryKey() {
+    return RubyPlugin.RUBY_REPOSITORY_KEY;
+  }
+
 }

@@ -53,4 +53,9 @@ public class KotlinSensor extends SlangSensor {
     return checks;
   }
 
+  @Override
+  protected String repositoryKey() {
+    return KotlinPlugin.KOTLIN_REPOSITORY_KEY;
+  }
+
 }

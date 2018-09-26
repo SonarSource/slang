@@ -302,6 +302,11 @@ public class SlangSensorTest extends AbstractSensorTest {
           IdenticalBinaryOperandCheck.class);
         return checks;
       }
+
+      @Override
+      protected String repositoryKey() {
+        return SlangSensorTest.this.repositoryKey();
+      }
     };
   }
 

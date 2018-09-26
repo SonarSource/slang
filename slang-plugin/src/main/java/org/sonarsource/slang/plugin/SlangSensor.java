@@ -73,7 +73,9 @@ public abstract class SlangSensor implements Sensor {
 
   protected abstract Checks<SlangCheck> checks();
 
-  private static boolean analyseFiles(ASTConverter converter,
+  protected abstract String repositoryKey();
+
+  private boolean analyseFiles(ASTConverter converter,
                                       SensorContext sensorContext,
                                       Iterable<InputFile> inputFiles,
                                       ProgressReport progressReport,
@@ -87,7 +89,7 @@ public abstract class SlangSensor implements Sensor {
         analyseFile(converter, inputFileContext, inputFile, visitors);
       } catch (ParseException e) {
         logParsingError(inputFile, e);
-        inputFileContext.reportAnalysisParseError(inputFile, e.getPosition());
+        inputFileContext.reportAnalysisParseError(repositoryKey(), inputFile, e.getPosition());
       }
       progressReport.nextFile();
     }
