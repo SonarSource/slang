@@ -49,4 +49,9 @@ public class ScalaSensor  extends SlangSensor {
     return checks;
   }
 
+  @Override
+  protected String repositoryKey() {
+    return ScalaPlugin.SCALA_REPOSITORY_KEY;
+  }
+
 }

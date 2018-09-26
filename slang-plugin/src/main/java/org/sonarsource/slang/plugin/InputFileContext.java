@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
 import org.sonar.api.batch.fs.TextRange;
-import org.sonar.api.batch.rule.ActiveRule;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.error.NewAnalysisError;
 import org.sonar.api.batch.sensor.issue.NewIssue;
@@ -35,6 +34,8 @@ import org.sonarsource.slang.checks.api.SecondaryLocation;
 import org.sonarsource.slang.visitors.TreeContext;
 
 public class InputFileContext extends TreeContext {
+
+  private static final String PARSING_ERROR_RULE_KEY = "ParsingError";
 
   public final SensorContext sensorContext;
 
@@ -81,32 +82,26 @@ public class InputFileContext extends TreeContext {
     issue.save();
   }
 
-  public void reportAnalysisParseError(InputFile inputFile, @Nullable org.sonarsource.slang.api.TextPointer location) {
+  public void reportAnalysisParseError(String repositoryKey, InputFile inputFile, @Nullable org.sonarsource.slang.api.TextPointer location) {
     reportAnalysisError("Unable to parse file: " + inputFile, location);
-    Optional<RuleKey> ruleKey = lookupParseErrorRuleKey();
-    if (ruleKey.isPresent()) {
-      NewIssue parseError = sensorContext.newIssue();
-      NewIssueLocation parseErrorLocation = parseError.newLocation()
-        .on(inputFile)
-        .message("A parsing error occurred in this file.");
-
-      Optional.ofNullable(location)
-        .map(org.sonarsource.slang.api.TextPointer::line)
-        .map(inputFile::selectLine)
-        .ifPresent(parseErrorLocation::at);
-
-      parseError
-        .forRule(ruleKey.get())
-        .at(parseErrorLocation)
-        .save();
+    RuleKey parsingErrorRuleKey = RuleKey.of(repositoryKey, PARSING_ERROR_RULE_KEY);
+    if (sensorContext.activeRules().find(parsingErrorRuleKey) == null) {
+      return;
     }
-  }
+    NewIssue parseError = sensorContext.newIssue();
+    NewIssueLocation parseErrorLocation = parseError.newLocation()
+      .on(inputFile)
+      .message("A parsing error occurred in this file.");
 
-  private Optional<RuleKey> lookupParseErrorRuleKey() {
-    return sensorContext.activeRules().findAll().stream()
-      .map(ActiveRule::ruleKey)
-      .filter(key -> "ParsingError".equals(key.rule()))
-      .findFirst();
+    Optional.ofNullable(location)
+      .map(org.sonarsource.slang.api.TextPointer::line)
+      .map(inputFile::selectLine)
+      .ifPresent(parseErrorLocation::at);
+
+    parseError
+      .forRule(parsingErrorRuleKey)
+      .at(parseErrorLocation)
+      .save();
   }
 
   public void reportAnalysisError(String message, @Nullable org.sonarsource.slang.api.TextPointer location) {
