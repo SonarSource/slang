@@ -58,7 +58,7 @@
     <!-- used for deployment to SonarSource Artifactory -->
     <gitRepositoryName>slang</gitRepositoryName>
     <!-- Release: enable publication to Bintray -->
-    <artifactsToPublish>${project.groupId}:sonar-kotlin-plugin:jar,${project.groupId}:sonar-ruby-plugin:jar</artifactsToPublish>
+    <artifactsToPublish>${project.groupId}:sonar-kotlin-plugin:jar,${project.groupId}:sonar-ruby-plugin:jar,${project.groupId}:sonar-scala-plugin:jar</artifactsToPublish>
     <orchestrator.version>3.21.0.1721</orchestrator.version>
     <!-- TODO replace this PR build with released build -->
     <sonarlint.version>3.9.0.1909</sonarlint.version>
