@@ -74,6 +74,8 @@ public class SlangRulingTest {
     rubyRulesConfiguration.add("S1479", "maximum", "10");
 
     ProfileGenerator.RulesConfiguration scalaRulesConfiguration = new ProfileGenerator.RulesConfiguration();
+    scalaRulesConfiguration.add("S1451", "headerFormat", "^(?i).*copyright");
+    scalaRulesConfiguration.add("S1451", "isRegularExpression", "true");
 
     File kotlinProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "kotlin", "kotlin", kotlinRulesConfiguration, Collections.emptySet());
     File rubyProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "ruby", "ruby", rubyRulesConfiguration, Collections.emptySet());
