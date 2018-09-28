@@ -19,34 +19,30 @@
  */
 package org.sonarsource.slang.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import org.sonarsource.slang.api.Comment;
+import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
-import java.util.List;
 
 public class TopLevelTreeImpl extends BaseTreeImpl implements TopLevelTree {
 
-  private final List<Tree> preambleDeclarations;
   private final List<Tree> declarations;
   private final List<Comment> allComments;
-
-  public TopLevelTreeImpl(TreeMetaData metaData, List<Tree> preambleDeclarations, List<Tree> declarations, List<Comment> allComments) {
-    super(metaData);
-    this.preambleDeclarations = preambleDeclarations;
-    this.declarations = declarations;
-    this.allComments = allComments;
-  }
+  private final Token firstCpdToken;
 
   public TopLevelTreeImpl(TreeMetaData metaData, List<Tree> declarations, List<Comment> allComments) {
-    this(metaData, Collections.emptyList(), declarations, allComments);
+    this(metaData, declarations, allComments, null);
   }
 
-  @Override
-  public List<Tree> preambleDeclarations() {
-    return preambleDeclarations;
+  public TopLevelTreeImpl(TreeMetaData metaData, List<Tree> declarations, List<Comment> allComments, @Nullable Token firstCpdToken) {
+    super(metaData);
+    this.declarations = declarations;
+    this.allComments = allComments;
+    this.firstCpdToken = firstCpdToken;
   }
 
   @Override
@@ -59,11 +55,14 @@ public class TopLevelTreeImpl extends BaseTreeImpl implements TopLevelTree {
     return allComments;
   }
 
+  @CheckForNull
+  @Override
+  public Token firstCpdToken() {
+    return firstCpdToken;
+  }
+
   @Override
   public List<Tree> children() {
-    List<Tree> children = new ArrayList<>();
-    children.addAll(preambleDeclarations());
-    children.addAll(declarations());
-    return children;
+    return declarations();
   }
 }

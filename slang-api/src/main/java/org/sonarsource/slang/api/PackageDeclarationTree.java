@@ -19,16 +19,5 @@
  */
 package org.sonarsource.slang.api;
 
-import java.util.List;
-import javax.annotation.CheckForNull;
-
-public interface TopLevelTree extends Tree {
-
-  List<Tree> declarations();
-
-  List<Comment> allComments();
-
-  @CheckForNull
-  Token firstCpdToken();
-
+public interface PackageDeclarationTree extends Tree {
 }

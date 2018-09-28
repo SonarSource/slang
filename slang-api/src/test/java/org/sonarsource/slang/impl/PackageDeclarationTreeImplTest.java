@@ -17,18 +17,23 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.api;
+package org.sonarsource.slang.impl;
 
-import java.util.List;
-import javax.annotation.CheckForNull;
+import java.util.Collections;
+import org.assertj.core.api.Assertions;
+import org.junit.Test;
+import org.sonarsource.slang.api.PackageDeclarationTree;
+import org.sonarsource.slang.api.Tree;
 
-public interface TopLevelTree extends Tree {
+import static org.sonarsource.slang.utils.TreeCreationUtils.identifier;
 
-  List<Tree> declarations();
+public class PackageDeclarationTreeImplTest {
 
-  List<Comment> allComments();
-
-  @CheckForNull
-  Token firstCpdToken();
+  @Test
+  public void test() {
+    Tree identifier = identifier("x");
+    PackageDeclarationTree tree = new PackageDeclarationTreeImpl(null, Collections.singletonList(identifier));
+    Assertions.assertThat(tree.children()).containsExactly(identifier);
+  }
 
 }

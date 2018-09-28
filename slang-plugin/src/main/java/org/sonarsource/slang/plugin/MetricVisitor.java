@@ -32,6 +32,8 @@ import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
+import org.sonarsource.slang.api.ImportDeclarationTree;
+import org.sonarsource.slang.api.PackageDeclarationTree;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
@@ -81,6 +83,8 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
 
   private void addExecutableLines(List<Tree> trees) {
     trees.stream()
+      .filter(t -> !(t instanceof PackageDeclarationTree))
+      .filter(t -> !(t instanceof ImportDeclarationTree))
       .filter(t -> !(t instanceof ClassDeclarationTree))
       .filter(t -> !(t instanceof FunctionDeclarationTree))
       .filter(t -> !(t instanceof BlockTree))

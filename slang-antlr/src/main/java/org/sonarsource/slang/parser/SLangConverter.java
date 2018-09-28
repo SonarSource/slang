@@ -61,6 +61,7 @@ import org.sonarsource.slang.impl.ExceptionHandlingTreeImpl;
 import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.IfTreeImpl;
+import org.sonarsource.slang.impl.ImportDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IntegerLiteralTreeImpl;
 import org.sonarsource.slang.impl.JumpTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
@@ -69,6 +70,7 @@ import org.sonarsource.slang.impl.MatchCaseTreeImpl;
 import org.sonarsource.slang.impl.MatchTreeImpl;
 import org.sonarsource.slang.impl.ModifierTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
+import org.sonarsource.slang.impl.PackageDeclarationTreeImpl;
 import org.sonarsource.slang.impl.ParameterTreeImpl;
 import org.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
 import org.sonarsource.slang.impl.ReturnTreeImpl;
@@ -84,6 +86,7 @@ import org.sonarsource.slang.impl.UnaryExpressionTreeImpl;
 import org.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.FOR;
@@ -212,12 +215,25 @@ public class SLangConverter implements ASTConverter {
     public Tree visitSlangFile(SLangParser.SlangFileContext ctx) {
       // Special case for text range here, as last token is <EOF> which has length 5, so we only go up to the start of the <EOF> token
       TextRangeImpl textRange = new TextRangeImpl(startOf(ctx.start), new TextPointerImpl(ctx.stop.getLine(), ctx.stop.getCharPositionInLine()));
-      return new TopLevelTreeImpl(meta(textRange), list(ctx.importDeclaration()), list(ctx.typeDeclaration()), metaDataProvider.allComments());
+      List<Tree> typeDeclarations = list(ctx.typeDeclaration());
+      List<Tree> allDeclarations = new ArrayList<>();
+      if (ctx.packageDeclaration() != null) {
+        allDeclarations.add(visit(ctx.packageDeclaration()));
+      }
+      allDeclarations.addAll(list(ctx.importDeclaration()));
+      allDeclarations.addAll(typeDeclarations);
+      org.sonarsource.slang.api.Token firstCpdToken = typeDeclarations.isEmpty() ? null : typeDeclarations.get(0).metaData().tokens().get(0);
+      return new TopLevelTreeImpl(meta(textRange), allDeclarations, metaDataProvider.allComments(), firstCpdToken);
+    }
+
+    @Override
+    public Tree visitPackageDeclaration(SLangParser.PackageDeclarationContext ctx) {
+      return new PackageDeclarationTreeImpl(meta(ctx), singletonList(visit(ctx.identifier())));
     }
 
     @Override
     public Tree visitImportDeclaration(SLangParser.ImportDeclarationContext ctx) {
-      return nativeTree(ctx, Collections.singletonList(ctx.identifier()));
+      return new ImportDeclarationTreeImpl(meta(ctx), singletonList(visit(ctx.identifier())));
     }
 
     @Override

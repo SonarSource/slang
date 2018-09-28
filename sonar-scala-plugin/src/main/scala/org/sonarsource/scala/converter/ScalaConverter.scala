@@ -20,9 +20,9 @@
 package org.sonarsource.scala.converter
 
 import org.sonarsource.slang
-import org.sonarsource.slang.api.TextRange
-import org.sonarsource.slang.api.Token
+import org.sonarsource.slang.api.{NativeTree, TextRange, Token, TreeMetaData}
 import org.sonarsource.slang.impl._
+import org.sonarsource.slang.visitors.TreePrinter
 
 import scala.collection.JavaConverters._
 import scala.meta._
@@ -60,7 +60,7 @@ class ScalaConverter extends slang.api.ASTConverter {
       val metaData = metaDataProvider.metaData(textRange(metaTree))
       metaTree match {
         case scala.meta.Source(stats) =>
-          new TopLevelTreeImpl(metaData, convert(stats), metaDataProvider.allComments())
+          createTopLevelTree(metaData, stats)
         case lit: scala.meta.Lit.String =>
           new StringLiteralTreeImpl(metaData, "\"" + lit.value + "\"")
         case lit: scala.meta.Lit.Int =>
@@ -73,7 +73,21 @@ class ScalaConverter extends slang.api.ASTConverter {
       }
     }
 
-    def convert(trees: scala.List[scala.meta.Tree]): java.util.List[slang.api.Tree] = {
+    private def createTopLevelTree(metaData: TreeMetaData, stats: List[Stat]) = {
+      val firstCpdTokenRange = stats.flatMap(t => if (t.is[scala.meta.Pkg]) t.asInstanceOf[Pkg].stats else List(t))
+        .find(t => t.isNot[scala.meta.Import])
+        .map(t => textRange(t.tokens.apply(0).pos))
+      val findToken = (range: TextRange) =>
+        metaData.tokens().stream()
+          .filter(token => token.textRange().equals(range))
+          .findFirst()
+      val firstCpdToken = firstCpdTokenRange
+        .map(range => findToken(range).orElse(null))
+        .orNull
+      new TopLevelTreeImpl(metaData, convert(stats), metaDataProvider.allComments, firstCpdToken)
+    }
+
+    private def convert(trees: scala.List[scala.meta.Tree]): java.util.List[slang.api.Tree] = {
       trees.filter(t => t.pos.start != t.pos.end)
         .map(t => convert(t))
         .asJava

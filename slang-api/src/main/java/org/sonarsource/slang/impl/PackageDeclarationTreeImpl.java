@@ -17,18 +17,25 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.api;
+package org.sonarsource.slang.impl;
 
 import java.util.List;
-import javax.annotation.CheckForNull;
+import org.sonarsource.slang.api.PackageDeclarationTree;
+import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.api.TreeMetaData;
 
-public interface TopLevelTree extends Tree {
+public class PackageDeclarationTreeImpl extends BaseTreeImpl implements PackageDeclarationTree {
 
-  List<Tree> declarations();
+  private final List<Tree> children;
 
-  List<Comment> allComments();
+  public PackageDeclarationTreeImpl(TreeMetaData metaData, List<Tree> children) {
+    super(metaData);
+    this.children = children;
+  }
 
-  @CheckForNull
-  Token firstCpdToken();
+  @Override
+  public List<Tree> children() {
+    return children;
+  }
 
 }

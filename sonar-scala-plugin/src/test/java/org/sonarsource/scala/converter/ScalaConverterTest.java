@@ -81,4 +81,13 @@ public class ScalaConverterTest extends AbstractScalaConverterTest {
     Tree tree = scalaStatement("if (x) { y }");
     assertThat(tree.descendants().filter(t -> t instanceof LiteralTree)).isEmpty();
   }
+
+  @Test
+  public void first_cpd_token() {
+    TopLevelTree topLevel = (TopLevelTree) parse("" +
+      "package com.example\n" +
+      "import com.example.MyClass\n" +
+      "object Obj {}");
+    assertThat(topLevel.firstCpdToken().text()).isEqualTo("object");
+  }
 }

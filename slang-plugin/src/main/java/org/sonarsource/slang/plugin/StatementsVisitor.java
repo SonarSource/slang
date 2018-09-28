@@ -22,7 +22,9 @@ package org.sonarsource.slang.plugin;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
+import org.sonarsource.slang.api.ImportDeclarationTree;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.PackageDeclarationTree;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.visitors.TreeContext;
@@ -61,7 +63,10 @@ public class StatementsVisitor extends TreeVisitor<TreeContext> {
   }
 
   private static boolean isDeclaration(Tree tree) {
-    return tree instanceof ClassDeclarationTree || tree instanceof FunctionDeclarationTree;
+    return tree instanceof ClassDeclarationTree
+      || tree instanceof FunctionDeclarationTree
+      || tree instanceof PackageDeclarationTree
+      || tree instanceof ImportDeclarationTree;
   }
 
   private static boolean isNative(Tree tree) {

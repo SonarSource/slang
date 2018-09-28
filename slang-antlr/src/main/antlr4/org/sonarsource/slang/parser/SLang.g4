@@ -1,7 +1,11 @@
 grammar SLang;
 
 slangFile
-  :  importDeclaration* typeDeclaration* EOF
+  :  packageDeclaration? importDeclaration* typeDeclaration* EOF
+  ;
+
+packageDeclaration
+  : PACKAGE identifier SEMICOLON
   ;
 
 importDeclaration
@@ -325,6 +329,7 @@ WHILE : 'while';
 BREAK : 'break';
 CONTINUE: 'continue';
 IMPORT: 'import';
+PACKAGE: 'package';
 THROW: 'throw';
 
 

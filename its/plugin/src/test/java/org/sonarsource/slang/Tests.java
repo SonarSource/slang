@@ -44,7 +44,7 @@ public class Tests {
   static final String SQ_VERSION_PROPERTY = "sonar.runtimeVersion";
   static final String DEFAULT_SQ_VERSION = "LATEST_RELEASE";
 
-  private static final Set<String> LANGUAGES = ImmutableSet.of("kotlin" , "ruby");
+  private static final Set<String> LANGUAGES = ImmutableSet.of("kotlin", "ruby", "scala");
 
   @ClassRule
   public static final Orchestrator ORCHESTRATOR;
