@@ -22,7 +22,9 @@ package org.sonarsource.scala.converter;
 import java.util.List;
 import org.junit.Test;
 import org.sonarsource.slang.api.Comment;
+import org.sonarsource.slang.api.ImportDeclarationTree;
 import org.sonarsource.slang.api.LiteralTree;
+import org.sonarsource.slang.api.PackageDeclarationTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.Token;
@@ -56,6 +58,15 @@ public class ScalaConverterTest extends AbstractScalaConverterTest {
   }
 
   @Test
+  public void package_and_import_declarations() {
+    Tree tree = parse("package abc\nimport x.y\nobject MyObj{}");
+    Tree pkg = tree.children().get(0);
+    assertThat(pkg).isInstanceOf(PackageDeclarationTree.class);
+    assertThat(pkg.children()).hasSize(3);
+    assertThat(pkg.children().get(1)).isInstanceOf(ImportDeclarationTree.class);
+  }
+
+  @Test
   public void tokens() {
     Tree tree = parse("object Main /* comment */ { print(\"Hello!\") }");
     List<Token> tokens = tree.metaData().tokens();
@@ -80,5 +91,14 @@ public class ScalaConverterTest extends AbstractScalaConverterTest {
   public void empty_scalameta_literal_node_in_if_without_else() {
     Tree tree = scalaStatement("if (x) { y }");
     assertThat(tree.descendants().filter(t -> t instanceof LiteralTree)).isEmpty();
+  }
+
+  @Test
+  public void first_cpd_token() {
+    TopLevelTree topLevel = (TopLevelTree) parse("" +
+      "package com.example\n" +
+      "import com.example.MyClass\n" +
+      "object Obj {}");
+    assertThat(topLevel.firstCpdToken().text()).isEqualTo("object");
   }
 }

@@ -34,6 +34,7 @@ import org.sonarsource.slang.api.ExceptionHandlingTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.IfTree;
+import org.sonarsource.slang.api.ImportDeclarationTree;
 import org.sonarsource.slang.api.IntegerLiteralTree;
 import org.sonarsource.slang.api.JumpTree;
 import org.sonarsource.slang.api.LiteralTree;
@@ -41,6 +42,7 @@ import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.MatchCaseTree;
 import org.sonarsource.slang.api.MatchTree;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.PackageDeclarationTree;
 import org.sonarsource.slang.api.ParameterTree;
 import org.sonarsource.slang.api.ParenthesizedExpressionTree;
 import org.sonarsource.slang.api.ParseException;
@@ -110,15 +112,29 @@ public class KotlinConverterTest {
   }
 
   @Test
-  public void testPreamble() {
+  public void testFirstCpdToken() {
     TopLevelTree topLevel = (TopLevelTree) converter.parse("" +
       "@file:JvmName(\"xxx\")\n" +
       "package com.example\n" +
       "import com.example.MyClass\n" +
-      "fun main(args: Array<String>) {}");
-    assertThat(topLevel.preambleDeclarations()).hasSize(3);
-    assertThat(topLevel.declarations()).hasSize(1);
-    assertThat(topLevel.declarations().get(0)).isInstanceOf(FunctionDeclarationTree.class);
+      "fun main(args: Array<String>) {}\n" +
+      "class A {}");
+    assertThat(topLevel.declarations()).hasSize(5);
+    assertThat(topLevel.firstCpdToken().text()).isEqualTo("fun");
+  }
+
+  @Test
+  public void testImport() {
+    Tree topLevel = converter.parse("import abc");
+    assertThat(topLevel.children()).hasSize(1);
+    assertThat(topLevel.children().get(0)).isInstanceOf(ImportDeclarationTree.class);
+  }
+
+  @Test
+  public void testPackage() {
+    Tree topLevel = converter.parse("package abc");
+    assertThat(topLevel.children()).hasSize(1);
+    assertThat(topLevel.children().get(0)).isInstanceOf(PackageDeclarationTree.class);
   }
 
   @Test

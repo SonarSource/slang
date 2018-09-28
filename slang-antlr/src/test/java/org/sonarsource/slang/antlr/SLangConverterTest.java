@@ -35,12 +35,14 @@ import org.sonarsource.slang.api.ExceptionHandlingTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.IfTree;
+import org.sonarsource.slang.api.ImportDeclarationTree;
 import org.sonarsource.slang.api.IntegerLiteralTree;
 import org.sonarsource.slang.api.JumpTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.MatchTree;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.PackageDeclarationTree;
 import org.sonarsource.slang.api.ParenthesizedExpressionTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.ReturnTree;
@@ -72,19 +74,31 @@ public class SLangConverterTest {
   private SLangConverter converter = new SLangConverter();
 
   @Test
-  public void imports() {
-    TopLevelTree tree = (TopLevelTree) converter.parse("import x; import y; import x;");
-    assertThat(tree.declarations()).isEmpty();
-    List<Tree> preambleTrees = tree.preambleDeclarations();
-    assertThat(preambleTrees).hasSize(3);
-    assertTree(preambleTrees.get(0)).isEquivalentTo(preambleTrees.get(2));
-    assertTree(preambleTrees.get(0)).isNotEquivalentTo(preambleTrees.get(1));
-  }
-
-  @Test
   public void top_level_block() {
     Tree tree = converter.parse("{ 2; };").children().get(0);
     assertTree(tree).isBlock(LiteralTree.class);
+  }
+
+  @Test
+  public void first_cpd_token() {
+    TopLevelTree tree = (TopLevelTree) converter.parse("package abc; import x; import y; 42;");
+    assertThat(tree.firstCpdToken().text()).isEqualTo("42");
+  }
+
+  @Test
+  public void package_declaration() {
+    Tree tree = converter.parse("package abc;").children().get(0);
+    assertThat(tree).isInstanceOf(PackageDeclarationTree.class);
+    assertThat(tree.children()).hasSize(1);
+    assertTree(tree.children().get(0)).isIdentifier("abc");
+  }
+
+  @Test
+  public void import_declaration() {
+    Tree tree = converter.parse("import abc;").children().get(0);
+    assertThat(tree).isInstanceOf(ImportDeclarationTree.class);
+    assertThat(tree.children()).hasSize(1);
+    assertTree(tree.children().get(0)).isIdentifier("abc");
   }
 
   @Test

@@ -172,6 +172,7 @@ public class MetricVisitorTest {
   @Test
   public void executable_lines() throws Exception {
     scan("" +
+      "package abc;\n" +
       "import x;\n" +
       "class A {\n" +
       "  fun foo() {\n" +
@@ -182,7 +183,7 @@ public class MetricVisitorTest {
       "{\n" +
       "  x = 42;\n" +
       "};");
-    assertThat(visitor.executableLines()).containsExactly(4, 9);
+    assertThat(visitor.executableLines()).containsExactly(5, 10);
   }
 
   private void scan(String code) throws IOException {

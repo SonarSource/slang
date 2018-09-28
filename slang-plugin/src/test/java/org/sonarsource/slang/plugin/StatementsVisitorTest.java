@@ -34,7 +34,10 @@ public class StatementsVisitorTest {
 
   @Test
   public void should_count_top_level_without_natives_and_blocks() throws Exception {
-    String content = "native[] { };" +
+    String content = "" +
+      "package abc;" +
+      "import xyz;" +
+      "native[] { };" +
       "foo;" + // +1
       "class A{};" +
       "if (a) {};" + // +1

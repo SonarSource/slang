@@ -20,9 +20,9 @@
 package org.sonarsource.scala.converter
 
 import org.sonarsource.slang
-import org.sonarsource.slang.api.TextRange
-import org.sonarsource.slang.api.Token
+import org.sonarsource.slang.api.{NativeTree, TextRange, Token, TreeMetaData}
 import org.sonarsource.slang.impl._
+import org.sonarsource.slang.visitors.TreePrinter
 
 import scala.collection.JavaConverters._
 import scala.meta._
@@ -60,7 +60,11 @@ class ScalaConverter extends slang.api.ASTConverter {
       val metaData = metaDataProvider.metaData(textRange(metaTree))
       metaTree match {
         case scala.meta.Source(stats) =>
-          new TopLevelTreeImpl(metaData, convert(stats), metaDataProvider.allComments())
+          createTopLevelTree(metaData, stats)
+        case scala.meta.Pkg(ref, stats) =>
+          new PackageDeclarationTreeImpl(metaData, convert(ref :: stats))
+        case scala.meta.Import(importers) =>
+          new ImportDeclarationTreeImpl(metaData, convert(importers))
         case lit: scala.meta.Lit.String =>
           new StringLiteralTreeImpl(metaData, "\"" + lit.value + "\"")
         case lit: scala.meta.Lit.Int =>
@@ -73,7 +77,19 @@ class ScalaConverter extends slang.api.ASTConverter {
       }
     }
 
-    def convert(trees: scala.List[scala.meta.Tree]): java.util.List[slang.api.Tree] = {
+    private def createTopLevelTree(metaData: TreeMetaData, stats: List[Stat]) = {
+      val convertedStats = convert(stats)
+      val firstCpdToken = convertedStats.stream()
+        // The first child of a Package is the "ref" of the package
+        .flatMap(t => if (t.isInstanceOf[slang.api.PackageDeclarationTree]) t.children().stream.skip(1) else List(t).asJava.stream)
+        .filter(t => !t.isInstanceOf[slang.api.ImportDeclarationTree])
+        .map[slang.api.Token](t => t.metaData.tokens.get(0))
+        .findFirst()
+        .orElse(null)
+      new TopLevelTreeImpl(metaData, convertedStats, metaDataProvider.allComments, firstCpdToken)
+    }
+
+    private def convert(trees: scala.List[scala.meta.Tree]): java.util.List[slang.api.Tree] = {
       trees.filter(t => t.pos.start != t.pos.end)
         .map(t => convert(t))
         .asJava

@@ -34,17 +34,14 @@ public class CpdVisitor extends TreeVisitor<InputFileContext> {
     register(TopLevelTree.class, (ctx, tree) -> {
       List<Token> tokens = tree.metaData().tokens();
 
-      List<Tree> preambleTrees = tree.preambleDeclarations();
-      if (!preambleTrees.isEmpty()) {
-        Tree lastPreambleTree = preambleTrees.get(preambleTrees.size() - 1);
-        List<Token> lastPreambleTokens = lastPreambleTree.metaData().tokens();
-        Token lastPreambleToken = lastPreambleTokens.get(lastPreambleTokens.size() - 1);
-        tokens = tokens.subList(tokens.indexOf(lastPreambleToken) + 1, tokens.size());
-      }
+      boolean foundFirstToken = (tree.firstCpdToken() == null);
 
       for (Token token : tokens) {
-        String text = token.type() == Token.Type.STRING_LITERAL ? "LITERAL" : token.text();
-        cpdTokens.addToken(ctx.textRange(token.textRange()), text);
+        foundFirstToken = foundFirstToken || (token == tree.firstCpdToken());
+        if (foundFirstToken) {
+          String text = token.type() == Token.Type.STRING_LITERAL ? "LITERAL" : token.text();
+          cpdTokens.addToken(ctx.textRange(token.textRange()), text);
+        }
       }
     });
   }

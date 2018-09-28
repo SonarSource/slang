@@ -46,4 +46,13 @@ public class DuplicationsTest extends TestBase {
     assertThat(getMeasure("duplicated_lines_density").getValue()).isEqualTo("57.9");
   }
 
+  @Test
+  public void scala_duplications() {
+    ORCHESTRATOR.executeBuild(getSonarScanner(BASE_DIRECTORY, "scala"));
+
+    assertThat(getMeasureAsInt("duplicated_lines")).isEqualTo(79);
+    assertThat(getMeasureAsInt("duplicated_blocks")).isEqualTo(5);
+    assertThat(getMeasureAsInt("duplicated_files")).isEqualTo(2);
+    assertThat(getMeasure("duplicated_lines_density").getValue()).isEqualTo("64.2");
+  }
 }
