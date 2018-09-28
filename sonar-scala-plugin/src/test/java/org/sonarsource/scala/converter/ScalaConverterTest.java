@@ -22,7 +22,9 @@ package org.sonarsource.scala.converter;
 import java.util.List;
 import org.junit.Test;
 import org.sonarsource.slang.api.Comment;
+import org.sonarsource.slang.api.ImportDeclarationTree;
 import org.sonarsource.slang.api.LiteralTree;
+import org.sonarsource.slang.api.PackageDeclarationTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.Token;
@@ -53,6 +55,15 @@ public class ScalaConverterTest extends AbstractScalaConverterTest {
   public void top_level_tree() {
     Tree tree = parse("object Main { print(\"Hello!\") }");
     assertThat(tree).isInstanceOf(TopLevelTree.class);
+  }
+
+  @Test
+  public void package_and_import_declarations() {
+    Tree tree = parse("package abc\nimport x.y\nobject MyObj{}");
+    Tree pkg = tree.children().get(0);
+    assertThat(pkg).isInstanceOf(PackageDeclarationTree.class);
+    assertThat(pkg.children()).hasSize(3);
+    assertThat(pkg.children().get(1)).isInstanceOf(ImportDeclarationTree.class);
   }
 
   @Test

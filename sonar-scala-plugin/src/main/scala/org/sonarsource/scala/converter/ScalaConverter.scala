@@ -61,6 +61,10 @@ class ScalaConverter extends slang.api.ASTConverter {
       metaTree match {
         case scala.meta.Source(stats) =>
           createTopLevelTree(metaData, stats)
+        case scala.meta.Pkg(ref, stats) =>
+          new PackageDeclarationTreeImpl(metaData, convert(ref :: stats))
+        case scala.meta.Import(importers) =>
+          new ImportDeclarationTreeImpl(metaData, convert(importers))
         case lit: scala.meta.Lit.String =>
           new StringLiteralTreeImpl(metaData, "\"" + lit.value + "\"")
         case lit: scala.meta.Lit.Int =>
@@ -74,17 +78,15 @@ class ScalaConverter extends slang.api.ASTConverter {
     }
 
     private def createTopLevelTree(metaData: TreeMetaData, stats: List[Stat]) = {
-      val firstCpdTokenRange = stats.flatMap(t => if (t.is[scala.meta.Pkg]) t.asInstanceOf[Pkg].stats else List(t))
-        .find(t => t.isNot[scala.meta.Import])
-        .map(t => textRange(t.tokens.apply(0).pos))
-      val findToken = (range: TextRange) =>
-        metaData.tokens().stream()
-          .filter(token => token.textRange().equals(range))
-          .findFirst()
-      val firstCpdToken = firstCpdTokenRange
-        .map(range => findToken(range).orElse(null))
-        .orNull
-      new TopLevelTreeImpl(metaData, convert(stats), metaDataProvider.allComments, firstCpdToken)
+      val convertedStats = convert(stats)
+      val firstCpdToken = convertedStats.stream()
+        // The first child of a Package is the "ref" of the package
+        .flatMap(t => if (t.isInstanceOf[slang.api.PackageDeclarationTree]) t.children().stream.skip(1) else List(t).asJava.stream)
+        .filter(t => !t.isInstanceOf[slang.api.ImportDeclarationTree])
+        .map[slang.api.Token](t => t.metaData.tokens.get(0))
+        .findFirst()
+        .orElse(null)
+      new TopLevelTreeImpl(metaData, convertedStats, metaDataProvider.allComments, firstCpdToken)
     }
 
     private def convert(trees: scala.List[scala.meta.Tree]): java.util.List[slang.api.Tree] = {
