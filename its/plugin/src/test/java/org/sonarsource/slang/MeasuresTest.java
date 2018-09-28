@@ -79,4 +79,17 @@ public class MeasuresTest extends TestBase {
     assertThat(issuesForRule).extracting(Issue::componentKey).containsExactly(PROJECT_KEY + ":file.rb");
   }
 
+  @Test
+  public void scala_measures() {
+    ORCHESTRATOR.executeBuild(getSonarScanner(BASE_DIRECTORY, "scala"));
+
+    assertThat(getMeasureAsInt("file.scala", "ncloc")).isEqualTo(8);
+    assertThat(getMeasureAsInt("file.scala", "comment_lines")).isEqualTo(3);
+    assertThat(getMeasure("file.scala", "ncloc_data").getValue()).isEqualTo("1=1;3=1;7=1;10=1;11=1;12=1;13=1;15=1");
+    assertThat(getMeasureAsInt("file.scala", "functions")).isEqualTo(1);
+
+    List<Issue> issuesForRule = getIssuesForRule("scala:S1135");
+    assertThat(issuesForRule).extracting(Issue::line).containsExactly(9);
+    assertThat(issuesForRule).extracting(Issue::componentKey).containsExactly(PROJECT_KEY + ":file.scala");
+  }
 }
