@@ -130,6 +130,7 @@ public class SlangRulingTest {
   @Test
   public void test_kotlin() throws IOException {
     run_ruling_test("kotlin", ImmutableMap.of(
+      "sonar.slang.converter.validation", "true",
       "sonar.inclusions", "sources/kotlin/**/*.kt, ruling/src/test/resources/sources/kotlin/**/*.kt",
       "sonar.exclusions", "**/testData/**/*"));
   }
@@ -137,12 +138,14 @@ public class SlangRulingTest {
   @Test
   public void test_ruby() throws IOException {
     run_ruling_test("ruby", ImmutableMap.of(
+      "sonar.slang.converter.validation", "true",
       "sonar.inclusions", "sources/ruby/**/*.rb, ruling/src/test/resources/sources/ruby/**/*.rb"));
   }
 
   @Test
   public void test_scala() throws IOException {
     run_ruling_test("scala", ImmutableMap.of(
+      "sonar.slang.converter.validation", "true",
       "sonar.inclusions", "sources/scala/**/*.scala, ruling/src/test/resources/sources/scala/**/*.scala"));
   }
 

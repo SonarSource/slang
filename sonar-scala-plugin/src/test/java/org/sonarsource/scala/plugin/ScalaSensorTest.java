@@ -52,6 +52,12 @@ public class ScalaSensorTest extends AbstractSensorTest {
     assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. Parse error at position 1:0", inputFile.uri()));
   }
 
+  @Test
+  public void token_validation_map_is_not_empty() {
+    ScalaSensor sensor = sensor(checkFactory("ParsingError"));
+    assertThat(sensor.tokenValidationMap()).isNotEmpty();
+  }
+
   @Override
   protected String repositoryKey() {
     return ScalaPlugin.SCALA_REPOSITORY_KEY;

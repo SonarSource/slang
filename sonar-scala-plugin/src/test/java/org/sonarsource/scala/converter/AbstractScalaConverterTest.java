@@ -20,11 +20,13 @@
 package org.sonarsource.scala.converter;
 
 import java.util.List;
+import org.sonarsource.scala.plugin.ScalaSensor;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.parser.SLangConverter;
+import org.sonarsource.slang.plugin.SlangTreeValidation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,7 +39,9 @@ public abstract class AbstractScalaConverterTest {
   }
 
   Tree scalaStatement(String scalaCode) {
-    TopLevelTree topLevel = (TopLevelTree) converter.parse("object Main { def foo():Unit={ " + scalaCode + "} }");
+    String wrappedCode = "object Main { def foo():Unit={ " + scalaCode + "} }";
+    TopLevelTree topLevel = (TopLevelTree) converter.parse(wrappedCode);
+    SlangTreeValidation.validateTree(topLevel, wrappedCode, ScalaSensor.TOKEN_VALIDATION_MAP);
     NativeTree objectDefn = (NativeTree) topLevel.children().get(0);
     NativeTree template = (NativeTree) objectDefn.children().get(1);
     FunctionDeclarationTree functionDefn = (FunctionDeclarationTree) template.children().get(template.children().size() - 1);

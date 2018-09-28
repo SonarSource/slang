@@ -22,6 +22,8 @@ package org.sonarsource.slang.plugin;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
+import java.util.function.Predicate;
 import org.junit.Test;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.fs.InputFile;
@@ -34,6 +36,7 @@ import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.batch.sensor.issue.IssueLocation;
+import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
@@ -42,13 +45,16 @@ import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.Version;
 import org.sonar.api.utils.log.LoggerLevel;
 import org.sonarsource.slang.api.ASTConverter;
+import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.checks.CommentedCodeCheck;
 import org.sonarsource.slang.checks.IdenticalBinaryOperandCheck;
 import org.sonarsource.slang.checks.StringLiteralDuplicatedCheck;
 import org.sonarsource.slang.checks.api.SlangCheck;
+import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.parser.SLangConverter;
 import org.sonarsource.slang.parser.SlangCodeVerifier;
+import org.sonarsource.slang.plugin.SlangTreeValidation.TokenValidationBuilder;
 import org.sonarsource.slang.testing.AbstractSensorTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -260,6 +266,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   public void test_sonarlint_context() {
     SonarRuntime sonarLintRuntime = SonarRuntimeImpl.forSonarLint(Version.create(3, 9));
     SensorContextTester context = SensorContextTester.create(baseDir);
+    context.setSettings(new MapSettings().setProperty("sonar.slang.converter.validation", "true"));
     InputFile inputFile = createInputFile("file1.slang", "" +
       "fun main(int x) {\nprint (1 == 1); print(\"abc\"); }\nclass A {}");
     context.fileSystem().add(inputFile);
@@ -274,6 +281,42 @@ public class SlangSensorTest extends AbstractSensorTest {
     assertThat(context.cpdTokens(inputFile.key())).isNull();
 
     assertThat(logTester.logs()).contains("1 source files to be analyzed");
+  }
+
+  @Test
+  public void parse_without_validation() {
+    InputFile inputFile = createInputFile("small.slang", "package a;");
+    context.fileSystem().add(inputFile);
+    context.setSettings(new MapSettings().setProperty("sonar.slang.converter.validation", "false"));
+    CheckFactory checkFactory = checkFactory("S1764");
+    sensor(checkFactory).execute(context);
+    assertThat(context.allAnalysisErrors()).hasSize(0);
+    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
+  }
+
+  @Test
+  public void parse_with_converter_validation_but_empty_tokenValidationMap() {
+    InputFile inputFile = createInputFile("small.slang", "package a;");
+    context.fileSystem().add(inputFile);
+    context.setSettings(new MapSettings().setProperty("sonar.slang.converter.validation", "true"));
+    CheckFactory checkFactory = checkFactory("S1764");
+    sensor(checkFactory).execute(context);
+    assertThat(context.allAnalysisErrors()).hasSize(0);
+    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+    assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
+  }
+
+  @Test
+  public void parse_with_converter_validation() {
+    InputFile inputFile = createInputFile("small.slang", "package a;");
+    context.fileSystem().add(inputFile);
+    context.setSettings(new MapSettings().setProperty("sonar.slang.converter.validation", "true"));
+    CheckFactory checkFactory = checkFactory("S1764");
+
+    sensor(checkFactory, new TokenValidationBuilder().anyFor(IdentifierTreeImpl.class).build()).execute(context);
+    assertThat(context.allAnalysisErrors()).hasSize(1);
+    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("Token(s) 'package', ';' unexpected in PackageDeclarationTreeImpl");
   }
 
   @Override
@@ -301,6 +344,30 @@ public class SlangSensorTest extends AbstractSensorTest {
           new CommentedCodeCheck(new SlangCodeVerifier()),
           IdenticalBinaryOperandCheck.class);
         return checks;
+      }
+
+      @Override
+      protected String repositoryKey() {
+        return SlangSensorTest.this.repositoryKey();
+      }
+    };
+  }
+
+  private SlangSensor sensor(CheckFactory checkFactory, Map<Class, Predicate<Token>> tokenValidationMap) {
+    return new SlangSensor(new NoSonarFilter(), fileLinesContextFactory, SLANG) {
+      @Override
+      protected ASTConverter astConverter() {
+        return new SLangConverter();
+      }
+
+      @Override
+      protected Map<Class, Predicate<Token>> tokenValidationMap() {
+        return tokenValidationMap;
+      }
+
+      @Override
+      protected Checks<SlangCheck> checks() {
+        return checkFactory.create(repositoryKey());
       }
 
       @Override

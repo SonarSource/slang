@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -44,6 +46,7 @@ import org.sonarsource.analyzer.commons.ProgressReport;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
+import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.visitors.TreeVisitor;
@@ -75,18 +78,23 @@ public abstract class SlangSensor implements Sensor {
 
   protected abstract String repositoryKey();
 
+  protected Map<Class, Predicate<Token>> tokenValidationMap() {
+    return Collections.emptyMap();
+  }
+
   private boolean analyseFiles(ASTConverter converter,
                                       SensorContext sensorContext,
                                       Iterable<InputFile> inputFiles,
                                       ProgressReport progressReport,
                                       List<TreeVisitor<InputFileContext>> visitors) {
+    boolean validateConversion = sensorContext.config().getBoolean("sonar.slang.converter.validation").orElse(false);
     for (InputFile inputFile : inputFiles) {
       if (sensorContext.isCancelled()) {
         return false;
       }
       InputFileContext inputFileContext = new InputFileContext(sensorContext, inputFile);
       try {
-        analyseFile(converter, inputFileContext, inputFile, visitors);
+        analyseFile(converter, inputFileContext, inputFile, visitors, validateConversion);
       } catch (ParseException e) {
         logParsingError(inputFile, e);
         inputFileContext.reportAnalysisParseError(repositoryKey(), inputFile, e.getPosition());
@@ -96,7 +104,8 @@ public abstract class SlangSensor implements Sensor {
     return true;
   }
 
-  private static void analyseFile(ASTConverter converter, InputFileContext inputFileContext, InputFile inputFile, List<TreeVisitor<InputFileContext>> visitors) {
+  private void analyseFile(ASTConverter converter, InputFileContext inputFileContext, InputFile inputFile,
+                                  List<TreeVisitor<InputFileContext>> visitors, boolean validateConversion) {
     String content;
     try {
       content = inputFile.contents();
@@ -109,6 +118,9 @@ public abstract class SlangSensor implements Sensor {
     }
 
     Tree tree = converter.parse(content);
+    if (validateConversion && !tokenValidationMap().isEmpty()) {
+      SlangTreeValidation.validateTree(tree, content, tokenValidationMap());
+    }
     for (TreeVisitor<InputFileContext> visitor : visitors) {
       try {
         visitor.scan(inputFileContext, tree);
