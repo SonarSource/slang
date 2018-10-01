@@ -54,7 +54,6 @@ public class CheckList {
     CollapsibleIfStatementsCheck.class,
     DuplicateBranchCheck.class,
     DuplicatedFunctionImplementationCheck.class,
-    ElseIfWithoutElseCheck.class,
     EmptyBlockCheck.class,
     EmptyFunctionCheck.class,
     FunctionCognitiveComplexityCheck.class,
