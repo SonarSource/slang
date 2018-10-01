@@ -47,7 +47,6 @@ public class CheckList {
   private static final Class[] SCALA_CHECK_BLACK_LIST = {
     AllBranchesIdenticalCheck.class,
     BadClassNameCheck.class,
-    BadFunctionNameCheck.class,
     BooleanInversionCheck.class,
     BooleanLiteralCheck.class,
     CodeAfterJumpCheck.class,

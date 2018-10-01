@@ -19,16 +19,23 @@
  */
 package org.sonarsource.slang.checks.utils;
 
-/**
- * This enum is used only to distinguish default values for rule parameters. This should be the sole exception in otherwise
- * language agnostic module
- */
-public enum Language {
-  KOTLIN, RUBY, SCALA;
+import java.util.regex.Pattern;
+import org.junit.Test;
 
-  public static final String RUBY_NAMING_DEFAULT = "^(@{0,2}[\\da-z_]+[!?=]?)|([*+-/%=!><~]+)|(\\[]=?)$";
+import static org.assertj.core.api.Assertions.assertThat;
 
-  // support function name suffix '_=', '_+', '_!', ... and operators '+', '-', ...
-  public static final String SCALA_FUNCTION_OR_OPERATOR_NAMING_DEFAULT = "^([a-z][a-zA-Z0-9]*+(_[^a-zA-Z0-9]++)?+|[^a-zA-Z0-9]++)$";
+public class LanguageTest {
 
+  @Test
+  public void default_scala_function_name() {
+    Pattern pattern = Pattern.compile(Language.SCALA_FUNCTION_OR_OPERATOR_NAMING_DEFAULT);
+    assertThat(pattern.matcher("print").matches()).isTrue();
+    assertThat(pattern.matcher("printLn").matches()).isTrue();
+    assertThat(pattern.matcher("method_=").matches()).isTrue();
+    assertThat(pattern.matcher("parse_!").matches()).isTrue();
+    assertThat(pattern.matcher("+").matches()).isTrue();
+    assertThat(pattern.matcher("<<").matches()).isTrue();
+    assertThat(pattern.matcher("print_ln").matches()).isFalse();
+    assertThat(pattern.matcher("PRINT").matches()).isFalse();
+  }
 }
