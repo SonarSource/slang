@@ -61,7 +61,7 @@
     <artifactsToPublish>${project.groupId}:sonar-kotlin-plugin:jar,${project.groupId}:sonar-ruby-plugin:jar,${project.groupId}:sonar-scala-plugin:jar</artifactsToPublish>
     <orchestrator.version>3.21.0.1721</orchestrator.version>
     <!-- TODO replace this PR build with released build -->
-    <sonarlint.version>3.9.0.1909</sonarlint.version>
+    <sonarlint.version>4.0.0.1980</sonarlint.version>
   </properties>
 
   <dependencyManagement>
