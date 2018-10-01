@@ -20,6 +20,7 @@
 package org.sonarsource.scala.converter;
 
 import java.util.List;
+import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
@@ -39,9 +40,8 @@ public abstract class AbstractScalaConverterTest {
     TopLevelTree topLevel = (TopLevelTree) converter.parse("object Main { def foo():Unit={ " + scalaCode + "} }");
     NativeTree objectDefn = (NativeTree) topLevel.children().get(0);
     NativeTree template = (NativeTree) objectDefn.children().get(1);
-    NativeTree functionDefn = (NativeTree) template.children().get(template.children().size() - 1);
-    NativeTree functionBlock = (NativeTree) functionDefn.children().get(2);
-    return functionBlock.children().get(0);
+    FunctionDeclarationTree functionDefn = (FunctionDeclarationTree) template.children().get(template.children().size() - 1);
+    return functionDefn.body().statementOrExpressions().get(0);
   }
 
   Tree slangStatement(String innerCode) {

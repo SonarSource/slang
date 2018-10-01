@@ -19,10 +19,12 @@
  */
 package org.sonarsource.scala.converter
 
+import java.util.Collections.{emptyList, singletonList}
+
 import org.sonarsource.slang
+import org.sonarsource.slang.api
 import org.sonarsource.slang.api.{NativeTree, TextRange, Token, TreeMetaData}
 import org.sonarsource.slang.impl._
-import org.sonarsource.slang.visitors.TreePrinter
 
 import scala.collection.JavaConverters._
 import scala.meta._
@@ -71,10 +73,20 @@ class ScalaConverter extends slang.api.ASTConverter {
           new IntegerLiteralTreeImpl(metaData, lit.syntax)
         case lit: scala.meta.Lit =>
           new LiteralTreeImpl(metaData, lit.syntax)
+        case Term.Name(value) =>
+          new IdentifierTreeImpl(metaData, value)
+        case defn: Defn.Def =>
+          createFunctionDeclarationTree(metaData, defn)
+        case Term.Block(stats) =>
+          new BlockTreeImpl(metaData, convert(stats))
         case _ =>
-          val nativeKind = ScalaNativeKind(metaTree.getClass)
-          new NativeTreeImpl(metaData, nativeKind, convert(metaTree.children))
+          createNativeTree(metaData, metaTree)
       }
+    }
+
+    private def createNativeTree(metaData: TreeMetaData, metaTree: Tree) = {
+      val nativeKind = ScalaNativeKind(metaTree.getClass)
+      new NativeTreeImpl(metaData, nativeKind, convert(metaTree.children))
     }
 
     private def createTopLevelTree(metaData: TreeMetaData, stats: List[Stat]) = {
@@ -93,6 +105,26 @@ class ScalaConverter extends slang.api.ASTConverter {
       trees.filter(t => t.pos.start != t.pos.end)
         .map(t => convert(t))
         .asJava
+    }
+
+    private def createFunctionDeclarationTree(metaData: TreeMetaData, defn: Defn.Def): slang.api.Tree = {
+      if (defn.paramss.size > 1) {
+        return createNativeTree(metaData, defn)
+      }
+      val modifiers = convert(defn.mods)
+      val returnType = defn.decltpe.map(convert).orNull
+      val name = convert(defn.name).asInstanceOf[slang.api.IdentifierTree]
+      val params = defn.paramss match {
+        case List(x) => convert(x)
+        case _ => emptyList[api.Tree]
+      }
+      val rawBody = convert(defn.body);
+      val body = rawBody match {
+        case b: slang.api.BlockTree => b
+        case _ => new BlockTreeImpl(rawBody.metaData(), singletonList(rawBody))
+      }
+      val nativeChildren = convert(defn.tparams)
+      new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, name, params, body, nativeChildren)
     }
 
   }
