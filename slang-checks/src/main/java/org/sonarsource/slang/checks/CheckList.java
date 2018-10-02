@@ -61,7 +61,6 @@ public class CheckList {
     OctalValuesCheck.class,
     RedundantParenthesesCheck.class,
     SelfAssignmentCheck.class,
-    StringLiteralDuplicatedCheck.class,
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
     UnusedFunctionParameterCheck.class,
