@@ -24,6 +24,7 @@ import org.sonarsource.slang.api.Token;
 import java.util.Arrays;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.sonarsource.slang.impl.TextRanges.range;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -62,4 +63,22 @@ public class TreeMetaDataProviderTest {
     assertThat(provider.metaData(new TextRangeImpl(1, 1, 3, 20)).linesOfCode()).containsExactly(1, 2);
     assertThat(provider.metaData(new TextRangeImpl(1, 1, 6, 20)).linesOfCode()).containsExactly(1, 2, 4, 5, 6);
   }
+
+  @Test
+  public void keyword() {
+    Token token1 = new TokenImpl(range(1, 1, 1, 3), "ab", Token.Type.KEYWORD);
+    Token token2 = new TokenImpl(range(1, 4, 1, 6), "cd", Token.Type.KEYWORD);
+    Token token3 = new TokenImpl(range(1, 6, 1, 7), "{",  Token.Type.OTHER);
+    Token token4 = new TokenImpl(range(1, 7, 1, 8), "ef", Token.Type.OTHER);
+    TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2, token3, token4));
+    assertThat(provider.keyword(range(1, 3, 1, 7))).isEqualTo(token2);
+    assertThat(provider.keyword(range(1, 3, 1, 8))).isEqualTo(token2);
+    assertThatThrownBy(() -> provider.keyword(range(1, 3, 1, 4)))
+      .isInstanceOf(IllegalArgumentException.class)
+      .hasMessage("Cannot find single keyword in TextRange[1, 3, 1, 4]");
+    assertThatThrownBy(() -> provider.keyword(range(1, 1, 1, 7)))
+      .isInstanceOf(IllegalArgumentException.class)
+      .hasMessage("Cannot find single keyword in TextRange[1, 1, 1, 7]");
+  }
+
 }

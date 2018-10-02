@@ -59,6 +59,9 @@ class ScalaConverter extends slang.api.ASTConverter {
   private class TreeConversion(metaDataProvider: TreeMetaDataProvider) {
 
     def convert(metaTree: scala.meta.Tree): slang.api.Tree = {
+      if (metaTree.pos.start == metaTree.pos.end) {
+        return null
+      }
       val metaData = metaDataProvider.metaData(textRange(metaTree))
       metaTree match {
         case scala.meta.Source(stats) =>
@@ -79,6 +82,8 @@ class ScalaConverter extends slang.api.ASTConverter {
           createFunctionDeclarationTree(metaData, defn)
         case Term.Block(stats) =>
           new BlockTreeImpl(metaData, convert(stats))
+        case Term.If(cond, thenp, elsep) =>
+          createIfTree(metaData, cond, thenp, elsep)
         case _ =>
           createNativeTree(metaData, metaTree)
       }
@@ -127,6 +132,18 @@ class ScalaConverter extends slang.api.ASTConverter {
       new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, name, params, body, nativeChildren)
     }
 
+    private def createIfTree(metaData: TreeMetaData, cond: Term, thenp: Term, elsep: Term) = {
+      val convertedCond = convert(cond)
+      val convertedThenp = convert(thenp)
+      val convertedElsep = convert(elsep)
+      val ifKeyword = keyword(metaData.textRange.start, convertedCond.metaData.textRange.start)
+      val elseKeyword = if (convertedElsep == null) null else keyword(convertedThenp.textRange.end, convertedElsep.metaData.textRange.start)
+      new IfTreeImpl(metaData, convertedCond, convertedThenp, convertedElsep, ifKeyword, elseKeyword)
+    }
+
+    private def keyword(start: slang.api.TextPointer, end: slang.api.TextPointer): slang.api.Token = {
+      return metaDataProvider.keyword(new TextRangeImpl(start, end))
+    }
   }
 
   case class ScalaNativeKind(treeClass: Class[_ <: scala.meta.Tree]) extends slang.api.NativeKind {
