@@ -27,4 +27,8 @@ public enum Language {
   KOTLIN, RUBY, SCALA;
 
   public static final String RUBY_NAMING_DEFAULT = "^(@{0,2}[\\da-z_]+[!?=]?)|([*+-/%=!><~]+)|(\\[]=?)$";
+
+  // support function name suffix '_=', '_+', '_!', ... and operators '+', '-', ...
+  public static final String SCALA_FUNCTION_OR_OPERATOR_NAMING_DEFAULT = "^([a-z][a-zA-Z0-9]*+(_[^a-zA-Z0-9]++)?+|[^a-zA-Z0-9]++)$";
+
 }
