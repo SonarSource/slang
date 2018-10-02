@@ -33,6 +33,7 @@ import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.impl.BlockTreeImpl;
 import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
+import org.sonarsource.slang.impl.IfTreeImpl;
 import org.sonarsource.slang.impl.ImportDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IntegerLiteralTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
@@ -48,6 +49,7 @@ public class ScalaSensor extends SlangSensor {
     .patternFor("package|\\{|}|;", PackageDeclarationTreeImpl.class)
     .patternFor("import|,|;", ImportDeclarationTreeImpl.class)
     .patternFor("def|\\(|,|\\)|\\[|\\]|implicit|:|=|;", FunctionDeclarationTreeImpl.class)
+    .patternFor("if|\\(|\\)|else|;", IfTreeImpl.class)
     // TODO Remove parentheses from BlockTree, see: whisk/utils/test/ExecutionContextFactoryTests.scala:39,40
     .patternFor("\\{|\\}|\\(|\\)|,|;", BlockTreeImpl.class)
     // TODO 0L should be IntegerLiteralTreeImpl instead of LiteralTreeImpl
