@@ -37,5 +37,7 @@ public class LanguageTest {
     assertThat(pattern.matcher("<<").matches()).isTrue();
     assertThat(pattern.matcher("print_ln").matches()).isFalse();
     assertThat(pattern.matcher("PRINT").matches()).isFalse();
+    assertThat(pattern.matcher("_print").matches()).isFalse();
+    assertThat(pattern.matcher("+print").matches()).isFalse();
   }
 }
