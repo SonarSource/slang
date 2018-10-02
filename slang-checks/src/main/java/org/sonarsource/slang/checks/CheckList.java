@@ -72,7 +72,6 @@ public class CheckList {
     StringLiteralDuplicatedCheck.class,
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
-    TooLongFunctionCheck.class,
     TooManyCasesCheck.class,
     TooManyParametersCheck.class,
     UnusedFunctionParameterCheck.class,
