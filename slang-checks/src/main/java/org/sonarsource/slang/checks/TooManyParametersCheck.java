@@ -19,29 +19,37 @@
  */
 package org.sonarsource.slang.checks;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import org.sonar.check.Rule;
+import org.sonar.check.RuleProperty;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SecondaryLocation;
 import org.sonarsource.slang.checks.api.SlangCheck;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.sonar.check.Rule;
 
 @Rule(key = "S107")
 public class TooManyParametersCheck implements SlangCheck {
 
-  private int threshold = 7;
+  private static final int DEFAULT_MAX = 7;
+
+  @RuleProperty(
+    key = "Max",
+    description = "Maximum authorized number of parameters",
+    defaultValue = "" + DEFAULT_MAX
+  )
+  public int max = DEFAULT_MAX;
 
   @Override
   public void initialize(InitContext init) {
     init.register(FunctionDeclarationTree.class, (ctx, tree) -> {
-      if (tree.formalParameters().size() > threshold) {
+      if (tree.formalParameters().size() > max) {
         String message = String.format(
           "This function has %s parameters, which is greater than the %s authorized.",
           tree.formalParameters().size(),
-          threshold);
+          max);
         List<SecondaryLocation> secondaryLocations = tree.formalParameters().stream()
-          .skip(threshold)
+          .skip(max)
           .map(SecondaryLocation::new)
           .collect(Collectors.toList());
 
