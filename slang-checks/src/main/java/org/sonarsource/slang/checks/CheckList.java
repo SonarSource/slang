@@ -55,7 +55,6 @@ public class CheckList {
     DuplicateBranchCheck.class,
     DuplicatedFunctionImplementationCheck.class,
     EmptyBlockCheck.class,
-    EmptyFunctionCheck.class,
     FunctionCognitiveComplexityCheck.class,
     HardcodedCredentialsCheck.class,
     HardcodedIpCheck.class,
