@@ -62,7 +62,7 @@ class ScalaConverter extends slang.api.ASTConverter {
       if (metaTree.pos.start == metaTree.pos.end) {
         return null
       }
-      val metaData = metaDataProvider.metaData(textRange(metaTree))
+      val metaData = treeMetaData(metaTree)
       metaTree match {
         case scala.meta.Source(stats) =>
           createTopLevelTree(metaData, stats)
@@ -84,9 +84,15 @@ class ScalaConverter extends slang.api.ASTConverter {
           new BlockTreeImpl(metaData, convert(stats))
         case Term.If(cond, thenp, elsep) =>
           createIfTree(metaData, cond, thenp, elsep)
+        case matchTree: Term.Match =>
+          createMatchTree(metaData, matchTree)
         case _ =>
           createNativeTree(metaData, metaTree)
       }
+    }
+
+    private def treeMetaData(metaTree: Tree) = {
+      metaDataProvider.metaData(textRange(metaTree))
     }
 
     private def createNativeTree(metaData: TreeMetaData, metaTree: Tree) = {
@@ -136,13 +142,26 @@ class ScalaConverter extends slang.api.ASTConverter {
       val convertedCond = convert(cond)
       val convertedThenp = convert(thenp)
       val convertedElsep = convert(elsep)
-      val ifKeyword = keyword(metaData.textRange.start, convertedCond.metaData.textRange.start)
-      val elseKeyword = if (convertedElsep == null) null else keyword(convertedThenp.textRange.end, convertedElsep.metaData.textRange.start)
+      val ifKeyword = keyword(metaData.textRange.start, convertedCond.textRange.start)
+      val elseKeyword = if (convertedElsep == null) null else keyword(convertedThenp.textRange.end, convertedElsep.textRange.start)
       new IfTreeImpl(metaData, convertedCond, convertedThenp, convertedElsep, ifKeyword, elseKeyword)
     }
 
+    private def createMatchTree(metaData: TreeMetaData, matchTree: Term.Match): api.Tree = {
+      if (matchTree.cases.exists(c => c.cond.nonEmpty)) {
+        return createNativeTree(metaData, matchTree)
+      }
+      val convertedCases = matchTree.cases
+        .map(c => new MatchCaseTreeImpl(treeMetaData(c), if (c.pat.is[Pat.Wildcard]) null else convert(c.pat), convert(c.body))
+          .asInstanceOf[slang.api.MatchCaseTree])
+      val convertedExpression = convert(matchTree.expr)
+      val matchKeyword = keyword(convertedExpression.textRange.end, convertedCases.head.textRange.start)
+      new MatchTreeImpl(metaData, convertedExpression, convertedCases.asJava, matchKeyword)
+    }
+
+
     private def keyword(start: slang.api.TextPointer, end: slang.api.TextPointer): slang.api.Token = {
-      return metaDataProvider.keyword(new TextRangeImpl(start, end))
+      metaDataProvider.keyword(new TextRangeImpl(start, end))
     }
   }
 
