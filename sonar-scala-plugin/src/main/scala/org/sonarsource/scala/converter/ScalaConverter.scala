@@ -23,7 +23,7 @@ import java.util.Collections.{emptyList, singletonList}
 
 import org.sonarsource.slang
 import org.sonarsource.slang.api
-import org.sonarsource.slang.api.{NativeTree, TextRange, Token, TreeMetaData}
+import org.sonarsource.slang.api.{NativeTree, TextRange, Token, TreeMetaData, IdentifierTree}
 import org.sonarsource.slang.impl._
 
 import scala.collection.JavaConverters._
@@ -78,6 +78,8 @@ class ScalaConverter extends slang.api.ASTConverter {
           new LiteralTreeImpl(metaData, lit.syntax)
         case Term.Name(value) =>
           new IdentifierTreeImpl(metaData, value)
+        case Type.Name(value) =>
+          new IdentifierTreeImpl(metaData, value)
         case defn: Defn.Def =>
           createFunctionDeclarationTree(metaData, defn)
         case Term.Block(stats) =>
@@ -86,6 +88,9 @@ class ScalaConverter extends slang.api.ASTConverter {
           createIfTree(metaData, cond, thenp, elsep)
         case matchTree: Term.Match =>
           createMatchTree(metaData, matchTree)
+        case classDecl: Defn.Class =>
+          val identifier = convert(classDecl.name).asInstanceOf[IdentifierTree]
+          new ClassDeclarationTreeImpl(metaData, identifier, createNativeTree(metaData, classDecl))
         case _ =>
           createNativeTree(metaData, metaTree)
       }
