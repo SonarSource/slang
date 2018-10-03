@@ -59,7 +59,7 @@ class ScalaConverter extends slang.api.ASTConverter {
   private class TreeConversion(metaDataProvider: TreeMetaDataProvider) {
 
     def convert(metaTree: scala.meta.Tree): slang.api.Tree = {
-      if (metaTree.pos.start == metaTree.pos.end) {
+      if (metaTree.pos.start == metaTree.pos.end && metaTree.isNot[scala.meta.Source]) {
         return null
       }
       val metaData = treeMetaData(metaTree)

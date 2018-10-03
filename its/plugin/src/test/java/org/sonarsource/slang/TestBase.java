@@ -62,7 +62,7 @@ public abstract class TestBase {
       .setProjectDir(new File(directoryToScan, languageKey))
       .setProjectKey(PROJECT_KEY)
       .setProjectName(PROJECT_KEY)
-      .setProperty("sonar.slang.converter.validation", "true")
+      .setProperty("sonar.slang.converter.validation", "log")
       .setProjectVersion("1")
       .setSourceDirs(".");
   }

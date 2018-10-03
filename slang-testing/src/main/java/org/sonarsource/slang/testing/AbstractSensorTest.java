@@ -27,7 +27,6 @@ import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
-import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.resources.Language;
@@ -55,7 +54,6 @@ public abstract class AbstractSensorTest {
   public void setup() {
     baseDir = temp.newDir();
     context = SensorContextTester.create(baseDir);
-    context.setSettings(new MapSettings().setProperty("sonar.slang.converter.validation", "true"));
     FileLinesContext fileLinesContext = mock(FileLinesContext.class);
     when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
   }

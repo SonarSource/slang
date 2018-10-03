@@ -19,44 +19,17 @@
  */
 package org.sonarsource.scala.plugin;
 
-import java.util.Map;
-import java.util.function.Predicate;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonarsource.scala.converter.ScalaConverter;
 import org.sonarsource.slang.api.ASTConverter;
-import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.api.SlangCheck;
-import org.sonarsource.slang.impl.BlockTreeImpl;
-import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
-import org.sonarsource.slang.impl.IdentifierTreeImpl;
-import org.sonarsource.slang.impl.IfTreeImpl;
-import org.sonarsource.slang.impl.ImportDeclarationTreeImpl;
-import org.sonarsource.slang.impl.IntegerLiteralTreeImpl;
-import org.sonarsource.slang.impl.LiteralTreeImpl;
-import org.sonarsource.slang.impl.NativeTreeImpl;
-import org.sonarsource.slang.impl.PackageDeclarationTreeImpl;
-import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 import org.sonarsource.slang.plugin.SlangSensor;
-import org.sonarsource.slang.plugin.SlangTreeValidation.TokenValidationBuilder;
 
-public class ScalaSensor extends SlangSensor {
-
-  public static final Map<Class, Predicate<Token>> TOKEN_VALIDATION_MAP = new TokenValidationBuilder()
-    .patternFor("package|\\{|}|;", PackageDeclarationTreeImpl.class)
-    .patternFor("import|,|;", ImportDeclarationTreeImpl.class)
-    .patternFor("def|\\(|,|\\)|\\[|\\]|implicit|:|=|;", FunctionDeclarationTreeImpl.class)
-    .patternFor("if|\\(|\\)|else|;", IfTreeImpl.class)
-    // TODO Remove parentheses from BlockTree, see: whisk/utils/test/ExecutionContextFactoryTests.scala:39,40
-    .patternFor("\\{|\\}|\\(|\\)|,|;", BlockTreeImpl.class)
-    // TODO 0L should be IntegerLiteralTreeImpl instead of LiteralTreeImpl
-    .patternFor("null|true|false|\\(|\\)|'.*|[0-9a-fA-FxX.eEfFdDlL+\\-]+", LiteralTreeImpl.class)
-    .patternFor("\\(|\\)|\\+|-|[0-9a-fA-FxX]+[Ll]?", IntegerLiteralTreeImpl.class)
-    .anyFor(IdentifierTreeImpl.class, StringLiteralTreeImpl.class, NativeTreeImpl.class)
-    .build();
+public class ScalaSensor  extends SlangSensor {
 
   private final Checks<SlangCheck> checks;
 
@@ -69,11 +42,6 @@ public class ScalaSensor extends SlangSensor {
   @Override
   protected ASTConverter astConverter() {
     return new ScalaConverter();
-  }
-
-  @Override
-  protected Map<Class, Predicate<Token>> tokenValidationMap() {
-    return TOKEN_VALIDATION_MAP;
   }
 
   @Override

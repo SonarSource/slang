@@ -20,6 +20,7 @@
 package org.sonarsource.scala.plugin;
 
 import java.util.Collection;
+import org.junit.Before;
 import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
@@ -32,6 +33,12 @@ import org.sonarsource.slang.testing.AbstractSensorTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ScalaSensorTest extends AbstractSensorTest {
+
+  @Before
+  public void setup() {
+    super.setup();
+    context.setSettings(new MapSettings().setProperty("sonar.slang.converter.validation", "throw"));
+  }
 
   @Test
   public void test_fail_parsing() {
@@ -50,12 +57,6 @@ public class ScalaSensorTest extends AbstractSensorTest {
     assertThat(textPointer.lineOffset()).isEqualTo(0);
 
     assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. Parse error at position 1:0", inputFile.uri()));
-  }
-
-  @Test
-  public void token_validation_map_is_not_empty() {
-    ScalaSensor sensor = sensor(checkFactory("ParsingError"));
-    assertThat(sensor.tokenValidationMap()).isNotEmpty();
   }
 
   @Override

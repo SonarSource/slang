@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -130,7 +131,6 @@ public class SlangRulingTest {
   @Test
   public void test_kotlin() throws IOException {
     run_ruling_test("kotlin", ImmutableMap.of(
-      "sonar.slang.converter.validation", "true",
       "sonar.inclusions", "sources/kotlin/**/*.kt, ruling/src/test/resources/sources/kotlin/**/*.kt",
       "sonar.exclusions", "**/testData/**/*"));
   }
@@ -138,18 +138,19 @@ public class SlangRulingTest {
   @Test
   public void test_ruby() throws IOException {
     run_ruling_test("ruby", ImmutableMap.of(
-      "sonar.slang.converter.validation", "true",
       "sonar.inclusions", "sources/ruby/**/*.rb, ruling/src/test/resources/sources/ruby/**/*.rb"));
   }
 
   @Test
   public void test_scala() throws IOException {
     run_ruling_test("scala", ImmutableMap.of(
-      "sonar.slang.converter.validation", "true",
       "sonar.inclusions", "sources/scala/**/*.scala, ruling/src/test/resources/sources/scala/**/*.scala"));
   }
 
-  private void run_ruling_test(String language, Map<String, String> properties) throws IOException {
+  private void run_ruling_test(String language, Map<String, String> languageProperties) throws IOException {
+    Map<String, String> properties = new HashMap<>(languageProperties);
+    properties.put("sonar.slang.converter.validation", "log");
+
     String projectKey = language + "-project";
     orchestrator.getServer().provisionProject(projectKey, projectKey);
     orchestrator.getServer().associateProjectToQualityProfile(projectKey, language, "rules");

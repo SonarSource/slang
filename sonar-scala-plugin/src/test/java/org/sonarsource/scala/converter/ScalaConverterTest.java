@@ -58,6 +58,12 @@ public class ScalaConverterTest extends AbstractScalaConverterTest {
   }
 
   @Test
+  public void empty_top_level_tree() {
+    assertThat(parse("")).isInstanceOf(TopLevelTree.class);
+    assertThat(parse("  \n")).isInstanceOf(TopLevelTree.class);
+  }
+
+  @Test
   public void package_and_import_declarations() {
     Tree tree = parse("package abc\nimport x.y\nobject MyObj{}");
     Tree pkg = tree.children().get(0);
