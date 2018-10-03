@@ -24,8 +24,15 @@ import org.junit.Test;
 public class TooManyParametersCheckTest {
 
   @Test
-  public void test() {
+  public void default_threshold() {
     Verifier.verify("TooManyParameters.slang", new TooManyParametersCheck());
+  }
+
+  @Test
+  public void threshold_3() {
+    TooManyParametersCheck check = new TooManyParametersCheck();
+    check.max = 3;
+    Verifier.verify("TooManyParameters.threshold.3.slang", check);
   }
 
 }
