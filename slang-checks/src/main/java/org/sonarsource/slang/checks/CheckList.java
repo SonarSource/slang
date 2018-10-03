@@ -50,7 +50,6 @@ public class CheckList {
     BooleanInversionCheck.class,
     BooleanLiteralCheck.class,
     CodeAfterJumpCheck.class,
-    CollapsibleIfStatementsCheck.class,
     DuplicateBranchCheck.class,
     DuplicatedFunctionImplementationCheck.class,
     EmptyBlockCheck.class,
