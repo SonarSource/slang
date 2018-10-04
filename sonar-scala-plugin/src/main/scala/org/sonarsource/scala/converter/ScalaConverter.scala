@@ -19,17 +19,18 @@
  */
 package org.sonarsource.scala.converter
 
+import java.util
 import java.util.Collections.{emptyList, singletonList}
 
 import org.sonarsource.slang
 import org.sonarsource.slang.api
-import org.sonarsource.slang.api.{NativeTree, TextRange, Token, TreeMetaData, IdentifierTree}
+import org.sonarsource.slang.api.{IdentifierTree, TextRange, Token, TreeMetaData}
 import org.sonarsource.slang.impl._
 
 import scala.collection.JavaConverters._
 import scala.meta._
 import scala.meta.internal.tokenizers.keywords
-import scala.meta.tokens.Token.Comment
+import scala.meta.tokens.Token.{CR, Comment, LF, Space, Tab}
 
 class ScalaConverter extends slang.api.ASTConverter {
 
@@ -41,8 +42,8 @@ class ScalaConverter extends slang.api.ASTConverter {
     }
 
     val allTokens = metaTree.tokens
-      .filter(t => !t.is[Comment])
-      .filter(t => t.text.trim.nonEmpty)
+      .filter(t => t.isNot[Comment])
+      .filter(t => t.pos.start < t.pos.end && t.isNot[Space] && t.isNot[Tab] && t.isNot[CR] && t.isNot[LF])
       .map(t => new TokenImpl(textRange(t.pos), t.text, tokenType(t)))
       .asInstanceOf[IndexedSeq[Token]]
       .asJava
@@ -76,6 +77,10 @@ class ScalaConverter extends slang.api.ASTConverter {
           new IntegerLiteralTreeImpl(metaData, lit.syntax)
         case lit: scala.meta.Lit =>
           new LiteralTreeImpl(metaData, lit.syntax)
+        case lit: scala.meta.Term.Interpolate if lit.args.nonEmpty =>
+          // We don't transform the parts in StringLiteralTreeImpl if we have some args in the interpolated term
+          // Example: s"abs $x" is not transformed but raw"abc" is
+          mapInterpolateWithArgs(metaTree, metaData, lit)
         case Term.Name(value) =>
           new IdentifierTreeImpl(metaData, value)
         case Type.Name(value) =>
@@ -115,6 +120,23 @@ class ScalaConverter extends slang.api.ASTConverter {
         .findFirst()
         .orElse(null)
       new TopLevelTreeImpl(metaData, convertedStats, metaDataProvider.allComments, firstCpdToken)
+    }
+
+    private def mapInterpolateWithArgs(metaTree: Tree, metaData: TreeMetaData, lit: scala.meta.Term.Interpolate) = {
+      val nativeKind = ScalaNativeKind(metaTree.getClass)
+      val convertedChildren = new util.ArrayList[slang.api.Tree]()
+
+      convertedChildren.add(convert(lit.prefix))
+
+      lit.parts.filter(p => p.pos.start < p.pos.end)
+        .map(p => createNativeTree(metaDataProvider.metaData(textRange(p)), p))
+        .foreach(convertedChildren.add)
+
+      lit.args.map(convert)
+        .filter(_ != null)
+        .foreach(convertedChildren.add)
+
+      new NativeTreeImpl(metaData, nativeKind, convertedChildren)
     }
 
     private def convert(trees: scala.List[scala.meta.Tree]): java.util.List[slang.api.Tree] = {

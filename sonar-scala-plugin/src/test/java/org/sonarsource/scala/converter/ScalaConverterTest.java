@@ -74,10 +74,21 @@ public class ScalaConverterTest extends AbstractScalaConverterTest {
 
   @Test
   public void tokens() {
-    Tree tree = parse("object Main /* comment */ { print(\"Hello!\") }");
+    Tree tree = parse("object Main /* comment */ {\n" +
+      "  print(\"hello world!\")\n" +
+      "\tprint(s\"$hello $world!\")\r\n" +
+      "}\n");
     List<Token> tokens = tree.metaData().tokens();
-    assertThat(tokens).extracting(Token::text).containsExactly("object", "Main", "{", "print", "(", "\"Hello!\"", ")", "}");
-    assertThat(tokens).extracting(Token::type).containsExactly(KEYWORD, OTHER, OTHER, OTHER, OTHER, STRING_LITERAL, OTHER, OTHER);
+    assertThat(tokens).extracting(Token::text).containsExactly(
+      "object", "Main", "{",
+      "print", "(", "\"hello world!\"", ")",
+      "print", "(", "s", "\"", "$", "hello", " ", "$", "world", "!", "\"", ")",
+      "}");
+    assertThat(tokens).extracting(Token::type).containsExactly(
+      KEYWORD, OTHER, OTHER,
+      OTHER, OTHER, STRING_LITERAL, OTHER,
+      OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER,
+      OTHER);
     assertRange(tokens.get(1).textRange()).hasRange(1, 7, 1, 11);
   }
 
