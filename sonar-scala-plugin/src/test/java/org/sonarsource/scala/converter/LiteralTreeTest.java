@@ -41,6 +41,10 @@ public class LiteralTreeTest extends AbstractScalaConverterTest {
       .filter(LiteralTree.class::isInstance)
       .map(LiteralTree.class::cast)
       .map(LiteralTree::value)).containsExactly("\"abc\"");
+
+    //Test that string interpolation with variable are not mapped to LiteralTree
+    Tree interpolationTree = scalaStatement("s\"abc $x \"");
+    assertThat(interpolationTree.descendants().filter(LiteralTree.class::isInstance)).isEmpty();
   }
 
   @Test
