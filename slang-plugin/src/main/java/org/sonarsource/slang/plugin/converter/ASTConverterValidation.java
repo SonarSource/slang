@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.utils;
+package org.sonarsource.slang.plugin.converter;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.sonar.api.config.Configuration;
+import org.sonar.api.internal.google.common.annotations.VisibleForTesting;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.slang.api.ASTConverter;
@@ -97,11 +98,13 @@ public class ASTConverterValidation implements ASTConverter {
     wrapped.terminate();
   }
 
-  public ValidationMode mode() {
+  @VisibleForTesting
+  ValidationMode mode() {
     return mode;
   }
 
-  public List<String> errors() {
+  @VisibleForTesting
+  List<String> errors() {
     return firstErrorOfEachKind.entrySet().stream()
       .map(entry -> entry.getKey() + entry.getValue())
       .collect(Collectors.toList());
@@ -187,7 +190,7 @@ public class ASTConverterValidation implements ASTConverter {
         .collect(Collectors.toList());
     } else {
       unexpectedTokens = tokens.stream()
-        .filter(token -> !(token.type() == Token.Type.KEYWORD || token.type() == Token.Type.STRING_LITERAL))
+        .filter(token -> token.type() != Token.Type.KEYWORD)
         .filter(token -> !PUNCTUATOR_PATTERN.matcher(token.text()).matches())
         .collect(Collectors.toList());
     }

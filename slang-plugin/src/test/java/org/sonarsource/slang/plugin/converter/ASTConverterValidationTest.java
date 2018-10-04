@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.utils;
+package org.sonarsource.slang.plugin.converter;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.assertj.core.api.ListAssert;
 import org.junit.Rule;
@@ -53,7 +52,7 @@ import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 import org.sonarsource.slang.impl.TextRangeImpl;
 import org.sonarsource.slang.impl.TokenImpl;
 import org.sonarsource.slang.impl.TopLevelTreeImpl;
-import org.sonarsource.slang.utils.ASTConverterValidation.ValidationMode;
+import org.sonarsource.slang.plugin.converter.ASTConverterValidation.ValidationMode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -243,7 +242,7 @@ public class ASTConverterValidationTest {
       token(1, 9, "=="),
       stringLiteral(1, 12, "\"a\""));
     assertValidationErrors("if value == \"a\"", new BlockTreeImpl(metaData, Collections.emptyList()))
-      .containsExactly("Unexpected tokens in BlockTreeImpl: 'value' (line: 1, column: 1)");
+      .containsExactly("Unexpected tokens in BlockTreeImpl: 'value', '\"a\"' (line: 1, column: 1)");
   }
 
   @Test
@@ -352,11 +351,7 @@ public class ASTConverterValidationTest {
 
       @Override
       public Set<Integer> linesOfCode() {
-        return tokens.stream()
-          .map(HasTextRange::textRange)
-          .flatMapToInt(range -> IntStream.range(range.start().line(), range.end().line() + 1))
-          .boxed()
-          .collect(Collectors.toSet());
+        throw new UnsupportedOperationException();
       }
     };
   }

@@ -22,7 +22,6 @@ package org.sonarsource.slang.plugin;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import org.junit.Before;
 import org.junit.Test;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.fs.InputFile;
@@ -35,7 +34,6 @@ import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.batch.sensor.issue.IssueLocation;
-import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
@@ -61,12 +59,6 @@ import static org.sonarsource.slang.plugin.SlangSensorTest.SlangLanguage.SLANG;
 import static org.sonarsource.slang.testing.TextRangeAssert.assertTextRange;
 
 public class SlangSensorTest extends AbstractSensorTest {
-
-  @Before
-  public void setup() {
-    super.setup();
-    context.setSettings(new MapSettings().setProperty("sonar.slang.converter.validation", "log"));
-  }
 
   @Test
   public void test_one_rule() {

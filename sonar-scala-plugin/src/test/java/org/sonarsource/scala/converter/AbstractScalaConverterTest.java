@@ -26,8 +26,8 @@ import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.parser.SLangConverter;
-import org.sonarsource.slang.utils.ASTConverterValidation;
-import org.sonarsource.slang.utils.ASTConverterValidation.ValidationMode;
+import org.sonarsource.slang.plugin.converter.ASTConverterValidation;
+import org.sonarsource.slang.plugin.converter.ASTConverterValidation.ValidationMode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

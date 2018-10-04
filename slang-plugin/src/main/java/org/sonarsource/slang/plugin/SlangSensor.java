@@ -46,7 +46,7 @@ import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.checks.api.SlangCheck;
-import org.sonarsource.slang.utils.ASTConverterValidation;
+import org.sonarsource.slang.plugin.converter.ASTConverterValidation;
 import org.sonarsource.slang.visitors.TreeVisitor;
 
 public abstract class SlangSensor implements Sensor {
