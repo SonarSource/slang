@@ -225,7 +225,15 @@ class ScalaConverter extends slang.api.ASTConverter {
     }
 
     private def createBinaryExpressionTree(metaData: TreeMetaData, infix: Term.ApplyInfix, operator: BinaryExpressionTree.Operator): slang.api.Tree = {
+      // Scala can have multiple arguments on the right-hand side of an infix function application
+      // Example: foo ** (bar, baz)
       if (infix.args.length != 1) {
+        return createNativeTree(metaData, infix)
+      }
+      // Scala has special shorthand for an anonymous function
+      // (_ || _) is equivalent to (p1, p2) => p1 || p2
+      val elems = infix.args :+ infix.lhs
+      if (elems.toStream.exists(term => term.is[Term.Placeholder])) {
         return createNativeTree(metaData, infix)
       }
       val leftOperand = convert(infix.lhs)

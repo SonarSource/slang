@@ -83,4 +83,12 @@ public class BinaryExpressionTreeTest extends AbstractScalaConverterTest {
     tree = scalaStatement("a foo 2");
     assertTree(tree).isInstanceOf(NativeTree.class);
   }
+  @Test
+  public void placeholder() {
+    Tree tree = scalaStatement("_ * _");
+    assertTree(tree).isInstanceOf(NativeTree.class);
+
+    tree = scalaStatement("_ + 2");
+    assertTree(tree).isInstanceOf(NativeTree.class);
+  }
 }

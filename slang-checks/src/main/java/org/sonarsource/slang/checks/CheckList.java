@@ -54,7 +54,6 @@ public class CheckList {
     EmptyBlockCheck.class,
     FunctionCognitiveComplexityCheck.class,
     HardcodedCredentialsCheck.class,
-    IdenticalBinaryOperandCheck.class,
     IdenticalConditionsCheck.class,
     MatchWithoutElseCheck.class,
     OctalValuesCheck.class,
