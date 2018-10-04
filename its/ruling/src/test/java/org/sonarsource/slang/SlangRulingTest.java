@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -146,7 +147,10 @@ public class SlangRulingTest {
       "sonar.inclusions", "sources/scala/**/*.scala, ruling/src/test/resources/sources/scala/**/*.scala"));
   }
 
-  private void run_ruling_test(String language, Map<String, String> properties) throws IOException {
+  private void run_ruling_test(String language, Map<String, String> languageProperties) throws IOException {
+    Map<String, String> properties = new HashMap<>(languageProperties);
+    properties.put("sonar.slang.converter.validation", "log");
+
     String projectKey = language + "-project";
     orchestrator.getServer().provisionProject(projectKey, projectKey);
     orchestrator.getServer().associateProjectToQualityProfile(projectKey, language, "rules");
