@@ -20,17 +20,20 @@
 package org.sonarsource.scala.converter;
 
 import java.util.List;
+import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.parser.SLangConverter;
+import org.sonarsource.slang.plugin.converter.ASTConverterValidation;
+import org.sonarsource.slang.plugin.converter.ASTConverterValidation.ValidationMode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class AbstractScalaConverterTest {
 
-  private final ScalaConverter converter = new ScalaConverter();
+  private final ASTConverter converter = new ASTConverterValidation(new ScalaConverter(), ValidationMode.THROW_EXCEPTION);
 
   Tree parse(String scalaCode) {
     return converter.parse(scalaCode);

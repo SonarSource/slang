@@ -3,6 +3,7 @@
   "ruleKeys": [
     "ParsingError",
     "S100",
+    "S101",
     "S107",
     "S1066",
     "S1134",

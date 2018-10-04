@@ -46,6 +46,7 @@ import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.checks.api.SlangCheck;
+import org.sonarsource.slang.plugin.converter.ASTConverterValidation;
 import org.sonarsource.slang.visitors.TreeVisitor;
 
 public abstract class SlangSensor implements Sensor {
@@ -140,7 +141,7 @@ public abstract class SlangSensor implements Sensor {
     ProgressReport progressReport = new ProgressReport("Progress of the " + language.getName() + " analysis", TimeUnit.SECONDS.toMillis(10));
     progressReport.start(filenames);
     boolean success = false;
-    ASTConverter converter = astConverter();
+    ASTConverter converter = ASTConverterValidation.wrap(astConverter(), sensorContext.config());
     try {
       success = analyseFiles(converter, sensorContext, inputFiles, progressReport, visitors(sensorContext));
     } finally {
