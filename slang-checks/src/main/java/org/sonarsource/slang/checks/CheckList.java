@@ -59,7 +59,6 @@ public class CheckList {
     IdenticalBinaryOperandCheck.class,
     IdenticalConditionsCheck.class,
     IfConditionalAlwaysTrueOrFalseCheck.class,
-    MatchCaseTooBigCheck.class,
     MatchWithoutElseCheck.class,
     NestedMatchCheck.class,
     OctalValuesCheck.class,
