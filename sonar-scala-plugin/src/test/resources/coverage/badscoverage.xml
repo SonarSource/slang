@@ -1,0 +1,4 @@
+
+<statement
+        package="package.name" class="ListTestObject" class-type="Object" full-class-name="package.name.ListTestObject" source="/Absolute/Path/To/file1.scala" method="listM" start="210" end="218" branch="false" invocation-count="1" ignored="false">
+</statement>
