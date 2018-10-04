@@ -91,10 +91,38 @@ public class ScoverageSensorTest {
 
     new ScoverageSensor().execute(context);
 
-    String expectedMessage = String.format(
-        "Some attributes of statement at line 3 of scoverage report are not present.");
+    String expectedMessage = "Some attributes of statement at line 3 of scoverage report are not present.";
     assertThat(logTester.logs().contains(expectedMessage)).isTrue();
   }
+
+  @Test
+  public void testLogWhenUnresolvedInputFiles() throws IOException {
+    Path baseDir = COVERAGE_DIR.toAbsolutePath();
+    Path reportPath = baseDir.resolve("scoverage.xml");
+
+    SensorContextTester context = getSensorContext(reportPath.toString());
+
+    new ScoverageSensor().execute(context);
+
+    String expectedMessage = "Fail to resolve 2 file(s). No coverage data will be imported on the following file(s): /Absolute/Path/To/file1.scala;/Absolute/Path/To/file2.scala";
+
+    assertThat(logTester.logs().contains(expectedMessage)).isTrue();
+  }
+
+  @Test
+  public void testLogInvalidXMLFile() throws IOException {
+    Path baseDir = COVERAGE_DIR.toAbsolutePath();
+    Path reportPath = baseDir.resolve("invalidscoverage.xml");
+
+    SensorContextTester context = getSensorContext(reportPath.toString());
+
+    new ScoverageSensor().execute(context);
+
+    String expectedMessage = String.format("File '" + reportPath.toString() + "' can't be read. ParseError at [row,col]:[2,1]\nMessage: Content is not allowed in prolog.");
+
+    assertThat(logTester.logs().contains(expectedMessage)).isTrue();
+  }
+
 
   private SensorContextTester getSensorContext(String coverageReportPath, String... fileNames) throws IOException {
     Path baseDir = COVERAGE_DIR.toAbsolutePath();
