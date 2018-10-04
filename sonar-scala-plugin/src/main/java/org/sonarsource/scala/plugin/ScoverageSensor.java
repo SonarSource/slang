@@ -34,9 +34,18 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.stream.Collectors;
 
 import static org.sonarsource.scala.plugin.ScalaPlugin.COVERAGE_REPORT_PATHS_KEY;
@@ -44,7 +53,7 @@ import static org.sonarsource.scala.plugin.ScalaPlugin.COVERAGE_REPORT_PATHS_KEY
 public class ScoverageSensor implements Sensor {
 
 
-  private final String XML_REPORT_FILENAME = "scoverage.xml";
+  private static final String XML_REPORT_FILENAME = "scoverage.xml";
 
   private static final QName STATEMENT_ELEMENT = new QName("statement");
 
@@ -68,7 +77,8 @@ public class ScoverageSensor implements Sensor {
     List<File> reportFiles = ExternalReportProvider.getReportFiles(context, COVERAGE_REPORT_PATHS_KEY);
 
     if (reportFiles.isEmpty()) {
-      return; //Return if we don't have any files
+      //Return if we don't have any files
+      return;
     }
 
     Set<String> unresolvedInputFile = new HashSet<>();
@@ -87,9 +97,7 @@ public class ScoverageSensor implements Sensor {
     logUnresolvedInputFiles(unresolvedInputFile);
   }
 
-  private void readReportFile(InputStream in, SensorContext context, Set<String> unresolvedInputFile) throws XMLStreamException {
-    FilePredicates predicates = context.fileSystem().predicates();
-
+  private static void readReportFile(InputStream in, SensorContext context, Set<String> unresolvedInputFile) throws XMLStreamException {
     Map<String, Set<Integer>> linesHitPerFiles = new HashMap<>();
 
     XMLEventReader reader = XMLInputFactory.newInstance().createXMLEventReader(in);
@@ -97,49 +105,62 @@ public class ScoverageSensor implements Sensor {
       XMLEvent event = reader.nextEvent();
       if (event.isStartElement() && STATEMENT_ELEMENT.equals(event.asStartElement().getName())) {
         //We have a statement, read the attributes of the statement
-        Iterator<Attribute> attributes = event.asStartElement().getAttributes();
-
-        Integer line = null;
-        Integer invocationCount = null;
-        String source = null;
-
-        while (attributes.hasNext()) {
-          Attribute attribute = attributes.next();
-          if (attribute.getName().equals(INVOCATION_COUNT_ATTRIBUTE)) {
-            invocationCount = Integer.valueOf(attribute.getValue()); // Is always 0 or 1 in Scoverage
-          }
-          if (attribute.getName().equals(LINE_ATTRIBUTE)) {
-            line = Integer.valueOf(attribute.getValue());
-          }
-          if (attribute.getName().equals(SOURCE_ATTRIBUTE)) {
-            source = attribute.getValue();
-          }
-        }
-
-        if(line != null && invocationCount != null && source != null) {
-          //Store the new statement if invoked
-          if (invocationCount > 0) {
-            if (!linesHitPerFiles.containsKey(source)) {
-              Set<Integer> newFileLineHit = new HashSet<>();
-              newFileLineHit.add(line);
-              linesHitPerFiles.put(source, newFileLineHit);
-            } else {
-              linesHitPerFiles.get(source).add(line);
-            }
-          }
-        } else {
-          LOG.warn("Some attributes of statement at line {} of scoverage report are not present.", event.getLocation().getLineNumber());
-        }
+        parseStatementAttributes(linesHitPerFiles, event.asStartElement());
       }
     }
-    //Add the lines hit to the context
-    for(String sourcePath: linesHitPerFiles.keySet()) {
+    //Once we have parsed all this report, add the statements to the context
+    addLineHitToContext(linesHitPerFiles, context, unresolvedInputFile);
+  }
+
+
+  private static void parseStatementAttributes(Map<String, Set<Integer>> linesHitPerFiles, StartElement currentEvent){
+    Integer line = null;
+    Integer invocationCount = null;
+    String source = null;
+    Iterator<Attribute> attributes = currentEvent.getAttributes();
+    while (attributes.hasNext()) {
+      Attribute attribute = attributes.next();
+      if (attribute.getName().equals(INVOCATION_COUNT_ATTRIBUTE)) {
+        invocationCount = Integer.valueOf(attribute.getValue());
+      }
+      if (attribute.getName().equals(LINE_ATTRIBUTE)) {
+        line = Integer.valueOf(attribute.getValue());
+      }
+      if (attribute.getName().equals(SOURCE_ATTRIBUTE)) {
+        source = attribute.getValue();
+      }
+    }
+    if(line != null && invocationCount != null && source != null) {
+      addStatementToMap(linesHitPerFiles, source, line, invocationCount);
+    } else {
+      LOG.warn("Some attributes of statement at line {} of scoverage report are not present.", currentEvent.getLocation().getLineNumber());
+    }
+  }
+
+  private static void addStatementToMap(Map<String, Set<Integer>> linesHitPerFiles, String source, Integer line, Integer invocationCount) {
+    //Store the new statement if invoked
+    if (invocationCount > 0) {
+      if (!linesHitPerFiles.containsKey(source)) {
+        Set<Integer> newFileLineHit = new HashSet<>();
+        newFileLineHit.add(line);
+        linesHitPerFiles.put(source, newFileLineHit);
+      } else {
+        linesHitPerFiles.get(source).add(line);
+      }
+    }
+  }
+
+  private static void addLineHitToContext(Map<String, Set<Integer>> linesHitPerFiles, SensorContext context, Set<String> unresolvedInputFile){
+    FilePredicates predicates = context.fileSystem().predicates();
+    for (Map.Entry<String,Set<Integer>> entry : linesHitPerFiles.entrySet()) {
+      String sourcePath = entry.getKey();
+
       InputFile inputFile = context.fileSystem().inputFile(predicates.hasAbsolutePath(sourcePath));
       if (inputFile == null) {
         unresolvedInputFile.add(sourcePath);
       } else {
         NewCoverage newCoverage = context.newCoverage().onFile(inputFile);
-        for(Integer lineHit: linesHitPerFiles.get(sourcePath)){
+        for(Integer lineHit: entry.getValue()){
           newCoverage.lineHits(lineHit,1);
         }
         newCoverage.save();
