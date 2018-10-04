@@ -24,7 +24,7 @@ import java.util.Collections.{emptyList, singletonList}
 
 import org.sonarsource.slang
 import org.sonarsource.slang.api
-import org.sonarsource.slang.api.{NativeTree, TextRange, Token, TreeMetaData, IdentifierTree, BinaryExpressionTree}
+import org.sonarsource.slang.api.{BinaryExpressionTree, IdentifierTree, TextRange, Token, TreeMetaData}
 import org.sonarsource.slang.impl._
 
 import scala.collection.JavaConverters._
@@ -238,7 +238,7 @@ class ScalaConverter extends slang.api.ASTConverter {
       }
       val leftOperand = convert(infix.lhs)
       val rightOperand = convert(infix.args.head)
-      val operatorToken = new TokenImpl(textRange(infix.op), infix.op.value, Token.Type.STRING_LITERAL)
+      val operatorToken = treeMetaData(infix.op).tokens().get(0)
       new BinaryExpressionTreeImpl(metaData, operator, operatorToken, leftOperand, rightOperand)
     }
 

@@ -41,9 +41,6 @@ public class BinaryExpressionTreeTest extends AbstractScalaConverterTest {
     binaryExpressionTree = scalaStatement("a >= 2");
     assertTree(binaryExpressionTree).isBinaryExpression(BinaryExpressionTree.Operator.GREATER_THAN_OR_EQUAL_TO);
 
-    binaryExpressionTree = scalaStatement("a >= 2");
-    assertTree(binaryExpressionTree).isBinaryExpression(BinaryExpressionTree.Operator.GREATER_THAN_OR_EQUAL_TO);
-
     binaryExpressionTree = scalaStatement("a < 2");
     assertTree(binaryExpressionTree).isBinaryExpression(BinaryExpressionTree.Operator.LESS_THAN);
 

@@ -40,6 +40,9 @@
 'scala-project:sources/scala/finagle/finagle-serversets/src/test/scala/com/twitter/finagle/zookeeper/ZkResolverTest.scala':[
 53,
 ],
+'scala-project:sources/scala/gitbucket/src/main/scala/gitbucket/core/service/RepositoryService.scala':[
+204,
+],
 'scala-project:sources/scala/incubator-openwhisk/tests/src/test/scala/whisk/core/entity/test/SizeTests.scala':[
 87,
 ],
