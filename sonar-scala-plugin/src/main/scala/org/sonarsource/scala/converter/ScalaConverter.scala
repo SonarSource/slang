@@ -24,7 +24,7 @@ import java.util.Collections.{emptyList, singletonList}
 
 import org.sonarsource.slang
 import org.sonarsource.slang.api
-import org.sonarsource.slang.api.{IdentifierTree, TextRange, Token, TreeMetaData}
+import org.sonarsource.slang.api.{NativeTree, TextRange, Token, TreeMetaData, IdentifierTree, BinaryExpressionTree}
 import org.sonarsource.slang.impl._
 
 import scala.collection.JavaConverters._
@@ -33,6 +33,22 @@ import scala.meta.internal.tokenizers.keywords
 import scala.meta.tokens.Token.{CR, Comment, LF, Space, Tab}
 
 class ScalaConverter extends slang.api.ASTConverter {
+  val BINARY_OPERATOR_MAP = Map(
+    "+" -> BinaryExpressionTree.Operator.PLUS,
+    "-" -> BinaryExpressionTree.Operator.MINUS,
+    "*" -> BinaryExpressionTree.Operator.TIMES,
+    "/" -> BinaryExpressionTree.Operator.DIVIDED_BY,
+
+    "==" -> BinaryExpressionTree.Operator.EQUAL_TO,
+    "!=" -> BinaryExpressionTree.Operator.NOT_EQUAL_TO,
+    ">"  -> BinaryExpressionTree.Operator.GREATER_THAN,
+    ">=" -> BinaryExpressionTree.Operator.GREATER_THAN_OR_EQUAL_TO,
+    "<"  -> BinaryExpressionTree.Operator.LESS_THAN,
+    "<=" -> BinaryExpressionTree.Operator.LESS_THAN_OR_EQUAL_TO,
+
+    "&&" -> BinaryExpressionTree.Operator.CONDITIONAL_AND,
+    "||" -> BinaryExpressionTree.Operator.CONDITIONAL_OR
+  )
 
   def parse(code: String): slang.api.Tree = {
     val metaTree: scala.meta.Tree = code.parse[Source] match {
@@ -104,6 +120,11 @@ class ScalaConverter extends slang.api.ASTConverter {
           createVariableDeclarationTree(metaData, name, decltpe, convert(rhs), true)
         case Defn.Var(List(), List(Pat.Var(name)), decltpe, rhs) =>
           createVariableDeclarationTree(metaData, name, decltpe, convert(rhs).orNull, false)
+        case infix: Term.ApplyInfix =>
+          BINARY_OPERATOR_MAP.get(infix.op.value) match {
+            case Some(operator) => createBinaryExpressionTree(metaData, infix, operator)
+            case None => createNativeTree(metaData, infix)
+          }
         case _ =>
           createNativeTree(metaData, metaTree)
       }
@@ -201,6 +222,16 @@ class ScalaConverter extends slang.api.ASTConverter {
     private def createVariableDeclarationTree(metaData: TreeMetaData, name: Term.Name, decltpe: Option[Type], rhs: slang.api.Tree, isVal: Boolean) = {
       val identifier = convert(name).asInstanceOf[slang.api.IdentifierTree]
       new VariableDeclarationTreeImpl(metaData, identifier, convert(decltpe).orNull, rhs, isVal)
+    }
+
+    private def createBinaryExpressionTree(metaData: TreeMetaData, infix: Term.ApplyInfix, operator: BinaryExpressionTree.Operator): slang.api.Tree = {
+      if (infix.args.length != 1) {
+        return createNativeTree(metaData, infix)
+      }
+      val leftOperand = convert(infix.lhs)
+      val rightOperand = convert(infix.args.head)
+      val operatorToken = new TokenImpl(textRange(infix.op), infix.op.value, Token.Type.STRING_LITERAL)
+      new BinaryExpressionTreeImpl(metaData, operator, operatorToken, leftOperand, rightOperand)
     }
 
     private def keyword(start: slang.api.TextPointer, end: slang.api.TextPointer): slang.api.Token = {
