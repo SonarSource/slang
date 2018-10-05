@@ -19,15 +19,15 @@
  */
 package org.sonarsource.slang.utils;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import org.junit.Test;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.Tree;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
@@ -37,9 +37,9 @@ import static org.sonarsource.slang.utils.SyntacticEquivalence.findDuplicatedGro
 import static org.sonarsource.slang.utils.TreeCreationUtils.assignment;
 import static org.sonarsource.slang.utils.TreeCreationUtils.binary;
 import static org.sonarsource.slang.utils.TreeCreationUtils.identifier;
+import static org.sonarsource.slang.utils.TreeCreationUtils.integerLiteral;
 import static org.sonarsource.slang.utils.TreeCreationUtils.literal;
 import static org.sonarsource.slang.utils.TreeCreationUtils.loop;
-import static org.sonarsource.slang.utils.TreeCreationUtils.integerLiteral;
 import static org.sonarsource.slang.utils.TreeCreationUtils.simpleModifier;
 import static org.sonarsource.slang.utils.TreeCreationUtils.simpleNative;
 import static org.sonarsource.slang.utils.TreeCreationUtils.value;
@@ -95,12 +95,17 @@ public class SyntacticEquivalenceTest {
     assertThat(areEquivalent(assignmentAPlusEqual1, assignment(AssignmentExpressionTree.Operator.EQUAL, identifierA, literal1))).isFalse();
     assertThat(areEquivalent(assignmentAPlusEqual1, binaryAEquals1)).isFalse();
 
-    Tree native1 = simpleNative(KIND, Collections.emptyList());
+    Tree native1 = simpleNative(KIND, Collections.singletonList("@a"), Collections.emptyList());
     assertThat(areEquivalent(native1, native1)).isTrue();
-    assertThat(areEquivalent(native1, simpleNative(KIND, Collections.emptyList()))).isTrue();
-    assertThat(areEquivalent(native1, simpleNative(KIND, Collections.singletonList(literal1)))).isFalse();
-    assertThat(areEquivalent(native1, simpleNative(null, Collections.emptyList()))).isFalse();
+    assertThat(areEquivalent(native1, simpleNative(KIND, Collections.singletonList("@a"), Collections.emptyList()))).isTrue();
+    assertThat(areEquivalent(native1, simpleNative(KIND, Arrays.asList("@a", "@b"), Collections.emptyList()))).isFalse();
+    assertThat(areEquivalent(native1, simpleNative(KIND, Collections.singletonList("1"), Collections.singletonList(literal1)))).isFalse();
+    assertThat(areEquivalent(native1, simpleNative(null, Collections.singletonList("@a"), Collections.emptyList()))).isFalse();
     assertThat(areEquivalent(native1, literal1)).isFalse();
+
+    Tree native2 = simpleNative(KIND, Collections.singletonList("1"), Collections.singletonList(literal1));
+    assertThat(areEquivalent(native2, native1)).isFalse();
+    assertThat(areEquivalent(native2, native2)).isTrue();
 
     Tree modifier1 = simpleModifier(PRIVATE);
     assertThat(areEquivalent(modifier1, modifier1)).isTrue();
