@@ -96,6 +96,14 @@ class ScalaConverter extends slang.api.ASTConverter {
         case classDecl: Defn.Class =>
           val identifier = convert(classDecl.name).asInstanceOf[IdentifierTree]
           new ClassDeclarationTreeImpl(metaData, identifier, createNativeTree(metaData, classDecl))
+        case v: Defn.Val if v.parent.exists(_.is[Template]) =>
+          createNativeTree(metaData, metaTree)
+        case v: Defn.Var if v.parent.exists(_.is[Template]) =>
+          createNativeTree(metaData, metaTree)
+        case Defn.Val(List(), List(Pat.Var(name)), decltpe, rhs) =>
+          createVariableDeclarationTree(metaData, name, decltpe, convert(rhs), true)
+        case Defn.Var(List(), List(Pat.Var(name)), decltpe, rhs) =>
+          createVariableDeclarationTree(metaData, name, decltpe, convert(rhs).orNull, false)
         case _ =>
           createNativeTree(metaData, metaTree)
       }
@@ -145,6 +153,10 @@ class ScalaConverter extends slang.api.ASTConverter {
         .asJava
     }
 
+    private def convert(optionalTree: Option[scala.meta.Tree]): Option[slang.api.Tree] = {
+      optionalTree.map(t => convert(t))
+    }
+
     private def createFunctionDeclarationTree(metaData: TreeMetaData, defn: Defn.Def): slang.api.Tree = {
       if (defn.paramss.size > 1) {
         return createNativeTree(metaData, defn)
@@ -186,6 +198,10 @@ class ScalaConverter extends slang.api.ASTConverter {
       new MatchTreeImpl(metaData, convertedExpression, convertedCases.asJava, matchKeyword)
     }
 
+    private def createVariableDeclarationTree(metaData: TreeMetaData, name: Term.Name, decltpe: Option[Type], rhs: slang.api.Tree, isVal: Boolean) = {
+      val identifier = convert(name).asInstanceOf[slang.api.IdentifierTree]
+      new VariableDeclarationTreeImpl(metaData, identifier, convert(decltpe).orNull, rhs, isVal)
+    }
 
     private def keyword(start: slang.api.TextPointer, end: slang.api.TextPointer): slang.api.Token = {
       metaDataProvider.keyword(new TextRangeImpl(start, end))

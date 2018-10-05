@@ -63,7 +63,6 @@ public class CheckList {
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
     UnusedFunctionParameterCheck.class,
-    UnusedLocalVariableCheck.class,
     UnusedPrivateMethodCheck.class,
     VariableAndParameterNameCheck.class,
     WrongAssignmentOperatorCheck.class
