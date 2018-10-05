@@ -56,7 +56,6 @@ public class CheckList {
     HardcodedCredentialsCheck.class,
     IdenticalBinaryOperandCheck.class,
     IdenticalConditionsCheck.class,
-    IfConditionalAlwaysTrueOrFalseCheck.class,
     MatchWithoutElseCheck.class,
     OctalValuesCheck.class,
     RedundantParenthesesCheck.class,
