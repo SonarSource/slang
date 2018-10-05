@@ -91,6 +91,10 @@ class ScalaConverter extends slang.api.ASTConverter {
         case classDecl: Defn.Class =>
           val identifier = convert(classDecl.name).asInstanceOf[IdentifierTree]
           new ClassDeclarationTreeImpl(metaData, identifier, createNativeTree(metaData, classDecl))
+        case v: Defn.Val if v.parent.exists(_.is[Template]) =>
+          createNativeTree(metaData, metaTree)
+        case v: Defn.Var if v.parent.exists(_.is[Template]) =>
+          createNativeTree(metaData, metaTree)
         case Defn.Val(List(), List(Pat.Var(name)), decltpe, rhs) =>
           createVariableDeclarationTree(metaData, name, decltpe, convert(rhs), true)
         case Defn.Var(List(), List(Pat.Var(name)), decltpe, rhs) =>

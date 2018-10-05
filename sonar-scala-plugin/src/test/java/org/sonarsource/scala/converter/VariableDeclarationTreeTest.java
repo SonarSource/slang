@@ -48,4 +48,9 @@ public class VariableDeclarationTreeTest extends AbstractScalaConverterTest {
     assertThat(parse("object Obj { final val x = 42 }").descendants().filter(VariableDeclarationTree.class::isInstance)).isEmpty();
   }
 
+  @Test
+  public void fields() {
+    assertThat(scalaStatement("new { val x = 42 }").descendants().filter(VariableDeclarationTree.class::isInstance)).isEmpty();
+    assertThat(scalaStatement("new { var x = 42 }").descendants().filter(VariableDeclarationTree.class::isInstance)).isEmpty();
+  }
 }
