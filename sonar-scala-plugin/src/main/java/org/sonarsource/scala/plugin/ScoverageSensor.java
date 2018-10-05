@@ -75,7 +75,6 @@ public class ScoverageSensor implements Sensor {
     if (reportFiles.isEmpty()) {
       return;
     }
-
     Set<String> unresolvedInputFile = new HashSet<>();
 
     for (File f : reportFiles) {
@@ -119,17 +118,6 @@ public class ScoverageSensor implements Sensor {
   private static String getAttributeValue(StartElement element, QName attributeName) {
     Attribute attribute = element.getAttributeByName(attributeName);
     return attribute != null ? attribute.getValue() : null;
-  }
-
-  private static void addStatementToMap(Map<String, Map<Integer,Integer>> linesHitPerFiles, String source, Integer line, Integer invocationCount) {
-    Map<Integer,Integer> hitCountPerLine = linesHitPerFiles.computeIfAbsent(source, key -> new HashMap<>());
-
-    if(!hitCountPerLine.containsKey(line)) {
-      hitCountPerLine.put(line, invocationCount);
-    } else {
-      int oldInvocationCount = hitCountPerLine.get(line);
-      hitCountPerLine.put(line,oldInvocationCount + invocationCount);
-    }
   }
 
   private static void addLineHitToContext(Map<String, Map<Integer,Integer>> linesHitPerFiles, SensorContext context, Set<String> unresolvedInputFile){
