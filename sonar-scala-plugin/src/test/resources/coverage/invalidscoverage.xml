@@ -1,4 +1,4 @@
 
 statement
-        package="package.name" class="ListTestObject" class-type="Object" full-class-name="package.name.ListTestObject" source="/Absolute/Path/To/file1.scala" method="listM" start="210" end="218" branch="false" invocation-count="1" ignored="false">
+        package="package.name" class="IfTestObject" class-type="Object" full-class-name="package.name.IfTestObject" source="/Absolute/Path/To/file2.scala" method="method" start="155" end="165" line="9" branch="true" invocation-count="0" ignored="false">
 </statement>

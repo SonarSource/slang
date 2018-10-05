@@ -71,15 +71,18 @@ public class ScoverageSensorTest {
     String fileKey2 = MODULE_KEY + ":file2.scala";
 
     //File1
-    assertThat(context.lineHits(fileKey1, 6)).isNull();
+    assertThat(context.lineHits(fileKey1, 5)).isNull();
+    assertThat(context.lineHits(fileKey1, 6)).isEqualTo(0);
     assertThat(context.lineHits(fileKey1, 7)).isEqualTo(1);
-    assertThat(context.lineHits(fileKey1, 8)).isNull();
+    assertThat(context.lineHits(fileKey1, 8)).isEqualTo(0);
     assertThat(context.lineHits(fileKey1, 9)).isNull();
 
     //File2
     assertThat(context.lineHits(fileKey2, 5)).isEqualTo(1);
-    assertThat(context.lineHits(fileKey2, 7)).isEqualTo(1);
-    assertThat(context.lineHits(fileKey2, 9)).isNull();
+    assertThat(context.lineHits(fileKey2, 6)).isNull();
+    assertThat(context.lineHits(fileKey2, 7)).isEqualTo(2);
+    assertThat(context.lineHits(fileKey2, 8)).isNull();
+    assertThat(context.lineHits(fileKey2, 9)).isEqualTo(0);
   }
 
   @Test
@@ -91,7 +94,7 @@ public class ScoverageSensorTest {
 
     new ScoverageSensor().execute(context);
 
-    String expectedMessage = "Some attributes of statement at line 3 of scoverage report are not present.";
+    String expectedMessage = "File '" + reportPath.toString() + "' can't be read. java.lang.NumberFormatException: null";
     assertThat(logTester.logs().contains(expectedMessage)).isTrue();
   }
 
@@ -118,8 +121,20 @@ public class ScoverageSensorTest {
 
     new ScoverageSensor().execute(context);
 
-    String expectedMessage = String.format("File '" + reportPath.toString() + "' can't be read. ParseError at [row,col]:[2,1]\nMessage: Content is not allowed in prolog.");
+    String expectedMessage = String.format("File '" + reportPath.toString() + "' can't be read. javax.xml.stream.XMLStreamException: ParseError at [row,col]:[2,1]\nMessage: Content is not allowed in prolog.");
 
+    assertThat(logTester.logs().contains(expectedMessage)).isTrue();
+  }
+
+  @Test
+  public void testStringInLineNumber() throws IOException {
+    Path baseDir = COVERAGE_DIR.toAbsolutePath();
+    Path reportPath = baseDir.resolve("stringInLine.xml");
+
+    SensorContextTester context = getSensorContext(reportPath.toString());
+
+    new ScoverageSensor().execute(context);
+    String expectedMessage = "File '" + reportPath.toString() + "' can't be read. java.lang.NumberFormatException: For input string: \"nine\"";
     assertThat(logTester.logs().contains(expectedMessage)).isTrue();
   }
 
@@ -146,7 +161,6 @@ public class ScoverageSensorTest {
     String[] coverageReportPaths = coverageReportPath.split(",");
     for (String reportPath : coverageReportPaths) {
       reportPath = reportPath.trim();
-      // if report is relative path we create it under fake filesystem
       if (!Paths.get(coverageReportPath).isAbsolute()) {
         try {
           DefaultInputFile coverageFile = createInputFile(reportPath, fileContent(baseDir, reportPath));
