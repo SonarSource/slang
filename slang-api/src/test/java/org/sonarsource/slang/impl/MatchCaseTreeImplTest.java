@@ -52,6 +52,7 @@ public class MatchCaseTreeImplTest {
     assertThat(tree.body()).isEqualTo(body);
 
     assertThat(new MatchCaseTreeImpl(meta, null, body).children()).containsExactly(body);
+    assertThat(new MatchCaseTreeImpl(meta, expression, null).children()).containsExactly(expression);
   }
 
   @Test
@@ -73,6 +74,9 @@ public class MatchCaseTreeImplTest {
     BlockTree body = new BlockTreeImpl(bodyMetaData, emptyList());
 
     assertThat(new MatchCaseTreeImpl(matchCaseMetaData, null, body).rangeToHighlight())
+      .isEqualTo(range(1, 1, 1, 8));
+
+    assertThat(new MatchCaseTreeImpl(matchCaseMetaData, null, null).rangeToHighlight())
       .isEqualTo(range(1, 1, 1, 8));
   }
 

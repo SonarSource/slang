@@ -27,6 +27,7 @@ public interface MatchCaseTree extends Tree {
   @CheckForNull
   Tree expression();
 
+  @CheckForNull
   Tree body();
 
   TextRange rangeToHighlight();

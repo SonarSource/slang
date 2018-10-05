@@ -42,6 +42,12 @@ public class MatchTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
+  public void case_without_body() {
+    MatchTree tree = (MatchTree) scalaStatement("x match { case 1=> a case 2=> /* do nothing */}");
+    assertThat(tree.cases().get(1).body()).isNull();
+  }
+
+  @Test
   public void case_with_condition() {
     assertTree(scalaStatement("x match { case 1 if guard => a case 2=> b }")).isInstanceOf(NativeTree.class);
   }

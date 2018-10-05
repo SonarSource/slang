@@ -35,7 +35,7 @@ public class MatchCaseTreeImpl extends BaseTreeImpl implements MatchCaseTree {
   private final Tree expression;
   private final Tree body;
 
-  public MatchCaseTreeImpl(TreeMetaData metaData, @Nullable Tree expression, Tree body) {
+  public MatchCaseTreeImpl(TreeMetaData metaData, @Nullable Tree expression, @Nullable Tree body) {
     super(metaData);
     this.expression = expression;
     this.body = body;
@@ -47,6 +47,7 @@ public class MatchCaseTreeImpl extends BaseTreeImpl implements MatchCaseTree {
     return expression;
   }
 
+  @CheckForNull
   @Override
   public Tree body() {
     return body;
@@ -54,6 +55,10 @@ public class MatchCaseTreeImpl extends BaseTreeImpl implements MatchCaseTree {
 
   @Override
   public TextRange rangeToHighlight() {
+    if (body == null) {
+      return textRange();
+    }
+
     TextRange bodyRange = body.metaData().textRange();
     List<TextRange> tokenRangesBeforeBody = metaData().tokens().stream()
       .map(Token::textRange)
@@ -73,7 +78,9 @@ public class MatchCaseTreeImpl extends BaseTreeImpl implements MatchCaseTree {
     if (expression != null) {
       children.add(expression);
     }
-    children.add(body);
+    if (body != null) {
+      children.add(body);
+    }
     return children;
   }
 }
