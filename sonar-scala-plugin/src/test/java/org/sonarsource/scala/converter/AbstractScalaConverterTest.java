@@ -20,8 +20,10 @@
 package org.sonarsource.scala.converter;
 
 import java.util.List;
+import java.util.stream.Stream;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
+import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
@@ -57,5 +59,11 @@ public abstract class AbstractScalaConverterTest {
     Tree tree = new SLangConverter().parse(innerCode);
     assertThat(tree).isInstanceOf(TopLevelTree.class);
     return tree.children();
+  }
+
+  static Stream<String> identifierDescendants(Tree tree) {
+    return tree.descendants()
+      .filter(IdentifierTree.class::isInstance)
+      .map(i -> ((IdentifierTree) i).name());
   }
 }

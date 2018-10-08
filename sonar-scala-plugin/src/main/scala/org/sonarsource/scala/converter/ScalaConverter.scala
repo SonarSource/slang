@@ -24,7 +24,8 @@ import java.util.Collections.{emptyList, singletonList}
 
 import org.sonarsource.slang
 import org.sonarsource.slang.api
-import org.sonarsource.slang.api.{BinaryExpressionTree, IdentifierTree, TextRange, Token, TreeMetaData, UnaryExpressionTree}
+import org.sonarsource.slang.api.{BinaryExpressionTree, IdentifierTree, TextRange, Token, TreeMetaData, UnaryExpressionTree, CatchTree}
+import org.sonarsource.slang.api.LoopTree.LoopKind
 import org.sonarsource.slang.impl._
 
 import scala.collection.JavaConverters._
@@ -113,6 +114,15 @@ class ScalaConverter extends slang.api.ASTConverter {
           new BlockTreeImpl(metaData, convert(stats))
         case Term.If(cond, thenp, elsep) =>
           createIfTree(metaData, cond, thenp, elsep)
+        case Term.While(expr, body) =>
+          val convertedExpr = convert(expr)
+          new LoopTreeImpl(metaData, convertedExpr, convert(body), LoopKind.WHILE, keyword(metaData.textRange.start, start(convertedExpr)))
+        case Term.Do(body, expr) =>
+          val convertedBody = convert(body)
+          new LoopTreeImpl(metaData, convert(expr), convertedBody, LoopKind.DOWHILE, keyword(metaData.textRange.start, start(convertedBody)))
+        case Term.For(enums, body) =>
+          val convertedEnums = createNativeTree(enums, ScalaForConditionKind)
+          new LoopTreeImpl(metaData, convertedEnums, convert(body), LoopKind.FOR, keyword(metaData.textRange.start, start(convertedEnums)))
         case matchTree: Term.Match =>
           createMatchTree(metaData, matchTree)
         case classDecl: Defn.Class =>
@@ -136,13 +146,41 @@ class ScalaConverter extends slang.api.ASTConverter {
             case Some(operator) => new UnaryExpressionTreeImpl(metaData, operator, convert(unaryExpression.arg))
             case None => createNativeTree(metaData, unaryExpression)
           }
+        case Term.Try(expr, catchp, finallyp) =>
+          val catchBlock = Some(catchp).filter(_.nonEmpty).map(createNativeTree(_, ScalaCatchBlockKind))
+          createExceptionHandlingTree(metaData, expr, catchBlock, finallyp)
+        case Term.TryWithHandler(expr, catchp, finallyp) =>
+          createExceptionHandlingTree(metaData, expr, Some(convert(catchp)), finallyp)
         case _ =>
           createNativeTree(metaData, metaTree)
       }
     }
 
+    private def createExceptionHandlingTree(metaData: TreeMetaData, expr: Term, catchBlock: Option[slang.api.Tree], finallyp: Option[Term]) = {
+      val convertedExpr = convert(expr)
+      val tryKeyword = keyword(metaData.textRange.start, start(convertedExpr))
+      val catchTrees = catchBlock match {
+        case Some(b) => singletonList(createCatchTree(convertedExpr, b))
+        case None => emptyList[CatchTree]()
+      }
+      new ExceptionHandlingTreeImpl(metaData, convertedExpr, tryKeyword, catchTrees, convert(finallyp).orNull)
+    }
+
+    private def createCatchTree(convertedExpr: slang.api.Tree, catchBlock: slang.api.Tree): CatchTree = {
+      val catchKeyword = keyword(convertedExpr.textRange.end, start(catchBlock))
+      val catchMetaData = metaDataProvider.metaData(new TextRangeImpl(convertedExpr.textRange.end, catchBlock.textRange.end))
+      new CatchTreeImpl(catchMetaData, null, catchBlock, catchKeyword)
+    }
+
     private def treeMetaData(metaTree: Tree) = {
       metaDataProvider.metaData(textRange(metaTree))
+    }
+
+    private def createNativeTree(children: List[scala.meta.Tree], nativeKind: slang.api.NativeKind) = {
+      val convertedChildren = convert(children)
+      val lastConvertedChild = convertedChildren.get(convertedChildren.size() - 1)
+      val metaData = metaDataProvider.metaData(new TextRangeImpl(convertedChildren.get(0).textRange.start, lastConvertedChild.textRange.end))
+      new NativeTreeImpl(metaData, nativeKind, convertedChildren)
     }
 
     private def createNativeTree(metaData: TreeMetaData, metaTree: Tree) = {
@@ -213,8 +251,8 @@ class ScalaConverter extends slang.api.ASTConverter {
       val convertedCond = convert(cond)
       val convertedThenp = convert(thenp)
       val convertedElsep = convert(elsep)
-      val ifKeyword = keyword(metaData.textRange.start, convertedCond.textRange.start)
-      val elseKeyword = if (convertedElsep == null) null else keyword(convertedThenp.textRange.end, convertedElsep.textRange.start)
+      val ifKeyword = keyword(metaData.textRange.start, start(convertedCond))
+      val elseKeyword = if (convertedElsep == null) null else keyword(convertedThenp.textRange.end, start(convertedElsep))
       new IfTreeImpl(metaData, convertedCond, convertedThenp, convertedElsep, ifKeyword, elseKeyword)
     }
 
@@ -226,7 +264,7 @@ class ScalaConverter extends slang.api.ASTConverter {
         .map(c => new MatchCaseTreeImpl(treeMetaData(c), if (c.pat.is[Pat.Wildcard]) null else convert(c.pat), convert(c.body))
           .asInstanceOf[slang.api.MatchCaseTree])
       val convertedExpression = convert(matchTree.expr)
-      val matchKeyword = keyword(convertedExpression.textRange.end, convertedCases.head.textRange.start)
+      val matchKeyword = keyword(convertedExpression.textRange.end, start(convertedCases.head))
       new MatchTreeImpl(metaData, convertedExpression, convertedCases.asJava, matchKeyword)
     }
 
@@ -261,6 +299,9 @@ class ScalaConverter extends slang.api.ASTConverter {
   case class ScalaNativeKind(treeClass: Class[_ <: scala.meta.Tree]) extends slang.api.NativeKind {
   }
 
+  object ScalaCatchBlockKind extends slang.api.NativeKind
+  object ScalaForConditionKind extends slang.api.NativeKind
+
   def tokenType(token: scala.meta.tokens.Token): Token.Type = {
     if (token.is[scala.meta.tokens.Token.Constant.String]) {
       return Token.Type.STRING_LITERAL
@@ -290,6 +331,10 @@ class ScalaConverter extends slang.api.ASTConverter {
 
   def textRange(pos: scala.meta.Position): TextRange = {
     TextRanges.range(pos.startLine + 1, pos.startColumn, pos.endLine + 1, pos.endColumn)
+  }
+
+  private def start(tree: slang.api.Tree): slang.api.TextPointer = {
+    tree.textRange.start
   }
 
 }

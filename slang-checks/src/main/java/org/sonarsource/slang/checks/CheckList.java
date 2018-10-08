@@ -57,7 +57,6 @@ public class CheckList {
     RedundantParenthesesCheck.class,
     SelfAssignmentCheck.class,
     TooComplexExpressionCheck.class,
-    TooDeeplyNestedStatementsCheck.class,
     UnusedFunctionParameterCheck.class,
     UnusedPrivateMethodCheck.class,
     VariableAndParameterNameCheck.class,
