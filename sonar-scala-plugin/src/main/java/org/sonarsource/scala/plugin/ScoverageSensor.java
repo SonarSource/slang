@@ -27,7 +27,6 @@ import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.coverage.NewCoverage;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonarsource.analyzer.commons.ExternalReportProvider;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -45,6 +44,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
+import java.util.Collections;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import static org.sonarsource.scala.plugin.ScalaPlugin.COVERAGE_REPORT_PATHS_KEY;
@@ -70,7 +71,7 @@ public class ScoverageSensor implements Sensor {
 
   @Override
   public void execute(SensorContext context) {
-    List<File> reportFiles = ExternalReportProvider.getReportFiles(context, COVERAGE_REPORT_PATHS_KEY);
+    List<File> reportFiles = getReportFiles(context);
 
     if (reportFiles.isEmpty()) {
       return;
@@ -87,6 +88,35 @@ public class ScoverageSensor implements Sensor {
     }
 
     logUnresolvedInputFiles(unresolvedInputFile);
+  }
+
+  private static List<File> getReportFiles(SensorContext context) {
+    String[] reportPaths = context.config().getStringArray(COVERAGE_REPORT_PATHS_KEY);
+
+    if (reportPaths.length == 0) {
+      return Collections.emptyList();
+    }
+
+    List<File> result = new ArrayList<>();
+    for (String reportPath : reportPaths) {
+      File report = getIOFile(context.fileSystem().baseDir(), reportPath);
+      result.add(report);
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns a java.io.File for the given path.
+   * If path is not absolute, returns a File with module base directory as parent path.
+   */
+  private static File getIOFile(File baseDir, String path) {
+    File file = new File(path);
+    if (!file.isAbsolute()) {
+      file = new File(baseDir, path);
+    }
+
+    return file;
   }
 
   private static void readReportFile(InputStream in, SensorContext context, Set<String> unresolvedInputFile) throws XMLStreamException {
