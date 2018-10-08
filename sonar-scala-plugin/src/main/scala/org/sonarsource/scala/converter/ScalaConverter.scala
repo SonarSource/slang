@@ -24,7 +24,7 @@ import java.util.Collections.{emptyList, singletonList}
 
 import org.sonarsource.slang
 import org.sonarsource.slang.api
-import org.sonarsource.slang.api.{BinaryExpressionTree, IdentifierTree, TextRange, Token, TreeMetaData}
+import org.sonarsource.slang.api.{BinaryExpressionTree, IdentifierTree, TextRange, Token, TreeMetaData, UnaryExpressionTree}
 import org.sonarsource.slang.impl._
 
 import scala.collection.JavaConverters._
@@ -48,6 +48,12 @@ class ScalaConverter extends slang.api.ASTConverter {
 
     "&&" -> BinaryExpressionTree.Operator.CONDITIONAL_AND,
     "||" -> BinaryExpressionTree.Operator.CONDITIONAL_OR
+  )
+
+  val UNARY_OPERATOR_MAP = Map(
+    "!"  -> UnaryExpressionTree.Operator.NEGATE,
+    "+"  -> UnaryExpressionTree.Operator.PLUS,
+    "-"  -> UnaryExpressionTree.Operator.MINUS
   )
 
   def parse(code: String): slang.api.Tree = {
@@ -124,6 +130,11 @@ class ScalaConverter extends slang.api.ASTConverter {
           BINARY_OPERATOR_MAP.get(infix.op.value) match {
             case Some(operator) => createBinaryExpressionTree(metaData, infix, operator)
             case None => createNativeTree(metaData, infix)
+          }
+        case unaryExpression: Term.ApplyUnary =>
+          UNARY_OPERATOR_MAP.get(unaryExpression.op.value) match {
+            case Some(operator) => new UnaryExpressionTreeImpl(metaData, operator, convert(unaryExpression.arg))
+            case None => createNativeTree(metaData, unaryExpression)
           }
         case _ =>
           createNativeTree(metaData, metaTree)
