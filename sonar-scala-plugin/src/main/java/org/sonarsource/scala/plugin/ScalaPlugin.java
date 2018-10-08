@@ -31,12 +31,15 @@ public class ScalaPlugin implements Plugin {
   static final String SCALA_FILE_SUFFIXES_DEFAULT_VALUE = ".scala";
   static final String SCALA_FILE_SUFFIXES_KEY = "sonar.scala.file.suffixes";
 
+  static final String COVERAGE_REPORT_PATHS_KEY = "sonar.scala.coverage.reportPaths";
+
   static final String SCALA_REPOSITORY_KEY = "scala";
   static final String REPOSITORY_NAME = "SonarAnalyzer";
   static final String PROFILE_NAME = "Sonar way";
 
   private static final String GENERAL = "General";
   private static final String SCALA_CATEGORY = "Scala";
+  private static final String TEST_COVERAGE_SUBCATEGORY = "Test and Coverage";
 
   @Override
   public void define(Context context) {
@@ -49,6 +52,8 @@ public class ScalaPlugin implements Plugin {
     if (context.getRuntime().getProduct() != SonarProduct.SONARLINT) {
       context.addExtensions(
         ScalaProfileDefinition.class,
+        ScoverageSensor.class,
+
         PropertyDefinition.builder(SCALA_FILE_SUFFIXES_KEY)
           .defaultValue(SCALA_FILE_SUFFIXES_DEFAULT_VALUE)
           .name("File Suffixes")
@@ -57,6 +62,15 @@ public class ScalaPlugin implements Plugin {
           .category(SCALA_CATEGORY)
           .multiValues(true)
           .onQualifiers(Qualifiers.PROJECT)
+          .build(),
+
+        PropertyDefinition.builder(COVERAGE_REPORT_PATHS_KEY)
+          .name("Path to Scoverage report")
+          .description("Path to Scoverage report file(s) (scoverage.xml). Usually in target\\scala-X.X\\scoverage-report")
+          .category(SCALA_CATEGORY)
+          .subCategory(TEST_COVERAGE_SUBCATEGORY)
+          .onQualifiers(Qualifiers.PROJECT)
+          .multiValues(true)
           .build()
       );
     }

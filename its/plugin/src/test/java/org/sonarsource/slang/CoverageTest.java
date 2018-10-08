@@ -40,8 +40,7 @@ public class CoverageTest extends TestBase {
   public TemporaryFolder tmpDir = new TemporaryFolder();
   private Path workDir;
 
-  @Before
-  public void setUp() throws Exception {
+  public void setUpRuby() throws Exception {
     workDir = tmpDir.newFolder("ruby").toPath().toAbsolutePath();
     Path src = BASE_DIRECTORY.resolve("ruby/file.rb");
     Path srcCopy = workDir.resolve(src.getFileName()).toAbsolutePath();
@@ -56,7 +55,8 @@ public class CoverageTest extends TestBase {
   }
 
   @Test
-  public void ruby_coverage() {
+  public void ruby_coverage() throws Exception {
+    setUpRuby();
     SonarScanner rubyScanner = getSonarScanner(workDir.getParent().toString(), "ruby");
     ORCHESTRATOR.executeBuild(rubyScanner);
 
@@ -71,4 +71,30 @@ public class CoverageTest extends TestBase {
     assertThat(getMeasureAsInt("file_not_in_report.rb", "uncovered_conditions")).isNull();
   }
 
+  public void setUpScala() throws Exception {
+    workDir = tmpDir.newFolder("scala").toPath().toAbsolutePath();
+    Path src = BASE_DIRECTORY.resolve("scala/file2.scala");
+    Path srcCopy = workDir.resolve(src.getFileName()).toAbsolutePath();
+    Files.copy(src, srcCopy);
+    Path report = BASE_DIRECTORY.resolve("scala/scoverage.xml");
+    String reportContent = new String(Files.readAllBytes(report), UTF_8);
+    reportContent = reportContent.replace(ABSOLUTE_PATH_PLACEHOLDER, srcCopy.toString().replace("\\", "\\\\"));
+    Path reportCopy = workDir.resolve("coverage/.scoverage.xml");
+    Files.createDirectories(reportCopy.getParent());
+    Files.write(reportCopy, reportContent.getBytes(UTF_8));
+  }
+
+  @Test
+  public void scala_coverage() throws Exception {
+    setUpScala();
+    SonarScanner scalaScanner = getSonarScanner(workDir.getParent().toString(), "scala");
+    scalaScanner.setProperty("sonar.scala.coverage.reportPaths", "coverage/.scoverage.xml");
+
+    ORCHESTRATOR.executeBuild(scalaScanner);
+
+    assertThat(getMeasureAsInt("file2.scala", "lines_to_cover")).isEqualTo(3);
+    assertThat(getMeasureAsInt("file2.scala", "uncovered_lines")).isEqualTo(1);
+    assertThat(getMeasureAsInt("file2.scala", "conditions_to_cover")).isNull();
+    assertThat(getMeasureAsInt("file2.scala", "uncovered_conditions")).isNull();
+  }
 }
