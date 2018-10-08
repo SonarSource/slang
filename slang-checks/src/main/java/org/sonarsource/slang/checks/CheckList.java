@@ -49,7 +49,6 @@ public class CheckList {
     CodeAfterJumpCheck.class,
     DuplicatedFunctionImplementationCheck.class,
     FunctionCognitiveComplexityCheck.class,
-    HardcodedCredentialsCheck.class,
     IdenticalConditionsCheck.class,
     MatchWithoutElseCheck.class,
     OctalValuesCheck.class,
