@@ -1,0 +1,32 @@
+<p>When two methods have the same implementation, either it was a mistake - something else was intended - or the duplication was intentional, but may
+be confusing to maintainers. In the latter case, one implementation should invoke the other.</p>
+<h2>Noncompliant Code Example</h2>
+<pre>
+class Box(length: Int, width: Int, height: Int) {
+  def volume: Int = {
+    val s = length * width
+    s * height
+  }
+
+  def area: Int = {
+    val s = length * width
+    s * height
+  }
+}
+</pre>
+<h2>Compliant Solution</h2>
+<pre>
+class Box(length: Int, width: Int, height: Int) {
+  def volume: Int = {
+    val s = length * width
+    s * height
+  }
+
+  def area: Int = {
+    length * width
+  }
+}
+</pre>
+<h2>Exceptions</h2>
+<p>Methods with fewer than 2 statements are ignored.</p>
+
