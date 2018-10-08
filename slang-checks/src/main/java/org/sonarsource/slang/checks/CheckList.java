@@ -50,7 +50,6 @@ public class CheckList {
     CodeAfterJumpCheck.class,
     DuplicateBranchCheck.class,
     DuplicatedFunctionImplementationCheck.class,
-    EmptyBlockCheck.class,
     FunctionCognitiveComplexityCheck.class,
     HardcodedCredentialsCheck.class,
     IdenticalConditionsCheck.class,
