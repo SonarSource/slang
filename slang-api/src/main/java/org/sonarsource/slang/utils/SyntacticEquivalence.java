@@ -19,6 +19,10 @@
  */
 package org.sonarsource.slang.utils;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.IdentifierTree;
@@ -27,14 +31,11 @@ import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.UnaryExpressionTree;
 import org.sonarsource.slang.api.VariableDeclarationTree;
 import org.sonarsource.slang.visitors.TreePrinter;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 
 public class SyntacticEquivalence {
 
@@ -74,9 +75,22 @@ public class SyntacticEquivalence {
       return ((LiteralTree) first).value().equals(((LiteralTree) second).value());
     } else if (hasDifferentFields(first, second)) {
       return false;
+    } else if (first instanceof NativeTree && first.children().isEmpty()) {
+      return areEquivalentTokenText(first.metaData().tokens(), second.metaData().tokens());
     }
-
     return areEquivalent(first.children(), second.children());
+  }
+
+  private static boolean areEquivalentTokenText(List<Token> firstList, List<Token> secondList) {
+    if (firstList.size() != secondList.size()) {
+      return false;
+    }
+    for (int i = 0; i < firstList.size(); i++) {
+      if (!firstList.get(i).text().equals(secondList.get(i).text())) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private static boolean hasDifferentFields(Tree first, Tree second) {

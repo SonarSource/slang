@@ -21,6 +21,8 @@ package org.sonarsource.ruby.converter;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
@@ -32,16 +34,20 @@ import org.sonarsource.slang.api.ParameterTree;
 import org.sonarsource.slang.api.StringLiteralTree;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.api.TreeMetaData;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.IntegerLiteralTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.ParameterTreeImpl;
 import org.sonarsource.slang.impl.StringLiteralTreeImpl;
+import org.sonarsource.slang.impl.TokenImpl;
 import org.sonarsource.slang.parser.SLangConverter;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public abstract class AbstractRubyConverterTest {
 
@@ -108,12 +114,12 @@ public abstract class AbstractRubyConverterTest {
     return new IdentifierTreeImpl(null, name);
   }
 
-  protected static NativeTree nativeTree(NativeKind kind) {
-    return new NativeTreeImpl(null, kind, emptyList());
+  protected static NativeTree nativeTree(NativeKind kind, String... tokens) {
+    return new NativeTreeImpl(metaData(tokens), kind, emptyList());
   }
 
-  protected static NativeTree nativeTree(String nativeKind) {
-    return nativeTree(nativeKind(nativeKind));
+  protected static NativeTree nativeTree(String nativeKind, String... tokens) {
+    return nativeTree(nativeKind(nativeKind), tokens);
   }
 
   protected static NativeKind nativeKind(String type) {
@@ -122,6 +128,14 @@ public abstract class AbstractRubyConverterTest {
 
   protected static NativeTree sendToIdentifier(String identifierName) {
     return nativeTree(nativeKind("send"), asList(identifier(identifierName)));
+  }
+
+  private static TreeMetaData metaData(String... tokens) {
+    TreeMetaData metaData = mock(TreeMetaData.class);
+    when(metaData.tokens()).thenReturn(Stream.of(tokens)
+      .map(text -> new TokenImpl(null, text, null))
+      .collect(Collectors.toList()));
+    return metaData;
   }
 
 }

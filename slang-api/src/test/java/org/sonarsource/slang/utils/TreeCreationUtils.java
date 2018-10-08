@@ -19,6 +19,9 @@
  */
 package org.sonarsource.slang.utils;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.BlockTree;
@@ -33,6 +36,7 @@ import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.api.TreeMetaData;
 import org.sonarsource.slang.api.VariableDeclarationTree;
 import org.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import org.sonarsource.slang.impl.BinaryExpressionTreeImpl;
@@ -47,10 +51,10 @@ import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.TokenImpl;
 import org.sonarsource.slang.impl.TopLevelTreeImpl;
 import org.sonarsource.slang.impl.VariableDeclarationTreeImpl;
-import java.util.Collections;
-import java.util.List;
 
 import static java.util.Collections.emptyList;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TreeCreationUtils {
   private TreeCreationUtils() {
@@ -105,12 +109,24 @@ public class TreeCreationUtils {
     return new NativeTreeImpl(null, kind, children);
   }
 
+  public static NativeTree simpleNative(NativeKind kind, List<String> tokens, List<Tree> children) {
+    return new NativeTreeImpl(metaData(tokens), kind, children);
+  }
+
   public static ModifierTree simpleModifier(ModifierTree.Kind kind) {
     return new ModifierTreeImpl(null, kind);
   }
 
   public static TopLevelTree topLevel(List<Tree> declarations) {
     return new TopLevelTreeImpl(null, declarations, null);
+  }
+
+  private static TreeMetaData metaData(List<String> tokens) {
+    TreeMetaData metaData = mock(TreeMetaData.class);
+    when(metaData.tokens()).thenReturn(tokens.stream()
+      .map(text -> new TokenImpl(null, text, null))
+      .collect(Collectors.toList()));
+    return metaData;
   }
 
 }

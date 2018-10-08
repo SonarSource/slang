@@ -60,7 +60,7 @@ public class ArgVisitorTest extends AbstractRubyConverterTest {
   public void test_unnamed_rest_arg() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo(*, arg) end");
     Tree firstParameter = tree.formalParameters().get(0);
-    assertTree(firstParameter).isEquivalentTo(nativeTree("restarg"));
+    assertTree(firstParameter).isEquivalentTo(nativeTree("restarg", "*"));
     assertTree(tree.formalParameters().get(1)).isEquivalentTo(parameter("arg"));
   }
 
@@ -81,7 +81,7 @@ public class ArgVisitorTest extends AbstractRubyConverterTest {
   public void test_unnamed_kw_rest_arg() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo(**) end");
     Tree firstParameter = tree.formalParameters().get(0);
-    assertTree(firstParameter).isEquivalentTo(nativeTree("kwrestarg"));
+    assertTree(firstParameter).isEquivalentTo(nativeTree("kwrestarg", "**"));
   }
 
   @Test
@@ -120,7 +120,7 @@ public class ArgVisitorTest extends AbstractRubyConverterTest {
     Tree args = tree.children().get(1);
     Tree procarg = args.children().get(0);
     // it seems that regex node is not processed correctly, see issue opened on parser side https://github.com/whitequark/parser/issues/527
-    assertTree(procarg.children().get(0)).isEquivalentTo(nativeTree("(arg :regex)"));
+    assertTree(procarg.children().get(0)).isEquivalentTo(nativeTree("(arg :regex)", "(", "regex", ",", "sub", ")"));
     assertTree(procarg.children().get(1)).isEquivalentTo(parameter("sub"));
 
     tree = rubyStatement("[].each do |regex, sub| url = url.sub(regex, sub) end");

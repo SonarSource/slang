@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
@@ -44,7 +43,7 @@ public class RubyVisitorTest extends AbstractRubyConverterTest {
 
   @Test
   public void singletons() {
-    assertTree(rubyStatement("nil")).isEquivalentTo(nativeTree(nativeKind("nil"), emptyList()));
+    assertTree(rubyStatement("nil")).isEquivalentTo(nativeTree("nil", "nil"));
   }
 
 }
