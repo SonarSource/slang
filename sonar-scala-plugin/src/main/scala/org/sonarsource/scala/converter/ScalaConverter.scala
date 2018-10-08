@@ -112,6 +112,8 @@ class ScalaConverter extends slang.api.ASTConverter {
           createFunctionDeclarationTree(metaData, defn)
         case Term.Block(stats) =>
           new BlockTreeImpl(metaData, convert(stats))
+        case Term.Assign(lhs, rhs) if metaTree.parent.exists(p => p.isNot[Term.Apply] && p.isNot[Init]) =>
+          new AssignmentExpressionTreeImpl(metaData, slang.api.AssignmentExpressionTree.Operator.EQUAL, convert(lhs), convert(rhs));
         case Term.If(cond, thenp, elsep) =>
           createIfTree(metaData, cond, thenp, elsep)
         case Term.While(expr, body) =>
