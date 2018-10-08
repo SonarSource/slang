@@ -55,7 +55,6 @@ public class CheckList {
     MatchWithoutElseCheck.class,
     OctalValuesCheck.class,
     RedundantParenthesesCheck.class,
-    SelfAssignmentCheck.class,
     TooComplexExpressionCheck.class,
     UnusedFunctionParameterCheck.class,
     UnusedPrivateMethodCheck.class,
