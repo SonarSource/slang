@@ -50,7 +50,6 @@ public class CheckList {
     DuplicateBranchCheck.class,
     DuplicatedFunctionImplementationCheck.class,
     FunctionCognitiveComplexityCheck.class,
-    HardcodedCredentialsCheck.class,
     IdenticalConditionsCheck.class,
     MatchWithoutElseCheck.class,
     OctalValuesCheck.class,
