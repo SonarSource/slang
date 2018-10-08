@@ -1,4 +1,7 @@
 {
+'scala-project:ruling/src/test/resources/sources/scala/S1862.scala':[
+13,
+],
 'scala-project:sources/scala/http4s/blaze-server/src/test/scala/org/http4s/server/blaze/Http1ServerStageSpec.scala':[
 80,
 ],
