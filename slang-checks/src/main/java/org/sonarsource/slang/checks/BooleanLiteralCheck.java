@@ -22,8 +22,10 @@ package org.sonarsource.slang.checks;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Nullable;
 import org.sonar.check.Rule;
 import org.sonarsource.slang.api.BinaryExpressionTree;
+import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.UnaryExpressionTree;
@@ -41,8 +43,12 @@ public class BooleanLiteralCheck implements SlangCheck {
 
   @Override
   public void initialize(InitContext init) {
-    init.register(IfTree.class, (ctx, ifTree) -> getBooleanLiteral(ifTree.thenBranch(), ifTree.elseBranch())
-      .ifPresent(booleanLiteral -> ctx.reportIssue(booleanLiteral, MESSAGE)));
+    init.register(IfTree.class, (ctx, ifTree) -> {
+      if (isIfWithMaxTwoBranches(ctx.parent(), ifTree) && !hasBlockBranch(ifTree)) {
+        getBooleanLiteral(ifTree.thenBranch(), ifTree.elseBranch())
+          .ifPresent(booleanLiteral -> ctx.reportIssue(booleanLiteral, MESSAGE));
+      }
+    });
 
     init.register(BinaryExpressionTree.class, (ctx, binaryExprTree) -> {
       if (CONDITIONAL_BINARY_OPERATORS.contains(binaryExprTree.operator())) {
@@ -57,6 +63,16 @@ public class BooleanLiteralCheck implements SlangCheck {
           .ifPresent(booleanLiteral -> ctx.reportIssue(booleanLiteral, MESSAGE));
       }
     });
+  }
+
+  private static boolean isIfWithMaxTwoBranches(@Nullable Tree parent, IfTree ifTree) {
+    boolean isElseIf = parent instanceof IfTree && ((IfTree) parent).elseBranch() == ifTree;
+    boolean isIfElseIf = ifTree.elseBranch() instanceof IfTree;
+    return !isElseIf && !isIfElseIf;
+  }
+
+  private static boolean hasBlockBranch(IfTree ifTree) {
+    return ifTree.thenBranch() instanceof BlockTree || ifTree.elseBranch() instanceof BlockTree;
   }
 
   private static Optional<Tree> getBooleanLiteral(Tree... trees) {
