@@ -153,6 +153,8 @@ class ScalaConverter extends slang.api.ASTConverter {
           createExceptionHandlingTree(metaData, expr, catchBlock, finallyp)
         case Term.TryWithHandler(expr, catchp, finallyp) =>
           createExceptionHandlingTree(metaData, expr, Some(convert(catchp)), finallyp)
+        case Mod.Private(_) =>
+          new ModifierTreeImpl(metaData, slang.api.ModifierTree.Kind.PRIVATE)
         case _ =>
           createNativeTree(metaData, metaTree)
       }
@@ -236,17 +238,23 @@ class ScalaConverter extends slang.api.ASTConverter {
       val modifiers = convert(defn.mods)
       val returnType = defn.decltpe.map(convert).orNull
       val name = convert(defn.name).asInstanceOf[slang.api.IdentifierTree]
-      val params = defn.paramss match {
-        case List(x) => convert(x)
-        case _ => emptyList[api.Tree]
+      val (unusualParams, params) = defn.paramss.flatten.partition{p =>
+        p.default.isDefined || p.mods.exists(m => m.isInstanceOf[scala.meta.Mod.Implicit])
       }
-      val rawBody = convert(defn.body);
+      val allParams = params.map(createParameterTree).union(unusualParams.map(convert)).asJava
+      val rawBody = convert(defn.body)
       val body = rawBody match {
         case b: slang.api.BlockTree => b
         case _ => new BlockTreeImpl(rawBody.metaData(), singletonList(rawBody))
       }
       val nativeChildren = convert(defn.tparams)
-      new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, name, params, body, nativeChildren)
+      new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, name, allParams, body, nativeChildren)
+    }
+
+    private def createParameterTree(param: Term.Param): slang.api.Tree = {
+      val identifier = convert(param.name).asInstanceOf[slang.api.IdentifierTree]
+      val typ = convert(param.decltpe).orNull
+      new ParameterTreeImpl(treeMetaData(param), identifier, typ)
     }
 
     private def createIfTree(metaData: TreeMetaData, cond: Term, thenp: Term, elsep: Term) = {
