@@ -177,8 +177,8 @@ matchExpression
   ;
 
 matchCase
-  :  statement ARROW controlBlock semi
-  |  ELSE ARROW controlBlock semi
+  :  statement ARROW controlBlock? semi
+  |  ELSE ARROW controlBlock? semi
   ;
 
 loopExpression

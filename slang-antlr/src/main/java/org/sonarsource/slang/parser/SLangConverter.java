@@ -407,7 +407,7 @@ public class SLangConverter implements ASTConverter {
     @Override
     public Tree visitMatchCase(SLangParser.MatchCaseContext ctx) {
       Tree expression = ctx.statement() == null ? null : visit(ctx.statement());
-      Tree body = visit(ctx.controlBlock());
+      Tree body = ctx.controlBlock() == null ? null : visit(ctx.controlBlock());
       return new MatchCaseTreeImpl(meta(ctx), expression, body);
     }
 

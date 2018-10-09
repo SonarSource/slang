@@ -361,6 +361,15 @@ public class SLangConverterTest {
   }
 
   @Test
+  public void match_case_without_body() {
+    Tree tree = converter.parse("match(x) { 1 -> ; 2 -> a; else ->; };").children().get(0);
+    MatchTree matchTree = (MatchTree) tree;
+    assertTree(matchTree.cases().get(0).body()).isNull();
+    assertTree(matchTree.cases().get(1).body()).isNotNull();
+    assertTree(matchTree.cases().get(2).body()).isNull();
+  }
+
+  @Test
   public void for_loop() {
     Tree tree = converter.parse("for (var x = list) { x; };").children().get(0);
     assertTree(tree).isInstanceOf(LoopTree.class).hasTextRange(1, 0, 1, 25);

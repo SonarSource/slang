@@ -75,3 +75,23 @@
   else
     bar
   ;
+
+  match(x) {
+    1 ->
+      foo
+      + bar;
+    2 ->
+      foo
+      + baz;
+    3 ->
+      foo // Noncompliant
+      + bar;
+  };
+
+  match(x) {
+    1 -> ;
+    2 ->
+      foo
+      + baz;
+    3 -> ;
+  };
