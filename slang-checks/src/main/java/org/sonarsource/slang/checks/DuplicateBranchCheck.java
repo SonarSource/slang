@@ -19,6 +19,7 @@
  */
 package org.sonarsource.slang.checks;
 
+import javax.annotation.Nullable;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Tree;
@@ -53,7 +54,10 @@ public class DuplicateBranchCheck extends AbstractBranchDuplicationCheck {
     // handled by S3923
   }
 
-  private static boolean spansMultipleLines(Tree tree) {
+  private static boolean spansMultipleLines(@Nullable Tree tree) {
+    if (tree == null) {
+      return false;
+    }
     if (tree instanceof BlockTree) {
       BlockTree block = (BlockTree) tree;
       List<Tree> statements = block.statementOrExpressions();
