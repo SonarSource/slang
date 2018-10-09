@@ -49,7 +49,6 @@ public class CheckList {
     MatchWithoutElseCheck.class,
     OctalValuesCheck.class,
     RedundantParenthesesCheck.class,
-    UnusedFunctionParameterCheck.class,
     UnusedPrivateMethodCheck.class,
     WrongAssignmentOperatorCheck.class
   };
