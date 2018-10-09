@@ -48,7 +48,6 @@ public class CheckList {
     BooleanLiteralCheck.class,
     CodeAfterJumpCheck.class,
     FunctionCognitiveComplexityCheck.class,
-    IdenticalConditionsCheck.class,
     MatchWithoutElseCheck.class,
     OctalValuesCheck.class,
     RedundantParenthesesCheck.class,
