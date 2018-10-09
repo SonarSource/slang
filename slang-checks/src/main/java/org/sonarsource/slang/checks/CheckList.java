@@ -52,7 +52,6 @@ public class CheckList {
     RedundantParenthesesCheck.class,
     UnusedFunctionParameterCheck.class,
     UnusedPrivateMethodCheck.class,
-    VariableAndParameterNameCheck.class,
     WrongAssignmentOperatorCheck.class
   };
 
