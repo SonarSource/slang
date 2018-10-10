@@ -18,9 +18,6 @@
 'scala-project:sources/scala/finagle/finagle-http2/src/main/scala/com/twitter/finagle/http2/transport/StreamTransportFactory.scala':[
 117,
 ],
-'scala-project:sources/scala/finagle/finagle-mux/src/main/scala/com/twitter/finagle/Mux.scala':[
-319,
-],
 'scala-project:sources/scala/finagle/finagle-netty3/src/main/scala/com/twitter/finagle/httpproxy/HttpConnectHandler.scala':[
 61,
 ],
@@ -49,9 +46,6 @@
 ],
 'scala-project:sources/scala/incubator-openwhisk/tests/src/test/scala/system/basic/WskSequenceTests.scala':[
 469,
-],
-'scala-project:sources/scala/linkerd/etcd/src/main/scala/io/buoyant/etcd/NodeOp.scala':[
-57,
 ],
 'scala-project:sources/scala/linkerd/namerd/iface/control-http/src/main/scala/io/buoyant/namerd/iface/DtabHandler.scala':[
 85,
