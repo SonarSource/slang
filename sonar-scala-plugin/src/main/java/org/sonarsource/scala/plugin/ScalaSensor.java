@@ -26,8 +26,10 @@ import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonarsource.scala.converter.ScalaConverter;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.checks.CheckList;
+import org.sonarsource.slang.checks.CommentedCodeCheck;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.plugin.SlangSensor;
+import org.sonarsource.scala.converter.ScalaCodeVerifier;
 
 public class ScalaSensor  extends SlangSensor {
 
@@ -37,6 +39,7 @@ public class ScalaSensor  extends SlangSensor {
     super(noSonarFilter, fileLinesContextFactory, language);
     checks = checkFactory.create(ScalaPlugin.SCALA_REPOSITORY_KEY);
     checks.addAnnotatedChecks((Iterable<?>) CheckList.scalaChecks());
+    checks.addAnnotatedChecks(new CommentedCodeCheck(new ScalaCodeVerifier()));
   }
 
   @Override
