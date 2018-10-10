@@ -153,11 +153,18 @@ class ScalaConverter extends slang.api.ASTConverter {
           createExceptionHandlingTree(metaData, expr, catchBlock, finallyp)
         case Term.TryWithHandler(expr, catchp, finallyp) =>
           createExceptionHandlingTree(metaData, expr, Some(convert(catchp)), finallyp)
-        case Mod.Private(_) =>
+        case Mod.Private(within) if isStrictPrivate(within) =>
           new ModifierTreeImpl(metaData, slang.api.ModifierTree.Kind.PRIVATE)
         case _ =>
           createNativeTree(metaData, metaTree)
       }
+    }
+
+    // private => like Java
+    // private[this] =>  accessible only for current instance
+    // private[foo] => accessible inside foo package
+    private def isStrictPrivate(within: Ref) = {
+      within.isInstanceOf[Name.Anonymous] || within.isInstanceOf[Term.This]
     }
 
     private def createExceptionHandlingTree(metaData: TreeMetaData, expr: Term, catchBlock: Option[slang.api.Tree], finallyp: Option[Term]) = {
