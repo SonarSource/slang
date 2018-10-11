@@ -155,9 +155,17 @@ class ScalaConverter extends slang.api.ASTConverter {
           createExceptionHandlingTree(metaData, expr, Some(convert(catchp)), finallyp)
         case Mod.Private(within) if isStrictPrivate(within) =>
           new ModifierTreeImpl(metaData, slang.api.ModifierTree.Kind.PRIVATE)
+        case Term.Return(expr) =>
+          createReturnTree(metaData, expr)
         case _ =>
           createNativeTree(metaData, metaTree)
       }
+    }
+
+    private def createReturnTree(metaData: TreeMetaData, expr: Term) = {
+      val convertedExpr = convert(expr)
+      val end = if (convertedExpr == null) metaData.textRange.end else start(convertedExpr)
+      new ReturnTreeImpl(metaData, keyword(metaData.textRange.start, end), convertedExpr)
     }
 
     // private => like Java
