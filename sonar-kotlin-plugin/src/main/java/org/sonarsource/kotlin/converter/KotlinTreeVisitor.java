@@ -134,6 +134,7 @@ import org.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
+import static org.sonarsource.slang.api.ModifierTree.Kind.OVERRIDE;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PUBLIC;
 
@@ -414,6 +415,8 @@ class KotlinTreeVisitor {
           return new ModifierTreeImpl(metaData, PUBLIC);
         } else if (KtTokens.PRIVATE_KEYWORD.getValue().equals(element.getText())) {
           return new ModifierTreeImpl(metaData, PRIVATE);
+        } else if(KtTokens.OVERRIDE_KEYWORD.getValue().equals(element.getText())) {
+          return new ModifierTreeImpl(metaData, OVERRIDE);
         } else {
           NativeKind modifierKind = new KotlinNativeKind(element, element.getText());
           return createNativeTree(metaData, modifierKind, Collections.emptyList());

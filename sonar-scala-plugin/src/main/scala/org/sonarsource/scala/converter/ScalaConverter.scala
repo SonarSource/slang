@@ -155,6 +155,8 @@ class ScalaConverter extends slang.api.ASTConverter {
           createExceptionHandlingTree(metaData, expr, Some(convert(catchp)), finallyp)
         case Mod.Private(within) if isStrictPrivate(within) =>
           new ModifierTreeImpl(metaData, slang.api.ModifierTree.Kind.PRIVATE)
+        case Mod.Override() =>
+          new ModifierTreeImpl(metaData, slang.api.ModifierTree.Kind.OVERRIDE)
         case Term.Return(expr) =>
           createReturnTree(metaData, expr)
         case _ =>

@@ -29,6 +29,7 @@ methodDeclaration
 methodModifier
   : PUBLIC  
   | PRIVATE
+  | OVERRIDE
   ;
 
 methodHeader
@@ -320,6 +321,7 @@ MATCH : 'match';
 NATIVE : 'native'; 
 PRIVATE : 'private';
 PUBLIC : 'public';
+OVERRIDE: 'override';
 RETURN : 'return';
 THIS : 'this';
 TRY : 'try';

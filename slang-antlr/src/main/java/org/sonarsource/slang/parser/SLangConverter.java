@@ -91,6 +91,7 @@ import static java.util.stream.Collectors.toList;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
+import static org.sonarsource.slang.api.ModifierTree.Kind.OVERRIDE;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PUBLIC;
 import static org.sonarsource.slang.api.UnaryExpressionTree.Operator.DECREMENT;
@@ -310,6 +311,8 @@ public class SLangConverter implements ASTConverter {
       Kind modifierKind = PUBLIC;
       if (ctx.PRIVATE() != null) {
         modifierKind = PRIVATE;
+      } else if (ctx.OVERRIDE() != null) {
+        modifierKind = OVERRIDE;
       }
       return new ModifierTreeImpl(meta(ctx), modifierKind);
     }

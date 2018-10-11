@@ -23,7 +23,8 @@ public interface ModifierTree extends Tree {
 
   enum Kind {
     PUBLIC,
-    PRIVATE
+    PRIVATE,
+    OVERRIDE
   }
 
   Kind kind();
