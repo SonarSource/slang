@@ -71,5 +71,9 @@ public class ScalaCodeVerifierTest {
     assertThat(verifier.containsCode("(name, persons)")).isFalse();
 
     assertThat(verifier.containsCode("case None => true")).isTrue();
+
+    assertThat(verifier.containsCode("* Copyright (c) 2012-2014")).isFalse();
+    // Catch UnreachableError exception
+    assertThat(verifier.containsCode("TODO can we avoid the map() ?")).isFalse();
   }
 }
