@@ -257,7 +257,7 @@ class ScalaConverter extends slang.api.ASTConverter {
       val returnType = defn.decltpe.map(convert).orNull
       val name = convert(defn.name).asInstanceOf[slang.api.IdentifierTree]
       val (unusualParams, params) = defn.paramss.flatten.partition{p =>
-        p.default.isDefined || p.mods.exists(m => m.isInstanceOf[scala.meta.Mod.Implicit])
+        p.default.isDefined || p.mods.nonEmpty
       }
       val allParams = params.map(createParameterTree).union(unusualParams.map(convert)).asJava
       val rawBody = convert(defn.body)
