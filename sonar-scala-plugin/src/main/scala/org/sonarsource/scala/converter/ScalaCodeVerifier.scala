@@ -7,7 +7,8 @@ import scala.util.{Success, Try}
 
 class ScalaCodeVerifier extends slang.api.CodeVerifier {
 
-  override def containsCode(content: String): Boolean = {
+  override def containsCode(commentContent: String): Boolean = {
+    val content = if(commentContent.trim.startsWith(".")) "x" + commentContent else commentContent
     val wrappedContent = "object Obj { def f1() = { " + content + " } }"
     val source: Source = Try(wrappedContent.parse[Source]) match {
       case Success(scala.meta.parsers.Parsed.Success(t)) => t
