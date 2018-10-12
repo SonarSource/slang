@@ -1,0 +1,821 @@
+[
+  {
+    "key": "com.sksamuel.scapegoat.inspections.AvoidToMinusOne",
+    "name": "Checks for loops that use `x to n-1` instead of `x until n`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.DoubleNegation",
+    "name": "Checks for code like `!(!b)`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.EmptyCaseClass",
+    "name": "Checks for case classes like `case class Faceman()`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.FinalModifierOnCaseClass",
+    "name": "Using Case classes without `final` modifier can lead to surprising breakage",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.LonelySealedTrait",
+    "name": "Checks for sealed traits which have no implementation",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.MaxParameters",
+    "name": "Checks for methods that have over 10 parameters",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.NoOpOverride",
+    "name": "Checks for code that overrides parent method but simply calls super",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.PublicFinalizer",
+    "name": "Checks for overridden finalizes that are public",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.RedundantFinalModifierOnMethod",
+    "name": "Redundant `final` modifier on method that cannot be overridden",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.RedundantFinalModifierOnVar",
+    "name": "Redundant `final` modifier on var that cannot be overridden",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.TypeShadowing",
+    "name": "Checks for shadowed type parameters in methods",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.VarClosure",
+    "name": "Finds closures that reference var",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.ArrayEquals",
+    "name": "Checks for comparison of arrays using `\u003d\u003d` which will always return false",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.AvoidSizeEqualsZero",
+    "name": "Traversable.size can be slow for some data structure, prefer .isEmpty",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.AvoidSizeNotEqualsZero",
+    "name": "Traversable.size can be slow for some data structure, prefer .nonEmpty",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.CollectionIndexOnNonIndexedSeq",
+    "name": "Checks for indexing on a Seq which is not an IndexedSeq",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.CollectionNamingConfusion",
+    "name": "Checks for variables that are confusingly named",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.CollectionNegativeIndex",
+    "name": "Checks for negative access on a sequence eg `list.get(-1)`",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.CollectionPromotionToAny",
+    "name": "Checks for collection operations that promote the collection to `Any`",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.ComparisonToEmptyList",
+    "name": "Checks for code like `a \u003d\u003d List()` or `a \u003d\u003d Nil`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.ComparisonToEmptySet",
+    "name": "Checks for code like `a \u003d\u003d Set()` or `a \u003d\u003d Set.empty`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.DuplicateMapKey",
+    "name": "Checks for duplicate key names in Map literals",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.DuplicateSetValue",
+    "name": "Checks for duplicate values in set literals",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.ExistsSimplifiableToContains",
+    "name": "`exists(x \u003d\u003e x \u003d\u003d b)` replaceable with `contains(b)`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.FilterDotHead",
+    "name": "`.filter(x \u003d\u003e ).head` can be replaced with `find(x \u003d\u003e ) match { .. } `",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.FilterDotHeadOption",
+    "name": "`.filter(x \u003d\u003e).headOption` can be replaced with `find(x \u003d\u003e )`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.FilterDotIsEmpty",
+    "name": "`.filter(x \u003d\u003e ).isEmpty` can be replaced with `!exists(x \u003d\u003e )`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.FilterDotSize",
+    "name": "`.filter(x \u003d\u003e ).size` can be replaced more concisely with with `count(x \u003d\u003e )`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.FilterOptionAndGet",
+    "name": "`.filter(_.isDefined).map(_.get)` can be replaced with `flatten`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.FindAndNotEqualsNoneReplaceWithExists",
+    "name": "`.find(x \u003d\u003e ) !\u003d None` can be replaced with `exist(x \u003d\u003e )`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.FindDotIsDefined",
+    "name": "`find(x \u003d\u003e ).isDefined` can be replaced with `exist(x \u003d\u003e )`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.JavaConversionsUse",
+    "name": "Checks for use of implicit Java conversions",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.ListAppend",
+    "name": "Checks for List :+ which is O(n)",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.ListSize",
+    "name": "Checks for `List.size` which is O(n).",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.MapGetAndGetOrElse",
+    "name": "`Map.get(key).getOrElse(value)` can be replaced with `Map.getOrElse(key, value)`",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.NegationIsEmpty",
+    "name": "`!Traversable.isEmpty` can be replaced with `Traversable.nonEmpty`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.NegationNonEmpty",
+    "name": "`!Traversable.nonEmpty` can be replaced with `Traversable.isEmpty`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.PreferSeqEmpty",
+    "name": "Checks for Seq() when could use Seq.empty",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.PreferSetEmpty",
+    "name": "Checks for Set() when could use Set.empty",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.ReverseFunc",
+    "name": "`reverse` followed by `head`, `headOption`, `iterator`, or`map` can be replaced, respectively, with `last`, `lastOption`, `reverseIterator`, or `reverseMap`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.ReverseTailReverse",
+    "name": "`.reverse.tail.reverse` can be replaced with `init`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.ReverseTakeReverse",
+    "name": "`.reverse.take(...).reverse` can be replaced with `takeRight`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.SwapSortFilter",
+    "name": "`sort.filter` can be replaced with `filter.sort` for performance",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.TraversableHead",
+    "name": "Looks for unsafe usage of `Traversable.head`",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.TraversableLast",
+    "name": "Looks for unsafe usage of `Traversable.last`",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.collections.UnsafeContains",
+    "name": "Checks for `List.contains(value)` for invalid types",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.controlflow.WhileTrue",
+    "name": "Checks for code that uses a `while(true)` or `do { } while(true)` block.",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.empty.EmptyFor",
+    "name": "Checks for empty `for` loops",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.empty.EmptyIfBlock",
+    "name": "Checks for empty `if` blocks",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.empty.EmptyMethod",
+    "name": "Looks for empty methods",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.empty.EmptySynchronizedBlock",
+    "name": "Looks for empty synchronized blocks",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.empty.EmptyTryBlock",
+    "name": "Looks for empty try blocks",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.empty.EmptyWhileBlock",
+    "name": "Looks for empty while loops",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.equality.ComparingFloatingPointTypes",
+    "name": "Checks for equality checks on floating point types",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.equality.ComparingUnrelatedTypes",
+    "name": "Checks for equality comparisons that cannot succeed",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.equality.ComparisonWithSelf",
+    "name": "Checks for equality checks with itself",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.exception.CatchException",
+    "name": "Checks for try blocks that catch Exception",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.exception.CatchFatal",
+    "name": "Checks for try blocks that catch fatal exceptions: VirtualMachineError, ThreadDeath, InterruptedException, LinkageError, ControlThrowable",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.exception.CatchNpe",
+    "name": "Checks for try blocks that catch null pointer exceptions",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.exception.CatchThrowable",
+    "name": "Checks for try blocks that catch Throwable",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.exception.IncorrectlyNamedExceptions",
+    "name": "Checks for exceptions that are not called *Exception and vice versa",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.exception.SwallowedException",
+    "name": "Finds catch blocks that don\u0027t handle caught exceptions",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.exception.UnreachableCatch",
+    "name": "Checks for catch clauses that cannot be reached",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.imports.DuplicateImport",
+    "name": "Checks for import statements that import the same selector",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.inference.BoundedByFinalType",
+    "name": "Looks for types with upper bounds of a final type",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.inference.MethodReturningAny",
+    "name": "Checks for defs that are defined or inferred to return `Any`",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.inference.PointlessTypeBounds",
+    "name": "Finds type bounds of the form `[A \u003c: Any]` or `[A \u003e: Nothing]`",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.inference.ProductWithSerializableInferred",
+    "name": "Checks for vals that have `Product with Serializable` as their inferred type",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.matching.PartialFunctionInsteadOfMatch",
+    "name": "Warns when you could use a partial function directly instead of a match block",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.matching.RepeatedCaseBody",
+    "name": "Checks for case statements which have the same body",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.matching.SuspiciousMatchOnClassObject",
+    "name": "Finds code where matching is taking place on class literals",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.math.BigDecimalDoubleConstructor",
+    "name": "Checks for use of `BigDecimal(double)` which can be unsafe",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.math.BigDecimalScaleWithoutRoundingMode",
+    "name": "`setScale()` on a `BigDecimal` without setting the rounding mode can throw an exception",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.math.BrokenOddness",
+    "name": "checks for a % 2 \u003d\u003d 1 for oddness because this fails on negative numbers",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.math.DivideByOne",
+    "name": "Checks for divide by one, which always returns the original value",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.math.ModOne",
+    "name": "Checks for `x % 1` which will always return `0`",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.math.NanComparison",
+    "name": "Checks for `x \u003d\u003d Double.NaN` which will always fail",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.math.UseCbrt",
+    "name": "Checks for use of `math.pow` for calculating `math.cbrt`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.math.UseExpM1",
+    "name": "Checks for use of `math.exp(x) - 1` instead of `math.expm1(x)`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.math.UseLog10",
+    "name": "Checks for use of `math.log(x)/math.log(10)` instead of `math.log10(x)`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.math.UseLog1P",
+    "name": "Checks for use of `math.log(x + 1)` instead of `math.log1p(x)`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.math.UseSqrt",
+    "name": "Checks for use of `math.pow` for calculating `math.sqrt`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.math.ZeroNumerator",
+    "name": "Checks for dividing by 0 by a number, eg `0 / x` which will always return `0`",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.naming.ClassNames",
+    "name": "Ensures class names adhere to the style guidelines",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.naming.MethodNames",
+    "name": "Warns on method names that don\u0027t adhere to the Scala style guidelines",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.naming.ObjectNames",
+    "name": "Ensures object names adhere to the Scala style guidelines",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.nulls.NullAssignment",
+    "name": "Checks for use of `null` in assignments",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.nulls.NullParameter",
+    "name": "Checks for use of `null` in method invocation",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.option.EitherGet",
+    "name": "Checks for use of .get on Left or Right",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.option.ImpossibleOptionSizeCondition",
+    "name": "Checks for code like `option.size \u003e 2` which can never be true",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.option.OptionGet",
+    "name": "Checks for `Option.get`",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.option.OptionSize",
+    "name": "Checks for `Option.size`",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.string.ArraysInFormat",
+    "name": "Checks for arrays passed to String.format",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.string.ArraysToString",
+    "name": "Checks for explicit toString calls on arrays",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.string.EmptyInterpolatedString",
+    "name": "Looks for interpolated strings that have no arguments",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.string.IllegalFormatString",
+    "name": "Looks for invalid format strings",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.string.IncorrectNumberOfArgsToFormat",
+    "name": "Checks for wrong number of arguments to `String.format`",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.string.InvalidRegex",
+    "name": "Checks for invalid regex literals",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.string.LooksLikeInterpolatedString",
+    "name": "Finds strings that look like they should be interpolated but are not",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.string.StripMarginOnRegex",
+    "name": "Checks for .stripMargin on regex strings that contain a pipe",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.string.SubstringZero",
+    "name": "Checks for `String.substring(0)`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.string.UnsafeStringContains",
+    "name": "Checks for `String.contains(value)` for invalid types",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.style.AvoidOperatorOverload",
+    "name": "Checks for mental symbolic method names",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.style.ParameterlessMethodReturnsUnit",
+    "name": "Checks for `def foo : Unit`",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.style.SimplifyBooleanExpression",
+    "name": "`b \u003d\u003d false` can be simplified to `!b`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.unneccesary.ConstantIf",
+    "name": "Checks for code where the if condition compiles to a constant",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.unneccesary.RedundantFinalizer",
+    "name": "Checks for empty finalizers.",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.unneccesary.UnnecessaryIf",
+    "name": "Checks for code like `if (expr) true else false`",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.unneccesary.UnnecessaryReturnUse",
+    "name": "Checks for use of `return` keyword in blocks",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.unneccesary.UnnecessaryToInt",
+    "name": "Checks for unnecessary `toInt` on instances of Int",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.unneccesary.UnnecessaryToString",
+    "name": "Checks for unnecessary `toString` on instances of String",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.unneccesary.UnusedMethodParameter",
+    "name": "Checks for unused method parameters",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.unneccesary.VarCouldBeVal",
+    "name": "Checks for `var`s that could be declared as `val`s",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.unsafe.AsInstanceOf",
+    "name": "Checks for use of `asInstanceOf`",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.unsafe.FinalizerWithoutSuper",
+    "name": "Checks for overridden finalizers that do not call super",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.unsafe.IsInstanceOf",
+    "name": "Checks for use of `isInstanceOf`",
+    "type": "CODE_SMELL",
+    "severity": "MAJOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  },
+  {
+    "key": "com.sksamuel.scapegoat.inspections.unsafe.TryGet",
+    "name": "Checks for use of `Try.get`",
+    "type": "BUG",
+    "severity": "MINOR",
+    "url": "https://github.com/sksamuel/scapegoat/blob/master/README.md#inspections"
+  }
+]

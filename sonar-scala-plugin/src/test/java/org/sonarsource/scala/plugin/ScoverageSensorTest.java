@@ -19,6 +19,12 @@
  */
 package org.sonarsource.scala.plugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile;
@@ -29,13 +35,7 @@ import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.utils.log.LogTester;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import org.sonar.api.utils.log.LoggerLevel;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -121,9 +121,9 @@ public class ScoverageSensorTest {
 
     new ScoverageSensor().execute(context);
 
-    String expectedMessage = String.format("File '" + reportPath.toString() + "' can't be read. javax.xml.stream.XMLStreamException: ParseError at [row,col]:[2,1]\nMessage: Content is not allowed in prolog.");
-
-    assertThat(logTester.logs().contains(expectedMessage)).isTrue();
+    String expectedMessage = String.format("File '" + reportPath.toString() + "' can't be read. javax.xml.stream.XMLStreamException");
+    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
+    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains(expectedMessage);
   }
 
   @Test
@@ -134,8 +134,9 @@ public class ScoverageSensorTest {
     SensorContextTester context = getSensorContext(reportPath.toString());
 
     new ScoverageSensor().execute(context);
-    String expectedMessage = "File '" + reportPath.toString() + "' can't be read. java.lang.NumberFormatException: For input string: \"nine\"";
-    assertThat(logTester.logs().contains(expectedMessage)).isTrue();
+    String expectedMessage = "File '" + reportPath.toString() + "' can't be read. java.lang.NumberFormatException";
+    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
+    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains(expectedMessage);
   }
 
 

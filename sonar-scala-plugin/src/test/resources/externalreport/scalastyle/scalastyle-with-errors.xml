@@ -1,0 +1,27 @@
+<checkstyle version="5.0" generatedBy="scapegoat">
+    <file name="/absolute/path/to/HelloWorld.scala">
+        <error line="5" message="Valid issue" source="com.sksamuel.scapegoat.inspections.EmptyCaseClass"></error>
+        <error message="Missing line" source="unknown.key"></error>
+        <error line="6" message="Missing source"></error>
+        <error line="7" source="com.sksamuel.scapegoat.inspections.EmptyCaseClass"></error>
+        <error></error>
+    </file>
+    <file name="/absolute/path/to/InvalidPath.scala">
+        <error line="9" message="Empty case class" severity="Info"
+               source="com.sksamuel.scapegoat.inspections.EmptyCaseClass"
+               snippet="Empty case class can be rewritten as a case object"></error>
+    </file>
+    <file>
+        <error line="9" message="Empty case class" severity="Info"
+               source="com.sksamuel.scapegoat.inspections.EmptyCaseClass"
+               snippet="Empty case class can be rewritten as a case object"></error>
+    </file>
+    <other>
+        <error line="9" message="Empty case class" severity="Info"
+               source="com.sksamuel.scapegoat.inspections.EmptyCaseClass"
+               snippet="Empty case class can be rewritten as a case object"></error>
+        <other>
+            <other></other>
+        </other>
+    </other>
+</checkstyle>

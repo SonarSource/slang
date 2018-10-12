@@ -23,6 +23,11 @@ import org.sonar.api.Plugin;
 import org.sonar.api.SonarProduct;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
+import org.sonar.api.utils.Version;
+import org.sonarsource.scala.externalreport.scalastyle.ScalastyleRulesDefinition;
+import org.sonarsource.scala.externalreport.scalastyle.ScalastyleSensor;
+import org.sonarsource.scala.externalreport.scapegoat.ScapegoatRulesDefinition;
+import org.sonarsource.scala.externalreport.scapegoat.ScapegoatSensor;
 
 public class ScalaPlugin implements Plugin {
   public static final String SCALA_LANGUAGE_KEY = "scala";
@@ -40,6 +45,7 @@ public class ScalaPlugin implements Plugin {
   private static final String GENERAL = "General";
   private static final String SCALA_CATEGORY = "Scala";
   private static final String TEST_COVERAGE_SUBCATEGORY = "Test and Coverage";
+  private static final String EXTERNAL_ANALYZERS_CATEGORY = "External Analyzers";
 
   @Override
   public void define(Context context) {
@@ -50,9 +56,16 @@ public class ScalaPlugin implements Plugin {
       ScalaRulesDefinition.class);
 
     if (context.getRuntime().getProduct() != SonarProduct.SONARLINT) {
+
+      boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
+
       context.addExtensions(
         ScalaProfileDefinition.class,
         ScoverageSensor.class,
+        ScalastyleSensor.class,
+        ScapegoatSensor.class,
+        new ScalastyleRulesDefinition(externalIssuesSupported),
+        new ScapegoatRulesDefinition(externalIssuesSupported),
 
         PropertyDefinition.builder(SCALA_FILE_SUFFIXES_KEY)
           .defaultValue(SCALA_FILE_SUFFIXES_DEFAULT_VALUE)
@@ -73,6 +86,27 @@ public class ScalaPlugin implements Plugin {
           .multiValues(true)
           .build()
       );
+
+      if (externalIssuesSupported) {
+        context.addExtensions(
+          PropertyDefinition.builder(ScalastyleSensor.REPORT_PROPERTY_KEY)
+            .name("Scalastyle Report Files")
+            .description("Paths (absolute or relative) to scalastyle xml files with Scalastyle issues.")
+            .category(EXTERNAL_ANALYZERS_CATEGORY)
+            .subCategory(SCALA_CATEGORY)
+            .onQualifiers(Qualifiers.PROJECT)
+            .multiValues(true)
+            .build(),
+          PropertyDefinition.builder(ScapegoatSensor.REPORT_PROPERTY_KEY)
+            .name("Scapegoat Report Files")
+            .description("Paths (absolute or relative) to scapegoat xml files using scalastyle format. For example: scapegoat-scalastyle.xml")
+            .category(EXTERNAL_ANALYZERS_CATEGORY)
+            .subCategory(SCALA_CATEGORY)
+            .onQualifiers(Qualifiers.PROJECT)
+            .multiValues(true)
+            .build()
+          );
+      }
     }
 
   }
