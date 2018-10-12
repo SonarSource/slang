@@ -1,0 +1,13 @@
+<checkstyle version="5.0" generatedBy="scapegoat">
+    <file name="{ABSOLUTE_HELLO_WORLD_PATH}">
+        <error line="9" message="Empty case class" severity="Info"
+               source="com.sksamuel.scapegoat.inspections.EmptyCaseClass"
+               snippet="Empty case class can be rewritten as a case object"></error>
+        <error line="9" message="Missing final modifier on case class" severity="Info"
+               source="com.sksamuel.scapegoat.inspections.FinalModifierOnCaseClass"
+               snippet="Case classes should have final modifier"></error>
+        <error line="5" message="Use of isInstanceOf" severity="Warning"
+               source="com.sksamuel.scapegoat.inspections.unsafe.IsInstanceOf"
+               snippet="Consider using a pattern match rather than isInstanceOf: args.isInstanceOf[Array[String]]"></error>
+    </file>
+</checkstyle>

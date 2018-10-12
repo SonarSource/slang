@@ -1,0 +1,506 @@
+[
+  {
+    "key": "org.scalastyle.file.FileLengthChecker",
+    "name": "File size limit",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_FileLengthChecker"
+  },
+  {
+    "key": "org.scalastyle.file.FileLineLengthChecker",
+    "name": "Line size limit",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_FileLineLengthChecker"
+  },
+  {
+    "key": "org.scalastyle.file.FileTabChecker",
+    "name": "Line contains tab",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_FileTabChecker"
+  },
+  {
+    "key": "org.scalastyle.file.HeaderMatchesChecker",
+    "name": "Header matches",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_HeaderMatchesChecker"
+  },
+  {
+    "key": "org.scalastyle.file.IndentationChecker",
+    "name": "Indentation",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_IndentationChecker"
+  },
+  {
+    "key": "org.scalastyle.file.NewLineAtEofChecker",
+    "name": "Newline at eof",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_NewLineAtEofChecker"
+  },
+  {
+    "key": "org.scalastyle.file.NoNewLineAtEofChecker",
+    "name": "No newline at eof",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_NoNewLineAtEofChecker"
+  },
+  {
+    "key": "org.scalastyle.file.RegexChecker",
+    "name": "Regex",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_RegexChecker"
+  },
+  {
+    "key": "org.scalastyle.file.WhitespaceEndOfLineChecker",
+    "name": "Whitespace end of line",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_WhitespaceEndOfLineChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.BlockImportChecker",
+    "name": "Block import",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_BlockImportChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.CaseBraceChecker",
+    "name": "Disallow case brace",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_CaseBraceChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.ClassNamesChecker",
+    "name": "Class name",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ClassNamesChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.ClassTypeParameterChecker",
+    "name": "Class type parameter name",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ClassTypeParameterChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.CovariantEqualsChecker",
+    "name": "Covariant equals",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_CovariantEqualsChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.CyclomaticComplexityChecker",
+    "name": "Cyclomatic complexity",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_CyclomaticComplexityChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.DeprecatedJavaChecker",
+    "name": "Deprecated java",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_DeprecatedJavaChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.DisallowSpaceAfterTokenChecker",
+    "name": "Disallow space after token",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_DisallowSpaceAfterTokenChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.DisallowSpaceBeforeTokenChecker",
+    "name": "Disallow space before token",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_DisallowSpaceBeforeTokenChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.EmptyClassChecker",
+    "name": "Empty class",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_EmptyClassChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.EmptyInterpolatedStringChecker",
+    "name": "Empty interpolated strings",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_EmptyInterpolatedStringChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.EnsureSingleSpaceAfterTokenChecker",
+    "name": "Ensure single space after token",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_EnsureSingleSpaceAfterTokenChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.EnsureSingleSpaceBeforeTokenChecker",
+    "name": "Ensure single space before token",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_EnsureSingleSpaceBeforeTokenChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.EqualsHashCodeChecker",
+    "name": "Equals hash code",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_EqualsHashCodeChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.FieldNamesChecker",
+    "name": "Field name",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_FieldNamesChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.ForBraceChecker",
+    "name": "For brace",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ForBraceChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.ForLoopChecker",
+    "name": "For loop",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ForLoopChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.IfBraceChecker",
+    "name": "If brace",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_IfBraceChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.IllegalImportsChecker",
+    "name": "Illegal imports",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_IllegalImportsChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.ImportGroupingChecker",
+    "name": "Import grouping",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ImportGroupingChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.ImportOrderChecker",
+    "name": "Import ordering",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ImportOrderChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.LowercasePatternMatchChecker",
+    "name": "Lowercase pattern match",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_LowercasePatternMatchChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.MagicNumberChecker",
+    "name": "Magic number",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_MagicNumberChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.MethodArgumentNamesChecker",
+    "name": "Method argument name",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_MethodArgumentNamesChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.MethodLengthChecker",
+    "name": "Method length",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_MethodLengthChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.MethodNamesChecker",
+    "name": "Method name",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_MethodNamesChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.MultipleStringLiteralsChecker",
+    "name": "Multiple string literals",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_MultipleStringLiteralsChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.NamedArgumentChecker",
+    "name": "Named argument",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NamedArgumentChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.NoCloneChecker",
+    "name": "No clone",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NoCloneChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.NoFinalizeChecker",
+    "name": "No finalize",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NoFinalizeChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.NoWhitespaceAfterLeftBracketChecker",
+    "name": "No whitespace after left bracket",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NoWhitespaceAfterLeftBracketChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.NoWhitespaceBeforeLeftBracketChecker",
+    "name": "No whitespace before left bracket",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NoWhitespaceBeforeLeftBracketChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.NoWhitespaceBeforeRightBracketChecker",
+    "name": "No whitespace before right bracket",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NoWhitespaceBeforeRightBracketChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.NonASCIICharacterChecker",
+    "name": "Non ascii character disallowed",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NonASCIICharacterChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.NotImplementedErrorUsage",
+    "name": "Not implemented error usage",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NotImplementedErrorUsage"
+  },
+  {
+    "key": "org.scalastyle.scalariform.NullChecker",
+    "name": "Null",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NullChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.NumberOfMethodsInTypeChecker",
+    "name": "Number of methods",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NumberOfMethodsInTypeChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.NumberOfTypesChecker",
+    "name": "Number of types",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NumberOfTypesChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.ObjectNamesChecker",
+    "name": "Object name",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ObjectNamesChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.OverrideJavaChecker",
+    "name": "Override java",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_OverrideJavaChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.PackageNamesChecker",
+    "name": "Package name",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_PackageNamesChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.PackageObjectNamesChecker",
+    "name": "Package object name",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_PackageObjectNamesChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.ParameterNumberChecker",
+    "name": "Parameter number",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ParameterNumberChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.PatternMatchAlignChecker",
+    "name": "Pattern match align",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_PatternMatchAlignChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.ProcedureDeclarationChecker",
+    "name": "Procedure declaration",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ProcedureDeclarationChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.PublicMethodsHaveTypeChecker",
+    "name": "Public methods have type",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_PublicMethodsHaveTypeChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.RedundantIfChecker",
+    "name": "If redundant",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_RedundantIfChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.ReturnChecker",
+    "name": "Return",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ReturnChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.ScalaDocChecker",
+    "name": "Scaladoc",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ScalaDocChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.SimplifyBooleanExpressionChecker",
+    "name": "Simplify boolean expression",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_SimplifyBooleanExpressionChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.SpaceAfterCommentStartChecker",
+    "name": "Space after comment start",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_SpaceAfterCommentStartChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.SpacesAfterPlusChecker",
+    "name": "Spaces after plus",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_SpacesAfterPlusChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.SpacesBeforePlusChecker",
+    "name": "Spaces before plus",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_SpacesBeforePlusChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.StructuralTypeChecker",
+    "name": "Structural type",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_StructuralTypeChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.TodoCommentChecker",
+    "name": "Todo comment",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_TodoCommentChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.TokenChecker",
+    "name": "Token",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_TokenChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.UnderscoreImportChecker",
+    "name": "Underscore import",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_UnderscoreImportChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.UppercaseLChecker",
+    "name": "Uppercase l",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_UppercaseLChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.VarFieldChecker",
+    "name": "Var field",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_VarFieldChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.VarLocalChecker",
+    "name": "Var local",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_VarLocalChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.WhileBraceChecker",
+    "name": "While brace",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_WhileBraceChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.WhileChecker",
+    "name": "While",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_WhileChecker"
+  },
+  {
+    "key": "org.scalastyle.scalariform.XmlLiteralChecker",
+    "name": "Xml literal",
+    "type": "CODE_SMELL",
+    "severity": "MINOR",
+    "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_XmlLiteralChecker"
+  }
+]
