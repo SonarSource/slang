@@ -114,12 +114,6 @@
 'scala-project:sources/scala/finagle/finagle-base-http/src/main/scala/com/twitter/finagle/http/Cookie.scala':[
 174,
 ],
-'scala-project:sources/scala/finagle/finagle-http2/src/main/scala/com/twitter/finagle/http2/LoggerPerFrameTypeLogger.scala':[
-58,
-],
-'scala-project:sources/scala/finagle/finagle-http2/src/main/scala/com/twitter/finagle/http2/transport/Http2ClientDowngrader.scala':[
-100,
-],
 'scala-project:sources/scala/finagle/finagle-netty4-http/src/main/scala/com/twitter/finagle/netty4/http/Netty4FormPostEncoder.scala':[
 131,
 ],
@@ -183,7 +177,6 @@
 ],
 'scala-project:sources/scala/incubator-openwhisk/tests/src/test/scala/whisk/core/cli/test/ApiGwRestTests.scala':[
 89,
-158,
 ],
 'scala-project:sources/scala/incubator-openwhisk/tests/src/test/scala/whisk/core/cli/test/BaseApiGwTests.scala':[
 123,
@@ -200,9 +193,6 @@
 ],
 'scala-project:sources/scala/kafka-manager/app/models/form/ClusterOperation.scala':[
 33,
-],
-'scala-project:sources/scala/linkerd/finagle/h2/src/main/scala/io/netty/handler/codec/http2/H2FrameCodec.scala':[
-268,
 ],
 'scala-project:sources/scala/linkerd/namer/consul/src/main/scala/io/buoyant/namer/consul/ConsulNamer.scala':[
 15,
@@ -299,7 +289,6 @@
 192,
 ],
 'scala-project:sources/scala/snowplow/2-collectors/scala-stream-collector/core/src/main/scala/com.snowplowanalytics.snowplow.collectors.scalastream/CollectorService.scala':[
-79,
 175,
 221,
 ],
