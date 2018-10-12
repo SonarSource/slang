@@ -62,6 +62,16 @@
         <dependency>
             <groupId>org.scalameta</groupId>
             <artifactId>scalameta_2.12</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.scalameta</groupId>
+                    <artifactId>semanticdb_2.12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.lihaoyi</groupId>
+                    <artifactId>fansi_2.12</artifactId>
+                </exclusion>
+            </exclusions>
             <version>4.0.0</version>
         </dependency>
         <dependency>
@@ -124,6 +134,31 @@
                             <shadedArtifactAttached>false</shadedArtifactAttached>
                             <minimizeJar>true</minimizeJar>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>org.scalameta:common_2.12</artifact>
+                                    <excludes>
+                                        <exclude>org/scalameta/*</exclude>
+                                        <exclude>org/scalameta/overload/*</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.scalameta:io_2.12</artifact>
+                                    <excludes>
+                                        <exclude>scala/meta/internal/io/*</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.scala-lang:scala-library</artifact>
+                                    <excludes>
+                                        <exclude>scala/annotation/*</exclude>
+                                        <exclude>scala/collection/parallel/**</exclude>
+                                        <exclude>scala/concurrent/**</exclude>
+                                        <exclude>scala/io/*</exclude>
+                                        <exclude>scala/util/matching/*</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
@@ -141,8 +176,8 @@
                         <configuration>
                             <rules>
                                 <requireFilesSize>
-                                    <minsize>11000000</minsize>
-                                    <maxsize>13000000</maxsize>
+                                    <minsize>7000000</minsize>
+                                    <maxsize>9000000</maxsize>
                                     <files>
                                         <file>${project.build.directory}/${project.build.finalName}.jar</file>
                                     </files>
