@@ -185,6 +185,9 @@
 32,
 34,
 ],
+'scala-project:sources/scala/linkerd/linkerd/protocol/h2/src/main/scala/io/buoyant/linkerd/protocol/H2Config.scala':[
+57,
+],
 'scala-project:sources/scala/linkerd/namer/fs/src/main/scala/io/buoyant/namer/fs/Watcher.scala':[
 150,
 ],
@@ -227,6 +230,9 @@
 'scala-project:sources/scala/mmlspark/src/io/http/src/main/scala/schemas/ImageSearchSchemas.scala':[
 10,
 70,
+],
+'scala-project:sources/scala/mmlspark/src/io/http/src/test/scala/ContinuousHTTPSuite.scala':[
+99,
 ],
 'scala-project:sources/scala/mmlspark/src/io/http/src/test/scala/DistributedHTTPSuite.scala':[
 106,
@@ -375,6 +381,9 @@
 44,
 ],
 'scala-project:sources/scala/reforest/src/main/scala/reforest/util/CCUtil.scala':[
+47,
+49,
+53,
 66,
 ],
 'scala-project:sources/scala/reforest/src/main/scala/reforest/util/CCUtilIO.scala':[

@@ -72,8 +72,18 @@ public class ScalaCodeVerifierTest {
 
     assertThat(verifier.containsCode("case None => true")).isTrue();
 
+
     assertThat(verifier.containsCode("* Copyright (c) 2012-2014")).isFalse();
     // Catch UnreachableError exception
     assertThat(verifier.containsCode("TODO can we avoid the map() ?")).isFalse();
+    assertThat(verifier.containsCode("case None => true")).isTrue();
+    assertThat(verifier.containsCode("case None => true")).isTrue();
+
+    assertThat(verifier.containsCode("hello.set 123")).isFalse();
+    assertThat(verifier.containsCode(".set(123)")).isTrue();
+    assertThat(verifier.containsCode("                     .set(123)")).isTrue();
+    assertThat(verifier.containsCode(".Hello")).isFalse();
+    assertThat(verifier.containsCode("          .Hello")).isFalse();
+    assertThat(verifier.containsCode("hello.World")).isFalse();
   }
 }
