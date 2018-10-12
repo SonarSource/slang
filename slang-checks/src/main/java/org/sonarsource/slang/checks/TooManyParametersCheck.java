@@ -64,8 +64,12 @@ public class TooManyParametersCheck implements SlangCheck {
   }
 
   private static boolean isOverrideMethod(FunctionDeclarationTree tree) {
-    return tree.modifiers().stream().anyMatch(mod ->
-      (mod instanceof ModifierTree) && ((ModifierTree) mod).kind() == ModifierTree.Kind.OVERRIDE);
+    return tree.modifiers().stream().anyMatch(mod -> {
+      if (!(mod instanceof ModifierTree)) {
+        return false;
+      }
+      return ((ModifierTree) mod).kind() == ModifierTree.Kind.OVERRIDE;
+    });
   }
 
 }

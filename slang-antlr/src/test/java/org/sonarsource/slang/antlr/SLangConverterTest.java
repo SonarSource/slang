@@ -310,6 +310,10 @@ public class SLangConverterTest {
     ModifierTree modifier = (ModifierTree) overriddenFunction.modifiers().get(0);
     assertThat(modifier.kind()).isEqualTo(OVERRIDE);
 
+    FunctionDeclarationTree functWithNativeModifier = parseFunction("native [] {} int fun foo();");
+    assertThat(functWithNativeModifier.modifiers()).hasSize(1);
+    assertThat(functWithNativeModifier.modifiers().get(0)).isInstanceOf(NativeTree.class);
+
     FunctionDeclarationTree noNameFunction = parseFunction("fun() {}");
     assertThat(noNameFunction.name()).isNull();
   }

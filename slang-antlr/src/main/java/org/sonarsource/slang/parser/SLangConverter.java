@@ -313,6 +313,8 @@ public class SLangConverter implements ASTConverter {
         modifierKind = PRIVATE;
       } else if (ctx.OVERRIDE() != null) {
         modifierKind = OVERRIDE;
+      } else if(ctx.nativeExpression() != null) {
+        return visit(ctx.nativeExpression());
       }
       return new ModifierTreeImpl(meta(ctx), modifierKind);
     }

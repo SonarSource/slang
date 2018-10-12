@@ -30,6 +30,7 @@ methodModifier
   : PUBLIC  
   | PRIVATE
   | OVERRIDE
+  | nativeExpression
   ;
 
 methodHeader
