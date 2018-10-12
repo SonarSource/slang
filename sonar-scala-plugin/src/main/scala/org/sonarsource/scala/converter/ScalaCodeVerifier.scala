@@ -3,14 +3,15 @@ package org.sonarsource.scala.converter
 import org.sonarsource.slang
 
 import scala.meta._
+import scala.util.{Success, Try}
 
 class ScalaCodeVerifier extends slang.api.CodeVerifier {
 
   override def containsCode(content: String): Boolean = {
     val wrappedContent = "object Obj { def f1() = { " + content + " } }"
-    val source: Source = wrappedContent.parse[Source] match {
-      case scala.meta.parsers.Parsed.Success(t) => t
-      case scala.meta.parsers.Parsed.Error(_, _, _) => return false
+    val source: Source = Try(wrappedContent.parse[Source]) match {
+      case Success(scala.meta.parsers.Parsed.Success(t)) => t
+      case _ => return false
     }
 
     val body = source
