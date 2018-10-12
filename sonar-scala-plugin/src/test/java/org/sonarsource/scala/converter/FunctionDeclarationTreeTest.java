@@ -21,6 +21,7 @@ package org.sonarsource.scala.converter;
 
 import org.junit.Test;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
+import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.ParameterTree;
 
@@ -103,5 +104,24 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
         "def foo(implicit p1: String) = {p1}");
     assertThat(func.formalParameters()).hasSize(1);
     assertTree(func.formalParameters().get(0)).isInstanceOf(NativeTree.class);
+  }
+
+  @Test
+  public void modifiers() {
+    FunctionDeclarationTree privateFunc = scalaMethod(
+      "private def foo(p1: String) = {p1}");
+    assertThat(privateFunc.modifiers()).hasSize(1);
+    ModifierTree modifier = (ModifierTree) privateFunc.modifiers().get(0);
+    assertThat(modifier.kind()).isEqualTo(ModifierTree.Kind.PRIVATE);
+
+    FunctionDeclarationTree overriddenFunc = scalaMethod(
+      "override def foo(p1: String) = {p1}");
+    assertThat(overriddenFunc.modifiers()).hasSize(1);
+    modifier = (ModifierTree) overriddenFunc.modifiers().get(0);
+    assertThat(modifier.kind()).isEqualTo(ModifierTree.Kind.OVERRIDE);
+
+    FunctionDeclarationTree publicFunc = scalaMethod(
+      "def foo(p1: String) = {p1}");
+    assertThat(publicFunc.modifiers()).hasSize(0);
   }
 }

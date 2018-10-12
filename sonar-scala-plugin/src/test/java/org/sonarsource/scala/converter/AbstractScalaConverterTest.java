@@ -49,6 +49,13 @@ public abstract class AbstractScalaConverterTest {
     return functionDefn.body().statementOrExpressions().get(0);
   }
 
+  FunctionDeclarationTree scalaMethod(String scalaCode) {
+    TopLevelTree topLevel = (TopLevelTree) parse("object Main { " + scalaCode + " }");
+    NativeTree objectDefn = (NativeTree) topLevel.children().get(0);
+    NativeTree template = (NativeTree) objectDefn.children().get(1);
+    return (FunctionDeclarationTree) template.children().get(template.children().size() - 1);
+  }
+
   Tree slangStatement(String innerCode) {
     List<Tree> statements = slangStatements(innerCode);
     assertThat(statements).hasSize(1);

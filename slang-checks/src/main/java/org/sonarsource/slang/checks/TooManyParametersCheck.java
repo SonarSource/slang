@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
+import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SecondaryLocation;
 import org.sonarsource.slang.checks.api.SlangCheck;
@@ -43,7 +44,7 @@ public class TooManyParametersCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(FunctionDeclarationTree.class, (ctx, tree) -> {
-      if (tree.formalParameters().size() > max) {
+      if (!isOverrideMethod(tree) &&  tree.formalParameters().size() > max) {
         String message = String.format(
           "This function has %s parameters, which is greater than the %s authorized.",
           tree.formalParameters().size(),
@@ -59,6 +60,15 @@ public class TooManyParametersCheck implements SlangCheck {
           ctx.reportIssue(tree.name(), message, secondaryLocations);
         }
       }
+    });
+  }
+
+  private static boolean isOverrideMethod(FunctionDeclarationTree tree) {
+    return tree.modifiers().stream().anyMatch(mod -> {
+      if (!(mod instanceof ModifierTree)) {
+        return false;
+      }
+      return ((ModifierTree) mod).kind() == ModifierTree.Kind.OVERRIDE;
     });
   }
 

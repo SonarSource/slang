@@ -41,6 +41,7 @@ import org.sonarsource.slang.api.JumpTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.MatchTree;
+import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.PackageDeclarationTree;
 import org.sonarsource.slang.api.ParenthesizedExpressionTree;
@@ -59,6 +60,7 @@ import static org.sonarsource.slang.api.BinaryExpressionTree.Operator.GREATER_TH
 import static org.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
+import static org.sonarsource.slang.api.ModifierTree.Kind.OVERRIDE;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PUBLIC;
 import static org.sonarsource.slang.api.Token.Type.KEYWORD;
@@ -302,6 +304,15 @@ public class SLangConverterTest {
     assertThat(simpleFunction.modifiers()).isEmpty();
     assertThat(simpleFunction.returnType()).isNull();
     assertThat(simpleFunction.body().statementOrExpressions()).isEmpty();
+
+    FunctionDeclarationTree overriddenFunction = parseFunction("override int fun foo();");
+    assertThat(overriddenFunction.modifiers()).hasSize(1);
+    ModifierTree modifier = (ModifierTree) overriddenFunction.modifiers().get(0);
+    assertThat(modifier.kind()).isEqualTo(OVERRIDE);
+
+    FunctionDeclarationTree functWithNativeModifier = parseFunction("native [] {} int fun foo();");
+    assertThat(functWithNativeModifier.modifiers()).hasSize(1);
+    assertThat(functWithNativeModifier.modifiers().get(0)).isInstanceOf(NativeTree.class);
 
     FunctionDeclarationTree noNameFunction = parseFunction("fun() {}");
     assertThat(noNameFunction.name()).isNull();

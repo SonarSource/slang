@@ -41,6 +41,7 @@ import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.MatchCaseTree;
 import org.sonarsource.slang.api.MatchTree;
+import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.PackageDeclarationTree;
 import org.sonarsource.slang.api.ParameterTree;
@@ -64,6 +65,7 @@ import static org.sonarsource.slang.api.IntegerLiteralTree.Base.HEXADECIMAL;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
+import static org.sonarsource.slang.api.ModifierTree.Kind.OVERRIDE;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PUBLIC;
 import static org.sonarsource.slang.api.Token.Type.KEYWORD;
@@ -290,6 +292,10 @@ public class KotlinConverterTest {
     FunctionDeclarationTree functionWithProtectedModifier = (FunctionDeclarationTree) kotlin("protected fun function1(a: Int, c: String): Boolean = true");
     assertThat(functionWithProtectedModifier.modifiers()).hasSize(1);
     assertTree(functionWithProtectedModifier).isNotEquivalentTo(functionDeclarationTree);
+
+    FunctionDeclarationTree functionWithOverride = (FunctionDeclarationTree) kotlin("override fun function2() {}");
+    ModifierTree overriddenModifier = (ModifierTree) functionWithOverride.modifiers().get(0);
+    assertThat(overriddenModifier.kind()).isEqualTo(OVERRIDE);
 
     FunctionDeclarationTree functionWithPrivate = (FunctionDeclarationTree) kotlin("private fun function2() {}");
     assertThat(functionWithPrivate.formalParameters()).isEmpty();
