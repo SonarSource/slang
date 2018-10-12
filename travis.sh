@@ -11,4 +11,4 @@ configureTravis
 . ~/.local/bin/installMaven35
 
 export DEPLOY_PULL_REQUEST=true
-regular_mvn_build_deploy_analyze
+regular_mvn_build_deploy_analyze -Pexternal-linter
