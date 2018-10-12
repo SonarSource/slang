@@ -58,6 +58,7 @@ class ScalaConverter extends slang.api.ASTConverter {
   )
 
   def parse(code: String): slang.api.Tree = {
+    scala.meta.internal.tokenizers.PlatformTokenizerCache.megaCache.clear
     val metaTree: scala.meta.Tree = code.parse[Source] match {
       case scala.meta.parsers.Parsed.Success(tree) => tree
       case scala.meta.parsers.Parsed.Error(pos, _, _) =>
