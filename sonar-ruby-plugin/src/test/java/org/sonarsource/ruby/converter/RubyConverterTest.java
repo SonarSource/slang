@@ -21,6 +21,10 @@ package org.sonarsource.ruby.converter;
 
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import org.assertj.core.api.Condition;
 import org.jruby.Ruby;
@@ -235,6 +239,33 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
     assertThat(tokens).hasSize(8);
     assertThat(tokens).extracting(Token::text).containsExactly("if", "a", "==", "1", "a", "=", "ABC", "end");
     assertThat(tokens).extracting(Token::type).containsExactly(KEYWORD, OTHER, OTHER, OTHER, OTHER, OTHER, STRING_LITERAL, KEYWORD);
+  }
+
+  @Test
+  public void file_filesystem_not_created() throws URISyntaxException {
+    assertThat(converter.createdJarFileSystem).isNull();
+    URI uri = converter.getClass().getResource("RubyConverter.class").toURI();
+    assertThat(uri.getScheme()).isEqualTo("file");
+    Path path = converter.prepareFileSystemAndGetPath(uri);
+    assertThat(path.toString()).endsWith("RubyConverter.class");
+    assertThat(converter.createdJarFileSystem).isNull();
+  }
+
+  @Test
+  public void jar_filesystem_created_only_once() throws URISyntaxException, IOException {
+    assertThat(converter.createdJarFileSystem).isNull();
+    URI uri = this.getClass().getClassLoader().getResource("org/junit/Test.class").toURI();
+    assertThat(uri.getScheme()).isEqualTo("jar");
+    assertThat(uri.toString()).endsWith("junit-4.12.jar!/org/junit/Test.class");
+    Path path = converter.prepareFileSystemAndGetPath(uri);
+
+    assertThat(path.toString()).endsWith("/org/junit/Test.class");
+    byte[] data = Files.readAllBytes(path);
+    assertThat(data.length).isGreaterThan(300);
+
+    assertThat(converter.createdJarFileSystem).isNotNull();
+    converter.terminate();
+    assertThat(converter.createdJarFileSystem).isNull();
   }
 
   private void assertComment(String input, String entireComment, String content, TextRange entireRange, TextRange contentRange) {
