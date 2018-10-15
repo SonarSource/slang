@@ -139,7 +139,6 @@
                                 <filter>
                                     <artifact>org.scalameta:common_2.12</artifact>
                                     <excludes>
-                                        <exclude>org/scalameta/*</exclude>
                                         <exclude>org/scalameta/overload/*</exclude>
                                     </excludes>
                                 </filter>
