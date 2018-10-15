@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,6 +43,7 @@ import org.jruby.exceptions.StandardError;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.jruby.specialized.RubyArrayTwoObject;
+import org.sonar.api.internal.google.common.annotations.VisibleForTesting;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.ruby.converter.adapter.CommentAdapter;
@@ -75,6 +78,9 @@ public class RubyConverter implements ASTConverter {
   private final RubyRuntimeAdapter rubyRuntimeAdapter;
   private final Ruby runtime;
 
+  @VisibleForTesting
+  FileSystem createdJarFileSystem;
+
   RubyConverter(RubyRuntimeAdapter rubyRuntimeAdapter) {
     this.rubyRuntimeAdapter = rubyRuntimeAdapter;
     try {
@@ -93,6 +99,7 @@ public class RubyConverter implements ASTConverter {
     // Shutdown and terminate ruby instance
     if (runtime != null) {
       JavaEmbedUtils.terminate(runtime);
+      closeJarFileSystem();
     }
   }
 
@@ -189,17 +196,46 @@ public class RubyConverter implements ASTConverter {
     URI initParserScriptUri = initParserScriptUrl.toURI();
 
     System.setProperty("jruby.thread.pool.enabled", "true");
-    if ("jar".equalsIgnoreCase(initParserScriptUri.getScheme())) {
-      // Need to init ZipFileSystem to read file
-      Map<String, String> env = new HashMap<>();
-      env.put("create", "true");
-      FileSystems.newFileSystem(initParserScriptUri, env);
-    }
-
-    Path initParserScriptPath = Paths.get(initParserScriptUri);
+    Path initParserScriptPath = prepareFileSystemAndGetPath(initParserScriptUri);
     String initParserScript = new String(Files.readAllBytes(initParserScriptPath), UTF_8);
     rubyRuntimeAdapter.eval(rubyRuntime, initParserScript);
     return rubyRuntime;
+  }
+
+  @VisibleForTesting
+  Path prepareFileSystemAndGetPath(URI uri) {
+    String scheme =  uri.getScheme();
+    if ("jar".equalsIgnoreCase(scheme)) {
+      try {
+        FileSystems.getFileSystem(uri);
+      } catch(FileSystemNotFoundException e) {
+        createJarFileSystem(uri);
+      }
+    }
+    return Paths.get(uri);
+  }
+
+  private void createJarFileSystem(URI uri) {
+    try {
+      Map<String, String> env = new HashMap<>();
+      env.put("create", "true");
+      createdJarFileSystem = FileSystems.newFileSystem(uri, env);
+    } catch (IOException ex) {
+      throw new IllegalStateException(ex);
+    }
+  }
+
+  @VisibleForTesting
+  void closeJarFileSystem() {
+    if (createdJarFileSystem != null) {
+      try {
+        createdJarFileSystem.close();
+      } catch (IOException e) {
+        throw new IllegalStateException(e);
+      } finally {
+        createdJarFileSystem = null;
+      }
+    }
   }
 
 }
