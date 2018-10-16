@@ -181,12 +181,12 @@ public class RubyConverter implements ASTConverter {
 
     Ruby rubyRuntime = JavaEmbedUtils.initialize(Arrays.asList(raccRubygem.toString(), astRubygem.toString(), parserRubygem.toString()));
     System.setProperty("jruby.thread.pool.enabled", "true");
-    String initParserScript = new String(readStream(initParserScriptUrl), UTF_8);
+    String initParserScript = new String(getBytes(initParserScriptUrl), UTF_8);
     rubyRuntimeAdapter.eval(rubyRuntime, initParserScript);
     return rubyRuntime;
   }
 
-  private static byte[] readStream(URL url) throws IOException {
+  private static byte[] getBytes(URL url) throws IOException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     try(InputStream in = url.openStream()) {
       byte[] buffer = new byte[8192];
