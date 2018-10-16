@@ -19,18 +19,12 @@
  */
 package org.sonarsource.ruby.converter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
@@ -79,7 +73,7 @@ public class RubyConverter implements ASTConverter {
     this.rubyRuntimeAdapter = rubyRuntimeAdapter;
     try {
       runtime = initializeRubyRuntime();
-    } catch (URISyntaxException | IOException e) {
+    } catch (IOException e) {
       throw new IllegalStateException("Failed to initialized ruby runtime", e);
     }
   }
@@ -179,27 +173,28 @@ public class RubyConverter implements ASTConverter {
     return JavaEmbedUtils.invokeMethod(runtime, receiver, methodName, args, Object.class);
   }
 
-  private Ruby initializeRubyRuntime() throws URISyntaxException, IOException {
+  private Ruby initializeRubyRuntime() throws IOException {
     URL raccRubygem = RubyConverter.class.getResource(RACC_RUBYGEM_PATH);
     URL astRubygem = RubyConverter.class.getResource(AST_RUBYGEM_PATH);
     URL parserRubygem = RubyConverter.class.getResource(PARSER_RUBYGEM_PATH);
     URL initParserScriptUrl = RubyConverter.class.getResource(SETUP_SCRIPT_PATH);
 
     Ruby rubyRuntime = JavaEmbedUtils.initialize(Arrays.asList(raccRubygem.toString(), astRubygem.toString(), parserRubygem.toString()));
-    URI initParserScriptUri = initParserScriptUrl.toURI();
-
     System.setProperty("jruby.thread.pool.enabled", "true");
-    if ("jar".equalsIgnoreCase(initParserScriptUri.getScheme())) {
-      // Need to init ZipFileSystem to read file
-      Map<String, String> env = new HashMap<>();
-      env.put("create", "true");
-      FileSystems.newFileSystem(initParserScriptUri, env);
-    }
-
-    Path initParserScriptPath = Paths.get(initParserScriptUri);
-    String initParserScript = new String(Files.readAllBytes(initParserScriptPath), UTF_8);
+    String initParserScript = new String(getBytes(initParserScriptUrl), UTF_8);
     rubyRuntimeAdapter.eval(rubyRuntime, initParserScript);
     return rubyRuntime;
+  }
+
+  private static byte[] getBytes(URL url) throws IOException {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    try(InputStream in = url.openStream()) {
+      byte[] buffer = new byte[8192];
+      for(int len = in.read(buffer); len != -1; len = in.read(buffer)) {
+        out.write(buffer, 0, len);
+      }
+    }
+    return out.toByteArray();
   }
 
 }
