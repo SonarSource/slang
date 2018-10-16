@@ -10,7 +10,7 @@
 
   <groupId>org.sonarsource.slang</groupId>
   <artifactId>slang</artifactId>
-  <version>1.2.1-SNAPSHOT</version>
+  <version>1.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>SLang</name>
 
