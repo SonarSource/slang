@@ -34,6 +34,7 @@
     <module>sonar-kotlin-plugin</module>
     <module>sonar-ruby-plugin</module>
     <module>sonar-scala-plugin</module>
+    <module>slang-evaluation</module>
   </modules>
 
   <scm>
