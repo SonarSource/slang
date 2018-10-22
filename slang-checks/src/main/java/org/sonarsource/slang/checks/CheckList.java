@@ -32,25 +32,6 @@ public class CheckList {
     CommentedCodeCheck.class,
   };
 
-  private static final Class[] RUBY_CHECK_BLACK_LIST = {
-    BooleanLiteralCheck.class,
-    UnusedPrivateMethodCheck.class,
-  };
-
-  private static final Class[] KOTLIN_CHECK_BLACK_LIST = {
-    // FP rate too high for now in Kotlin on 'when' statements due to enum/sealed class that have all branches covered
-    MatchWithoutElseCheck.class,
-    // Rule does not apply here as octal values do not exist in Kotlin
-    OctalValuesCheck.class
-  };
-
-  private static final Class[] SCALA_CHECK_BLACK_LIST = {
-    MatchWithoutElseCheck.class,
-    OctalValuesCheck.class,
-    RedundantParenthesesCheck.class,
-    WrongAssignmentOperatorCheck.class
-  };
-
   private CheckList() {
   }
 
@@ -102,19 +83,7 @@ public class CheckList {
       WrongAssignmentOperatorCheck.class);
   }
 
-  public static List<Class> kotlinChecks() {
-    return excludeChecks(KOTLIN_CHECK_BLACK_LIST);
-  }
-
-  public static List<Class> rubyChecks() {
-    return excludeChecks(RUBY_CHECK_BLACK_LIST);
-  }
-
-  public static List<Class> scalaChecks() {
-    return excludeChecks(SCALA_CHECK_BLACK_LIST);
-  }
-
-  private static List<Class> excludeChecks(Class[] blackList) {
+  public static List<Class> excludeChecks(Class[] blackList) {
     List<Class> checks = new ArrayList<>(allChecks());
     checks.removeAll(Arrays.asList(blackList));
     return checks;

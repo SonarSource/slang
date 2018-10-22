@@ -24,7 +24,6 @@ import java.util.List;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
-import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.CommentedCodeCheck;
 import org.sonarsource.slang.checks.utils.Language;
 import org.sonarsource.slang.plugin.RulesDefinitionUtils;
@@ -45,7 +44,7 @@ public class ScalaRulesDefinition implements RulesDefinition {
       .setName(ScalaPlugin.REPOSITORY_NAME);
     RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER, ScalaProfileDefinition.PATH_TO_JSON, sonarRuntime);
 
-    List<Class> checks = new ArrayList<>(CheckList.scalaChecks());
+    List<Class> checks = new ArrayList<>(ScalaCheckList.checks());
     checks.add(CommentedCodeCheck.class);
     ruleMetadataLoader.addRulesByAnnotatedClass(repository, checks);
 

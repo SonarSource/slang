@@ -26,7 +26,6 @@ import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonarsource.kotlin.converter.KotlinCodeVerifier;
 import org.sonarsource.kotlin.converter.KotlinConverter;
 import org.sonarsource.slang.api.ASTConverter;
-import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.CommentedCodeCheck;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.plugin.SlangSensor;
@@ -39,7 +38,7 @@ public class KotlinSensor extends SlangSensor {
     super(noSonarFilter, fileLinesContextFactory, language);
 
     checks = checkFactory.create(KotlinPlugin.KOTLIN_REPOSITORY_KEY);
-    checks.addAnnotatedChecks((Iterable<?>) CheckList.kotlinChecks());
+    checks.addAnnotatedChecks((Iterable<?>) KotlinCheckList.checks());
     checks.addAnnotatedChecks(new CommentedCodeCheck(new KotlinCodeVerifier()));
   }
 
