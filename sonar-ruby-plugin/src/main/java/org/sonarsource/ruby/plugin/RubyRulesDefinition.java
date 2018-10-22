@@ -23,7 +23,6 @@ import java.util.List;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
-import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.utils.Language;
 import org.sonarsource.slang.plugin.RulesDefinitionUtils;
 
@@ -43,7 +42,7 @@ public class RubyRulesDefinition implements RulesDefinition {
       .setName(RubyPlugin.REPOSITORY_NAME);
     RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER, RubyProfileDefinition.PATH_TO_JSON, sonarRuntime);
 
-    List<Class> checks = CheckList.rubyChecks();
+    List<Class> checks = RubyCheckList.checks();
     ruleMetadataLoader.addRulesByAnnotatedClass(repository, checks);
 
     RulesDefinitionUtils.setDefaultValuesForParameters(repository, checks, Language.RUBY);

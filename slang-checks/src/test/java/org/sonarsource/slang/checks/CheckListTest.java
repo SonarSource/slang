@@ -40,12 +40,12 @@ public class CheckListTest {
   }
 
   @Test
-  public void each_check_has_to_be_used() {
-    Set<Class> allChecks = new HashSet<>(CheckList.allChecks());
-    allChecks.removeAll(CheckList.kotlinChecks());
-    allChecks.removeAll(CheckList.rubyChecks());
-    allChecks.removeAll(CheckList.scalaChecks());
-    assertThat(allChecks).isEmpty();
+  public void exclude_checks() {
+    List<Class> allChecks = CheckList.allChecks();
+    assertThat(allChecks.size()).isGreaterThanOrEqualTo(40);
+
+    List<Class> includedChecks = CheckList.excludeChecks(new Class[] {AllBranchesIdenticalCheck.class});
+    assertThat(includedChecks.size()).isEqualTo(allChecks.size() - 1);
   }
 
   @Test

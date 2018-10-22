@@ -23,13 +23,12 @@ import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
+import org.sonarsource.scala.converter.ScalaCodeVerifier;
 import org.sonarsource.scala.converter.ScalaConverter;
 import org.sonarsource.slang.api.ASTConverter;
-import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.CommentedCodeCheck;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.plugin.SlangSensor;
-import org.sonarsource.scala.converter.ScalaCodeVerifier;
 
 public class ScalaSensor  extends SlangSensor {
 
@@ -38,7 +37,7 @@ public class ScalaSensor  extends SlangSensor {
   public ScalaSensor(CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter, ScalaLanguage language) {
     super(noSonarFilter, fileLinesContextFactory, language);
     checks = checkFactory.create(ScalaPlugin.SCALA_REPOSITORY_KEY);
-    checks.addAnnotatedChecks((Iterable<?>) CheckList.scalaChecks());
+    checks.addAnnotatedChecks((Iterable<?>) ScalaCheckList.checks());
     checks.addAnnotatedChecks(new CommentedCodeCheck(new ScalaCodeVerifier()));
   }
 

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
-import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.CommentedCodeCheck;
 import org.sonarsource.slang.checks.utils.Language;
 import org.sonarsource.slang.plugin.RulesDefinitionUtils;
@@ -44,7 +43,7 @@ public class KotlinRulesDefinition implements RulesDefinition {
       .setName(KotlinPlugin.REPOSITORY_NAME);
     RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER, KotlinProfileDefinition.PATH_TO_JSON, sonarRuntime);
 
-    ArrayList<Class> checks = new ArrayList<>(CheckList.kotlinChecks());
+    ArrayList<Class> checks = new ArrayList<>(KotlinCheckList.checks());
     checks.add(CommentedCodeCheck.class);
     ruleMetadataLoader.addRulesByAnnotatedClass(repository, checks);
 
