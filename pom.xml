@@ -61,7 +61,7 @@
     <artifactsToPublish>${project.groupId}:sonar-kotlin-plugin:jar,${project.groupId}:sonar-ruby-plugin:jar,${project.groupId}:sonar-scala-plugin:jar</artifactsToPublish>
     <orchestrator.version>3.21.0.1721</orchestrator.version>
     <!-- TODO replace this PR build with released build -->
-    <sonarlint.version>4.0.0.1980</sonarlint.version>
+    <sonarlint.version>4.0.0.2052</sonarlint.version>
   </properties>
 
   <dependencyManagement>
@@ -72,6 +72,7 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+
         <groupId>${project.groupId}</groupId>
         <artifactId>slang-checks</artifactId>
         <version>${project.version}</version>

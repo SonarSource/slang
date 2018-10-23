@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -144,6 +145,11 @@ public class SonarLintTest {
     return new ClientInputFile() {
 
       @Override
+      public URI uri() {
+        return path.toUri();
+      }
+
+      @Override
       public String getPath() {
         return path.toString();
       }
@@ -171,7 +177,7 @@ public class SonarLintTest {
 
       @Override
       public String relativePath() {
-        return null;
+        return path.toString();
       }
 
       @Override
