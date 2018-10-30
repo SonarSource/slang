@@ -29,6 +29,10 @@ import org.sonarsource.slang.api.Tree;
 
 public class Utils {
 
+  private Utils() {
+    throw new IllegalStateException("Utility class");
+  }
+
   public static String table(Tree tree) {
     Table table = new Table("AST node class", "first…last tokens", "line:col");
     addAstNode(table, tree, 0);
