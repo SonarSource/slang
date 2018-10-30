@@ -20,36 +20,38 @@
 package org.sonarsource.slang.testing;
 
 import org.junit.Test;
+import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.parser.SLangConverter;
+import org.sonarsource.slang.impl.TextRangeImpl;
 
 import static org.junit.Assert.assertEquals;
+import static org.sonarsource.slang.testing.TreeCreationUtils.assignment;
+import static org.sonarsource.slang.testing.TreeCreationUtils.binary;
+import static org.sonarsource.slang.testing.TreeCreationUtils.identifier;
+import static org.sonarsource.slang.testing.TreeCreationUtils.integerLiteral;
 
 public class UtilsTest {
 
-  private SLangConverter parser = new SLangConverter();
-
   @Test
   public void table_test() {
-    String content =
-            "  { " +
-            "    x = x-1;" +
-            "  };";
-    Tree tree = parser.parse(content);
-    String actual = Utils.table(tree);
+    // x = x-1;
+    Tree add = binary(BinaryExpressionTree.Operator.PLUS,
+        identifier("x", new TextRangeImpl(1,12,1,13),"x"),
+        integerLiteral("1", new TextRangeImpl(1,14,1,15), "1"),
+        new TextRangeImpl(1,12,1,15), "x", "1");
+
+    Tree assign = assignment(identifier("x", new TextRangeImpl(1,8,1,9), "x"), add,
+        new TextRangeImpl(1,8,1,15),"x", "=", "x", "1");
+
+    String actual = Utils.table(assign);
     Utils.Table expected = new Utils.Table("AST node class", "first…last tokens", "line:col");
-    expected.add("TopLevelTree {","{ … ; ","1:3 … 1:21");
-    expected.add("  BlockTree {","{ … }", "1:3 … 1:20 ");
-    expected.add("    AssignmentExpressionTree {","x … 1","1:9 … 1:16");
-    expected.add("      IdentifierTree","x","1:9 … 1:10");
-    expected.add("      BinaryExpressionTree {","x … 1","1:13 … 1:16");
-    expected.add("        IdentifierTree","x","1:13 … 1:14");
-    expected.add("        IntegerLiteralTree","1","1:15 … 1:16");
-    expected.add("      }","","");
-    expected.add("    }","","");
+    expected.add("AssignmentExpressionTree {","x … 1","1:9 … 1:16");
+    expected.add("  IdentifierTree","x","1:9 … 1:10");
+    expected.add("  BinaryExpressionTree {","x … 1","1:13 … 1:16");
+    expected.add("    IdentifierTree","x","1:13 … 1:14");
+    expected.add("    IntegerLiteralTree","1","1:15 … 1:16");
     expected.add("  }","","");
     expected.add("}","","");
     assertEquals(expected.toString(), actual);
   }
-
 }
