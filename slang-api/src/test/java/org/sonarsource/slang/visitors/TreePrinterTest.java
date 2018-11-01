@@ -32,9 +32,15 @@ import org.sonarsource.slang.impl.ModifierTreeImpl;
 import java.util.Arrays;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.sonarsource.slang.impl.TextRangeImpl;
 
+import static org.junit.Assert.assertEquals;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.sonarsource.slang.utils.TreeCreationUtils.assignment;
+import static org.sonarsource.slang.utils.TreeCreationUtils.binary;
+import static org.sonarsource.slang.utils.TreeCreationUtils.identifier;
+import static org.sonarsource.slang.utils.TreeCreationUtils.integerLiteral;
 
 public class TreePrinterTest {
 
@@ -56,5 +62,30 @@ public class TreePrinterTest {
         "\n" +
         "FunctionDeclarationTreeImpl\n" +
         "  ModifierTreeImpl PRIVATE\n");
+  }
+
+  @Test
+  public void table_test() {
+    // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx = x-1;
+    Tree add = binary(BinaryExpressionTree.Operator.PLUS,
+        identifier("x", new TextRangeImpl(1,42,1,43),"x"),
+        integerLiteral("1", new TextRangeImpl(1,44,1,45), "1"),
+        new TextRangeImpl(1,42,1,45), "x", "1");
+
+    Tree assign = assignment(identifier("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        new TextRangeImpl(1,8,1,39), "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"),
+        add,
+        new TextRangeImpl(1,8,1,45),"x", "=", "x", "1");
+
+    String actual = TreePrinter.table(assign);
+    TreePrinter.Table expected = new TreePrinter.Table("AST node class", "first…last tokens", "line:col");
+    expected.add("AssignmentExpressionTree {","x … 1","1:9 … 1:46");
+    expected.add("  IdentifierTree","xxxxxxxxxxx…xxxxxxxxxxx","1:9 … 1:40");
+    expected.add("  BinaryExpressionTree {","x … 1","1:43 … 1:46");
+    expected.add("    IdentifierTree","x","1:43 … 1:44");
+    expected.add("    IntegerLiteralTree","1","1:45 … 1:46");
+    expected.add("  }","","");
+    expected.add("}","","");
+    assertEquals(expected.toString(), actual);
   }
 }

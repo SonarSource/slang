@@ -19,6 +19,7 @@
  */
 package org.sonarsource.slang.utils;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
@@ -48,6 +50,7 @@ import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.LoopTreeImpl;
 import org.sonarsource.slang.impl.ModifierTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
+import org.sonarsource.slang.impl.TextRangeImpl;
 import org.sonarsource.slang.impl.TokenImpl;
 import org.sonarsource.slang.impl.TopLevelTreeImpl;
 import org.sonarsource.slang.impl.VariableDeclarationTreeImpl;
@@ -69,12 +72,20 @@ public class TreeCreationUtils {
     return new IntegerLiteralTreeImpl(null, value);
   }
 
+  public static IntegerLiteralTree integerLiteral(String value, TextRange textRange, String ... tokens) {
+    return new IntegerLiteralTreeImpl(metaData(textRange, tokens), value);
+  }
+
   public static LiteralTree literal(String value) {
     return new LiteralTreeImpl(null, value);
   }
 
   public static IdentifierTree identifier(String name) {
     return new IdentifierTreeImpl(null, name);
+  }
+
+  public static IdentifierTree identifier(String name, TextRange textRange, String ... tokens) {
+    return new IdentifierTreeImpl(metaData(textRange, tokens), name);
   }
 
   public static VariableDeclarationTree variable(String name) {
@@ -89,12 +100,24 @@ public class TreeCreationUtils {
     return new BinaryExpressionTreeImpl(null, operator, null, leftOperand, rightOperand);
   }
 
+  public static BinaryExpressionTree binary(BinaryExpressionTree.Operator operator, Tree leftOperand, Tree rightOperand, TextRange textRange, String ... tokens) {
+    return new BinaryExpressionTreeImpl(metaData(textRange, tokens), operator, new TokenImpl(new TextRangeImpl(1,0,1,0), operator.toString(), null), leftOperand, rightOperand);
+  }
+
   public static AssignmentExpressionTree assignment(Tree leftOperand, Tree rightOperand) {
     return assignment(AssignmentExpressionTree.Operator.EQUAL, leftOperand, rightOperand);
   }
 
+  public static AssignmentExpressionTree assignment(Tree leftOperand, Tree rightOperand, TextRange textRange, String ... tokens) {
+    return assignment(AssignmentExpressionTree.Operator.EQUAL, leftOperand, rightOperand, textRange, tokens);
+  }
+
   public static BlockTree block(List<Tree> body) {
     return new BlockTreeImpl(null, body);
+  }
+
+  public static BlockTree block(List<Tree> body, TextRange textRange, String ... tokens) {
+    return new BlockTreeImpl(metaData(textRange, tokens), body);
   }
 
   public static FunctionDeclarationTree simpleFunction(IdentifierTree name, BlockTree body) {
@@ -103,6 +126,10 @@ public class TreeCreationUtils {
 
   public static AssignmentExpressionTree assignment(AssignmentExpressionTree.Operator operator, Tree leftOperand, Tree rightOperand) {
     return new AssignmentExpressionTreeImpl(null, operator, leftOperand, rightOperand);
+  }
+
+  public static AssignmentExpressionTree assignment(AssignmentExpressionTree.Operator operator, Tree leftOperand, Tree rightOperand, TextRange textRange, String ... tokens) {
+    return new AssignmentExpressionTreeImpl(metaData(textRange, tokens), operator, leftOperand, rightOperand);
   }
 
   public static NativeTree simpleNative(NativeKind kind, List<Tree> children) {
@@ -123,10 +150,24 @@ public class TreeCreationUtils {
 
   private static TreeMetaData metaData(List<String> tokens) {
     TreeMetaData metaData = mock(TreeMetaData.class);
-    when(metaData.tokens()).thenReturn(tokens.stream()
-      .map(text -> new TokenImpl(null, text, null))
-      .collect(Collectors.toList()));
+    mockTokens(metaData, tokens);
     return metaData;
   }
 
+  private static TreeMetaData metaData(TextRange textRange, String ... tokens) {
+    TreeMetaData metaData = mock(TreeMetaData.class);
+    mockTokens(metaData, Arrays.asList(tokens));
+    mockTextRange(metaData, textRange);
+    return metaData;
+  }
+
+  private static void mockTokens(TreeMetaData metaData, List<String> tokens) {
+    when(metaData.tokens()).thenReturn(tokens.stream()
+        .map(text -> new TokenImpl(null, text, null))
+        .collect(Collectors.toList()));
+  }
+
+  private static void mockTextRange(TreeMetaData metaData, TextRange textRange) {
+    when(metaData.textRange()).thenReturn(textRange);
+  }
 }
