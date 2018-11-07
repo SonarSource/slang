@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.sonarsource.slang.api.Comment;
@@ -50,6 +51,44 @@ public class TreeMetaDataProvider {
     return sortedComments;
   }
 
+  public List<Token> allTokens() {
+    return sortedTokens;
+  }
+
+  public int indexOfFirstToken(TextRange textRange) {
+    return indexOfFirstElement(sortedTokens, textRange);
+  }
+
+  public Optional<Token> firstToken(TextRange textRange) {
+    int textRangeIndex = indexOfFirstElement(sortedTokens, textRange);
+    if (textRangeIndex == -1) {
+      return Optional.empty();
+    } else {
+      return Optional.of(sortedTokens.get(textRangeIndex));
+    }
+  }
+
+  public Optional<Token> previousToken(TextRange textRange) {
+    int textRangeIndex = indexOfFirstElement(sortedTokens, textRange);
+    if (textRangeIndex <= 0) {
+      return Optional.empty();
+    } else {
+      return Optional.of(sortedTokens.get(textRangeIndex - 1));
+    }
+  }
+
+  public void updateTokenType(Token token, Token.Type newType) {
+    int tokenIndex = indexOfFirstToken(token.textRange());
+    if (!isExistingToken(token, tokenIndex)) {
+      throw new IllegalArgumentException("token '" + token.text() + "' not found in metadata, " + token.textRange());
+    }
+    this.sortedTokens.set(tokenIndex, new TokenImpl(token.textRange(), token.text(), newType));
+  }
+
+  private boolean isExistingToken(Token token, int tokenIndex) {
+    return tokenIndex != -1 && this.sortedTokens.get(tokenIndex) == token;
+  }
+
   public Token keyword(TextRange textRange) {
     List<Token> keywordsInRange = getElementsInRange(sortedTokens, textRange).stream()
       .filter(t -> t.type() == Token.Type.KEYWORD)
@@ -60,14 +99,25 @@ public class TreeMetaDataProvider {
     return keywordsInRange.get(0);
   }
 
-  private static <T extends HasTextRange> List<T> getElementsInRange(List<T> sortedList, TextRange textRange) {
-    List<T> elementsInsideRange = new ArrayList<>();
+  private static <T extends HasTextRange> int indexOfFirstElement(List<T> sortedList, TextRange textRange) {
     HasTextRange key = () -> textRange;
     int index = Collections.binarySearch(sortedList, key, COMPARATOR);
     if (index < 0) {
       index = -index - 1;
     }
-    for (int i = index; i < sortedList.size(); i++) {
+    if (index < sortedList.size() && sortedList.get(index).textRange().isInside(textRange)) {
+      return index;
+    }
+    return -1;
+  }
+
+  private static <T extends HasTextRange> List<T> getElementsInRange(List<T> sortedList, TextRange textRange) {
+    int first = indexOfFirstElement(sortedList, textRange);
+    if (first  == -1) {
+      return Collections.emptyList();
+    }
+    List<T> elementsInsideRange = new ArrayList<>();
+    for (int i = first; i < sortedList.size(); i++) {
       T element = sortedList.get(i);
       if (!element.textRange().isInside(textRange)) {
         break;
