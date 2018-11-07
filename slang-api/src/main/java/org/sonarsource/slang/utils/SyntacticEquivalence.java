@@ -70,7 +70,7 @@ public class SyntacticEquivalence {
     }
 
     if (first instanceof IdentifierTree) {
-      return ((IdentifierTree) first).name().equals(((IdentifierTree) second).name());
+      return ((IdentifierTree) first).identifier().equals(((IdentifierTree) second).identifier());
     } else if (first instanceof LiteralTree) {
       return ((LiteralTree) first).value().equals(((LiteralTree) second).value());
     } else if (hasDifferentFields(first, second)) {
