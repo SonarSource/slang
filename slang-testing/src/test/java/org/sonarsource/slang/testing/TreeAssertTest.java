@@ -253,6 +253,11 @@ public class TreeAssertTest {
       public Set<Integer> linesOfCode() {
         return Collections.emptySet();
       }
+
+      @Override
+      public String originalTreeKind() {
+        return null;
+      }
     };
   }
 }

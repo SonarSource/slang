@@ -52,6 +52,7 @@ public class AssignmentVisitorTest extends AbstractRubyConverterTest {
 
     assertTree(rubyStatement("@@a += 1")).isInstanceOf(AssignmentExpressionTree.class);
     assertTree(rubyStatement("@@a = 1")).isInstanceOf(AssignmentExpressionTree.class);
+    assertThat(rubyStatement("a = 1").metaData().originalTreeKind()).isEqualTo("lvasgn");
   }
 
   @Test

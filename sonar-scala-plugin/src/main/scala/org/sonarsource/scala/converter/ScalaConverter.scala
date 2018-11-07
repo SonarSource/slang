@@ -124,13 +124,13 @@ class ScalaConverter extends slang.api.ASTConverter {
           val convertedBody = convert(body)
           new LoopTreeImpl(metaData, convert(expr), convertedBody, LoopKind.DOWHILE, keyword(metaData.textRange.start, start(convertedBody)))
         case Term.For(enums, body) =>
-          val convertedEnums = createNativeTree(enums, ScalaForConditionKind)
+          val convertedEnums = createNativeTree(enums, ScalaForConditionKind, "@forLoopCondition")
           new LoopTreeImpl(metaData, convertedEnums, convert(body), LoopKind.FOR, keyword(metaData.textRange.start, start(convertedEnums)))
         case matchTree: Term.Match =>
           createMatchTree(metaData, matchTree)
         case classDecl: Defn.Class =>
           val identifier = convert(classDecl.name).asInstanceOf[IdentifierTree]
-          new ClassDeclarationTreeImpl(metaData, identifier, createNativeTree(metaData, classDecl))
+          new ClassDeclarationTreeImpl(metaData, identifier, createNativeTree(metaDataProvider.metaData(metaData.textRange(), "@nativeClassTree"), classDecl))
         case v: Defn.Val if v.parent.exists(_.is[Template]) =>
           createNativeTree(metaData, metaTree)
         case v: Defn.Var if v.parent.exists(_.is[Template]) =>
@@ -150,7 +150,7 @@ class ScalaConverter extends slang.api.ASTConverter {
             case None => createNativeTree(metaData, unaryExpression)
           }
         case Term.Try(expr, catchp, finallyp) =>
-          val catchBlock = Some(catchp).filter(_.nonEmpty).map(createNativeTree(_, ScalaCatchBlockKind))
+          val catchBlock = Some(catchp).filter(_.nonEmpty).map(createNativeTree(_, ScalaCatchBlockKind, "@catchBlock"))
           createExceptionHandlingTree(metaData, expr, catchBlock, finallyp)
         case Term.TryWithHandler(expr, catchp, finallyp) =>
           createExceptionHandlingTree(metaData, expr, Some(convert(catchp)), finallyp)
@@ -190,18 +190,18 @@ class ScalaConverter extends slang.api.ASTConverter {
 
     private def createCatchTree(convertedExpr: slang.api.Tree, catchBlock: slang.api.Tree): CatchTree = {
       val catchKeyword = keyword(convertedExpr.textRange.end, start(catchBlock))
-      val catchMetaData = metaDataProvider.metaData(new TextRangeImpl(convertedExpr.textRange.end, catchBlock.textRange.end))
+      val catchMetaData = metaDataProvider.metaData(new TextRangeImpl(convertedExpr.textRange.end, catchBlock.textRange.end), "@catchClause")
       new CatchTreeImpl(catchMetaData, null, catchBlock, catchKeyword)
     }
 
     private def treeMetaData(metaTree: Tree) = {
-      metaDataProvider.metaData(textRange(metaTree))
+      metaDataProvider.metaData(textRange(metaTree), metaTree.getClass().getName())
     }
 
-    private def createNativeTree(children: List[scala.meta.Tree], nativeKind: slang.api.NativeKind) = {
+    private def createNativeTree(children: List[scala.meta.Tree], nativeKind: slang.api.NativeKind, originalKind: String) = {
       val convertedChildren = convert(children)
       val lastConvertedChild = convertedChildren.get(convertedChildren.size() - 1)
-      val metaData = metaDataProvider.metaData(new TextRangeImpl(convertedChildren.get(0).textRange.start, lastConvertedChild.textRange.end))
+      val metaData = metaDataProvider.metaData(new TextRangeImpl(convertedChildren.get(0).textRange.start, lastConvertedChild.textRange.end), originalKind)
       new NativeTreeImpl(metaData, nativeKind, convertedChildren)
     }
 
@@ -229,7 +229,7 @@ class ScalaConverter extends slang.api.ASTConverter {
       convertedChildren.add(convert(lit.prefix))
 
       lit.parts.filter(p => p.pos.start < p.pos.end)
-        .map(p => createNativeTree(metaDataProvider.metaData(textRange(p)), p))
+        .map(p => createNativeTree(metaDataProvider.metaData(textRange(p), "@interpolationPart"), p))
         .foreach(convertedChildren.add)
 
       lit.args.map(convert)
@@ -263,7 +263,7 @@ class ScalaConverter extends slang.api.ASTConverter {
       val rawBody = convert(defn.body)
       val body = rawBody match {
         case b: slang.api.BlockTree => b
-        case _ => new BlockTreeImpl(rawBody.metaData(), singletonList(rawBody))
+        case _ => new BlockTreeImpl(metaDataProvider.metaData(rawBody.metaData().textRange(), "@functionBodyBlock"), singletonList(rawBody))
       }
       val nativeChildren = convert(defn.tparams)
       new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, name, allParams, body, nativeChildren)

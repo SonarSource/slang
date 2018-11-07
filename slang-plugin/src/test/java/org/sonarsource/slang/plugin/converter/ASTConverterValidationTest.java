@@ -353,6 +353,11 @@ public class ASTConverterValidationTest {
       public Set<Integer> linesOfCode() {
         throw new UnsupportedOperationException();
       }
+
+      @Override
+      public String originalTreeKind() {
+        return null;
+      }
     };
   }
 

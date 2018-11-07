@@ -283,7 +283,8 @@ class KotlinTreeVisitor {
   }
 
   private Tree createPackageDeclarationTree(KtPackageDirective element, TreeMetaData metaData) {
-    return new PackageDeclarationTreeImpl(metaData, Collections.singletonList(convertElementToNative(element, metaData)));
+    return new PackageDeclarationTreeImpl(metaData,
+      Collections.singletonList(convertElementToNative(element, metaDataProvider.metaData(metaData.textRange(), "@nativePackage"))));
   }
 
   private Tree createImportDeclarationTree(KtImportList importList, TreeMetaData metaData) {
@@ -348,7 +349,7 @@ class KotlinTreeVisitor {
       children.add(identifier);
     }
 
-    Tree nativeClassDecl = createNativeTree(metaData, new KotlinNativeKind(ktClass), children);
+    Tree nativeClassDecl = createNativeTree(metaDataProvider.metaData(metaData.textRange(), "@classNative"), new KotlinNativeKind(ktClass), children);
     Tree classDecl = nativeClassDecl;
     if (isInsideEnum == null || !isInsideEnum) {
       classDecl = new ClassDeclarationTreeImpl(metaData, identifier, nativeClassDecl);
@@ -390,7 +391,7 @@ class KotlinTreeVisitor {
     }
     if (bodyTree != null && !(bodyTree instanceof BlockTree)) {
       // FIXME are we sure we want body of function as block tree ?
-      bodyTree = new BlockTreeImpl(bodyTree.metaData(), Collections.singletonList(bodyTree));
+      bodyTree = new BlockTreeImpl(metaDataProvider.metaData(bodyTree.metaData().textRange(), "@functionBodyBlock"), Collections.singletonList(bodyTree));
     }
     List<Tree> typeParameters;
     if (typeParameterList != null) {
@@ -507,7 +508,7 @@ class KotlinTreeVisitor {
       TextPointer startPointer = conditionsList.get(0).metaData().textRange().start();
       TextPointer endPointer = conditionsList.get(conditionsList.size() - 1).metaData().textRange().end();
       TextRange textRange = new TextRangeImpl(startPointer, endPointer);
-      TreeMetaData treeMetaData = metaDataProvider.metaData(textRange);
+      TreeMetaData treeMetaData = metaDataProvider.metaData(textRange, KtWhenCondition.class.getSimpleName());
       conditionExpression = createNativeTree(treeMetaData, new KotlinNativeKind(KtWhenCondition.class), conditionsList);
     }
     return new MatchCaseTreeImpl(metaData, conditionExpression, body);
@@ -529,7 +530,7 @@ class KotlinTreeVisitor {
       TextPointer startPointer = parameter.textRange().start();
       TextPointer endPointer = range.textRange().end();
       TextRange textRange = new TextRangeImpl(startPointer, endPointer);
-      TreeMetaData conditionMetaData = metaDataProvider.metaData(textRange);
+      TreeMetaData conditionMetaData = metaDataProvider.metaData(textRange, "@forLoopCondition");
       Tree condition = createNativeTree(conditionMetaData, new KotlinNativeKind(ktLoopExpression), Arrays.asList(parameter, range));
       Token forToken = toSlangToken(forExpression.getForKeyword());
       return new LoopTreeImpl(metaData, condition, body, FOR, forToken);
@@ -577,7 +578,7 @@ class KotlinTreeVisitor {
     if (element.getCatchParameter() == null) {
       return new CatchTreeImpl(metaData, null, catchBody, keyword);
     } else {
-      return new CatchTreeImpl(metaData, createParameter(metaData, element.getCatchParameter()), catchBody, keyword);
+      return new CatchTreeImpl(metaData, createParameter(metaDataProvider.metaData(metaData.textRange(), "@catchParameter"), element.getCatchParameter()), catchBody, keyword);
     }
   }
 
@@ -635,7 +636,7 @@ class KotlinTreeVisitor {
   }
 
   private TreeMetaData getTreeMetaData(PsiElement element) {
-    return metaDataProvider.metaData(KotlinTextRanges.textRange(psiDocument, element));
+    return metaDataProvider.metaData(KotlinTextRanges.textRange(psiDocument, element), element.getClass().getSimpleName());
   }
 
   private List<Tree> list(Stream<? extends PsiElement> stream) {

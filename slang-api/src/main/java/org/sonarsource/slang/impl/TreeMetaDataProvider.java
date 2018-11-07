@@ -77,17 +77,23 @@ public class TreeMetaDataProvider {
     return elementsInsideRange;
   }
 
+  public TreeMetaData metaData(TextRange textRange, String originalTreeKind) {
+    return new TreeMetaDataImpl(textRange, originalTreeKind);
+  }
+
   public TreeMetaData metaData(TextRange textRange) {
-    return new TreeMetaDataImpl(textRange);
+    return new TreeMetaDataImpl(textRange, "NA_KIND");
   }
 
   private class TreeMetaDataImpl implements TreeMetaData {
 
     private final TextRange textRange;
+    private final String originalTreeKind;
     private Set<Integer> linesOfCode;
 
-    private TreeMetaDataImpl(TextRange textRange) {
+    private TreeMetaDataImpl(TextRange textRange, String originalTreeKind) {
       this.textRange = textRange;
+      this.originalTreeKind = originalTreeKind;
     }
 
     @Override
@@ -111,6 +117,11 @@ public class TreeMetaDataProvider {
         linesOfCode = computeLinesOfCode();
       }
       return linesOfCode;
+    }
+
+    @Override
+    public String originalTreeKind() {
+      return originalTreeKind;
     }
 
     private Set<Integer> computeLinesOfCode() {

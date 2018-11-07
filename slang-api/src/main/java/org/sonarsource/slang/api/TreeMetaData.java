@@ -32,4 +32,6 @@ public interface TreeMetaData {
 
   Set<Integer> linesOfCode();
 
+  String originalTreeKind();
+
 }

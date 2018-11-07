@@ -37,7 +37,7 @@ public class ClassVisitorTest extends AbstractRubyConverterTest {
     assertTree(tree.identifier()).isIdentifier("A");
     NativeTree nativeClassTree = (NativeTree) tree.children().get(0);
     assertThat(nativeClassTree).isInstanceOf(NativeTree.class);
-    assertThat(nativeClassTree.nativeKind()).isEqualTo(nativeKind("class"));
+    assertThat(nativeClassTree.nativeKind()).isEqualTo(nativeKind("@classNative"));
     assertThat(nativeClassTree.children().get(0)).isEqualTo(tree.identifier());
   }
 
@@ -47,7 +47,7 @@ public class ClassVisitorTest extends AbstractRubyConverterTest {
     assertTree(tree.identifier()).isIdentifier("A");
     NativeTree nativeClassTree = (NativeTree) tree.children().get(0);
     assertThat(nativeClassTree).isInstanceOf(NativeTree.class);
-    assertThat(nativeClassTree.nativeKind()).isEqualTo(nativeKind("class"));
+    assertThat(nativeClassTree.nativeKind()).isEqualTo(nativeKind("@classNative"));
     assertThat(nativeClassTree.children().get(0)).isEqualTo(tree.identifier());
   }
 
