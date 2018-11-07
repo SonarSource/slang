@@ -22,12 +22,15 @@ package org.sonarsource.slang.utils;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import org.junit.Test;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.api.TreeMetaData;
+import org.sonarsource.slang.impl.IdentifierTreeImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
@@ -155,6 +158,28 @@ public class SyntacticEquivalenceTest {
     assertThat(areEquivalent(loop1, loop(condition1, body2, LoopTree.LoopKind.WHILE, "while"))).isFalse();
     assertThat(areEquivalent(loop1, loop(condition1, body1, LoopTree.LoopKind.FOR, "while"))).isFalse();
     assertThat(areEquivalent(loop1, loop(condition1, body1, LoopTree.LoopKind.WHILE, "until"))).isFalse();
+  }
+
+  @Test
+  public void test_unique_identifier_equivalence() {
+    IdentifierTreeImpl id = new CustomIdentifierTreeImpl(null, "abc");
+    assertThat(areEquivalent(id, new IdentifierTreeImpl(null, "abc"))).isFalse();
+    assertThat(areEquivalent(id, id)).isTrue();
+    assertThat(areEquivalent(id, new CustomIdentifierTreeImpl(null, "abc"))).isTrue();
+    assertThat(areEquivalent(id, new CustomIdentifierTreeImpl(null, "ABc"))).isTrue();
+    assertThat(areEquivalent(id, new CustomIdentifierTreeImpl(null, "ABC"))).isTrue();
+    assertThat(areEquivalent(id, new CustomIdentifierTreeImpl(null, "a"))).isFalse();
+  }
+
+  class CustomIdentifierTreeImpl extends IdentifierTreeImpl {
+    CustomIdentifierTreeImpl(TreeMetaData metaData, String name) {
+      super(metaData, name);
+    }
+
+    @Override
+    public String identifier() {
+      return name().toUpperCase(Locale.ENGLISH);
+    }
   }
 
 }

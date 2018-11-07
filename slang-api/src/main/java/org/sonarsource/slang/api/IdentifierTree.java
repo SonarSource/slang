@@ -23,4 +23,9 @@ public interface IdentifierTree extends Tree {
 
   String name();
 
+  // identifier is used for equivalence comparison
+  default String identifier() {
+    return name();
+  }
+
 }
