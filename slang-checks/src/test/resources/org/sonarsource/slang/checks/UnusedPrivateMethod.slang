@@ -3,6 +3,8 @@ class A {
 
   private fun unusedPrivate(int a) {} // Noncompliant
 
+  private override fun unusedPrivateOverride(int a) {} // OK - might be forced to override the method here
+
   private fun usedPrivate(int a) {}
 
   fun unusedNoModifier(int a) {

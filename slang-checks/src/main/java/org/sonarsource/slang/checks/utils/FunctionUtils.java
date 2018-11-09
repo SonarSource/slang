@@ -22,6 +22,7 @@ package org.sonarsource.slang.checks.utils;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.ModifierTree;
 
+import static org.sonarsource.slang.api.ModifierTree.Kind.OVERRIDE;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
 
 public class FunctionUtils {
@@ -30,10 +31,19 @@ public class FunctionUtils {
   }
 
   public static boolean isPrivateMethod(FunctionDeclarationTree method) {
+    return hasModifierMethod(method, PRIVATE);
+
+  }
+
+  public static boolean isOverrideMethod(FunctionDeclarationTree method) {
+    return hasModifierMethod(method, OVERRIDE);
+  }
+
+  public static boolean hasModifierMethod(FunctionDeclarationTree method, ModifierTree.Kind kind) {
     return method.modifiers().stream()
       .filter(ModifierTree.class::isInstance)
       .map(ModifierTree.class::cast)
-      .anyMatch(modifier -> modifier.kind() == PRIVATE);
+      .anyMatch(modifier -> modifier.kind() == kind);
   }
 
 }
