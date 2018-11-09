@@ -50,9 +50,6 @@
 'kotlin-project:sources/kotlin/corda/node/src/main/kotlin/net/corda/node/utilities/ObjectDiffer.kt':[
 60,
 ],
-'kotlin-project:sources/kotlin/corda/node/src/test/kotlin/net/corda/node/services/persistence/AppendOnlyPersistentMapTest.kt':[
-215,
-],
 'kotlin-project:sources/kotlin/corda/samples/network-visualiser/src/main/kotlin/net/corda/netmap/NetworkMapVisualiser.kt':[
 215,
 ],
@@ -67,9 +64,6 @@
 ],
 'kotlin-project:sources/kotlin/corda/serialization/src/main/kotlin/net/corda/serialization/internal/amqp/FingerPrinter.kt':[
 90,
-],
-'kotlin-project:sources/kotlin/corda/serialization/src/main/kotlin/net/corda/serialization/internal/amqp/SerializationHelper.kt':[
-32,
 ],
 'kotlin-project:sources/kotlin/corda/serialization/src/main/kotlin/net/corda/serialization/internal/amqp/SerializerFactory.kt':[
 318,
@@ -341,7 +335,6 @@
 859,
 ],
 'kotlin-project:sources/kotlin/kotlin/compiler/frontend/src/org/jetbrains/kotlin/cfg/ControlFlowProcessor.kt':[
-297,
 633,
 918,
 1228,
@@ -887,9 +880,6 @@
 'kotlin-project:sources/kotlin/kotlin/idea/idea-gradle/src/org/jetbrains/kotlin/idea/inspections/gradle/GradleHeuristicHelper.kt':[
 58,
 ],
-'kotlin-project:sources/kotlin/kotlin/idea/idea-gradle/src/org/jetbrains/kotlin/idea/inspections/gradle/KotlinGradleInspectionVisitor.kt':[
-70,
-],
 'kotlin-project:sources/kotlin/kotlin/idea/idea-jvm/src/org/jetbrains/kotlin/idea/KotlinExtraSteppingFilter.kt':[
 45,
 ],
@@ -1004,7 +994,6 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/editor/KotlinLiteralCopyPasteProcessor.kt':[
 73,
-187,
 232,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/editor/KotlinMultilineStringEnterHandler.kt':[
@@ -1531,7 +1520,6 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/js/js.frontend/src/org/jetbrains/kotlin/js/naming/NameSuggestion.kt':[
 66,
-219,
 ],
 'kotlin-project:sources/kotlin/kotlin/js/js.frontend/src/org/jetbrains/kotlin/js/naming/encodeSignature.kt':[
 27,
@@ -1638,9 +1626,6 @@
 'kotlin-project:sources/kotlin/kotlin/libraries/stdlib/jvm/src/kotlin/io/Console.kt':[
 156,
 ],
-'kotlin-project:sources/kotlin/kotlin/libraries/stdlib/jvm/src/kotlin/io/files/FileTreeWalk.kt':[
-174,
-],
 'kotlin-project:sources/kotlin/kotlin/libraries/stdlib/src/kotlin/collections/SlidingWindow.kt':[
 25,
 ],
@@ -1734,9 +1719,6 @@
 'kotlin-project:sources/kotlin/ktor/ktor-features/ktor-auth/test/io/ktor/tests/auth/OAuth1a.kt':[
 58,
 313,
-],
-'kotlin-project:sources/kotlin/ktor/ktor-features/ktor-auth/test/io/ktor/tests/auth/OAuth2.kt':[
-66,
 ],
 'kotlin-project:sources/kotlin/ktor/ktor-features/ktor-locations/src/io/ktor/locations/Locations.kt':[
 75,

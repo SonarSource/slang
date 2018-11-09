@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nullable;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.CatchTree;
 import org.sonarsource.slang.api.ClassDeclarationTree;
@@ -159,6 +160,7 @@ public class CognitiveComplexity {
       int nestingLevel = 0;
       boolean isInsideFunction = false;
       Iterator<Tree> ancestors = ctx.ancestors().descendingIterator();
+      Tree parent = null;
       while (ancestors.hasNext()) {
         Tree t = ancestors.next();
         if (t instanceof FunctionDeclarationTree) {
@@ -166,14 +168,19 @@ public class CognitiveComplexity {
             nestingLevel++;
           }
           isInsideFunction = true;
-        } else if (t instanceof IfTree || t instanceof MatchTree || t instanceof LoopTree || t instanceof CatchTree) {
+        } else if ((t instanceof IfTree && !isElseIfBranch(parent, t)) || t instanceof MatchTree || t instanceof LoopTree || t instanceof CatchTree) {
           nestingLevel++;
         } else if (t instanceof ClassDeclarationTree) {
           nestingLevel = 0;
           isInsideFunction = false;
         }
+        parent = t;
       }
       return nestingLevel;
+    }
+
+    private boolean isElseIfBranch(@Nullable Tree parent, Tree t) {
+      return parent instanceof IfTree && ((IfTree) parent).elseBranch() == t;
     }
 
   }

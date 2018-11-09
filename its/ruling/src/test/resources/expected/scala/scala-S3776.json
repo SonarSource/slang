@@ -49,9 +49,6 @@
 'scala-project:sources/scala/finagle/finagle-core/src/main/scala/com/twitter/finagle/loadbalancer/LoadBalancerFactory.scala':[
 185,
 ],
-'scala-project:sources/scala/finagle/finagle-core/src/main/scala/com/twitter/finagle/loadbalancer/aperture/Ring.scala':[
-63,
-],
 'scala-project:sources/scala/finagle/finagle-core/src/main/scala/com/twitter/finagle/loadbalancer/heap/HeapLeastLoaded.scala':[
 138,
 ],
@@ -75,9 +72,6 @@
 ],
 'scala-project:sources/scala/finagle/finagle-netty4-http/src/main/scala/com/twitter/finagle/netty4/http/Netty4FormPostEncoder.scala':[
 33,
-],
-'scala-project:sources/scala/finagle/finagle-netty4/src/main/scala/com/twitter/finagle/netty4/ConnectionBuilder.scala':[
-48,
 ],
 'scala-project:sources/scala/finagle/finagle-thrift/src/main/scala/com/twitter/finagle/thrift/service/ThriftResponseClassifier.scala':[
 79,
@@ -121,9 +115,6 @@
 ],
 'scala-project:sources/scala/http4s/client/src/main/scala/org/http4s/client/middleware/FollowRedirect.scala':[
 45,
-],
-'scala-project:sources/scala/http4s/core/src/main/scala/org/http4s/QValue.scala':[
-34,
 ],
 'scala-project:sources/scala/http4s/core/src/main/scala/org/http4s/UriTemplate.scala':[
 152,
