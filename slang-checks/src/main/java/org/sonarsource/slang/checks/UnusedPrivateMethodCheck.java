@@ -77,7 +77,7 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
         .collect(Collectors.toSet());
 
       classMethods.stream()
-        .filter(FunctionUtils::isPrivateMethod)
+        .filter(method -> FunctionUtils.isPrivateMethod(method) && !FunctionUtils.isOverrideMethod(method))
         .forEach(tree -> {
           IdentifierTree identifier = tree.name();
           if (isUnusedMethod(identifier, usedIdentifierNames)) {

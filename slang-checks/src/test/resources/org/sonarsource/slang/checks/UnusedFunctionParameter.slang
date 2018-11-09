@@ -37,6 +37,10 @@ class A {
     x = a;
   }
 
+  private override void fun fooBar(int a, int b) { // OK - even though it is private, it is an override method
+    x = a;
+  }
+
 }
 
 void fun main(int a) {} // OK - "main" functions are ignored

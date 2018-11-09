@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.sonar.check.Rule;
 
+import static org.sonarsource.slang.checks.utils.FunctionUtils.isOverrideMethod;
 import static org.sonarsource.slang.checks.utils.FunctionUtils.isPrivateMethod;
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 
@@ -80,7 +81,7 @@ public class UnusedFunctionParameterCheck implements SlangCheck {
 
   private static boolean shouldBeIgnored(CheckContext ctx, FunctionDeclarationTree tree) {
     IdentifierTree name = tree.name();
-    boolean validFunctionForRule = ctx.parent() instanceof TopLevelTreeImpl || isPrivateMethod(tree);
+    boolean validFunctionForRule = ctx.parent() instanceof TopLevelTreeImpl || (isPrivateMethod(tree) && !isOverrideMethod(tree));
     return !validFunctionForRule
       || tree.body() == null
       || (name != null && IGNORED_PATTERN.matcher(name.name()).matches());
