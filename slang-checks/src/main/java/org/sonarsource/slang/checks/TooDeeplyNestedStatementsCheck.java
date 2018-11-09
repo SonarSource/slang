@@ -19,16 +19,6 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.sonarsource.slang.api.ExceptionHandlingTree;
-import org.sonarsource.slang.api.IfTree;
-import org.sonarsource.slang.api.LoopTree;
-import org.sonarsource.slang.api.MatchTree;
-import org.sonarsource.slang.api.Token;
-import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.checks.api.CheckContext;
-import org.sonarsource.slang.checks.api.InitContext;
-import org.sonarsource.slang.checks.api.SecondaryLocation;
-import org.sonarsource.slang.checks.api.SlangCheck;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
@@ -37,6 +27,19 @@ import java.util.List;
 import javax.annotation.Nullable;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
+import org.sonarsource.slang.api.BlockTree;
+import org.sonarsource.slang.api.ExceptionHandlingTree;
+import org.sonarsource.slang.api.IfTree;
+import org.sonarsource.slang.api.LoopTree;
+import org.sonarsource.slang.api.MatchCaseTree;
+import org.sonarsource.slang.api.MatchTree;
+import org.sonarsource.slang.api.Token;
+import org.sonarsource.slang.api.TopLevelTree;
+import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.checks.api.CheckContext;
+import org.sonarsource.slang.checks.api.InitContext;
+import org.sonarsource.slang.checks.api.SecondaryLocation;
+import org.sonarsource.slang.checks.api.SlangCheck;
 
 @Rule(key = "S134")
 public class TooDeeplyNestedStatementsCheck implements SlangCheck {
@@ -59,6 +62,9 @@ public class TooDeeplyNestedStatementsCheck implements SlangCheck {
   private void checkNestedDepth(CheckContext ctx, Tree tree) {
     if (isElseIfStatement(ctx.parent(), tree)) {
       // Ignore 'else-if' statements since the issue would already be raised on the first 'if' statement
+      return;
+    }
+    if (isTernaryOperator(ctx, tree)) {
       return;
     }
 
@@ -115,6 +121,42 @@ public class TooDeeplyNestedStatementsCheck implements SlangCheck {
     } else {
       return ((LoopTree) tree).keyword();
     }
+  }
+
+  private static boolean isTernaryOperator(CheckContext ctx, Tree tree) {
+    if (!isIfWithElse(tree)) {
+      return false;
+    }
+    Tree child = tree;
+    for (Tree ancestor : ctx.ancestors()) {
+      if (ancestor instanceof BlockTree || ancestor instanceof ExceptionHandlingTree || ancestor instanceof TopLevelTree ||
+        isBranchOfLoopOrCaseOrIfWithoutElse(ancestor, child)) {
+        break;
+      }
+      if (!isBranchOfIf(ancestor, child)) {
+        return tree.descendants().noneMatch(BlockTree.class::isInstance);
+      }
+      child = ancestor;
+    }
+    return false;
+  }
+
+  private static boolean isIfWithElse(Tree tree) {
+    return tree instanceof IfTree && ((IfTree) tree).elseBranch() != null;
+  }
+
+  private static boolean isBranchOfLoopOrCaseOrIfWithoutElse(Tree parent, Tree child) {
+    return (parent instanceof LoopTree && child == ((LoopTree) parent).body()) ||
+      (parent instanceof MatchCaseTree && child == ((MatchCaseTree) parent).body()) ||
+      (isBranchOfIf(parent, child) && ((IfTree) parent).elseBranch() == null);
+  }
+
+  private static boolean isBranchOfIf(Tree parent, Tree child) {
+    if (parent instanceof IfTree) {
+      IfTree ifTree = (IfTree) parent;
+      return child == ifTree.thenBranch() || child == ifTree.elseBranch();
+    }
+    return false;
   }
 
 }
