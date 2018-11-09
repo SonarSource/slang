@@ -86,7 +86,7 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
 
   }
 
-  private Set<IdentifierTree> getAllUsedIdentifiers(CheckContext ctx, ClassDeclarationTree classDeclarationTree) {
+  private static Set<IdentifierTree> getAllUsedIdentifiers(CheckContext ctx, ClassDeclarationTree classDeclarationTree) {
     ClassDeclarationTree topLevelClassDeclarationTree = ctx.ancestors().stream()
       .filter(ClassDeclarationTree.class::isInstance)
       .map(ClassDeclarationTree.class::cast)
