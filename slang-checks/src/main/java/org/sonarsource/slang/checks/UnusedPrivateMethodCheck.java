@@ -34,6 +34,8 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.sonar.check.Rule;
 
+import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
+
 @Rule(key = "S1144")
 public class UnusedPrivateMethodCheck implements SlangCheck {
 
@@ -72,15 +74,11 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
         .map(FunctionDeclarationTree::name)
         .collect(Collectors.toSet()));
 
-      Set<String> usedIdentifierNames = usedIdentifiers.stream()
-        .map(IdentifierTree::name)
-        .collect(Collectors.toSet());
-
       classMethods.stream()
         .filter(method -> FunctionUtils.isPrivateMethod(method) && !FunctionUtils.isOverrideMethod(method))
         .forEach(tree -> {
           IdentifierTree identifier = tree.name();
-          if (isUnusedMethod(identifier, usedIdentifierNames)) {
+          if (isUnusedMethod(identifier, usedIdentifiers)) {
             String message = String.format("Remove this unused private \"%s\" method.", identifier.name());
             ctx.reportIssue(tree.rangeToHighlight(), message);
           }
@@ -90,9 +88,9 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
 
   }
 
-  private static boolean isUnusedMethod(@Nullable IdentifierTree identifier, Set<String> usedIdentifierNames) {
+  private static boolean isUnusedMethod(@Nullable IdentifierTree identifier, Set<IdentifierTree> usedIdentifierNames) {
     return identifier != null
-      && !usedIdentifierNames.contains(identifier.name())
+      && usedIdentifierNames.stream().noneMatch(usedIdentifier -> areEquivalent(identifier, usedIdentifier))
       && !IGNORED_METHODS.contains(identifier.name());
   }
 
