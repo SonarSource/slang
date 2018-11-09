@@ -22,6 +22,7 @@ package org.sonarsource.slang.checks;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
+import org.sonarsource.slang.checks.api.CheckContext;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.checks.utils.FunctionUtils;
@@ -65,10 +66,7 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
         });
       functionVisitor.scan(new TreeContext(), classDeclarationTree);
 
-      Set<IdentifierTree> usedIdentifiers = classDeclarationTree.descendants()
-        .filter(IdentifierTree.class::isInstance)
-        .map(IdentifierTree.class::cast)
-        .collect(Collectors.toSet());
+      Set<IdentifierTree> usedIdentifiers = getAllUsedIdentifiers(ctx, classDeclarationTree);
 
       usedIdentifiers.removeAll(classMethods.stream()
         .map(FunctionDeclarationTree::name)
@@ -86,6 +84,19 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
 
     });
 
+  }
+
+  private Set<IdentifierTree> getAllUsedIdentifiers(CheckContext ctx, ClassDeclarationTree classDeclarationTree) {
+    ClassDeclarationTree topLevelClassDeclarationTree = ctx.ancestors().stream()
+      .filter(ClassDeclarationTree.class::isInstance)
+      .map(ClassDeclarationTree.class::cast)
+      .reduce((first, last) -> last)
+      .orElse(classDeclarationTree);
+
+    return topLevelClassDeclarationTree.descendants()
+      .filter(IdentifierTree.class::isInstance)
+      .map(IdentifierTree.class::cast)
+      .collect(Collectors.toSet());
   }
 
   private static boolean isUnusedMethod(@Nullable IdentifierTree identifier, Set<IdentifierTree> usedIdentifierNames) {
