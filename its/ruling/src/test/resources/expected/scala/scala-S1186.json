@@ -42,9 +42,6 @@
 'scala-project:sources/scala/finagle/finagle-http2/src/test/scala/com/twitter/finagle/http2/transport/ServerNpnOrAlpnHandlerTest.scala':[
 32,
 ],
-'scala-project:sources/scala/finagle/finagle-memcached/src/main/scala/com/twitter/finagle/memcached/ZookeeperStateMonitor.scala':[
-141,
-],
 'scala-project:sources/scala/finagle/finagle-mux/src/main/scala/com/twitter/finagle/mux/lease/exp/LogsReceiver.scala':[
 14,
 16,
@@ -170,9 +167,6 @@
 37,
 39,
 41,
-],
-'scala-project:sources/scala/prisma/server/servers/api/src/test/scala/com/prisma/api/filters/SelfRelationFilterSpec.scala':[
-324,
 ],
 'scala-project:sources/scala/prisma/server/servers/deploy/src/test/scala/com/prisma/deploy/specutils/TestMigrator.scala':[
 44,

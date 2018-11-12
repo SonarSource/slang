@@ -19,11 +19,12 @@
  */
 package org.sonarsource.slang.checks;
 
+import org.sonar.check.Rule;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
+import org.sonarsource.slang.api.TreeMetaData;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
-import org.sonar.check.Rule;
 
 @Rule(key = "S1186")
 public class EmptyFunctionCheck implements SlangCheck {
@@ -32,10 +33,20 @@ public class EmptyFunctionCheck implements SlangCheck {
   public void initialize(InitContext init) {
     init.register(FunctionDeclarationTree.class, (ctx, tree) -> {
       BlockTree body = tree.body();
-      if (body != null && body.statementOrExpressions().isEmpty() && body.metaData().commentsInside().isEmpty()) {
+      if (body != null && body.statementOrExpressions().isEmpty() && !hasComment(body, ctx.parent().metaData())) {
         ctx.reportIssue(body, "Add a nested comment explaining why this function is empty or complete the implementation.");
       }
     });
+  }
+
+  private static boolean hasComment(BlockTree body, TreeMetaData parentMetaData) {
+    if (!body.metaData().commentsInside().isEmpty()) {
+      return true;
+    }
+
+    int emptyBodyEndLine = body.textRange().end().line();
+    return parentMetaData.commentsInside().stream()
+      .anyMatch(comment -> comment.contentRange().start().line() == emptyBodyEndLine);
   }
 
 }
