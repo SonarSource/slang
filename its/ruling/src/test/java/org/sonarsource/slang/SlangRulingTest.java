@@ -50,7 +50,7 @@ public class SlangRulingTest {
   private static final String DEFAULT_SQ_VERSION = "LATEST_RELEASE";
 
   private static Orchestrator orchestrator;
-  private static boolean keepSonarqubeRunning = false;
+  private static boolean keepSonarqubeRunning = "true".equals(System.getProperty("keepSonarqubeRunning"));
 
   private static final Set<String> LANGUAGES = ImmutableSet.of("kotlin" , "ruby" , "scala");
 

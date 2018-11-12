@@ -4,7 +4,6 @@
 107,
 139,
 157,
-166,
 167,
 184,
 205,
@@ -56,9 +55,6 @@
 'kotlin-project:sources/kotlin/corda/samples/attachment-demo/src/main/kotlin/net/corda/attachmentdemo/AttachmentDemo.kt':[
 158,
 ],
-'kotlin-project:sources/kotlin/corda/serialization/src/main/kotlin/net/corda/serialization/internal/AllButBlacklisted.kt':[
-134,
-],
 'kotlin-project:sources/kotlin/corda/serialization/src/main/kotlin/net/corda/serialization/internal/amqp/DeserializedParameterizedType.kt':[
 88,
 100,
@@ -89,7 +85,6 @@
 ],
 'kotlin-project:sources/kotlin/intellij-rust/src/main/kotlin/org/rust/lang/core/lexer/RustEscapesLexer.kt':[
 73,
-82,
 ],
 'kotlin-project:sources/kotlin/intellij-rust/src/main/kotlin/org/rust/lang/core/resolve/ItemResolution.kt':[
 105,
@@ -135,7 +130,6 @@
 'kotlin-project:sources/kotlin/kotlin/compiler/backend/src/org/jetbrains/kotlin/codegen/inline/MethodInliner.kt':[
 299,
 509,
-516,
 811,
 1052,
 ],
@@ -150,12 +144,8 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/compiler/cli/src/org/jetbrains/kotlin/cli/jvm/K2JVMCompiler.kt':[
 81,
-168,
 178,
 193,
-],
-'kotlin-project:sources/kotlin/kotlin/compiler/cli/src/org/jetbrains/kotlin/cli/jvm/compiler/ClasspathRootsResolver.kt':[
-263,
 ],
 'kotlin-project:sources/kotlin/kotlin/compiler/cli/src/org/jetbrains/kotlin/cli/jvm/compiler/CliTrace.kt':[
 77,
@@ -165,9 +155,6 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/compiler/cli/src/org/jetbrains/kotlin/cli/jvm/modules/JavaModuleGraph.kt':[
 51,
-],
-'kotlin-project:sources/kotlin/kotlin/compiler/daemon/daemon-client/src/org/jetbrains/kotlin/daemon/client/KotlinCompilerClient.kt':[
-329,
 ],
 'kotlin-project:sources/kotlin/kotlin/compiler/frontend.java/src/org/jetbrains/kotlin/resolve/jvm/checkers/JavaNullabilityChecker.kt':[
 61,
@@ -314,7 +301,6 @@
 'kotlin-project:sources/kotlin/kotlin/compiler/psi/src/org/jetbrains/kotlin/psi/createByPattern.kt':[
 157,
 163,
-252,
 253,
 ],
 'kotlin-project:sources/kotlin/kotlin/compiler/resolution/src/org/jetbrains/kotlin/resolve/calls/components/ArgumentsToParametersMapper.kt':[
@@ -374,9 +360,6 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/eval4j/test/org/jetbrains/eval4j/test/suiteBuilder.kt':[
 73,
-],
-'kotlin-project:sources/kotlin/kotlin/idea/formatter/src/org/jetbrains/kotlin/idea/formatter/KotlinSpacingBuilder.kt':[
-144,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/ide-common/src/org/jetbrains/kotlin/idea/kdoc/findKDoc.kt':[
 56,
@@ -441,7 +424,6 @@
 370,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/idea-android/idea-android-output-parser/src/org/jetbrains/kotlin/android/KotlinOutputParserHelper.kt':[
-57,
 59,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/idea-android/src/org/jetbrains/kotlin/android/configure/KotlinAndroidGradleLibraryDataService.kt':[
@@ -517,9 +499,6 @@
 'kotlin-project:sources/kotlin/kotlin/idea/idea-core/src/org/jetbrains/kotlin/idea/core/KotlinIndicesHelper.kt':[
 123,
 411,
-],
-'kotlin-project:sources/kotlin/kotlin/idea/idea-core/src/org/jetbrains/kotlin/idea/core/KotlinNameSuggester.kt':[
-255,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/idea-core/src/org/jetbrains/kotlin/idea/core/ShortenReferences.kt':[
 103,
@@ -627,7 +606,6 @@
 89,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/codeInliner/CodeInliner.kt':[
-245,
 267,
 269,
 ],
@@ -674,9 +652,6 @@
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/inspections/UnusedSymbolInspection.kt':[
 251,
 ],
-'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/ConvertEnumToSealedClassIntention.kt':[
-66,
-],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/ConvertFunctionToPropertyIntention.kt':[
 150,
 ],
@@ -694,7 +669,6 @@
 132,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/ConvertToStringTemplateIntention.kt':[
-94,
 113,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/ConvertTwoComparisonsToRangeCheckIntention.kt':[
@@ -708,7 +682,6 @@
 297,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/InvertIfConditionIntention.kt':[
-125,
 129,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/Utils.kt':[
@@ -723,10 +696,6 @@
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/loopToCallChain/matchAndConvert.kt':[
 90,
 192,
-],
-'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/loopToCallChain/result/FindTransformationMatcher.kt':[
-247,
-251,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/loopToCallChain/result/ForEachTransformation.kt':[
 72,
@@ -758,9 +727,6 @@
 95,
 101,
 ],
-'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/quickfix/createFromUsage/createCallable/CreateCallableFromUsageFix.kt':[
-119,
-],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/quickfix/replaceWith/DeprecatedSymbolUsageFixBase.kt':[
 171,
 ],
@@ -769,7 +735,6 @@
 285,
 575,
 584,
-747,
 854,
 855,
 858,
@@ -787,13 +752,9 @@
 183,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/introduce/extractionEngine/inferParameterInfo.kt':[
-235,
 240,
 261,
 276,
-],
-'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/introduce/introduceParameter/KotlinInplaceParameterIntroducer.kt':[
-140,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/introduce/introduceTypeAlias/introduceTypeAliasImpl.kt':[
 210,
@@ -803,7 +764,6 @@
 203,
 209,
 267,
-282,
 287,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/kotlinRefactoringUtil.kt':[
@@ -824,14 +784,10 @@
 121,
 126,
 507,
-516,
 518,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/pushDown/KotlinPushDownProcessor.kt':[
 181,
-],
-'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/rename/RenameKotlinPropertyProcessor.kt':[
-440,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/rename/renameConflictUtils.kt':[
 303,
@@ -872,13 +828,11 @@
 269,
 ],
 'kotlin-project:sources/kotlin/kotlin/j2k/src/org/jetbrains/kotlin/j2k/Converter.kt':[
-368,
 394,
 639,
 685,
 ],
 'kotlin-project:sources/kotlin/kotlin/j2k/src/org/jetbrains/kotlin/j2k/ExpressionConverter.kt':[
-140,
 313,
 318,
 373,
@@ -890,7 +844,6 @@
 'kotlin-project:sources/kotlin/kotlin/j2k/src/org/jetbrains/kotlin/j2k/ForConverter.kt':[
 166,
 172,
-182,
 244,
 ],
 'kotlin-project:sources/kotlin/kotlin/j2k/src/org/jetbrains/kotlin/j2k/OverloadReducer.kt':[
@@ -941,7 +894,6 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/js/js.tests/test/org/jetbrains/kotlin/generators/tests/generateTestDataForReservedWords.kt':[
 297,
-303,
 318,
 ],
 'kotlin-project:sources/kotlin/kotlin/js/js.translator/src/org/jetbrains/kotlin/js/translate/reference/CallArgumentTranslator.kt':[
@@ -988,22 +940,14 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/libraries/stdlib/src/kotlin/collections/SlidingWindow.kt':[
 37,
-49,
-55,
 ],
 'kotlin-project:sources/kotlin/kotlin/libraries/stdlib/src/kotlin/coroutines/experimental/CoroutineContext.kt':[
 41,
-],
-'kotlin-project:sources/kotlin/kotlin/libraries/stdlib/src/kotlin/text/Strings.kt':[
-1069,
 ],
 'kotlin-project:sources/kotlin/kotlin/libraries/stdlib/test/ranges/ProgressionLastElementTest.kt':[
 72,
 73,
 78,
-],
-'kotlin-project:sources/kotlin/kotlin/libraries/tools/kotlin-gradle-plugin/src/main/kotlin/org/jetbrains/kotlin/gradle/plugin/KotlinPlugin.kt':[
-828,
 ],
 'kotlin-project:sources/kotlin/kotlin/libraries/tools/kotlin-stdlib-gen/src/templates/dsl/TypeParameterParsers.kt':[
 67,
@@ -1048,9 +992,6 @@
 74,
 128,
 139,
-],
-'kotlin-project:sources/kotlin/ktor/ktor-http-cio/src/io/ktor/http/cio/internals/WeakTimeoutQueue.kt':[
-100,
 ],
 'kotlin-project:sources/kotlin/ktor/ktor-http-cio/src/io/ktor/http/cio/websocket/DefaultWebSocketSessionImpl.kt':[
 82,
@@ -1117,8 +1058,6 @@
 589,
 591,
 605,
-1152,
-1302,
 1474,
 1494,
 ],

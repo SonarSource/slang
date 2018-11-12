@@ -70,7 +70,33 @@ if (false) // Compliant
 
         } catch () { };
 
+        x = if (false) 1 else 2;
+        x = if (false) { // Noncompliant
+          foo();
+          1
+        } else 2;
     };
+
+    x = if (condition) if (x == 0) 1 else 2 else 3;
+    x = if (condition) (if (x == 0) 1 else 2) else 3;
+    if (if (x == 0) a() else b()) {
+    };
+
+    if (condition) if (x == 0) a() else b(); // Noncompliant
+
+    for (int var o = objects) if (x == 0) 1 else 2; // Noncompliant
+
+    for (int var x = if (x == 0) 1 else 2)  {
+    };
+
+    while (if (x == 0) false else true)  {
+    };
+
+    match (if (x == 0) 1 else 2) {
+        1    -> if (x == 0) 1 else 2; // Noncompliant
+        else -> if (x == 0) 1 else 2; // Noncompliant
+    };
+
   };
 };
 
