@@ -31,23 +31,33 @@ class C {
 
     private fun unusedPrivate2() {}  // FN of current approach, "unusedPrivate2" identifier is used in inner class
 
+    private fun unusedPrivate4() {}
+
     private fun f1() {
       f1();
       usedInnerMethod1();
       usedInnerMethod2();
+      unusedPrivate4();
     }
 
     class D {
-        private fun unusedPrivate2() {}  // FN of current approach, "unusedPrivate2" identifier is used in outer class
+        private fun unusedPrivate2() {}
 
         private fun unusedPrivate3() {}  // Noncompliant
+
+        private fun unusedPrivate4() {} // FN of current approach, "unusedPrivate4" identifier is used in outer class
 
         private fun f1() {}  // FN of current approach, "f1" is used in outer class
 
         private fun usedInnerMethod1() {}
 
+        private fun f2() {
+          f2();
+          unusedPrivate2();
+        }
+
         class E {
-            private fun unusedPrivate4() {}  // Noncompliant
+            private fun unusedPrivate5() {}  // Noncompliant
 
             private fun usedInnerMethod2() {}
         }

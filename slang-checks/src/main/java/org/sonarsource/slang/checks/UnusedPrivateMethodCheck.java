@@ -19,6 +19,12 @@
  */
 package org.sonarsource.slang.checks;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+import org.sonar.check.Rule;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
@@ -28,18 +34,11 @@ import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.checks.utils.FunctionUtils;
 import org.sonarsource.slang.visitors.TreeContext;
 import org.sonarsource.slang.visitors.TreeVisitor;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.annotation.Nullable;
-import org.sonar.check.Rule;
 
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 
 @Rule(key = "S1144")
 public class UnusedPrivateMethodCheck implements SlangCheck {
-
   // Serializable method should not raise any issue in Kotlin. Either change it as parameter when adding new language,
   // or add all exceptions here
   private static final Set<String> IGNORED_METHODS = new HashSet<>(Arrays.asList(
@@ -52,27 +51,32 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(ClassDeclarationTree.class, (ctx, classDeclarationTree) -> {
-      Set<FunctionDeclarationTree> classMethods = new HashSet<>();
+      ClassDeclarationTree topLevelClass = getTopLevelClass(ctx, classDeclarationTree);
+      if (!topLevelClass.equals(classDeclarationTree)) {
+        return;
+      }
+
+      Set<FunctionDeclarationTree> methods = new HashSet<>();
       TreeVisitor<TreeContext> functionVisitor = new TreeVisitor<>();
       functionVisitor.register(FunctionDeclarationTree.class,
         (functionCtx, functionDeclarationTree) -> {
-          boolean isCurrentClassMethod = functionCtx.ancestors().stream()
-            .filter(ClassDeclarationTree.class::isInstance)
-            .findFirst().map(classDeclarationTree::equals)
-            .orElse(false);
-          if (isCurrentClassMethod) {
-            classMethods.add(functionDeclarationTree);
+          boolean hasClassDeclarationParent = functionCtx.ancestors().stream().anyMatch(ClassDeclarationTree.class::isInstance);
+          if (hasClassDeclarationParent) {
+            methods.add(functionDeclarationTree);
           }
         });
       functionVisitor.scan(new TreeContext(), classDeclarationTree);
 
-      Set<IdentifierTree> usedIdentifiers = getAllUsedIdentifiers(ctx, classDeclarationTree);
+      Set<IdentifierTree> usedIdentifiers = classDeclarationTree.descendants()
+        .filter(IdentifierTree.class::isInstance)
+        .map(IdentifierTree.class::cast)
+        .collect(Collectors.toSet());
 
-      usedIdentifiers.removeAll(classMethods.stream()
+      usedIdentifiers.removeAll(methods.stream()
         .map(FunctionDeclarationTree::name)
         .collect(Collectors.toSet()));
 
-      classMethods.stream()
+      methods.stream()
         .filter(method -> FunctionUtils.isPrivateMethod(method) && !FunctionUtils.isOverrideMethod(method))
         .forEach(tree -> {
           IdentifierTree identifier = tree.name();
@@ -83,20 +87,14 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
         });
 
     });
-
   }
 
-  private static Set<IdentifierTree> getAllUsedIdentifiers(CheckContext ctx, ClassDeclarationTree classDeclarationTree) {
-    ClassDeclarationTree topLevelClassDeclarationTree = ctx.ancestors().stream()
+  private static ClassDeclarationTree getTopLevelClass(CheckContext ctx, ClassDeclarationTree classDeclarationTree) {
+    return ctx.ancestors().stream()
       .filter(ClassDeclarationTree.class::isInstance)
       .map(ClassDeclarationTree.class::cast)
       .reduce((first, last) -> last)
       .orElse(classDeclarationTree);
-
-    return topLevelClassDeclarationTree.descendants()
-      .filter(IdentifierTree.class::isInstance)
-      .map(IdentifierTree.class::cast)
-      .collect(Collectors.toSet());
   }
 
   private static boolean isUnusedMethod(@Nullable IdentifierTree identifier, Set<IdentifierTree> usedIdentifierNames) {
