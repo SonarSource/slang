@@ -19,13 +19,20 @@
  */
 package org.sonarsource.slang.checks.utils;
 
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.List;
 import org.sonarsource.slang.api.BinaryExpressionTree;
+import org.sonarsource.slang.api.BlockTree;
+import org.sonarsource.slang.api.ExceptionHandlingTree;
+import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.LiteralTree;
+import org.sonarsource.slang.api.LoopTree;
+import org.sonarsource.slang.api.MatchCaseTree;
 import org.sonarsource.slang.api.ParenthesizedExpressionTree;
+import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.UnaryExpressionTree;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.sonarsource.slang.api.BinaryExpressionTree.Operator.CONDITIONAL_AND;
 import static org.sonarsource.slang.api.BinaryExpressionTree.Operator.CONDITIONAL_OR;
@@ -72,6 +79,42 @@ public class ExpressionUtils {
       result = ((ParenthesizedExpressionTree) result).expression();
     }
     return result;
+  }
+
+  public static boolean isTernaryOperator(Deque<Tree> ancestors, Tree tree) {
+    if (!isIfWithElse(tree)) {
+      return false;
+    }
+    Tree child = tree;
+    for (Tree ancestor : ancestors) {
+      if (ancestor instanceof BlockTree || ancestor instanceof ExceptionHandlingTree || ancestor instanceof TopLevelTree ||
+        isBranchOfLoopOrCaseOrIfWithoutElse(ancestor, child)) {
+        break;
+      }
+      if (!isBranchOfIf(ancestor, child)) {
+        return tree.descendants().noneMatch(BlockTree.class::isInstance);
+      }
+      child = ancestor;
+    }
+    return false;
+  }
+
+  private static boolean isIfWithElse(Tree tree) {
+    return tree instanceof IfTree && ((IfTree) tree).elseBranch() != null;
+  }
+
+  private static boolean isBranchOfLoopOrCaseOrIfWithoutElse(Tree parent, Tree child) {
+    return (parent instanceof LoopTree && child == ((LoopTree) parent).body()) ||
+      (parent instanceof MatchCaseTree && child == ((MatchCaseTree) parent).body()) ||
+      (isBranchOfIf(parent, child) && ((IfTree) parent).elseBranch() == null);
+  }
+
+  private static boolean isBranchOfIf(Tree parent, Tree child) {
+    if (parent instanceof IfTree) {
+      IfTree ifTree = (IfTree) parent;
+      return child == ifTree.thenBranch() || child == ifTree.elseBranch();
+    }
+    return false;
   }
 
 }
