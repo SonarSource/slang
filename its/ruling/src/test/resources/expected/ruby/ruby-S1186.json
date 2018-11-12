@@ -649,7 +649,6 @@
 'ruby-project:sources/ruby/rails/activerecord/lib/active_record/connection_adapters/abstract/database_statements.rb':[
 283,
 302,
-310,
 ],
 'ruby-project:sources/ruby/rails/activerecord/lib/active_record/connection_adapters/abstract/transaction.rb':[
 85,
