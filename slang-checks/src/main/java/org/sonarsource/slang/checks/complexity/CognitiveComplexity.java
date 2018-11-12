@@ -35,6 +35,7 @@ import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.MatchTree;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.checks.utils.ExpressionUtils;
 import org.sonarsource.slang.impl.JumpTreeImpl;
 import org.sonarsource.slang.visitors.TreeContext;
 import org.sonarsource.slang.visitors.TreeVisitor;
@@ -101,11 +102,13 @@ public class CognitiveComplexity {
 
       register(IfTree.class, (ctx, tree) -> {
         Tree parent = ctx.ancestors().peek();
-        if (!(parent instanceof IfTree) || tree != ((IfTree) parent).elseBranch()) {
+        boolean isElseIf = parent instanceof IfTree && tree == ((IfTree) parent).elseBranch();
+        boolean isTernary = ExpressionUtils.isTernaryOperator(ctx.ancestors(), tree);
+        if (!isElseIf || isTernary) {
           incrementWithNesting(tree.ifKeyword(), ctx);
         }
         Token elseKeyword = tree.elseKeyword();
-        if (elseKeyword != null) {
+        if (elseKeyword != null && !isTernary) {
           incrementWithoutNesting(elseKeyword);
         }
       });

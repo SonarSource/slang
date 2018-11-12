@@ -4,8 +4,6 @@
 ],
 'scala-project:sources/scala/cats/core/src/main/scala/cats/data/Chain.scala':[
 271,
-431,
-475,
 581,
 ],
 'scala-project:sources/scala/cats/core/src/main/scala/cats/instances/try.scala':[
@@ -36,12 +34,6 @@
 'scala-project:sources/scala/finagle/finagle-core/src/main/scala/com/twitter/finagle/NameTree.scala':[
 160,
 253,
-],
-'scala-project:sources/scala/finagle/finagle-core/src/main/scala/com/twitter/finagle/addr/StabilizingAddr.scala':[
-36,
-],
-'scala-project:sources/scala/finagle/finagle-core/src/main/scala/com/twitter/finagle/client/BackupRequestFilter.scala':[
-315,
 ],
 'scala-project:sources/scala/finagle/finagle-core/src/main/scala/com/twitter/finagle/decoder/LengthFieldFramer.scala':[
 90,
@@ -104,9 +96,6 @@
 'scala-project:sources/scala/http4s/blaze-core/src/main/scala/org/http4s/blazecore/Http1Stage.scala':[
 68,
 ],
-'scala-project:sources/scala/http4s/blaze-server/src/main/scala/org/http4s/server/blaze/BlazeBuilder.scala':[
-146,
-],
 'scala-project:sources/scala/http4s/blaze-server/src/main/scala/org/http4s/server/blaze/Http1ServerStage.scala':[
 166,
 ],
@@ -115,9 +104,6 @@
 ],
 'scala-project:sources/scala/http4s/client/src/main/scala/org/http4s/client/middleware/FollowRedirect.scala':[
 45,
-],
-'scala-project:sources/scala/http4s/core/src/main/scala/org/http4s/UriTemplate.scala':[
-152,
 ],
 'scala-project:sources/scala/http4s/core/src/main/scala/org/http4s/multipart/MultipartParser.scala':[
 460,
@@ -205,9 +191,6 @@
 ],
 'scala-project:sources/scala/playframework/framework/src/play-java/src/main/scala/play/routing/RouterBuilderHelper.scala':[
 20,
-],
-'scala-project:sources/scala/playframework/framework/src/play-jdbc-evolutions/src/main/scala/play/api/db/evolutions/EvolutionsApi.scala':[
-159,
 ],
 'scala-project:sources/scala/playframework/framework/src/play-server/src/main/scala/play/core/server/common/WebSocketFlowHandler.scala':[
 20,

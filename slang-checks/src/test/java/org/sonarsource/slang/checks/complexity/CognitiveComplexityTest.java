@@ -43,6 +43,17 @@ public class CognitiveComplexityTest {
   }
 
   @Test
+  public void ternary_operator() {
+    assertThat(complexity("v = if (x) 42 else 43;").value()).isEqualTo(1);
+    assertThat(complexity("v = if (x) 42 else if (y) 43 else 44;").value()).isEqualTo(3);
+    assertThat(complexity("v = if (x) (if (y) 42 else 43) else 44;").value()).isEqualTo(3);
+    assertThat(complexity("v = if (x) 42 else (if (y) 43 else 44);").value()).isEqualTo(3);
+    assertThat(complexity("v = if (x) (if (y) 42 else 43) else (if (y) 44 else 45);").value()).isEqualTo(5);
+    assertThat(complexity("v = if (x) if (y) if (z) 42 else 43 else 44 else 45;").value()).isEqualTo(6);
+    assertThat(complexity("v = if (x) (if (y) (if (z) 42 else 43) else 44) else 45;").value()).isEqualTo(6);
+  }
+
+  @Test
   public void nested_if_statements() {
     assertThat(complexity("if (x) { 42 };").value()).isEqualTo(1);
     assertThat(complexity("if (x) { 42 } else { 43 };").value()).isEqualTo(2);

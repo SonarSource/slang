@@ -18,9 +18,6 @@
 'kotlin-project:sources/kotlin/corda/client/rpc/src/main/kotlin/net/corda/client/rpc/internal/RPCClientProxyHandler.kt':[
 290,
 ],
-'kotlin-project:sources/kotlin/corda/experimental/corda-utils/src/main/kotlin/io/cryptoblk/core/StatusTransitions.kt':[
-57,
-],
 'kotlin-project:sources/kotlin/corda/finance/src/main/kotlin/net/corda/finance/contracts/asset/Obligation.kt':[
 240,
 ],
@@ -92,9 +89,6 @@
 'kotlin-project:sources/kotlin/intellij-rust/src/main/kotlin/org/rust/ide/typing/RsBraceMatcher.kt':[
 33,
 ],
-'kotlin-project:sources/kotlin/intellij-rust/src/main/kotlin/org/rust/ide/typing/RsEnterInLineCommentHandler.kt':[
-27,
-],
 'kotlin-project:sources/kotlin/intellij-rust/src/main/kotlin/org/rust/lang/core/completion/LookupElements.kt':[
 90,
 ],
@@ -162,7 +156,6 @@
 98,
 ],
 'kotlin-project:sources/kotlin/kotlin/buildSrc/src/main/kotlin/pill/parser.kt':[
-63,
 225,
 ],
 'kotlin-project:sources/kotlin/kotlin/buildSrc/src/main/kotlin/pill/plugin.kt':[
@@ -273,9 +266,6 @@
 'kotlin-project:sources/kotlin/kotlin/compiler/cli/src/org/jetbrains/kotlin/cli/jvm/compiler/KotlinToJVMBytecodeCompiler.kt':[
 178,
 ],
-'kotlin-project:sources/kotlin/kotlin/compiler/cli/src/org/jetbrains/kotlin/cli/jvm/compiler/TopDownAnalyzerFacadeForJVM.kt':[
-121,
-],
 'kotlin-project:sources/kotlin/kotlin/compiler/cli/src/org/jetbrains/kotlin/cli/jvm/index/JvmDependenciesIndexImpl.kt':[
 114,
 ],
@@ -291,9 +281,6 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/compiler/daemon/daemon-client/src/org/jetbrains/kotlin/daemon/client/KotlinCompilerClient.kt':[
 312,
-],
-'kotlin-project:sources/kotlin/kotlin/compiler/daemon/daemon-common/src/org/jetbrains/kotlin/daemon/common/DaemonParams.kt':[
-271,
 ],
 'kotlin-project:sources/kotlin/kotlin/compiler/daemon/src/org/jetbrains/kotlin/daemon/CompileServiceImpl.kt':[
 364,
@@ -353,7 +340,6 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/compiler/frontend/src/org/jetbrains/kotlin/cfg/pseudocode/pseudocodeUtils.kt':[
 75,
-90,
 142,
 ],
 'kotlin-project:sources/kotlin/kotlin/compiler/frontend/src/org/jetbrains/kotlin/resolve/DeclarationsChecker.kt':[
@@ -651,9 +637,6 @@
 'kotlin-project:sources/kotlin/kotlin/idea/ide-common/src/org/jetbrains/kotlin/idea/util/OptimizedImportsBuilder.kt':[
 117,
 ],
-'kotlin-project:sources/kotlin/kotlin/idea/ide-common/src/org/jetbrains/kotlin/idea/util/ShadowedDeclarationsFilter.kt':[
-116,
-],
 'kotlin-project:sources/kotlin/kotlin/idea/ide-common/src/org/jetbrains/kotlin/idea/util/psi/patternMatching/KotlinPsiUnifier.kt':[
 172,
 330,
@@ -867,9 +850,6 @@
 'kotlin-project:sources/kotlin/kotlin/idea/idea-core/src/org/jetbrains/kotlin/idea/j2k/IdeaDocCommentConverter.kt':[
 224,
 ],
-'kotlin-project:sources/kotlin/kotlin/idea/idea-gradle/src/org/jetbrains/kotlin/idea/configuration/GradleKotlinFrameworkSupportProvider.kt':[
-69,
-],
 'kotlin-project:sources/kotlin/kotlin/idea/idea-gradle/src/org/jetbrains/kotlin/idea/configuration/GroovyBuildScriptManipulator.kt':[
 57,
 ],
@@ -959,9 +939,6 @@
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/actions/generate/KotlinGenerateEqualsAndHashcodeAction.kt':[
 162,
 ],
-'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/actions/generate/KotlinGenerateSecondaryConstructorAction.kt':[
-141,
-],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/actions/internal/SearchNotPropertyCandidatesAction.kt':[
 69,
 ],
@@ -1007,9 +984,6 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/findUsages/KotlinFindUsagesHandlerFactory.kt':[
 57,
-],
-'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/formatter/KotlinFormatterUsageCollector.kt':[
-48,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/formatter/KotlinPreFormatProcessor.kt':[
 32,
@@ -1065,7 +1039,6 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/inspections/LiftReturnOrAssignmentInspection.kt':[
 31,
-33,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/inspections/MemberVisibilityCanBePrivateInspection.kt':[
 77,
@@ -1091,9 +1064,6 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/inspections/SelfAssignmentInspection.kt':[
 22,
-],
-'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/inspections/SortModifiersInspection.kt':[
-19,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/inspections/UnnecessaryVariableInspection.kt':[
 68,
@@ -1270,9 +1240,6 @@
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/quickfix/createFromUsage/createCallable/CreateCallableFromUsageFix.kt':[
 87,
 ],
-'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/quickfix/createFromUsage/createClass/CreateClassFromConstructorCallActionFactory.kt':[
-56,
-],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/quickfix/createFromUsage/createClass/CreateClassFromReferenceExpressionActionFactory.kt':[
 51,
 ],
@@ -1303,15 +1270,12 @@
 223,
 346,
 510,
-715,
 837,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/changeSignature/ui/KotlinChangeSignatureDialog.kt':[
 162,
-174,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/changeSignature/usages/KotlinCallableDefinitionUsage.kt':[
-102,
 165,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/changeSignature/usages/KotlinFunctionCallUsage.kt':[
@@ -1327,9 +1291,6 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/inline/KotlinInlineTypeAliasHandler.kt':[
 64,
-],
-'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/inline/KotlinInlineValHandler.kt':[
-58,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/introduce/extractClass/ExtractSuperRefactoring.kt':[
 91,
@@ -1457,9 +1418,6 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/tests/org/jetbrains/kotlin/idea/run/RunConfigurationTest.kt':[
 57,
-],
-'kotlin-project:sources/kotlin/kotlin/idea/tests/org/jetbrains/kotlin/idea/slicer/AbstractSlicerTest.kt':[
-55,
 ],
 'kotlin-project:sources/kotlin/kotlin/j2k/src/org/jetbrains/kotlin/j2k/AnnotationConverter.kt':[
 43,
@@ -1634,7 +1592,6 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/libraries/stdlib/src/kotlin/text/Strings.kt':[
 1045,
-1052,
 ],
 'kotlin-project:sources/kotlin/kotlin/libraries/stdlib/test/collections/ArraysTest.kt':[
 742,
@@ -1642,9 +1599,6 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/libraries/stdlib/test/ranges/ProgressionLastElementTest.kt':[
 66,
-],
-'kotlin-project:sources/kotlin/kotlin/libraries/tools/idl2k/src/main/kotlin/main.kt':[
-10,
 ],
 'kotlin-project:sources/kotlin/kotlin/libraries/tools/kotlin-gradle-plugin/src/main/kotlin/org/jetbrains/kotlin/gradle/plugin/KotlinPlugin.kt':[
 783,
@@ -1740,9 +1694,6 @@
 ],
 'kotlin-project:sources/kotlin/ktor/ktor-http-cio/src/io/ktor/http/cio/websocket/DefaultWebSocketSessionImpl.kt':[
 69,
-],
-'kotlin-project:sources/kotlin/ktor/ktor-http-cio/src/io/ktor/http/cio/websocket/FrameParser.kt':[
-62,
 ],
 'kotlin-project:sources/kotlin/ktor/ktor-http-cio/src/io/ktor/http/cio/websocket/PingPong.kt':[
 40,
