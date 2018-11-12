@@ -150,6 +150,7 @@ public class SlangRulingTest {
   private void run_ruling_test(String language, Map<String, String> languageProperties) throws IOException {
     Map<String, String> properties = new HashMap<>(languageProperties);
     properties.put("sonar.slang.converter.validation", "log");
+    properties.put("sonar.slang.duration.statistics", "true");
 
     String projectKey = language + "-project";
     orchestrator.getServer().provisionProject(projectKey, projectKey);

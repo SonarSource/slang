@@ -19,14 +19,6 @@
  */
 package org.sonarsource.slang.plugin;
 
-import org.sonarsource.slang.api.HasTextRange;
-import org.sonarsource.slang.api.TextRange;
-import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.checks.api.CheckContext;
-import org.sonarsource.slang.checks.api.InitContext;
-import org.sonarsource.slang.checks.api.SecondaryLocation;
-import org.sonarsource.slang.checks.api.SlangCheck;
-import org.sonarsource.slang.visitors.TreeVisitor;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,10 +29,21 @@ import java.util.function.BiConsumer;
 import javax.annotation.Nullable;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.rule.RuleKey;
+import org.sonarsource.slang.api.HasTextRange;
+import org.sonarsource.slang.api.TextRange;
+import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.checks.api.CheckContext;
+import org.sonarsource.slang.checks.api.InitContext;
+import org.sonarsource.slang.checks.api.SecondaryLocation;
+import org.sonarsource.slang.checks.api.SlangCheck;
+import org.sonarsource.slang.visitors.TreeVisitor;
 
 public class ChecksVisitor extends TreeVisitor<InputFileContext> {
 
-  public ChecksVisitor(Checks<SlangCheck> checks) {
+  private final DurationStatistics statistics;
+
+  public ChecksVisitor(Checks<SlangCheck> checks, DurationStatistics statistics) {
+    this.statistics = statistics;
     Collection<SlangCheck> rulesActiveInSonarQube = checks.all();
     for (SlangCheck check : rulesActiveInSonarQube) {
       RuleKey ruleKey = checks.ruleKey(check);
@@ -60,10 +63,10 @@ public class ChecksVisitor extends TreeVisitor<InputFileContext> {
 
     @Override
     public <T extends Tree> void register(Class<T> cls, BiConsumer<CheckContext, T> visitor) {
-      ChecksVisitor.this.register(cls, (ctx, tree) -> {
-        this.currentCtx = ctx;
+      ChecksVisitor.this.register(cls, statistics.time(ruleKey.rule(), (ctx, tree) -> {
+        currentCtx = ctx;
         visitor.accept(this, tree);
-      });
+      }));
     }
 
     @Override
