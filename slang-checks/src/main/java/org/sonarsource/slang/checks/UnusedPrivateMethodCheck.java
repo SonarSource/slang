@@ -28,12 +28,9 @@ import org.sonar.check.Rule;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
-import org.sonarsource.slang.checks.api.CheckContext;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.checks.utils.FunctionUtils;
-import org.sonarsource.slang.visitors.TreeContext;
-import org.sonarsource.slang.visitors.TreeVisitor;
 
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 
@@ -51,26 +48,21 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(ClassDeclarationTree.class, (ctx, classDeclarationTree) -> {
-      ClassDeclarationTree topLevelClass = getTopLevelClass(ctx, classDeclarationTree);
-      if (!topLevelClass.equals(classDeclarationTree)) {
+      // return if this is not the outermost class
+      if (ctx.ancestors().stream().anyMatch(ClassDeclarationTree.class::isInstance)) {
         return;
       }
 
       Set<FunctionDeclarationTree> methods = new HashSet<>();
-      TreeVisitor<TreeContext> functionVisitor = new TreeVisitor<>();
-      functionVisitor.register(FunctionDeclarationTree.class,
-        (functionCtx, functionDeclarationTree) -> {
-          boolean hasClassDeclarationParent = functionCtx.ancestors().stream().anyMatch(ClassDeclarationTree.class::isInstance);
-          if (hasClassDeclarationParent) {
-            methods.add(functionDeclarationTree);
-          }
-        });
-      functionVisitor.scan(new TreeContext(), classDeclarationTree);
+      Set<IdentifierTree> usedIdentifiers = new HashSet<>();
 
-      Set<IdentifierTree> usedIdentifiers = classDeclarationTree.descendants()
-        .filter(IdentifierTree.class::isInstance)
-        .map(IdentifierTree.class::cast)
-        .collect(Collectors.toSet());
+      classDeclarationTree.descendants().forEach(tree -> {
+        if (tree instanceof FunctionDeclarationTree) {
+          methods.add(((FunctionDeclarationTree) tree));
+        } else if (tree instanceof IdentifierTree) {
+          usedIdentifiers.add(((IdentifierTree) tree));
+        }
+      });
 
       usedIdentifiers.removeAll(methods.stream()
         .map(FunctionDeclarationTree::name)
@@ -87,14 +79,6 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
         });
 
     });
-  }
-
-  private static ClassDeclarationTree getTopLevelClass(CheckContext ctx, ClassDeclarationTree classDeclarationTree) {
-    return ctx.ancestors().stream()
-      .filter(ClassDeclarationTree.class::isInstance)
-      .map(ClassDeclarationTree.class::cast)
-      .reduce((first, last) -> last)
-      .orElse(classDeclarationTree);
   }
 
   private static boolean isUnusedMethod(@Nullable IdentifierTree identifier, Set<IdentifierTree> usedIdentifierNames) {
