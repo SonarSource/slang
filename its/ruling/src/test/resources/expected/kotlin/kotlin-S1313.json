@@ -10,6 +10,8 @@
 ],
 'kotlin-project:sources/kotlin/corda/core/src/test/kotlin/net/corda/core/utilities/NetworkHostAndPortTest.kt':[
 35,
+35,
+46,
 46,
 ],
 'kotlin-project:sources/kotlin/corda/node/src/test/kotlin/net/corda/node/internal/NodeTest.kt':[
@@ -25,5 +27,6 @@
 25,
 26,
 27,
+29,
 ],
 }
