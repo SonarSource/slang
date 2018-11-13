@@ -21,6 +21,7 @@ package org.sonarsource.slang.checks;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
@@ -31,8 +32,9 @@ import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.checks.utils.FunctionUtils;
+import org.sonarsource.slang.utils.SyntacticEquivalence;
 
-import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
+import static org.sonarsource.slang.utils.SyntacticEquivalence.getUniqueIdentifier;
 
 @Rule(key = "S1144")
 public class UnusedPrivateMethodCheck implements SlangCheck {
@@ -57,10 +59,10 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
       Set<IdentifierTree> usedIdentifiers = new HashSet<>();
 
       classDeclarationTree.descendants().forEach(tree -> {
-        if (tree instanceof FunctionDeclarationTree) {
+        if (tree instanceof FunctionDeclarationTree && isValidPrivateMethod((FunctionDeclarationTree) tree)) {
           methods.add(((FunctionDeclarationTree) tree));
         } else if (tree instanceof IdentifierTree) {
-          usedIdentifiers.add(((IdentifierTree) tree));
+          usedIdentifiers.add((IdentifierTree) tree);
         }
       });
 
@@ -68,23 +70,27 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
         .map(FunctionDeclarationTree::name)
         .collect(Collectors.toSet()));
 
-      methods.stream()
-        .filter(method -> FunctionUtils.isPrivateMethod(method) && !FunctionUtils.isOverrideMethod(method))
-        .forEach(tree -> {
+      Set<String> usedUniqueIdentifiers = usedIdentifiers.stream()
+        .filter(Objects::nonNull)
+        .map(SyntacticEquivalence::getUniqueIdentifier)
+        .collect(Collectors.toCollection(HashSet::new));
+
+      methods.forEach(tree -> {
           IdentifierTree identifier = tree.name();
-          if (isUnusedMethod(identifier, usedIdentifiers)) {
+          if (isUnusedMethod(identifier, usedUniqueIdentifiers) && !IGNORED_METHODS.contains(identifier.name())) {
             String message = String.format("Remove this unused private \"%s\" method.", identifier.name());
             ctx.reportIssue(tree.rangeToHighlight(), message);
           }
         });
-
     });
   }
 
-  private static boolean isUnusedMethod(@Nullable IdentifierTree identifier, Set<IdentifierTree> usedIdentifierNames) {
-    return identifier != null
-      && usedIdentifierNames.stream().noneMatch(usedIdentifier -> areEquivalent(identifier, usedIdentifier))
-      && !IGNORED_METHODS.contains(identifier.name());
+  private static boolean isValidPrivateMethod(FunctionDeclarationTree method) {
+    return FunctionUtils.isPrivateMethod(method) && !FunctionUtils.isOverrideMethod(method);
+  }
+
+  private static boolean isUnusedMethod(@Nullable IdentifierTree identifier, Set<String> usedIdentifierNames) {
+    return identifier != null && !usedIdentifierNames.contains(getUniqueIdentifier(identifier));
   }
 
 }
