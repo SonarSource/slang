@@ -59,7 +59,7 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
       Set<IdentifierTree> usedIdentifiers = new HashSet<>();
 
       classDeclarationTree.descendants().forEach(tree -> {
-        if (tree instanceof FunctionDeclarationTree && isValidPrivateMethod((FunctionDeclarationTree) tree)) {
+        if (tree instanceof FunctionDeclarationTree) {
           methods.add(((FunctionDeclarationTree) tree));
         } else if (tree instanceof IdentifierTree) {
           usedIdentifiers.add((IdentifierTree) tree);
@@ -75,7 +75,9 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
         .map(SyntacticEquivalence::getUniqueIdentifier)
         .collect(Collectors.toCollection(HashSet::new));
 
-      methods.forEach(tree -> {
+      methods.stream()
+        .filter(UnusedPrivateMethodCheck::isValidPrivateMethod)
+        .forEach(tree -> {
           IdentifierTree identifier = tree.name();
           if (isUnusedMethod(identifier, usedUniqueIdentifiers) && !IGNORED_METHODS.contains(identifier.name())) {
             String message = String.format("Remove this unused private \"%s\" method.", identifier.name());
