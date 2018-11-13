@@ -70,7 +70,7 @@ public class SyntacticEquivalence {
     }
 
     if (first instanceof IdentifierTree) {
-      return ((IdentifierTree) first).identifier().equals(((IdentifierTree) second).identifier());
+      return getUniqueIdentifier((IdentifierTree) first).equals(getUniqueIdentifier((IdentifierTree) second));
     } else if (first instanceof LiteralTree) {
       return ((LiteralTree) first).value().equals(((LiteralTree) second).value());
     } else if (hasDifferentFields(first, second)) {
@@ -79,6 +79,10 @@ public class SyntacticEquivalence {
       return areEquivalentTokenText(first.metaData().tokens(), second.metaData().tokens());
     }
     return areEquivalent(first.children(), second.children());
+  }
+
+  public static String getUniqueIdentifier(IdentifierTree identifier) {
+    return identifier.identifier();
   }
 
   private static boolean areEquivalentTokenText(List<Token> firstList, List<Token> secondList) {

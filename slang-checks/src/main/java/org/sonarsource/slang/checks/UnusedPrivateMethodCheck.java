@@ -19,27 +19,25 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.sonarsource.slang.api.ClassDeclarationTree;
-import org.sonarsource.slang.api.FunctionDeclarationTree;
-import org.sonarsource.slang.api.IdentifierTree;
-import org.sonarsource.slang.checks.api.CheckContext;
-import org.sonarsource.slang.checks.api.InitContext;
-import org.sonarsource.slang.checks.api.SlangCheck;
-import org.sonarsource.slang.checks.utils.FunctionUtils;
-import org.sonarsource.slang.visitors.TreeContext;
-import org.sonarsource.slang.visitors.TreeVisitor;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.sonar.check.Rule;
+import org.sonarsource.slang.api.ClassDeclarationTree;
+import org.sonarsource.slang.api.FunctionDeclarationTree;
+import org.sonarsource.slang.api.IdentifierTree;
+import org.sonarsource.slang.checks.api.InitContext;
+import org.sonarsource.slang.checks.api.SlangCheck;
+import org.sonarsource.slang.checks.utils.FunctionUtils;
+import org.sonarsource.slang.utils.SyntacticEquivalence;
 
-import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
+import static org.sonarsource.slang.utils.SyntacticEquivalence.getUniqueIdentifier;
 
 @Rule(key = "S1144")
 public class UnusedPrivateMethodCheck implements SlangCheck {
-
   // Serializable method should not raise any issue in Kotlin. Either change it as parameter when adding new language,
   // or add all exceptions here
   private static final Set<String> IGNORED_METHODS = new HashSet<>(Arrays.asList(
@@ -52,57 +50,49 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(ClassDeclarationTree.class, (ctx, classDeclarationTree) -> {
-      Set<FunctionDeclarationTree> classMethods = new HashSet<>();
-      TreeVisitor<TreeContext> functionVisitor = new TreeVisitor<>();
-      functionVisitor.register(FunctionDeclarationTree.class,
-        (functionCtx, functionDeclarationTree) -> {
-          boolean isCurrentClassMethod = functionCtx.ancestors().stream()
-            .filter(ClassDeclarationTree.class::isInstance)
-            .findFirst().map(classDeclarationTree::equals)
-            .orElse(false);
-          if (isCurrentClassMethod) {
-            classMethods.add(functionDeclarationTree);
-          }
-        });
-      functionVisitor.scan(new TreeContext(), classDeclarationTree);
+      // return if this is not the outermost class
+      if (ctx.ancestors().stream().anyMatch(ClassDeclarationTree.class::isInstance)) {
+        return;
+      }
 
-      Set<IdentifierTree> usedIdentifiers = getAllUsedIdentifiers(ctx, classDeclarationTree);
+      Set<FunctionDeclarationTree> methods = new HashSet<>();
+      Set<IdentifierTree> usedIdentifiers = new HashSet<>();
 
-      usedIdentifiers.removeAll(classMethods.stream()
+      classDeclarationTree.descendants().forEach(tree -> {
+        if (tree instanceof FunctionDeclarationTree) {
+          methods.add(((FunctionDeclarationTree) tree));
+        } else if (tree instanceof IdentifierTree) {
+          usedIdentifiers.add((IdentifierTree) tree);
+        }
+      });
+
+      usedIdentifiers.removeAll(methods.stream()
         .map(FunctionDeclarationTree::name)
         .collect(Collectors.toSet()));
 
-      classMethods.stream()
-        .filter(method -> FunctionUtils.isPrivateMethod(method) && !FunctionUtils.isOverrideMethod(method))
+      Set<String> usedUniqueIdentifiers = usedIdentifiers.stream()
+        .filter(Objects::nonNull)
+        .map(SyntacticEquivalence::getUniqueIdentifier)
+        .collect(Collectors.toCollection(HashSet::new));
+
+      methods.stream()
+        .filter(UnusedPrivateMethodCheck::isValidPrivateMethod)
         .forEach(tree -> {
           IdentifierTree identifier = tree.name();
-          if (isUnusedMethod(identifier, usedIdentifiers)) {
+          if (isUnusedMethod(identifier, usedUniqueIdentifiers) && !IGNORED_METHODS.contains(identifier.name())) {
             String message = String.format("Remove this unused private \"%s\" method.", identifier.name());
             ctx.reportIssue(tree.rangeToHighlight(), message);
           }
         });
-
     });
-
   }
 
-  private static Set<IdentifierTree> getAllUsedIdentifiers(CheckContext ctx, ClassDeclarationTree classDeclarationTree) {
-    ClassDeclarationTree topLevelClassDeclarationTree = ctx.ancestors().stream()
-      .filter(ClassDeclarationTree.class::isInstance)
-      .map(ClassDeclarationTree.class::cast)
-      .reduce((first, last) -> last)
-      .orElse(classDeclarationTree);
-
-    return topLevelClassDeclarationTree.descendants()
-      .filter(IdentifierTree.class::isInstance)
-      .map(IdentifierTree.class::cast)
-      .collect(Collectors.toSet());
+  private static boolean isValidPrivateMethod(FunctionDeclarationTree method) {
+    return FunctionUtils.isPrivateMethod(method) && !FunctionUtils.isOverrideMethod(method);
   }
 
-  private static boolean isUnusedMethod(@Nullable IdentifierTree identifier, Set<IdentifierTree> usedIdentifierNames) {
-    return identifier != null
-      && usedIdentifierNames.stream().noneMatch(usedIdentifier -> areEquivalent(identifier, usedIdentifier))
-      && !IGNORED_METHODS.contains(identifier.name());
+  private static boolean isUnusedMethod(@Nullable IdentifierTree identifier, Set<String> usedIdentifierNames) {
+    return identifier != null && !usedIdentifierNames.contains(getUniqueIdentifier(identifier));
   }
 
 }
