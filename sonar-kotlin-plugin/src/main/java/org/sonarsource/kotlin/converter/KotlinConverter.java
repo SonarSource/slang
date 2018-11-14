@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.com.intellij.openapi.extensions.ExtensionPoint;
 import org.jetbrains.kotlin.com.intellij.openapi.extensions.Extensions;
 import org.jetbrains.kotlin.com.intellij.openapi.fileEditor.FileDocumentManager;
 import org.jetbrains.kotlin.com.intellij.openapi.fileTypes.FileTypeRegistry;
+import org.jetbrains.kotlin.com.intellij.openapi.progress.ProgressManager;
+import org.jetbrains.kotlin.com.intellij.openapi.progress.impl.CoreProgressManager;
 import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer;
 import org.jetbrains.kotlin.com.intellij.openapi.util.StaticGetter;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
@@ -88,6 +90,7 @@ public class KotlinConverter implements ASTConverter {
     application.registerService(FileDocumentManager.class, fileDocMgr);
     PsiBuilderFactoryImpl psiBuilderFactory = new PsiBuilderFactoryImpl();
     application.registerService(PsiBuilderFactory.class, psiBuilderFactory);
+    application.registerService(ProgressManager.class, new CoreProgressManager());
     ApplicationManager.setApplication(application, FileTypeRegistry.ourInstanceGetter, disposable);
 
     Extensions.getArea(null).registerExtensionPoint(MetaLanguage.EP_NAME.getName(), MetaLanguage.class.getName(), ExtensionPoint.Kind.INTERFACE);

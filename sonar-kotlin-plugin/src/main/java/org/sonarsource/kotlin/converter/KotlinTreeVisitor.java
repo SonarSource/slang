@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.KtParenthesizedExpression;
 import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.psi.KtReturnExpression;
+import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtThrowExpression;
@@ -268,7 +269,13 @@ class KotlinTreeVisitor {
   private Tree createTopLevelTree(PsiElement element, TreeMetaData metaData) {
     Token firstCpdToken = null;
     KotlinNativeKind fileAnnotationKind = new KotlinNativeKind(KtFileAnnotationList.class);
-    List<Tree> allDeclarations = list(Arrays.stream(element.getChildren()));
+    List<Tree> allDeclarations = list(Arrays.stream(element.getChildren()).flatMap(child -> {
+      if (child instanceof KtScript) {
+        return ((KtScript) child).getDeclarations().stream();
+      } else {
+        return Stream.of(child);
+      }
+    }));
     for (Tree declaration : allDeclarations) {
       boolean excludedFromCpd =
         declaration instanceof PackageDeclarationTree

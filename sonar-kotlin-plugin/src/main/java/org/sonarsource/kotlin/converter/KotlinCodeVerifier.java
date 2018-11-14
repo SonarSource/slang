@@ -22,6 +22,8 @@ package org.sonarsource.kotlin.converter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
@@ -68,7 +70,11 @@ public class KotlinCodeVerifier implements CodeVerifier {
   // Filter natural language sentences parsed
   // as literals, infix notations or single expressions
   private static boolean isSimpleExpression(PsiFile tree) {
-    PsiElement content = tree.getLastChild().getLastChild();
+    // Since kotlin 1.3, compiler adds 2 hidden elements in the hierarchy: a `KtScript`, having a `KtBlockExpression`
+    PsiElement content = getLastChild(getLastChild(getLastChild(tree.getLastChild())));
+    if (content == null) {
+      throw new IllegalStateException("AST is missing expected elements");
+    }
     PsiElement[] elements = content.getChildren();
     return Arrays.stream(elements).allMatch(element ->
       element instanceof KtNameReferenceExpression ||
@@ -79,6 +85,14 @@ public class KotlinCodeVerifier implements CodeVerifier {
         element instanceof KtStringTemplateExpression ||
         isInfixNotation(element))
       || isSingleExpression(elements);
+  }
+
+  @CheckForNull
+  private static PsiElement getLastChild(@Nullable PsiElement tree) {
+    if (tree != null) {
+      return tree.getLastChild();
+    }
+    return null;
   }
 
   private static PsiElement[] removeParenthesizedExpressions(PsiElement[] elements) {
