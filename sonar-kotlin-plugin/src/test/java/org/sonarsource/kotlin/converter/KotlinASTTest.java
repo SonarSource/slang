@@ -40,7 +40,7 @@ public class KotlinASTTest {
   @Test
   public void all_kotlin_files() throws IOException {
     for (Path kotlinPath : getKotlinSources()) {
-      Path astPath = Paths.get(kotlinPath.toString().replaceFirst("\\.kt$", ".txt"));
+      Path astPath = Paths.get(kotlinPath.toString().replaceFirst("\\.kts?$", ".txt"));
       String actualAst = TreePrinter.table(parse(kotlinPath));
       String expectingAst = astPath.toFile().exists() ? new String(Files.readAllBytes(astPath), UTF_8) : "";
       assertThat(actualAst)
@@ -55,7 +55,7 @@ public class KotlinASTTest {
 
   private static void fix_all_cls_files_test_automatically() throws IOException {
     for (Path kotlinPath : getKotlinSources()) {
-      Path astPath = Paths.get(kotlinPath.toString().replaceFirst("\\.kt$", ".txt"));
+      Path astPath = Paths.get(kotlinPath.toString().replaceFirst("\\.kts?$", ".txt"));
       String actualAst = TreePrinter.table(parse(kotlinPath));
       Files.write(astPath, actualAst.getBytes(UTF_8));
     }
@@ -64,7 +64,7 @@ public class KotlinASTTest {
   private static List<Path> getKotlinSources() throws IOException {
     try (Stream<Path> pathStream = Files.walk(Paths.get("src", "test", "resources", "ast"))) {
       return pathStream
-        .filter(path -> !path.toFile().isDirectory() && path.getFileName().toString().endsWith(".kt"))
+        .filter(path -> !path.toFile().isDirectory() && path.getFileName().toString().endsWith(".kt") || path.getFileName().toString().endsWith(".kts"))
         .sorted()
         .collect(Collectors.toList());
     }
