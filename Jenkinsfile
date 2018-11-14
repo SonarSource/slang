@@ -21,12 +21,30 @@ pipeline {
     }
     stage('QA') {
       parallel {
-        stage('ruling-latest') {
+        stage('ruling-latest-kotlin') {
           agent {
             label 'linux'
           }
           steps {
-            runRuling "LATEST_RELEASE"
+            runRuling "LATEST_RELEASE", 'test_kotlin'
+          }
+        }
+
+        stage('ruling-latest-ruby') {
+          agent {
+            label 'linux'
+          }
+          steps {
+            runRuling "LATEST_RELEASE", 'test_ruby'
+          }
+        }
+
+        stage('ruling-latest-scala') {
+          agent {
+            label 'linux'
+          }
+          steps {
+            runRuling "LATEST_RELEASE", 'test_scala'
           }
         }
 
@@ -94,13 +112,13 @@ def mvnCommand() {
   return isUnix() ? 'mvn' : 'mvn.cmd'
 }
 
-def runRuling(String sqRuntimeVersion) {
+def runRuling(String sqRuntimeVersion, String test) {
   withQAEnv {
     withMaven(maven: MAVEN_TOOL) {
       mavenSetBuildVersion()
       dir('its') {
         sh 'git submodule update --init --recursive'
-        sh "${mvnCommand()} -pl ruling ${itBuildArguments sqRuntimeVersion}"
+        sh "${mvnCommand()} -pl ruling ${itBuildArguments sqRuntimeVersion} '-Dtest=org.sonarsource.slang.SlangRulingTest#${test}'"
       }
     }
   }
