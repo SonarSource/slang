@@ -2,12 +2,6 @@
 'ruby-project:sources/ruby/devdocs/lib/docs/filters/redis/entries.rb':[
 9,
 ],
-'ruby-project:sources/ruby/discourse/lib/email/processor.rb':[
-37,
-],
-'ruby-project:sources/ruby/discourse/lib/search.rb':[
-32,
-],
 'ruby-project:sources/ruby/fastlane/fastlane/lib/fastlane/actions/testfairy.rb':[
 73,
 ],

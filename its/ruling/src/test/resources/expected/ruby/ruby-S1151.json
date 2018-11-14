@@ -2,13 +2,6 @@
 'ruby-project:sources/ruby/devdocs/lib/docs/filters/cordova/entries.rb':[
 27,
 ],
-'ruby-project:sources/ruby/discourse/lib/excerpt_parser.rb':[
-58,
-145,
-],
-'ruby-project:sources/ruby/discourse/lib/freedom_patches/rails4.rb':[
-42,
-],
 'ruby-project:sources/ruby/rails/actionview/lib/action_view/helpers/date_helper.rb':[
 134,
 ],

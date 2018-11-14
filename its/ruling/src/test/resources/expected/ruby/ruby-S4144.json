@@ -1,13 +1,4 @@
 {
-'ruby-project:sources/ruby/discourse/app/mailers/user_notifications.rb':[
-230,
-238,
-246,
-254,
-],
-'ruby-project:sources/ruby/discourse/script/import_scripts/phpbb3/support/text_processor.rb':[
-40,
-],
 'ruby-project:sources/ruby/fastlane/fastlane_core/lib/fastlane_core/ui/fastlane_runner.rb':[
 181,
 ],

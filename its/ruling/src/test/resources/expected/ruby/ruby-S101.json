@@ -1,10 +1,4 @@
 {
-'ruby-project:sources/ruby/discourse/script/import_scripts/phpbb3/database/database_3_0.rb':[
-5,
-],
-'ruby-project:sources/ruby/discourse/script/import_scripts/phpbb3/database/database_3_1.rb':[
-5,
-],
 'ruby-project:sources/ruby/rails/activerecord/lib/active_record/migration/compatibility.rb':[
 18,
 21,
