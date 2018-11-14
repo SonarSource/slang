@@ -1,10 +1,4 @@
 {
-'ruby-project:sources/ruby/discourse/lib/freedom_patches/raw_handlebars.rb':[
-69,
-],
-'ruby-project:sources/ruby/discourse/script/import_scripts/discuz_x.rb':[
-291,
-],
 'ruby-project:sources/ruby/fastlane/scan/spec/test_command_generator_spec.rb':[
 431,
 ],
