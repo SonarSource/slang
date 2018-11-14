@@ -77,17 +77,19 @@ public abstract class SlangSensor implements Sensor {
   protected abstract String repositoryKey();
 
   private boolean analyseFiles(ASTConverter converter,
-                                      SensorContext sensorContext,
-                                      Iterable<InputFile> inputFiles,
-                                      ProgressReport progressReport,
-                                      List<TreeVisitor<InputFileContext>> visitors) {
+    SensorContext sensorContext,
+    Iterable<InputFile> inputFiles,
+    ProgressReport progressReport,
+    List<TreeVisitor<InputFileContext>> visitors,
+    DurationStatistics statistics) {
+
     for (InputFile inputFile : inputFiles) {
       if (sensorContext.isCancelled()) {
         return false;
       }
       InputFileContext inputFileContext = new InputFileContext(sensorContext, inputFile);
       try {
-        analyseFile(converter, inputFileContext, inputFile, visitors);
+        analyseFile(converter, inputFileContext, inputFile, visitors, statistics);
       } catch (ParseException e) {
         logParsingError(inputFile, e);
         inputFileContext.reportAnalysisParseError(repositoryKey(), inputFile, e.getPosition());
@@ -97,7 +99,11 @@ public abstract class SlangSensor implements Sensor {
     return true;
   }
 
-  private static void analyseFile(ASTConverter converter, InputFileContext inputFileContext, InputFile inputFile, List<TreeVisitor<InputFileContext>> visitors) {
+  private static void analyseFile(ASTConverter converter,
+                                  InputFileContext inputFileContext,
+                                  InputFile inputFile,
+                                  List<TreeVisitor<InputFileContext>> visitors,
+                                  DurationStatistics statistics) {
     String content;
     try {
       content = inputFile.contents();
@@ -109,10 +115,11 @@ public abstract class SlangSensor implements Sensor {
       return;
     }
 
-    Tree tree = converter.parse(content);
+    Tree tree = statistics.time("Parse", () -> converter.parse(content));
     for (TreeVisitor<InputFileContext> visitor : visitors) {
       try {
-        visitor.scan(inputFileContext, tree);
+        String visitorId = visitor.getClass().getSimpleName();
+        statistics.time(visitorId, () -> visitor.scan(inputFileContext, tree));
       } catch (RuntimeException e) {
         inputFileContext.reportAnalysisError(e.getMessage(), null);
         LOG.error("Cannot analyse " + inputFile, e);
@@ -132,6 +139,7 @@ public abstract class SlangSensor implements Sensor {
 
   @Override
   public void execute(SensorContext sensorContext) {
+    DurationStatistics statistics = new DurationStatistics(sensorContext.config());
     FileSystem fileSystem = sensorContext.fileSystem();
     FilePredicate mainFilePredicate = fileSystem.predicates().and(
       fileSystem.predicates().hasLanguage(language.getKey()),
@@ -143,7 +151,7 @@ public abstract class SlangSensor implements Sensor {
     boolean success = false;
     ASTConverter converter = ASTConverterValidation.wrap(astConverter(), sensorContext.config());
     try {
-      success = analyseFiles(converter, sensorContext, inputFiles, progressReport, visitors(sensorContext));
+      success = analyseFiles(converter, sensorContext, inputFiles, progressReport, visitors(sensorContext, statistics), statistics);
     } finally {
       if (success) {
         progressReport.stop();
@@ -152,14 +160,15 @@ public abstract class SlangSensor implements Sensor {
       }
       converter.terminate();
     }
+    statistics.log();
   }
 
-  private List<TreeVisitor<InputFileContext>> visitors(SensorContext sensorContext) {
+  private List<TreeVisitor<InputFileContext>> visitors(SensorContext sensorContext, DurationStatistics statistics) {
     if (sensorContext.runtime().getProduct() == SonarProduct.SONARLINT) {
-      return Collections.singletonList(new ChecksVisitor(checks()));
+      return Collections.singletonList(new ChecksVisitor(checks(), statistics));
     } else {
       return Arrays.asList(
-        new ChecksVisitor(checks()),
+        new ChecksVisitor(checks(), statistics),
         new MetricVisitor(fileLinesContextFactory, noSonarFilter),
         new CpdVisitor(),
         new SyntaxHighlighter());
