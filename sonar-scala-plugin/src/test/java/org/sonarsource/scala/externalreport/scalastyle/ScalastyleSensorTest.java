@@ -41,8 +41,8 @@ import org.sonar.api.batch.sensor.issue.ExternalIssue;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.utils.Version;
-import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
+import org.sonar.api.utils.log.ThreadLocalLogTester;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,7 +56,7 @@ public class ScalastyleSensorTest {
   private static ScalastyleFamilySensor sensor = new ScalastyleSensor();
 
   @Rule
-  public LogTester logTester = new LogTester();
+  public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
   public void test_config() {
@@ -226,7 +226,7 @@ public class ScalastyleSensorTest {
       .build();
   }
 
-  public static void assertNoErrorWarnDebugLogs(LogTester logTester) {
+  public static void assertNoErrorWarnDebugLogs(ThreadLocalLogTester logTester) {
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();

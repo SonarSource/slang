@@ -32,7 +32,7 @@ import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.resources.Language;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.internal.JUnitTempFolder;
-import org.sonar.api.utils.log.LogTester;
+import org.sonar.api.utils.log.ThreadLocalLogTester;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -48,7 +48,7 @@ public abstract class AbstractSensorTest {
   protected FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
 
   @org.junit.Rule
-  public LogTester logTester = new LogTester();
+  public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Before
   public void setup() {

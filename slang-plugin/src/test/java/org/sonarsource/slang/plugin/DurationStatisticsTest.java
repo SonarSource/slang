@@ -23,8 +23,8 @@ import java.nio.file.Paths;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
-import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
+import org.sonar.api.utils.log.ThreadLocalLogTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,7 +33,7 @@ public class DurationStatisticsTest {
   private SensorContextTester sensorContext = SensorContextTester.create(Paths.get("."));
 
   @Rule
-  public LogTester logTester = new LogTester();
+  public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
   public void statistics_disabled() {

@@ -39,8 +39,8 @@ import org.sonar.api.batch.sensor.issue.ExternalIssue;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.utils.Version;
-import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
+import org.sonar.api.utils.log.ThreadLocalLogTester;
 import org.sonarsource.ruby.plugin.RubyPlugin;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -53,7 +53,7 @@ public class RuboCopSensorTest {
   private static RuboCopSensor ruboCopSensor = new RuboCopSensor();
 
   @Rule
-  public LogTester logTester = new LogTester();
+  public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
   public void test_descriptor() {
@@ -195,7 +195,7 @@ public class RuboCopSensorTest {
     return elements.get(0);
   }
 
-  public static void assertNoErrorWarnDebugLogs(LogTester logTester) {
+  public static void assertNoErrorWarnDebugLogs(ThreadLocalLogTester logTester) {
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();

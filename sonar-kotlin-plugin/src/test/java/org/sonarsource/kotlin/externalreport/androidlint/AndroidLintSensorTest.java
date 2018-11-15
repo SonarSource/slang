@@ -32,13 +32,13 @@ import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
 import org.sonar.api.rules.RuleType;
-import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
+import org.sonar.api.utils.log.ThreadLocalLogTester;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.kotlin.externalreport.ExternalReportTestUtils.assertNoErrorWarnDebugLogs;
 import static org.sonarsource.kotlin.externalreport.ExternalReportTestUtils.createContext;
 import static org.sonarsource.kotlin.externalreport.ExternalReportTestUtils.onlyOneLogElement;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class AndroidLintSensorTest {
 
@@ -47,7 +47,7 @@ public class AndroidLintSensorTest {
   private static AndroidLintSensor androidLintSensor = new AndroidLintSensor();
 
   @Rule
-  public LogTester logTester = new LogTester();
+  public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
   public void test_descriptor() {
