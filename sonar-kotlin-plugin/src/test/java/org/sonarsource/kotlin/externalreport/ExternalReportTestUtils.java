@@ -19,7 +19,6 @@
  */
 package org.sonarsource.kotlin.externalreport;
 
-import org.sonarsource.kotlin.plugin.KotlinPlugin;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,8 +29,9 @@ import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.utils.Version;
-import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
+import org.sonar.api.utils.log.ThreadLocalLogTester;
+import org.sonarsource.kotlin.plugin.KotlinPlugin;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,7 +50,7 @@ public final class ExternalReportTestUtils {
     return context;
   }
 
-  public static void assertNoErrorWarnDebugLogs(LogTester logTester) {
+  public static void assertNoErrorWarnDebugLogs(ThreadLocalLogTester logTester) {
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();

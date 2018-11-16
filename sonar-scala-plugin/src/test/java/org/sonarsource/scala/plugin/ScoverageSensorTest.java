@@ -34,8 +34,8 @@ import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.config.internal.MapSettings;
-import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
+import org.sonar.api.utils.log.ThreadLocalLogTester;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,7 +47,7 @@ public class ScoverageSensorTest {
   private static final String MODULE_KEY = "/Absolute/Path/To/";
 
   @Rule
-  public LogTester logTester = new LogTester();
+  public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   private static ScoverageSensor scoverageSensor = new ScoverageSensor();
 

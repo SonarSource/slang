@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
-import org.sonar.api.utils.log.LogTester;
+import org.sonar.api.utils.log.ThreadLocalLogTester;
 import org.sonarsource.slang.api.IntegerLiteralTree;
 import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.NativeTree;
@@ -57,7 +57,7 @@ public abstract class AbstractRubyConverterTest {
   public ExpectedException thrown = ExpectedException.none();
 
   @Rule
-  public LogTester logTester = new LogTester();
+  public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @BeforeClass
   public static void setUp() {

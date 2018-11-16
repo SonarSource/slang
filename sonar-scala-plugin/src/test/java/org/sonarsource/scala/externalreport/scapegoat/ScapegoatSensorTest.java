@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
 import org.sonar.api.rules.RuleType;
-import org.sonar.api.utils.log.LogTester;
+import org.sonar.api.utils.log.ThreadLocalLogTester;
 import org.sonarsource.scala.externalreport.scalastyle.ScalastyleFamilySensor;
 import org.sonarsource.scala.externalreport.scalastyle.ScalastyleSensorTest;
 
@@ -37,7 +37,7 @@ public class ScapegoatSensorTest {
   private static ScalastyleFamilySensor sensor = new ScapegoatSensor();
 
   @Rule
-  public LogTester logTester = new LogTester();
+  public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
   public void test_config() {
