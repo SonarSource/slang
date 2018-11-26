@@ -1,0 +1,10 @@
+dependencies {
+    compile project(':slang-api')
+    compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
+    compile 'com.google.code.findbugs:jsr305'
+    compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
+    testCompile project(':slang-antlr')
+    testCompile 'junit:junit'
+    testCompile 'org.assertj:assertj-core'
+    testCompile 'org.sonarsource.analyzer-commons:sonar-analyzer-test-commons'
+}

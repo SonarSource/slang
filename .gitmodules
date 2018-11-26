@@ -1,3 +1,6 @@
 [submodule "its/sources"]
 	path = its/sources
 	url = git@github.com:SonarSource/slang-test-sources.git
+[submodule "private/its/apex-test-sources"]
+	path = private/its/sources
+	url = git@github.com:SonarSource/apex-test-sources.git

@@ -1,0 +1,21 @@
+apply plugin: 'antlr'
+
+dependencies {
+    antlr "org.antlr:antlr4:4.7.1"
+    compile project(':slang-api')
+    compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
+    testCompile project(':slang-testing')
+    testCompile 'junit:junit'
+    testCompile 'org.assertj:assertj-core'
+}
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+    arguments += ['-visitor', '-package', 'org.sonarsource.slang.parser']
+}
+
+sourceSets {
+    main {
+        antlr.srcDirs = [ "$projectDir/src/main/antlr4" ]
+    }
+}

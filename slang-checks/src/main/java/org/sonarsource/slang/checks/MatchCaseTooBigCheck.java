@@ -34,6 +34,7 @@ public class MatchCaseTooBigCheck implements SlangCheck {
     "Reduce this case clause number of lines from {0} to at most {1}, for example by extracting code into methods.";
 
   @RuleProperty(
+    key = "max",
     description = "Maximum number of lines",
     defaultValue = "" + DEFAULT_MAX)
   public int max = DEFAULT_MAX;

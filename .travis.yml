@@ -9,18 +9,18 @@ install: true
 script: "./travis.sh"
 
 before_cache:
-  # remove all the artifacts that are installed in local repo because of mvn deploy
-  - rm -rf $HOME/.m2/repository/org/sonarsource/slang
-  - find $HOME/.m2 -name resolver-status.properties -exec rm {} \;
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
 cache:
   directories:
-    - '$HOME/.m2/repository'
+    - "$HOME/.gradle/caches/"
+    - "$HOME/.gradle/wrapper/"
     - "$HOME/.sonar"
     - '$HOME/jvm'
-    - '$HOME/maven'
 
 notifications:
   email: false
   webhooks:
-    - secure: "ieWF8H7QSxnAjw4HxIpHwG3HUWFev4gxLTcBLbr58G6I8iatV9IsGraVrcWMjFC74RrdpeubFkP50jv+VBjBLC4/r5rq6EuSfusypGRLAjk9KtJ2TN+HJBUhAPPaBd6oiRWitZ32nbGNj/GJPCHRPc2xPk/ELpFcILY+bMeba/e3R288n+BUQ5QMg6okrzGwYFeS2TUzCRfP8g5dn4QkxYYv0v99x1uIZoiVxiyJB+66/Mv3AZbHcEorcivy5v2RTXnlwND96hwuG/ZoABllfq2IGc+4b2sFxc+XmHEOD6ycM0PfUjuIBAryCkXxzNasHaDQPRKn3lGEBwvVsqJr10H+/W15YX6XuRcBuT7FnqIrw1leMnK/ip3RUtPJApbV8UFF97mam6haErYrrotuu+nnFBeBNLba6urYc6sJiCdDLeezbYCp1mGqP+NKazevhfwwUdJQHRBUyEunYGpn8OlgPM9XKriXVqc4w/no5WlxGGUT/Zd4Jrn1wH7dZd8lF+PbSobPvxyxTSMZxR/ONw+USffZoJGk51m75GwuTG1Wd6bI/wLHe11vbdHEXyFaywGnarRKi+xrjAp6pq6uXZ+XnEyshhHM2qptWpAbCK0He0ASBm3Zmu2KhRoGHTQ9gJgE5eVfkhgz3/tpxRoifEG7hnoh2FvgFb31s0QCXhw="
+    - secure: "LphIQRyP2e8hwpoqwrUOcXoHye8p/DBIOlzhyVQ4AqG6pV6iEkJkIghU+Et+iGlN8C3Tc7zTbmeQCjYJJ2861ZeaBZ+X3eQgr6rrKCtd70ZRLtOKW2xW/kOLFm01L8bBBwX6V0h9YK0Xy4o/wrLbgrtCdZWqMfORL34fn2BWnnjM4Gqhock+0TCKiEi5ELWnlUevVS5Dm/t5LGC1xEGAk3Gm1yQVijSv4nVzxpMvtc/1ZbmsHcDFDuZFk2hyCQTYXQd0XcsRmYOP2q1etk1YEn0pQ9RtNiDfAREHlUneitsXEnJGw1b91s3SJG6QVhC54yeMIeedQyUuct9/Sh/Ybm3I8pOTTCpp17k6Tip4Fz1gINC8v7MzCCrlpAIbiryswACt+zVAiIa/xJ1qgAioN1QeIxu7hVG5rhoPRoSdfckJi4N06qoIzvQPnw/nRC7TlTwL9um7RsWuLNv9ohEOrGV9AC6uHBo3o6RJydpNBzF71ndLWbgeCjBFR8aPeo/wcMixx7tEAQ9IN1OIO7Olk6UUHjHUkE3XloaF/PiiVElG1fJZOZo8kGBBPHSh52KxcmBX3f7ce1Ij9qUo1H3U8cZpzayBrTIlM2bZb2HEhxbC1hws4RlvH9g4Lo/43adFUx9shXV+rGWgLLhpemLzSU+puGL3VY7eM2hgZE6UDGw="
   on_start: always

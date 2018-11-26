@@ -1,0 +1,27 @@
+pluginManagement {
+    repositories {
+        maven {
+            url 'https://repox.sonarsource.com/plugins.gradle.org/'
+        }
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'slang'
+
+include 'slang-api'
+include 'slang-testing'
+include 'slang-antlr'
+include 'slang-checks'
+include 'slang-plugin'
+include 'sonar-kotlin-plugin'
+include 'sonar-ruby-plugin'
+include 'sonar-scala-plugin'
+include 'its:plugin'
+include 'its:ruling'
+
+// "extraSettings.gradle" should not be renamed "settings.gradle" to not create a wrong project rootDir
+File extraSettings = new File(rootDir, 'private/extraSettings.gradle')
+if (extraSettings.exists()) {
+    apply from: extraSettings
+}

@@ -1,0 +1,119 @@
+plugins {
+    id "scala"
+    id "org.scoverage" version "2.5.0"
+    id 'com.github.johnrengelman.shadow' version '4.0.2'
+}
+
+ext {
+    scoveragePluginVersion = '1.3.0'
+    scalaVersion = '2.12.7'
+    scalaBinaryVersion = '2.12'
+    kotlinVersion = '1.2.41'
+}
+
+// compile scala before java
+tasks.compileScala.dependsOn.remove("compileJava")
+tasks.compileJava.dependsOn compileScala
+tasks.check.dependsOn reportScoverage
+
+sourceSets {
+    main {
+        scala {
+            // scala output will be a dependency used by java code
+            outputDir = file("$buildDir/classes/scala/main")
+        }
+        java {
+            outputDir = file("$buildDir/classes/java/main")
+        }
+    }
+}
+
+sonarqube {
+    properties {
+        property 'sonar.sources', 'src/main/java,src/main/scala'
+        property 'sonar.scala.coverage.reportPaths', "${buildDir}/reports/scoverage/scoverage.xml"
+    }
+}
+
+dependencies {
+    compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
+    compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
+    compile project(':slang-api')
+    compile project(':slang-checks')
+    compile project(':slang-plugin')
+    compile('org.scalameta:scalameta_2.12:4.0.0') {
+        exclude group: 'org.scalameta', module: 'semanticdb_2.12'
+        exclude group: 'com.lihaoyi', module: 'fansi_2.12'
+    }
+    // java code depends on scala code
+    compile files("$sourceSets.main.scala.outputDir")
+    testCompile project(':slang-testing')
+    testCompile project(':slang-antlr')
+    testCompile 'junit:junit'
+    testCompile 'org.assertj:assertj-core'
+    testCompile 'org.mockito:mockito-core'
+
+    scoverage 'org.scoverage:scalac-scoverage-plugin_2.12:1.3.1', 'org.scoverage:scalac-scoverage-runtime_2.12:1.3.1'
+}
+
+jar {
+    manifest {
+        def displayVersion = (project.buildNumber == null ? version : version.substring(0, version.lastIndexOf('.')) + " (build ${project.buildNumber})")
+        def buildDate = new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        attributes(
+                'Build-Time': buildDate,
+                'Implementation-Build': 'git rev-parse HEAD'.execute().text.trim(),
+                'Plugin-BuildDate': buildDate,
+                'Plugin-ChildFirstClassLoader': 'false',
+                'Plugin-Class': 'org.sonarsource.scala.plugin.ScalaPlugin',
+                'Plugin-Description': 'Code Analyzer for Scala',
+                'Plugin-Developers': 'SonarSource Team',
+                'Plugin-Display-Version': displayVersion,
+                'Plugin-Homepage': 'http://redirect.sonarsource.com/plugins/scala.html',
+                'Plugin-IssueTrackerUrl': 'https://jira.sonarsource.com/browse/SONARSLANG',
+                'Plugin-Key': 'sonarscala',
+                'Plugin-License': 'GNU LGPL 3',
+                'Plugin-Name': 'SonarScala',
+                'Plugin-Organization': 'SonarSource',
+                'Plugin-OrganizationUrl': 'http://www.sonarsource.com',
+                'Plugin-SourcesUrl': 'https://github.com/SonarSource/slang',
+                'Plugin-Version': version,
+                'Sonar-Version': '6.7',
+                'SonarLint-Supported': 'true',
+                'Version': "${version}",
+        )
+    }
+}
+
+shadowJar {
+    minimize { }
+    // org.scalameta:common_2.12
+    exclude 'org/scalameta/overload/*'
+    // org.scalameta:io_2.12
+    exclude 'scala/meta/internal/io/*'
+    // org.scala-lang:scala-library
+    exclude 'scala/annotation/*'
+    exclude 'scala/collection/parallel/**'
+    exclude 'scala/concurrent/**'
+    exclude 'scala/io/*'
+    exclude 'scala/util/matching/*'
+    doLast {
+        enforceFileSize(new File(libsDir, shadowJar.archiveName), 7_000_000L, 9_000_000L)
+    }
+}
+
+artifacts {
+    archives shadowJar
+}
+
+artifactoryPublish.skip = false
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact source: shadowJar, classifier: null
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}

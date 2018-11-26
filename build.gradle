@@ -1,0 +1,235 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'com.github.hierynomus.license' version "0.15.0"
+    id 'com.jfrog.artifactory' version '4.8.1'
+    id 'io.spring.dependency-management' version '1.0.6.RELEASE' apply false
+    id 'org.sonarqube' version '2.6.2'
+}
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'com.jfrog.artifactory'
+    apply plugin: 'maven-publish'
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            if (project.hasProperty('warn')) {
+                options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+            } else {
+                options.compilerArgs << "-Xlint:-unchecked" << "-Xlint:-deprecation"
+            }
+        }
+    }
+
+    ext {
+        release = project.hasProperty('release') && project.getProperty('release')
+        buildNumber = System.getProperty("buildNumber")
+        analyzerCommonsVersion = '1.9.0.327'
+        sonarqubeVersion = '7.3'
+        orchestratorVersion = '3.21.0.1721'
+        sonarlintVersion = '4.0.1.2077'
+        sonarLinksCi = 'https://travis-ci.org/SonarSource/slang'
+        sonarLinksScm = 'https://github.com/SonarSource/slang'
+    }
+    // Replaces the version defined in sources, usually x.y-SNAPSHOT, by a version identifying the build.
+    if (version.endsWith('-SNAPSHOT') && ext.buildNumber != null) {
+        def versionSuffix = (version.toString().count('.') == 1 ? ".0.${ext.buildNumber}" : ".${ext.buildNumber}")
+        version = version.replace('-SNAPSHOT', versionSuffix)
+    }
+
+    File extraProperties = new File(rootDir, 'private/extraProperties.gradle')
+    if (extraProperties.exists()) {
+        apply from: extraProperties
+    }
+
+    repositories {
+        def repository = project.hasProperty('qa') ? 'sonarsource-qa' : 'sonarsource'
+        maven {
+            url "https://repox.sonarsource.com/${repository}"
+        }
+    }
+}
+
+subprojects {
+    // do not publish to Artifactory by default
+    artifactoryPublish.skip = true
+
+    apply plugin: 'com.github.hierynomus.license'
+    apply plugin: 'io.spring.dependency-management'
+    dependencyManagement {
+        dependencies {
+            dependency "org.sonarsource.sonarqube:sonar-plugin-api:${sonarqubeVersion}"
+            dependency "org.sonarsource.sonarqube:sonar-ws:${sonarqubeVersion}"
+            dependency 'com.google.code.findbugs:jsr305:1.3.9'
+            dependency 'junit:junit:4.12'
+            dependency 'org.mockito:mockito-core:2.21.0'
+            dependency 'org.assertj:assertj-core:3.6.1'
+            dependency "org.sonarsource.analyzer-commons:sonar-analyzer-test-commons:${analyzerCommonsVersion}"
+            dependency "org.sonarsource.analyzer-commons:sonar-analyzer-commons:${analyzerCommonsVersion}"
+            dependency "org.sonarsource.orchestrator:sonar-orchestrator:${orchestratorVersion}"
+            dependency "org.sonarsource.sonarlint.core:sonarlint-core:${sonarlintVersion}"
+        }
+    }
+
+    compileJava {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+        options.encoding = "UTF-8"
+    }
+    compileTestJava.options.encoding = "UTF-8"
+
+    configurations {
+        // include compileOnly dependencies during test
+        testCompile.extendsFrom compileOnly
+    }
+
+    test {
+        testLogging {
+            exceptionFormat 'full' // log the full stack trace (default is the 1st line of the stack trace)
+            events "skipped", "failed" // verbose log for failed and skipped tests (by default the name of the tests are not logged)
+        }
+        def propKeys = System.properties.findAll {
+            it.key.startsWith("orchestrator") || it.key.startsWith("sonar") || it.key == "buildNumber" || it.key == "slangVersion"
+        }.collect { it.key }
+        systemProperties = System.properties.subMap(propKeys)
+        if (propKeys.contains("buildNumber") && !propKeys.contains("slangVersion")) {
+            systemProperties["slangVersion"] = version
+        }
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    license {
+        header = rootProject.file('LICENSE_HEADER')
+        ext.name = 'SonarSource SLang'
+        ext.inceptionYear = '2009' // TODO replace by 2018
+        ext.year = Calendar.getInstance().get(Calendar.YEAR)
+        strictCheck true
+        mapping {
+            java = 'SLASHSTAR_STYLE'
+            js = 'SLASHSTAR_STYLE'
+            ts = 'SLASHSTAR_STYLE'
+            tsx = 'SLASHSTAR_STYLE'
+            css = 'SLASHSTAR_STYLE'
+            less = 'SLASHSTAR_STYLE'
+        }
+        includes(['**/src/**/*.java', '**/*.js', '**/*.ts', '**/*.tsx', '**/*.css'])
+        excludes([
+                "**/src/test/resources/**",
+                "**/build/**",
+                "its/sources/**",
+                "its/plugin/projects/**",
+                "private/its/sources/**",
+                "private/its/plugin/projects/**"
+        ])
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                afterEvaluate {
+                    if (release) {
+                        pom {
+                            name = projectTitle
+                            description = description
+                            url = 'http://www.sonarqube.org/'
+                            organization {
+                                name = 'SonarSource'
+                                url = 'http://www.sonarsource.com'
+                            }
+                            licenses {
+                                license {
+                                    name = 'GNU LGPL 3'
+                                    url = 'http://www.gnu.org/licenses/lgpl.txt'
+                                    distribution = 'repo'
+                                }
+                            }
+                            scm {
+                                url = 'https://github.com/SonarSource/slang'
+                            }
+                            developers {
+                                developer {
+                                    id = 'sonarsource-team'
+                                    name = 'SonarSource Team'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+sonarqube {
+    properties {
+        property 'sonar.projectName', projectTitle
+        property 'sonar.links.ci', "${sonarLinksCi}"
+        property 'sonar.links.scm', "${sonarLinksScm}"
+        property 'sonar.links.issue', 'https://jira.sonarsource.com/browse/SONARSLANG'
+        property 'sonar.exclusions', 'build/**/*'
+    }
+}
+
+artifactory {
+    clientConfig.setIncludeEnvVars(true)
+    clientConfig.setEnvVarsExcludePatterns('*password*,*PASSWORD*,*secret*,*MAVEN_CMD_LINE_ARGS*,sun.java.command,*token*,*TOKEN*,*LOGIN*,*login*')
+    contextUrl = System.getenv('ARTIFACTORY_URL')
+    publish {
+        repository {
+            repoKey = System.getenv('ARTIFACTORY_DEPLOY_REPO')
+            username = System.getenv('ARTIFACTORY_DEPLOY_USERNAME')
+            password = System.getenv('ARTIFACTORY_DEPLOY_PASSWORD')
+        }
+        defaults {
+            properties = [
+                'build.name': 'slang-enterprise',
+                'build.number': System.getenv('BUILD_NUMBER'),
+                'pr.branch.target': System.getenv('PULL_REQUEST_BRANCH_TARGET'),
+                'pr.number': System.getenv('PULL_REQUEST_NUMBER'),
+                'vcs.branch': System.getenv('GIT_BRANCH'),
+                'vcs.revision': System.getenv('GIT_COMMIT'),
+                'version': version
+            ]
+            publications('mavenJava')
+            publishPom = true
+            publishIvy = false
+        }
+    }
+
+    // used for deployment to SonarSource Artifactory
+    //gitRepositoryName = 'slang-enterprise'
+    //artifactsToPublish = 'org.sonarsource.slang:sonar-kotlin-plugin:jar,org.sonarsource.slang:sonar-ruby-plugin:jar,org.sonarsource.slang:sonar-scala-plugin:jar'
+    //artifactsToDownload = 'com.sonarsource.slang:sonar-apex-plugin:jar'
+
+
+    clientConfig.info.setBuildName('slang-enterprise')
+    clientConfig.info.setBuildNumber(System.getenv('BUILD_NUMBER'))
+    // Define the artifacts to be deployed to https://binaries.sonarsource.com on releases
+    clientConfig.info.addEnvironmentProperty('ARTIFACTS_TO_PUBLISH',
+            "org.sonarsource.slang:sonar-kotlin-plugin:jar,org.sonarsource.slang:sonar-ruby-plugin:jar,org.sonarsource.slang:sonar-scala-plugin:jar")
+    clientConfig.info.addEnvironmentProperty('ARTIFACTS_TO_DOWNLOAD',
+            "com.sonarsource.slang:sonar-apex-plugin:jar")
+    // The name of this variable is important because it's used by the delivery process when extracting version from Artifactory build info.
+    clientConfig.info.addEnvironmentProperty('PROJECT_VERSION', "${version}")
+}
+
+void enforceFileSize(File file, long minSize, long maxSize) {
+    long size = file.length()
+    if (size < minSize)  {
+        throw new GradleException("${file.path} size ($size) too small. Min is $minSize")
+    } else if (size > maxSize) {
+        throw new GradleException("${file.path} size ($size) too large. Max is $maxSize")
+    }
+}

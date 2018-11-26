@@ -1,0 +1,6 @@
+dependencies {
+    compile 'com.google.code.findbugs:jsr305'
+    testCompile 'junit:junit'
+    testCompile 'org.assertj:assertj-core'
+    testCompile 'org.mockito:mockito-core'
+}

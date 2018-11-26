@@ -1,0 +1,8 @@
+dependencies {
+    compile project(':slang-api')
+    compile 'com.google.code.findbugs:jsr305'
+    compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
+    compileOnly 'junit:junit'
+    compileOnly 'org.assertj:assertj-core'
+    compileOnly 'org.mockito:mockito-core'
+}

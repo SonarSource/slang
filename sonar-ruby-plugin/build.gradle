@@ -1,0 +1,232 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '4.0.2'
+    id 'com.github.jruby-gradle.jar' version '1.6.0'
+}
+
+import com.github.jrubygradle.JRubyPrepare
+
+ext {
+    jrubyVersion = '9.2.0.0'
+    rubygemsRaccVersion = '1.4.13'
+    rubygemsAstVersion = '2.4.0'
+    rubygemsParserVersion = '2.5.1.2'
+}
+
+processResources.from("src/main/resources", "${buildDir}/dependency_gems/gems")
+
+dependencies {
+    compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
+    compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
+    compile project(':slang-plugin')
+    compile project(':slang-checks')
+    compile project(':slang-api')
+    compile "org.jruby:jruby-core:${jrubyVersion}"
+    gems "rubygems:racc:${rubygemsRaccVersion}"
+    gems "rubygems:ast:${rubygemsAstVersion}"
+    gems "rubygems:parser:${rubygemsParserVersion}"
+    testCompile project(':slang-testing')
+    testCompile project(':slang-antlr')
+    testCompile 'junit:junit'
+    testCompile 'org.assertj:assertj-core'
+    testCompile 'org.mockito:mockito-core'
+}
+
+task unpackDependencyGems(type: JRubyPrepare) {
+    outputDir "${buildDir}/dependency_gems"
+    dependencies configurations.gems
+}
+task copyGemsJarsFromDirectoryToShadowBugWorkaroundJar(type: Jar) {
+    from "${buildDir}/dependency_gems/gems"
+    includes = ['**/*.jar']
+    destinationDir = file("${buildDir}/tmp")
+    archiveName = "shadowBugWorkaround.jar"
+}
+copyGemsJarsFromDirectoryToShadowBugWorkaroundJar.dependsOn unpackDependencyGems
+processResources.dependsOn copyGemsJarsFromDirectoryToShadowBugWorkaroundJar
+
+jar {
+    manifest {
+        def displayVersion = (project.buildNumber == null ? version : version.substring(0, version.lastIndexOf('.')) + " (build ${project.buildNumber})")
+        def buildDate = new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        attributes(
+                'Build-Time': buildDate,
+                'Implementation-Build': 'git rev-parse HEAD'.execute().text.trim(),
+                'Plugin-BuildDate': buildDate,
+                'Plugin-ChildFirstClassLoader': 'false',
+                'Plugin-Class': 'org.sonarsource.ruby.plugin.RubyPlugin',
+                'Plugin-Description': 'Code Analyzer for Ruby',
+                'Plugin-Developers': 'SonarSource Team',
+                'Plugin-Display-Version': displayVersion,
+                'Plugin-Homepage': 'http://redirect.sonarsource.com/plugins/ruby.html',
+                'Plugin-IssueTrackerUrl': 'https://jira.sonarsource.com/browse/SONARSLANG',
+                'Plugin-Key': 'ruby',
+                'Plugin-License': 'GNU LGPL 3',
+                'Plugin-Name': 'SonarRuby',
+                'Plugin-Organization': 'SonarSource',
+                'Plugin-OrganizationUrl': 'http://www.sonarsource.com',
+                'Plugin-SourcesUrl': 'https://github.com/SonarSource/slang',
+                'Plugin-Version': version,
+                'Sonar-Version': '6.7',
+                'SonarLint-Supported': 'true',
+                'Version': "${version}",
+        )
+    }
+}
+
+shadowJar {
+    // shadowJar can not embed jar files, it always extract them.
+    // https://imperceptiblethoughts.com/shadow/configuration/dependencies/#embedding-jar-files-inside-your-shadow-jar
+    // the workaround used here, is to put jar in jar
+    from file("${buildDir}/tmp/shadowBugWorkaround.jar")
+    exclude 'ast-2.4.0/a*'
+    exclude 'ast-2.4.0/C*'
+    exclude 'ast-2.4.0/G*'
+    exclude 'ast-2.4.0/L*'
+    exclude 'ast-2.4.0/R*'
+    exclude 'ast-2.4.0/test/**'
+    exclude 'ast-2.4.0/.*'
+    exclude 'com/headius/options/example/**'
+    exclude 'com/headius/racc/**' // also exclude extracted content of racc-1.4.13-java/lib/racc/cparse-jruby.jar
+    exclude 'com/jcraft/**'
+    exclude 'com/kenai/**'
+    exclude 'com/martiansoftware/**'
+    exclude 'javax/**'
+    exclude 'jni/**'
+    exclude 'jnr/ffi/A*'
+    exclude 'jnr/ffi/annotations/**'
+    exclude 'jnr/ffi/byref/**'
+    exclude 'jnr/ffi/C*'
+    exclude 'jnr/ffi/L*'
+    exclude 'jnr/ffi/mapper/A*'
+    exclude 'jnr/ffi/mapper/C*'
+    exclude 'jnr/ffi/mapper/D*'
+    exclude 'jnr/ffi/mapper/Fr*'
+    exclude 'jnr/ffi/mapper/FunctionMapper$*'
+    exclude 'jnr/ffi/mapper/M*'
+    exclude 'jnr/ffi/mapper/S*'
+    exclude 'jnr/ffi/mapper/T*'
+    exclude 'jnr/ffi/mapper/U*'
+    exclude 'jnr/ffi/M*'
+    exclude 'jnr/ffi/N*'
+    exclude 'jnr/ffi/O*'
+    exclude 'jnr/ffi/Pl*'
+    exclude 'jnr/ffi/provider/**'
+    exclude 'jnr/ffi/R*'
+    exclude 'jnr/ffi/Struct$*'
+    exclude 'jnr/ffi/StructL*'
+    exclude 'jnr/ffi/T*'
+    exclude 'jnr/ffi/types/**'
+    exclude 'jnr/ffi/U*'
+    exclude 'jnr/ffi/util/**'
+    exclude 'jnr/ffi/V*'
+    exclude 'jnr/netdb/**'
+    exclude 'jnr/x86asm/**'
+    exclude 'jruby/bundler/**'
+    exclude 'jruby/java/java_ext/**'
+    exclude 'module-info.class'
+    exclude 'org/joda/time/convert/**'
+    exclude 'org/joda/time/tz/data/**'
+    exclude 'org/joni/bench/**'
+    exclude 'org/jruby/ant/**'
+    exclude 'org/jruby/api/**'
+    exclude 'org/jruby/ast/java_signature/**'
+    exclude 'org/jruby/compiler/util/**'
+    exclude 'org/jruby/embed/**'
+    exclude 'org/jruby/ext/api/**'
+    exclude 'org/jruby/ext/bigdecimal/**'
+    exclude 'org/jruby/ext/cgi/**'
+    exclude 'org/jruby/ext/date/**'
+    exclude 'org/jruby/ext/digest/**'
+    exclude 'org/jruby/ext/etc/**'
+    exclude 'org/jruby/ext/fcntl/**'
+    exclude 'org/jruby/ext/ffi/io/**'
+    exclude 'org/jruby/ext/ffi/jffi/**'
+    exclude 'org/jruby/ext/io/**'
+    exclude 'org/jruby/ext/mathn/**'
+    exclude 'org/jruby/ext/net/**'
+    exclude 'org/jruby/ext/nkf/**'
+    exclude 'org/jruby/ext/pathname/**'
+    exclude 'org/jruby/ext/ripper/**'
+    exclude 'org/jruby/ext/securerandom/**'
+    exclude 'org/jruby/ext/socket/**'
+    exclude 'org/jruby/ext/strscan/**'
+    exclude 'org/jruby/ext/tempfile/**'
+    exclude 'org/jruby/ext/timeout/**'
+    exclude 'org/jruby/ext/zlib/**'
+    exclude 'org/jruby/ir/instructions/boxing/**'
+    exclude 'org/jruby/ir/persistence/util/**'
+    exclude 'org/jruby/ir/util/**'
+    exclude 'org/jruby/javasupport/bsf/**'
+    exclude 'org/jruby/main/**'
+    exclude 'org/jruby/org/objectweb/asm/signature/**'
+    exclude 'org/jruby/org/objectweb/asm/tree/analysis/**'
+    exclude 'org/jruby/runtime/callback/**'
+    exclude 'org/jruby/runtime/component/**'
+    exclude 'parser-2.5.1.2/bin/**'
+    exclude 'parser-2.5.1.2/C*'
+    exclude 'parser-2.5.1.2/doc/**'
+    exclude 'parser-2.5.1.2/G*'
+    exclude 'parser-2.5.1.2/lib/parser/lexer.rl'
+    exclude 'parser-2.5.1.2/lib/parser/ma*'
+    exclude 'parser-2.5.1.2/lib/parser/ruby1*'
+    exclude 'parser-2.5.1.2/lib/parser/ruby20*'
+    exclude 'parser-2.5.1.2/lib/parser/ruby21*'
+    exclude 'parser-2.5.1.2/lib/parser/ruby22*'
+    exclude 'parser-2.5.1.2/lib/parser/ruby23*'
+    exclude 'parser-2.5.1.2/lib/parser/ruby24*'
+    exclude 'parser-2.5.1.2/lib/parser/ruby25.y'
+    exclude 'parser-2.5.1.2/lib/parser/ruby26*'
+    exclude 'parser-2.5.1.2/lib/parser/rubym*'
+    exclude 'parser-2.5.1.2/lib/parser/runner/**'
+    exclude 'parser-2.5.1.2/L*'
+    exclude 'parser-2.5.1.2/p*'
+    exclude 'parser-2.5.1.2/R*'
+    exclude 'parser-2.5.1.2/test/**'
+    exclude 'parser-2.5.1.2/.*'
+    exclude 'racc-1.4.13-java/bin/**'
+    exclude 'racc-1.4.13-java/C*'
+    exclude 'racc-1.4.13-java/D*'
+    exclude 'racc-1.4.13-java/ext/**'
+    exclude 'racc-1.4.13-java/fastcache/**'
+    exclude 'racc-1.4.13-java/.*'
+    exclude 'racc-1.4.13-java/M*'
+    exclude 'racc-1.4.13-java/misc/**'
+    exclude 'racc-1.4.13-java/R*'
+    exclude 'racc-1.4.13-java/rdoc/**'
+    exclude 'racc-1.4.13-java/sample/**'
+    exclude 'racc-1.4.13-java/s*'
+    exclude 'racc-1.4.13-java/tasks/**'
+    exclude 'racc-1.4.13-java/test/**'
+    exclude 'racc-1.4.13-java/web/**'
+    exclude 'tables/Ca*'
+    exclude 'tables/Transcoder_B*'
+    exclude 'tables/Transcoder_C*'
+    exclude 'tables/Transcoder_E*'
+    exclude 'tables/Transcoder_G*'
+    exclude 'tables/Transcoder_I*'
+    exclude 'tables/Transcoder_J*'
+    exclude 'tables/Transcoder_K*'
+    exclude 'tables/Transcoder_N*'
+    exclude 'tables/Transcoder_S*'
+    exclude 'tables/Transcoder_Utf8*'
+    exclude 'Test.class'
+    doLast {
+        enforceFileSize(new File(libsDir, shadowJar.archiveName), 9_000_000L, 11_000_000L)
+    }
+}
+
+artifacts {
+    archives shadowJar
+}
+
+artifactoryPublish.skip = false
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact source: shadowJar, classifier: null
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}

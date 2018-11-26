@@ -11,7 +11,6 @@ pipeline {
   }
   environment {
     SONARSOURCE_QA = 'true'
-    MAVEN_TOOL = 'Maven 3.3.x'
   }
   stages {
     stage('Notify') {
@@ -26,7 +25,7 @@ pipeline {
             label 'linux'
           }
           steps {
-            runRuling "LATEST_RELEASE", 'test_kotlin'
+            runRuling "LATEST_RELEASE", 'ruling-kotlin'
           }
         }
 
@@ -35,7 +34,7 @@ pipeline {
             label 'linux'
           }
           steps {
-            runRuling "LATEST_RELEASE", 'test_ruby'
+            runRuling "LATEST_RELEASE", 'ruling-ruby'
           }
         }
 
@@ -44,7 +43,16 @@ pipeline {
             label 'linux'
           }
           steps {
-            runRuling "LATEST_RELEASE", 'test_scala'
+            runRuling "LATEST_RELEASE", 'ruling-scala'
+          }
+        }
+
+        stage('private-ruling-latest-apex') {
+          agent {
+            label 'linux'
+          }
+          steps {
+            runPrivateRuling "LATEST_RELEASE", 'ruling-apex'
           }
         }
 
@@ -57,12 +65,30 @@ pipeline {
           }
         }
 
+        stage('private-plugin-lts') {
+          agent {
+            label 'linux'
+          }
+          steps {
+            runPrivatePlugin "LATEST_RELEASE[6.7]"
+          }
+        }
+
         stage('plugin-dev') {
           agent {
             label 'linux'
           }
           steps {
             runPlugin "DEV"
+          }
+        }
+
+        stage('private-plugin-dev') {
+          agent {
+            label 'linux'
+          }
+          steps {
+            runPrivatePlugin "DEV"
           }
         }
 
@@ -75,17 +101,23 @@ pipeline {
           }
         }
 
+        stage('private-plugin-latest-windows') {
+          agent {
+            label 'windows'
+          }
+          steps {
+            runPrivatePlugin "LATEST_RELEASE"
+          }
+        }
+
         stage('ci-windows') {
           agent {
             label 'windows'
           }
           steps {
              withQAEnv {
-                withMaven(maven: MAVEN_TOOL) {
-                  mavenSetBuildVersion()
-                    sh "${mvnCommand()} clean verify"
-                }
-              }
+               gradle "build -Pqa --info --console plain --no-daemon --build-cache"
+             }
           }
         }
       }
@@ -97,7 +129,7 @@ pipeline {
     }
     stage('Promote') {
       steps {
-        repoxPromoteBuild()
+        repoxPromoteSonarEnterprise()
       }
       post {
         always {
@@ -108,41 +140,54 @@ pipeline {
   }
 }
 
-def mvnCommand() {
-  return isUnix() ? 'mvn' : 'mvn.cmd'
+def gradle(String args) {
+  if (isUnix()) {
+    sh "./gradlew ${args}"
+  } else {
+    bat "./gradlew.bat ${args}"
+  }
 }
 
-def runRuling(String sqRuntimeVersion, String test) {
+def runRuling(String sqRuntimeVersion, String rulingName) {
   withQAEnv {
-    withMaven(maven: MAVEN_TOOL) {
-      mavenSetBuildVersion()
-      dir('its') {
-        sh 'git submodule update --init --recursive'
-        sh "${mvnCommand()} -pl ruling ${itBuildArguments sqRuntimeVersion} '-Dtest=org.sonarsource.slang.SlangRulingTest#${test}'"
-      }
-    }
+    sh 'git submodule update --init its/sources'
+    gradle ":its:ruling:test -P${rulingName} ${itBuildArguments sqRuntimeVersion}"
+  }
+}
+
+def runPrivateRuling(String sqRuntimeVersion, String rulingName) {
+  withQAEnv {
+    sh 'git submodule update --init private/its/sources'
+    gradle ":private:its:ruling:test -P${rulingName} ${itBuildArguments sqRuntimeVersion}"
   }
 }
 
 def runPlugin(String sqRuntimeVersion) {
   withQAEnv {
-    withMaven(maven: MAVEN_TOOL) {
-      mavenSetBuildVersion()
-      dir('its') {
-        sh "${mvnCommand()} -pl plugin ${itBuildArguments sqRuntimeVersion}"
-      }
-    }
+    gradle ":its:plugin:test -Pplugin ${itBuildArguments sqRuntimeVersion}"
+  }
+}
+
+def runPrivatePlugin(String sqRuntimeVersion) {
+  withQAEnv {
+    sh 'git submodule update --init private/its/sources'
+    gradle ":private:its:plugin:test -Pplugin ${itBuildArguments sqRuntimeVersion}"
   }
 }
 
 def withQAEnv(def body) {
-  withCredentials([string(credentialsId: 'ARTIFACTORY_PRIVATE_API_KEY', variable: 'ARTIFACTORY_PRIVATE_API_KEY')]) {
-    body.call()
+  withCredentials([string(credentialsId: 'ARTIFACTORY_PRIVATE_API_KEY', variable: 'ARTIFACTORY_PRIVATE_API_KEY'),usernamePassword(credentialsId: 'ARTIFACTORY_PRIVATE_USER', passwordVariable: 'ARTIFACTORY_PRIVATE_PASSWORD', usernameVariable: 'ARTIFACTORY_PRIVATE_USERNAME')]) {
+    try {
+      body.call()
+    } catch (e) {
+      uploadToCixLogs("slang")
+      throw e
+    }
   }
 }
 
 String itBuildArguments(String sqRuntimeVersion) {
   "-Dsonar.runtimeVersion=${sqRuntimeVersion} -Dorchestrator.artifactory.apiKey=${env.ARTIFACTORY_PRIVATE_API_KEY} " +
-     "-Dorchestrator.configUrl=https://repox.sonarsource.com/orchestrator.properties/orch-h2.properties -Dmaven.test.redirectTestOutputToFile=false clean verify -e -V"
+     "-Dorchestrator.configUrl=https://repox.sonarsource.com/orchestrator.properties/orch-h2.properties " +
+     "-DbuildNumber=$CI_BUILD_NUMBER -Pqa --info --console plain --no-daemon --build-cache"
 }
-

@@ -19,8 +19,6 @@
  */
 package org.sonarsource.slang;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.OrchestratorBuilder;
 import com.sonar.orchestrator.build.SonarScanner;
@@ -30,8 +28,10 @@ import com.sonar.orchestrator.locator.MavenLocation;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -52,7 +52,7 @@ public class SlangRulingTest {
   private static Orchestrator orchestrator;
   private static boolean keepSonarqubeRunning = "true".equals(System.getProperty("keepSonarqubeRunning"));
 
-  private static final Set<String> LANGUAGES = ImmutableSet.of("kotlin" , "ruby" , "scala");
+  private static final Set<String> LANGUAGES = new HashSet<>(Arrays.asList("kotlin" , "ruby" , "scala"));
 
   @BeforeClass
   public static void setUp() {
@@ -94,7 +94,7 @@ public class SlangRulingTest {
       String plugin = "sonar-" + language +"-plugin";
       if (StringUtils.isEmpty(slangVersion)) {
         // use the plugin that was built on local machine
-        pluginLocation = FileLocation.byWildcardMavenFilename(new File("../../" + plugin + "/target"), plugin + "-*.jar");
+        pluginLocation = FileLocation.byWildcardMavenFilename(new File("../../" + plugin + "/build/libs"), plugin + "-*-all.jar");
       } else {
         // QA environment downloads the plugin built by the CI job
         pluginLocation = MavenLocation.of("org.sonarsource.slang", plugin, slangVersion);
@@ -130,21 +130,24 @@ public class SlangRulingTest {
 
   @Test
   public void test_kotlin() throws IOException {
-    run_ruling_test("kotlin", ImmutableMap.of(
-      "sonar.inclusions", "sources/kotlin/**/*.kt, ruling/src/test/resources/sources/kotlin/**/*.kt",
-      "sonar.exclusions", "**/testData/**/*"));
+    Map<String, String> properties = new HashMap<>();
+    properties.put("sonar.inclusions", "sources/kotlin/**/*.kt, ruling/src/test/resources/sources/kotlin/**/*.kt");
+    properties.put("sonar.exclusions", "**/testData/**/*");
+    run_ruling_test("kotlin", properties);
   }
 
   @Test
   public void test_ruby() throws IOException {
-    run_ruling_test("ruby", ImmutableMap.of(
-      "sonar.inclusions", "sources/ruby/**/*.rb, ruling/src/test/resources/sources/ruby/**/*.rb"));
+    Map<String, String> properties = new HashMap<>();
+    properties.put("sonar.inclusions", "sources/ruby/**/*.rb, ruling/src/test/resources/sources/ruby/**/*.rb");
+    run_ruling_test("ruby", properties);
   }
 
   @Test
   public void test_scala() throws IOException {
-    run_ruling_test("scala", ImmutableMap.of(
-      "sonar.inclusions", "sources/scala/**/*.scala, ruling/src/test/resources/sources/scala/**/*.scala"));
+    Map<String, String> properties = new HashMap<>();
+    properties.put("sonar.inclusions", "sources/scala/**/*.scala, ruling/src/test/resources/sources/scala/**/*.scala");
+    run_ruling_test("scala", properties);
   }
 
   private void run_ruling_test(String language, Map<String, String> languageProperties) throws IOException {
@@ -156,10 +159,10 @@ public class SlangRulingTest {
     orchestrator.getServer().provisionProject(projectKey, projectKey);
     orchestrator.getServer().associateProjectToQualityProfile(projectKey, language, "rules");
 
-    File actualDirectory = FileLocation.of("target/actual/" + language).getFile();
+    File actualDirectory = FileLocation.of("build/tmp/actual/" + language).getFile();
     actualDirectory.mkdirs();
 
-    File litsDifferencesFile = FileLocation.of("target/" + language + "-differences").getFile();
+    File litsDifferencesFile = FileLocation.of("build/" + language + "-differences").getFile();
     SonarScanner build = SonarScanner.create(FileLocation.of("../").getFile())
       .setProjectKey(projectKey)
       .setProjectName(projectKey)

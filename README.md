@@ -30,19 +30,20 @@ We use [Scalameta](https://scalameta.org/) to parse Scala language.
 
 ## Building
 
-Run:
+Build and run Unit Tests:
 
-    mvn clean install
+    ./gradlew build
+
+## Integration Tests
 
 By default, Integration Tests (ITs) are skipped during build.
 If you want to run them, you need first to retrieve the related projects which are used as input:
 
-    git submodule update --init
+    git submodule update --init its/sources
 
-Then run the ITs
+Then activate the Integration Tests using the 'its' property:
 
-    cd its
-    mvn clean install -Dsonar.runtimeVersion=7.1
+    ./gradlew test -Pits --info --no-daemon -Dsonar.runtimeVersion=7.1
 
 ## License headers
 
