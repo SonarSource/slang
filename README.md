@@ -41,12 +41,12 @@ If you want to run them, you need first to retrieve the related projects which a
 
     git submodule update --init its/sources
 
-Then activate the Integration Tests using the 'its' property:
+Then build and run the Integration Tests using the `its` property:
 
-    ./gradlew test -Pits --info --no-daemon -Dsonar.runtimeVersion=7.1
+    ./gradlew build -Pits --info --no-daemon -Dsonar.runtimeVersion=7.4
 
 ## License headers
 
 When adding a new source file, you will need to add license headers. Instead of copy-pasting blocks, the following command line can be used:
 
-    mvn license:format
+    ./gradlew licenseFormat
