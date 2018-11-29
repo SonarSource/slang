@@ -211,7 +211,7 @@ shadowJar {
     exclude 'tables/Transcoder_Utf8*'
     exclude 'Test.class'
     doLast {
-        enforceFileSize(new File(libsDir, shadowJar.archiveName), 9_000_000L, 11_000_000L)
+        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 9_000_000L, 11_000_000L)
     }
 }
 
