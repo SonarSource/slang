@@ -11,4 +11,9 @@ configureTravis
 
 export DEPLOY_PULL_REQUEST=true
 
-regular_gradle_build_deploy_analyze 
+export PARAMS=""
+if [ "${TRAVIS_BRANCH}" == "master" ];then
+  PARAMS=" -Dsonar.organization=sonarsource "
+fi
+
+regular_gradle_build_deploy_analyze $PARAMS
