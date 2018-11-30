@@ -1,22 +1,23 @@
 #!/bin/bash
 set -euo pipefail
 
-function configureTravis {
-  mkdir -p ~/.local
-  curl -sSL https://github.com/SonarSource/travis-utils/tarball/v52 | tar zx --strip-components 1 -C ~/.local
-  source ~/.local/bin/install
-}
-
-configureTravis
-
-export DEPLOY_PULL_REQUEST=true
-
-export PARAMS=""
 if [ "${TRAVIS_REPO_SLUG}" == "SonarSource/slang" ];then
   echo "Building slang"
-  PARAMS=" -Dsonar.organization=sonarsource "
+  
+  ./gradlew --no-daemon --console plain \
+    -DbuildNumber=$BUILD_NUMBER \
+    build sonarqube \
+    -Dsonar.host.url=$SONAR_HOST_URL \
+    -Dsonar.login=$SONAR_TOKEN \
+    -Dsonar.projectVersion=$INITIAL_VERSION \
+    -Dsonar.analysis.buildNumber=$BUILD_NUMBER \
+    -Dsonar.analysis.pipeline=$BUILD_NUMBER \
+    -Dsonar.analysis.sha1=$GIT_COMMIT \
+    -Dsonar.analysis.repository=$TRAVIS_REPO_SLUG \
+    -Dsonar.organization=sonarsource
+
 else
   echo "Building slang-enterprise"
+  ./private/private-travis.sh
 fi
 
-regular_gradle_build_deploy_analyze $PARAMS
