@@ -4,6 +4,8 @@ set -euo pipefail
 if [ "${TRAVIS_REPO_SLUG}" == "SonarSource/slang" ];then
   echo "Building slang"
   
+  export INITIAL_VERSION=$(cat gradle.properties | grep version | awk -F= '{print $2}')
+  
   ./gradlew --no-daemon --console plain \
     -DbuildNumber=$TRAVIS_BUILD_NUMBER \
     build sonarqube \
