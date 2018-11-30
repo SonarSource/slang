@@ -11,4 +11,12 @@ configureTravis
 
 export DEPLOY_PULL_REQUEST=true
 
-regular_gradle_build_deploy_analyze 
+export PARAMS=""
+if [ "${TRAVIS_REPO_SLUG}" == "SonarSource/slang" ];then
+  echo "Building slang"
+  PARAMS=" -Dsonar.organization=sonarsource "
+else
+  echo "Building slang-enterprise"
+fi
+
+regular_gradle_build_deploy_analyze $PARAMS
