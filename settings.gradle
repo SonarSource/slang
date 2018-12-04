@@ -25,3 +25,5 @@ File extraSettings = new File(rootDir, 'private/extraSettings.gradle')
 if (extraSettings.exists()) {
     apply from: extraSettings
 }
+
+enableFeaturePreview('STABLE_PUBLISHING')
