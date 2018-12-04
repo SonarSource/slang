@@ -133,7 +133,6 @@ shadowJar {
     exclude 'org/jruby/compiler/util/**'
     exclude 'org/jruby/embed/**'
     exclude 'org/jruby/ext/api/**'
-    exclude 'org/jruby/ext/bigdecimal/**'
     exclude 'org/jruby/ext/cgi/**'
     exclude 'org/jruby/ext/date/**'
     exclude 'org/jruby/ext/digest/**'
