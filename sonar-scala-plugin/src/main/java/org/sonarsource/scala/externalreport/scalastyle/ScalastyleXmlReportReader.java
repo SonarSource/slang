@@ -23,11 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import org.sonarsource.slang.plugin.utils.XMLStreamReader;
 
 class ScalastyleXmlReportReader {
 
@@ -58,7 +58,7 @@ class ScalastyleXmlReportReader {
   }
 
   private void read(InputStream in) throws XMLStreamException, IOException {
-    XMLEventReader reader = XMLInputFactory.newInstance().createXMLEventReader(in);
+    XMLEventReader reader = XMLStreamReader.create(in);
     while (reader.hasNext()) {
       XMLEvent event = reader.nextEvent();
       if (event.isStartElement()) {

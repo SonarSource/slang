@@ -24,7 +24,6 @@ import java.io.InputStream;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
@@ -38,6 +37,7 @@ import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ExternalRuleLoader;
+import org.sonarsource.slang.plugin.utils.XMLStreamReader;
 
 class DetektXmlReportReader {
 
@@ -69,7 +69,7 @@ class DetektXmlReportReader {
   }
 
   private void read(InputStream in) throws XMLStreamException, IOException {
-    XMLEventReader reader = XMLInputFactory.newInstance().createXMLEventReader(in);
+    XMLEventReader reader = XMLStreamReader.create(in);
     while (reader.hasNext()) {
       XMLEvent event = reader.nextEvent();
       if (event.isStartElement()) {
