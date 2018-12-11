@@ -27,7 +27,6 @@ allprojects {
     }
 
     ext {
-        release = project.hasProperty('release') && project.getProperty('release')
         buildNumber = System.getProperty("buildNumber")
         analyzerCommonsVersion = '1.9.0.327'
         sonarqubeVersion = '7.3'
@@ -143,32 +142,28 @@ subprojects {
     publishing {
         publications {
             mavenJava(MavenPublication) {
-                afterEvaluate {
-                    if (release) {
-                        pom {
-                            name = projectTitle
-                            description = description
-                            url = 'http://www.sonarqube.org/'
-                            organization {
-                                name = 'SonarSource'
-                                url = 'http://www.sonarsource.com'
-                            }
-                            licenses {
-                                license {
-                                    name = 'GNU LGPL 3'
-                                    url = 'http://www.gnu.org/licenses/lgpl.txt'
-                                    distribution = 'repo'
-                                }
-                            }
-                            scm {
-                                url = 'https://github.com/SonarSource/slang'
-                            }
-                            developers {
-                                developer {
-                                    id = 'sonarsource-team'
-                                    name = 'SonarSource Team'
-                                }
-                            }
+                pom {
+                    name = projectTitle
+                    description = project.description
+                    url = 'http://www.sonarqube.org/'
+                    organization {
+                        name = 'SonarSource'
+                        url = 'http://www.sonarsource.com'
+                    }
+                    licenses {
+                        license {
+                            name = 'GNU LGPL 3'
+                            url = 'http://www.gnu.org/licenses/lgpl.txt'
+                            distribution = 'repo'
+                        }
+                    }
+                    scm {
+                        url = 'https://github.com/SonarSource/slang'
+                    }
+                    developers {
+                        developer {
+                            id = 'sonarsource-team'
+                            name = 'SonarSource Team'
                         }
                     }
                 }
