@@ -1,4 +1,11 @@
 * text eol=lf
+*.bat                    -text
+*.jar                    -text
+*.cls                    -text
+*.trigger                -text
+private/its/sources/**           -text
+private/its/plugin/projects/**   -text
 its/sources/** -text
 its/plugin/projects/** -text
 **/src/test/resources/** -text
+

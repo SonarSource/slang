@@ -1,3 +1,7 @@
+# --- Gradle
+.gradle/
+build/
+
 # ---- Maven
 target/
 dependency-reduced-pom.xml
@@ -31,3 +35,4 @@ Desktop.ini
 
 .java-version
 .sonar/
+
