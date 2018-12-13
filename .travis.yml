@@ -2,6 +2,11 @@ language: java
 sudo: false
 jdk: oraclejdk8
 
+# blocklist
+branches:
+  except:
+  - public_master
+
 git:
   submodules: false
 
