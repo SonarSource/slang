@@ -157,7 +157,7 @@ public class SlangRulingTest {
 
     String projectKey = language + "-project";
     orchestrator.getServer().provisionProject(projectKey, projectKey);
-    orchestrator.getServer().associateProjectToQualityProfile(projectKey, language, "rules");
+    LANGUAGES.forEach(lang -> orchestrator.getServer().associateProjectToQualityProfile(projectKey, lang, "rules"));
 
     File actualDirectory = FileLocation.of("build/tmp/actual/" + language).getFile();
     actualDirectory.mkdirs();
