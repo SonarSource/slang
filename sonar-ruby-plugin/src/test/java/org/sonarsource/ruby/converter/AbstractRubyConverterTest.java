@@ -110,6 +110,10 @@ public abstract class AbstractRubyConverterTest {
     return new ParameterTreeImpl(null, identifier(name), null);
   }
 
+  protected static ParameterTree parameter(String name, Tree defaultValue) {
+    return new ParameterTreeImpl(null, identifier(name), null, defaultValue);
+  }
+
   protected static IdentifierTreeImpl identifier(String name) {
     return new IdentifierTreeImpl(null, name);
   }

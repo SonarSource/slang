@@ -43,10 +43,7 @@ public class ArgVisitorTest extends AbstractRubyConverterTest {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo(x = 1) end");
     Tree firstParameter = tree.formalParameters().get(0);
     assertTree(firstParameter).isEquivalentTo(
-      nativeTree(nativeKind("optarg"), asList(
-        parameter("x"),
-        integerLiteral("1")
-      )));
+        parameter("x", integerLiteral("1")));
   }
 
   @Test
@@ -70,11 +67,9 @@ public class ArgVisitorTest extends AbstractRubyConverterTest {
     Tree param1 = tree.formalParameters().get(0);
     assertTree(param1).isEquivalentTo(parameter("arg"));
     Tree param2 = tree.formalParameters().get(1);
-    assertTree(param2).isEquivalentTo(nativeTree(nativeKind("kwoptarg"),
-      asList(parameter("bar"), stringLiteral("'default'", "default"))));
+    assertTree(param2).isEquivalentTo(parameter("bar", stringLiteral("'default'", "default")));
     Tree param3 = tree.formalParameters().get(2);
     assertTree(param3).isEquivalentTo(parameter("splat"));
-
   }
 
   @Test

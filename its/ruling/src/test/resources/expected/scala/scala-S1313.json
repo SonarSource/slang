@@ -1,4 +1,7 @@
 {
+'scala-project:ruling/src/test/resources/sources/scala/S1313.scala':[
+3,
+],
 'scala-project:sources/scala/finagle/finagle-base-http/src/test/scala/com/twitter/finagle/http/codec/HttpDtabTest.scala':[
 11,
 ],

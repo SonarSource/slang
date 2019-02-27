@@ -28,4 +28,7 @@ public interface ParameterTree extends Tree {
   @CheckForNull
   Tree type();
 
+  @CheckForNull
+  Tree defaultValue();
+
 }

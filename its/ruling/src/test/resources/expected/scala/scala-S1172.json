@@ -2,6 +2,7 @@
 'scala-project:ruling/src/test/resources/sources/scala/S1172.scala':[
 7,
 11,
+15,
 ],
 'scala-project:sources/scala/deequ/src/main/scala/com/amazon/deequ/analyzers/runners/AnalysisRunner.scala':[
 225,
@@ -47,6 +48,12 @@
 'scala-project:sources/scala/incubator-openwhisk/tests/src/test/scala/system/basic/WskSequenceTests.scala':[
 469,
 ],
+'scala-project:sources/scala/kafka-manager/app/kafka/manager/utils/zero90/GroupMetadataManager.scala':[
+175,
+],
+'scala-project:sources/scala/kafka-manager/app/models/navigation/BreadCrumbs.scala':[
+150,
+],
 'scala-project:sources/scala/linkerd/namerd/iface/control-http/src/main/scala/io/buoyant/namerd/iface/DtabHandler.scala':[
 85,
 ],
@@ -63,6 +70,9 @@
 'scala-project:sources/scala/playframework/framework/src/play-akka-http-server/src/main/scala/play/core/server/akkahttp/AkkaModelConversion.scala':[
 57,
 ],
+'scala-project:sources/scala/playframework/framework/src/play/src/test/scala/play/api/mvc/RequestSpec.scala':[
+39,
+],
 'scala-project:sources/scala/prisma/server/servers/api/src/main/scala/com/prisma/api/mutactions/SubscriptionEvents.scala':[
 21,
 34,
@@ -74,6 +84,9 @@
 'scala-project:sources/scala/prisma/server/servers/deploy/src/main/scala/com/prisma/deploy/validation/DestructiveChanges.scala':[
 176,
 244,
+],
+'scala-project:sources/scala/prisma/server/servers/deploy/src/test/scala/com/prisma/deploy/specutils/DeployTestServer.scala':[
+187,
 ],
 'scala-project:sources/scala/snowplow/3-enrich/scala-common-enrich/src/main/scala/com.snowplowanalytics.snowplow.enrich/common/enrichments/registry/JavascriptScriptEnrichment.scala':[
 175,

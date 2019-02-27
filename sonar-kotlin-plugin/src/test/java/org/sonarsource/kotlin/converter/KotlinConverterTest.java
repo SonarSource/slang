@@ -314,7 +314,7 @@ public class KotlinConverterTest {
     assertThat(noModifierFunction.modifiers()).isEmpty();
     assertTree(noModifierFunction.returnType()).isNull();
     assertThat(noModifierFunction.formalParameters()).hasSize(2);
-    assertThat(noModifierFunction.formalParameters().get(0)).isInstanceOf(NativeTree.class);
+    assertThat(noModifierFunction.formalParameters().get(0)).isInstanceOf(ParameterTree.class);
     assertTree(noModifierFunction.body()).isBlock();
 
     FunctionDeclarationTree emptyLambdaFunction = (FunctionDeclarationTree) kotlinStatement("{ }").children().get(0);
@@ -338,6 +338,21 @@ public class KotlinConverterTest {
     assertTree(aIntParam1.identifier()).hasTextRange(1, 22, 1, 23);
     assertTree(aStringParam).isInstanceOf(ParameterTree.class);
     assertTree(aIntParamWithInitializer).hasTextRange(1, 14, 1, 24);
+  }
+
+  @Test
+  public void testFunctionDeclarationWithDefaultValue() {
+    FunctionDeclarationTree func = (FunctionDeclarationTree) kotlin(
+        "fun function1(p1: Int = 1, p2: String, p3: String = \"def\") {}");
+
+    assertThat(func.formalParameters()).hasSize(3);
+    assertTree(func).hasParameterNames("p1", "p2", "p3");
+    ParameterTree p1 = (ParameterTree) func.formalParameters().get(0);
+    ParameterTree p2 = (ParameterTree) func.formalParameters().get(1);
+    ParameterTree p3 = (ParameterTree) func.formalParameters().get(2);
+    assertTree(p1.defaultValue()).isLiteral("1");
+    assertTree(p2.defaultValue()).isNull();
+    assertTree(p3.defaultValue()).isLiteral("\"def\"");
   }
 
   @Test

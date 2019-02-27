@@ -20,6 +20,7 @@
 package org.sonarsource.slang.impl;
 
 import org.sonarsource.slang.api.IdentifierTree;
+import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
@@ -51,6 +52,32 @@ public class ParameterTreeImplTest {
     assertThat(areEquivalent(parameterTreeX, parameterTreeXTyped)).isFalse();
     assertThat(areEquivalent(parameterTreeX, parameterTreeY)).isFalse();
     assertThat(areEquivalent(parameterTreeXTyped, parameterTreeY)).isFalse();
+  }
+
+  @Test
+  public void test_default_value() {
+    TreeMetaData meta = null;
+    IdentifierTree identifierTreeX = new IdentifierTreeImpl(meta, "x");
+    IdentifierTree identifierTreeY = new IdentifierTreeImpl(meta, "y");
+    IdentifierTree defaultValue1 = new IdentifierTreeImpl(meta, "1");
+    ParameterTreeImpl parameterTreeXDefault1 = new ParameterTreeImpl(meta, identifierTreeX, null, defaultValue1);
+    ParameterTreeImpl parameterTreeXDefault1Copy = new ParameterTreeImpl(meta, new IdentifierTreeImpl(meta, "x"), null, new IdentifierTreeImpl(meta, "1"));
+    ParameterTreeImpl parameterTreeXDefault2 = new ParameterTreeImpl(meta, identifierTreeX, null, new IdentifierTreeImpl(meta, "2"));
+    ParameterTreeImpl parameterTreeXDefaultNative = new ParameterTreeImpl(meta, identifierTreeX, null, new NativeTreeImpl(meta, new TypeNativeKind(), null));
+    ParameterTreeImpl parameterTreeY = new ParameterTreeImpl(meta, identifierTreeY, null);
+
+
+    assertThat(parameterTreeXDefault1.children()).hasSize(2);
+    assertThat(parameterTreeXDefault2.children()).hasSize(2);
+    assertThat(parameterTreeXDefaultNative.children()).hasSize(2);
+    assertThat(parameterTreeY.children()).hasSize(1);
+    assertThat(parameterTreeXDefault1.defaultValue()).isEqualTo(defaultValue1);
+    assertThat(parameterTreeY.defaultValue()).isNull();
+
+    assertThat(areEquivalent(parameterTreeXDefault1, parameterTreeXDefault1Copy)).isTrue();
+    assertThat(areEquivalent(parameterTreeXDefault1, parameterTreeXDefault2)).isFalse();
+    assertThat(areEquivalent(parameterTreeXDefault1, parameterTreeXDefaultNative)).isFalse();
+    assertThat(areEquivalent(parameterTreeXDefault1, parameterTreeY)).isFalse();
   }
 
 }

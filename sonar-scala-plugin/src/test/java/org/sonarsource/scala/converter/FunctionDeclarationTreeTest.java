@@ -87,15 +87,24 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
         "def foo(p1: String = \"def\") = {p1}");
     assertThat(func.formalParameters()).hasSize(1);
-    assertTree(func.formalParameters().get(0)).isInstanceOf(NativeTree.class);
+    assertTree(func).hasParameterNames("p1");
+    assertTree(func.formalParameters().get(0)).isInstanceOf(ParameterTree.class);
+    ParameterTree parameter1 = (ParameterTree) func.formalParameters().get(0);
+    assertTree(parameter1.defaultValue()).isLiteral("\"def\"");
   }
 
   @Test
   public void function_multiple_parameters_with_default() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
-        "def foo(p1: String = \"def\", p2: String, p3: String = \"def\") = {p1}");
+        "def foo(p1: String = \"def\", p2: String, p3: String = \"def2\") = {p1}");
     assertThat(func.formalParameters()).hasSize(3);
-    assertTree(func).hasParameterNames("p2");
+    assertTree(func).hasParameterNames("p1", "p2", "p3");
+    ParameterTree p1 = (ParameterTree) func.formalParameters().get(0);
+    ParameterTree p2 = (ParameterTree) func.formalParameters().get(1);
+    ParameterTree p3 = (ParameterTree) func.formalParameters().get(2);
+    assertTree(p1.defaultValue()).isLiteral("\"def\"");
+    assertTree(p2.defaultValue()).isNull();
+    assertTree(p3.defaultValue()).isLiteral("\"def2\"");
   }
 
   @Test

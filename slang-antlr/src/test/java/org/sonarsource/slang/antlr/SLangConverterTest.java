@@ -44,6 +44,7 @@ import org.sonarsource.slang.api.MatchTree;
 import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.PackageDeclarationTree;
+import org.sonarsource.slang.api.ParameterTree;
 import org.sonarsource.slang.api.ParenthesizedExpressionTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.ReturnTree;
@@ -316,6 +317,17 @@ public class SLangConverterTest {
 
     FunctionDeclarationTree noNameFunction = parseFunction("fun() {}");
     assertThat(noNameFunction.name()).isNull();
+
+    FunctionDeclarationTree functionWithDefaultParam = parseFunction("fun foo(p1 = 1, p2, p3 = 1 + 3) {}");
+    Tree p1 = functionWithDefaultParam.formalParameters().get(0);
+    Tree p2 = functionWithDefaultParam.formalParameters().get(1);
+    Tree p3 = functionWithDefaultParam.formalParameters().get(2);
+    assertTree(p1).hasParameterName("p1");
+    assertTree(p2).hasParameterName("p2");
+    assertTree(p3).hasParameterName("p3");
+    assertTree(((ParameterTree) p1).defaultValue()).isLiteral("1");
+    assertTree(((ParameterTree) p2).defaultValue()).isNull();
+    assertTree(((ParameterTree) p3).defaultValue()).isBinaryExpression(Operator.PLUS);
   }
 
   @Test

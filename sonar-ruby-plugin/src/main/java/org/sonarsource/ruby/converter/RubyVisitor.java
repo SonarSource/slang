@@ -511,14 +511,12 @@ public class RubyVisitor {
       return createNativeTree(node, children);
     }
     IdentifierTree identifierTree = identifierFromSymbol(node, (RubySymbol) children.get(0));
-    ParameterTreeImpl parameterTree = new ParameterTreeImpl(metaData(node), identifierTree, null);
+
+    Tree defaultValue = null;
     if ("optarg".equals(node.type()) || "kwoptarg".equals(node.type())) {
-      List<Tree> nativeChildren = new ArrayList<>();
-      nativeChildren.add(parameterTree);
-      nativeChildren.add((Tree) children.get(1));
-      return createNativeTree(node, nativeChildren);
+      defaultValue = (Tree) children.get(1);
     }
-    return parameterTree;
+    return new ParameterTreeImpl(metaData(node), identifierTree, null, defaultValue);
   }
 
   private Tree createCaseTree(AstNode node, List<?> children) {

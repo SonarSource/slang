@@ -52,7 +52,7 @@ formalParameters
   ;
 
 formalParameter
-  :  simpleType? variableDeclaratorId
+  :  simpleType? variableDeclaratorId ('=' expression)?
   ;
 
 lastFormalParameter

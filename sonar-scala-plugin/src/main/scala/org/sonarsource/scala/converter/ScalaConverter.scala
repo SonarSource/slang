@@ -256,9 +256,7 @@ class ScalaConverter extends slang.api.ASTConverter {
       val modifiers = convert(defn.mods)
       val returnType = defn.decltpe.map(convert).orNull
       val name = convert(defn.name).asInstanceOf[slang.api.IdentifierTree]
-      val (unusualParams, params) = defn.paramss.flatten.partition{p =>
-        p.default.isDefined || p.mods.nonEmpty
-      }
+      val (unusualParams, params) = defn.paramss.flatten.partition(_.mods.nonEmpty)
       val allParams = params.map(createParameterTree).union(unusualParams.map(convert)).asJava
       val rawBody = convert(defn.body)
       val body = rawBody match {
@@ -272,7 +270,8 @@ class ScalaConverter extends slang.api.ASTConverter {
     private def createParameterTree(param: Term.Param): slang.api.Tree = {
       val identifier = convert(param.name).asInstanceOf[slang.api.IdentifierTree]
       val typ = convert(param.decltpe).orNull
-      new ParameterTreeImpl(treeMetaData(param), identifier, typ)
+      val defaultValue = convert(param.default).orNull
+      new ParameterTreeImpl(treeMetaData(param), identifier, typ, defaultValue)
     }
 
     private def createIfTree(metaData: TreeMetaData, cond: Term, thenp: Term, elsep: Term) = {
