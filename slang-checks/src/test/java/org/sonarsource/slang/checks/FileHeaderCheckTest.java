@@ -1,6 +1,6 @@
 /*
  * SonarSource SLang
- * Copyright (C) 2009-2018 SonarSource SA
+ * Copyright (C) 2018-2019 SonarSource SA
  * mailto:info AT sonarsource DOT com
  *
  * This program is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@ public class FileHeaderCheckTest {
   public void test_multiline() {
     check.headerFormat = "/*\n" +
       " * SonarSource SLang\n" +
-      " * Copyright (C) 2009-2018 SonarSource SA\n" +
+      " * Copyright (C) 1999-2001 SonarSource SA\n" +
       " * mailto:info AT sonarsource DOT com\n" +
       " */";
     Verifier.verifyNoIssue("fileheader/Multiline.slang", check);
