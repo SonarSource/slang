@@ -31,7 +31,7 @@ allprojects {
         analyzerCommonsVersion = '1.10.2.456'
         sonarqubeVersion = '7.3'
         orchestratorVersion = '3.22.0.1791'
-        sonarlintVersion = '4.0.1.2077'
+        sonarlintVersion = '4.2.0.2266'
         sonarLinksCi = 'https://travis-ci.org/SonarSource/slang'
         sonarLinksScm = 'https://github.com/SonarSource/slang'
 

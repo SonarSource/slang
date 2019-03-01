@@ -135,6 +135,27 @@ public class SonarLintTest {
       tuple("kotlin:S2068", 2, inputFile.getPath(), "BLOCKER"));
   }
 
+  @Test
+  public void test_scala() throws Exception {
+    ClientInputFile inputFile = prepareInputFile("foo.scala",
+      "object Code {\n" +
+        "  def foo_bar() = {\n" + // scala:S100 (Method name)
+        "    val password = \"blabla\"\n" +  // scala:S181 (Unused variable) scala:S2068 (Credentials should not be hard-coded)
+        "  }\n" +
+        "}",
+      false, "scala");
+
+    List<Issue> issues = new ArrayList<>();
+    sonarlintEngine.analyze(
+      new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Collections.singletonList(inputFile), new HashMap<>()),
+      issues::add, null, null);
+
+    assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
+      tuple("scala:S100", 2, inputFile.getPath(), "MINOR"),
+      tuple("scala:S1481", 3, inputFile.getPath(), "MINOR"),
+      tuple("scala:S2068", 3, inputFile.getPath(), "BLOCKER"));
+  }
+
   private ClientInputFile prepareInputFile(String relativePath, String content, final boolean isTest, String language) throws IOException {
     File file = new File(baseDir, relativePath);
     FileUtils.write(file, content, StandardCharsets.UTF_8);
