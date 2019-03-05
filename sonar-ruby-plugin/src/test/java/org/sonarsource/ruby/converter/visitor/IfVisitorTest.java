@@ -24,6 +24,7 @@ import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.ParenthesizedExpressionTree;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 
@@ -119,9 +120,50 @@ public class IfVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void ternary_statements_are_not_ifs() {
+  public void ternary_statements_are_mapped_as_if_expressions() {
     Tree ternaryStatement = rubyStatement("1 ? 2 : 3");
-    assertThat(ternaryStatement).isInstanceOf(NativeTree.class);
+    assertThat(ternaryStatement).isInstanceOf(IfTree.class);
+
+    IfTree ifTree = (IfTree) ternaryStatement;
+    assertThat(ifTree.ifKeyword().text()).isEqualTo("?");
+    assertThat(ifTree.elseKeyword().text()).isEqualTo(":");
+
+    assertTree(ifTree.condition()).isLiteral("1");
+    assertTree(ifTree.thenBranch()).isLiteral("2");
+    assertTree(ifTree.elseBranch()).isLiteral("3");
+  }
+
+  @Test
+  public void ternary_statements_are_mapped_as_if_expressions_without_space() {
+    Tree ternaryStatement = rubyStatement("1?2:3");
+    assertThat(ternaryStatement).isInstanceOf(IfTree.class);
+
+    IfTree ifTree = (IfTree) ternaryStatement;
+    assertThat(ifTree.ifKeyword().text()).isEqualTo("?");
+    assertThat(ifTree.elseKeyword().text()).isEqualTo(":");
+
+    assertTree(ifTree.condition()).isLiteral("1");
+    assertTree(ifTree.thenBranch()).isLiteral("2");
+    assertTree(ifTree.elseBranch()).isLiteral("3");
+  }
+
+  @Test
+  public void nested_ternary_statements() {
+    Tree ternaryStatement = rubyStatement("(a == b ? !a : c) ? (1 ? 2 : (bar() ? 3 : 4)) : (foo() ? 5 : 6)");
+    assertThat(ternaryStatement).isInstanceOf(IfTree.class);
+
+    IfTree ifTree = (IfTree) ternaryStatement;
+    assertThat(ifTree.ifKeyword().text()).isEqualTo("?");
+    assertThat(ifTree.ifKeyword().textRange().start().lineOffset()).isEqualTo(18);
+    assertThat(ifTree.elseKeyword().text()).isEqualTo(":");
+    assertThat(ifTree.elseKeyword().textRange().start().lineOffset()).isEqualTo(46);
+
+    Tree condition = ((ParenthesizedExpressionTree) ifTree.condition()).expression();
+    assertTree(condition).isInstanceOf(IfTree.class);
+    Tree thenBranch = ((ParenthesizedExpressionTree) ifTree.thenBranch()).expression();
+    assertTree(thenBranch).isInstanceOf(IfTree.class);
+    Tree elseBranch = ((ParenthesizedExpressionTree) ifTree.elseBranch()).expression();
+    assertTree(elseBranch).isInstanceOf(IfTree.class);
   }
 
 }

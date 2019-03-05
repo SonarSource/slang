@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.HasTextRange;
@@ -75,6 +76,14 @@ public class TreeMetaDataProvider {
     } else {
       return Optional.of(sortedTokens.get(textRangeIndex - 1));
     }
+  }
+
+  public Optional<Token> previousToken(TextRange textRange, String expectedTokenValue) {
+    return previousToken(textRange, token -> expectedTokenValue.equals(token.text()));
+  }
+
+  public Optional<Token> previousToken(TextRange textRange, Predicate<Token> expectedConditionToMatch) {
+    return previousToken(textRange).filter(expectedConditionToMatch::test);
   }
 
   public void updateTokenType(Token token, Token.Type newType) {

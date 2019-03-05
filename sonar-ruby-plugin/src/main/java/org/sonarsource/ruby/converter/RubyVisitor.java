@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
+
 import org.jruby.RubySymbol;
 import org.sonarsource.ruby.converter.impl.RubyPartialExceptionHandlingTree;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
@@ -422,7 +423,6 @@ public class RubyVisitor {
   }
 
   /**
-   *
    * @return if this is the first time we see this identifier in current scope we create {@link org.sonarsource.slang.api.VariableDeclarationTree}
    * otherwise {@link AssignmentExpressionTree} is created
    */
@@ -776,8 +776,18 @@ public class RubyVisitor {
 
   private Tree createIfTree(AstNode node, List<?> children) {
     Optional<Token> mainKeyword = lookForTokenByAttribute(node, KEYWORD_ATTRIBUTE);
-    if (!mainKeyword.isPresent() || mainKeyword.get().text().equals("unless")) {
-      // Ternary operator and "unless" are not considered as "IfTree" for now
+    if (!mainKeyword.isPresent()) {
+      // "ternary"
+      Tree condition = (Tree) children.get(0);
+      Tree thenBranch = (Tree) children.get(1);
+      Tree elseBranch = (Tree) children.get(2);
+
+      Token ifToken = previousToken(thenBranch.textRange(), "?");
+      Token elseToken = previousToken(elseBranch.textRange(), ":");
+
+      return new IfTreeImpl(metaData(node), condition, thenBranch, elseBranch, ifToken, elseToken);
+    } else if (mainKeyword.get().text().equals("unless")) {
+      // "unless" are not considered as "IfTree" for now
       return createNativeTree(node, children);
     }
 
@@ -787,6 +797,13 @@ public class RubyVisitor {
     Tree elseBranch = getElseBranch(node, elseKeyword, (Tree) children.get(2));
 
     return new IfTreeImpl(metaData(node), (Tree) children.get(0), thenBranch, elseBranch, mainKeyword.get(), elseKeyword);
+  }
+
+  private Token previousToken(TextRange textRange, String expectedTokenValue) {
+    return metaDataProvider.previousToken(textRange, expectedTokenValue)
+      .orElseThrow(() -> new IllegalStateException(
+        String.format("Unable to locate token with value '%s' before position [Line:%d,Offset:%d].",
+          expectedTokenValue, textRange.start().line(), textRange.start().lineOffset())));
   }
 
   private Tree getThenBranch(AstNode node, Token mainKeyword, @Nullable Token elseKeyword, @Nullable Tree thenBranch) {

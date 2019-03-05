@@ -5,7 +5,7 @@ else
   doOneMoreThing()
 end
 
-b = a > 12 ? 4 : 4;  # Noncompliant FN!!
+b = a > 12 ? 4 : 4;  # Noncompliant
 
 case i  # Noncompliant
   when 1

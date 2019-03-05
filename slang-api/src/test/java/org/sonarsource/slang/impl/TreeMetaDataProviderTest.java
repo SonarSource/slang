@@ -133,10 +133,25 @@ public class TreeMetaDataProviderTest {
     Token token1 = new TokenImpl(range(1, 1, 1, 3), "ab", Token.Type.KEYWORD);
     Token token2 = new TokenImpl(range(1, 4, 1, 6), "cd", Token.Type.KEYWORD);
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2));
-    assertThat(provider.previousToken(range(1, 0, 1, 1)).isPresent()).isFalse();
-    assertThat(provider.previousToken(range(1, 1, 1, 3)).isPresent()).isFalse();
+
+    assertThat(provider.previousToken(range(1, 0, 1, 1))).isNotPresent();
+    assertThat(provider.previousToken(range(1, 1, 1, 3))).isNotPresent();
     assertThat(provider.previousToken(range(1, 2, 1, 20)).get().text()).isEqualTo("ab");
-    assertThat(provider.previousToken(range(1, 5, 1, 20)).isPresent()).isFalse();
+    assertThat(provider.previousToken(range(1, 5, 1, 20))).isNotPresent();
+  }
+
+  @Test
+  public void previous_token_with_expected_value() {
+    Token token1 = new TokenImpl(range(1, 1, 1, 3), "ab", Token.Type.KEYWORD);
+    Token token2 = new TokenImpl(range(1, 4, 1, 6), "cd", Token.Type.KEYWORD);
+    TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2));
+
+    assertThat(provider.previousToken(range(1, 2, 1, 20), "ef")).isNotPresent();
+    assertThat(provider.previousToken(range(1, 2, 1, 20), "ab")).isPresent();
+    assertThat(provider.previousToken(range(1, 2, 1, 20), "AB")).isNotPresent();
+
+    assertThat(provider.previousToken(range(1, 2, 1, 20), token -> true)).isPresent();
+    assertThat(provider.previousToken(range(1, 2, 1, 20), token -> false)).isNotPresent();
   }
 
   @Test
