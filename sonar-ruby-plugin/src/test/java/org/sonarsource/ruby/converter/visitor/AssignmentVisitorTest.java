@@ -112,6 +112,41 @@ public class AssignmentVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
+  public void multiple_declaration_or_assignment() throws Exception {
+    Tree tree = rubyStatement("a, b = 0, 1\na, b = 0, 1");
+    assertThat(tree.children()).hasSize(2);
+    assertTree(tree.children().get(0)).isInstanceOf(NativeTree.class);
+    assertTree(tree.children().get(1)).isInstanceOf(NativeTree.class);
+
+    Tree twoDeclaration = tree.children().get(0);
+    assertThat(twoDeclaration.children()).hasSize(2);
+
+    assertTree(twoDeclaration.children().get(0)).isInstanceOf(VariableDeclarationTree.class);
+    VariableDeclarationTree declarationTree = (VariableDeclarationTree) twoDeclaration.children().get(0);
+    assertTree(declarationTree.identifier()).isIdentifier("a");
+    assertTree(declarationTree.initializer()).isLiteral("0");
+
+    assertTree(twoDeclaration.children().get(1)).isInstanceOf(VariableDeclarationTree.class);
+    assertThat(twoDeclaration.children()).hasSize(2);
+    VariableDeclarationTree declarationTree2 = (VariableDeclarationTree) twoDeclaration.children().get(1);
+    assertTree(declarationTree2.identifier()).isIdentifier("b");
+    assertTree(declarationTree2.initializer()).isLiteral("1");
+
+    Tree twoAssignment = tree.children().get(1);
+    assertThat(twoAssignment.children()).hasSize(2);
+
+    assertTree(twoAssignment.children().get(0)).isInstanceOf(AssignmentExpressionTree.class);
+    AssignmentExpressionTree assignmentTree = (AssignmentExpressionTree) twoAssignment.children().get(0);
+    assertTree(assignmentTree.leftHandSide()).isIdentifier("a");
+    assertTree(assignmentTree.statementOrExpression()).isLiteral("0");
+
+    assertTree(twoAssignment.children().get(1)).isInstanceOf(AssignmentExpressionTree.class);
+    AssignmentExpressionTree assignmentTree2 = (AssignmentExpressionTree) twoAssignment.children().get(1);
+    assertTree(assignmentTree2.leftHandSide()).isIdentifier("b");
+    assertTree(assignmentTree2.statementOrExpression()).isLiteral("1");
+  }
+
+  @Test
   public void compound_are_natives() throws Exception {
     assertThat(((NativeTree) rubyStatement("a -= 1")).nativeKind()).isEqualTo(nativeKind("op_asgn"));
     assertThat(((NativeTree) rubyStatement("a *= 1")).nativeKind()).isEqualTo(nativeKind("op_asgn"));

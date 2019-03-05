@@ -417,21 +417,25 @@ public class RubyVisitor {
     return createNativeTree(node, children);
   }
 
+  private Tree assignmentOrDeclaration(AstNode node, IdentifierTree identifier, Tree rhs) {
+    return assignmentOrDeclaration(metaData(node), identifier, rhs);
+  }
+
   /**
    *
    * @return if this is the first time we see this identifier in current scope we create {@link org.sonarsource.slang.api.VariableDeclarationTree}
    * otherwise {@link AssignmentExpressionTree} is created
    */
-  private Tree assignmentOrDeclaration(AstNode node, IdentifierTree identifier, Tree rhs) {
+  private Tree assignmentOrDeclaration(TreeMetaData metaData, IdentifierTree identifier, Tree rhs) {
     if (isLocalVariable(identifier) && localVariables.peek().add(identifier.name())) {
       return new VariableDeclarationTreeImpl(
-        metaData(node),
+        metaData,
         identifier,
         null,
         rhs, false);
     } else {
       return new AssignmentExpressionTreeImpl(
-        metaData(node),
+        metaData,
         AssignmentExpressionTree.Operator.EQUAL,
         identifier,
         rhs);
@@ -465,11 +469,38 @@ public class RubyVisitor {
   }
 
   private Tree createFromMasgn(AstNode node, List<?> children) {
-    return new AssignmentExpressionTreeImpl(
-      metaData(node),
-      AssignmentExpressionTree.Operator.EQUAL,
-      (Tree) children.get(0),
-      (Tree) children.get(1));
+    List<IdentifierTree> lhsChild = getChildIfArray((Tree) children.get(0))
+        .stream()
+        .filter(child -> child instanceof IdentifierTree)
+        .map(IdentifierTree.class::cast)
+        .collect(Collectors.toList());
+
+    List<Tree> rhsChild = getChildIfArray((Tree) children.get(1));
+
+    if(lhsChild.isEmpty() || rhsChild.isEmpty() || lhsChild.size() != rhsChild.size()) {
+      return new AssignmentExpressionTreeImpl(
+          metaData(node),
+          AssignmentExpressionTree.Operator.EQUAL,
+          (Tree) children.get(0),
+          (Tree) children.get(1));
+    } else {
+      List<Tree> assignments = new ArrayList<>();
+      for (int i = 0; i < lhsChild.size(); i++) {
+        IdentifierTree id = lhsChild.get(i);
+        assignments.add(assignmentOrDeclaration(id.metaData(), id, rhsChild.get(i)));
+      }
+      return createNativeTree(node, assignments);
+    }
+  }
+
+  private static List<Tree> getChildIfArray(Tree node) {
+    if(node instanceof NativeTree) {
+      NativeTree nativeNode = (NativeTree) node;
+      if(nativeNode.nativeKind().equals(new RubyNativeKind("array"))) {
+        return nativeNode.children();
+      }
+    }
+    return Collections.emptyList();
   }
 
   private Tree createFromVar(AstNode node, List<?> children) {
