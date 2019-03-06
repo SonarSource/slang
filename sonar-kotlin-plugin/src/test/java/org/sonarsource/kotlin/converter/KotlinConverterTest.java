@@ -525,10 +525,15 @@ public class KotlinConverterTest {
     assertTree(getCondition(cases, 0)).isNotEquivalentTo(getCondition(cases, 4));
     assertTree(getCondition(cases, 1)).isEquivalentTo(getCondition(cases, 5));
 
-    NativeTree emptyWhen = (NativeTree) kotlinStatement("when {}");
-    assertTree(emptyWhen).hasChildren(0);
-    assertTree(emptyWhen).isEquivalentTo(kotlinStatement("when {}"));
-    assertTree(emptyWhen).isNotEquivalentTo(kotlinStatement("when (x) {}"));
+    Tree emptyWhen = kotlinStatement("when {}");
+    assertTree(emptyWhen).isInstanceOf(MatchTree.class);
+    MatchTree emptyMatchTree = (MatchTree) emptyWhen;
+    assertTree(emptyMatchTree).hasChildren(0);
+    assertTree(emptyMatchTree.expression()).isNull();
+    assertThat(emptyMatchTree.cases()).isEmpty();
+    assertTree(emptyMatchTree).isEquivalentTo(kotlinStatement("when {}"));
+    assertTree(emptyMatchTree).isNotEquivalentTo(kotlinStatement("when (x) {}"));
+    assertTree(emptyMatchTree).isNotEquivalentTo(kotlinStatement("when {1 -> true}"));
   }
 
   @Test

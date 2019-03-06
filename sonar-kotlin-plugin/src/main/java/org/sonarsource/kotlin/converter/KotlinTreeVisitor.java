@@ -491,9 +491,6 @@ class KotlinTreeVisitor {
   private Tree createMatchTree(TreeMetaData metaData, KtWhenExpression element) {
     Tree subjectExpression = createElement(element.getSubjectExpression());
     List<Tree> whenExpressions = list(element.getEntries().stream());
-    if (subjectExpression == null) {
-      return createNativeTree(metaData, new KotlinNativeKind(element), whenExpressions);
-    }
     return new MatchTreeImpl(metaData,
       subjectExpression,
       whenExpressions.stream()

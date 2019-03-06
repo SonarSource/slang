@@ -1,4 +1,7 @@
 {
+'kotlin-project:sources/kotlin/corda/client/jfx/src/main/kotlin/net/corda/client/jfx/utils/AggregatedList.kt':[
+70,
+],
 'kotlin-project:sources/kotlin/corda/client/jfx/src/main/kotlin/net/corda/client/jfx/utils/ConcatenatedList.kt':[
 64,
 123,
@@ -83,6 +86,9 @@
 'kotlin-project:sources/kotlin/intellij-rust/src/main/kotlin/org/rust/ide/annotator/RsCargoCheckAnnotator.kt':[
 144,
 ],
+'kotlin-project:sources/kotlin/intellij-rust/src/main/kotlin/org/rust/ide/inspections/import/AutoImportFix.kt':[
+60,
+],
 'kotlin-project:sources/kotlin/intellij-rust/src/main/kotlin/org/rust/ide/presentation/Ty.kt':[
 21,
 ],
@@ -118,6 +124,9 @@
 ],
 'kotlin-project:sources/kotlin/intellij-rust/src/main/kotlin/org/rust/lang/core/types/infer/Fulfillment.kt':[
 171,
+],
+'kotlin-project:sources/kotlin/intellij-rust/src/main/kotlin/org/rust/lang/core/types/infer/TypeInference.kt':[
+305,
 ],
 'kotlin-project:sources/kotlin/intellij-rust/src/main/kotlin/org/rust/lang/refactoring/extractFunction/RsExtractFunctionConfig.kt':[
 147,
@@ -222,6 +231,9 @@
 'kotlin-project:sources/kotlin/kotlin/compiler/backend/src/org/jetbrains/kotlin/codegen/optimization/boxing/StackPeepholeOptimizationsTransformer.kt':[
 33,
 ],
+'kotlin-project:sources/kotlin/kotlin/compiler/backend/src/org/jetbrains/kotlin/codegen/optimization/common/MethodAnalyzer.kt':[
+96,
+],
 'kotlin-project:sources/kotlin/kotlin/compiler/backend/src/org/jetbrains/kotlin/codegen/optimization/nullCheck/RedundantNullCheckMethodTransformer.kt':[
 155,
 ],
@@ -242,6 +254,9 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/arguments/CommonCompilerArguments.kt':[
 188,
+],
+'kotlin-project:sources/kotlin/kotlin/compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/arguments/Jsr305Parser.kt':[
+25,
 ],
 'kotlin-project:sources/kotlin/kotlin/compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/arguments/parseCommandLineArguments.kt':[
 66,
@@ -280,6 +295,7 @@
 78,
 ],
 'kotlin-project:sources/kotlin/kotlin/compiler/daemon/daemon-client/src/org/jetbrains/kotlin/daemon/client/KotlinCompilerClient.kt':[
+234,
 312,
 ],
 'kotlin-project:sources/kotlin/kotlin/compiler/daemon/src/org/jetbrains/kotlin/daemon/CompileServiceImpl.kt':[
@@ -602,6 +618,9 @@
 'kotlin-project:sources/kotlin/kotlin/core/metadata/src/org/jetbrains/kotlin/metadata/deserialization/VersionRequirement.kt':[
 84,
 ],
+'kotlin-project:sources/kotlin/kotlin/core/reflection.jvm/src/kotlin/reflect/jvm/internal/AnnotationConstructorCaller.kt':[
+104,
+],
 'kotlin-project:sources/kotlin/kotlin/core/reflection.jvm/src/kotlin/reflect/jvm/internal/KPropertyImpl.kt':[
 197,
 ],
@@ -639,6 +658,7 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/ide-common/src/org/jetbrains/kotlin/idea/util/psi/patternMatching/KotlinPsiUnifier.kt':[
 172,
+297,
 330,
 510,
 587,
@@ -675,10 +695,14 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/idea-analysis/src/org/jetbrains/kotlin/idea/findUsages/UsageTypeUtils.kt':[
 35,
+57,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/idea-analysis/src/org/jetbrains/kotlin/idea/highlighter/KotlinPsiChecker.kt':[
 202,
 271,
+],
+'kotlin-project:sources/kotlin/kotlin/idea/idea-analysis/src/org/jetbrains/kotlin/idea/highlighter/KotlinSuppressableWarningProblemGroup.kt':[
+53,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/idea-analysis/src/org/jetbrains/kotlin/idea/highlighter/TypeKindHighlightingVisitor.kt':[
 32,
@@ -768,6 +792,7 @@
 91,
 200,
 327,
+329,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/idea-completion/src/org/jetbrains/kotlin/idea/completion/KeywordValues.kt':[
 49,
@@ -831,6 +856,7 @@
 40,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/idea-core/src/org/jetbrains/kotlin/idea/core/ShortenReferences.kt':[
+77,
 135,
 438,
 ],
@@ -911,6 +937,9 @@
 'kotlin-project:sources/kotlin/kotlin/idea/idea-jvm/src/org/jetbrains/kotlin/idea/i18n/inspections/KotlinInvalidBundleOrPropertyInspection.kt':[
 40,
 ],
+'kotlin-project:sources/kotlin/kotlin/idea/idea-jvm/src/org/jetbrains/kotlin/idea/injection/KotlinLanguageInjector.kt':[
+85,
+],
 'kotlin-project:sources/kotlin/kotlin/idea/idea-jvm/src/org/jetbrains/kotlin/idea/internal/KotlinBytecodeToolWindow.kt':[
 320,
 ],
@@ -938,6 +967,7 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/actions/generate/KotlinGenerateEqualsAndHashcodeAction.kt':[
 162,
+222,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/actions/internal/SearchNotPropertyCandidatesAction.kt':[
 69,
@@ -1102,6 +1132,7 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/ConvertLambdaToReferenceIntention.kt':[
 61,
+219,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/ConvertPrimaryConstructorToSecondaryIntention.kt':[
 65,
@@ -1150,6 +1181,9 @@
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/RemoveExplicitTypeIntention.kt':[
 42,
 ],
+'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/SimplifyBooleanWithConstantsIntention.kt':[
+79,
+],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/SpecifyTypeExplicitlyIntention.kt':[
 86,
 ],
@@ -1170,6 +1204,9 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/loopToCallChain/matchAndConvert.kt':[
 62,
+],
+'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/loopToCallChain/result/AddToCollectionTransformation.kt':[
+134,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/intentions/loopToCallChain/result/FindTransformationMatcher.kt':[
 223,
@@ -1351,6 +1388,7 @@
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/move/moveUtils.kt':[
 121,
 366,
+538,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/pullUp/JavaToKotlinPreconversionPullUpHelper.kt':[
 84,
@@ -1379,6 +1417,7 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/refactoring/safeDelete/KotlinSafeDeleteProcessor.kt':[
 80,
+140,
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/src/org/jetbrains/kotlin/idea/roots/KotlinNonJvmSourceRootConverterProvider.kt':[
 134,
@@ -1395,6 +1434,9 @@
 87,
 113,
 ],
+'kotlin-project:sources/kotlin/kotlin/idea/tests/org/jetbrains/kotlin/idea/codeInsight/AbstractInspectionTest.kt':[
+60,
+],
 'kotlin-project:sources/kotlin/kotlin/idea/tests/org/jetbrains/kotlin/idea/debugger/KotlinDebuggerTestBase.kt':[
 290,
 ],
@@ -1407,6 +1449,9 @@
 'kotlin-project:sources/kotlin/kotlin/idea/tests/org/jetbrains/kotlin/idea/intentions/AbstractIntentionTest.kt':[
 151,
 ],
+'kotlin-project:sources/kotlin/kotlin/idea/tests/org/jetbrains/kotlin/idea/intentions/IntentionDescriptionTest.kt':[
+33,
+],
 'kotlin-project:sources/kotlin/kotlin/idea/tests/org/jetbrains/kotlin/idea/quickfix/AbstractQuickFixMultiFileTest.kt':[
 122,
 196,
@@ -1418,6 +1463,9 @@
 ],
 'kotlin-project:sources/kotlin/kotlin/idea/tests/org/jetbrains/kotlin/idea/run/RunConfigurationTest.kt':[
 57,
+],
+'kotlin-project:sources/kotlin/kotlin/idea/tests/org/jetbrains/kotlin/idea/slicer/AbstractSlicerTest.kt':[
+55,
 ],
 'kotlin-project:sources/kotlin/kotlin/j2k/src/org/jetbrains/kotlin/j2k/AnnotationConverter.kt':[
 43,
@@ -1468,6 +1516,7 @@
 153,
 ],
 'kotlin-project:sources/kotlin/kotlin/jps-plugin/src/org/jetbrains/kotlin/jps/build/KotlinBuilder.kt':[
+206,
 305,
 ],
 'kotlin-project:sources/kotlin/kotlin/js/js.dce/src/org/jetbrains/kotlin/js/dce/Analyzer.kt':[
@@ -1674,6 +1723,9 @@
 58,
 313,
 ],
+'kotlin-project:sources/kotlin/ktor/ktor-features/ktor-auth/test/io/ktor/tests/auth/OAuth2.kt':[
+422,
+],
 'kotlin-project:sources/kotlin/ktor/ktor-features/ktor-locations/src/io/ktor/locations/Locations.kt':[
 75,
 ],
@@ -1739,6 +1791,9 @@
 278,
 400,
 ],
+'kotlin-project:sources/kotlin/ktor/ktor-server/ktor-server-host-common/src/io/ktor/server/engine/BaseApplicationResponse.kt':[
+42,
+],
 'kotlin-project:sources/kotlin/ktor/ktor-server/ktor-server-host-common/src/io/ktor/server/engine/CommandLine.kt':[
 14,
 ],
@@ -1756,6 +1811,7 @@
 384,
 445,
 531,
+887,
 1131,
 1242,
 1453,
