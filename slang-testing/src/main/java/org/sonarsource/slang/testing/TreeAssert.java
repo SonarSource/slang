@@ -19,6 +19,12 @@
  */
 package org.sonarsource.slang.testing;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import org.assertj.core.api.AbstractAssert;
+import org.assertj.core.api.Assertions;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.BlockTree;
@@ -27,17 +33,14 @@ import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.ParameterTree;
 import org.sonarsource.slang.api.StringLiteralTree;
+import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.UnaryExpressionTree;
 import org.sonarsource.slang.utils.SyntacticEquivalence;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import org.assertj.core.api.AbstractAssert;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.visitors.TreePrinter.tree2string;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
 
@@ -52,6 +55,13 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
     if (!Objects.equals(actualIdentifier.name(), expectedName)) {
       failWithMessage("Expected identifier's name to be <%s> but was <%s>", expectedName, actualIdentifier.name());
     }
+    return this;
+  }
+
+  public TreeAssert hasTokens(String... tokens) {
+    isNotNull();
+    List<String> expected = actual.metaData().tokens().stream().map(Token::text).collect(Collectors.toList());
+    Assertions.assertThat(Arrays.asList(tokens)).isEqualTo(expected);
     return this;
   }
 

@@ -19,11 +19,13 @@
  */
 package org.sonarsource.scala.converter;
 
+import java.util.List;
 import org.junit.Test;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.ParameterTree;
+import org.sonarsource.slang.api.Tree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
@@ -64,7 +66,10 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
 
   @Test
   public void function_with_multiple_parameter_lists() {
-    assertThat(scalaStatement("def foo(p1: String)(p2: Int) = { println(param) }")).isInstanceOf(NativeTree.class);
+    FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement("def foo(p1: String)(p2: Int) = { println(param) }");
+    assertThat(func.formalParameters()).hasSize(2);
+    assertTree(func.formalParameters().get(0)).hasTokens("p1", ":", "String");
+    assertTree(func.formalParameters().get(1)).hasTokens("p2", ":", "Int");
   }
 
   @Test
@@ -112,7 +117,9 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
         "def foo(implicit p1: String) = {p1}");
     assertThat(func.formalParameters()).hasSize(1);
-    assertTree(func.formalParameters().get(0)).isInstanceOf(NativeTree.class);
+    assertTree(func.formalParameters().get(0)).isInstanceOf(ParameterTree.class);
+    assertThat(((ParameterTree)func.formalParameters().get(0)).modifiers()).hasSize(1);
+    assertThat(((ParameterTree)func.formalParameters().get(0)).modifiers().get(0)).isInstanceOf(NativeTree.class);
   }
 
   @Test
@@ -120,7 +127,43 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
       "def foo(@transient p1: String) = {p1}");
     assertThat(func.formalParameters()).hasSize(1);
-    assertTree(func.formalParameters().get(0)).isInstanceOf(NativeTree.class);
+    assertTree(func.formalParameters().get(0)).isInstanceOf(ParameterTree.class);
+    assertThat(((ParameterTree)func.formalParameters().get(0)).modifiers()).hasSize(1);
+    assertThat(((ParameterTree)func.formalParameters().get(0)).modifiers().get(0)).isInstanceOf(NativeTree.class);
+  }
+
+  @Test
+  public void function_with_annotated_and_implicit_parameter() {
+    FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
+        "def foo(implicit @transient p1: String) = {p1}");
+    assertThat(func.formalParameters()).hasSize(1);
+    Tree parameterTree = func.formalParameters().get(0);
+    assertTree(parameterTree).isInstanceOf(ParameterTree.class);
+    List<Tree> modifiers = ((ParameterTree) parameterTree).modifiers();
+    assertThat(modifiers).hasSize(2);
+    assertTree(modifiers.get(0)).hasTokens("@", "transient");
+    assertTree(modifiers.get(1)).hasTokens("implicit");
+  }
+
+  @Test
+  public void function_with_annotated_and_implicit_parameters() {
+    FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
+        "def foo(p1 : Int)(implicit @transient p2 : Char, @transient p3: String) = {p1}");
+    assertThat(func.formalParameters()).hasSize(3);
+    ParameterTree p1 = (ParameterTree)func.formalParameters().get(0);
+    ParameterTree p2 = (ParameterTree)func.formalParameters().get(1);
+    ParameterTree p3 = (ParameterTree)func.formalParameters().get(2);
+    assertTree(p1.identifier()).isIdentifier("p1");
+    assertThat(p1.modifiers()).isEmpty();
+    assertTree(p2.identifier()).isIdentifier("p2");
+    assertThat(p2.modifiers()).hasSize(2);
+    // Note: Scalameta add "implicit" modifier after annotations and not before, but currently it does not worth to be fixed
+    assertTree(p2.modifiers().get(0)).hasTokens("@", "transient");
+    assertTree(p2.modifiers().get(1)).hasTokens("implicit");
+    assertTree(p3.identifier()).isIdentifier("p3");
+    assertThat(p3.modifiers()).hasSize(2);
+    assertTree(p3.modifiers().get(0)).hasTokens("@", "transient");
+    assertTree(p3.modifiers().get(1)).hasTokens("implicit");
   }
 
   @Test

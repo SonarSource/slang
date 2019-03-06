@@ -52,7 +52,8 @@ public class UnusedFunctionParameterCheck implements SlangCheck {
       List<ParameterTree> unusedParameters =
           functionDeclarationTree.formalParameters().stream()
             .filter(ParameterTree.class::isInstance)
-            .map(ParameterTree.class::cast).filter(parameterTree -> functionDeclarationTree.descendants()
+            .map(ParameterTree.class::cast)
+              .filter(parameterTree -> parameterTree.modifiers().isEmpty() && functionDeclarationTree.descendants()
               .noneMatch(tree -> !tree.equals(parameterTree.identifier()) && areEquivalent(tree, parameterTree.identifier())))
             .collect(Collectors.toList());
 

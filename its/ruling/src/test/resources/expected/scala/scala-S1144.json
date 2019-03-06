@@ -4,10 +4,14 @@
 ],
 'scala-project:sources/scala/kafka-manager/app/kafka/manager/actor/cluster/ClusterManagerActor.scala':[
 356,
+608,
 ],
 'scala-project:sources/scala/kafka-manager/app/kafka/manager/logkafka/LogkafkaStateActor.scala':[
 190,
 192,
+],
+'scala-project:sources/scala/kafka-manager/test/kafka/manager/TestLogkafkaViewCacheActor.scala':[
+70,
 ],
 'scala-project:sources/scala/linkerd/telemetry/prometheus/src/main/scala/io/buoyant/telemetry/prometheus/PrometheusTelemeter.scala':[
 42,

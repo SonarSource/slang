@@ -328,6 +328,14 @@ public class SLangConverterTest {
     assertTree(((ParameterTree) p1).defaultValue()).isLiteral("1");
     assertTree(((ParameterTree) p2).defaultValue()).isNull();
     assertTree(((ParameterTree) p3).defaultValue()).isBinaryExpression(Operator.PLUS);
+
+    FunctionDeclarationTree functionWithModifier = parseFunction("fun foo(p1, native [] {} p2) {}");
+    assertTree(functionWithModifier).hasParameterNames("p1", "p2");
+    Tree p1Mod = functionWithModifier.formalParameters().get(0);
+    Tree p2Mod = functionWithModifier.formalParameters().get(1);
+    assertThat(((ParameterTree) p1Mod).modifiers()).isEmpty();
+    assertThat(((ParameterTree) p2Mod).modifiers()).hasSize(1);
+    assertThat(((ParameterTree) p2Mod).modifiers().get(0)).isInstanceOf(NativeTree.class);
   }
 
   @Test

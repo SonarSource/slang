@@ -255,6 +255,20 @@ public class ASTConverterValidationTest {
   }
 
   @Test
+  public void allowed_misplaced_token() {
+    Token misplacedToken = token(1, 0, "implicit");
+    Tree misplacedTree = new NativeTreeImpl(metaData(misplacedToken), NATIVE_KIND, Collections.emptyList());
+
+    Token identifierToken = token(1, 9, "value");
+    IdentifierTreeImpl identifierTree = new IdentifierTreeImpl(metaData(identifierToken), "value");
+
+    TreeMetaData blockMetaData = metaData(identifierTree.textRange(), misplacedToken, identifierToken);
+    BlockTreeImpl block = new BlockTreeImpl(blockMetaData, Arrays.asList(misplacedTree, identifierTree));
+
+    assertValidationErrors("implicit value", block).isEmpty();
+  }
+
+  @Test
   public void child_range_or_token_outside_parent_range() {
     Token ifToken = keyword(1, 0, "if");
     Token identifierToken = token(1, 3, "value");
@@ -264,6 +278,19 @@ public class ASTConverterValidationTest {
     assertValidationErrors("if", block).containsExactly(
         "BlockTreeImpl contains a child IdentifierTreeImpl outside its range, parentRange: TextRange[1, 0, 1, 2] childRange: TextRange[1, 3, 1, 8] (line: 1, column: 4)",
         "IdentifierTreeImpl contains a token missing in its parent BlockTreeImpl, token: 'value' (line: 1, column: 4)");
+  }
+
+  @Test
+  public void several_children_outside_parent_range() {
+    Token ifToken = keyword(1, 0, "if");
+    Token annotationToken = token(1, 3, "@transient");
+    Token identifierToken = token(1, 14, "value");
+    IdentifierTreeImpl identifier = new IdentifierTreeImpl(metaData(annotationToken, identifierToken), "value");
+    BlockTreeImpl block = new BlockTreeImpl(metaData(ifToken.textRange(), ifToken, annotationToken, identifierToken), Collections.singletonList(identifier));
+
+    assertValidationErrors("if @transient value", block).containsExactly(
+      "BlockTreeImpl contains a child IdentifierTreeImpl outside its range, parentRange: TextRange[1, 0, 1, 2] childRange: TextRange[1, 3, 1, 19] (line: 1, column: 4)",
+      "BlockTreeImpl contains a token outside its range range: TextRange[1, 0, 1, 2] tokenRange: TextRange[1, 3, 1, 13] token: '@transient' (line: 1, column: 4)");
   }
 
   @Test
@@ -371,10 +398,6 @@ public class ASTConverterValidationTest {
 
   public static Token token(int line, int lineOffset, String text) {
     return new TokenImpl(range(line, lineOffset, text), text, Token.Type.OTHER);
-  }
-
-  public static Token token(int line, int lineOffset, String text, Token.Type type) {
-    return new TokenImpl(range(line, lineOffset, text), text, type);
   }
 
   private static TextRange range(int line, int lineOffset, String text) {

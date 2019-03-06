@@ -19,6 +19,7 @@
  */
 package org.sonarsource.slang.impl;
 
+import java.util.Collections;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeKind;
@@ -78,6 +79,38 @@ public class ParameterTreeImplTest {
     assertThat(areEquivalent(parameterTreeXDefault1, parameterTreeXDefault2)).isFalse();
     assertThat(areEquivalent(parameterTreeXDefault1, parameterTreeXDefaultNative)).isFalse();
     assertThat(areEquivalent(parameterTreeXDefault1, parameterTreeY)).isFalse();
+  }
+
+  @Test
+  public void test_modifiers() {
+    TreeMetaData meta = null;
+    IdentifierTree identifierTreeX = new IdentifierTreeImpl(meta, "x");
+    IdentifierTree identifierTreeY = new IdentifierTreeImpl(meta, "y");
+    Tree publicModifier = new ModifierTreeImpl(meta, ModifierTree.Kind.PUBLIC);
+
+    ParameterTreeImpl parameterTreeXPublic = new ParameterTreeImpl(meta, identifierTreeX, null, null,
+        Collections.singletonList(publicModifier));
+    ParameterTreeImpl parameterTreeXPublicCopy = new ParameterTreeImpl(meta, new IdentifierTreeImpl(meta, "x"),
+        null, null, Collections.singletonList(new ModifierTreeImpl(meta, ModifierTree.Kind.PUBLIC)));
+    ParameterTreeImpl parameterTreeXPrivate = new ParameterTreeImpl(meta, identifierTreeX,
+        null, null, Collections.singletonList(new ModifierTreeImpl(meta, ModifierTree.Kind.PRIVATE)));
+    ParameterTreeImpl parameterTreeXNative = new ParameterTreeImpl(meta, identifierTreeX, null, null,
+        Collections.singletonList(new NativeTreeImpl(meta, new TypeNativeKind(), null)));
+    ParameterTreeImpl parameterTreeNoMod = new ParameterTreeImpl(meta, identifierTreeY, null);
+
+
+    assertThat(parameterTreeXPublic.children()).hasSize(2);
+    assertThat(parameterTreeXPrivate.children()).hasSize(2);
+    assertThat(parameterTreeXNative.children()).hasSize(2);
+    assertThat(parameterTreeNoMod.children()).hasSize(1);
+    assertThat(parameterTreeXPublic.modifiers()).hasSize(1);
+    assertThat(parameterTreeXPublic.modifiers().get(0)).isEqualTo(publicModifier);
+    assertThat(parameterTreeNoMod.modifiers()).isEmpty();
+
+    assertThat(areEquivalent(parameterTreeXPublic, parameterTreeXPublicCopy)).isTrue();
+    assertThat(areEquivalent(parameterTreeXPublic, parameterTreeXPrivate)).isFalse();
+    assertThat(areEquivalent(parameterTreeXPublic, parameterTreeXNative)).isFalse();
+    assertThat(areEquivalent(parameterTreeXPublic, parameterTreeNoMod)).isFalse();
   }
 
 }

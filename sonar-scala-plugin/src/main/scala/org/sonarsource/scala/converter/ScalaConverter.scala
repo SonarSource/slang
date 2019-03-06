@@ -24,7 +24,7 @@ import java.util.Collections.{emptyList, singletonList}
 
 import org.sonarsource.slang
 import org.sonarsource.slang.api
-import org.sonarsource.slang.api.{BinaryExpressionTree, IdentifierTree, TextRange, Token, TreeMetaData, UnaryExpressionTree, CatchTree}
+import org.sonarsource.slang.api.{BinaryExpressionTree, CatchTree, IdentifierTree, TextRange, Token, TreeMetaData, UnaryExpressionTree}
 import org.sonarsource.slang.api.LoopTree.LoopKind
 import org.sonarsource.slang.impl._
 
@@ -84,6 +84,10 @@ class ScalaConverter extends slang.api.ASTConverter {
   private class TreeConversion(metaDataProvider: TreeMetaDataProvider) {
 
     def convert(metaTree: scala.meta.Tree): slang.api.Tree = {
+      metaTree match {
+        case implicitTree: Mod.Implicit => return convertModImplicit(implicitTree)
+        case _ =>
+      }
       if (metaTree.pos.start == metaTree.pos.end && metaTree.isNot[scala.meta.Source]) {
         return null
       }
@@ -165,6 +169,20 @@ class ScalaConverter extends slang.api.ASTConverter {
       }
     }
 
+    def convertModImplicit(metaTree: Mod.Implicit): api.Tree = {
+      // Implicit modifier position is broken in Scalameta, we need to retrieve
+      // "implicit" token ourselves (https://github.com/scalameta/scalameta/issues/1132)
+      val metaData = treeMetaData(metaTree.parent.get)
+      var previousToken : java.util.Optional[Token] = metaDataProvider.previousToken(metaData.textRange)
+      while (previousToken.isPresent && !previousToken.get.text.equals("implicit")) {
+        previousToken = metaDataProvider.previousToken(previousToken.get.textRange)
+      }
+      if (!previousToken.isPresent) {
+        return null
+      }
+      new NativeTreeImpl(metaDataProvider.metaData(previousToken.get.textRange), ScalaImplicitKind, List().asJava)
+    }
+
     private def createReturnTree(metaData: TreeMetaData, expr: Term) = {
       val convertedExpr = convert(expr)
       val end = if (convertedExpr == null) metaData.textRange.end else start(convertedExpr)
@@ -240,24 +258,18 @@ class ScalaConverter extends slang.api.ASTConverter {
     }
 
     private def convert(trees: scala.List[scala.meta.Tree]): java.util.List[slang.api.Tree] = {
-      trees.filter(t => t.pos.start != t.pos.end)
-        .map(t => convert(t))
-        .asJava
+      trees.map(convert).filter(_ != null).asJava
     }
 
     private def convert(optionalTree: Option[scala.meta.Tree]): Option[slang.api.Tree] = {
-      optionalTree.map(t => convert(t))
+      optionalTree.map(convert)
     }
 
     private def createFunctionDeclarationTree(metaData: TreeMetaData, defn: Defn.Def): slang.api.Tree = {
-      if (defn.paramss.size > 1) {
-        return createNativeTree(metaData, defn)
-      }
       val modifiers = convert(defn.mods)
       val returnType = defn.decltpe.map(convert).orNull
       val name = convert(defn.name).asInstanceOf[slang.api.IdentifierTree]
-      val (unusualParams, params) = defn.paramss.flatten.partition(_.mods.nonEmpty)
-      val allParams = params.map(createParameterTree).union(unusualParams.map(convert)).asJava
+      val allParams = defn.paramss.flatten.map(createParameterTree).asJava
       val rawBody = convert(defn.body)
       val body = rawBody match {
         case b: slang.api.BlockTree => b
@@ -271,7 +283,8 @@ class ScalaConverter extends slang.api.ASTConverter {
       val identifier = convert(param.name).asInstanceOf[slang.api.IdentifierTree]
       val typ = convert(param.decltpe).orNull
       val defaultValue = convert(param.default).orNull
-      new ParameterTreeImpl(treeMetaData(param), identifier, typ, defaultValue)
+      val modifiers = convert(param.mods)
+      new ParameterTreeImpl(treeMetaData(param), identifier, typ, defaultValue, modifiers)
     }
 
     private def createIfTree(metaData: TreeMetaData, cond: Term, thenp: Term, elsep: Term) = {
@@ -328,6 +341,7 @@ class ScalaConverter extends slang.api.ASTConverter {
 
   object ScalaCatchBlockKind extends slang.api.NativeKind
   object ScalaForConditionKind extends slang.api.NativeKind
+  object ScalaImplicitKind extends slang.api.NativeKind
 
   def tokenType(token: scala.meta.tokens.Token): Token.Type = {
     if (token.is[scala.meta.tokens.Token.Constant.String]) {

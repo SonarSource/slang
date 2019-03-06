@@ -16,7 +16,12 @@ object Main {
     i + k
   }
 
-  private def f6(implicit i : Int): Integer = {
-    1
+  private def f(implicit p1: Int, p2: String) = {
+    g // p1 and p2 are used implicitly by this 'g' function call
+  }
+
+  private def g(implicit p1: Int, p2: String) = {
+    print(p1)
+    print(p2)
   }
 }

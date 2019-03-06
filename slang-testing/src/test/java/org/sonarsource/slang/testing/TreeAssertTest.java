@@ -19,11 +19,17 @@
  */
 package org.sonarsource.slang.testing;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import org.junit.Test;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.LiteralTree;
+import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TreeMetaData;
@@ -33,18 +39,15 @@ import org.sonarsource.slang.impl.BlockTreeImpl;
 import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
+import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.ParameterTreeImpl;
 import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 import org.sonarsource.slang.impl.TextRangeImpl;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import org.junit.Test;
+import org.sonarsource.slang.impl.TokenImpl;
 
-import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
 public class TreeAssertTest {
 
@@ -60,6 +63,15 @@ public class TreeAssertTest {
   @Test
   public void identifier_ok() {
     assertTree(IDENTIFIER_ABC).isIdentifier("abc");
+  }
+
+  @Test
+  public void has_tokens() {
+    Token token1 = new TokenImpl(new TextRangeImpl(1,0,1,1), "a", Token.Type.OTHER);
+    Token token2 = new TokenImpl(new TextRangeImpl(1,2,1,3), "b", Token.Type.OTHER);
+    TextRangeImpl textRange = new TextRangeImpl(token1.textRange().start(), token2.textRange().end());
+    NativeTree nativeTree = new NativeTreeImpl(meta(textRange, token1, token2), null, Collections.emptyList());
+    assertTree(nativeTree).hasTokens("a", "b");
   }
 
   @Test(expected = AssertionError.class)
@@ -232,7 +244,7 @@ public class TreeAssertTest {
     assertTree(ABC_PLUS_ABC_PLUS_42).hasNotDescendant(new LiteralTreeImpl(null, "42"));
   }
 
-  private TreeMetaData meta(TextRange textRange) {
+  private TreeMetaData meta(TextRange textRange, Token... tokens) {
     return new TreeMetaData() {
       @Override
       public TextRange textRange() {
@@ -246,7 +258,7 @@ public class TreeAssertTest {
 
       @Override
       public List<Token> tokens() {
-        return null;
+        return Arrays.asList(tokens);
       }
 
       @Override

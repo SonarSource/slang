@@ -20,6 +20,7 @@
 package org.sonarsource.slang.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.ParameterTree;
 import org.sonarsource.slang.api.Tree;
@@ -33,12 +34,18 @@ public class ParameterTreeImpl extends BaseTreeImpl implements ParameterTree {
   private final IdentifierTree identifier;
   private final Tree type;
   private final Tree defaultValue;
+  private final List<Tree> modifiers;
 
-  public ParameterTreeImpl(TreeMetaData metaData, IdentifierTree identifier, @Nullable Tree type, @Nullable Tree defaultValue) {
+  public ParameterTreeImpl(TreeMetaData metaData, IdentifierTree identifier, @Nullable Tree type, @Nullable Tree defaultValue, List<Tree> modifiers) {
     super(metaData);
     this.identifier = identifier;
     this.type = type;
     this.defaultValue = defaultValue;
+    this.modifiers = modifiers;
+  }
+
+  public ParameterTreeImpl(TreeMetaData metaData, IdentifierTree identifier, @Nullable Tree type, @Nullable Tree defaultValue) {
+    this(metaData, identifier, type, defaultValue, Collections.emptyList());
   }
 
   public ParameterTreeImpl(TreeMetaData metaData, IdentifierTree identifier, @Nullable Tree type) {
@@ -63,10 +70,15 @@ public class ParameterTreeImpl extends BaseTreeImpl implements ParameterTree {
   }
 
   @Override
+  public List<Tree> modifiers() {
+    return modifiers;
+  }
+
+  @Override
   public List<Tree> children() {
     List<Tree> children = new ArrayList<>();
+    children.addAll(modifiers);
     children.add(identifier);
-
     if (type != null) {
       children.add(type);
     }

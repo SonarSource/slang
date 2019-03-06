@@ -45,3 +45,4 @@ class A {
 
 void fun main(int a) {} // OK - "main" functions are ignored
 int fun Main(int a) {} // OK - "main" functions are ignored
+fun foo(p1, native [] {} p2) {p1} // OK - parameter with modifier are ignored

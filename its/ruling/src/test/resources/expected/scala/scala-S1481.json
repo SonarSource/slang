@@ -144,6 +144,13 @@
 ],
 'scala-project:sources/scala/gitbucket/src/main/scala/gitbucket/core/util/JGitUtil.scala':[
 1198,
+1265,
+],
+'scala-project:sources/scala/incubator-openwhisk/common/scala/src/main/scala/whisk/core/database/DocumentFactory.scala':[
+113,
+],
+'scala-project:sources/scala/incubator-openwhisk/core/controller/src/main/scala/whisk/core/entitlement/LocalEntitlement.scala':[
+61,
 ],
 'scala-project:sources/scala/incubator-openwhisk/core/invoker/src/main/scala/whisk/core/invoker/InvokerReactive.scala':[
 200,
@@ -208,6 +215,9 @@
 'scala-project:sources/scala/linkerd/namer/istio/src/main/scala/io/buoyant/namer/k8s/istio/IstioInitializer.scala':[
 43,
 ],
+'scala-project:sources/scala/linkerd/namerd/iface/control-http/src/main/scala/io/buoyant/namerd/iface/HttpControlService.scala':[
+99,
+],
 'scala-project:sources/scala/mmlspark/src/cntk-train/src/main/scala/CommandBuilders.scala':[
 186,
 ],
@@ -245,6 +255,9 @@
 67,
 102,
 ],
+'scala-project:sources/scala/playframework/documentation/manual/working/commonGuide/configuration/code/ThreadPools.scala':[
+202,
+],
 'scala-project:sources/scala/playframework/documentation/manual/working/scalaGuide/main/async/code/scalaguide/async/scalastream/ScalaStream.scala':[
 37,
 100,
@@ -254,6 +267,9 @@
 ],
 'scala-project:sources/scala/playframework/documentation/manual/working/scalaGuide/main/i18n/code/scalaguide/i18n/ScalaI18nService.scala':[
 100,
+],
+'scala-project:sources/scala/playframework/framework/src/play-filters-helpers/src/test/scala/play/filters/cors/CORSActionBuilderSpec.scala':[
+27,
 ],
 'scala-project:sources/scala/playframework/framework/src/play-integration-test/src/test/scala/play/it/http/FlashCookieSpec.scala':[
 71,
@@ -282,6 +298,12 @@
 ],
 'scala-project:sources/scala/rocket-chip/src/main/scala/amba/axi4/Fragmenter.scala':[
 65,
+],
+'scala-project:sources/scala/rocket-chip/src/main/scala/devices/debug/Periphery.scala':[
+147,
+],
+'scala-project:sources/scala/rocket-chip/src/main/scala/diplomacy/Nodes.scala':[
+382,
 ],
 'scala-project:sources/scala/rocket-chip/src/main/scala/rocket/TLBPermissions.scala':[
 61,
