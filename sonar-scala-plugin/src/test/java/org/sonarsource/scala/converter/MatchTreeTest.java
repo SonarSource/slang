@@ -20,8 +20,17 @@
 package org.sonarsource.scala.converter;
 
 import org.junit.Test;
+import org.sonarsource.slang.api.IdentifierTree;
+import org.sonarsource.slang.api.LiteralTree;
+import org.sonarsource.slang.api.MatchCaseTree;
 import org.sonarsource.slang.api.MatchTree;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.ParenthesizedExpressionTree;
+import org.sonarsource.slang.api.Token;
+import org.sonarsource.slang.api.Tree;
+
+import java.lang.annotation.Native;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
@@ -49,6 +58,45 @@ public class MatchTreeTest extends AbstractScalaConverterTest {
 
   @Test
   public void case_with_condition() {
-    assertTree(scalaStatement("x match { case 1 if guard => a case 2=> b }")).isInstanceOf(NativeTree.class);
+    Tree tree = scalaStatement(
+      "x match { \n"
+        + "  case 1 if guard => a\n"
+        + "  case 2 => b\n"
+        + "  case 3 if (guard2) => c\n"
+        + "  case _ if guard3 => d\n"
+        + "  case _ :Int => e\n"
+        + "  case _ => f\n"
+        + "}");
+    assertThat(tree).isInstanceOf(MatchTree.class);
+    MatchTree matchTree =  (MatchTree) tree;
+
+    List<MatchCaseTree> cases = matchTree.cases();
+    assertThat(cases).hasSize(6);
+
+    Tree firstCase = cases.get(0).expression();
+    Tree secondCase = cases.get(1).expression();
+    Tree thirdCase = cases.get(2).expression();
+    Tree defaultCaseWithGuard = cases.get(3).expression();
+    Tree defaultCaseWithType = cases.get(4).expression();
+    Tree defaultCase = cases.get(5).expression();
+
+    assertThat(firstCase).isInstanceOf(NativeTree.class);
+    assertThat(secondCase).isInstanceOf(LiteralTree.class);
+    assertThat(thirdCase).isInstanceOf(NativeTree.class);
+    assertThat(defaultCaseWithGuard).isInstanceOf(NativeTree.class);
+    assertThat(defaultCaseWithType).isInstanceOf(NativeTree.class);
+    assertThat(defaultCase).isNull();
+
+    assertThat(firstCase.children()).hasSize(2);
+    assertThat(firstCase.metaData().tokens().stream().map(Token::text)).containsExactly("1", "if","guard");
+
+    assertThat(thirdCase.children()).hasSize(2);
+    assertThat(thirdCase.children().get(0)).isInstanceOf(LiteralTree.class);
+    // skipped parenthesis
+    assertThat(thirdCase.children().get(1)).isInstanceOf(IdentifierTree.class);
+    assertThat(thirdCase.metaData().tokens().stream().map(Token::text)).containsExactly("3", "if","(", "guard2", ")");
+
+    assertThat(defaultCaseWithGuard.children()).hasSize(2);
+    assertThat(defaultCaseWithGuard.metaData().tokens().stream().map(Token::text)).containsExactly("_", "if","guard3");
   }
 }

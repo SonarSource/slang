@@ -1,4 +1,7 @@
 {
+'scala-project:sources/scala/prisma/server/servers/api/src/main/scala/com/prisma/api/schema/ObjectTypeBuilder.scala':[
+209,
+],
 'scala-project:sources/scala/prisma/server/servers/api/src/main/scala/com/prisma/subscriptions/schema/MyVisitor.scala':[
 69,
 ],

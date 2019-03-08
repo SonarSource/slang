@@ -3,4 +3,10 @@
 8,
 18,
 ],
+'scala-project:sources/scala/snowplow/2-collectors/scala-stream-collector/kinesis/src/main/scala/com.snowplowanalytics.snowplow.collectors.scalastream/sinks/KinesisSink.scala':[
+88,
+],
+'scala-project:sources/scala/snowplow/3-enrich/stream-enrich/kinesis/src/main/scala/com.snowplowanalytics.snowplow.enrich.stream/KinesisEnrich.scala':[
+300,
+],
 }

@@ -297,15 +297,23 @@ class ScalaConverter extends slang.api.ASTConverter {
     }
 
     private def createMatchTree(metaData: TreeMetaData, matchTree: Term.Match): api.Tree = {
-      if (matchTree.cases.exists(c => c.cond.nonEmpty)) {
-        return createNativeTree(metaData, matchTree)
-      }
-      val convertedCases = matchTree.cases
-        .map(c => new MatchCaseTreeImpl(treeMetaData(c), if (c.pat.is[Pat.Wildcard]) null else convert(c.pat), convert(c.body))
-          .asInstanceOf[slang.api.MatchCaseTree])
+      val convertedCases = matchTree.cases.map(createCaseTree)
       val convertedExpression = convert(matchTree.expr)
       val matchKeyword = keyword(convertedExpression.textRange.end, start(convertedCases.head))
       new MatchTreeImpl(metaData, convertedExpression, convertedCases.asJava, matchKeyword)
+    }
+
+    private def createCaseTree(c: Case): api.MatchCaseTree = {
+      return new MatchCaseTreeImpl(treeMetaData(c), convertCaseExpression(c), convert(c.body)).asInstanceOf[slang.api.MatchCaseTree]
+    }
+
+    private def convertCaseExpression(c: Case): api.Tree = {
+      c.cond match {
+        case Some(cond) => createNativeTree(List(c.pat, cond), ScalaCaseWithConditionKind)
+        // default case
+        case None if c.pat.is[Pat.Wildcard] => null
+        case None => convert(c.pat)
+      }
     }
 
     private def createVariableDeclarationTree(metaData: TreeMetaData, name: Term.Name, decltpe: Option[Type], rhs: slang.api.Tree, isVal: Boolean) = {
@@ -342,6 +350,7 @@ class ScalaConverter extends slang.api.ASTConverter {
   object ScalaCatchBlockKind extends slang.api.NativeKind
   object ScalaForConditionKind extends slang.api.NativeKind
   object ScalaImplicitKind extends slang.api.NativeKind
+  object ScalaCaseWithConditionKind extends slang.api.NativeKind
 
   def tokenType(token: scala.meta.tokens.Token): Token.Type = {
     if (token.is[scala.meta.tokens.Token.Constant.String]) {
