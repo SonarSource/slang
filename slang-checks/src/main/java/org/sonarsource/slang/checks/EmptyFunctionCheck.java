@@ -33,7 +33,7 @@ public class EmptyFunctionCheck implements SlangCheck {
   public void initialize(InitContext init) {
     init.register(FunctionDeclarationTree.class, (ctx, tree) -> {
       BlockTree body = tree.body();
-      if (body != null && body.statementOrExpressions().isEmpty() && !hasComment(body, ctx.parent().metaData())) {
+      if (!tree.isConstructor() && body != null && body.statementOrExpressions().isEmpty() && !hasComment(body, ctx.parent().metaData())) {
         ctx.reportIssue(body, "Add a nested comment explaining why this function is empty or complete the implementation.");
       }
     });

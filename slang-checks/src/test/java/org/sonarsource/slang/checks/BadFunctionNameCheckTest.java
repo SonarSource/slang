@@ -21,10 +21,17 @@ package org.sonarsource.slang.checks;
 
 import org.junit.Test;
 
-public class BadMethodNameCheckTest {
+public class BadFunctionNameCheckTest {
 
   @Test
   public void test() {
-    Verifier.verify("BadMethodName.slang", new BadFunctionNameCheck());
+    Verifier.verify("BadFunctionName.slang", new BadFunctionNameCheck());
+  }
+
+  @Test
+  public void test_upper_case() {
+    BadFunctionNameCheck check = new BadFunctionNameCheck();
+    check.format = "^[A-Z]*$";
+    Verifier.verify("BadFunctionName.uppercase.slang", check);
   }
 }

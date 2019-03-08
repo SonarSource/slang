@@ -85,3 +85,17 @@ fun f12(int a, int b) {
   foo = 2;
   bar = foo > 3 || bar
 }
+
+class A {
+
+  fun constructor(int a) {
+    foo = 1;
+    bar = 2;
+  }
+
+  fun constructor(int a) { // Compliant, constructor
+    foo = 1;
+    bar = 2;
+  }
+
+}

@@ -115,6 +115,10 @@ class ScalaConverter extends slang.api.ASTConverter {
           new IdentifierTreeImpl(metaData, value)
         case defn: Defn.Def =>
           createFunctionDeclarationTree(metaData, defn)
+        case ctor: Ctor.Primary =>
+          createPrimaryConstructorDeclaration(metaData, ctor)
+        case ctor: Ctor.Secondary =>
+          createSecondaryConstructorDeclaration(metaData, ctor)
         case Term.Block(stats) =>
           new BlockTreeImpl(metaData, convert(stats))
         case Term.Assign(lhs, rhs) if metaTree.parent.exists(p => p.isNot[Term.Apply] && p.isNot[Init]) =>
@@ -223,6 +227,16 @@ class ScalaConverter extends slang.api.ASTConverter {
       new NativeTreeImpl(metaData, nativeKind, convertedChildren)
     }
 
+    private def createArtificialBlockTree(children: List[scala.meta.Tree]) : BlockTreeImpl = {
+      if (children == null || children.isEmpty) {
+        return null
+      }
+      val convertedChildren = convert(children)
+      val lastConvertedChild = convertedChildren.get(convertedChildren.size() - 1)
+      val metaData = metaDataProvider.metaData(new TextRangeImpl(convertedChildren.get(0).textRange.start, lastConvertedChild.textRange.end))
+      new BlockTreeImpl(metaData, convertedChildren)
+    }
+
     private def createNativeTree(metaData: TreeMetaData, metaTree: Tree) = {
       val nativeKind = ScalaNativeKind(metaTree.getClass)
       new NativeTreeImpl(metaData, nativeKind, convert(metaTree.children))
@@ -276,7 +290,32 @@ class ScalaConverter extends slang.api.ASTConverter {
         case _ => new BlockTreeImpl(rawBody.metaData(), singletonList(rawBody))
       }
       val nativeChildren = convert(defn.tparams)
-      new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, name, allParams, body, nativeChildren)
+      new FunctionDeclarationTreeImpl(metaData, modifiers, false, returnType, name, allParams, body, nativeChildren)
+    }
+
+    private def createPrimaryConstructorDeclaration(metaData: TreeMetaData, ctor: Ctor.Primary): slang.api.Tree = {
+      val modifiers = convert(ctor.mods)
+      val isConstructor = true
+      val returnType = null
+      val name = convert(ctor.name).asInstanceOf[slang.api.IdentifierTree]
+      val allParams = ctor.paramss.flatten.map(createParameterTree).asJava
+      val body = null
+      val nativeChildren = emptyList[slang.api.Tree]()
+      new FunctionDeclarationTreeImpl(metaData, modifiers, isConstructor, returnType, name, allParams, body, nativeChildren)
+    }
+
+    private def createSecondaryConstructorDeclaration(metaData: TreeMetaData, ctor: Ctor.Secondary): slang.api.Tree = {
+      val modifiers = convert(ctor.mods)
+      val isConstructor = true
+      val returnType = null
+      val name = null
+      val allParams = ctor.paramss.flatten.map(createParameterTree).asJava
+      var body = createArtificialBlockTree(ctor.stats)
+      if (body == null) {
+        body = createArtificialBlockTree(List(ctor.init))
+      }
+      val nativeChildren = emptyList[slang.api.Tree]()
+      new FunctionDeclarationTreeImpl(metaData, modifiers, isConstructor, returnType, name, allParams, body, nativeChildren)
     }
 
     private def createParameterTree(param: Term.Param): slang.api.Tree = {

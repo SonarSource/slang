@@ -172,9 +172,6 @@
 239,
 240,
 ],
-'ruby-project:sources/ruby/rails/actionmailer/test/delivery_methods_test.rb':[
-16,
-],
 'ruby-project:sources/ruby/rails/actionmailer/test/mailers/base_mailer.rb':[
 127,
 ],
@@ -367,9 +364,6 @@
 22,
 694,
 ],
-'ruby-project:sources/ruby/rails/actionview/test/template/form_helper_test.rb':[
-179,
-],
 'ruby-project:sources/ruby/rails/actionview/test/template/javascript_helper_test.rb':[
 16,
 ],
@@ -439,7 +433,6 @@
 302,
 ],
 'ruby-project:sources/ruby/rails/activerecord/lib/active_record/connection_adapters/abstract/transaction.rb':[
-85,
 86,
 90,
 ],
@@ -513,7 +506,6 @@
 16,
 17,
 18,
-97,
 98,
 ],
 'ruby-project:sources/ruby/rails/activerecord/test/cases/tasks/mysql_rake_test.rb':[
@@ -648,9 +640,6 @@
 'ruby-project:sources/ruby/rails/railties/test/commands/console_test.rb':[
 165,
 ],
-'ruby-project:sources/ruby/rails/railties/test/generators/orm_test.rb':[
-10,
-],
 'ruby-project:sources/ruby/rails/railties/test/test_unit/reporter_test.rb':[
 9,
 ],
@@ -658,7 +647,6 @@
 21,
 ],
 'ruby-project:sources/ruby/vagrant/lib/vagrant/plugin/v1/communicator.rb':[
-35,
 51,
 59,
 76,
@@ -677,7 +665,6 @@
 61,
 ],
 'ruby-project:sources/ruby/vagrant/lib/vagrant/plugin/v1/provider.rb':[
-12,
 30,
 ],
 'ruby-project:sources/ruby/vagrant/lib/vagrant/plugin/v1/provisioner.rb':[
@@ -690,7 +677,6 @@
 29,
 ],
 'ruby-project:sources/ruby/vagrant/lib/vagrant/plugin/v2/communicator.rb':[
-37,
 76,
 84,
 101,
@@ -698,7 +684,6 @@
 118,
 ],
 'ruby-project:sources/ruby/vagrant/lib/vagrant/plugin/v2/provider.rb':[
-46,
 64,
 ],
 'ruby-project:sources/ruby/vagrant/lib/vagrant/plugin/v2/provisioner.rb':[
@@ -759,13 +744,9 @@
 368,
 ],
 'ruby-project:sources/ruby/vagrant/plugins/pushes/noop/config.rb':[
-4,
 7,
 ],
 'ruby-project:sources/ruby/vagrant/test/unit/vagrant/action/builtin/call_test.rb':[
 106,
-],
-'ruby-project:sources/ruby/vagrant/test/unit/vagrant/action/runner_test.rb':[
-27,
 ],
 }

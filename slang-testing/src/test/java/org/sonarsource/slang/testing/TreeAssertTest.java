@@ -58,7 +58,8 @@ public class TreeAssertTest {
   private static final BinaryExpressionTreeImpl ABC_PLUS_42 = new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, null, IDENTIFIER_ABC, LITERAL_42);
   private static final BinaryExpressionTreeImpl ABC_PLUS_ABC_PLUS_42 = new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, null, IDENTIFIER_ABC, ABC_PLUS_42);
   private static final ParameterTreeImpl PARAMETER_ABC = new ParameterTreeImpl(null, IDENTIFIER_ABC, null);
-  private static final FunctionDeclarationTreeImpl FUNCTION_ABC = new FunctionDeclarationTreeImpl(null, Collections.emptyList(), null, null, Arrays.asList(PARAMETER_ABC), null, emptyList());
+  private static final FunctionDeclarationTreeImpl FUNCTION_ABC = new FunctionDeclarationTreeImpl(null, Collections.emptyList(), false, null, null,
+    singletonList(PARAMETER_ABC), null, emptyList());
 
   @Test
   public void identifier_ok() {

@@ -3,14 +3,12 @@ AST node class                             | first…last tokens | line:col
 TopLevelTree {                             | class … }         | 1:1 … 6:1  
   ClassDeclarationTree {                   | class … }         | 1:1 … 5:2  
     ?KtClass? {                            | class … }         | 1:1 … 5:2  
-      ?KtPrimaryConstructor? {             | ( … )             | 1:13 … 1:28
-        ?KtParameterList? {                | ( … )             | 1:13 … 1:28
-          ParameterTree {                  | var … String      | 1:14 … 1:27
-            IdentifierTree                 | a                 | 1:18 … 1:19
-            ?KtTypeReference? {            | String            | 1:21 … 1:27
-              ?KtUserType? {               | String            | 1:21 … 1:27
-                IdentifierTree             | String            | 1:21 … 1:27
-              }                            |                   |            
+      FunctionDeclarationTree {            | ( … )             | 1:13 … 1:28
+        ParameterTree {                    | var … String      | 1:14 … 1:27
+          IdentifierTree                   | a                 | 1:18 … 1:19
+          ?KtTypeReference? {              | String            | 1:21 … 1:27
+            ?KtUserType? {                 | String            | 1:21 … 1:27
+              IdentifierTree               | String            | 1:21 … 1:27
             }                              |                   |            
           }                                |                   |            
         }                                  |                   |            

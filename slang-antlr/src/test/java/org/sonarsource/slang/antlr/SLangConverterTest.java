@@ -234,6 +234,23 @@ public class SLangConverterTest {
   }
 
   @Test
+  public void class_with_constructor() {
+    ClassDeclarationTree classe = parseClass("class MyClass { fun constructor(x) { } fun foo(x) { } } ");
+    assertThat(classe.children()).hasSize(1);
+    assertThat(classe.classTree()).isInstanceOf(NativeTree.class);
+    assertTree(classe.identifier()).isIdentifier("MyClass");
+    NativeTree classChildren = (NativeTree) classe.classTree();
+    assertThat(classChildren.children()).hasSize(3);
+    assertTree(classChildren.children().get(0)).isIdentifier("MyClass");
+    assertTree(classChildren.children().get(1)).isInstanceOf(FunctionDeclarationTree.class);
+    assertTree(classChildren.children().get(2)).isInstanceOf(FunctionDeclarationTree.class);
+    FunctionDeclarationTree constructorTree = (FunctionDeclarationTree) classChildren.children().get(1);
+    assertThat(constructorTree.isConstructor()).isTrue();
+    FunctionDeclarationTree functionTree = (FunctionDeclarationTree) classChildren.children().get(2);
+    assertThat(functionTree.isConstructor()).isFalse();
+  }
+
+  @Test
   public void class_without_body() {
     ClassDeclarationTree classe = parseClass("class MyClass { } ");
     assertThat(classe.children()).hasSize(1);

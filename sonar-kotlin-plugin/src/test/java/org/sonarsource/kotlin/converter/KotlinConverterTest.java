@@ -407,8 +407,8 @@ public class KotlinConverterTest {
       .isNotEquivalentTo(kotlin("class A(a: Int) {}"));
     assertTree(kotlin("class A(a: Int) { constructor() {} }"))
       .isEquivalentTo(kotlin("class A(a: Int) { constructor() {} }"));
-    assertTree(kotlin("class A(a: Int) { constructor() {} }"))
-      .isNotEquivalentTo(kotlin("class A(a: Int) { constructor(): this(0) {} }"));
+    assertTree(kotlin("class A(a: Int) { constructor(): this(1) {} }"))
+      .isNotEquivalentTo(kotlin("class A(a: Int) { constructor(): this(2) {} }"));
     assertTree(kotlin("class A(a: Int) { constructor(): this(0) {} }"))
       .isEquivalentTo(kotlin("class A(a: Int) { constructor(): this(0) {} }"));
   }

@@ -289,8 +289,10 @@ public class SLangConverter implements ASTConverter {
       if (resultContext != null) {
         returnType = new IdentifierTreeImpl(meta(resultContext), resultContext.getText());
       }
+      boolean isConstructor = false;
       if (identifier != null) {
         name = (IdentifierTree) visit(identifier);
+        isConstructor = "constructor".equals(name.name());
       }
 
       List<Tree> convertedParameters = new ArrayList<>();
@@ -303,7 +305,7 @@ public class SLangConverter implements ASTConverter {
         convertedParameters.add(visit(formalParameterListContext.lastFormalParameter()));
       }
 
-      return new FunctionDeclarationTreeImpl(meta(ctx), modifiers, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()), emptyList());
+      return new FunctionDeclarationTreeImpl(meta(ctx), modifiers, isConstructor, returnType, name, convertedParameters, (BlockTree) visit(ctx.methodBody()), emptyList());
     }
 
     @Override

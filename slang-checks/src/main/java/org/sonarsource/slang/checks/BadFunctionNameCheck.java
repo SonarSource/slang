@@ -52,7 +52,7 @@ public class BadFunctionNameCheck implements SlangCheck {
     Pattern pattern = Pattern.compile(format);
     init.register(FunctionDeclarationTree.class, (ctx, fnDeclarationTree) -> {
       IdentifierTree name = fnDeclarationTree.name();
-      if (name != null && !pattern.matcher(name.name()).matches()) {
+      if (!fnDeclarationTree.isConstructor() && name != null && !pattern.matcher(name.name()).matches()) {
         ctx.reportIssue(fnDeclarationTree.name(), message(name.name()));
       }
     });

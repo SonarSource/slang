@@ -19,6 +19,14 @@
  */
 package org.sonarsource.slang.checks;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.IntStream;
+import org.sonar.check.Rule;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
@@ -30,14 +38,6 @@ import org.sonarsource.slang.checks.api.SecondaryLocation;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.visitors.TreeContext;
 import org.sonarsource.slang.visitors.TreeVisitor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.IntStream;
-import org.sonar.check.Rule;
 
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 
@@ -53,10 +53,13 @@ public class DuplicatedFunctionImplementationCheck implements SlangCheck {
     init.register(TopLevelTree.class, (ctx, tree) -> {
       Map<Tree, List<FunctionDeclarationTree>> functionsByParents = new HashMap<>();
       TreeVisitor<TreeContext> functionVisitor = new TreeVisitor<>();
-      functionVisitor.register(FunctionDeclarationTree.class,
-        (functionCtx, functionDeclarationTree) -> functionsByParents
-          .computeIfAbsent(functionCtx.ancestors().peek(), key -> new ArrayList<>())
-          .add(functionDeclarationTree));
+      functionVisitor.register(FunctionDeclarationTree.class, (functionCtx, functionDeclarationTree) -> {
+        if (!functionDeclarationTree.isConstructor()) {
+          functionsByParents
+            .computeIfAbsent(functionCtx.ancestors().peek(), key -> new ArrayList<>())
+            .add(functionDeclarationTree);
+        }
+      });
       functionVisitor.scan(new TreeContext(), tree);
 
       for (Map.Entry<Tree, List<FunctionDeclarationTree>> entry : functionsByParents.entrySet()) {

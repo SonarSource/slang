@@ -35,6 +35,7 @@ public class FunctionVisitorTest extends AbstractRubyConverterTest {
   public void simple_function() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo(p)\n puts 'hello'\nend");
     assertTree(tree.name()).isIdentifier("foo");
+    assertThat(tree.isConstructor()).isFalse();
     assertTree(tree.name()).hasTextRange(1, 4, 1, 7);
     assertThat(tree.modifiers()).isEmpty();
     assertThat(tree.returnType()).isNull();
@@ -43,6 +44,13 @@ public class FunctionVisitorTest extends AbstractRubyConverterTest {
     assertThat(tree.body().statementOrExpressions()).hasSize(1);
     assertThat(((NativeTree) tree.body().statementOrExpressions().get(0)).nativeKind()).isEqualTo(nativeKind("send"));
     assertThat(tree.nativeChildren()).isEmpty();
+  }
+
+  @Test
+  public void constructor() {
+    FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def initialize(p)\n puts p\nend");
+    assertTree(tree.name()).isIdentifier("initialize");
+    assertThat(tree.isConstructor()).isTrue();
   }
 
   @Test

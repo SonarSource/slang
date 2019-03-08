@@ -45,7 +45,7 @@ public class UnusedFunctionParameterCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(FunctionDeclarationTree.class, (ctx, functionDeclarationTree) -> {
-      if (shouldBeIgnored(ctx, functionDeclarationTree)) {
+      if (functionDeclarationTree.isConstructor() || shouldBeIgnored(ctx, functionDeclarationTree)) {
         return;
       }
 

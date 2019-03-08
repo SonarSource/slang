@@ -16,3 +16,12 @@ native [] {
     var POSSIBLY_NOT_LOCAL;
   ]
 };
+
+class A {
+  fun constructor(param1, PARAM2) { // Noncompliant
+//                        ^^^^^^
+  }
+  fun method(param1, PARAM2) { // Noncompliant
+//                   ^^^^^^
+  }
+}

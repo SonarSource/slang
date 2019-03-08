@@ -21,6 +21,7 @@ package org.sonarsource.kotlin.converter;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.psi.KtCatchClause;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtConstantExpression;
 import org.jetbrains.kotlin.psi.KtConstructor;
+import org.jetbrains.kotlin.psi.KtConstructorDelegationCall;
 import org.jetbrains.kotlin.psi.KtContinueExpression;
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry;
 import org.jetbrains.kotlin.psi.KtDoWhileExpression;
@@ -71,6 +73,7 @@ import org.jetbrains.kotlin.psi.KtParenthesizedExpression;
 import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.psi.KtReturnExpression;
 import org.jetbrains.kotlin.psi.KtScript;
+import org.jetbrains.kotlin.psi.KtSecondaryConstructor;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression;
 import org.jetbrains.kotlin.psi.KtThrowExpression;
@@ -373,8 +376,8 @@ class KotlinTreeVisitor {
   }
 
   private Tree createFunctionDeclarationTree(TreeMetaData metaData, KtFunction functionElement) {
-    if (functionElement instanceof KtConstructor || functionElement.getReceiverTypeReference() != null) {
-      // Constructors and extension functions: for now they are considered as native elements instead of function declaration to avoid FP
+    if (functionElement.getReceiverTypeReference() != null) {
+      // Extension functions: for now they are considered as native elements instead of function declaration to avoid FP
       return createNativeTree(metaData, new KotlinNativeKind(functionElement), functionElement);
     }
 
@@ -399,14 +402,18 @@ class KotlinTreeVisitor {
       // FIXME are we sure we want body of function as block tree ?
       bodyTree = new BlockTreeImpl(bodyTree.metaData(), Collections.singletonList(bodyTree));
     }
-    List<Tree> typeParameters;
+    List<Tree> nativeChildren = new ArrayList<>();
     if (typeParameterList != null) {
-      typeParameters = list(Arrays.stream(typeParameterList.getChildren()));
-    } else {
-      typeParameters = Collections.emptyList();
+      nativeChildren.addAll(list(Arrays.stream(typeParameterList.getChildren())));
     }
-
-    return new FunctionDeclarationTreeImpl(metaData, modifiers, returnType, identifierTree, parametersList, (BlockTree) bodyTree, typeParameters);
+    boolean isConstructor = functionElement instanceof KtConstructor;
+    if(functionElement instanceof KtSecondaryConstructor) {
+      KtConstructorDelegationCall superConstructorDelegationCall = ((KtSecondaryConstructor) functionElement).getDelegationCall();
+      if (!superConstructorDelegationCall.isImplicit()) {
+        nativeChildren.add(convertElementToNative(superConstructorDelegationCall, metaData));
+      }
+    }
+    return new FunctionDeclarationTreeImpl(metaData, modifiers, isConstructor, returnType, identifierTree, parametersList, (BlockTree) bodyTree, nativeChildren);
   }
 
   private List<Tree> getModifierList(@Nullable KtModifierList modifierList) {

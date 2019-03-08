@@ -29,6 +29,9 @@ class B {
 }
 
 class C {
+
+    private fun constructor() {}  // Compliant to prevent FP, constructor call semantic is not yet supported
+
     private fun unusedPrivate1() {}  // Noncompliant
 
     private fun unusedPrivate2() {}  // FN of current approach, "unusedPrivate2" identifier is used in inner class

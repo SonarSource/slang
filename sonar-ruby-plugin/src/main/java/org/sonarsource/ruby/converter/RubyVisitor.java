@@ -712,6 +712,7 @@ public class RubyVisitor {
     int childrenIndexShift = isSingletonMethod ? 1 : 0;
 
     IdentifierTree name = identifierFromSymbol(node, (RubySymbol) children.get(0 + childrenIndexShift));
+    boolean isConstructor = "initialize".equals(name.identifier());
 
     List<Tree> parameters;
     Object args = children.get(1 + childrenIndexShift);
@@ -733,6 +734,7 @@ public class RubyVisitor {
     }
     return new FunctionDeclarationTreeImpl(metaData(node),
       emptyList(),
+      isConstructor,
       null,
       name,
       parameters,

@@ -21,11 +21,15 @@ package org.sonarsource.scala.converter;
 
 import java.util.List;
 import org.junit.Test;
+import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
+import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.ParameterTree;
+import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.impl.NativeTreeImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
@@ -164,6 +168,57 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
     assertThat(p3.modifiers()).hasSize(2);
     assertTree(p3.modifiers().get(0)).hasTokens("@", "transient");
     assertTree(p3.modifiers().get(1)).hasTokens("implicit");
+  }
+
+  @Test
+  public void secondary_constructor() {
+    TopLevelTree topLevel = (TopLevelTree) parse("class Main(p1: Int, p2: String) { def this(p3: Int) { this(42, \"\") } }");
+    ClassDeclarationTree classDecl = (ClassDeclarationTree) topLevel.children().get(0);
+    List<Tree> members = (classDecl.children().get(0)).children();
+    assertThat(members).hasSize(3);
+    assertTree(members.get(0)).isInstanceOf(IdentifierTree.class);
+    assertTree(members.get(1)).isInstanceOf(FunctionDeclarationTree.class);
+    assertTree(members.get(2)).isInstanceOf(NativeTreeImpl.class);
+
+    FunctionDeclarationTree primaryConstructor = (FunctionDeclarationTree)members.get(1);
+    assertThat(primaryConstructor.formalParameters()).hasSize(2);
+    assertTree(((ParameterTree)primaryConstructor.formalParameters().get(0)).identifier()).isIdentifier("p1");
+    assertTree(((ParameterTree)primaryConstructor.formalParameters().get(1)).identifier()).isIdentifier("p2");
+    assertThat(primaryConstructor.isConstructor()).isTrue();
+
+    List<Tree> nativeChildren = members.get(2).children();
+    assertThat(nativeChildren).hasSize(1);
+
+    FunctionDeclarationTree secondaryConstructor = (FunctionDeclarationTree)nativeChildren.get(0);
+    assertThat(secondaryConstructor.formalParameters()).hasSize(1);
+    assertTree(((ParameterTree)secondaryConstructor.formalParameters().get(0)).identifier()).isIdentifier("p3");
+    assertThat(secondaryConstructor.isConstructor()).isTrue();
+  }
+
+  @Test
+  public void secondary_constructor_expression() {
+    TopLevelTree topLevel = (TopLevelTree) parse("class Main(p1: Int) { def this() = this(0) }");
+    ClassDeclarationTree classDecl = (ClassDeclarationTree) topLevel.children().get(0);
+    List<Tree> members = (classDecl.children().get(0)).children();
+    assertThat(members).hasSize(3);
+    assertTree(members.get(0)).isInstanceOf(IdentifierTree.class);
+    assertTree(members.get(1)).isInstanceOf(FunctionDeclarationTree.class);
+    assertTree(members.get(2)).isInstanceOf(NativeTreeImpl.class);
+
+    FunctionDeclarationTree primaryConstructor = (FunctionDeclarationTree)members.get(1);
+    assertThat(primaryConstructor.formalParameters()).hasSize(1);
+    assertTree(((ParameterTree)primaryConstructor.formalParameters().get(0)).identifier()).isIdentifier("p1");
+    assertThat(primaryConstructor.isConstructor()).isTrue();
+
+    List<Tree> nativeChildren = members.get(2).children();
+    assertThat(nativeChildren).hasSize(1);
+
+    FunctionDeclarationTree secondaryConstructor = (FunctionDeclarationTree)nativeChildren.get(0);
+    assertThat(secondaryConstructor.formalParameters()).hasSize(0);
+    assertThat(secondaryConstructor.isConstructor()).isTrue();
+    List<Tree> expressions = secondaryConstructor.body().statementOrExpressions();
+    assertThat(expressions).hasSize(1);
+    assertTree(expressions.get(0)).isInstanceOf(NativeTreeImpl.class);
   }
 
   @Test

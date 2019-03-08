@@ -35,6 +35,7 @@ import javax.annotation.Nullable;
 public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements FunctionDeclarationTree {
 
   private final List<Tree> modifiers;
+  private final boolean isConstructor;
   private final Tree returnType;
   private final IdentifierTree name;
   private final List<Tree> formalParameters;
@@ -45,6 +46,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
   public FunctionDeclarationTreeImpl(
     TreeMetaData metaData,
     List<Tree> modifiers,
+    boolean isConstructor,
     @Nullable Tree returnType,
     @Nullable IdentifierTree name,
     List<Tree> formalParameters,
@@ -53,6 +55,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
     super(metaData);
 
     this.modifiers = modifiers;
+    this.isConstructor = isConstructor;
     this.returnType = returnType;
     this.name = name;
     this.formalParameters = formalParameters;
@@ -76,6 +79,11 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
   @Override
   public List<Tree> modifiers() {
     return modifiers;
+  }
+
+  @Override
+  public boolean isConstructor() {
+    return isConstructor;
   }
 
   @CheckForNull

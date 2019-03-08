@@ -439,14 +439,12 @@ TopLevelTree {                                         | import … )           
   ClassDeclarationTree {                               | inline … )           | 76:1 … 76:33 
     ?KtClass? {                                        | inline … )           | 76:1 … 76:33 
       ?KtDeclarationModifierList?                      | inline               | 76:1 … 76:7  
-      ?KtPrimaryConstructor? {                         | ( … )                | 76:18 … 76:33
-        ?KtParameterList? {                            | ( … )                | 76:18 … 76:33
-          ParameterTree {                              | val … String         | 76:19 … 76:32
-            IdentifierTree                             | s                    | 76:23 … 76:24
-            ?KtTypeReference? {                        | String               | 76:26 … 76:32
-              ?KtUserType? {                           | String               | 76:26 … 76:32
-                IdentifierTree                         | String               | 76:26 … 76:32
-              }                                        |                      |              
+      FunctionDeclarationTree {                        | ( … )                | 76:18 … 76:33
+        ParameterTree {                                | val … String         | 76:19 … 76:32
+          IdentifierTree                               | s                    | 76:23 … 76:24
+          ?KtTypeReference? {                          | String               | 76:26 … 76:32
+            ?KtUserType? {                             | String               | 76:26 … 76:32
+              IdentifierTree                           | String               | 76:26 … 76:32
             }                                          |                      |              
           }                                            |                      |              
         }                                              |                      |              

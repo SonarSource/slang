@@ -59,7 +59,7 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
       Set<IdentifierTree> usedIdentifiers = new HashSet<>();
 
       classDeclarationTree.descendants().forEach(tree -> {
-        if (tree instanceof FunctionDeclarationTree) {
+        if (tree instanceof FunctionDeclarationTree && !((FunctionDeclarationTree)tree).isConstructor()) {
           methods.add(((FunctionDeclarationTree) tree));
         } else if (tree instanceof IdentifierTree) {
           usedIdentifiers.add((IdentifierTree) tree);

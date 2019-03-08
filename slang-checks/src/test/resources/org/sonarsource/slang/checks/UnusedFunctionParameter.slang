@@ -27,6 +27,9 @@ id fun fooBar(int id) {} // OK - issue is not raised here as 'id' is found in me
 
 class A {
 
+  private fun constructor(int a) { // Compliant to prevent FP on constructor
+  }
+
   void fun fooBar() {}
 
   void fun fooBar(int a, int b) { // OK - method is not private and could potentially be overridden

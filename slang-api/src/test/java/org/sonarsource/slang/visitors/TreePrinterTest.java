@@ -19,6 +19,9 @@
  */
 package org.sonarsource.slang.visitors;
 
+import java.util.Arrays;
+import org.assertj.core.api.Assertions;
+import org.junit.Test;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.ModifierTree;
@@ -29,14 +32,11 @@ import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.ModifierTreeImpl;
-import java.util.Arrays;
-import org.assertj.core.api.Assertions;
-import org.junit.Test;
 import org.sonarsource.slang.impl.TextRangeImpl;
 
-import static org.junit.Assert.assertEquals;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertEquals;
 import static org.sonarsource.slang.utils.TreeCreationUtils.assignment;
 import static org.sonarsource.slang.utils.TreeCreationUtils.binary;
 import static org.sonarsource.slang.utils.TreeCreationUtils.identifier;
@@ -52,7 +52,7 @@ public class TreePrinterTest {
     Tree binaryExp = new BinaryExpressionTreeImpl(null, BinaryExpressionTree.Operator.PLUS, null, var1, literal1);
     Tree assignExp = new AssignmentExpressionTreeImpl(null, AssignmentExpressionTree.Operator.EQUAL, x1, binaryExp);
     Tree modifier = new ModifierTreeImpl(null, ModifierTree.Kind.PRIVATE);
-    Tree function = new FunctionDeclarationTreeImpl(null, singletonList(modifier), null, null, emptyList(), null, emptyList());
+    Tree function = new FunctionDeclarationTreeImpl(null, singletonList(modifier), false, null, null, emptyList(), null, emptyList());
     Assertions.assertThat(TreePrinter.tree2string(Arrays.asList(assignExp, function))).isEqualTo(
       "AssignmentExpressionTreeImpl EQUAL\n" +
         "  IdentifierTreeImpl x1\n" +

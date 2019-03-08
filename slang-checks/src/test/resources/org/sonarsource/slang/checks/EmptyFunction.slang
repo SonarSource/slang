@@ -21,3 +21,9 @@ fun emptyOnSeveralLine() {
 // Noncompliant@+1
 fun empty() {
 }
+
+class A {
+  // Compliant, constructor
+  fun constructor() {
+  }
+}

@@ -121,7 +121,7 @@ public class TreeCreationUtils {
   }
 
   public static FunctionDeclarationTree simpleFunction(IdentifierTree name, BlockTree body) {
-    return new FunctionDeclarationTreeImpl(null, Collections.emptyList(), null, name, Collections.emptyList(), body, emptyList());
+    return new FunctionDeclarationTreeImpl(null, Collections.emptyList(), false, null, name, Collections.emptyList(), body, emptyList());
   }
 
   public static AssignmentExpressionTree assignment(AssignmentExpressionTree.Operator operator, Tree leftOperand, Tree rightOperand) {
