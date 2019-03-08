@@ -43,6 +43,7 @@ import static org.sonarsource.slang.utils.TreeCreationUtils.identifier;
 import static org.sonarsource.slang.utils.TreeCreationUtils.integerLiteral;
 import static org.sonarsource.slang.utils.TreeCreationUtils.literal;
 import static org.sonarsource.slang.utils.TreeCreationUtils.loop;
+import static org.sonarsource.slang.utils.TreeCreationUtils.placeHolderTree;
 import static org.sonarsource.slang.utils.TreeCreationUtils.simpleModifier;
 import static org.sonarsource.slang.utils.TreeCreationUtils.simpleNative;
 import static org.sonarsource.slang.utils.TreeCreationUtils.value;
@@ -115,6 +116,12 @@ public class SyntacticEquivalenceTest {
     assertThat(areEquivalent(modifier1, simpleModifier(PRIVATE))).isTrue();
     assertThat(areEquivalent(modifier1, simpleModifier(PUBLIC))).isFalse();
     assertThat(areEquivalent(modifier1, literal1)).isFalse();
+
+    Tree placeHolder1 = placeHolderTree();
+    Tree placeHolder2 = placeHolderTree();
+    assertThat(areEquivalent(placeHolder1, identifierA)).isFalse();
+    assertThat(areEquivalent(placeHolder1, identifier("_"))).isFalse();
+    assertThat(areEquivalent(placeHolder1, placeHolder2)).isTrue();
   }
 
   @Test

@@ -34,6 +34,7 @@ import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.PlaceHolderTree;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
@@ -50,6 +51,7 @@ import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.LoopTreeImpl;
 import org.sonarsource.slang.impl.ModifierTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
+import org.sonarsource.slang.impl.PlaceHolderTreeImpl;
 import org.sonarsource.slang.impl.TextRangeImpl;
 import org.sonarsource.slang.impl.TokenImpl;
 import org.sonarsource.slang.impl.TopLevelTreeImpl;
@@ -70,6 +72,10 @@ public class TreeCreationUtils {
 
   public static IntegerLiteralTree integerLiteral(String value) {
     return new IntegerLiteralTreeImpl(null, value);
+  }
+
+  public static PlaceHolderTree placeHolderTree() {
+    return new PlaceHolderTreeImpl(null, null);
   }
 
   public static IntegerLiteralTree integerLiteral(String value, TextRange textRange, String ... tokens) {

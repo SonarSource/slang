@@ -83,9 +83,21 @@ public class BinaryExpressionTreeTest extends AbstractScalaConverterTest {
   @Test
   public void placeholder() {
     Tree tree = scalaStatement("_ * _");
-    assertTree(tree).isInstanceOf(NativeTree.class);
+    assertTree(tree).isInstanceOf(BinaryExpressionTree.class);
 
     tree = scalaStatement("_ + 2");
-    assertTree(tree).isInstanceOf(NativeTree.class);
+    assertTree(tree).isInstanceOf(BinaryExpressionTree.class);
+
+    tree = scalaStatement("_._1 < _._1");
+    assertTree(tree).isInstanceOf(BinaryExpressionTree.class);
+
+    tree = scalaStatement("_._1 < a._1");
+    assertTree(tree).isInstanceOf(BinaryExpressionTree.class);
+
+    tree = scalaStatement("_._1._1 < _._1._1");
+    assertTree(tree).isInstanceOf(BinaryExpressionTree.class);
+
+    tree = scalaStatement("a._1._1 < _._1._1");
+    assertTree(tree).isInstanceOf(BinaryExpressionTree.class);
   }
 }

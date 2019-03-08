@@ -25,6 +25,7 @@ import org.sonarsource.slang.checks.api.SecondaryLocation;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonar.check.Rule;
 
+import static org.sonarsource.slang.checks.utils.ExpressionUtils.containsPlaceHolder;
 import static org.sonarsource.slang.checks.utils.ExpressionUtils.skipParentheses;
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 
@@ -36,6 +37,7 @@ public class IdenticalBinaryOperandCheck implements SlangCheck {
     init.register(BinaryExpressionTree.class, (ctx, tree) -> {
       if (tree.operator() != BinaryExpressionTree.Operator.PLUS
         && tree.operator() != BinaryExpressionTree.Operator.TIMES
+        && !containsPlaceHolder(tree)
         && areEquivalent(skipParentheses(tree.leftOperand()), skipParentheses(tree.rightOperand()))) {
         ctx.reportIssue(
           tree.rightOperand(),

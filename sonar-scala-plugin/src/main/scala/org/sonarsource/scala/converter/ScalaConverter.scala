@@ -168,6 +168,7 @@ class ScalaConverter extends slang.api.ASTConverter {
           new ModifierTreeImpl(metaData, slang.api.ModifierTree.Kind.OVERRIDE)
         case Term.Return(expr) =>
           createReturnTree(metaData, expr)
+        case Term.Placeholder() => new PlaceHolderTreeImpl(metaData, metaDataProvider.keyword(metaData.textRange()))
         case _ =>
           createNativeTree(metaData, metaTree)
       }
@@ -364,12 +365,6 @@ class ScalaConverter extends slang.api.ASTConverter {
       // Scala can have multiple arguments on the right-hand side of an infix function application
       // Example: foo ** (bar, baz)
       if (infix.args.length != 1) {
-        return createNativeTree(metaData, infix)
-      }
-      // Scala has special shorthand for an anonymous function
-      // (_ || _) is equivalent to (p1, p2) => p1 || p2
-      val elems = infix.args :+ infix.lhs
-      if (elems.toStream.exists(term => term.is[Term.Placeholder])) {
         return createNativeTree(metaData, infix)
       }
       val leftOperand = convert(infix.lhs)

@@ -13,3 +13,9 @@
   x + x;
   x * x;
   x <= x; // Noncompliant
+  _x <= _x; // Noncompliant
+  x_ <= x_; // Noncompliant
+  _x <= x_;
+  x <= _;
+  _ <= y;
+  _ <= _;

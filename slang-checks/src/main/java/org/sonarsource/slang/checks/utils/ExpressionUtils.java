@@ -30,6 +30,7 @@ import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.MatchCaseTree;
 import org.sonarsource.slang.api.ParenthesizedExpressionTree;
+import org.sonarsource.slang.api.PlaceHolderTree;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.UnaryExpressionTree;
@@ -79,6 +80,10 @@ public class ExpressionUtils {
       result = ((ParenthesizedExpressionTree) result).expression();
     }
     return result;
+  }
+
+  public static boolean containsPlaceHolder(Tree tree) {
+    return tree.descendants().anyMatch(t -> t instanceof PlaceHolderTree);
   }
 
   public static boolean isTernaryOperator(Deque<Tree> ancestors, Tree tree) {

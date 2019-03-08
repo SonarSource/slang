@@ -7,7 +7,7 @@ fun localVariables() {
   var invalid_local; // Noncompliant
 }
 
-fun parameters(param1, PARAM2, _) { // Noncompliant {{Rename this parameter to match the regular expression "^[_a-z][a-zA-Z0-9]*$".}}
+fun parameters(param1, PARAM2, param3) { // Noncompliant {{Rename this parameter to match the regular expression "^[_a-z][a-zA-Z0-9]*$".}}
 //                     ^^^^^^
 }
 

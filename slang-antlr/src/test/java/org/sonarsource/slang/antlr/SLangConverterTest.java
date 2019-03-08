@@ -47,6 +47,7 @@ import org.sonarsource.slang.api.PackageDeclarationTree;
 import org.sonarsource.slang.api.ParameterTree;
 import org.sonarsource.slang.api.ParenthesizedExpressionTree;
 import org.sonarsource.slang.api.ParseException;
+import org.sonarsource.slang.api.PlaceHolderTree;
 import org.sonarsource.slang.api.ReturnTree;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TopLevelTree;
@@ -172,6 +173,14 @@ public class SLangConverterTest {
     assertTree(binary).isBinaryExpression(Operator.PLUS);
     assertTree(binary.leftOperand()).isIdentifier("x");
     assertTree(binary.rightOperand()).isBinaryExpression(Operator.MINUS).hasTextRange(1, 4, 2, 3);
+  }
+
+  @Test
+  public void binary_expression_with_place_holder() {
+    BinaryExpressionTree binary = parseBinary("_ && y;");
+    assertTree(binary).isBinaryExpression(Operator.CONDITIONAL_AND);
+    assertTree(binary.leftOperand()).isInstanceOf(PlaceHolderTree.class);
+    assertTree(binary.rightOperand()).isIdentifier("y");
   }
 
   @Test

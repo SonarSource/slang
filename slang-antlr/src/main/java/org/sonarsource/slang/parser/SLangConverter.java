@@ -73,6 +73,7 @@ import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.PackageDeclarationTreeImpl;
 import org.sonarsource.slang.impl.ParameterTreeImpl;
 import org.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
+import org.sonarsource.slang.impl.PlaceHolderTreeImpl;
 import org.sonarsource.slang.impl.ReturnTreeImpl;
 import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 import org.sonarsource.slang.impl.TextPointerImpl;
@@ -530,7 +531,11 @@ public class SLangConverter implements ASTConverter {
 
     @Override
     public Tree visitIdentifier(SLangParser.IdentifierContext ctx) {
-      return new IdentifierTreeImpl(meta(ctx), ctx.getText());
+      if("_".equals(ctx.getText())) {
+        return new PlaceHolderTreeImpl(meta(ctx), toSlangToken(ctx.getStart()));
+      } else {
+        return new IdentifierTreeImpl(meta(ctx), ctx.getText());
+      }
     }
 
     @Override

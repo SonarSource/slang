@@ -1,4 +1,8 @@
 {
+'scala-project:ruling/src/test/resources/sources/scala/S1764.scala':[
+7,
+10,
+],
 'scala-project:sources/scala/cats/tests/src/test/scala/cats/tests/EvalSuite.scala':[
 250,
 ],
@@ -54,8 +58,5 @@
 ],
 'scala-project:sources/scala/snowplow/2-collectors/scala-stream-collector/core/src/main/scala/com.snowplowanalytics.snowplow.collectors.scalastream/CollectorRoute.scala':[
 44,
-],
-'scala-project:sources/scala/snowplow/3-enrich/scala-common-enrich/src/main/scala/com.snowplowanalytics.snowplow.enrich/common/enrichments/registry/EventFingerprintEnrichment.scala':[
-106,
 ],
 }
