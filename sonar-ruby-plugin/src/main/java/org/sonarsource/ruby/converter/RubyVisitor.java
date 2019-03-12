@@ -788,17 +788,26 @@ public class RubyVisitor {
       Token elseToken = previousToken(elseBranch.textRange(), ":");
 
       return new IfTreeImpl(metaData(node), condition, thenBranch, elseBranch, ifToken, elseToken);
-    } else if (mainKeyword.get().text().equals("unless")) {
-      // "unless" are not considered as "IfTree" for now
-      return createNativeTree(node, children);
+    }
+    // operator can be "if" or "unless" (inverted if)
+    Token operator = mainKeyword.get();
+    Tree condition = (Tree) children.get(0);
+    Tree thenCandidate = (Tree) children.get(1);
+    Token elseKeyword = lookForTokenByAttribute(node, "else").orElse(null);
+    Tree elseCandidate = (Tree) children.get(2);
+
+    if ("unless".equals(operator.text())) {
+      // FIXME Ideally we should invert 'else' and 'then' branch if we want to keep the IfTree consistent semantically.
+      // this is already done by the ruby parser, but problem is that the thenBranch can not be null in the IfTree interface without changing all the logic
+      Tree swap = thenCandidate;
+      thenCandidate = elseCandidate;
+      elseCandidate = swap;
     }
 
-    Optional<Token> elseKeywordOptional = lookForTokenByAttribute(node, "else");
-    Token elseKeyword = elseKeywordOptional.orElse(null);
-    Tree thenBranch = getThenBranch(node, mainKeyword.get(), elseKeyword, (Tree) children.get(1));
-    Tree elseBranch = getElseBranch(node, elseKeyword, (Tree) children.get(2));
+    Tree thenBranch = getThenBranch(node, operator, elseKeyword, thenCandidate);
+    Tree elseBranch = getElseBranch(node, elseKeyword, elseCandidate);
 
-    return new IfTreeImpl(metaData(node), (Tree) children.get(0), thenBranch, elseBranch, mainKeyword.get(), elseKeyword);
+    return new IfTreeImpl(metaData(node), condition, thenBranch, elseBranch, operator, elseKeyword);
   }
 
   private Token previousToken(TextRange textRange, String expectedTokenValue) {

@@ -6,6 +6,12 @@ if !filename.nil?
     # ...
   end
 end
+
+if a then
+  unless b then
+    # ...
+  end
+end
 </pre>
 <h2>Compliant Solution</h2>
 <pre>
@@ -15,6 +21,10 @@ end
 # ...
 
 if !filename.nil? &amp;&amp; isFileOrDirectory(filename)
+  # ...
+end
+
+if a &amp;&amp; !b then
   # ...
 end
 </pre>

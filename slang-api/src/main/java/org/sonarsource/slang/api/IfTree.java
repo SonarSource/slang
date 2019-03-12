@@ -21,6 +21,27 @@ package org.sonarsource.slang.api;
 
 import javax.annotation.CheckForNull;
 
+/**
+ * The interface used to define conditional expressions.
+ *
+ * In order to be compatible with most of the languages, the 'IfTree' is not defined 
+ * as a statement and should be considered as an expression.
+ *
+ * A 'IfTree' always has:
+ * - a keyword ('if', '?', 'unless', ...)
+ * - a condition
+ * - a 'then' branch 
+ * 
+ * Additionally, it's possible to also have:
+ * - an 'else' keyword
+ * - an 'else' branch (which does not necessarily requires a 'else' keyword)
+ * 
+ * Known mapping from languages conditional expressions to IfTree:
+ * - Apex:   if, ternary (a?b:c)
+ * - Kotlin: if
+ * - Ruby:   if, ternary (a?b:c), unless (equivalent to 'if not')
+ * - Scala:  if
+ */
 public interface IfTree extends Tree {
 
   Tree condition();

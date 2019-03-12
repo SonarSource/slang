@@ -8,6 +8,9 @@
 'ruby-project:sources/ruby/rails/actionpack/lib/action_controller/metal/live.rb':[
 259,
 ],
+'ruby-project:sources/ruby/rails/actionpack/lib/action_controller/test_case.rb':[
+572,
+],
 'ruby-project:sources/ruby/rails/activerecord/lib/active_record/associations/has_one_association.rb':[
 60,
 ],
@@ -16,14 +19,18 @@
 ],
 'ruby-project:sources/ruby/rails/activerecord/lib/active_record/autosave_association.rb':[
 401,
-444,
+442,
 450,
 ],
 'ruby-project:sources/ruby/rails/activerecord/lib/active_record/connection_adapters/abstract/schema_statements.rb':[
 1069,
 ],
 'ruby-project:sources/ruby/rails/activerecord/lib/active_record/connection_adapters/abstract/transaction.rb':[
-251,
+248,
+250,
+],
+'ruby-project:sources/ruby/rails/activerecord/lib/active_record/connection_adapters/postgresql/database_statements.rb':[
+121,
 ],
 'ruby-project:sources/ruby/rails/activerecord/lib/active_record/fixtures.rb':[
 686,
@@ -34,6 +41,9 @@
 ],
 'ruby-project:sources/ruby/rails/activesupport/lib/active_support/callbacks.rb':[
 116,
+],
+'ruby-project:sources/ruby/rails/guides/rails_guides/indexer.rb':[
+41,
 ],
 'ruby-project:sources/ruby/rails/railties/lib/rails/mailers_controller.rb':[
 31,
@@ -132,7 +142,9 @@
 72,
 ],
 'ruby-project:sources/ruby/vagrant/plugins/provisioners/salt/provisioner.rb':[
+400,
 406,
+411,
 416,
 ],
 'ruby-project:sources/ruby/vagrant/plugins/synced_folders/nfs/synced_folder.rb':[
@@ -141,5 +153,6 @@
 'ruby-project:sources/ruby/vagrant/plugins/synced_folders/unix_mount_helpers.rb':[
 52,
 56,
+65,
 ],
 }

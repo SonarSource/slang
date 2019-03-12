@@ -23,10 +23,10 @@ import org.junit.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.IfTree;
-import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.ParenthesizedExpressionTree;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.api.VariableDeclarationTree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.RangeAssert.assertRange;
@@ -113,10 +113,41 @@ public class IfVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void unless_statements_not_supported() {
-    // FIXME find a way to map "unless" statements to slang AST so that it makes sense
-    Tree unlessStatement = rubyStatement("unless 1\nend");
-    assertThat(unlessStatement).isInstanceOf(NativeTree.class);
+  public void unless_statements() {
+    Tree tree = rubyStatement("unless 1\nend");
+    assertThat(tree).isInstanceOf(IfTree.class);
+    IfTree ifTree = (IfTree) tree;
+
+    assertTree(ifTree.condition()).isLiteral("1");
+    assertTree(ifTree.thenBranch()).isBlock();
+
+    assertThat(ifTree.elseKeyword()).isNull();
+    assertThat(ifTree.elseBranch()).isNull();
+  }
+
+  @Test
+  public void unless_statements_with_else() {
+    Tree tree = rubyStatement("unless 1; 2; else 3; end");
+    assertThat(tree).isInstanceOf(IfTree.class);
+    IfTree ifTree = (IfTree) tree;
+
+    assertTree(ifTree.condition()).isLiteral("1");
+    assertTree(ifTree.thenBranch()).isLiteral("2");
+    assertThat(ifTree.elseKeyword()).isNotNull();
+    assertTree(ifTree.elseBranch()).isLiteral("3");
+  }
+
+  @Test
+  public void unless_statements_as_expression() {
+    Tree tree = rubyStatement("x = 1 unless false");
+    assertThat(tree).isInstanceOf(IfTree.class);
+    IfTree ifTree = (IfTree) tree;
+
+    assertTree(ifTree.condition()).isLiteral("false");
+    assertTree(ifTree.thenBranch()).isInstanceOf(VariableDeclarationTree.class);
+
+    assertThat(ifTree.elseKeyword()).isNull();
+    assertThat(ifTree.elseBranch()).isNull();
   }
 
   @Test
