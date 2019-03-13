@@ -179,7 +179,7 @@ sonarqube {
         property 'sonar.links.ci', "${sonarLinksCi}"
         property 'sonar.links.scm', "${sonarLinksScm}"
         property 'sonar.links.issue', 'https://jira.sonarsource.com/browse/SONARSLANG'
-        property 'sonar.exclusions', 'build/**/*'
+        property 'sonar.exclusions', '**/build/**/*'
     }
 }
 
