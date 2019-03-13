@@ -173,14 +173,10 @@ public class SlangRulingTest {
       .setProperty("dump.old", FileLocation.of("src/test/resources/expected/" + language).getFile().getAbsolutePath())
       .setProperty("dump.new", actualDirectory.getAbsolutePath())
       .setProperty("lits.differences", litsDifferencesFile.getAbsolutePath())
-      .setProperty("sonar.cpd.skip", "true")
+      .setProperty("sonar.cpd.exclusions", "**/*")
       .setProperty("sonar.scm.disabled", "true")
       .setProperty("sonar.language", language)
       .setEnvironmentVariable("SONAR_RUNNER_OPTS", "-Xmx1024m");
-
-    if (!keepSonarqubeRunning) {
-      build.setProperty("sonar.analysis.mode", "preview");
-    }
 
     orchestrator.executeBuild(build);
 
