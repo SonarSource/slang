@@ -40,6 +40,7 @@ sonarqube {
 dependencies {
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
     compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
+    compile 'org.sonarsource.analyzer-commons:sonar-xml-parsing'
     compile project(':slang-api')
     compile project(':slang-checks')
     compile project(':slang-plugin')
@@ -98,7 +99,7 @@ shadowJar {
     exclude 'scala/io/*'
     exclude 'scala/util/matching/*'
     doLast {
-        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 7_000_000L, 9_000_000L)
+        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 9_000_000L, 10_000_000L)
     }
 }
 

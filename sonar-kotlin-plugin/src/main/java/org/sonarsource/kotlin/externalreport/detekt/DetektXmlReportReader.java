@@ -37,7 +37,7 @@ import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ExternalRuleLoader;
-import org.sonarsource.slang.plugin.utils.XMLStreamReader;
+import org.sonarsource.analyzer.commons.xml.SafetyFactory;
 
 class DetektXmlReportReader {
 
@@ -69,7 +69,7 @@ class DetektXmlReportReader {
   }
 
   private void read(InputStream in) throws XMLStreamException, IOException {
-    XMLEventReader reader = XMLStreamReader.create(in);
+    XMLEventReader reader = SafetyFactory.createXMLInputFactory().createXMLEventReader(in);
     while (reader.hasNext()) {
       XMLEvent event = reader.nextEvent();
       if (event.isStartElement()) {

@@ -27,7 +27,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import org.sonarsource.slang.plugin.utils.XMLStreamReader;
+import org.sonarsource.analyzer.commons.xml.SafetyFactory;
 
 class ScalastyleXmlReportReader {
 
@@ -58,7 +58,7 @@ class ScalastyleXmlReportReader {
   }
 
   private void read(InputStream in) throws XMLStreamException, IOException {
-    XMLEventReader reader = XMLStreamReader.create(in);
+    XMLEventReader reader = SafetyFactory.createXMLInputFactory().createXMLEventReader(in);
     while (reader.hasNext()) {
       XMLEvent event = reader.nextEvent();
       if (event.isStartElement()) {

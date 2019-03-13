@@ -129,7 +129,8 @@ public class ScalastyleSensorTest {
     String realPath = PROJECT_DIR.toRealPath().resolve("invalid-scalastyle.txt").toString();
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
     assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).startsWith(
-      "No issues information will be saved as the report file '" + realPath + "' can't be read. XMLStreamException: ");
+      "No issues information will be saved as the report file '" + realPath + "' can't be read. WstxUnexpectedCharException: "
+          + "Unexpected character 'i' (code 105) in prolog; expected '<'");
   }
 
   @Test

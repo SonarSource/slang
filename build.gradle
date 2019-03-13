@@ -73,6 +73,7 @@ subprojects {
             dependency 'org.assertj:assertj-core:3.6.1'
             dependency "org.sonarsource.analyzer-commons:sonar-analyzer-test-commons:${analyzerCommonsVersion}"
             dependency "org.sonarsource.analyzer-commons:sonar-analyzer-commons:${analyzerCommonsVersion}"
+            dependency "org.sonarsource.analyzer-commons:sonar-xml-parsing:${analyzerCommonsVersion}"
             dependency "org.sonarsource.orchestrator:sonar-orchestrator:${orchestratorVersion}"
             dependency "org.sonarsource.sonarlint.core:sonarlint-core:${sonarlintVersion}"
         }

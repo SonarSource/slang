@@ -12,6 +12,7 @@ dependencies {
     compile project(':slang-plugin')
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
     compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
+    compile 'org.sonarsource.analyzer-commons:sonar-xml-parsing'
     compile "org.jetbrains.kotlin:kotlin-compiler-embeddable:${kotlinVersion}"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
     testCompile 'junit:junit'
@@ -74,7 +75,7 @@ shadowJar {
     exclude 'org/jetbrains/kotlin/types/**'
     exclude 'org/jetbrains/org/**'
     doLast {
-        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 5_000_000L, 6_500_000L)
+        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 7_000_000L, 8_500_000L)
     }
 }
 

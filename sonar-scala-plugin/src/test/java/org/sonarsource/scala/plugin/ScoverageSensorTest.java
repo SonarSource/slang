@@ -121,9 +121,10 @@ public class ScoverageSensorTest {
 
     new ScoverageSensor().execute(context);
 
-    String expectedMessage = String.format("File '" + reportPath.toString() + "' can't be read. javax.xml.stream.XMLStreamException");
+    String expectedMessage = String.format("File '" + reportPath.toString() +
+        "' can't be read. com.ctc.wstx.exc.WstxUnexpectedCharException: Unexpected character 's' (code 115) in prolog; expected '<'");
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains(expectedMessage);
+    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).startsWith(expectedMessage);
   }
 
   @Test
