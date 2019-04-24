@@ -1,6 +1,6 @@
 language: java
 sudo: false
-jdk: oraclejdk8
+jdk: openjdk11
 
 # blocklist
 branches:
@@ -10,7 +10,6 @@ branches:
 git:
   submodules: false
 
-install: true
 script: "./travis.sh"
 
 before_cache:
