@@ -28,6 +28,10 @@ We use [whitequark parser](https://github.com/whitequark/parser) to parse Ruby l
 
 We use [Scalameta](https://scalameta.org/) to parse Scala language.
 
+## Have question or feedback?
+
+To provide feedback (request a feature, report a bug etc.) use the [SonarQube Community Forum](https://community.sonarsource.com/). Please do not forget to specify the language, plugin version and SonarQube version.
+
 ## Building
 
 Build and run Unit Tests:
