@@ -1,0 +1,14 @@
+{
+'project:kubernetes/pkg/client/informers/informers_generated/externalversions/generic.go':[
+68,
+],
+'project:kubernetes/pkg/client/informers/informers_generated/internalversion/generic.go':[
+64,
+],
+'project:kubernetes/staging/src/k8s.io/apiserver/pkg/endpoints/metrics/metrics.go':[
+165,
+],
+'project:kubernetes/staging/src/k8s.io/client-go/informers/generic.go':[
+68,
+],
+}

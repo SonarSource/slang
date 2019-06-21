@@ -1,0 +1,10 @@
+{
+  "rules-metadata-path": "./src/main/resources/org/sonar/l10n/go/rules/go",
+  "languages": [
+    "GO"
+  ],
+  "latest-update": "2018-06-07T08:13:27.527Z",
+  "options": {
+    "no-language-in-filenames": true
+  }
+}

@@ -1,5 +1,5 @@
 /*
- * SonarSource SLang
+ * SonarQube Go Plugin
  * Copyright (C) 2018-2019 SonarSource SA
  * mailto:info AT sonarsource DOT com
  *
@@ -17,21 +17,30 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.checks.utils;
+package org.sonar.go.plugin;
 
-/**
- * This enum is used only to distinguish default values for rule parameters. This should be the sole exception in otherwise
- * language agnostic module
- */
-public enum Language {
-  KOTLIN, RUBY, SCALA, GO;
+import org.sonar.api.config.Configuration;
+import org.sonar.api.resources.AbstractLanguage;
 
-  public static final String RUBY_NAMING_DEFAULT = "^(@{0,2}[\\da-z_]+[!?=]?)|([*+-/%=!><~]+)|(\\[]=?)$";
+public class GoLanguage extends AbstractLanguage {
 
-  // scala constant starts with upper-case
-  public static final String SCALA_NAMING_DEFAULT = "^[_a-zA-Z][a-zA-Z0-9]*$";
+  public static final String KEY = "go";
+  public static final String FILE_SUFFIXES_KEY = "sonar.go.file.suffixes";
+  public static final String FILE_SUFFIXES_DEFAULT_VALUE = ".go";
 
-  // support function name suffix '_=', '_+', '_!', ... and operators '+', '-', ...
-  public static final String SCALA_FUNCTION_OR_OPERATOR_NAMING_DEFAULT = "^([a-z][a-zA-Z0-9]*+(_[^a-zA-Z0-9]++)?+|[^a-zA-Z0-9]++)$";
+  private final Configuration configuration;
 
+  public GoLanguage(Configuration configuration) {
+    super(KEY, "Go");
+    this.configuration = configuration;
+  }
+
+  @Override
+  public String[] getFileSuffixes() {
+    String[] suffixes = configuration.getStringArray(FILE_SUFFIXES_KEY);
+    if (suffixes == null || suffixes.length == 0) {
+      suffixes = new String[] {FILE_SUFFIXES_DEFAULT_VALUE};
+    }
+    return suffixes;
+  }
 }

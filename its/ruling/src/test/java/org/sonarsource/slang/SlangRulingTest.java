@@ -52,7 +52,7 @@ public class SlangRulingTest {
   private static Orchestrator orchestrator;
   private static boolean keepSonarqubeRunning = "true".equals(System.getProperty("keepSonarqubeRunning"));
 
-  private static final Set<String> LANGUAGES = new HashSet<>(Arrays.asList("kotlin" , "ruby" , "scala"));
+  private static final Set<String> LANGUAGES = new HashSet<>(Arrays.asList("kotlin", "ruby", "scala", "go"));
 
   @BeforeClass
   public static void setUp() {
@@ -78,12 +78,17 @@ public class SlangRulingTest {
     scalaRulesConfiguration.add("S1451", "headerFormat", "^(?i).*copyright");
     scalaRulesConfiguration.add("S1451", "isRegularExpression", "true");
 
+    ProfileGenerator.RulesConfiguration goRulesConfiguration = new ProfileGenerator.RulesConfiguration();
+
     File kotlinProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "kotlin", "kotlin", kotlinRulesConfiguration, Collections.emptySet());
     File rubyProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "ruby", "ruby", rubyRulesConfiguration, Collections.emptySet());
     File scalaProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "scala", "scala", scalaRulesConfiguration, Collections.emptySet());
+    File goProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "go", "go", goRulesConfiguration, Collections.emptySet());
+
     orchestrator.getServer().restoreProfile(FileLocation.of(kotlinProfile));
     orchestrator.getServer().restoreProfile(FileLocation.of(rubyProfile));
     orchestrator.getServer().restoreProfile(FileLocation.of(scalaProfile));
+    orchestrator.getServer().restoreProfile(FileLocation.of(goProfile));
   }
 
   private static void addLanguagePlugins(OrchestratorBuilder builder) {
@@ -148,6 +153,13 @@ public class SlangRulingTest {
     Map<String, String> properties = new HashMap<>();
     properties.put("sonar.inclusions", "sources/scala/**/*.scala, ruling/src/test/resources/sources/scala/**/*.scala");
     run_ruling_test("scala", properties);
+  }
+
+  @Test
+  public void test_go() throws IOException {
+    Map<String, String> properties = new HashMap<>();
+    properties.put("sonar.inclusions", "sources/go/**/*.go, ruling/src/test/resources/sources/go/**/*.go");
+    run_ruling_test("go", properties);
   }
 
   private void run_ruling_test(String language, Map<String, String> languageProperties) throws IOException {

@@ -1,0 +1,9 @@
+{
+'project:kubernetes/pkg/controller/service/servicecontroller.go':[
+179,
+],
+'project:samples/NoIdenticalConditions.go':[
+4,
+6,
+],
+}

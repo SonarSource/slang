@@ -17,6 +17,7 @@ include 'slang-plugin'
 include 'sonar-kotlin-plugin'
 include 'sonar-ruby-plugin'
 include 'sonar-scala-plugin'
+include 'sonar-go-plugin'
 include 'its:plugin'
 include 'its:ruling'
 
