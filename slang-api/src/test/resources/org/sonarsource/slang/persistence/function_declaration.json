@@ -1,0 +1,31 @@
+{
+  "treeMetaData": {
+    "comments": [],
+    "tokens": [
+      {"textRange": "1:0:1:6", "text": "public", "type": "KEYWORD"},
+      {"textRange": "1:7:1:10", "text": "int", "type": "OTHER"},
+      {"textRange": "1:11:1:14", "text": "foo", "type": "OTHER"},
+      {"textRange": "1:15:1:20", "text": "param", "type": "OTHER"},
+      {"textRange": "1:20:1:21", "text": "{", "type": "OTHER"},
+      {"textRange": "1:22:1:23", "text": "}", "type": "OTHER"},
+      {"textRange": "1:24:1:26", "text": "->", "type": "KEYWORD"}
+    ]
+  },
+  "tree": {
+    "@type": "FunctionDeclaration",
+    "metaData": "1:0:1:26",
+    "modifiers": [
+      {"@type": "Native", "metaData": "1:0:1:6", "nativeKind": "modifier", "children": []}
+    ],
+    "isConstructor": true,
+    "returnType": {"@type": "Identifier", "metaData": "1:7:1:10", "name": "int"},
+    "name": {"@type": "Identifier", "metaData": "1:11:1:14", "name": "foo"},
+    "formalParameters": [
+      {"@type": "Identifier", "metaData": "1:15:1:20", "name": "param"}
+    ],
+    "body": {"@type": "Block", "metaData": "1:20:1:23", "statementOrExpressions": []},
+    "nativeChildren": [
+      {"@type": "Native", "metaData": "1:24:1:26", "nativeKind": "arrow", "children": []}
+    ]
+  }
+}

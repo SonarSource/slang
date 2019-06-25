@@ -1,0 +1,16 @@
+{
+  "treeMetaData": {
+    "comments": [],
+    "tokens": [
+      {"textRange": "1:0:1:7", "text": "package", "type": "KEYWORD"},
+      {"textRange": "1:8:1:13", "text": "hello", "type": "OTHER"}
+    ]
+  },
+  "tree": {
+    "@type": "PackageDeclaration",
+    "metaData": "1:0:1:13",
+    "children": [
+      {"@type": "Identifier", "metaData": "1:8:1:13", "name": "hello"}
+    ]
+  }
+}

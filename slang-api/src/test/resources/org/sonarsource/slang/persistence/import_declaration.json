@@ -1,0 +1,16 @@
+{
+  "treeMetaData": {
+    "comments": [],
+    "tokens": [
+      {"textRange": "1:0:1:6", "text": "import", "type": "KEYWORD"},
+      {"textRange": "1:7:1:10", "text": "lib", "type": "OTHER"}
+    ]
+  },
+  "tree": {
+    "@type": "ImportDeclaration",
+    "metaData": "1:0:1:10",
+    "children": [
+      {"@type": "Identifier", "metaData": "1:7:1:10", "name": "lib"}
+    ]
+  }
+}

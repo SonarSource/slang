@@ -1,0 +1,18 @@
+{
+  "treeMetaData": {
+    "comments": [],
+    "tokens": [
+      {"textRange": "1:0:1:1", "text": "x", "type": "OTHER"},
+      {"textRange": "1:2:1:3", "text": "<", "type": "OTHER"},
+      {"textRange": "1:4:1:5", "text": "y", "type": "OTHER"}
+    ]
+  },
+  "tree": {
+    "@type": "BinaryExpression",
+    "metaData": "1:0:1:5",
+    "operator": "LESS_THAN",
+    "operatorToken": "1:2:1:3",
+    "leftOperand": {"@type": "Identifier", "metaData": "1:0:1:1", "name": "x"},
+    "rightOperand": {"@type": "Identifier", "metaData": "1:4:1:5", "name": "y"}
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "treeMetaData": {
+    "comments": [],
+    "tokens": [
+      {"textRange": "1:0:1:9", "text": "@Nullable", "type": "OTHER"},
+      {"textRange": "2:0:2:1", "text": "x", "type": "OTHER"},
+      {"textRange": "2:2:2:5", "text": "int", "type": "OTHER"},
+      {"textRange": "2:6:2:8", "text": "42", "type": "OTHER"}
+    ]
+  },
+  "tree": {
+    "@type": "Parameter",
+    "metaData": "1:0:2:8",
+    "identifier": {"@type": "Identifier", "metaData": "2:0:2:1", "name": "x"},
+    "type": {"@type": "Identifier", "metaData": "2:2:2:5", "name": "int"},
+    "defaultValue": {"@type": "IntegerLiteral", "metaData": "2:6:2:8", "value": "42"},
+    "modifiers": [
+      {"@type": "Identifier", "metaData": "1:0:1:9", "name": "@Nullable"}
+    ]
+  }
+}
