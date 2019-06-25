@@ -1,5 +1,6 @@
 package org.sonar.go.plugin;
 
+import java.util.List;
 import org.sonarsource.slang.checks.AllBranchesIdenticalCheck;
 import org.sonarsource.slang.checks.BadClassNameCheck;
 import org.sonarsource.slang.checks.BadFunctionNameCheck;
@@ -32,7 +33,6 @@ import org.sonarsource.slang.checks.RedundantParenthesesCheck;
 import org.sonarsource.slang.checks.SelfAssignmentCheck;
 import org.sonarsource.slang.checks.StringLiteralDuplicatedCheck;
 import org.sonarsource.slang.checks.TabsCheck;
-import org.sonarsource.slang.checks.TodoCommentCheck;
 import org.sonarsource.slang.checks.TooComplexExpressionCheck;
 import org.sonarsource.slang.checks.TooDeeplyNestedStatementsCheck;
 import org.sonarsource.slang.checks.TooLongFunctionCheck;
@@ -45,8 +45,6 @@ import org.sonarsource.slang.checks.UnusedLocalVariableCheck;
 import org.sonarsource.slang.checks.UnusedPrivateMethodCheck;
 import org.sonarsource.slang.checks.VariableAndParameterNameCheck;
 import org.sonarsource.slang.checks.WrongAssignmentOperatorCheck;
-
-import java.util.List;
 
 public class GoCheckList {
 
@@ -86,7 +84,6 @@ public class GoCheckList {
     SelfAssignmentCheck.class,
     StringLiteralDuplicatedCheck.class,
     TabsCheck.class,
-    TodoCommentCheck.class,
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
     TooLongFunctionCheck.class,

@@ -70,7 +70,7 @@ public abstract class SlangSensor implements Sensor {
       .name(language.getName() + " Sensor");
   }
 
-  protected abstract ASTConverter astConverter();
+  protected abstract ASTConverter astConverter(SensorContext sensorContext);
 
   protected abstract Checks<SlangCheck> checks();
 
@@ -149,7 +149,7 @@ public abstract class SlangSensor implements Sensor {
     ProgressReport progressReport = new ProgressReport("Progress of the " + language.getName() + " analysis", TimeUnit.SECONDS.toMillis(10));
     progressReport.start(filenames);
     boolean success = false;
-    ASTConverter converter = ASTConverterValidation.wrap(astConverter(), sensorContext.config());
+    ASTConverter converter = ASTConverterValidation.wrap(astConverter(sensorContext), sensorContext.config());
     try {
       success = analyseFiles(converter, sensorContext, inputFiles, progressReport, visitors(sensorContext, statistics), statistics);
     } finally {

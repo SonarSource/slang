@@ -20,7 +20,6 @@
 package org.sonar.go.plugin;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -39,15 +38,21 @@ import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
+import org.sonar.api.batch.rule.internal.NewActiveRule;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.issue.NoSonarFilter;
+import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
+import org.sonar.api.rule.RuleKey;
+import org.sonar.api.utils.log.LoggerLevel;
+import org.sonar.api.utils.log.ThreadLocalLogTester;
 import org.sonarsource.slang.checks.api.SlangCheck;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -61,6 +66,9 @@ public class GoSensorTest {
   private FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
   private FileLinesContextTester fileLinesContext;
 
+  @org.junit.Rule
+  public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
+
   @Before
   public void setUp() throws IOException {
     workDir = Files.createTempDirectory("gotest");
@@ -69,6 +77,7 @@ public class GoSensorTest {
     projectDir.toFile().deleteOnExit();
     sensorContext = SensorContextTester.create(workDir);
     sensorContext.fileSystem().setWorkDir(workDir);
+    sensorContext.settings().setProperty("sonar.slang.converter.validation", "throw");
     fileLinesContext = new FileLinesContextTester();
     when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
   }
@@ -84,28 +93,27 @@ public class GoSensorTest {
 
   @Test
   public void test_issue() throws IOException {
+    InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
+      "package main \n" +
+        "\n" +
+        "func test() {\n" +
+        " pwd := \"secret\"\n" +
+        "}");
+    sensorContext.fileSystem().add(inputFile);
+    GoSensor goSensor = getSensor("S2068");
+    goSensor.execute(sensorContext);
     // FIXME
-//    InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
-//      "package main \n" +
-//        "\n" +
-//        "func test() {\n" +
-//        " pwd := \"secret\"\n" +
-//        "}");
-//    sensorContext.fileSystem().add(inputFile);
-//    GoSensor goSensor = getSensor("S2068");
-//    goSensor.execute(sensorContext);
 //    assertThat(sensorContext.allIssues()).hasSize(1);
   }
 
   @Test
   public void test_file_issue() throws IOException {
-    // FIXME
-//    InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
-//      "// hey \n package main \n");
-//    sensorContext.fileSystem().add(inputFile);
-//    GoSensor goSensor = getSensor("S1451");
-//    goSensor.execute(sensorContext);
-//    assertThat(sensorContext.allIssues()).hasSize(1);
+    InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
+      "// TODO implement the logic \n package main \n");
+    sensorContext.fileSystem().add(inputFile);
+    GoSensor goSensor = getSensor("S1135");
+    goSensor.execute(sensorContext);
+    assertThat(sensorContext.allIssues()).hasSize(1);
   }
 
   @Test
@@ -142,16 +150,12 @@ public class GoSensorTest {
   }
 
   @Test
-  public void test_failure_empty_file() throws Exception {
-    // FIXME
-//    InputFile failingFile = createInputFile("lets.go", InputFile.Type.MAIN, "");
-//    sensorContext.fileSystem().add(failingFile);
-//    GoSensor goSensor = getSensor("S2068");
-//    goSensor.execute(sensorContext);
-//
-//    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("Error analyzing file lets.go");
-//    // test log from external process asynchronously
-//    await().until(() -> logTester.logs(LoggerLevel.DEBUG).contains("panic: -:1:1: expected 'package', found 'EOF'"));
+  public void test_empty_file() throws Exception {
+    InputFile failingFile = createInputFile("lets.go", InputFile.Type.MAIN, "");
+    sensorContext.fileSystem().add(failingFile);
+    GoSensor goSensor = getSensor("S1135");
+    goSensor.execute(sensorContext);
+    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
   }
 
   @Test
@@ -181,23 +185,24 @@ public class GoSensorTest {
     GoSensor goSensor = getSensor();
     goSensor.execute(sensorContext);
     assertThat(sensorContext.allIssues()).hasSize(0);
-//    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.NCLOC).value()).isEqualTo(19);
-//    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COMMENT_LINES).value()).isEqualTo(3);
+    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.NCLOC).value()).isEqualTo(19);
+    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COMMENT_LINES).value()).isEqualTo(3);
+    // FIXME
 //    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.CLASSES).value()).isEqualTo(2);
 //    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.FUNCTIONS).value()).isEqualTo(3);
 //    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.STATEMENTS).value()).isEqualTo(4);
 //    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COGNITIVE_COMPLEXITY).value()).isEqualTo(1);
 
-//    assertThat(fileLinesContext.saveCount).isEqualTo(1);
+    assertThat(fileLinesContext.saveCount).isEqualTo(1);
 
-//    assertThat(fileLinesContext.metrics.keySet()).containsExactlyInAnyOrder(CoreMetrics.NCLOC_DATA_KEY,
-//      CoreMetrics.EXECUTABLE_LINES_DATA_KEY);
-//
-//
-//    assertThat(fileLinesContext.metrics.get(CoreMetrics.NCLOC_DATA_KEY)).containsExactlyInAnyOrder(
-//      "2:1", "3:1", "4:1", "5:1", "6:1", "7:1", "8:1", "9:1", "10:1", "11:1",
-//      "12:1", "13:1", "14:1", "15:1", "16:1", "17:1", "18:1", "19:1", "20:1");
-//
+    assertThat(fileLinesContext.metrics.keySet()).containsExactlyInAnyOrder(CoreMetrics.NCLOC_DATA_KEY,
+      CoreMetrics.EXECUTABLE_LINES_DATA_KEY);
+
+
+    assertThat(fileLinesContext.metrics.get(CoreMetrics.NCLOC_DATA_KEY)).containsExactlyInAnyOrder(
+      "2:1", "3:1", "4:1", "5:1", "6:1", "7:1", "8:1", "9:1", "10:1", "11:1",
+      "12:1", "13:1", "14:1", "15:1", "16:1", "17:1", "18:1", "19:1", "20:1");
+
 //    assertThat(fileLinesContext.metrics.get(CoreMetrics.EXECUTABLE_LINES_DATA_KEY)).containsExactlyInAnyOrder(
 //      "8:1", "11:1", "12:1", "13:1", "14:1", "19:1");
   }
@@ -205,26 +210,26 @@ public class GoSensorTest {
   @Test
   public void metrics_for_test_file() {
     // FIXME
-//    InputFile inputFile = createInputFile("lets.go", InputFile.Type.TEST,
-//      "// This is not a line of code\n" +
-//        "package main\n" +
-//        "import \"fmt\"\n" +
-//        "func main() {\n" +
-//        "  fmt.Println(\"Hello\")\n" +
-//        "}\n");
-//    sensorContext.fileSystem().add(inputFile);
-//    GoSensor goSensor = getSensor();
-//    goSensor.execute(sensorContext);
-//    assertThat(sensorContext.allIssues()).hasSize(0);
-//    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.NCLOC)).isNull();
-//    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COMMENT_LINES)).isNull();
-//    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.CLASSES)).isNull();
-//    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.FUNCTIONS)).isNull();
-//    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.STATEMENTS)).isNull();
-//    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COGNITIVE_COMPLEXITY)).isNull();
-//
-//    assertThat(fileLinesContext.saveCount).isEqualTo(0);
-//    assertThat(fileLinesContext.metrics.keySet()).isEmpty();
+    InputFile inputFile = createInputFile("lets.go", InputFile.Type.TEST,
+      "// This is not a line of code\n" +
+        "package main\n" +
+        "import \"fmt\"\n" +
+        "func main() {\n" +
+        "  fmt.Println(\"Hello\")\n" +
+        "}\n");
+    sensorContext.fileSystem().add(inputFile);
+    GoSensor goSensor = getSensor();
+    goSensor.execute(sensorContext);
+    assertThat(sensorContext.allIssues()).hasSize(0);
+    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.NCLOC)).isNull();
+    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COMMENT_LINES)).isNull();
+    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.CLASSES)).isNull();
+    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.FUNCTIONS)).isNull();
+    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.STATEMENTS)).isNull();
+    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COGNITIVE_COMPLEXITY)).isNull();
+
+    assertThat(fileLinesContext.saveCount).isEqualTo(0);
+    assertThat(fileLinesContext.metrics.keySet()).isEmpty();
   }
 
   @Test
@@ -261,45 +266,50 @@ public class GoSensorTest {
   @Test
   public void highlighting() throws Exception {
     // FIXME
-//    InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
-//      "//abc\n" +
-//        "/*x*/\n" +
-//        "package main\n" +
-//        "import \"fmt\"\n" +
-//        "type class1 struct { }\n" +
-//        "func fun2(x string) int {\n" +
-//        "  return 42\n" +
-//        "}\n");
-//    sensorContext.fileSystem().add(inputFile);
-//    GoSensor goSensor = getSensor();
-//    goSensor.execute(sensorContext);
-//
-//    String componentKey = "module:lets.go";
-//    // //abc
-//    assertHighlighting(componentKey, 1, 1, 5, TypeOfText.COMMENT);
-//    // /*x*/
-//    assertHighlighting(componentKey, 2, 1, 5, TypeOfText.STRUCTURED_COMMENT);
-//    // package main
-//    assertHighlighting(componentKey, 3, 1, 7, TypeOfText.KEYWORD);
-//    assertHighlighting(componentKey, 3, 9, 12, null);
-//    // import "fmt"
-//    assertHighlighting(componentKey, 4, 1, 6, TypeOfText.KEYWORD);
-//    assertHighlighting(componentKey, 4, 8, 12, TypeOfText.STRING);
-//    // type class1 struct { }
-//    assertHighlighting(componentKey, 5, 1, 4, TypeOfText.KEYWORD);
-//    assertHighlighting(componentKey, 5, 6, 11, null);
-//    assertHighlighting(componentKey, 5, 13, 18, TypeOfText.KEYWORD);
-//    assertHighlighting(componentKey, 5, 20, 22, null);
-//    // func fun2(x string) int {
-//    assertHighlighting(componentKey, 6, 1, 4, TypeOfText.KEYWORD);
-//    assertHighlighting(componentKey, 6, 6, 9, null);
-//    assertHighlighting(componentKey, 6, 6, 12, null);
-//    assertHighlighting(componentKey, 6, 13, 18, TypeOfText.KEYWORD_LIGHT);
-//    assertHighlighting(componentKey, 6, 19, 20, null);
-//    assertHighlighting(componentKey, 6, 21, 23, TypeOfText.KEYWORD_LIGHT);
-//    // return 42
-//    assertHighlighting(componentKey, 7, 3, 8, TypeOfText.KEYWORD);
-//    assertHighlighting(componentKey, 7, 10, 11, TypeOfText.CONSTANT);
+    InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
+      "//abc\n" +
+        "/*x*/\n" +
+        "package main\n" +
+        "import \"fmt\"\n" +
+        "type class1 struct { }\n" +
+        "func fun2(x string) int {\n" +
+        "  return 42\n" +
+        "}\n");
+    sensorContext.fileSystem().add(inputFile);
+    GoSensor goSensor = getSensor();
+    goSensor.execute(sensorContext);
+
+    String componentKey = "module:lets.go";
+    // //abc
+    assertHighlighting(componentKey, 1, 1, 5, TypeOfText.COMMENT);
+    // /*x*/
+    assertHighlighting(componentKey, 2, 1, 5, TypeOfText.COMMENT);
+    // package main
+    assertHighlighting(componentKey, 3, 1, 7, TypeOfText.KEYWORD);
+    assertHighlighting(componentKey, 3, 9, 12, null);
+    // import "fmt"
+    assertHighlighting(componentKey, 4, 1, 6, TypeOfText.KEYWORD);
+// FIXME assertHighlighting(componentKey, 4, 8, 12, TypeOfText.STRING);
+    // type class1 struct { }
+    assertHighlighting(componentKey, 5, 1, 4, TypeOfText.KEYWORD);
+    assertHighlighting(componentKey, 5, 6, 11, null);
+    assertHighlighting(componentKey, 5, 13, 18, TypeOfText.KEYWORD);
+    assertHighlighting(componentKey, 5, 20, 22, null);
+    // func fun2(x string) int {
+    assertHighlighting(componentKey, 6, 1, 4, TypeOfText.KEYWORD);
+    assertHighlighting(componentKey, 6, 6, 9, null);
+    assertHighlighting(componentKey, 6, 6, 12, null);
+    assertHighlighting(componentKey, 6, 13, 18, null);
+    assertHighlighting(componentKey, 6, 19, 20, null);
+    assertHighlighting(componentKey, 6, 21, 23, null);
+    // return 42
+    assertHighlighting(componentKey, 7, 3, 8, TypeOfText.KEYWORD);
+// FIXME assertHighlighting(componentKey, 7, 10, 11, TypeOfText.CONSTANT);
+  }
+
+  @Test
+  public void repository_key() {
+    assertThat(getSensor().repositoryKey()).isEqualTo("go");
   }
 
   private void assertHighlighting(String componentKey, int line, int columnFirst, int columnLast, @Nullable TypeOfText type) {
@@ -318,16 +328,23 @@ public class GoSensorTest {
     List<Class> ruleClasses = GoCheckList.checks();
     List<String> allKeys = ruleClasses.stream().map(ruleClass -> ((org.sonar.check.Rule) ruleClass.getAnnotations()[0]).key()).collect(Collectors.toList());
     ActiveRulesBuilder rulesBuilder = new ActiveRulesBuilder();
-//    allKeys.forEach(key -> {
-//      if (activeRuleSet.contains(key)) {
+    allKeys.forEach(key -> {
+      if (activeRuleSet.contains(key)) {
+        NewActiveRule newActiveRule = rulesBuilder.create(RuleKey.of(GoRulesDefinition.REPOSITORY_KEY, key))
+          .setName(key);
+        if (key.equals("S1451")) {
+          newActiveRule.setParam("headerFormat", "some header format");
+        }
+        newActiveRule.activate();
+// FIXME use latest SQ api
 //        NewActiveRule.Builder newActiveRuleBuilder = new NewActiveRule.Builder()
 //          .setRuleKey(RuleKey.of(GoRulesDefinition.REPOSITORY_KEY, key));
 //        if (key.equals("S1451")) {
-//          newActiveRuleBuilder.setParam("headerFormat", "some header format");
+//          rulesBuilder.setParam("headerFormat", "some header format");
 //        }
 //        rulesBuilder.addRule(newActiveRuleBuilder.build());
-//      }
-//    });
+      }
+    });
     ActiveRules activeRules = rulesBuilder.build();
     CheckFactory checkFactory = new CheckFactory(activeRules);
     Checks<SlangCheck> checks = checkFactory.create(GoRulesDefinition.REPOSITORY_KEY);
@@ -338,7 +355,7 @@ public class GoSensorTest {
   private InputFile createInputFile(String filename, InputFile.Type type, String content) {
     Path filePath = projectDir.resolve(filename);
     return TestInputFileBuilder.create("module", projectDir.toFile(), filePath.toFile())
-      .setCharset(StandardCharsets.UTF_8)
+      .setCharset(UTF_8)
       .setLanguage(GoLanguage.KEY)
       .setContents(content)
       .setType(type)

@@ -38,7 +38,7 @@ public class GoLanguage extends AbstractLanguage {
   @Override
   public String[] getFileSuffixes() {
     String[] suffixes = configuration.getStringArray(FILE_SUFFIXES_KEY);
-    if (suffixes == null || suffixes.length == 0) {
+    if (suffixes.length == 0) {
       suffixes = new String[] {FILE_SUFFIXES_DEFAULT_VALUE};
     }
     return suffixes;

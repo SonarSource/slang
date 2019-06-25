@@ -2,10 +2,16 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '4.0.2'
 }
 
+// require sonar-go-to-slang binaries to be build
+shadowJar.dependsOn ':sonar-go-to-slang:goBuild'
+test.dependsOn ':sonar-go-to-slang:goBuild'
+
 dependencies {
     compile project(':slang-api')
     compile project(':slang-checks')
     compile project(':slang-plugin')
+    // dependency on sonar-go-to-slang binaries
+    runtime files(project(':sonar-go-to-slang').buildDir)
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
     compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
     testCompile 'junit:junit'
@@ -13,6 +19,7 @@ dependencies {
     testCompile 'org.mockito:mockito-core'
     testCompile project(':slang-antlr')
     testCompile project(':slang-testing')
+    testCompile 'org.awaitility:awaitility:3.1.0'
 }
 
 tasks.withType(JavaCompile) {
@@ -65,7 +72,7 @@ shadowJar {
         exclude(dependency('com.google.code.findbugs:jsr305'))
     }
     doLast {
-        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 100_000L, 1_500_000L)
+        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 5_000_000L, 5_300_000L)
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * SonarSource SLang
+ * SonarQube Go Plugin
  * Copyright (C) 2018-2019 SonarSource SA
  * mailto:info AT sonarsource DOT com
  *
@@ -19,12 +19,27 @@
  */
 package org.sonar.go.plugin;
 
-import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.fs.InputFileFilter;
+import org.sonar.api.config.Configuration;
+import org.sonar.api.utils.WildcardPattern;
 
-public class GoCheckListTest {
-  @Test
-  public void go_checks_size() {
-    Assertions.assertThat(GoCheckList.checks().size()).isEqualTo(1);
+public class GoExclusionsFileFilter implements InputFileFilter {
+
+  private final Configuration configuration;
+
+  public GoExclusionsFileFilter(Configuration configuration) {
+    this.configuration = configuration;
   }
+
+  @Override
+  public boolean accept(InputFile inputFile) {
+    if (!GoLanguage.KEY.equals(inputFile.language())) {
+      return true;
+    }
+    String[] excludedPatterns = this.configuration.getStringArray(GoPlugin.EXCLUSIONS_KEY);
+    String relativePath = inputFile.uri().toString();
+    return !WildcardPattern.match(WildcardPattern.create(excludedPatterns), relativePath);
+  }
+
 }

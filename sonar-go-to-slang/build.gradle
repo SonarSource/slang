@@ -1,0 +1,40 @@
+plugins {
+  id 'com.github.blindpirate.gogradle' version '0.11.4'
+}
+
+//sonarqube {
+//  properties {
+//    property 'sonar.sources', '.'
+//    property 'sonar.exclusions', '**/*_test.go,**/generate_source.go,**/*_generated.go,**/build/**,**/.gogradle/**'
+//    property 'sonar.tests', '.'
+//    property 'sonar.test.inclusions', '**/*_test.go'
+//    property 'sonar.test.exclusions', '**/build/**,**/.gogradle/**'
+//    property 'sonar.go.tests.reportPaths', "${project.projectDir}/.gogradle/reports/test-report.out"
+//    property 'sonar.go.coverage.reportPaths', "${project.projectDir}/.gogradle/reports/coverage/profiles/github.com%2FSonarSource%2Fsonar-go%2Fuast-generator-go.out"
+//  }
+//}
+
+golang {
+  packagePath = 'github.com/SonarSource/slang-enterprise/sonar-go-to-slang'
+  goVersion = '1.12.6'
+}
+
+dependencies {
+  golang {
+    test name:'github.com/stretchr/testify'
+  }
+}
+
+task generateSource(type: com.github.blindpirate.gogradle.Go) {
+    go 'run generate_source.go'
+}
+
+installDependencies.dependsOn generateSource
+clean.dependsOn goClean
+test.dependsOn goCheck
+build.dependsOn goBuild
+
+goBuild {
+  targetPlatform = ['linux-amd64', 'windows-amd64', 'darwin-amd64']
+  outputLocation = './build/sonar-go-to-slang-${GOOS}-${GOARCH}${GOEXE}'
+}

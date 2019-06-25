@@ -36,7 +36,6 @@ import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.IdentifierTree;
-import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
@@ -115,7 +114,8 @@ public class ASTConverterValidation implements ASTConverter {
 
   private void raiseError(String messageKey, String messageDetails, TextPointer position) {
     if (mode == ValidationMode.THROW_EXCEPTION) {
-      throw new ParseException(messageKey + messageDetails, position);
+      throw new IllegalStateException("ASTConverterValidationException: " + messageKey + messageDetails +
+        " at  " + position.line() + ":" + position.lineOffset());
     } else {
       String positionDetails = " (line: " + position.line() + ", column: " + (position.lineOffset() + 1) + ")";
       firstErrorOfEachKind.putIfAbsent(messageKey, messageDetails + positionDetails);

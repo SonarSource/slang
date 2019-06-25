@@ -134,6 +134,14 @@ public class SlangRulingTest {
   }
 
   @Test
+  // @Ignore because it should only be run manually
+  @Ignore
+  public void go_manual_keep_sonarqube_server_up() throws IOException {
+    keepSonarqubeRunning = true;
+    test_go();
+  }
+
+  @Test
   public void test_kotlin() throws IOException {
     Map<String, String> properties = new HashMap<>();
     properties.put("sonar.inclusions", "sources/kotlin/**/*.kt, ruling/src/test/resources/sources/kotlin/**/*.kt");
@@ -159,6 +167,9 @@ public class SlangRulingTest {
   public void test_go() throws IOException {
     Map<String, String> properties = new HashMap<>();
     properties.put("sonar.inclusions", "sources/go/**/*.go, ruling/src/test/resources/sources/go/**/*.go");
+    properties.put("sonar.exclusions", "**/*generated*.go, **/*.pb.go");
+    properties.put("sonar.tests", ".");
+    properties.put("sonar.test.inclusions", "**/*_test.go");
     run_ruling_test("go", properties);
   }
 

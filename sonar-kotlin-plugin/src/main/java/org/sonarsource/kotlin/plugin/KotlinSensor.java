@@ -21,6 +21,7 @@ package org.sonarsource.kotlin.plugin;
 
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
+import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonarsource.kotlin.converter.KotlinCodeVerifier;
@@ -43,7 +44,7 @@ public class KotlinSensor extends SlangSensor {
   }
 
   @Override
-  protected ASTConverter astConverter() {
+  protected ASTConverter astConverter(SensorContext sensorContext) {
     return new KotlinConverter();
   }
 

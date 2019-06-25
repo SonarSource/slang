@@ -28,6 +28,7 @@ import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
+import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.error.AnalysisError;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
@@ -289,7 +290,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   private SlangSensor sensor(CheckFactory checkFactory) {
     return new SlangSensor(new NoSonarFilter(), fileLinesContextFactory, SLANG) {
       @Override
-      protected ASTConverter astConverter() {
+      protected ASTConverter astConverter(SensorContext sensorContext) {
         return new SLangConverter();
       }
 

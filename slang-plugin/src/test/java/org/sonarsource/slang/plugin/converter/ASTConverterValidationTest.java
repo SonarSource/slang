@@ -37,7 +37,6 @@ import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.HasTextRange;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.NativeKind;
-import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
@@ -141,7 +140,7 @@ public class ASTConverterValidationTest {
 
   @Test
   public void missing_token() {
-    expected.expect(ParseException.class);
+    expected.expect(IllegalStateException.class);
     expected.expectMessage("IdentifierTreeImpl has no token");
 
     TextRange range = new TextRangeImpl(1, 0, 1, 1);

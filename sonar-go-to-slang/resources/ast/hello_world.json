@@ -1,0 +1,82 @@
+{ 
+  "treeMetaData": {
+    "comments": [
+            {"text":"// +build ignore", "contentText":" +build ignore", "range":"1:0:1:16", "contentRange": "1:2:1:16"}
+    ],
+    "tokens": [
+      {"text":"package","textRange":"3:0:3:7","type":"KEYWORD"},
+      {"text":"main","textRange":"3:8:3:12","type":"OTHER"},
+      {"text":"import","textRange":"5:0:5:6","type":"KEYWORD"},
+      {"text":"\"fmt\"","textRange":"5:7:5:12","type":"STRING_LITERAL"},
+      {"text":"func","textRange":"7:0:7:4","type":"KEYWORD"},
+      {"text":"main","textRange":"7:5:7:9","type":"OTHER"},
+      {"text":"(","textRange":"7:9:7:10","type":"OTHER"},
+      {"text":")","textRange":"7:10:7:11","type":"OTHER"},
+      {"text":"{","textRange":"7:12:7:13","type":"OTHER"},
+      {"text":"msg","textRange":"8:1:8:4","type":"OTHER"},
+      {"text":":=","textRange":"8:5:8:7","type":"OTHER"},
+      {"text":"\"hello, world\"","textRange":"8:8:8:22","type":"STRING_LITERAL"},
+      {"text":"fmt","textRange":"9:1:9:4","type":"OTHER"},
+      {"text":"Println","textRange":"9:5:9:12","type":"OTHER"},
+      {"text":".","textRange":"9:4:9:5","type":"OTHER"},
+      {"text":"(","textRange":"9:12:9:13","type":"OTHER"},
+      {"text":"msg","textRange":"9:13:9:16","type":"OTHER"},
+      {"text":")","textRange":"9:16:9:17","type":"OTHER"},
+      {"text":"}","textRange":"10:0:10:1","type":"OTHER"}
+    ]
+  },
+  "tree": {"@type": "TopLevel", "metaData": "1:0:11:0", "declarations": [
+    {"@type": "Native", "metaData": "1:0:11:0","nativeKind":"(File)","children":[
+      {"@type": "Native", "metaData": "1:0:3:12","nativeKind":"File.Package","children":[
+        {"@type": "Native", "metaData": "3:0:3:7","nativeKind":""},
+        {"@type": "Identifier", "metaData": "3:8:3:12","name":"main"}
+      ]},
+      {"@type": "Native", "metaData": "5:0:10:1","nativeKind":"Decls([]Decl)","children":[
+        {"@type": "Native", "metaData": "5:0:5:12","nativeKind":"[0](GenDecl)","children":[
+          {"@type": "Native", "metaData": "5:0:5:6","nativeKind":"Tok"},
+          {"@type": "Native", "metaData": "5:7:5:12","nativeKind":"Specs([]Spec)","children":[
+            {"@type": "Native", "metaData": "5:7:5:12","nativeKind":"[0](ImportSpec)","children":[
+              {"@type": "Native", "metaData": "5:7:5:12","nativeKind":"Path(BasicLit)"}
+            ]}
+          ]}
+        ]},
+        {"@type": "Native", "metaData": "7:0:10:1","nativeKind":"[1](FuncDecl)","children":[
+          {"@type": "Native", "metaData": "7:0:7:4","nativeKind":"Type.Func"},
+          {"@type": "Identifier", "metaData": "7:5:7:9","name":"main"},
+          {"@type": "Native", "metaData": "7:9:7:11","nativeKind":"Type(FuncType)","children":[
+            {"@type": "Native", "metaData": "7:9:7:11","nativeKind":"Params(FieldList)","children":[
+              {"@type": "Native", "metaData": "7:9:7:10","nativeKind":"Opening"},
+              {"@type": "Native", "metaData": "7:10:7:11","nativeKind":"Closing"}
+            ]}
+          ]},
+          {"@type": "Native", "metaData": "7:12:10:1","nativeKind":"Body(BlockStmt)","children":[
+            {"@type": "Native", "metaData": "7:12:7:13","nativeKind":"Lbrace"},
+            {"@type": "Native", "metaData": "8:1:8:22","nativeKind":"[0](AssignStmt)","children":[
+              {"@type": "Native", "metaData": "8:1:8:4","nativeKind":"Lhs([]Expr)","children":[
+                {"@type": "Identifier", "metaData": "8:1:8:4","name":"msg"}
+              ]},
+              {"@type": "Native", "metaData": "8:5:8:7","nativeKind":"Tok"},
+              {"@type": "Native", "metaData": "8:8:8:22","nativeKind":"Rhs([]Expr)","children":[
+                {"@type": "Native", "metaData": "8:8:8:22","nativeKind":"[0](BasicLit)"}
+              ]}
+            ]},
+            {"@type": "Native", "metaData": "9:1:9:17","nativeKind":"[1](ExprStmt)","children":[
+              {"@type": "Native", "metaData": "9:1:9:17","nativeKind":"X(CallExpr)","children":[
+                {"@type": "Native", "metaData": "9:1:9:12","nativeKind":"Fun(SelectorExpr)","children":[
+                  {"@type": "Identifier", "metaData": "9:1:9:4","name":"fmt"},
+                  {"@type": "Native", "metaData": "9:4:9:5","nativeKind":""},
+                  {"@type": "Identifier", "metaData": "9:5:9:12","name":"Println"}
+                ]},
+                {"@type": "Native", "metaData": "9:12:9:13","nativeKind":"Lparen"},
+                {"@type": "Native", "metaData": "9:13:9:16","nativeKind":"Args([]Expr)","children":[
+                  {"@type": "Identifier", "metaData": "9:13:9:16","name":"msg"}
+                ]},
+                {"@type": "Native", "metaData": "9:16:9:17","nativeKind":"Rparen"}
+              ]}
+            ]},
+            {"@type": "Native", "metaData": "10:0:10:1","nativeKind":"Rbrace"}
+          ]}
+        ]}
+      ]}
+    ]}], "firstCpdToken": null }
+} 

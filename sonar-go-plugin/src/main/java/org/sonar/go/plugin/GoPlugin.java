@@ -41,6 +41,7 @@ public class GoPlugin implements Plugin {
     context.addExtensions(
       GoLanguage.class,
       GoSensor.class,
+      GoExclusionsFileFilter.class,
       new GoRulesDefinition(externalIssuesSupported),
       GoProfileDefinition.class,
 

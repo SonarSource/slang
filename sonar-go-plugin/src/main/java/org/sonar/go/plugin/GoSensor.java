@@ -21,6 +21,7 @@ package org.sonar.go.plugin;
 
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
+import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
@@ -46,9 +47,8 @@ public class GoSensor extends SlangSensor {
   }
 
   @Override
-  protected ASTConverter astConverter() {
-    // FIXME
-    return new GoConverter();
+  protected ASTConverter astConverter(SensorContext sensorContext) {
+    return new GoConverter(sensorContext.fileSystem().workDir());
   }
 
   @Override
