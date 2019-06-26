@@ -3,8 +3,8 @@ plugins {
 }
 
 // require sonar-go-to-slang binaries to be build
-shadowJar.dependsOn ':sonar-go-to-slang:goBuild'
-test.dependsOn ':sonar-go-to-slang:goBuild'
+shadowJar.dependsOn ':sonar-go-to-slang:build'
+test.dependsOn ':sonar-go-to-slang:build'
 
 dependencies {
     compile project(':slang-api')

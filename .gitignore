@@ -1,6 +1,8 @@
 # --- Gradle
 .gradle/
 build/
+go.mod
+go.sum
 
 # ---- Maven
 target/
