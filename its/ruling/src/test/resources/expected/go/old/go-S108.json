@@ -1,5 +1,5 @@
 {
-'project:kubernetes/pkg/controller/service/servicecontroller.go':[
+'go-project:sources/go/kubernetes/pkg/controller/service/servicecontroller.go':[
 179,
 ],
 'project:samples/NoIdenticalConditions.go':[

@@ -1,12 +1,12 @@
 {
-'project:kubernetes/pkg/api/testing/fuzzer.go':[
+'go-project:sources/go/kubernetes/pkg/api/testing/fuzzer.go':[
 56,
 169,
 ],
-'project:kubernetes/staging/src/k8s.io/apimachinery/pkg/api/testing/fuzzer.go':[
+'go-project:sources/go/kubernetes/staging/src/k8s.io/apimachinery/pkg/api/testing/fuzzer.go':[
 80,
 ],
-'project:kubernetes/staging/src/k8s.io/apiserver/pkg/apis/example/fuzzer/fuzzer.go':[
+'go-project:sources/go/kubernetes/staging/src/k8s.io/apiserver/pkg/apis/example/fuzzer/fuzzer.go':[
 35,
 ],
 }
