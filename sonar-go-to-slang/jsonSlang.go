@@ -13,16 +13,8 @@ func toJsonSlang(node *Node, comments []*Node, tokens []*Token) string {
 	indent := "  "
 	buf.WriteString("{ \n")
 	marshallSlangMetaData(&buf, comments, tokens, indent)
-	//buf.WriteString(indent + "\"tree\":\n")
-	//Add TopLevel by hand to have the metrics
-	buf.WriteString(indent + "\"tree\": {\"@type\": \"TopLevel\", \"metaData\": ")
-	writeObjectSlang(&buf, node.TextRange)
-	buf.WriteString(", \"declarations\": [\n")
-
+	buf.WriteString(indent + "\"tree\":\n")
 	marshalIndentSlang(&buf, node, "    ", indent)
-
-	buf.WriteString("], \"firstCpdToken\": null }")
-
 	buf.WriteString("\n} \n")
 	return string(buf.Bytes())
 }

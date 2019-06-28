@@ -29,7 +29,6 @@ import (
 	"go/token"
 	"io/ioutil"
 	"os"
-	"strconv"
 	"strings"
 	"unicode/utf8"
 )
@@ -498,50 +497,4 @@ func (t *SlangMapper) location(offset, endOffset int) string {
 
 func isEndOfLine(ch byte) bool {
 	return ch == '\n' || ch == '\r'
-}
-
-func (t *SlangMapper) mapReturnStmt(astNode *ast.ReturnStmt, fieldName string) *Node {
-	if astNode == nil {
-		return nil
-	}
-	var children []*Node
-	slangField := make(map[string]interface{})
-	returnToken := t.createTokenFromPosAstToken(astNode.Return, token.RETURN, "Return")
-	slangField["keyword"] = returnToken.Token.TextRange
-	children = t.appendNode(children, returnToken)
-
-	if len(astNode.Results) == 0 {
-		slangField["body"] = nil
-	} else if len(astNode.Results) == 1 {
-		body := t.mapExpr(astNode.Results[0], "["+strconv.Itoa(0)+"]")
-		slangField["body"] = body
-		children = t.appendNode(children, body)
-	} else {
-		//Slang does not support multiple body, map the whole node to native
-		for i := 0; i < len(astNode.Results); i++ {
-			children = t.appendNode(children, t.mapExpr(astNode.Results[i], "["+strconv.Itoa(i)+"]"))
-		}
-		return t.createNativeNode(astNode, children, fieldName+"(ReturnStmt)")
-	}
-
-	return t.createNode(astNode, children, fieldName+"(ReturnStmt)", "Return", slangField)
-}
-
-func (t *SlangMapper) mapIdent(astNode *ast.Ident, fieldName string) *Node {
-	if astNode == nil {
-		return nil
-	}
-	slangField := make(map[string]interface{})
-	var slangType string
-
-	switch astNode.Name {
-	case "true", "false", "nil":
-		slangType = "Literal"
-		slangField["value"] = astNode.Name
-	default:
-		slangType = "Identifier"
-		slangField["name"] = astNode.Name
-	}
-	var children []*Node
-	return t.createNode(astNode, children, fieldName+"(Ident)", slangType, slangField)
 }

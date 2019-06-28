@@ -198,9 +198,7 @@ import (
 		},
 		TypeProcessed: map[reflect.Type]bool{
 			//Node already implemented inside goparser.go
-			typeOf((*ast.BasicLit)(nil)):   true,
-			typeOf((*ast.Ident)(nil)):      true,
-			typeOf((*ast.ReturnStmt)(nil)): true,
+			typeOf((*ast.BasicLit)(nil)): true,
 		},
 		AllAstStruct: typeOfList(
 			// "Go" does not provide a way to enumerate struct types that inherit from a given interface.
@@ -332,6 +330,10 @@ func (t *AstContext) visitStructType(structType reflect.Type) {
 		t.writeLn("func (t *SlangMapper) " + methodName + "(" + arguments + ") *Node {")
 		t.writeLn("\tif astNode == nil {")
 		t.writeLn("\t\treturn nil")
+		t.writeLn("\t}")
+		t.writeLn("\tnodeImpl := t." + methodName + "Impl(astNode, fieldName)")
+		t.writeLn("\tif nodeImpl != nil {")
+		t.writeLn("\t\treturn nodeImpl")
 		t.writeLn("\t}")
 		t.writeLn("\tvar children []*Node")
 		if !t.ForceLeafNode[structType.Name()] {

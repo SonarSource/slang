@@ -56,8 +56,8 @@
       {"text":"}","textRange":"20:0:20:1","type":"OTHER"}
     ]
   },
-  "tree": {"@type": "TopLevel", "metaData": "1:0:21:0", "declarations": [
-    {"@type": "Native", "metaData": "1:0:21:0","nativeKind":"(File)","children":[
+  "tree":
+    {"@type": "TopLevel", "metaData": "1:0:21:0","firstCpdToken":null,"declarations":[
       {"@type": "Native", "metaData": "1:0:1:12","nativeKind":"File.Package","children":[
         {"@type": "Native", "metaData": "1:0:1:7","nativeKind":""},
         {"@type": "Identifier", "metaData": "1:8:1:12","name":"main"}
@@ -181,5 +181,5 @@
           ]}
         ]}
       ]}
-    ]}], "firstCpdToken": null }
+    ]}
 } 

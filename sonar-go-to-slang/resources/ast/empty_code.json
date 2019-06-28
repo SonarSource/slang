@@ -8,11 +8,11 @@
       {"text":"ast","textRange":"1:8:1:11","type":"OTHER"}
     ]
   },
-  "tree": {"@type": "TopLevel", "metaData": "1:0:5:0", "declarations": [
-    {"@type": "Native", "metaData": "1:0:5:0","nativeKind":"(File)","children":[
+  "tree":
+    {"@type": "TopLevel", "metaData": "1:0:5:0","firstCpdToken":null,"declarations":[
       {"@type": "Native", "metaData": "1:0:1:11","nativeKind":"File.Package","children":[
         {"@type": "Native", "metaData": "1:0:1:7","nativeKind":""},
         {"@type": "Identifier", "metaData": "1:8:1:11","name":"ast"}
       ]}
-    ]}], "firstCpdToken": null }
+    ]}
 } 

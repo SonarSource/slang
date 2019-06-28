@@ -25,8 +25,8 @@
       {"text":"}","textRange":"10:0:10:1","type":"OTHER"}
     ]
   },
-  "tree": {"@type": "TopLevel", "metaData": "1:0:11:0", "declarations": [
-    {"@type": "Native", "metaData": "1:0:11:0","nativeKind":"(File)","children":[
+  "tree":
+    {"@type": "TopLevel", "metaData": "1:0:11:0","firstCpdToken":null,"declarations":[
       {"@type": "Native", "metaData": "1:0:3:12","nativeKind":"File.Package","children":[
         {"@type": "Native", "metaData": "3:0:3:7","nativeKind":""},
         {"@type": "Identifier", "metaData": "3:8:3:12","name":"main"}
@@ -78,5 +78,5 @@
           ]}
         ]}
       ]}
-    ]}], "firstCpdToken": null }
+    ]}
 } 
