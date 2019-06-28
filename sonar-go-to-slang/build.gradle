@@ -23,12 +23,6 @@ golang {
   goVersion = '1.12.6'
 }
 
-dependencies {
-  golang {
-    test name:'github.com/stretchr/testify', tag:'v1.3.0'
-  }
-}
-
 task generateSource(type: com.github.blindpirate.gogradle.Go) {
     go 'run generate_source.go'
 }
