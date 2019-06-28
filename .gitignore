@@ -8,6 +8,10 @@ go.sum
 target/
 dependency-reduced-pom.xml
 
+# ---- SonarQube analysis
+.scannerwork/
+.sonar/
+
 # ---- IntelliJ IDEA
 *.iws
 *.iml
@@ -37,5 +41,4 @@ Thumbs.db
 Desktop.ini
 
 .java-version
-.sonar/
 

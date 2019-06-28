@@ -1,6 +1,9 @@
 {
   "name": "Sonar way",
   "ruleKeys": [
-    "S1135"
+    "ParsingError",
+    "S1134",
+    "S1135",
+    "S4663"
   ]
 }

@@ -1,4 +1,8 @@
 {
+'go-project:ruling/src/test/resources/sources/go/S1135.go':[
+6,
+7,
+],
 'go-project:sources/go/kubernetes/cmd/gendocs/gen_kubectl_docs.go':[
 49,
 ],
@@ -4168,9 +4172,5 @@
 ],
 'go-project:sources/go/kubernetes/third_party/forked/golang/template/funcs.go':[
 263,
-],
-'go-project:ruling/src/test/resources/sources/go/S1135.go':[
-6,
-7,
 ],
 }

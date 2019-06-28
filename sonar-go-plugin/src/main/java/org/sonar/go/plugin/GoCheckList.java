@@ -13,10 +13,7 @@ import org.sonarsource.slang.checks.DuplicateBranchCheck;
 import org.sonarsource.slang.checks.DuplicatedFunctionImplementationCheck;
 import org.sonarsource.slang.checks.ElseIfWithoutElseCheck;
 import org.sonarsource.slang.checks.EmptyBlockCheck;
-import org.sonarsource.slang.checks.EmptyCommentCheck;
 import org.sonarsource.slang.checks.EmptyFunctionCheck;
-import org.sonarsource.slang.checks.FileHeaderCheck;
-import org.sonarsource.slang.checks.FixMeCommentCheck;
 import org.sonarsource.slang.checks.FunctionCognitiveComplexityCheck;
 import org.sonarsource.slang.checks.HardcodedCredentialsCheck;
 import org.sonarsource.slang.checks.HardcodedIpCheck;
@@ -28,7 +25,6 @@ import org.sonarsource.slang.checks.MatchWithoutElseCheck;
 import org.sonarsource.slang.checks.NestedMatchCheck;
 import org.sonarsource.slang.checks.OctalValuesCheck;
 import org.sonarsource.slang.checks.OneStatementPerLineCheck;
-import org.sonarsource.slang.checks.ParsingErrorCheck;
 import org.sonarsource.slang.checks.RedundantParenthesesCheck;
 import org.sonarsource.slang.checks.SelfAssignmentCheck;
 import org.sonarsource.slang.checks.StringLiteralDuplicatedCheck;
@@ -36,9 +32,7 @@ import org.sonarsource.slang.checks.TabsCheck;
 import org.sonarsource.slang.checks.TooComplexExpressionCheck;
 import org.sonarsource.slang.checks.TooDeeplyNestedStatementsCheck;
 import org.sonarsource.slang.checks.TooLongFunctionCheck;
-import org.sonarsource.slang.checks.TooLongLineCheck;
 import org.sonarsource.slang.checks.TooManyCasesCheck;
-import org.sonarsource.slang.checks.TooManyLinesOfCodeFileCheck;
 import org.sonarsource.slang.checks.TooManyParametersCheck;
 import org.sonarsource.slang.checks.UnusedFunctionParameterCheck;
 import org.sonarsource.slang.checks.UnusedLocalVariableCheck;
@@ -64,10 +58,7 @@ public class GoCheckList {
     DuplicatedFunctionImplementationCheck.class,
     ElseIfWithoutElseCheck.class,
     EmptyBlockCheck.class,
-    EmptyCommentCheck.class,
     EmptyFunctionCheck.class,
-    FileHeaderCheck.class,
-    FixMeCommentCheck.class,
     FunctionCognitiveComplexityCheck.class,
     HardcodedCredentialsCheck.class,
     HardcodedIpCheck.class,
@@ -79,7 +70,6 @@ public class GoCheckList {
     NestedMatchCheck.class,
     OctalValuesCheck.class,
     OneStatementPerLineCheck.class,
-    ParsingErrorCheck.class,
     RedundantParenthesesCheck.class,
     SelfAssignmentCheck.class,
     StringLiteralDuplicatedCheck.class,
@@ -87,8 +77,6 @@ public class GoCheckList {
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
     TooLongFunctionCheck.class,
-    TooLongLineCheck.class,
-    TooManyLinesOfCodeFileCheck.class,
     TooManyCasesCheck.class,
     TooManyParametersCheck.class,
     UnusedFunctionParameterCheck.class,

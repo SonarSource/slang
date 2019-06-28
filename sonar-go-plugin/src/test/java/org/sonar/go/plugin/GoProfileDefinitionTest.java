@@ -39,7 +39,7 @@ public class GoProfileDefinitionTest {
 
     assertThat(profile.language()).isEqualTo("go");
     assertThat(profile.name()).isEqualTo("Sonar way");
-    assertThat(profile.rules()).hasSize(1);
+    assertThat(profile.rules()).hasSize(4);
     assertThat(validation.hasErrors()).isFalse();
   }
 

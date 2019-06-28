@@ -79,6 +79,8 @@ public class SlangRulingTest {
     scalaRulesConfiguration.add("S1451", "isRegularExpression", "true");
 
     ProfileGenerator.RulesConfiguration goRulesConfiguration = new ProfileGenerator.RulesConfiguration();
+    goRulesConfiguration.add("S1451", "headerFormat", "^(?i).*copyright");
+    goRulesConfiguration.add("S1451", "isRegularExpression", "true");
 
     File kotlinProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "kotlin", "kotlin", kotlinRulesConfiguration, Collections.emptySet());
     File rubyProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "ruby", "ruby", rubyRulesConfiguration, Collections.emptySet());
