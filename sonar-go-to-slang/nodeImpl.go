@@ -74,21 +74,19 @@ func (t *SlangMapper) mapFuncDeclImpl(decl *ast.FuncDecl, fieldName string) *Nod
 	var nativeChildren []*Node
 	slangField := make(map[string]interface{})
 
-	funcKeyword := t.createTokenFromPosAstToken(decl.Type.Func, token.FUNC, "Type.Func")
-	children = t.appendNode(children, funcKeyword)
-	nativeChildren = t.appendNode(nativeChildren, funcKeyword)
+	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Type.Func, token.FUNC, "Type.Func"))
 
-	parameters := t.mapFieldListParams(decl.Recv, "Recv")
-	children = t.appendNode(children, parameters)
-	nativeChildren = t.appendNode(nativeChildren, parameters)
+	receivers := t.mapFieldListParams(decl.Recv, "Recv")
+	children = t.appendNode(children, receivers)
+	nativeChildren = t.appendNode(nativeChildren, receivers)
 
 	funcName := t.mapIdent(decl.Name, "Name")
 	children = t.appendNode(children, funcName)
 	slangField["name"] = funcName
-	
-	funcParams := t.mapFieldListParams(decl.Type.Params, "Params")
-	children = t.appendNode(children, funcParams)
-	slangField["formalParameters"] = funcParams
+
+	parameters := t.mapFieldListParams(decl.Type.Params, "Params")
+	children = t.appendNode(children, parameters)
+	slangField["formalParameters"] = t.getFormalParameter(parameters)
 
 	funcResults := t.mapFieldListResults(decl.Type.Results, "Results")
 	children = t.appendNode(children, funcResults)
@@ -106,6 +104,20 @@ func (t *SlangMapper) mapFuncDeclImpl(decl *ast.FuncDecl, fieldName string) *Nod
 	slangField["nativeChildren"] = nativeChildren
 
 	return t.createNode(decl, children, fieldName+"(FuncDecl)", "FunctionDeclaration", slangField)
+}
+
+func (t *SlangMapper) getFormalParameter(node *Node) []*Node {
+	var formalParameters []*Node
+	//Get all FieldListParams lists
+	childrenWithoutComment := t.filterOutComments(node.Children)
+	for i := 1; i < len(childrenWithoutComment)-1; i++ {
+		//Get all params inside this list (excluding comma)
+		currentList := t.filterOutComments(childrenWithoutComment[i].Children)
+		for j := 0; j < len(currentList); j = j + 2 {
+			formalParameters = append(formalParameters, currentList[j])
+		}
+	}
+	return formalParameters
 }
 
 func (t *SlangMapper) mapGenDeclImpl(decl *ast.GenDecl, fieldName string) *Node {
@@ -161,7 +173,41 @@ func (t *SlangMapper) mapFieldResultImpl(field *ast.Field, fieldName string) *No
 }
 
 func (t *SlangMapper) mapFieldParamImpl(field *ast.Field, fieldName string) *Node {
-	return nil
+	var children []*Node
+
+	nNames := len(field.Names)
+
+	if nNames <= 0 {
+		return nil
+	}
+	//Go paramter can share the type with multiple identifier ex: f(a, b int)
+	//We will create a parameter node without type for the firsts and with type for the last
+	for i := 0; i < nNames-1; i++ {
+		paramterIdent := t.mapIdent(field.Names[i], fieldName+"["+strconv.Itoa(i)+"]")
+		parameter := t.createParameter(field.Names[i], paramterIdent, nil, fieldName)
+		children = t.appendNode(children, parameter)
+	}
+	lastParameterIdent := t.mapIdent(field.Names[nNames-1], fieldName+"["+strconv.Itoa(nNames-1)+"]")
+	lastParameterType := t.mapExpr(field.Type, "Type")
+
+	lastParameter := t.createParameter(field.Names[nNames-1], lastParameterIdent, lastParameterType, fieldName)
+	children = t.appendNode(children, lastParameter)
+	children = t.appendNode(children, t.mapBasicLit(field.Tag, "Tag"))
+
+	return t.createNativeNode(field, children, fieldName+"(Field)")
+}
+
+func (t *SlangMapper) createParameter(ident *ast.Ident, parameterIdent, typ *Node, fieldName string) *Node {
+	slangField := make(map[string]interface{})
+	children := []*Node{parameterIdent}
+	if typ != nil {
+		children = t.appendNode(children, typ)
+	}
+	slangField["identifier"] = parameterIdent
+	slangField["type"] = typ
+	slangField["modifiers"] = nil    //No paramter modifier in Go
+	slangField["defaultValue"] = nil //No default value in Go
+	return t.createNode(ident, children, fieldName+"(Parameter)", "Parameter", slangField)
 }
 
 func (t *SlangMapper) mapStmtImpl(stmt ast.Stmt, fieldName string) *Node {

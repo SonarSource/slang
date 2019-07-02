@@ -21,3 +21,11 @@ func f8(a int) int {
 func f9(a int) (int, string) {
     return 1, "one"
 }
+
+func (t *SlangMapper) f10() { }
+
+func f11(head string, handleFunc func(*store.NodeExtern)) { }
+
+func g1(i, /*comment*/j int) {}
+
+func g3(i, j  int, /*comment*/ k, l string) {}

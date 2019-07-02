@@ -72,14 +72,8 @@
           ]}
         ]},
         {"@type": "FunctionDeclaration", "metaData": "5:0:20:1","returnType":
-          null,"nativeChildren":[
-          {"@type": "Native", "metaData": "5:0:5:4","nativeKind":"Type.Func"}
-        ],"name":
-          {"@type": "Identifier", "metaData": "5:5:5:9","name":"main"},"modifiers":null,"isConstructor":false,"formalParameters":
-          {"@type": "Native", "metaData": "5:9:5:11","nativeKind":"Params(FieldList)","children":[
-            {"@type": "Native", "metaData": "5:9:5:10","nativeKind":"Opening"},
-            {"@type": "Native", "metaData": "5:10:5:11","nativeKind":"Closing"}
-          ]},"body":
+          null,"nativeChildren":[],"name":
+          {"@type": "Identifier", "metaData": "5:5:5:9","name":"main"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
           {"@type": "Block", "metaData": "5:12:20:1","statementOrExpressions":[
             {"@type": "Native", "metaData": "6:1:8:2","nativeKind":"[0](IfStmt)","children":[
               {"@type": "Native", "metaData": "6:1:6:3","nativeKind":"If"},
