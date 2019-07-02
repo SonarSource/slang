@@ -12,7 +12,6 @@ import org.sonarsource.slang.checks.CollapsibleIfStatementsCheck;
 import org.sonarsource.slang.checks.DuplicateBranchCheck;
 import org.sonarsource.slang.checks.DuplicatedFunctionImplementationCheck;
 import org.sonarsource.slang.checks.ElseIfWithoutElseCheck;
-import org.sonarsource.slang.checks.EmptyBlockCheck;
 import org.sonarsource.slang.checks.EmptyFunctionCheck;
 import org.sonarsource.slang.checks.FunctionCognitiveComplexityCheck;
 import org.sonarsource.slang.checks.HardcodedCredentialsCheck;
@@ -54,7 +53,6 @@ public class GoCheckList {
     DuplicateBranchCheck.class,
     DuplicatedFunctionImplementationCheck.class,
     ElseIfWithoutElseCheck.class,
-    EmptyBlockCheck.class,
     EmptyFunctionCheck.class,
     FunctionCognitiveComplexityCheck.class,
     HardcodedCredentialsCheck.class,
