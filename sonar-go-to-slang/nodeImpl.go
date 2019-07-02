@@ -70,7 +70,42 @@ func (t *SlangMapper) mapBadDeclImpl(decl *ast.BadDecl, fieldName string) *Node 
 }
 
 func (t *SlangMapper) mapFuncDeclImpl(decl *ast.FuncDecl, fieldName string) *Node {
-	return nil
+	var children []*Node
+	var nativeChildren []*Node
+	slangField := make(map[string]interface{})
+
+	funcKeyword := t.createTokenFromPosAstToken(decl.Type.Func, token.FUNC, "Type.Func")
+	children = t.appendNode(children, funcKeyword)
+	nativeChildren = t.appendNode(nativeChildren, funcKeyword)
+
+	parameters := t.mapFieldListParams(decl.Recv, "Recv")
+	children = t.appendNode(children, parameters)
+	nativeChildren = t.appendNode(nativeChildren, parameters)
+
+	funcName := t.mapIdent(decl.Name, "Name")
+	children = t.appendNode(children, funcName)
+	slangField["name"] = funcName
+	
+	funcParams := t.mapFieldListParams(decl.Type.Params, "Params")
+	children = t.appendNode(children, funcParams)
+	slangField["formalParameters"] = funcParams
+
+	funcResults := t.mapFieldListResults(decl.Type.Results, "Results")
+	children = t.appendNode(children, funcResults)
+	slangField["returnType"] = funcResults
+
+	funcBody := t.mapBlockStmt(decl.Body, "Body")
+	children = t.appendNode(children, funcBody)
+	slangField["body"] = funcBody
+
+	//Required by SLang; Go does not have constructors
+	slangField["isConstructor"] = false
+	//Go does not have explicit modifiers
+	slangField["modifiers"] = nil
+	//Other children of the function node
+	slangField["nativeChildren"] = nativeChildren
+
+	return t.createNode(decl, children, fieldName+"(FuncDecl)", "FunctionDeclaration", slangField)
 }
 
 func (t *SlangMapper) mapGenDeclImpl(decl *ast.GenDecl, fieldName string) *Node {

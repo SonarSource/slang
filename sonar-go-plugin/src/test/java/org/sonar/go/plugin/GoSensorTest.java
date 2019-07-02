@@ -120,13 +120,12 @@ public class GoSensorTest {
 
   @Test
   public void test_line_issue() throws IOException {
-    // FIXME
-//    InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
-//      "package                                                                                                                           main\n");
-//    sensorContext.fileSystem().add(inputFile);
-//    GoSensor goSensor = getSensor("S103");
-//    goSensor.execute(sensorContext);
-//    assertThat(sensorContext.allIssues()).hasSize(1);
+    InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
+      "package                                                                                                                                                                                                                               main\n");
+    sensorContext.fileSystem().add(inputFile);
+    GoSensor goSensor = getSensor("S103");
+    goSensor.execute(sensorContext);
+    assertThat(sensorContext.allIssues()).hasSize(1);
   }
 
   @Test
@@ -184,9 +183,9 @@ public class GoSensorTest {
     assertThat(sensorContext.allIssues()).hasSize(0);
     assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.NCLOC).value()).isEqualTo(19);
     assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COMMENT_LINES).value()).isEqualTo(3);
+    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.FUNCTIONS).value()).isEqualTo(3);
     // FIXME
 //    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.CLASSES).value()).isEqualTo(2);
-//    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.FUNCTIONS).value()).isEqualTo(3);
 //    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.STATEMENTS).value()).isEqualTo(4);
 //    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COGNITIVE_COMPLEXITY).value()).isEqualTo(1);
 
@@ -262,7 +261,6 @@ public class GoSensorTest {
 
   @Test
   public void highlighting() throws Exception {
-    // FIXME
     InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
       "//abc\n" +
         "/*x*/\n" +
@@ -286,7 +284,7 @@ public class GoSensorTest {
     assertHighlighting(componentKey, 3, 9, 12, null);
     // import "fmt"
     assertHighlighting(componentKey, 4, 1, 6, TypeOfText.KEYWORD);
-// FIXME assertHighlighting(componentKey, 4, 8, 12, TypeOfText.STRING);
+    assertHighlighting(componentKey, 4, 8, 12, TypeOfText.STRING);
     // type class1 struct { }
     assertHighlighting(componentKey, 5, 1, 4, TypeOfText.KEYWORD);
     assertHighlighting(componentKey, 5, 6, 11, null);
@@ -301,7 +299,7 @@ public class GoSensorTest {
     assertHighlighting(componentKey, 6, 21, 23, null);
     // return 42
     assertHighlighting(componentKey, 7, 3, 8, TypeOfText.KEYWORD);
-// FIXME assertHighlighting(componentKey, 7, 10, 11, TypeOfText.CONSTANT);
+    assertHighlighting(componentKey, 7, 10, 11, TypeOfText.CONSTANT);
   }
 
   @Test

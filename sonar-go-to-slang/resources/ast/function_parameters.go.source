@@ -1,0 +1,23 @@
+package main
+
+func f1() {}
+
+func f2(a int) {}
+
+func f3(a, b int) {}
+
+func f4(a int, b int) {}
+
+func f5(a int, b string) {}
+
+func f6(a int, b, c string) {}
+
+func f7(a, b int, c, d string) {}
+
+func f8(a int) int {
+    return 1
+}
+
+func f9(a int) (int, string) {
+    return 1, "one"
+}
