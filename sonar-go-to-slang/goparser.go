@@ -258,6 +258,13 @@ func (t *SlangMapper) appendNodeList(parentList []*Node, children []*Node, nativ
 
 func (t *SlangMapper) createNativeNode(astNode ast.Node, children []*Node, nativeNode string) *Node {
 	slangField := make(map[string]interface{})
+	slangField["children"] = t.filterOutComments(children)
+	slangField["nativeKind"] = nativeNode
+
+	return t.createNode(astNode, children, nativeNode, "Native", slangField)
+}
+
+func (t *SlangMapper) filterOutComments(children []*Node) []*Node {
 	//Filter the nodes that are comments
 	var slangChildren []*Node
 	for _, child := range children {
@@ -265,10 +272,7 @@ func (t *SlangMapper) createNativeNode(astNode ast.Node, children []*Node, nativ
 			slangChildren = append(slangChildren, child)
 		}
 	}
-	slangField["children"] = slangChildren
-	slangField["nativeKind"] = nativeNode
-
-	return t.createNode(astNode, children, nativeNode, "Native", slangField)
+	return slangChildren
 }
 
 func (t *SlangMapper) createNode(astNode ast.Node, children []*Node, nativeNode, slangType string, slangField map[string]interface{}) *Node {

@@ -1,0 +1,20 @@
+// This is not a line of code
+package main
+import "fmt"
+type class1 struct { x, y int }
+type class2 struct { a, b string }
+type anyObject interface {}
+func fun1() {
+  fmt.Println("Statement 1")
+}
+func fun2(i int) {
+  switch i { // Statement 2
+  case 2:
+    fmt.Println(
+      "Statement 3",
+    )
+  }
+}
+func fun3(x interface{}) int {
+  return 42 // Statement 4
+}

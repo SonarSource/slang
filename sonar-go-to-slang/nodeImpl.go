@@ -56,7 +56,7 @@ func (t *SlangMapper) mapFileImpl(file *ast.File, fieldName string) *Node {
 		nodeListDecls = t.appendNode(nodeListDecls, t.mapDecl(file.Decls[i], "["+strconv.Itoa(i)+"]"))
 	}
 	children = t.appendNodeList(children, nodeListDecls, "Decls([]Decl)")
-	slangField["declarations"] = children
+	slangField["declarations"] = t.filterOutComments(children)
 	slangField["firstCpdToken"] = nil
 	return t.createNode(file, children, fieldName, "TopLevel", slangField)
 }
@@ -97,8 +97,20 @@ func (t *SlangMapper) mapFuncTypeDeclImpl(funcType *ast.FuncType, fieldName stri
 	return nil
 }
 
-func (t *SlangMapper) mapBlockStmtImpl(stmt *ast.BlockStmt, fieldName string) *Node {
-	return nil
+func (t *SlangMapper) mapBlockStmtImpl(blockStmt *ast.BlockStmt, fieldName string) *Node {
+	var children []*Node
+	children = t.appendNode(children, t.createTokenFromPosAstToken(blockStmt.Lbrace, token.LBRACE, "Lbrace"))
+	for i := 0; i < len(blockStmt.List); i++ {
+		children = t.appendNode(children, t.mapStmt(blockStmt.List[i], "["+strconv.Itoa(i)+"]"))
+	}
+	children = t.appendNode(children, t.createTokenFromPosAstToken(blockStmt.Rbrace, token.RBRACE, "Rbrace"))
+
+	slangField := make(map[string]interface{})
+
+	// children without the braces
+	slangField["statementOrExpressions"] = t.filterOutComments(children[1 : len(children)-1])
+
+	return t.createNode(blockStmt, children, fieldName+"(BlockStmt)", "Block", slangField)
 }
 
 func (t *SlangMapper) mapSpecImpl(spec ast.Spec, fieldName string) *Node {

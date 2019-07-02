@@ -54,8 +54,7 @@
               {"@type": "Native", "metaData": "3:17:3:18","nativeKind":"Closing"}
             ]}
           ]},
-          {"@type": "Native", "metaData": "3:19:12:1","nativeKind":"Body(BlockStmt)","children":[
-            {"@type": "Native", "metaData": "3:19:3:20","nativeKind":"Lbrace"},
+          {"@type": "Block", "metaData": "3:19:12:1","statementOrExpressions":[
             {"@type": "Native", "metaData": "4:1:4:28","nativeKind":"[0](AssignStmt)","children":[
               {"@type": "Native", "metaData": "4:1:4:10","nativeKind":"Lhs([]Expr)","children":[
                 {"@type": "Identifier", "metaData": "4:1:4:10","name":"stringLit"}
@@ -127,8 +126,7 @@
               {"@type": "Native", "metaData": "11:12:11:19","nativeKind":"Rhs([]Expr)","children":[
                 {"@type": "Native", "metaData": "11:12:11:19","nativeKind":"[0](BasicLit)"}
               ]}
-            ]},
-            {"@type": "Native", "metaData": "12:0:12:1","nativeKind":"Rbrace"}
+            ]}
           ]}
         ]}
       ]}

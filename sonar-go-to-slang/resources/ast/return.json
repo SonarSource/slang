@@ -85,11 +85,9 @@
               ]}
             ]}
           ]},
-          {"@type": "Native", "metaData": "3:23:5:1","nativeKind":"Body(BlockStmt)","children":[
-            {"@type": "Native", "metaData": "3:23:3:24","nativeKind":"Lbrace"},
+          {"@type": "Block", "metaData": "3:23:5:1","statementOrExpressions":[
             {"@type": "Return", "metaData": "4:1:4:12","keyword":"4:1:4:7","body":
-              {"@type": "Literal", "metaData": "4:8:4:12","value":"true"}},
-            {"@type": "Native", "metaData": "5:0:5:1","nativeKind":"Rbrace"}
+              {"@type": "Literal", "metaData": "4:8:4:12","value":"true"}}
           ]}
         ]},
         {"@type": "Native", "metaData": "7:0:9:1","nativeKind":"[1](FuncDecl)","children":[
@@ -101,10 +99,8 @@
               {"@type": "Native", "metaData": "7:17:7:18","nativeKind":"Closing"}
             ]}
           ]},
-          {"@type": "Native", "metaData": "7:19:9:1","nativeKind":"Body(BlockStmt)","children":[
-            {"@type": "Native", "metaData": "7:19:7:20","nativeKind":"Lbrace"},
-            {"@type": "Return", "metaData": "8:1:8:7","keyword":"8:1:8:7","body":null},
-            {"@type": "Native", "metaData": "9:0:9:1","nativeKind":"Rbrace"}
+          {"@type": "Block", "metaData": "7:19:9:1","statementOrExpressions":[
+            {"@type": "Return", "metaData": "8:1:8:7","keyword":"8:1:8:7","body":null}
           ]}
         ]},
         {"@type": "Native", "metaData": "11:0:17:1","nativeKind":"[2](FuncDecl)","children":[
@@ -121,28 +117,22 @@
               ]}
             ]}
           ]},
-          {"@type": "Native", "metaData": "11:24:17:1","nativeKind":"Body(BlockStmt)","children":[
-            {"@type": "Native", "metaData": "11:24:11:25","nativeKind":"Lbrace"},
+          {"@type": "Block", "metaData": "11:24:17:1","statementOrExpressions":[
             {"@type": "Native", "metaData": "12:1:16:2","nativeKind":"[0](IfStmt)","children":[
               {"@type": "Native", "metaData": "12:1:12:3","nativeKind":"If"},
               {"@type": "Native", "metaData": "12:4:12:8","nativeKind":"InitAndCond","children":[
                 {"@type": "Literal", "metaData": "12:4:12:8","value":"true"}
               ]},
-              {"@type": "Native", "metaData": "12:9:14:2","nativeKind":"Body(BlockStmt)","children":[
-                {"@type": "Native", "metaData": "12:9:12:10","nativeKind":"Lbrace"},
+              {"@type": "Block", "metaData": "12:9:14:2","statementOrExpressions":[
                 {"@type": "Return", "metaData": "13:2:13:15","keyword":"13:2:13:8","body":
-                  {"@type": "StringLiteral", "metaData": "13:9:13:15","value":"\"true\"","content":"true"}},
-                {"@type": "Native", "metaData": "14:1:14:2","nativeKind":"Rbrace"}
+                  {"@type": "StringLiteral", "metaData": "13:9:13:15","value":"\"true\"","content":"true"}}
               ]},
               {"@type": "Native", "metaData": "14:3:14:7","nativeKind":""},
-              {"@type": "Native", "metaData": "14:8:16:2","nativeKind":"Else(BlockStmt)","children":[
-                {"@type": "Native", "metaData": "14:8:14:9","nativeKind":"Lbrace"},
+              {"@type": "Block", "metaData": "14:8:16:2","statementOrExpressions":[
                 {"@type": "Return", "metaData": "15:2:15:16","keyword":"15:2:15:8","body":
-                  {"@type": "StringLiteral", "metaData": "15:9:15:16","value":"\"false\"","content":"false"}},
-                {"@type": "Native", "metaData": "16:1:16:2","nativeKind":"Rbrace"}
+                  {"@type": "StringLiteral", "metaData": "15:9:15:16","value":"\"false\"","content":"false"}}
               ]}
-            ]},
-            {"@type": "Native", "metaData": "17:0:17:1","nativeKind":"Rbrace"}
+            ]}
           ]}
         ]},
         {"@type": "Native", "metaData": "19:0:22:1","nativeKind":"[3](FuncDecl)","children":[
@@ -169,8 +159,7 @@
               {"@type": "Native", "metaData": "19:47:19:48","nativeKind":"Closing"}
             ]}
           ]},
-          {"@type": "Native", "metaData": "19:49:22:1","nativeKind":"Body(BlockStmt)","children":[
-            {"@type": "Native", "metaData": "19:49:19:50","nativeKind":"Lbrace"},
+          {"@type": "Block", "metaData": "19:49:22:1","statementOrExpressions":[
             {"@type": "Native", "metaData": "20:1:20:9","nativeKind":"[0](AssignStmt)","children":[
               {"@type": "Native", "metaData": "20:1:20:2","nativeKind":"Lhs([]Expr)","children":[
                 {"@type": "Identifier", "metaData": "20:1:20:2","name":"b"}
@@ -187,8 +176,7 @@
               {"@type": "IntegerLiteral", "metaData": "21:11:21:12","value":"2"},
               {"@type": "Native", "metaData": "21:12:21:13","nativeKind":""},
               {"@type": "StringLiteral", "metaData": "21:14:21:17","value":"\"c\"","content":"c"}
-            ]},
-            {"@type": "Native", "metaData": "22:0:22:1","nativeKind":"Rbrace"}
+            ]}
           ]}
         ]}
       ]}
