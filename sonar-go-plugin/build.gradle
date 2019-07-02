@@ -54,7 +54,7 @@ jar {
                 'Plugin-Name': 'SonarGo',
                 'Plugin-Organization': 'SonarSource',
                 'Plugin-OrganizationUrl': 'http://www.sonarsource.com',
-                'Plugin-SourcesUrl': 'https://github.com/SonarSource/sonar-go',
+                'Plugin-SourcesUrl': 'https://github.com/SonarSource/slang',
                 'Plugin-Version': version,
                 'Sonar-Version': '6.7',
                 'SonarLint-Supported': 'false',

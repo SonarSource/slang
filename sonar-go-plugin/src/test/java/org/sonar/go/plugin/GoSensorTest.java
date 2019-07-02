@@ -55,7 +55,9 @@ import org.sonarsource.slang.checks.api.SlangCheck;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public class GoSensorTest {
@@ -129,24 +131,19 @@ public class GoSensorTest {
 
   @Test
   public void test_failure() throws Exception {
-    // FIXME
-//    InputFile failingFile = createInputFile("lets.go", InputFile.Type.MAIN,
-//      "package main \n" +
-//        "\n" +
-//        "func test() {\n" +
-//        " pwd := \"secret\"\n" +
-//        "}");
-//    failingFile = spy(failingFile);
-//    IOException ioException = new IOException();
-//    when(failingFile.inputStream()).thenThrow(ioException);
-//
-//    sensorContext.fileSystem().add(failingFile);
-//    sensorContext.settings().setProperty("sonar.go.coverage.reportPaths", "invalid-coverage-path.out");
-//    GoSensor goSensor = getSensor("S2068");
-//    goSensor.execute(sensorContext);
-//    assertThat(logTester.logs(LoggerLevel.ERROR).stream().collect(Collectors.joining("\n")))
-//      .contains("Error analyzing file lets.go")
-//      .contains("Coverage report can't be loaded, report file not found, ignoring this file invalid-coverage-path.out.");
+    InputFile failingFile = createInputFile("lets.go", InputFile.Type.MAIN,
+      "package main \n" +
+        "\n" +
+        "func test() {\n" +
+        " pwd := \"secret\"\n" +
+        "}");
+    failingFile = spy(failingFile);
+    doThrow(new IOException()).when(failingFile).contents();
+
+    sensorContext.fileSystem().add(failingFile);
+    GoSensor goSensor = getSensor("S1135");
+    goSensor.execute(sensorContext);
+    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("Cannot read lets.go");
   }
 
   @Test

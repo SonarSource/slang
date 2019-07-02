@@ -23,7 +23,6 @@ import com.sonar.orchestrator.build.SonarScanner;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -97,4 +96,18 @@ public class CoverageTest extends TestBase {
     assertThat(getMeasureAsInt("file2.scala", "conditions_to_cover")).isNull();
     assertThat(getMeasureAsInt("file2.scala", "uncovered_conditions")).isNull();
   }
+
+  @Test
+  public void go_coverage() {
+    SonarScanner goScanner = getSonarScanner(BASE_DIRECTORY.toString(), "go");
+    goScanner.setProperty("sonar.go.coverage.reportPaths", "coverage.out");
+
+    ORCHESTRATOR.executeBuild(goScanner);
+
+    assertThat(getMeasureAsInt("pivot.go", "lines_to_cover")).isEqualTo(16);
+    assertThat(getMeasureAsInt("pivot.go", "uncovered_lines")).isEqualTo(4);
+    assertThat(getMeasureAsInt("pivot.go", "conditions_to_cover")).isNull();
+    assertThat(getMeasureAsInt("pivot.go", "uncovered_conditions")).isNull();
+  }
+
 }

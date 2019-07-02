@@ -1,5 +1,5 @@
 /*
- * SonarQube Go Plugin
+ * SonarSource SLang
  * Copyright (C) 2018-2019 SonarSource SA
  * mailto:info AT sonarsource DOT com
  *
