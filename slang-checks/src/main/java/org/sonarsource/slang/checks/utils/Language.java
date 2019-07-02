@@ -34,4 +34,6 @@ public enum Language {
   // support function name suffix '_=', '_+', '_!', ... and operators '+', '-', ...
   public static final String SCALA_FUNCTION_OR_OPERATOR_NAMING_DEFAULT = "^([a-z][a-zA-Z0-9]*+(_[^a-zA-Z0-9]++)?+|[^a-zA-Z0-9]++)$";
 
+  public static final String GO_NAMING_DEFAULT = "^[a-zA-Z0-9]+$";
+
 }

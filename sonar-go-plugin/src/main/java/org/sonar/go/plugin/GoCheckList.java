@@ -3,7 +3,6 @@ package org.sonar.go.plugin;
 import java.util.List;
 import org.sonarsource.slang.checks.AllBranchesIdenticalCheck;
 import org.sonarsource.slang.checks.BadClassNameCheck;
-import org.sonarsource.slang.checks.BadFunctionNameCheck;
 import org.sonarsource.slang.checks.BooleanInversionCheck;
 import org.sonarsource.slang.checks.BooleanLiteralCheck;
 import org.sonarsource.slang.checks.CheckList;
@@ -27,7 +26,6 @@ import org.sonarsource.slang.checks.SelfAssignmentCheck;
 import org.sonarsource.slang.checks.TabsCheck;
 import org.sonarsource.slang.checks.TooComplexExpressionCheck;
 import org.sonarsource.slang.checks.TooDeeplyNestedStatementsCheck;
-import org.sonarsource.slang.checks.TooLongFunctionCheck;
 import org.sonarsource.slang.checks.TooManyCasesCheck;
 import org.sonarsource.slang.checks.TooManyParametersCheck;
 import org.sonarsource.slang.checks.UnusedFunctionParameterCheck;
@@ -45,7 +43,6 @@ public class GoCheckList {
   private static final Class[] GO_CHECK_BLACK_LIST = {
     AllBranchesIdenticalCheck.class,
     BadClassNameCheck.class,
-    BadFunctionNameCheck.class,
     BooleanInversionCheck.class,
     BooleanLiteralCheck.class,
     CodeAfterJumpCheck.class,
@@ -68,7 +65,6 @@ public class GoCheckList {
     TabsCheck.class,
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
-    TooLongFunctionCheck.class,
     TooManyCasesCheck.class,
     TooManyParametersCheck.class,
     UnusedFunctionParameterCheck.class,
