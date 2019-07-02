@@ -15,6 +15,9 @@ func main() {
 
 	if (true) {
 		fmt.Println("thenPart")
-
 	}
+
+	if x := 42; true && x > 0 {
+        fmt.Println("thenPart")
+    }
 }

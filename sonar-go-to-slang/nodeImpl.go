@@ -313,8 +313,46 @@ func (t *SlangMapper) mapGoStmtImpl(stmt *ast.GoStmt, fieldName string) *Node {
 	return nil
 }
 
-func (t *SlangMapper) mapIfStmtImpl(stmt *ast.IfStmt, fieldName string) *Node {
-	return nil
+func (t *SlangMapper) mapIfStmtImpl(ifStmt *ast.IfStmt, fieldName string) *Node {
+	var children []*Node
+	ifToken := t.createTokenFromPosAstToken(ifStmt.If, token.IF, "If")
+	children = t.appendNode(children, ifToken)
+
+	var condition *Node
+	if ifStmt.Init != nil {
+		condition = t.createAdditionalInitAndCond(ifStmt.Init, ifStmt.Cond)
+	} else {
+		condition = t.mapExpr(ifStmt.Cond, "Cond")
+	}
+
+	children = t.appendNode(children, condition)
+
+	thenBranch := t.mapBlockStmt(ifStmt.Body, "Body")
+	children = t.appendNode(children, thenBranch)
+
+	elseBranch := t.mapStmt(ifStmt.Else, "Else")
+	children = t.appendNode(children, elseBranch)
+
+	slangField := make(map[string]interface{})
+
+	slangField["ifKeyword"] = ifToken.TextRange
+	slangField["condition"] = condition
+	slangField["thenBranch"] = thenBranch
+	slangField["elseKeyword"] = nil
+	slangField["elseBranch"] = elseBranch
+
+	childrenWithoutComments := t.filterOutComments(children)
+	if elseBranch != nil {
+		for i := len(childrenWithoutComments) - 1; i >= 0; i-- {
+			if childrenWithoutComments[i] == elseBranch {
+				// else keyword is necessarily before, and has been added to the children when calling "appendNode"
+				slangField["elseKeyword"] = childrenWithoutComments[i-1].TextRange
+				break
+			}
+		}
+	}
+
+	return t.createNode(ifStmt, children, fieldName+"(IfStmt)", "If", slangField)
 }
 
 func (t *SlangMapper) mapIncDecStmtImpl(stmt *ast.IncDecStmt, fieldName string) *Node {

@@ -616,11 +616,7 @@
                   ]},
                   {"@type": "Native", "metaData": "42:25:42:26","nativeKind":"Colon"},
                   {"@type": "Native", "metaData": "43:8:47:9","nativeKind":"Body([]Stmt)","children":[
-                    {"@type": "Native", "metaData": "43:8:47:9","nativeKind":"[0](IfStmt)","children":[
-                      {"@type": "Native", "metaData": "43:8:43:10","nativeKind":"If"},
-                      {"@type": "Native", "metaData": "43:11:43:13","nativeKind":"InitAndCond","children":[
-                        {"@type": "Identifier", "metaData": "43:11:43:13","name":"ok"}
-                      ]},
+                    {"@type": "If", "metaData": "43:8:47:9","thenBranch":
                       {"@type": "Block", "metaData": "43:14:45:9","statementOrExpressions":[
                         {"@type": "Native", "metaData": "44:12:44:48","nativeKind":"[0](ExprStmt)","children":[
                           {"@type": "Native", "metaData": "44:12:44:48","nativeKind":"X(CallExpr)","children":[
@@ -636,8 +632,7 @@
                             {"@type": "Native", "metaData": "44:47:44:48","nativeKind":"Rparen"}
                           ]}
                         ]}
-                      ]},
-                      {"@type": "Native", "metaData": "45:10:45:14","nativeKind":""},
+                      ]},"ifKeyword":"43:8:43:10","elseKeyword":"45:10:45:14","elseBranch":
                       {"@type": "Block", "metaData": "45:15:47:9","statementOrExpressions":[
                         {"@type": "Native", "metaData": "46:12:46:35","nativeKind":"[0](ExprStmt)","children":[
                           {"@type": "Native", "metaData": "46:12:46:35","nativeKind":"X(CallExpr)","children":[
@@ -649,8 +644,8 @@
                             {"@type": "Native", "metaData": "46:34:46:35","nativeKind":"Rparen"}
                           ]}
                         ]}
-                      ]}
-                    ]}
+                      ]},"condition":
+                      {"@type": "Identifier", "metaData": "43:11:43:13","name":"ok"}}
                   ]}
                 ]},
                 {"@type": "Native", "metaData": "48:4:48:23","nativeKind":"[3](CommClause)","children":[
