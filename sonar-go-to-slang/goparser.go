@@ -164,12 +164,29 @@ func (t *SlangMapper) mapBasicLit(astNode *ast.BasicLit, fieldName string) *Node
 	if astNode == nil {
 		return nil
 	}
+	slangField := make(map[string]interface{})
+	var slangType string
 	var tokenType = "OTHER"
-	if strings.HasPrefix(astNode.Value, "\"") && strings.HasSuffix(astNode.Value, "\"") {
-		tokenType = "STRING_LITERAL"
-	}
 
-	return t.createExpectedToken(astNode.Pos(), astNode.Value, fieldName+"(BasicLit)", tokenType)
+	switch astNode.Kind {
+	case token.STRING:
+		if strings.HasPrefix(astNode.Value, "`") {
+			// discard multi-line strings
+			return t.createExpectedToken(astNode.Pos(), astNode.Value, fieldName+"(BasicLit)", tokenType)
+		}
+		slangType = "StringLiteral"
+		tokenType = "STRING_LITERAL"
+		slangField["content"] = astNode.Value[1 : len(astNode.Value)-1]
+		slangField["value"] = astNode.Value
+		return t.createExpectedNode(astNode.Pos(), astNode.Value, fieldName+"(StringLit)", tokenType, slangType, slangField)
+	case token.INT:
+		slangType = "IntegerLiteral"
+		slangField["value"] = astNode.Value
+		return t.createExpectedNode(astNode.Pos(), astNode.Value, fieldName+"(IntLit)", tokenType, slangType, slangField)
+	default:
+		//Binary literal are expected in GO 1.13 (https://github.com/golang/go/issues/19308)
+		return t.createExpectedToken(astNode.Pos(), astNode.Value, fieldName+"(BasicLit)", tokenType)
+	}
 }
 
 func (t *SlangMapper) appendNode(children []*Node, child *Node) []*Node {
@@ -368,6 +385,25 @@ func (t *SlangMapper) createExpectedToken(pos token.Pos, expectedValue, nativeNo
 	var endOffset int
 	endOffset, expectedValue = t.computeEndOffsetSupportingMultiLineToken(offset, expectedValue)
 	node := t.createToken(offset, endOffset, nativeNode, tokenType)
+	if node != nil && node.Token.Value != expectedValue {
+		if t.paranoiac {
+			location := t.location(offset, endOffset)
+			panic(fmt.Sprintf("Invalid token value '%s' instead of '%s'%s",
+				node.Token.Value, expectedValue, location))
+		}
+		return nil
+	}
+	return node
+}
+
+func (t *SlangMapper) createExpectedNode(pos token.Pos, expectedValue, nativeNode, tokenType string, slangType string, slangField map[string]interface{}) *Node {
+	if pos == token.NoPos {
+		return nil
+	}
+	offset := t.file.Offset(pos)
+	var endOffset int
+	endOffset, expectedValue = t.computeEndOffsetSupportingMultiLineToken(offset, expectedValue)
+	node := t.createLeafNode(offset, endOffset, nativeNode, slangType, tokenType, slangField)
 	if node != nil && node.Token.Value != expectedValue {
 		if t.paranoiac {
 			location := t.location(offset, endOffset)

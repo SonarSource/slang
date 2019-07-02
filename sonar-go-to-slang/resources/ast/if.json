@@ -67,7 +67,7 @@
           {"@type": "Native", "metaData": "3:0:3:6","nativeKind":"Tok"},
           {"@type": "Native", "metaData": "3:7:3:12","nativeKind":"Specs([]Spec)","children":[
             {"@type": "Native", "metaData": "3:7:3:12","nativeKind":"[0](ImportSpec)","children":[
-              {"@type": "Native", "metaData": "3:7:3:12","nativeKind":"Path(BasicLit)"}
+              {"@type": "StringLiteral", "metaData": "3:7:3:12","value":"\"fmt\"","content":"fmt"}
             ]}
           ]}
         ]},
@@ -98,7 +98,7 @@
                     ]},
                     {"@type": "Native", "metaData": "7:13:7:14","nativeKind":"Lparen"},
                     {"@type": "Native", "metaData": "7:14:7:24","nativeKind":"Args([]Expr)","children":[
-                      {"@type": "Native", "metaData": "7:14:7:24","nativeKind":"[0](BasicLit)"}
+                      {"@type": "StringLiteral", "metaData": "7:14:7:24","value":"\"thenPart\"","content":"thenPart"}
                     ]},
                     {"@type": "Native", "metaData": "7:24:7:25","nativeKind":"Rparen"}
                   ]}
@@ -122,7 +122,7 @@
                     ]},
                     {"@type": "Native", "metaData": "11:13:11:14","nativeKind":"Lparen"},
                     {"@type": "Native", "metaData": "11:14:11:24","nativeKind":"Args([]Expr)","children":[
-                      {"@type": "Native", "metaData": "11:14:11:24","nativeKind":"[0](BasicLit)"}
+                      {"@type": "StringLiteral", "metaData": "11:14:11:24","value":"\"thenPart\"","content":"thenPart"}
                     ]},
                     {"@type": "Native", "metaData": "11:24:11:25","nativeKind":"Rparen"}
                   ]}
@@ -141,7 +141,7 @@
                     ]},
                     {"@type": "Native", "metaData": "13:13:13:14","nativeKind":"Lparen"},
                     {"@type": "Native", "metaData": "13:14:13:24","nativeKind":"Args([]Expr)","children":[
-                      {"@type": "Native", "metaData": "13:14:13:24","nativeKind":"[0](BasicLit)"}
+                      {"@type": "StringLiteral", "metaData": "13:14:13:24","value":"\"elsePart\"","content":"elsePart"}
                     ]},
                     {"@type": "Native", "metaData": "13:24:13:25","nativeKind":"Rparen"}
                   ]}
@@ -169,7 +169,7 @@
                     ]},
                     {"@type": "Native", "metaData": "17:13:17:14","nativeKind":"Lparen"},
                     {"@type": "Native", "metaData": "17:14:17:24","nativeKind":"Args([]Expr)","children":[
-                      {"@type": "Native", "metaData": "17:14:17:24","nativeKind":"[0](BasicLit)"}
+                      {"@type": "StringLiteral", "metaData": "17:14:17:24","value":"\"thenPart\"","content":"thenPart"}
                     ]},
                     {"@type": "Native", "metaData": "17:24:17:25","nativeKind":"Rparen"}
                   ]}

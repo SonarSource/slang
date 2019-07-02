@@ -16,18 +16,15 @@ import org.sonarsource.slang.checks.EmptyBlockCheck;
 import org.sonarsource.slang.checks.EmptyFunctionCheck;
 import org.sonarsource.slang.checks.FunctionCognitiveComplexityCheck;
 import org.sonarsource.slang.checks.HardcodedCredentialsCheck;
-import org.sonarsource.slang.checks.HardcodedIpCheck;
 import org.sonarsource.slang.checks.IdenticalBinaryOperandCheck;
 import org.sonarsource.slang.checks.IdenticalConditionsCheck;
 import org.sonarsource.slang.checks.IfConditionalAlwaysTrueOrFalseCheck;
 import org.sonarsource.slang.checks.MatchCaseTooBigCheck;
 import org.sonarsource.slang.checks.MatchWithoutElseCheck;
 import org.sonarsource.slang.checks.NestedMatchCheck;
-import org.sonarsource.slang.checks.OctalValuesCheck;
 import org.sonarsource.slang.checks.OneStatementPerLineCheck;
 import org.sonarsource.slang.checks.RedundantParenthesesCheck;
 import org.sonarsource.slang.checks.SelfAssignmentCheck;
-import org.sonarsource.slang.checks.StringLiteralDuplicatedCheck;
 import org.sonarsource.slang.checks.TabsCheck;
 import org.sonarsource.slang.checks.TooComplexExpressionCheck;
 import org.sonarsource.slang.checks.TooDeeplyNestedStatementsCheck;
@@ -61,18 +58,15 @@ public class GoCheckList {
     EmptyFunctionCheck.class,
     FunctionCognitiveComplexityCheck.class,
     HardcodedCredentialsCheck.class,
-    HardcodedIpCheck.class,
     IdenticalBinaryOperandCheck.class,
     IdenticalConditionsCheck.class,
     IfConditionalAlwaysTrueOrFalseCheck.class,
     MatchCaseTooBigCheck.class,
     MatchWithoutElseCheck.class,
     NestedMatchCheck.class,
-    OctalValuesCheck.class,
     OneStatementPerLineCheck.class,
     RedundantParenthesesCheck.class,
     SelfAssignmentCheck.class,
-    StringLiteralDuplicatedCheck.class,
     TabsCheck.class,
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,

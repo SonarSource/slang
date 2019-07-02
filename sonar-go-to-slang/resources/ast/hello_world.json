@@ -36,7 +36,7 @@
           {"@type": "Native", "metaData": "5:0:5:6","nativeKind":"Tok"},
           {"@type": "Native", "metaData": "5:7:5:12","nativeKind":"Specs([]Spec)","children":[
             {"@type": "Native", "metaData": "5:7:5:12","nativeKind":"[0](ImportSpec)","children":[
-              {"@type": "Native", "metaData": "5:7:5:12","nativeKind":"Path(BasicLit)"}
+              {"@type": "StringLiteral", "metaData": "5:7:5:12","value":"\"fmt\"","content":"fmt"}
             ]}
           ]}
         ]},
@@ -57,7 +57,7 @@
               ]},
               {"@type": "Native", "metaData": "8:5:8:7","nativeKind":"Tok"},
               {"@type": "Native", "metaData": "8:8:8:22","nativeKind":"Rhs([]Expr)","children":[
-                {"@type": "Native", "metaData": "8:8:8:22","nativeKind":"[0](BasicLit)"}
+                {"@type": "StringLiteral", "metaData": "8:8:8:22","value":"\"hello, world\"","content":"hello, world"}
               ]}
             ]},
             {"@type": "Native", "metaData": "9:1:9:17","nativeKind":"[1](ExprStmt)","children":[

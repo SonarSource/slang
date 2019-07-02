@@ -1,0 +1,12 @@
+package ast
+
+func allLiterals() {
+	stringLit := "hello, world"
+	multiLineStringLit := `hello world`
+	intLit := 42
+	hexLit := 0xFF42
+	octalLit := 042
+	floatLit := 4.2
+	charLit := 'c'
+	imagLit := 123.45i //mapped to native node
+}
