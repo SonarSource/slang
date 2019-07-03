@@ -6,7 +6,7 @@ plugins {
     id 'com.github.hierynomus.license' version "0.15.0"
     id 'com.jfrog.artifactory' version '4.8.1'
     id 'io.spring.dependency-management' version '1.0.6.RELEASE' apply false
-    id 'org.sonarqube' version '2.6.2'
+    id 'org.sonarqube' version '2.7.1'
 }
 
 allprojects {
@@ -92,6 +92,19 @@ subprojects {
 
     jacoco {
         toolVersion = "0.8.3"
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            csv.enabled false
+            html.enabled false
+        }
+    }
+
+    // when subproject has Jacoco pLugin applied we want to generate XML report for coverage
+    plugins.withType(JacocoPlugin) {
+        tasks["test"].finalizedBy 'jacocoTestReport'
     }
 
     configurations {
