@@ -32,13 +32,13 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.sonar.api.batch.fs.FileSystem;
 
-class GoPathContext {
+public class GoPathContext {
   private static final String LINUX_ABSOLUTE_PREFIX = "_/";
   private static final String WINDOWS_ABSOLUTE_PREFIX = "_\\";
   private static final Pattern WINDOWS_ABSOLUTE_REGEX = Pattern.compile("^_\\\\(\\w)_\\\\");
   private static final int MAX_PATH_CACHE_SIZE = 100;
 
-  static final GoPathContext DEFAULT = new GoPathContext(File.separatorChar, File.pathSeparator, System.getenv("GOPATH"));
+  public static final GoPathContext DEFAULT = new GoPathContext(File.separatorChar, File.pathSeparator, System.getenv("GOPATH"));
   final char fileSeparator;
   final List<String> goSrcPathList;
   final Map<String, String> resolvedPaths = new LinkedHashMap<String, String>() {
@@ -48,7 +48,7 @@ class GoPathContext {
     }
   };
 
-  GoPathContext(char fileSeparator, String pathSeparator, @Nullable String goPath) {
+  public GoPathContext(char fileSeparator, String pathSeparator, @Nullable String goPath) {
     this.fileSeparator = fileSeparator;
     List<String> goPathEntries = Collections.emptyList();
     if (goPath != null) {
@@ -75,7 +75,7 @@ class GoPathContext {
    * if GOPATH is empty).
    * See {@link GoCoverSensor#findInputFile(String, FileSystem)}
    */
-  String resolve(String filePath) {
+  public String resolve(String filePath) {
     return resolvedPaths.computeIfAbsent(filePath, path -> {
       if (path.startsWith(LINUX_ABSOLUTE_PREFIX)) {
         return path.substring(1);

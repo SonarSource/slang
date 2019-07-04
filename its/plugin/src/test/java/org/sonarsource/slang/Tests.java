@@ -35,6 +35,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
   CoverageTest.class,
+  TestReportTest.class,
   DuplicationsTest.class,
   ExternalReportTest.class,
   MeasuresTest.class,
