@@ -55,4 +55,20 @@ public class DuplicationsTest extends TestBase {
     assertThat(getMeasureAsInt("duplicated_files")).isEqualTo(2);
     assertThat(getMeasure("duplicated_lines_density").getValue()).isEqualTo("64.2");
   }
+
+  @Test
+  public void go_duplications() {
+    ORCHESTRATOR.executeBuild(getSonarScanner(BASE_DIRECTORY, "go"));
+
+    assertThat(getMeasureAsInt("duplicated_lines")).isEqualTo(135);
+    assertThat(getMeasureAsInt("duplicated_blocks")).isEqualTo(5);
+    assertThat(getMeasureAsInt("duplicated_files")).isEqualTo(3);
+    assertThat(getMeasure("duplicated_lines_density").getValue()).isEqualTo("97.8");
+
+    assertThat(getMeasureAsInt("pivot.go", "duplicated_lines")).isEqualTo(47);
+    assertThat(getMeasureAsInt("pivot.go", "duplicated_blocks")).isEqualTo(2);
+    assertThat(getMeasureAsInt("pivot.go", "duplicated_files")).isEqualTo(1);
+    assertThat(getMeasure("pivot.go", "duplicated_lines_density").getValue()).isEqualTo("97.9");
+  }
+
 }
