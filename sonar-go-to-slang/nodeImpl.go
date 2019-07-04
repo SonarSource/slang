@@ -219,7 +219,20 @@ func (t *SlangMapper) mapImportSpecImpl(spec *ast.ImportSpec, fieldName string) 
 }
 
 func (t *SlangMapper) mapTypeSpecImpl(spec *ast.TypeSpec, fieldName string) *Node {
-	return nil
+	slangField := make(map[string]interface{})
+	var children []*Node
+
+	specName := t.mapIdent(spec.Name, "Name")
+	children = t.appendNode(children, specName)
+	slangField["identifier"] = specName.TextRange
+
+	children = t.appendNode(children, t.createTokenFromPosAstToken(spec.Assign, token.ASSIGN, "Assign"))
+	children = t.appendNode(children, t.mapExpr(spec.Type, "Type"))
+
+	//ClassTree in SLang contains everything (including identifier), we create a new node for this purpose
+	classTree := t.createNativeNode(spec, children, fieldName+"(TypeSpecWrapped)")
+	slangField["classTree"] = classTree
+	return t.createNode(spec, []*Node{classTree}, fieldName+"(TypeSpec)", "ClassDeclaration", slangField)
 }
 
 func (t *SlangMapper) mapValueSpecImpl(spec *ast.ValueSpec, fieldName string) *Node {

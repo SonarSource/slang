@@ -1,0 +1,31 @@
+package ast
+import "fmt"
+
+
+type class1 struct { x, y int }
+type Class2 struct { a, b string }
+
+type class3 struct {
+	Value     string
+	TextRange *TextRange
+	TokenType string
+}
+
+type class4 struct {}
+
+var anonymous Class2 = struct { Class2 }{} //Not a TypeSpec, but a StructType, it will not be a class
+
+type class5 interface {
+    f1() float64
+    f2() float64
+}
+
+type Class6 interface {}
+
+func foo(notClass3 interface{ bar() }) { //Not a TypeSpec, but a InterfaceType; not a class
+     var anonymous Class2 = struct { Class2 }{}
+}
+
+func bar(x int) {
+     type class7 struct { x, y int }
+}
