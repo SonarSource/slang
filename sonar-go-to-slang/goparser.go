@@ -277,19 +277,7 @@ func (t *SlangMapper) filterOutComments(children []*Node) []*Node {
 
 func (t *SlangMapper) createNode(astNode ast.Node, children []*Node, nativeNode, slangType string, slangField map[string]interface{}) *Node {
 	if len(children) > 0 {
-		return &Node{
-			Children:  children,
-			offset:    children[0].offset,
-			endOffset: children[len(children)-1].endOffset,
-			SlangType: slangType,
-			TextRange: &TextRange{
-				StartLine:   children[0].TextRange.StartLine,
-				StartColumn: children[0].TextRange.StartColumn,
-				EndLine:     children[len(children)-1].TextRange.EndLine,
-				EndColumn:   children[len(children)-1].TextRange.EndColumn,
-			},
-			SlangField: slangField,
-		}
+		return t.createNodeWithChildren(children, slangType, slangField)
 	} else if slangField != nil && astNode != nil {
 		//We create a leaf node, that is not a Native node
 		offset := t.file.Offset(astNode.Pos())
@@ -303,6 +291,33 @@ func (t *SlangMapper) createNode(astNode ast.Node, children []*Node, nativeNode,
 		return t.createToken(offset, endOffset, nativeNode, "OTHER")
 	} else {
 		return nil
+	}
+}
+
+func (t *SlangMapper) createNativeNodeWithChildren(children []*Node, nativeNode string) *Node {
+	slangField := make(map[string]interface{})
+	slangField["children"] = t.filterOutComments(children)
+	slangField["nativeKind"] = nativeNode
+
+	return t.createNodeWithChildren(children, "Native", slangField)
+}
+
+func (t *SlangMapper) createNodeWithChildren(children []*Node, slangType string, slangField map[string]interface{}) *Node {
+	if len(children) < 1 {
+		return nil
+	}
+	return &Node{
+		Children:  children,
+		offset:    children[0].offset,
+		endOffset: children[len(children)-1].endOffset,
+		SlangType: slangType,
+		TextRange: &TextRange{
+			StartLine:   children[0].TextRange.StartLine,
+			StartColumn: children[0].TextRange.StartColumn,
+			EndLine:     children[len(children)-1].TextRange.EndLine,
+			EndColumn:   children[len(children)-1].TextRange.EndColumn,
+		},
+		SlangField: slangField,
 	}
 }
 

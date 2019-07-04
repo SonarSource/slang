@@ -188,33 +188,31 @@
             {"@type": "Identifier", "metaData": "10:10:10:11","name":"i"},"defaultValue":null}
         ],"body":
           {"@type": "Block", "metaData": "10:17:17:1","statementOrExpressions":[
-            {"@type": "Native", "metaData": "11:2:16:3","nativeKind":"[0](SwitchStmt)","children":[
-              {"@type": "Native", "metaData": "11:2:11:8","nativeKind":"Switch"},
-              {"@type": "Identifier", "metaData": "11:9:11:10","name":"i"},
-              {"@type": "Block", "metaData": "11:11:16:3","statementOrExpressions":[
-                {"@type": "Native", "metaData": "12:2:15:5","nativeKind":"[0](CaseClause)","children":[
-                  {"@type": "Native", "metaData": "12:2:12:6","nativeKind":"Case"},
-                  {"@type": "IntegerLiteral", "metaData": "12:7:12:8","value":"2"},
-                  {"@type": "Native", "metaData": "12:8:12:9","nativeKind":"Colon"},
-                  {"@type": "Native", "metaData": "13:4:15:5","nativeKind":"Body([]Stmt)","children":[
-                    {"@type": "Native", "metaData": "13:4:15:5","nativeKind":"[0](ExprStmt)","children":[
-                      {"@type": "Native", "metaData": "13:4:15:5","nativeKind":"X(CallExpr)","children":[
-                        {"@type": "Native", "metaData": "13:4:13:15","nativeKind":"Fun(SelectorExpr)","children":[
-                          {"@type": "Identifier", "metaData": "13:4:13:7","name":"fmt"},
-                          {"@type": "Native", "metaData": "13:7:13:8","nativeKind":""},
-                          {"@type": "Identifier", "metaData": "13:8:13:15","name":"Println"}
-                        ]},
-                        {"@type": "Native", "metaData": "13:15:13:16","nativeKind":"Lparen"},
-                        {"@type": "Native", "metaData": "14:6:14:19","nativeKind":"Args([]Expr)","children":[
-                          {"@type": "StringLiteral", "metaData": "14:6:14:19","value":"\"Statement 3\"","content":"Statement 3"}
-                        ]},
-                        {"@type": "Native", "metaData": "14:19:14:20","nativeKind":""},
-                        {"@type": "Native", "metaData": "15:4:15:5","nativeKind":"Rparen"}
-                      ]}
+            {"@type": "Match", "metaData": "11:2:16:3","keyword":"11:2:11:8","expression":
+              {"@type": "Native", "metaData": "11:9:11:10","nativeKind":"InitAndTag","children":[
+                {"@type": "Identifier", "metaData": "11:9:11:10","name":"i"}
+              ]},"cases":[
+              {"@type": "MatchCase", "metaData": "12:2:15:5","expression":
+                {"@type": "Native", "metaData": "12:7:12:8","nativeKind":"CaseExprList","children":[
+                  {"@type": "IntegerLiteral", "metaData": "12:7:12:8","value":"2"}
+                ]},"body":
+                {"@type": "Native", "metaData": "13:4:15:5","nativeKind":"CaseBodyList","children":[
+                  {"@type": "Native", "metaData": "13:4:15:5","nativeKind":"[0](ExprStmt)","children":[
+                    {"@type": "Native", "metaData": "13:4:15:5","nativeKind":"X(CallExpr)","children":[
+                      {"@type": "Native", "metaData": "13:4:13:15","nativeKind":"Fun(SelectorExpr)","children":[
+                        {"@type": "Identifier", "metaData": "13:4:13:7","name":"fmt"},
+                        {"@type": "Native", "metaData": "13:7:13:8","nativeKind":""},
+                        {"@type": "Identifier", "metaData": "13:8:13:15","name":"Println"}
+                      ]},
+                      {"@type": "Native", "metaData": "13:15:13:16","nativeKind":"Lparen"},
+                      {"@type": "Native", "metaData": "14:6:14:19","nativeKind":"Args([]Expr)","children":[
+                        {"@type": "StringLiteral", "metaData": "14:6:14:19","value":"\"Statement 3\"","content":"Statement 3"}
+                      ]},
+                      {"@type": "Native", "metaData": "14:19:14:20","nativeKind":""},
+                      {"@type": "Native", "metaData": "15:4:15:5","nativeKind":"Rparen"}
                     ]}
                   ]}
-                ]}
-              ]}
+                ]}}
             ]}
           ]}},
         {"@type": "FunctionDeclaration", "metaData": "18:0:20:1","returnType":

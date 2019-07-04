@@ -256,7 +256,33 @@ func (t *SlangMapper) mapBranchStmtImpl(stmt *ast.BranchStmt, fieldName string) 
 }
 
 func (t *SlangMapper) mapCaseClauseImpl(clause *ast.CaseClause, fieldName string) *Node {
-	return nil
+	var children []*Node
+	slangField := make(map[string]interface{})
+
+	children = t.handleSwitchCase(clause.Case, len(clause.List) == 0, children)
+
+	var clauseList []*Node
+	for i := 0; i < len(clause.List); i++ {
+		clauseList = t.appendNode(clauseList, t.mapExpr(clause.List[i], "["+strconv.Itoa(i)+"]"))
+	}
+	//SLang requires a tree as expression and not a list, we wrap it in a native node
+	caseExpression := t.createNativeNodeWithChildren(clauseList, "CaseExprList")
+	children = t.appendNode(children, caseExpression)
+	slangField["expression"] = caseExpression
+
+	children = t.appendNode(children, t.createTokenFromPosAstToken(clause.Colon, token.COLON, "Colon"))
+
+	var nodeListBody []*Node
+	for i := 0; i < len(clause.Body); i++ {
+		nodeListBody = t.appendNode(nodeListBody, t.mapStmt(clause.Body[i], "["+strconv.Itoa(i)+"]"))
+	}
+
+	//SLang requires a tree as body and not a list, we wrap it in a native node
+	caseBody := t.createNativeNodeWithChildren(nodeListBody, "CaseBodyList")
+	children = t.appendNode(children, caseBody)
+	slangField["body"] = caseBody
+
+	return t.createNode(clause, children, fieldName+"(CaseClause)", "MatchCase", slangField)
 }
 
 func (t *SlangMapper) mapCommClauseImpl(clause *ast.CommClause, fieldName string) *Node {
@@ -312,11 +338,56 @@ func (t *SlangMapper) mapSendStmtImpl(stmt *ast.SendStmt, fieldName string) *Nod
 }
 
 func (t *SlangMapper) mapSwitchStmtImpl(stmt *ast.SwitchStmt, fieldName string) *Node {
-	return nil
+	var children []*Node
+	slangField := make(map[string]interface{})
+
+	keywordToken := t.createTokenFromPosAstToken(stmt.Switch, token.SWITCH, "Switch")
+	children = t.appendNode(children, keywordToken)
+	slangField["keyword"] = keywordToken.TextRange
+
+	var expressionList []*Node
+	expressionList = t.appendNode(expressionList, t.mapStmt(stmt.Init, "Init"))
+	expressionList = t.appendNode(expressionList, t.mapExpr(stmt.Tag, "Tag"))
+
+	//Wrap the tag and init into one native node
+	expression := t.createNativeNodeWithChildren(expressionList, "InitAndTag")
+	children = t.appendNode(children, expression)
+	slangField["expression"] = expression
+
+	body := t.mapBlockStmt(stmt.Body, "Body")
+	children = t.appendNode(children, body)
+	slangField["cases"] = t.getMatchCases(body)
+
+	return t.createNode(stmt, children, fieldName+"(SwitchStmt)", "Match", slangField)
 }
 
 func (t *SlangMapper) mapTypeSwitchStmtImpl(stmt *ast.TypeSwitchStmt, fieldName string) *Node {
-	return nil
+	var children []*Node
+	slangField := make(map[string]interface{})
+
+	keywordToken := t.createTokenFromPosAstToken(stmt.Switch, token.SWITCH, "Switch")
+	children = t.appendNode(children, keywordToken)
+	slangField["keyword"] = keywordToken.TextRange
+
+	var expressionList []*Node
+	expressionList = t.appendNode(expressionList, t.mapStmt(stmt.Init, "Init"))
+	expressionList = t.appendNode(expressionList, t.mapStmt(stmt.Assign, "Assign"))
+
+	//Wrap the init and Assign into one native node
+	expression := t.createNativeNodeWithChildren(expressionList, "InitAndAssign")
+	children = t.appendNode(children, expression)
+	slangField["expression"] = expression
+
+	body := t.mapBlockStmt(stmt.Body, "Body")
+	children = t.appendNode(children, body)
+	slangField["cases"] = t.getMatchCases(body)
+
+	return t.createNode(stmt, children, fieldName+"(TypeSwitchStmt)", "Match", slangField)
+}
+
+func (t *SlangMapper) getMatchCases(node *Node) []*Node {
+	bodyWithoutComment := t.filterOutComments(node.Children)
+	return bodyWithoutComment[1 : len(bodyWithoutComment)-1]
 }
 
 func (t *SlangMapper) mapArrayTypeImpl(arrayType *ast.ArrayType, fieldName string) *Node {

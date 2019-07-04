@@ -1,0 +1,21 @@
+{
+  "title": "\"switch\" statements should have \"default\" clauses",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "5min"
+  },
+  "tags": [
+    "cwe"
+  ],
+  "defaultSeverity": "Critical",
+  "ruleSpecification": "RSPEC-131",
+  "sqKey": "S131",
+  "scope": "All",
+  "securityStandards": {
+    "CWE": [
+      478
+    ]
+  }
+}
