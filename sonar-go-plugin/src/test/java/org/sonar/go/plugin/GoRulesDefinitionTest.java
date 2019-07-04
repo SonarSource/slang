@@ -19,8 +19,13 @@
  */
 package org.sonar.go.plugin;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Test;
+import org.sonar.api.rules.RuleType;
+import org.sonar.api.server.debt.DebtRemediationFunction;
 import org.sonar.api.server.rule.RulesDefinition;
+import org.sonar.go.externalreport.ExternalKeyUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,6 +44,12 @@ public class GoRulesDefinitionTest {
     assertThat(goRepository.name()).isEqualTo("SonarAnalyzer");
     assertThat(goRepository.language()).isEqualTo("go");
     assertThat(goRepository.rules()).hasSize(GoCheckList.checks().size());
+
+    RulesDefinition.Rule rule = goRepository.rule("S4663");
+    assertThat(rule).isNotNull();
+    assertThat(rule.name()).isEqualTo("Multi-line comments should not be empty");
+    assertThat(rule.debtRemediationFunction().type()).isEqualTo(DebtRemediationFunction.Type.CONSTANT_ISSUE);
+    assertThat(rule.type()).isEqualTo(RuleType.CODE_SMELL);
   }
 
   @Test
@@ -49,9 +60,34 @@ public class GoRulesDefinitionTest {
     RulesDefinition.Repository golintRepository = context.repository("external_golint");
     RulesDefinition.Repository govetRepository = context.repository("external_govet");
 
-    assertThat(context.repositories()).hasSize(1);
+    assertThat(context.repositories()).hasSize(3);
 
-    assertThat(golintRepository).isNull();
-    assertThat(govetRepository).isNull();
+    assertThat(golintRepository.name()).isEqualTo("Golint");
+    assertThat(govetRepository.name()).isEqualTo("go vet");
+
+    assertThat(golintRepository.language()).isEqualTo("go");
+    assertThat(govetRepository.language()).isEqualTo("go");
+
+    assertThat(golintRepository.isExternal()).isEqualTo(true);
+    assertThat(govetRepository.isExternal()).isEqualTo(true);
+
+    assertThat(golintRepository.rules().size()).isEqualTo(18);
+    assertThat(ExternalKeyUtils.GO_LINT_KEYS.size()).isEqualTo(18);
+
+    assertThat(govetRepository.rules().size()).isEqualTo(21);
+    assertThat(ExternalKeyUtils.GO_VET_KEYS.size()).isEqualTo(21);
+
+    List<String> govetKeysWithoutDefinition = ExternalKeyUtils.GO_VET_KEYS.stream()
+      .map(x -> x.key)
+      .filter(key -> govetRepository.rule(key) == null)
+      .collect(Collectors.toList());
+    assertThat(govetKeysWithoutDefinition).isEmpty();
+
+    List<String> golintKeysWithoutDefinition = ExternalKeyUtils.GO_LINT_KEYS.stream()
+      .map(x -> x.key)
+      .filter(key -> golintRepository.rule(key) == null)
+      .collect(Collectors.toList());
+    assertThat(golintKeysWithoutDefinition).isEmpty();
   }
+
 }

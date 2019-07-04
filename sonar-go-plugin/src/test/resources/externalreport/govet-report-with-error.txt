@@ -1,0 +1,3 @@
+main.go:1: comparison of function Foo == nil is always false
+abcdefghijkl
+exit status 1

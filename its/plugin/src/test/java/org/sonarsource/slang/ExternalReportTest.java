@@ -168,6 +168,70 @@ public class ExternalReportTest extends TestBase {
     }
   }
 
+  @Test
+  public void govet() {
+    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "govet");
+    sonarScanner.setProperty("sonar.go.govet.reportPaths", "go-vet.out");
+    ORCHESTRATOR.executeBuild(sonarScanner);
+    List<Issue> issues = getExternalIssues();
+    if (ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2)) {
+      assertThat(issues).hasSize(2);
+      assertThat(formatIssues(issues)).isEqualTo(
+        "SelfAssignement.go|external_govet:assign|MAJOR|5min|line:7|self-assignment of name to name\n" +
+          "SelfAssignement.go|external_govet:assign|MAJOR|5min|line:9|self-assignment of user.name to user.name");
+    } else {
+      assertThat(issues).isEmpty();
+    }
+  }
+
+  @Test
+  public void golint() {
+    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "golint");
+    sonarScanner.setProperty("sonar.go.golint.reportPaths", "golint.out");
+    ORCHESTRATOR.executeBuild(sonarScanner);
+    List<Issue> issues = getExternalIssues();
+    if (ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2)) {
+      assertThat(issues).hasSize(11);
+      assertThat(formatIssues(issues)).isEqualTo(
+        "SelfAssignement.go|external_golint:Exported|MAJOR|5min|line:4|exported type User should have comment or be unexported\n" +
+          "SelfAssignement.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
+          "TabCharacter.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
+          "TodoTagPresence.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
+          "TooLongLine.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
+          "TooManyParameters.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
+          "pivot.go|external_golint:Names|MAJOR|5min|line:10|don't use underscores in Go names; var ascii_uppercase should be asciiUppercase\n" +
+          "pivot.go|external_golint:Names|MAJOR|5min|line:11|don't use underscores in Go names; var ascii_lowercase should be asciiLowercase\n" +
+          "pivot.go|external_golint:Names|MAJOR|5min|line:12|don't use underscores in Go names; var ascii_uppercase_len should be asciiUppercaseLen\n" +
+          "pivot.go|external_golint:Names|MAJOR|5min|line:13|don't use underscores in Go names; var ascii_lowercase_len should be asciiLowercaseLen\n" +
+          "pivot.go|external_golint:Names|MAJOR|5min|line:14|don't use underscores in Go names; var ascii_allowed should be asciiAllowed"
+      );
+    } else {
+      assertThat(issues).isEmpty();
+    }
+  }
+
+  @Test
+  public void gometalinter() {
+    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "gometalinter");
+    sonarScanner.setProperty("sonar.go.gometalinter.reportPaths", "gometalinter.out");
+    ORCHESTRATOR.executeBuild(sonarScanner);
+    List<Issue> issues = getExternalIssues();
+    if (ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2)) {
+      assertThat(issues).hasSize(8);
+      assertThat(formatIssues(issues)).isEqualTo(
+        "SelfAssignement.go|external_golint:Exported|MAJOR|5min|line:4|exported type User should have comment or be unexported\n" +
+          "SelfAssignement.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
+          "SelfAssignement.go|external_govet:assign|MAJOR|5min|line:7|self-assignment of name to name\n" +
+          "SelfAssignement.go|external_govet:assign|MAJOR|5min|line:9|self-assignment of user.name to user.name\n" +
+          "SelfAssignement.go|external_megacheck:SA4018|MAJOR|5min|line:7|self-assignment of name to name\n" +
+          "SelfAssignement.go|external_megacheck:SA4018|MAJOR|5min|line:9|self-assignment of user.name to user.name\n" +
+          "SelfAssignement.go|external_megacheck:U1000|MAJOR|5min|line:4|field name is unused\n" +
+          "SelfAssignement.go|external_megacheck:U1000|MAJOR|5min|line:6|func (*User).rename is unused");
+    } else {
+      assertThat(issues).isEmpty();
+    }
+  }
+
   private List<Issue> getExternalIssues() {
     Server server = ORCHESTRATOR.getServer();
     IssueClient issueClient = SonarClient.create(server.getUrl()).issueClient();
@@ -182,6 +246,22 @@ public class ExternalReportTest extends TestBase {
     Path destReportPath = tmpDir.newFile(sourceReportPath.getFileName().toString()).toPath().toRealPath();
     Files.write(destReportPath, reportContent.getBytes(UTF_8));
     return destReportPath;
+  }
+
+  private static String formatIssues(List<Issue> issues) {
+    return issues.stream()
+      .map(issue -> filePath(issue) + "|" +
+        issue.ruleKey() + "|" +
+        issue.severity() + "|" +
+        issue.debt() + "|" +
+        "line:" + issue.line() + "|" +
+        issue.message())
+      .sorted()
+      .collect(Collectors.joining("\n"));
+  }
+
+  private static String filePath(Issue issue) {
+    return issue.componentKey().substring(issue.componentKey().indexOf(':') + 1);
   }
 
 }

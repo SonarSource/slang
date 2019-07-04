@@ -14,6 +14,7 @@ dependencies {
     runtime files(project(':sonar-go-to-slang').buildDir)
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
     compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
+    compile 'com.eclipsesource.minimal-json:minimal-json'
     testCompile 'junit:junit'
     testCompile 'org.assertj:assertj-core'
     testCompile 'org.mockito:mockito-core'

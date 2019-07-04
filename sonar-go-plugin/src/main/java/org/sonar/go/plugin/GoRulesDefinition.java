@@ -21,6 +21,9 @@ package org.sonar.go.plugin;
 
 import java.util.List;
 import org.sonar.api.server.rule.RulesDefinition;
+import org.sonar.go.externalreport.AbstractReportSensor;
+import org.sonar.go.externalreport.GoLintReportSensor;
+import org.sonar.go.externalreport.GoVetReportSensor;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
 import org.sonarsource.slang.checks.utils.Language;
 import org.sonarsource.slang.plugin.RulesDefinitionUtils;
@@ -47,5 +50,10 @@ public class GoRulesDefinition implements RulesDefinition {
     RulesDefinitionUtils.setDefaultValuesForParameters(repository, checks, Language.GO);
 
     repository.done();
+
+    if (externalIssuesSupported) {
+      AbstractReportSensor.createExternalRuleRepository(context, GoVetReportSensor.LINTER_ID, GoVetReportSensor.LINTER_NAME);
+      AbstractReportSensor.createExternalRuleRepository(context, GoLintReportSensor.LINTER_ID, GoLintReportSensor.LINTER_NAME);
+    }
   }
 }
