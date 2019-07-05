@@ -1,0 +1,47 @@
+package ast
+
+import "fmt"
+
+func main() {
+	var x int
+	var y int = 42
+	var z = 42
+	w := 42
+
+	var a string
+	b := "??"
+	a = "42"
+
+	x = 4
+	x += 30 //Only += and = are mapped to assignment, other are mapped to native nodes (see AssignmentExpressionTree interface)
+	x *= 12
+	x /= 4
+	x %= 7
+	x -= 46
+
+	y = (32)
+
+	cond1, cond2, string1:= true, false, "no!"
+	r1, r2 := foo()
+	var i, j int = 1, 2
+	i, j = j, i
+	i,/*comment0*/ j = j/*comment0*/, i
+
+	const Pi = 3.14
+	const g float = 9.81
+
+
+    var /*comment0*/ii/*comment1*/,/*comment2*/jj/*comment3*/int = 11, 22
+    var ii, jj int =/*comment4*/11/*comment4*/,/*comment4*/22//Comment2
+
+    var (abc int)
+    var ( //Comment01
+        aa int
+        bb string
+        cc bool
+    )
+}
+
+func foo() (int, string) {
+	return 42, "42"
+}

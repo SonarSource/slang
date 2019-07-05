@@ -234,15 +234,9 @@
           null,"nativeChildren":[],"name":
           {"@type": "Identifier", "metaData": "5:5:5:9","name":"main"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
           {"@type": "Block", "metaData": "5:12:44:1","statementOrExpressions":[
-            {"@type": "Native", "metaData": "6:4:6:12","nativeKind":"[0](AssignStmt)","children":[
-              {"@type": "Native", "metaData": "6:4:6:7","nativeKind":"Lhs([]Expr)","children":[
-                {"@type": "Identifier", "metaData": "6:4:6:7","name":"tag"}
-              ]},
-              {"@type": "Native", "metaData": "6:8:6:10","nativeKind":"Tok"},
-              {"@type": "Native", "metaData": "6:11:6:12","nativeKind":"Rhs([]Expr)","children":[
-                {"@type": "IntegerLiteral", "metaData": "6:11:6:12","value":"1"}
-              ]}
-            ]},
+            {"@type": "VariableDeclaration", "metaData": "6:4:6:12","type":null,"isVal":false,"initializer":
+              {"@type": "IntegerLiteral", "metaData": "6:11:6:12","value":"1"},"identifier":
+              {"@type": "Identifier", "metaData": "6:4:6:7","name":"tag"}},
             {"@type": "Match", "metaData": "7:4:11:5","keyword":"7:4:7:10","expression":
               {"@type": "Native", "metaData": "7:11:7:14","nativeKind":"InitAndTag","children":[
                 {"@type": "Identifier", "metaData": "7:11:7:14","name":"tag"}
@@ -316,33 +310,15 @@
                   ]}
                 ]}}
             ]},
-            {"@type": "Native", "metaData": "13:4:13:10","nativeKind":"[2](AssignStmt)","children":[
-              {"@type": "Native", "metaData": "13:4:13:5","nativeKind":"Lhs([]Expr)","children":[
-                {"@type": "Identifier", "metaData": "13:4:13:5","name":"x"}
-              ]},
-              {"@type": "Native", "metaData": "13:6:13:8","nativeKind":"Tok"},
-              {"@type": "Native", "metaData": "13:9:13:10","nativeKind":"Rhs([]Expr)","children":[
-                {"@type": "IntegerLiteral", "metaData": "13:9:13:10","value":"4"}
-              ]}
-            ]},
-            {"@type": "Native", "metaData": "14:4:14:10","nativeKind":"[3](AssignStmt)","children":[
-              {"@type": "Native", "metaData": "14:4:14:5","nativeKind":"Lhs([]Expr)","children":[
-                {"@type": "Identifier", "metaData": "14:4:14:5","name":"y"}
-              ]},
-              {"@type": "Native", "metaData": "14:6:14:8","nativeKind":"Tok"},
-              {"@type": "Native", "metaData": "14:9:14:10","nativeKind":"Rhs([]Expr)","children":[
-                {"@type": "IntegerLiteral", "metaData": "14:9:14:10","value":"2"}
-              ]}
-            ]},
-            {"@type": "Native", "metaData": "15:4:15:10","nativeKind":"[4](AssignStmt)","children":[
-              {"@type": "Native", "metaData": "15:4:15:5","nativeKind":"Lhs([]Expr)","children":[
-                {"@type": "Identifier", "metaData": "15:4:15:5","name":"z"}
-              ]},
-              {"@type": "Native", "metaData": "15:6:15:8","nativeKind":"Tok"},
-              {"@type": "Native", "metaData": "15:9:15:10","nativeKind":"Rhs([]Expr)","children":[
-                {"@type": "IntegerLiteral", "metaData": "15:9:15:10","value":"3"}
-              ]}
-            ]},
+            {"@type": "VariableDeclaration", "metaData": "13:4:13:10","type":null,"isVal":false,"initializer":
+              {"@type": "IntegerLiteral", "metaData": "13:9:13:10","value":"4"},"identifier":
+              {"@type": "Identifier", "metaData": "13:4:13:5","name":"x"}},
+            {"@type": "VariableDeclaration", "metaData": "14:4:14:10","type":null,"isVal":false,"initializer":
+              {"@type": "IntegerLiteral", "metaData": "14:9:14:10","value":"2"},"identifier":
+              {"@type": "Identifier", "metaData": "14:4:14:5","name":"y"}},
+            {"@type": "VariableDeclaration", "metaData": "15:4:15:10","type":null,"isVal":false,"initializer":
+              {"@type": "IntegerLiteral", "metaData": "15:9:15:10","value":"3"},"identifier":
+              {"@type": "Identifier", "metaData": "15:4:15:5","name":"z"}},
             {"@type": "Match", "metaData": "17:4:21:5","keyword":"17:4:17:10","expression":
               null,"cases":[
               {"@type": "MatchCase", "metaData": "18:8:18:37","expression":
@@ -420,19 +396,13 @@
             ]},
             {"@type": "Match", "metaData": "23:4:26:5","keyword":"23:4:23:10","expression":
               {"@type": "Native", "metaData": "23:11:23:19","nativeKind":"InitAndTag","children":[
-                {"@type": "Native", "metaData": "23:11:23:19","nativeKind":"Init(AssignStmt)","children":[
-                  {"@type": "Native", "metaData": "23:11:23:12","nativeKind":"Lhs([]Expr)","children":[
-                    {"@type": "Identifier", "metaData": "23:11:23:12","name":"x"}
-                  ]},
-                  {"@type": "Native", "metaData": "23:13:23:15","nativeKind":"Tok"},
-                  {"@type": "Native", "metaData": "23:16:23:19","nativeKind":"Rhs([]Expr)","children":[
-                    {"@type": "Native", "metaData": "23:16:23:19","nativeKind":"[0](CallExpr)","children":[
-                      {"@type": "Identifier", "metaData": "23:16:23:17","name":"f"},
-                      {"@type": "Native", "metaData": "23:17:23:18","nativeKind":"Lparen"},
-                      {"@type": "Native", "metaData": "23:18:23:19","nativeKind":"Rparen"}
-                    ]}
-                  ]}
-                ]}
+                {"@type": "VariableDeclaration", "metaData": "23:11:23:19","type":null,"isVal":false,"initializer":
+                  {"@type": "Native", "metaData": "23:16:23:19","nativeKind":"[0](CallExpr)","children":[
+                    {"@type": "Identifier", "metaData": "23:16:23:17","name":"f"},
+                    {"@type": "Native", "metaData": "23:17:23:18","nativeKind":"Lparen"},
+                    {"@type": "Native", "metaData": "23:18:23:19","nativeKind":"Rparen"}
+                  ]},"identifier":
+                  {"@type": "Identifier", "metaData": "23:11:23:12","name":"x"}}
               ]},"cases":[
               {"@type": "MatchCase", "metaData": "24:8:24:38","expression":
                 {"@type": "Native", "metaData": "24:13:24:18","nativeKind":"CaseExprList","children":[
@@ -478,45 +448,28 @@
                 ]}}
             ]},
             {"@type": "Native", "metaData": "28:4:28:35","nativeKind":"[7](DeclStmt)","children":[
-              {"@type": "Native", "metaData": "28:4:28:35","nativeKind":"Decl(GenDecl)","children":[
-                {"@type": "Native", "metaData": "28:4:28:7","nativeKind":"Tok"},
-                {"@type": "Native", "metaData": "28:8:28:35","nativeKind":"Specs([]Spec)","children":[
-                  {"@type": "Native", "metaData": "28:8:28:35","nativeKind":"[0](ValueSpec)","children":[
-                    {"@type": "Native", "metaData": "28:8:28:15","nativeKind":"Names([]*Ident)","children":[
-                      {"@type": "Identifier", "metaData": "28:8:28:15","name":"intType"}
-                    ]},
-                    {"@type": "Native", "metaData": "28:16:28:27","nativeKind":"Type(InterfaceType)","children":[
-                      {"@type": "Native", "metaData": "28:16:28:25","nativeKind":"Interface"},
-                      {"@type": "Native", "metaData": "28:25:28:27","nativeKind":"Methods(FieldList)","children":[
-                        {"@type": "Native", "metaData": "28:25:28:26","nativeKind":"Opening"},
-                        {"@type": "Native", "metaData": "28:26:28:27","nativeKind":"Closing"}
-                      ]}
-                    ]},
-                    {"@type": "Native", "metaData": "28:28:28:29","nativeKind":""},
-                    {"@type": "Native", "metaData": "28:30:28:35","nativeKind":"Values([]Expr)","children":[
-                      {"@type": "StringLiteral", "metaData": "28:30:28:35","value":"\"abc\"","content":"abc"}
-                    ]}
+              {"@type": "VariableDeclaration", "metaData": "28:4:28:35","type":
+                {"@type": "Native", "metaData": "28:16:28:27","nativeKind":"Type(InterfaceType)","children":[
+                  {"@type": "Native", "metaData": "28:16:28:25","nativeKind":"Interface"},
+                  {"@type": "Native", "metaData": "28:25:28:27","nativeKind":"Methods(FieldList)","children":[
+                    {"@type": "Native", "metaData": "28:25:28:26","nativeKind":"Opening"},
+                    {"@type": "Native", "metaData": "28:26:28:27","nativeKind":"Closing"}
                   ]}
-                ]}
-              ]}
+                ]},"isVal":false,"initializer":
+                {"@type": "StringLiteral", "metaData": "28:30:28:35","value":"\"abc\"","content":"abc"},"identifier":
+                {"@type": "Identifier", "metaData": "28:8:28:15","name":"intType"}}
             ]},
             {"@type": "Match", "metaData": "30:4:43:5","keyword":"30:4:30:10","expression":
               {"@type": "Native", "metaData": "30:11:30:30","nativeKind":"InitAndAssign","children":[
-                {"@type": "Native", "metaData": "30:11:30:30","nativeKind":"Assign(AssignStmt)","children":[
-                  {"@type": "Native", "metaData": "30:11:30:12","nativeKind":"Lhs([]Expr)","children":[
-                    {"@type": "Identifier", "metaData": "30:11:30:12","name":"i"}
-                  ]},
-                  {"@type": "Native", "metaData": "30:13:30:15","nativeKind":"Tok"},
-                  {"@type": "Native", "metaData": "30:16:30:30","nativeKind":"Rhs([]Expr)","children":[
-                    {"@type": "Native", "metaData": "30:16:30:30","nativeKind":"[0](TypeAssertExpr)","children":[
-                      {"@type": "Identifier", "metaData": "30:16:30:23","name":"intType"},
-                      {"@type": "Native", "metaData": "30:23:30:24","nativeKind":""},
-                      {"@type": "Native", "metaData": "30:24:30:25","nativeKind":"Lparen"},
-                      {"@type": "Native", "metaData": "30:25:30:29","nativeKind":""},
-                      {"@type": "Native", "metaData": "30:29:30:30","nativeKind":"Rparen"}
-                    ]}
-                  ]}
-                ]}
+                {"@type": "VariableDeclaration", "metaData": "30:11:30:30","type":null,"isVal":false,"initializer":
+                  {"@type": "Native", "metaData": "30:16:30:30","nativeKind":"[0](TypeAssertExpr)","children":[
+                    {"@type": "Identifier", "metaData": "30:16:30:23","name":"intType"},
+                    {"@type": "Native", "metaData": "30:23:30:24","nativeKind":""},
+                    {"@type": "Native", "metaData": "30:24:30:25","nativeKind":"Lparen"},
+                    {"@type": "Native", "metaData": "30:25:30:29","nativeKind":""},
+                    {"@type": "Native", "metaData": "30:29:30:30","nativeKind":"Rparen"}
+                  ]},"identifier":
+                  {"@type": "Identifier", "metaData": "30:11:30:12","name":"i"}}
               ]},"cases":[
               {"@type": "MatchCase", "metaData": "31:8:33:17","expression":
                 {"@type": "Native", "metaData": "31:13:31:16","nativeKind":"CaseExprList","children":[

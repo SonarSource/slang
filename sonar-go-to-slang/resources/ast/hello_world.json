@@ -44,15 +44,9 @@
           null,"nativeChildren":[],"name":
           {"@type": "Identifier", "metaData": "7:5:7:9","name":"main"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
           {"@type": "Block", "metaData": "7:12:10:1","statementOrExpressions":[
-            {"@type": "Native", "metaData": "8:1:8:22","nativeKind":"[0](AssignStmt)","children":[
-              {"@type": "Native", "metaData": "8:1:8:4","nativeKind":"Lhs([]Expr)","children":[
-                {"@type": "Identifier", "metaData": "8:1:8:4","name":"msg"}
-              ]},
-              {"@type": "Native", "metaData": "8:5:8:7","nativeKind":"Tok"},
-              {"@type": "Native", "metaData": "8:8:8:22","nativeKind":"Rhs([]Expr)","children":[
-                {"@type": "StringLiteral", "metaData": "8:8:8:22","value":"\"hello, world\"","content":"hello, world"}
-              ]}
-            ]},
+            {"@type": "VariableDeclaration", "metaData": "8:1:8:22","type":null,"isVal":false,"initializer":
+              {"@type": "StringLiteral", "metaData": "8:8:8:22","value":"\"hello, world\"","content":"hello, world"},"identifier":
+              {"@type": "Identifier", "metaData": "8:1:8:4","name":"msg"}},
             {"@type": "Native", "metaData": "9:1:9:17","nativeKind":"[1](ExprStmt)","children":[
               {"@type": "Native", "metaData": "9:1:9:17","nativeKind":"X(CallExpr)","children":[
                 {"@type": "Native", "metaData": "9:1:9:12","nativeKind":"Fun(SelectorExpr)","children":[

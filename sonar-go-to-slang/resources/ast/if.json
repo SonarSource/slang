@@ -188,15 +188,9 @@
               ]},"ifKeyword":"20:1:20:3","elseKeyword":null,"elseBranch":
               null,"condition":
               {"@type": "Native", "metaData": "20:4:20:26","nativeKind":"InitAndCond","children":[
-                {"@type": "Native", "metaData": "20:4:20:11","nativeKind":"Init(AssignStmt)","children":[
-                  {"@type": "Native", "metaData": "20:4:20:5","nativeKind":"Lhs([]Expr)","children":[
-                    {"@type": "Identifier", "metaData": "20:4:20:5","name":"x"}
-                  ]},
-                  {"@type": "Native", "metaData": "20:6:20:8","nativeKind":"Tok"},
-                  {"@type": "Native", "metaData": "20:9:20:11","nativeKind":"Rhs([]Expr)","children":[
-                    {"@type": "IntegerLiteral", "metaData": "20:9:20:11","value":"42"}
-                  ]}
-                ]},
+                {"@type": "VariableDeclaration", "metaData": "20:4:20:11","type":null,"isVal":false,"initializer":
+                  {"@type": "IntegerLiteral", "metaData": "20:9:20:11","value":"42"},"identifier":
+                  {"@type": "Identifier", "metaData": "20:4:20:5","name":"x"}},
                 {"@type": "Native", "metaData": "20:11:20:12","nativeKind":""},
                 {"@type": "Native", "metaData": "20:13:20:26","nativeKind":"Cond(BinaryExpr)","children":[
                   {"@type": "Literal", "metaData": "20:13:20:17","value":"true"},

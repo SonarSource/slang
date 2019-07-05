@@ -121,7 +121,63 @@ func (t *SlangMapper) getFormalParameter(node *Node) []*Node {
 }
 
 func (t *SlangMapper) mapGenDeclImpl(decl *ast.GenDecl, fieldName string) *Node {
-	return nil
+	slangField := make(map[string]interface{})
+
+	switch decl.Tok {
+	case token.CONST:
+		slangField["isVal"] = true
+	case token.VAR:
+		slangField["isVal"] = false
+	default:
+		// token.IMPORT, token.TYPE, mapped to native
+		return nil
+	}
+
+	if len(decl.Specs) != 1 {
+		//The node can not be mapped to a typed Slang node, create a native node
+		return nil
+	}
+
+	valueSpec, ok := decl.Specs[0].(*ast.ValueSpec)
+	if !ok || len(valueSpec.Names) != 1 {
+		// The spec of this declaration is not a valueSpec, or have multiple identifier (i, j := 1, 2), we map it to native
+		return nil
+	}
+
+	var children []*Node
+	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.TokPos, decl.Tok, "Tok"))
+	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Lparen, token.LPAREN, "Lparen"))
+
+	identifier := t.mapIdent(valueSpec.Names[0], "[0]")
+	children = t.appendNode(children, identifier)
+	slangField["identifier"] = identifier
+
+	typ := t.mapExpr(valueSpec.Type, "Type")
+	children = t.appendNode(children, typ)
+	slangField["type"] = typ
+
+	var initializer *Node
+	nValues := len(valueSpec.Values)
+
+	if nValues > 1 {
+		var nodeListValues []*Node
+		for i := 0; i < len(valueSpec.Values); i++ {
+			nodeListValues = t.appendNode(nodeListValues, t.mapExpr(valueSpec.Values[i], "["+strconv.Itoa(i)+"]"))
+		}
+		//Wrap all values in a native node
+		initializer = t.createNativeNodeWithChildren(nodeListValues, "Values([]Expr)")
+	} else if nValues == 1 {
+		initializer = t.mapExpr(valueSpec.Values[0], "[0]")
+	} else {
+		initializer = nil
+	}
+
+	children = t.appendNode(children, initializer)
+	slangField["initializer"] = initializer
+
+	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Rparen, token.RPAREN, "Rparen"))
+
+	return t.createNode(decl, children, fieldName+"(GenDecl)", "VariableDeclaration", slangField)
 }
 
 func (t *SlangMapper) mapFieldListParamsImpl(list *ast.FieldList, fieldName string) *Node {
@@ -236,6 +292,7 @@ func (t *SlangMapper) mapTypeSpecImpl(spec *ast.TypeSpec, fieldName string) *Nod
 }
 
 func (t *SlangMapper) mapValueSpecImpl(spec *ast.ValueSpec, fieldName string) *Node {
+	// ValueSpec represents declaration, but they will be mapped inside mapGenDeclImpl to know if the node is a const or not.
 	return nil
 }
 
@@ -244,7 +301,70 @@ func (t *SlangMapper) mapExprImpl(expr ast.Expr, fieldName string) *Node {
 }
 
 func (t *SlangMapper) mapAssignStmtImpl(stmt *ast.AssignStmt, fieldName string) *Node {
-	return nil
+	if stmt.Lhs == nil || stmt.Rhs == nil {
+		//SLang does not support null LHS or RHS for assignment
+		return nil
+	}
+
+	var operator string
+	var isVarDecl = false
+	switch stmt.Tok {
+	case token.ASSIGN:
+		operator = "EQUAL"
+	case token.ADD_ASSIGN:
+		operator = "PLUS_EQUAL"
+	case token.DEFINE:
+		if len(stmt.Lhs) != 1 {
+			//i, j := 1, 2; SLang does not support this, map to Native
+			return nil
+		}
+		isVarDecl = true
+	default:
+		// Slang only support = and +=, other compound assignments are ignored.
+		return nil
+	}
+
+	var leftHandSide *Node
+	if len(stmt.Lhs) > 1 {
+		var nodeListLhs []*Node
+		for i := 0; i < len(stmt.Lhs); i++ {
+			nodeListLhs = t.appendNode(nodeListLhs, t.mapExpr(stmt.Lhs[i], "["+strconv.Itoa(i)+"]"))
+		}
+		leftHandSide = t.createNativeNodeWithChildren(nodeListLhs, "Lhs([]Expr)")
+	} else {
+		leftHandSide = t.mapExpr(stmt.Lhs[0], "[0]")
+	}
+
+	var children []*Node
+	children = t.appendNode(children, leftHandSide)
+
+	children = t.appendNode(children, t.createTokenFromPosAstToken(stmt.TokPos, stmt.Tok, "Tok"))
+
+	var rightHandSide *Node
+	if len(stmt.Rhs) > 1 {
+		var nodeListRhs []*Node
+		for i := 0; i < len(stmt.Rhs); i++ {
+			nodeListRhs = t.appendNode(nodeListRhs, t.mapExpr(stmt.Rhs[i], "["+strconv.Itoa(i)+"]"))
+		}
+		rightHandSide = t.createNativeNodeWithChildren(nodeListRhs, "Rhs([]Expr)")
+	} else {
+		rightHandSide = t.mapExpr(stmt.Rhs[0], "[0]")
+	}
+	children = t.appendNode(children, rightHandSide)
+
+	slangField := make(map[string]interface{})
+	if isVarDecl {
+		slangField["identifier"] = leftHandSide
+		slangField["type"] = nil
+		slangField["initializer"] = rightHandSide
+		slangField["isVal"] = false
+		return t.createNode(stmt, children, fieldName+"(AssignDefineStmt)", "VariableDeclaration", slangField)
+	} else {
+		slangField["operator"] = operator
+		slangField["leftHandSide"] = leftHandSide
+		slangField["statementOrExpression"] = rightHandSide
+		return t.createNode(stmt, children, fieldName+"(AssignStmt)", "AssignmentExpression", slangField)
+	}
 }
 
 func (t *SlangMapper) mapBadStmtImpl(stmt *ast.BadStmt, fieldName string) *Node {
