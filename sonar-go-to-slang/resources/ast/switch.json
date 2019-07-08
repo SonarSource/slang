@@ -323,11 +323,9 @@
               null,"cases":[
               {"@type": "MatchCase", "metaData": "18:8:18:37","expression":
                 {"@type": "Native", "metaData": "18:13:18:18","nativeKind":"CaseExprList","children":[
-                  {"@type": "Native", "metaData": "18:13:18:18","nativeKind":"[0](BinaryExpr)","children":[
-                    {"@type": "Identifier", "metaData": "18:13:18:14","name":"x"},
-                    {"@type": "Native", "metaData": "18:15:18:16","nativeKind":"Op"},
-                    {"@type": "Identifier", "metaData": "18:17:18:18","name":"y"}
-                  ]}
+                  {"@type": "BinaryExpression", "metaData": "18:13:18:18","rightOperand":
+                    {"@type": "Identifier", "metaData": "18:17:18:18","name":"y"},"operatorToken":"18:15:18:16","operator":"LESS_THAN","leftOperand":
+                    {"@type": "Identifier", "metaData": "18:13:18:14","name":"x"}}
                 ]},"body":
                 {"@type": "Native", "metaData": "18:20:18:37","nativeKind":"CaseBodyList","children":[
                   {"@type": "Native", "metaData": "18:20:18:37","nativeKind":"[0](ExprStmt)","children":[
@@ -347,11 +345,9 @@
                 ]}},
               {"@type": "MatchCase", "metaData": "19:8:19:37","expression":
                 {"@type": "Native", "metaData": "19:13:19:18","nativeKind":"CaseExprList","children":[
-                  {"@type": "Native", "metaData": "19:13:19:18","nativeKind":"[0](BinaryExpr)","children":[
-                    {"@type": "Identifier", "metaData": "19:13:19:14","name":"x"},
-                    {"@type": "Native", "metaData": "19:15:19:16","nativeKind":"Op"},
-                    {"@type": "Identifier", "metaData": "19:17:19:18","name":"z"}
-                  ]}
+                  {"@type": "BinaryExpression", "metaData": "19:13:19:18","rightOperand":
+                    {"@type": "Identifier", "metaData": "19:17:19:18","name":"z"},"operatorToken":"19:15:19:16","operator":"LESS_THAN","leftOperand":
+                    {"@type": "Identifier", "metaData": "19:13:19:14","name":"x"}}
                 ]},"body":
                 {"@type": "Native", "metaData": "19:20:19:37","nativeKind":"CaseBodyList","children":[
                   {"@type": "Native", "metaData": "19:20:19:37","nativeKind":"[0](ExprStmt)","children":[
@@ -371,11 +367,9 @@
                 ]}},
               {"@type": "MatchCase", "metaData": "20:8:20:37","expression":
                 {"@type": "Native", "metaData": "20:13:20:19","nativeKind":"CaseExprList","children":[
-                  {"@type": "Native", "metaData": "20:13:20:19","nativeKind":"[0](BinaryExpr)","children":[
-                    {"@type": "Identifier", "metaData": "20:13:20:14","name":"x"},
-                    {"@type": "Native", "metaData": "20:15:20:17","nativeKind":"Op"},
-                    {"@type": "IntegerLiteral", "metaData": "20:18:20:19","value":"4"}
-                  ]}
+                  {"@type": "BinaryExpression", "metaData": "20:13:20:19","rightOperand":
+                    {"@type": "IntegerLiteral", "metaData": "20:18:20:19","value":"4"},"operatorToken":"20:15:20:17","operator":"EQUAL_TO","leftOperand":
+                    {"@type": "Identifier", "metaData": "20:13:20:14","name":"x"}}
                 ]},"body":
                 {"@type": "Native", "metaData": "20:21:20:37","nativeKind":"CaseBodyList","children":[
                   {"@type": "Native", "metaData": "20:21:20:37","nativeKind":"[0](ExprStmt)","children":[
@@ -406,11 +400,9 @@
               ]},"cases":[
               {"@type": "MatchCase", "metaData": "24:8:24:38","expression":
                 {"@type": "Native", "metaData": "24:13:24:18","nativeKind":"CaseExprList","children":[
-                  {"@type": "Native", "metaData": "24:13:24:18","nativeKind":"[0](BinaryExpr)","children":[
-                    {"@type": "Identifier", "metaData": "24:13:24:14","name":"x"},
-                    {"@type": "Native", "metaData": "24:15:24:16","nativeKind":"Op"},
-                    {"@type": "IntegerLiteral", "metaData": "24:17:24:18","value":"0"}
-                  ]}
+                  {"@type": "BinaryExpression", "metaData": "24:13:24:18","rightOperand":
+                    {"@type": "IntegerLiteral", "metaData": "24:17:24:18","value":"0"},"operatorToken":"24:15:24:16","operator":"LESS_THAN","leftOperand":
+                    {"@type": "Identifier", "metaData": "24:13:24:14","name":"x"}}
                 ]},"body":
                 {"@type": "Native", "metaData": "24:20:24:38","nativeKind":"CaseBodyList","children":[
                   {"@type": "Native", "metaData": "24:20:24:38","nativeKind":"[0](ExprStmt)","children":[
@@ -566,11 +558,9 @@
                       ]},
                       {"@type": "Native", "metaData": "40:23:40:24","nativeKind":"Lparen"},
                       {"@type": "Native", "metaData": "40:24:40:62","nativeKind":"Args([]Expr)","children":[
-                        {"@type": "Native", "metaData": "40:24:40:62","nativeKind":"[0](BinaryExpr)","children":[
-                          {"@type": "StringLiteral", "metaData": "40:24:40:58","value":"\"type is string and the value is \"","content":"type is string and the value is "},
-                          {"@type": "Native", "metaData": "40:59:40:60","nativeKind":"Op"},
-                          {"@type": "Identifier", "metaData": "40:61:40:62","name":"i"}
-                        ]}
+                        {"@type": "BinaryExpression", "metaData": "40:24:40:62","rightOperand":
+                          {"@type": "Identifier", "metaData": "40:61:40:62","name":"i"},"operatorToken":"40:59:40:60","operator":"PLUS","leftOperand":
+                          {"@type": "StringLiteral", "metaData": "40:24:40:58","value":"\"type is string and the value is \"","content":"type is string and the value is "}}
                       ]},
                       {"@type": "Native", "metaData": "40:62:40:63","nativeKind":"Rparen"}
                     ]}

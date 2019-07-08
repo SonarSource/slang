@@ -284,15 +284,13 @@
                 ]},
                 {"@type": "Native", "metaData": "11:11:11:12","nativeKind":"Lparen"},
                 {"@type": "Native", "metaData": "11:12:11:27","nativeKind":"Args([]Expr)","children":[
-                  {"@type": "Native", "metaData": "11:12:11:27","nativeKind":"[0](BinaryExpr)","children":[
-                    {"@type": "IntegerLiteral", "metaData": "11:12:11:13","value":"6"},
-                    {"@type": "Native", "metaData": "11:14:11:15","nativeKind":"Op"},
-                    {"@type": "Native", "metaData": "11:16:11:27","nativeKind":"Y(SelectorExpr)","children":[
+                  {"@type": "BinaryExpression", "metaData": "11:12:11:27","rightOperand":
+                    {"@type": "Native", "metaData": "11:16:11:27","nativeKind":"operand(SelectorExpr)","children":[
                       {"@type": "Identifier", "metaData": "11:16:11:20","name":"time"},
                       {"@type": "Native", "metaData": "11:20:11:21","nativeKind":""},
                       {"@type": "Identifier", "metaData": "11:21:11:27","name":"Second"}
-                    ]}
-                  ]}
+                    ]},"operatorToken":"11:14:11:15","operator":"TIMES","leftOperand":
+                    {"@type": "IntegerLiteral", "metaData": "11:12:11:13","value":"6"}}
                 ]},
                 {"@type": "Native", "metaData": "11:27:11:28","nativeKind":"Rparen"}
               ]}
@@ -322,15 +320,13 @@
                 ]},
                 {"@type": "Native", "metaData": "15:11:15:12","nativeKind":"Lparen"},
                 {"@type": "Native", "metaData": "15:12:15:27","nativeKind":"Args([]Expr)","children":[
-                  {"@type": "Native", "metaData": "15:12:15:27","nativeKind":"[0](BinaryExpr)","children":[
-                    {"@type": "IntegerLiteral", "metaData": "15:12:15:13","value":"3"},
-                    {"@type": "Native", "metaData": "15:14:15:15","nativeKind":"Op"},
-                    {"@type": "Native", "metaData": "15:16:15:27","nativeKind":"Y(SelectorExpr)","children":[
+                  {"@type": "BinaryExpression", "metaData": "15:12:15:27","rightOperand":
+                    {"@type": "Native", "metaData": "15:16:15:27","nativeKind":"operand(SelectorExpr)","children":[
                       {"@type": "Identifier", "metaData": "15:16:15:20","name":"time"},
                       {"@type": "Native", "metaData": "15:20:15:21","nativeKind":""},
                       {"@type": "Identifier", "metaData": "15:21:15:27","name":"Second"}
-                    ]}
-                  ]}
+                    ]},"operatorToken":"15:14:15:15","operator":"TIMES","leftOperand":
+                    {"@type": "IntegerLiteral", "metaData": "15:12:15:13","value":"3"}}
                 ]},
                 {"@type": "Native", "metaData": "15:27:15:28","nativeKind":"Rparen"}
               ]}

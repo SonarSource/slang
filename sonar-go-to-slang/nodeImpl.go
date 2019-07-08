@@ -660,7 +660,56 @@ func (t *SlangMapper) mapBadExprImpl(expr *ast.BadExpr, fieldName string) *Node 
 }
 
 func (t *SlangMapper) mapBinaryExprImpl(expr *ast.BinaryExpr, fieldName string) *Node {
-	return nil
+
+	var operatorName = ""
+	switch expr.Op {
+	case token.ADD:
+		operatorName = "PLUS"
+	case token.SUB:
+		operatorName = "MINUS"
+	case token.MUL:
+		operatorName = "TIMES"
+	case token.QUO:
+		operatorName = "DIVIDED_BY"
+	case token.EQL:
+		operatorName = "EQUAL_TO"
+	case token.NEQ:
+		operatorName = "NOT_EQUAL_TO"
+	case token.GTR:
+		operatorName = "GREATER_THAN"
+	case token.GEQ:
+		operatorName = "GREATER_THAN_OR_EQUAL_TO"
+	case token.LSS:
+		operatorName = "LESS_THAN"
+	case token.LEQ:
+		operatorName = "LESS_THAN_OR_EQUAL_TO"
+	case token.LAND:
+		operatorName = "CONDITIONAL_AND"
+	case token.LOR:
+		operatorName = "CONDITIONAL_OR"
+	default:
+		// all the other binary operators are not mapped
+		return nil
+
+	}
+
+	var children []*Node
+	slangField := make(map[string]interface{})
+
+	leftOperand := t.mapExpr(expr.X, "operand")
+	children = t.appendNode(children, leftOperand)
+	slangField["leftOperand"] = leftOperand
+
+	operator := t.createTokenFromPosAstToken(expr.OpPos, expr.Op, "Op")
+	children = t.appendNode(children, operator)
+	slangField["operator"] = operatorName
+	slangField["operatorToken"] = operator.TextRange
+
+	rightOperand := t.mapExpr(expr.Y, "operand")
+	children = t.appendNode(children, rightOperand)
+	slangField["rightOperand"] = rightOperand
+
+	return t.createNode(expr, children, fieldName+"(BinaryExpr)", "BinaryExpression", slangField)
 }
 
 func (t *SlangMapper) mapCallExprImpl(expr *ast.CallExpr, fieldName string) *Node {

@@ -189,15 +189,11 @@
                   {"@type": "IntegerLiteral", "metaData": "20:9:20:11","value":"42"},"identifier":
                   {"@type": "Identifier", "metaData": "20:4:20:5","name":"x"}},
                 {"@type": "Native", "metaData": "20:11:20:12","nativeKind":""},
-                {"@type": "Native", "metaData": "20:13:20:26","nativeKind":"Cond(BinaryExpr)","children":[
-                  {"@type": "Literal", "metaData": "20:13:20:17","value":"true"},
-                  {"@type": "Native", "metaData": "20:18:20:20","nativeKind":"Op"},
-                  {"@type": "Native", "metaData": "20:21:20:26","nativeKind":"Y(BinaryExpr)","children":[
-                    {"@type": "Identifier", "metaData": "20:21:20:22","name":"x"},
-                    {"@type": "Native", "metaData": "20:23:20:24","nativeKind":"Op"},
-                    {"@type": "IntegerLiteral", "metaData": "20:25:20:26","value":"0"}
-                  ]}
-                ]}
+                {"@type": "BinaryExpression", "metaData": "20:13:20:26","rightOperand":
+                  {"@type": "BinaryExpression", "metaData": "20:21:20:26","rightOperand":
+                    {"@type": "IntegerLiteral", "metaData": "20:25:20:26","value":"0"},"operatorToken":"20:23:20:24","operator":"GREATER_THAN","leftOperand":
+                    {"@type": "Identifier", "metaData": "20:21:20:22","name":"x"}},"operatorToken":"20:18:20:20","operator":"CONDITIONAL_AND","leftOperand":
+                  {"@type": "Literal", "metaData": "20:13:20:17","value":"true"}}
               ]}}
           ]}}
       ]}

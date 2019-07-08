@@ -266,11 +266,8 @@
               ]}
             ]},
             {"@type": "AssignmentExpression", "metaData": "22:1:22:9","statementOrExpression":
-              {"@type": "Native", "metaData": "22:5:22:9","nativeKind":"[0](ParenExpr)","children":[
-                {"@type": "Native", "metaData": "22:5:22:6","nativeKind":"Lparen"},
-                {"@type": "IntegerLiteral", "metaData": "22:6:22:8","value":"32"},
-                {"@type": "Native", "metaData": "22:8:22:9","nativeKind":"Rparen"}
-              ]},"operator":"EQUAL","leftHandSide":
+              {"@type": "ParenthesizedExpression", "metaData": "22:5:22:9","rightParenthesis":"22:8:22:9","leftParenthesis":"22:5:22:6","expression":
+                {"@type": "IntegerLiteral", "metaData": "22:6:22:8","value":"32"}},"operator":"EQUAL","leftHandSide":
               {"@type": "Identifier", "metaData": "22:1:22:2","name":"y"}},
             {"@type": "Native", "metaData": "24:1:24:43","nativeKind":"[14](AssignStmt)","children":[
               {"@type": "Native", "metaData": "24:1:24:22","nativeKind":"Lhs([]Expr)","children":[
