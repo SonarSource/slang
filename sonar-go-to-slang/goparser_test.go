@@ -24,6 +24,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"go/ast"
 	"go/token"
 	"io/ioutil"
@@ -91,6 +92,7 @@ func Test_all_go_files(t *testing.T) {
 		}
 
 		if !reflect.DeepEqual(jsonExpected, jsonActual) {
+			fmt.Printf("Failed to match expected results for file: %#v\n", file)
 			t.Fatalf("got: %#v\nexpected: %#v", jsonActual, jsonExpected)
 		}
 	}
