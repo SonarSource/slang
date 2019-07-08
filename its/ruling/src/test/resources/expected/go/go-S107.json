@@ -1,4 +1,7 @@
 {
+'go-project:ruling/src/test/resources/sources/go/S107.go':[
+4,
+],
 'go-project:sources/go/kubernetes/cmd/libs/go2idl/client-gen/generators/client_generator.go':[
 68,
 ],
@@ -88,9 +91,6 @@
 ],
 'go-project:sources/go/kubernetes/pkg/kubelet/eviction/eviction_manager.go':[
 96,
-],
-'go-project:sources/go/kubernetes/pkg/kubelet/images/image_manager.go':[
-76,
 ],
 'go-project:sources/go/kubernetes/pkg/kubelet/kubelet_pods.go':[
 1443,
@@ -196,6 +196,9 @@
 'go-project:sources/go/kubernetes/staging/src/k8s.io/apiserver/pkg/endpoints/installer.go':[
 863,
 ],
+'go-project:sources/go/kubernetes/staging/src/k8s.io/apiserver/pkg/registry/generic/registry/storage_factory.go':[
+30,
+],
 'go-project:sources/go/kubernetes/staging/src/k8s.io/apiserver/pkg/registry/generic/storage_decorator.go':[
 43,
 ],
@@ -223,9 +226,6 @@
 120,
 420,
 ],
-'go-project:sources/go/kubernetes/test/e2e/framework/framework.go':[
-450,
-],
 'go-project:sources/go/kubernetes/test/e2e/framework/networking_utils.go':[
 174,
 ],
@@ -249,11 +249,5 @@
 ],
 'go-project:sources/go/kubernetes/test/utils/deployment.go':[
 145,
-],
-'go-project:sources/go/kubernetes/test/utils/runners.go':[
-773,
-],
-'project:samples/TooManyParameters.go':[
-4,
 ],
 }

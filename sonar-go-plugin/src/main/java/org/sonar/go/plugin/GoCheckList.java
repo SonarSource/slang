@@ -7,11 +7,9 @@ import org.sonarsource.slang.checks.CodeAfterJumpCheck;
 import org.sonarsource.slang.checks.CollapsibleIfStatementsCheck;
 import org.sonarsource.slang.checks.OneStatementPerLineCheck;
 import org.sonarsource.slang.checks.TabsCheck;
-import org.sonarsource.slang.checks.TooManyParametersCheck;
 import org.sonarsource.slang.checks.UnusedFunctionParameterCheck;
 import org.sonarsource.slang.checks.UnusedLocalVariableCheck;
 import org.sonarsource.slang.checks.UnusedPrivateMethodCheck;
-import org.sonarsource.slang.checks.VariableAndParameterNameCheck;
 
 public class GoCheckList {
 
@@ -26,11 +24,10 @@ public class GoCheckList {
     CollapsibleIfStatementsCheck.class,
     OneStatementPerLineCheck.class,
     TabsCheck.class,
-    TooManyParametersCheck.class,
+    // Can not enable rule S1172 since it it not possible to identify overridden function with modifier (to avoid FP)
     UnusedFunctionParameterCheck.class,
     UnusedLocalVariableCheck.class,
-    UnusedPrivateMethodCheck.class,
-    VariableAndParameterNameCheck.class
+    UnusedPrivateMethodCheck.class
   };
 
   public static List<Class> checks() {

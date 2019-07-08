@@ -21,5 +21,7 @@ func foo() {
 
     if cond { }  //NonCompliant
 }
+//Next line compliant for rule 108 (but will trigger rule S1186)
+func bar() {
 
-func bar() {} //Compliant for rule 108 (but will trigger rule S1186)
+}
