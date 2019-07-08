@@ -12,13 +12,11 @@ import org.sonarsource.slang.checks.DuplicateBranchCheck;
 import org.sonarsource.slang.checks.DuplicatedFunctionImplementationCheck;
 import org.sonarsource.slang.checks.EmptyFunctionCheck;
 import org.sonarsource.slang.checks.FunctionCognitiveComplexityCheck;
-import org.sonarsource.slang.checks.HardcodedCredentialsCheck;
 import org.sonarsource.slang.checks.IdenticalBinaryOperandCheck;
 import org.sonarsource.slang.checks.IdenticalConditionsCheck;
 import org.sonarsource.slang.checks.IfConditionalAlwaysTrueOrFalseCheck;
 import org.sonarsource.slang.checks.OneStatementPerLineCheck;
 import org.sonarsource.slang.checks.RedundantParenthesesCheck;
-import org.sonarsource.slang.checks.SelfAssignmentCheck;
 import org.sonarsource.slang.checks.TabsCheck;
 import org.sonarsource.slang.checks.TooComplexExpressionCheck;
 import org.sonarsource.slang.checks.TooDeeplyNestedStatementsCheck;
@@ -47,13 +45,11 @@ public class GoCheckList {
     DuplicatedFunctionImplementationCheck.class,
     EmptyFunctionCheck.class,
     FunctionCognitiveComplexityCheck.class,
-    HardcodedCredentialsCheck.class,
     IdenticalBinaryOperandCheck.class,
     IdenticalConditionsCheck.class,
     IfConditionalAlwaysTrueOrFalseCheck.class,
     OneStatementPerLineCheck.class,
     RedundantParenthesesCheck.class,
-    SelfAssignmentCheck.class,
     TabsCheck.class,
     TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,

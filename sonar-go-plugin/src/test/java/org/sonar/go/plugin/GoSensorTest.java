@@ -104,8 +104,7 @@ public class GoSensorTest {
     sensorContext.fileSystem().add(inputFile);
     GoSensor goSensor = getSensor("S2068");
     goSensor.execute(sensorContext);
-    // FIXME
-//    assertThat(sensorContext.allIssues()).hasSize(1);
+    assertThat(sensorContext.allIssues()).hasSize(1);
   }
 
   @Test
