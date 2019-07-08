@@ -252,7 +252,30 @@ func (t *SlangMapper) mapBadStmtImpl(stmt *ast.BadStmt, fieldName string) *Node 
 }
 
 func (t *SlangMapper) mapBranchStmtImpl(stmt *ast.BranchStmt, fieldName string) *Node {
-	return nil
+	var children []*Node
+	slangField := make(map[string]interface{})
+
+	var jumpKind string
+
+	switch stmt.Tok {
+	case token.BREAK:
+		jumpKind = "BREAK"
+	case token.CONTINUE:
+		jumpKind = "CONTINUE"
+	default:
+		return nil
+	}
+
+	branchToken := t.createTokenFromPosAstToken(stmt.TokPos, stmt.Tok, "Tok"+jumpKind)
+	children = t.appendNode(children, branchToken)
+	slangField["keyword"] = branchToken.TextRange
+	slangField["kind"] = jumpKind
+
+	label := t.mapIdent(stmt.Label, "Label")
+	children = t.appendNode(children, label)
+	slangField["label"] = label
+
+	return t.createNode(stmt, children, fieldName+"(BranchStmt)", "Jump", slangField)
 }
 
 func (t *SlangMapper) mapCaseClauseImpl(clause *ast.CaseClause, fieldName string) *Node {
@@ -306,7 +329,46 @@ func (t *SlangMapper) mapExprStmtImpl(stmt *ast.ExprStmt, fieldName string) *Nod
 }
 
 func (t *SlangMapper) mapForStmtImpl(stmt *ast.ForStmt, fieldName string) *Node {
-	return nil
+	var children []*Node
+	slangField := make(map[string]interface{})
+
+	hasInitOrPost := stmt.Init != nil || stmt.Post != nil
+
+	if stmt.Cond == nil && !hasInitOrPost {
+		//For loop with null header, not possible currently in SLang, we let the caller map it to Native
+		return nil
+	}
+
+	forToken := t.createTokenFromPosAstToken(stmt.For, token.FOR, "For")
+	children = t.appendNode(children, forToken)
+	slangField["keyword"] = forToken.TextRange
+
+	var condition *Node
+	var kind string
+
+	if !hasInitOrPost {
+		condition = t.mapExpr(stmt.Cond, "Cond")
+		children = t.appendNode(children, condition)
+		kind = "WHILE"
+	} else {
+		var forHeaderList []*Node
+		forHeaderList = t.appendNode(forHeaderList, t.mapStmt(stmt.Init, "Init"))
+		forHeaderList = t.appendNode(forHeaderList, t.mapExpr(stmt.Cond, "Cond"))
+		forHeaderList = t.appendNode(forHeaderList, t.mapStmt(stmt.Post, "Post"))
+
+		//Wrap the 3 elements of the for loop header into one single node
+		condition = t.createNativeNodeWithChildren(forHeaderList, "ForHeader")
+		children = t.appendNode(children, condition)
+		kind = "FOR"
+	}
+	slangField["condition"] = condition
+	slangField["kind"] = kind
+
+	body := t.mapBlockStmt(stmt.Body, "Body")
+	children = t.appendNode(children, body)
+	slangField["body"] = body
+
+	return t.createNode(stmt, children, fieldName+"(ForStmt)", "Loop", slangField)
 }
 
 func (t *SlangMapper) mapGoStmtImpl(stmt *ast.GoStmt, fieldName string) *Node {
@@ -364,7 +426,32 @@ func (t *SlangMapper) mapLabeledStmtImpl(stmt *ast.LabeledStmt, fieldName string
 }
 
 func (t *SlangMapper) mapRangeStmtImpl(stmt *ast.RangeStmt, fieldName string) *Node {
-	return nil
+	var children []*Node
+	slangField := make(map[string]interface{})
+
+	forToken := t.createTokenFromPosAstToken(stmt.For, token.FOR, "For")
+	children = t.appendNode(children, forToken)
+	slangField["keyword"] = forToken.TextRange
+
+	var rangeHeaderList []*Node
+
+	rangeHeaderList = t.appendNode(rangeHeaderList, t.mapExpr(stmt.Key, "Key"))
+	rangeHeaderList = t.appendNode(rangeHeaderList, t.mapExpr(stmt.Value, "Value"))
+	rangeHeaderList = t.appendNode(rangeHeaderList, t.createTokenFromPosAstToken(stmt.TokPos, stmt.Tok, "Tok"))
+	rangeHeaderList = t.appendNode(rangeHeaderList, t.mapExpr(stmt.X, "X"))
+
+	//Wrap all element of the range loop into one single node
+	condition := t.createNativeNodeWithChildren(rangeHeaderList, "RangeHeader")
+	children = t.appendNode(children, condition)
+	slangField["condition"] = condition
+
+	body := t.mapBlockStmt(stmt.Body, "Body")
+	children = t.appendNode(children, body)
+	slangField["body"] = body
+
+	slangField["kind"] = "FOR"
+
+	return t.createNode(stmt, children, fieldName+"(RangeStmt)", "Loop", slangField)
 }
 
 func (t *SlangMapper) mapSelectStmtImpl(stmt *ast.SelectStmt, fieldName string) *Node {

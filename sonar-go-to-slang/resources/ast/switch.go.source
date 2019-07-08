@@ -30,10 +30,12 @@ func main() {
     switch i := intType.(type) { // This is a TypeSwitchStmt (others are SwitchStmt in this file)
         case nil:
             fmt.Println("type of i is type of x (interface{})")
+            break
         case int, bool:
             fmt.Println("type of i is int or bool") // type of i is type of x (interface{})
         case func(int) float64:
-        fmt.Println("type of i is func(int)")
+            fmt.Println("type of i is func(int)")
+            fallthrough
         case string:
             fmt.Println("type is string and the value is " + i)
         default:

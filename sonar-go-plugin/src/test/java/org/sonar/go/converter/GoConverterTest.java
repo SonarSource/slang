@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.ReturnTree;
 import org.sonarsource.slang.api.Tree;
@@ -27,6 +28,14 @@ public class GoConverterTest {
     Tree tree = converter.parse("package main\nfunc foo() {return 42}");
     List<Tree> returnList = tree.descendants().filter(t -> t instanceof ReturnTree).collect(Collectors.toList());
     assertThat(returnList).hasSize(1);
+  }
+
+  @Test
+  public void test_parse_infinite_for() {
+    GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
+    Tree tree = converter.parse("package main\nfunc foo() {for {}}");
+    List<Tree> returnList = tree.descendants().filter(t -> t instanceof LoopTree).collect(Collectors.toList());
+    assertThat(returnList).hasSize(0); // Infinite loop are not mapped to LoopTree
   }
 
   @Test

@@ -1,0 +1,46 @@
+package ast
+
+func foo() {
+	for i := 0; i < 10; i++ {
+	}
+
+	//For loop equivalent to while loop
+	n := 1
+	for n < 5 {
+		n *= 2
+	}
+
+	//Infinite loop
+	sum := 0
+	for {
+		sum++ // repeated forever
+	}
+	fmt.Println(sum)
+
+	//Range loop, equivalent to "for-each"
+	strings := []string{"hello", "world"}
+	for i, s := range strings {
+		fmt.Println(i, s)
+	}
+
+	//Continue and break behave as in Java
+	sum := 0
+OUTER:
+	for i := 1; i < 500; i++ {
+		if i%2 != 0 { // skip odd numbers
+			continue
+		}
+		if i == 100 { // stop at 100
+			break
+		}
+		if i%2 != 0 { // skip odd numbers
+			continue OUTER
+		}
+		sum += i
+	}
+
+	//multiple initialization; a consolidated bool expression with && and ||; multiple incrementation
+	for i, j, s := 0, 5, "a"; i < 3 && j < 100 && s != "aaaaa"; i, j, s = i+1, j+1, s+"a" {
+		fmt.Println("Value of i, j, s:", i, j, s)
+	}
+}

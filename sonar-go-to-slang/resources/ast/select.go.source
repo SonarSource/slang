@@ -24,6 +24,7 @@ func main() {
 	select {
 	case s1 := <-output1:
 		fmt.Println(s1)
+		break
 	case s2 := <-output2:
 		fmt.Println(s2)
 	}
