@@ -605,10 +605,8 @@
           {"@type": "Identifier", "metaData": "46:5:46:6","name":"f"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
           {"@type": "Block", "metaData": "46:13:48:1","statementOrExpressions":[
             {"@type": "Return", "metaData": "47:1:47:11","keyword":"47:1:47:7","body":
-              {"@type": "Native", "metaData": "47:8:47:11","nativeKind":"[0](UnaryExpr)","children":[
-                {"@type": "Native", "metaData": "47:8:47:9","nativeKind":"Op"},
-                {"@type": "IntegerLiteral", "metaData": "47:9:47:11","value":"42"}
-              ]}}
+              {"@type": "UnaryExpression", "metaData": "47:8:47:11","operator":"MINUS","operand":
+                {"@type": "IntegerLiteral", "metaData": "47:9:47:11","value":"42"}}}
           ]}}
       ]}
     ]}

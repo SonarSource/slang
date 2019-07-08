@@ -538,7 +538,23 @@ func (t *SlangMapper) mapIfStmtImpl(ifStmt *ast.IfStmt, fieldName string) *Node 
 }
 
 func (t *SlangMapper) mapIncDecStmtImpl(stmt *ast.IncDecStmt, fieldName string) *Node {
-	return nil
+	var operatorName = "DECREMENT"
+	if token.INC == stmt.Tok {
+		operatorName = "INCREMENT"
+	}
+
+	var children []*Node
+	slangField := make(map[string]interface{})
+
+	operand := t.mapExpr(stmt.X, "X")
+	children = t.appendNode(children, operand)
+	slangField["operand"] = operand
+
+	operator := t.createTokenFromPosAstToken(stmt.TokPos, stmt.Tok, "Tok")
+	children = t.appendNode(children, operator)
+	slangField["operator"] = operatorName
+
+	return t.createNode(stmt, children, fieldName+"(UnaryExpression)", "UnaryExpression", slangField)
 }
 
 func (t *SlangMapper) mapLabeledStmtImpl(stmt *ast.LabeledStmt, fieldName string) *Node {
@@ -723,5 +739,29 @@ func (t *SlangMapper) mapTypeAssertExprImpl(expr *ast.TypeAssertExpr, fieldName 
 }
 
 func (t *SlangMapper) mapUnaryExprImpl(expr *ast.UnaryExpr, fieldName string) *Node {
-	return nil
+	var operatorName = ""
+	switch expr.Op {
+	case token.ADD:
+		operatorName = "PLUS"
+	case token.SUB:
+		operatorName = "MINUS"
+	case token.NOT:
+		operatorName = "NEGATE"
+	default:
+		// only covering unary operators which are supported by SLang
+		return nil
+	}
+
+	var children []*Node
+	slangField := make(map[string]interface{})
+
+	operator := t.createTokenFromPosAstToken(expr.OpPos, expr.Op, "Op")
+	children = t.appendNode(children, operator)
+	slangField["operator"] = operatorName
+
+	operand := t.mapExpr(expr.X, "X")
+	children = t.appendNode(children, operand)
+	slangField["operand"] = operand
+
+	return t.createNode(expr, children, fieldName+"(UnaryExpression)", "UnaryExpression", slangField)
 }

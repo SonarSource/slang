@@ -214,10 +214,8 @@
                   {"@type": "IntegerLiteral", "metaData": "4:17:4:19","value":"10"}
                 ]},
                 {"@type": "Native", "metaData": "4:19:4:20","nativeKind":""},
-                {"@type": "Native", "metaData": "4:21:4:24","nativeKind":"Post(IncDecStmt)","children":[
-                  {"@type": "Identifier", "metaData": "4:21:4:22","name":"i"},
-                  {"@type": "Native", "metaData": "4:22:4:24","nativeKind":"Tok"}
-                ]}
+                {"@type": "UnaryExpression", "metaData": "4:21:4:24","operator":"INCREMENT","operand":
+                  {"@type": "Identifier", "metaData": "4:21:4:22","name":"i"}}
               ]},"body":
               {"@type": "Block", "metaData": "4:25:5:2","statementOrExpressions":[]}},
             {"@type": "VariableDeclaration", "metaData": "8:1:8:7","type":null,"isVal":false,"initializer":
@@ -246,10 +244,8 @@
             {"@type": "Native", "metaData": "15:1:17:2","nativeKind":"[4](ForStmt)","children":[
               {"@type": "Native", "metaData": "15:1:15:4","nativeKind":"For"},
               {"@type": "Block", "metaData": "15:5:17:2","statementOrExpressions":[
-                {"@type": "Native", "metaData": "16:2:16:7","nativeKind":"[0](IncDecStmt)","children":[
-                  {"@type": "Identifier", "metaData": "16:2:16:5","name":"sum"},
-                  {"@type": "Native", "metaData": "16:5:16:7","nativeKind":"Tok"}
-                ]}
+                {"@type": "UnaryExpression", "metaData": "16:2:16:7","operator":"INCREMENT","operand":
+                  {"@type": "Identifier", "metaData": "16:2:16:5","name":"sum"}}
               ]}
             ]},
             {"@type": "Native", "metaData": "18:1:18:17","nativeKind":"[5](ExprStmt)","children":[
@@ -327,10 +323,8 @@
                     {"@type": "IntegerLiteral", "metaData": "29:17:29:20","value":"500"}
                   ]},
                   {"@type": "Native", "metaData": "29:20:29:21","nativeKind":""},
-                  {"@type": "Native", "metaData": "29:22:29:25","nativeKind":"Post(IncDecStmt)","children":[
-                    {"@type": "Identifier", "metaData": "29:22:29:23","name":"i"},
-                    {"@type": "Native", "metaData": "29:23:29:25","nativeKind":"Tok"}
-                  ]}
+                  {"@type": "UnaryExpression", "metaData": "29:22:29:25","operator":"INCREMENT","operand":
+                    {"@type": "Identifier", "metaData": "29:22:29:23","name":"i"}}
                 ]},"body":
                 {"@type": "Block", "metaData": "29:26:40:2","statementOrExpressions":[
                   {"@type": "If", "metaData": "30:2:32:3","thenBranch":
