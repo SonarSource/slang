@@ -19,19 +19,18 @@
  */
 package org.sonarsource.kotlin.externalreport.detekt;
 
-import org.sonarsource.kotlin.plugin.KotlinPlugin;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import javax.xml.stream.XMLStreamException;
+import javax.annotation.Nullable;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
+import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ExternalReportProvider;
+import org.sonarsource.kotlin.plugin.KotlinPlugin;
+import org.sonarsource.slang.externalreport.CheckstyleFormatImporterWithRuleLoader;
 
 public class DetektSensor implements Sensor {
 
@@ -40,6 +39,8 @@ public class DetektSensor implements Sensor {
   static final String LINTER_KEY = "detekt";
 
   static final String LINTER_NAME = "detekt";
+
+  private static final String DETEKT_PREFIX = "detekt.";
 
   public static final String REPORT_PROPERTY_KEY = "sonar.kotlin.detekt.reportPaths";
 
@@ -54,16 +55,26 @@ public class DetektSensor implements Sensor {
   @Override
   public void execute(SensorContext context) {
     List<File> reportFiles = ExternalReportProvider.getReportFiles(context, REPORT_PROPERTY_KEY);
-    reportFiles.forEach(report -> importReport(report, context));
+    ReportImporter importer = new ReportImporter(context);
+    reportFiles.forEach(importer::importFile);
   }
 
-  private static void importReport(File reportPath, SensorContext context) {
-    try (InputStream in = new FileInputStream(reportPath)) {
-      LOG.info("Importing {}", reportPath);
-      DetektXmlReportReader.read(context, in);
-    } catch (IOException | XMLStreamException | RuntimeException e) {
-      LOG.error("No issues information will be saved as the report file '{}' can't be read.", reportPath, e);
+  private static class ReportImporter extends CheckstyleFormatImporterWithRuleLoader {
+
+    public ReportImporter(SensorContext context) {
+      super(context, LINTER_KEY, DetektRulesDefinition.RULE_LOADER);
     }
+
+    @Override
+    @Nullable
+    protected RuleKey createRuleKey(String source) {
+      if (!source.startsWith(DETEKT_PREFIX)) {
+        LOG.debug("Unexpected rule key without '{}' suffix: '{}'", DETEKT_PREFIX, source);
+        return null;
+      }
+      return super.createRuleKey(source.substring(DETEKT_PREFIX.length()));
+    }
+
   }
 
 }

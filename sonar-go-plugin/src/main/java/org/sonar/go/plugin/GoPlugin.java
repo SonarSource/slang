@@ -27,6 +27,7 @@ import org.sonar.go.coverage.GoCoverSensor;
 import org.sonar.go.externalreport.GoLintReportSensor;
 import org.sonar.go.externalreport.GoMetaLinterReportSensor;
 import org.sonar.go.externalreport.GoVetReportSensor;
+import org.sonar.go.externalreport.GolangCILintReportSensor;
 import org.sonar.go.testreport.GoTestSensor;
 
 public class GoPlugin implements Plugin {
@@ -56,6 +57,7 @@ public class GoPlugin implements Plugin {
       GoVetReportSensor.class,
       GoLintReportSensor.class,
       GoMetaLinterReportSensor.class,
+      GolangCILintReportSensor.class,
 
       PropertyDefinition.builder(GoLanguage.FILE_SUFFIXES_KEY)
         .index(10)
@@ -127,6 +129,17 @@ public class GoPlugin implements Plugin {
           .index(32)
           .name("GoMetaLinter Report Files")
           .description("Paths (absolute or relative) to the files with GoMetaLinter issues.")
+          .category(GO_CATEGORY)
+          .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
+          .onQualifiers(Qualifiers.PROJECT)
+          .defaultValue("")
+          .multiValues(true)
+          .build(),
+
+        PropertyDefinition.builder(GolangCILintReportSensor.PROPERTY_KEY)
+          .index(33)
+          .name("GolangCI-Lint Report Files")
+          .description("Paths (absolute or relative) to the files with GolangCI-Lint issues.")
           .category(GO_CATEGORY)
           .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
           .onQualifiers(Qualifiers.PROJECT)

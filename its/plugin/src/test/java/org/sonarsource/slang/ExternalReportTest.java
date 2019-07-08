@@ -232,6 +232,24 @@ public class ExternalReportTest extends TestBase {
     }
   }
 
+  @Test
+  public void golangcilint() {
+    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "golangci-lint");
+    sonarScanner.setProperty("sonar.go.golangci-lint.reportPaths", "golangci-lint-checkstyle.xml");
+    ORCHESTRATOR.executeBuild(sonarScanner);
+    List<Issue> issues = getExternalIssues();
+    if (ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2)) {
+      assertThat(issues).hasSize(4);
+      assertThat(formatIssues(issues)).isEqualTo(
+        "SelfAssignement.go|external_golangci-lint:govet|MAJOR|5min|line:7|assign: self-assignment of name to name\n" +
+          "SelfAssignement.go|external_golangci-lint:govet|MAJOR|5min|line:9|assign: self-assignment of user.name to user.name\n" +
+          "SelfAssignement.go|external_golangci-lint:unused|MAJOR|5min|line:4|U1000: field `name` is unused\n" +
+          "SelfAssignement.go|external_golangci-lint:unused|MAJOR|5min|line:6|U1000: func `(*User).rename` is unused");
+    } else {
+      assertThat(issues).isEmpty();
+    }
+  }
+
   private List<Issue> getExternalIssues() {
     Server server = ORCHESTRATOR.getServer();
     IssueClient issueClient = SonarClient.create(server.getUrl()).issueClient();

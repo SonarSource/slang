@@ -17,8 +17,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.kotlin.externalreport.detekt;
+package org.sonarsource.slang.externalreport;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Nullable;
@@ -30,54 +32,72 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.rules.RuleType;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonarsource.analyzer.commons.ExternalRuleLoader;
 import org.sonarsource.analyzer.commons.xml.SafetyFactory;
 
-class DetektXmlReportReader {
+/**
+ * Import external linter reports having a "Checkstyle" xml format into SonarQube
+ */
+public class CheckstyleFormatImporter {
 
-  private static final Logger LOG = Loggers.get(DetektXmlReportReader.class);
+  private static final Logger LOG = Loggers.get(CheckstyleFormatImporter.class);
+
+  private static final Long DEFAULT_CONSTANT_DEBT_MINUTES = 5L;
 
   private static final QName CHECKSTYLE = new QName("checkstyle");
   private static final QName FILE = new QName("file");
   private static final QName ERROR = new QName("error");
   private static final QName NAME = new QName("name");
+  private static final QName SEVERITY = new QName("severity");
   private static final QName SOURCE = new QName("source");
   private static final QName LINE = new QName("line");
   private static final QName MESSAGE = new QName("message");
 
-  private static final String DETEKT_PREFIX = "detekt.";
-
   private final SensorContext context;
+
+  private final String linterKey;
 
   private int level = 0;
 
   @Nullable
   private InputFile inputFile = null;
 
-  private DetektXmlReportReader(SensorContext context) {
+  /**
+   * @param context, the context where issues will be sent
+   * @param linterKey, used to specify the rule repository
+   */
+  public CheckstyleFormatImporter(SensorContext context, String linterKey) {
     this.context = context;
+    this.linterKey = linterKey;
   }
 
-  static void read(SensorContext context, InputStream in) throws XMLStreamException, IOException {
-    new DetektXmlReportReader(context).read(in);
-  }
-
-  private void read(InputStream in) throws XMLStreamException, IOException {
-    XMLEventReader reader = SafetyFactory.createXMLInputFactory().createXMLEventReader(in);
-    while (reader.hasNext()) {
-      XMLEvent event = reader.nextEvent();
-      if (event.isStartElement()) {
-        level++;
-        onElement(event.asStartElement());
-      } else if (event.isEndElement()) {
-        level--;
+  /**
+   * "importFile" parses the given report file and imports the content into SonarQube
+   * @param reportPath, path of the xml file
+   */
+  public void importFile(File reportPath) {
+    try (InputStream in = new FileInputStream(reportPath)) {
+      LOG.info("Importing {}", reportPath);
+      XMLEventReader reader = SafetyFactory.createXMLInputFactory().createXMLEventReader(in);
+      level = 0;
+      while (reader.hasNext()) {
+        XMLEvent event = reader.nextEvent();
+        if (event.isStartElement()) {
+          level++;
+          onElement(event.asStartElement());
+        } else if (event.isEndElement()) {
+          level--;
+        }
       }
+    } catch (IOException | XMLStreamException | RuntimeException e) {
+      LOG.error("No issue information will be saved as the report file '{}' can't be read.", reportPath, e);
     }
   }
 
@@ -102,29 +122,32 @@ class DetektXmlReportReader {
       predicates.hasAbsolutePath(filePath),
       predicates.hasRelativePath(filePath)));
     if (inputFile == null) {
-      LOG.warn("No input file found for {}. No detekt issues will be imported on this file.", filePath);
+      LOG.warn("No input file found for {}. No " + linterKey + " issues will be imported on this file.", filePath);
     }
   }
 
   private void onErrorElement(StartElement element) {
     String source = getAttributeValue(element, SOURCE);
     String line = getAttributeValue(element, LINE);
+    // severity could be: error, warning, info
+    String severity = getAttributeValue(element, SEVERITY);
     String message = getAttributeValue(element, MESSAGE);
-    if (!source.startsWith(DETEKT_PREFIX)) {
-      LOG.debug("Unexpected rule key without '{}' suffix: '{}'", DETEKT_PREFIX, source);
-      return;
-    }
     if (message.isEmpty()) {
-      LOG.debug("Unexpected error without message for rule: '{}'", source);
+      LOG.debug("Unexpected error without any message for rule: '{}'", source);
       return;
     }
-    RuleKey ruleKey = RuleKey.of(DetektSensor.LINTER_KEY, source.substring(DETEKT_PREFIX.length()));
-    saveIssue(ruleKey, line, message);
+    RuleKey ruleKey = createRuleKey(source);
+    if (ruleKey != null) {
+      saveIssue(ruleKey, line, severity, message);
+    }
   }
 
-  private void saveIssue(RuleKey ruleKey, String line, String message) {
-    NewExternalIssue newExternalIssue = context.newExternalIssue();
-    setRulesDefinitionProperties(newExternalIssue, ruleKey.rule());
+  private void saveIssue(RuleKey ruleRepoAndKey, String line, String severity, String message) {
+    String ruleKey = ruleRepoAndKey.rule();
+    NewExternalIssue newExternalIssue = context.newExternalIssue()
+      .type(ruleType(ruleKey, severity))
+      .severity(severity(ruleKey, severity))
+      .remediationEffortMinutes(effort(ruleKey));
 
     NewIssueLocation primaryLocation = newExternalIssue.newLocation()
       .message(message)
@@ -136,16 +159,25 @@ class DetektXmlReportReader {
 
     newExternalIssue
       .at(primaryLocation)
-      .forRule(ruleKey)
+      .forRule(ruleRepoAndKey)
       .save();
   }
 
-  private static void setRulesDefinitionProperties(NewExternalIssue newExternalIssue, String ruleKey) {
-    ExternalRuleLoader externalRuleLoader = DetektRulesDefinition.RULE_LOADER;
-    newExternalIssue
-      .type(externalRuleLoader.ruleType(ruleKey))
-      .severity(externalRuleLoader.ruleSeverity(ruleKey))
-      .remediationEffortMinutes(externalRuleLoader.ruleConstantDebtMinutes(ruleKey));
+  @Nullable
+  protected RuleKey createRuleKey(String source) {
+    return RuleKey.of(linterKey, source);
+  }
+
+  protected RuleType ruleType(String ruleKey, @Nullable String severity) {
+    return "error".equals(severity) ? RuleType.BUG : RuleType.CODE_SMELL;
+  }
+
+  protected Severity severity(String ruleKey, @Nullable String severity) {
+    return "info".equals(severity) ? Severity.MINOR : Severity.MAJOR;
+  }
+
+  protected Long effort(String ruleKey) {
+    return DEFAULT_CONSTANT_DEBT_MINUTES;
   }
 
   private static String getAttributeValue(StartElement element, QName attributeName) {

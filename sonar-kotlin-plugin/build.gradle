@@ -10,6 +10,7 @@ dependencies {
     compile project(':slang-api')
     compile project(':slang-checks')
     compile project(':slang-plugin')
+    compile project(':checkstyle-import')
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
     compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
     compile 'org.sonarsource.analyzer-commons:sonar-xml-parsing'

@@ -36,7 +36,7 @@ public class GoPluginTest {
     Plugin.Context context = new Plugin.Context(runtime);
     Plugin underTest = new GoPlugin();
     underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(14);
+    assertThat(context.getExtensions()).hasSize(15);
   }
 
   @Test
@@ -45,6 +45,6 @@ public class GoPluginTest {
     Plugin.Context context = new Plugin.Context(runtime);
     Plugin underTest = new GoPlugin();
     underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(17);
+    assertThat(context.getExtensions()).hasSize(19);
   }
 }
