@@ -1,0 +1,19 @@
+package ast
+
+ var _ int = 1 // This is not a VariableDeclaration
+
+ func bar() {
+     _, s := foo()
+     i, _ := foo()
+     // _ := "42" is a compilation error
+     _, _ = foo()
+     _ = 22
+ }
+
+ func bar2(_, _ int) bool { // These are not two parameters
+    return false
+ }
+
+ func foo() (int, string) {
+     return 42, "42"
+ }
