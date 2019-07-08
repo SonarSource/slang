@@ -164,11 +164,8 @@
                 ]}
               ]},"ifKeyword":"16:1:16:3","elseKeyword":null,"elseBranch":
               null,"condition":
-              {"@type": "Native", "metaData": "16:4:16:10","nativeKind":"Cond(ParenExpr)","children":[
-                {"@type": "Native", "metaData": "16:4:16:5","nativeKind":"Lparen"},
-                {"@type": "Literal", "metaData": "16:5:16:9","value":"true"},
-                {"@type": "Native", "metaData": "16:9:16:10","nativeKind":"Rparen"}
-              ]}},
+              {"@type": "ParenthesizedExpression", "metaData": "16:4:16:10","rightParenthesis":"16:9:16:10","leftParenthesis":"16:4:16:5","expression":
+                {"@type": "Literal", "metaData": "16:5:16:9","value":"true"}}},
             {"@type": "If", "metaData": "20:1:22:5","thenBranch":
               {"@type": "Block", "metaData": "20:27:22:5","statementOrExpressions":[
                 {"@type": "Native", "metaData": "21:8:21:31","nativeKind":"[0](ExprStmt)","children":[

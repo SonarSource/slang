@@ -684,7 +684,22 @@ func (t *SlangMapper) mapMapTypeImpl(mapType *ast.MapType, fieldName string) *No
 }
 
 func (t *SlangMapper) mapParenExprImpl(expr *ast.ParenExpr, fieldName string) *Node {
-	return nil
+	var children []*Node
+	slangField := make(map[string]interface{})
+
+	leftParen := t.createTokenFromPosAstToken(expr.Lparen, token.LPAREN, "Lparen")
+	slangField["leftParenthesis"] = leftParen.TextRange
+	children = t.appendNode(children, leftParen)
+
+	nestedExpr := t.mapExpr(expr.X, "X")
+	slangField["expression"] = nestedExpr
+	children = t.appendNode(children, nestedExpr)
+
+	rightParen := t.createTokenFromPosAstToken(expr.Rparen, token.RPAREN, "Rparen")
+	children = t.appendNode(children, rightParen)
+	slangField["rightParenthesis"] = rightParen.TextRange
+
+	return t.createNode(expr, children, fieldName+"(ParenExpr)", "ParenthesizedExpression", slangField)
 }
 
 func (t *SlangMapper) mapSelectorExprImpl(expr *ast.SelectorExpr, fieldName string) *Node {

@@ -570,14 +570,11 @@
                     ]},
                     {"@type": "Native", "metaData": "43:16:43:18","nativeKind":"Tok"},
                     {"@type": "Native", "metaData": "43:19:43:25","nativeKind":"Rhs([]Expr)","children":[
-                      {"@type": "Native", "metaData": "43:19:43:25","nativeKind":"[0](ParenExpr)","children":[
-                        {"@type": "Native", "metaData": "43:19:43:20","nativeKind":"Lparen"},
+                      {"@type": "ParenthesizedExpression", "metaData": "43:19:43:25","rightParenthesis":"43:24:43:25","leftParenthesis":"43:19:43:20","expression":
                         {"@type": "Native", "metaData": "43:20:43:24","nativeKind":"X(UnaryExpr)","children":[
                           {"@type": "Native", "metaData": "43:20:43:22","nativeKind":"Op"},
                           {"@type": "Identifier", "metaData": "43:22:43:24","name":"c3"}
-                        ]},
-                        {"@type": "Native", "metaData": "43:24:43:25","nativeKind":"Rparen"}
-                      ]}
+                        ]}}
                     ]}
                   ]},
                   {"@type": "Native", "metaData": "43:25:43:26","nativeKind":"Colon"},
