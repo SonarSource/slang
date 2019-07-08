@@ -3,8 +3,6 @@ package org.sonar.go.plugin;
 import java.util.List;
 import org.sonarsource.slang.checks.AllBranchesIdenticalCheck;
 import org.sonarsource.slang.checks.BadClassNameCheck;
-import org.sonarsource.slang.checks.BooleanInversionCheck;
-import org.sonarsource.slang.checks.BooleanLiteralCheck;
 import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.CodeAfterJumpCheck;
 import org.sonarsource.slang.checks.CollapsibleIfStatementsCheck;
@@ -12,13 +10,11 @@ import org.sonarsource.slang.checks.DuplicateBranchCheck;
 import org.sonarsource.slang.checks.DuplicatedFunctionImplementationCheck;
 import org.sonarsource.slang.checks.EmptyFunctionCheck;
 import org.sonarsource.slang.checks.FunctionCognitiveComplexityCheck;
-import org.sonarsource.slang.checks.IdenticalBinaryOperandCheck;
 import org.sonarsource.slang.checks.IdenticalConditionsCheck;
 import org.sonarsource.slang.checks.IfConditionalAlwaysTrueOrFalseCheck;
 import org.sonarsource.slang.checks.OneStatementPerLineCheck;
 import org.sonarsource.slang.checks.RedundantParenthesesCheck;
 import org.sonarsource.slang.checks.TabsCheck;
-import org.sonarsource.slang.checks.TooComplexExpressionCheck;
 import org.sonarsource.slang.checks.TooDeeplyNestedStatementsCheck;
 import org.sonarsource.slang.checks.TooManyParametersCheck;
 import org.sonarsource.slang.checks.UnusedFunctionParameterCheck;
@@ -36,8 +32,6 @@ public class GoCheckList {
   private static final Class[] GO_CHECK_BLACK_LIST = {
     AllBranchesIdenticalCheck.class,
     BadClassNameCheck.class,
-    BooleanInversionCheck.class,
-    BooleanLiteralCheck.class,
     CodeAfterJumpCheck.class,
     // Can not enable rule S1066, as Go if-trees are containing an initializer, not well handled by SLang
     CollapsibleIfStatementsCheck.class,
@@ -45,13 +39,11 @@ public class GoCheckList {
     DuplicatedFunctionImplementationCheck.class,
     EmptyFunctionCheck.class,
     FunctionCognitiveComplexityCheck.class,
-    IdenticalBinaryOperandCheck.class,
     IdenticalConditionsCheck.class,
     IfConditionalAlwaysTrueOrFalseCheck.class,
     OneStatementPerLineCheck.class,
     RedundantParenthesesCheck.class,
     TabsCheck.class,
-    TooComplexExpressionCheck.class,
     TooDeeplyNestedStatementsCheck.class,
     TooManyParametersCheck.class,
     UnusedFunctionParameterCheck.class,
