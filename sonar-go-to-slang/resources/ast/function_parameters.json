@@ -288,7 +288,8 @@
             ]}
           ]}},
         {"@type": "FunctionDeclaration", "metaData": "25:0:25:31","returnType":
-          null,"nativeChildren":[
+          null,"nativeChildren":[],"name":
+          {"@type": "Identifier", "metaData": "25:22:25:25","name":"f10"},"modifiers":null,"isConstructor":false,"formalParameters":[
           {"@type": "Native", "metaData": "25:5:25:21","nativeKind":"Recv(FieldList)","children":[
             {"@type": "Native", "metaData": "25:5:25:6","nativeKind":"Opening"},
             {"@type": "Native", "metaData": "25:6:25:20","nativeKind":"[0](Field)","children":[
@@ -301,8 +302,7 @@
             ]},
             {"@type": "Native", "metaData": "25:20:25:21","nativeKind":"Closing"}
           ]}
-        ],"name":
-          {"@type": "Identifier", "metaData": "25:22:25:25","name":"f10"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
+        ],"body":
           {"@type": "Block", "metaData": "25:28:25:31","statementOrExpressions":[]}},
         {"@type": "FunctionDeclaration", "metaData": "27:0:27:61","returnType":
           null,"nativeChildren":[],"name":

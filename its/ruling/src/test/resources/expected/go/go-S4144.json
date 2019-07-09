@@ -43,6 +43,9 @@
 'go-project:sources/go/kubernetes/pkg/registry/authorization/rest/storage_authorization.go':[
 77,
 ],
+'go-project:sources/go/kubernetes/pkg/volume/azure_dd/azure_common.go':[
+372,
+],
 'go-project:sources/go/kubernetes/staging/src/k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/clientset.go':[
 51,
 ],

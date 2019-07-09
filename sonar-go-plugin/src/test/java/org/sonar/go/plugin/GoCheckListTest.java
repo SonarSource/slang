@@ -25,6 +25,6 @@ import org.junit.Test;
 public class GoCheckListTest {
   @Test
   public void go_checks_size() {
-    Assertions.assertThat(GoCheckList.checks().size()).isEqualTo(24);
+    Assertions.assertThat(GoCheckList.checks().size()).isEqualTo(25);
   }
 }
