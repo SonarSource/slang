@@ -40,4 +40,10 @@ public class StringNativeKindTest {
     assertThat(StringNativeKind.toString(new StringNativeKind("ast.Element"))).isEqualTo("ast.Element");
   }
 
+  @Test
+  public void test_equals() {
+    assertThat(new StringNativeKind("ast.Element")).isEqualTo(new StringNativeKind("ast.Element"));
+    assertThat(new StringNativeKind("ast.Element").hashCode()).isEqualTo(new StringNativeKind("ast.Element").hashCode());
+  }
+  
 }

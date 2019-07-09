@@ -51,4 +51,19 @@ public class StringNativeKind implements NativeKind {
     return kind;
   }
 
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    return kind.equals(((StringNativeKind) other).kind);
+  }
+
+  @Override
+  public int hashCode() {
+    return kind.hashCode();
+  }
 }
