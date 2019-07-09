@@ -44,36 +44,34 @@
         {"@type": "Native", "metaData": "1:0:1:7","nativeKind":""},
         {"@type": "Identifier", "metaData": "1:8:1:11","name":"ast"}
       ]},
-      {"@type": "Native", "metaData": "3:0:12:1","nativeKind":"Decls([]Decl)","children":[
-        {"@type": "FunctionDeclaration", "metaData": "3:0:12:1","returnType":
-          null,"nativeChildren":[],"name":
-          {"@type": "Identifier", "metaData": "3:5:3:16","name":"allLiterals"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
-          {"@type": "Block", "metaData": "3:19:12:1","statementOrExpressions":[
-            {"@type": "VariableDeclaration", "metaData": "4:1:4:28","type":null,"isVal":false,"initializer":
-              {"@type": "StringLiteral", "metaData": "4:14:4:28","value":"\"hello, world\"","content":"hello, world"},"identifier":
-              {"@type": "Identifier", "metaData": "4:1:4:10","name":"stringLit"}},
-            {"@type": "VariableDeclaration", "metaData": "5:1:5:36","type":null,"isVal":false,"initializer":
-              {"@type": "Native", "metaData": "5:23:5:36","nativeKind":"[0](BasicLit)"},"identifier":
-              {"@type": "Identifier", "metaData": "5:1:5:19","name":"multiLineStringLit"}},
-            {"@type": "VariableDeclaration", "metaData": "6:1:6:13","type":null,"isVal":false,"initializer":
-              {"@type": "IntegerLiteral", "metaData": "6:11:6:13","value":"42"},"identifier":
-              {"@type": "Identifier", "metaData": "6:1:6:7","name":"intLit"}},
-            {"@type": "VariableDeclaration", "metaData": "7:1:7:17","type":null,"isVal":false,"initializer":
-              {"@type": "IntegerLiteral", "metaData": "7:11:7:17","value":"0xFF42"},"identifier":
-              {"@type": "Identifier", "metaData": "7:1:7:7","name":"hexLit"}},
-            {"@type": "VariableDeclaration", "metaData": "8:1:8:16","type":null,"isVal":false,"initializer":
-              {"@type": "IntegerLiteral", "metaData": "8:13:8:16","value":"042"},"identifier":
-              {"@type": "Identifier", "metaData": "8:1:8:9","name":"octalLit"}},
-            {"@type": "VariableDeclaration", "metaData": "9:1:9:16","type":null,"isVal":false,"initializer":
-              {"@type": "Native", "metaData": "9:13:9:16","nativeKind":"[0](BasicLit)"},"identifier":
-              {"@type": "Identifier", "metaData": "9:1:9:9","name":"floatLit"}},
-            {"@type": "VariableDeclaration", "metaData": "10:1:10:15","type":null,"isVal":false,"initializer":
-              {"@type": "Native", "metaData": "10:12:10:15","nativeKind":"[0](BasicLit)"},"identifier":
-              {"@type": "Identifier", "metaData": "10:1:10:8","name":"charLit"}},
-            {"@type": "VariableDeclaration", "metaData": "11:1:11:19","type":null,"isVal":false,"initializer":
-              {"@type": "Native", "metaData": "11:12:11:19","nativeKind":"[0](BasicLit)"},"identifier":
-              {"@type": "Identifier", "metaData": "11:1:11:8","name":"imagLit"}}
-          ]}}
-      ]}
+      {"@type": "FunctionDeclaration", "metaData": "3:0:12:1","returnType":
+        null,"nativeChildren":[],"name":
+        {"@type": "Identifier", "metaData": "3:5:3:16","name":"allLiterals"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
+        {"@type": "Block", "metaData": "3:19:12:1","statementOrExpressions":[
+          {"@type": "VariableDeclaration", "metaData": "4:1:4:28","type":null,"isVal":false,"initializer":
+            {"@type": "StringLiteral", "metaData": "4:14:4:28","value":"\"hello, world\"","content":"hello, world"},"identifier":
+            {"@type": "Identifier", "metaData": "4:1:4:10","name":"stringLit"}},
+          {"@type": "VariableDeclaration", "metaData": "5:1:5:36","type":null,"isVal":false,"initializer":
+            {"@type": "Native", "metaData": "5:23:5:36","nativeKind":"[0](BasicLit)"},"identifier":
+            {"@type": "Identifier", "metaData": "5:1:5:19","name":"multiLineStringLit"}},
+          {"@type": "VariableDeclaration", "metaData": "6:1:6:13","type":null,"isVal":false,"initializer":
+            {"@type": "IntegerLiteral", "metaData": "6:11:6:13","value":"42"},"identifier":
+            {"@type": "Identifier", "metaData": "6:1:6:7","name":"intLit"}},
+          {"@type": "VariableDeclaration", "metaData": "7:1:7:17","type":null,"isVal":false,"initializer":
+            {"@type": "IntegerLiteral", "metaData": "7:11:7:17","value":"0xFF42"},"identifier":
+            {"@type": "Identifier", "metaData": "7:1:7:7","name":"hexLit"}},
+          {"@type": "VariableDeclaration", "metaData": "8:1:8:16","type":null,"isVal":false,"initializer":
+            {"@type": "IntegerLiteral", "metaData": "8:13:8:16","value":"042"},"identifier":
+            {"@type": "Identifier", "metaData": "8:1:8:9","name":"octalLit"}},
+          {"@type": "VariableDeclaration", "metaData": "9:1:9:16","type":null,"isVal":false,"initializer":
+            {"@type": "Native", "metaData": "9:13:9:16","nativeKind":"[0](BasicLit)"},"identifier":
+            {"@type": "Identifier", "metaData": "9:1:9:9","name":"floatLit"}},
+          {"@type": "VariableDeclaration", "metaData": "10:1:10:15","type":null,"isVal":false,"initializer":
+            {"@type": "Native", "metaData": "10:12:10:15","nativeKind":"[0](BasicLit)"},"identifier":
+            {"@type": "Identifier", "metaData": "10:1:10:8","name":"charLit"}},
+          {"@type": "VariableDeclaration", "metaData": "11:1:11:19","type":null,"isVal":false,"initializer":
+            {"@type": "Native", "metaData": "11:12:11:19","nativeKind":"[0](BasicLit)"},"identifier":
+            {"@type": "Identifier", "metaData": "11:1:11:8","name":"imagLit"}}
+        ]}}
     ]}
 } 

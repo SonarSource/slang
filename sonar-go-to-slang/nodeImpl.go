@@ -55,14 +55,20 @@ func (t *SlangMapper) mapIdentImpl(ident *ast.Ident, fieldName string) *Node {
 func (t *SlangMapper) mapFileImpl(file *ast.File, fieldName string) *Node {
 	var children []*Node
 	slangField := make(map[string]interface{})
+	var declarations []*Node
 
-	children = t.appendNode(children, t.mapPackageDecl(file))
+	packageDecl := t.mapPackageDecl(file)
+	children = t.appendNode(children, packageDecl)
+	declarations = append(declarations, packageDecl)
+
 	var nodeListDecls []*Node
 	for i := 0; i < len(file.Decls); i++ {
 		nodeListDecls = t.appendNode(nodeListDecls, t.mapDecl(file.Decls[i], "["+strconv.Itoa(i)+"]"))
 	}
 	children = t.appendNodeList(children, nodeListDecls, "Decls([]Decl)")
-	slangField["declarations"] = t.filterOutComments(children)
+	declarations = append(declarations, t.filterOutComments(nodeListDecls)...)
+
+	slangField["declarations"] = declarations
 	slangField["firstCpdToken"] = nil
 	return t.createNode(file, children, fieldName, "TopLevel", slangField)
 }
