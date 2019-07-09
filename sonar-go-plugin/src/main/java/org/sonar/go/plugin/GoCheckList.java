@@ -7,7 +7,6 @@ import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.CodeAfterJumpCheck;
 import org.sonarsource.slang.checks.CollapsibleIfStatementsCheck;
 import org.sonarsource.slang.checks.DuplicateBranchCheck;
-import org.sonarsource.slang.checks.EmptyFunctionCheck;
 import org.sonarsource.slang.checks.FunctionCognitiveComplexityCheck;
 import org.sonarsource.slang.checks.IdenticalConditionsCheck;
 import org.sonarsource.slang.checks.IfConditionalAlwaysTrueOrFalseCheck;
@@ -35,7 +34,6 @@ public class GoCheckList {
     // Can not enable rule S1066, as Go if-trees are containing an initializer, not well handled by SLang
     CollapsibleIfStatementsCheck.class,
     DuplicateBranchCheck.class,
-    EmptyFunctionCheck.class,
     FunctionCognitiveComplexityCheck.class,
     IdenticalConditionsCheck.class,
     IfConditionalAlwaysTrueOrFalseCheck.class,

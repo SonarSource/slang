@@ -1,4 +1,10 @@
 {
+'go-project:ruling/src/test/resources/sources/go/S107.go':[
+7,
+],
+'go-project:ruling/src/test/resources/sources/go/S108.go':[
+25,
+],
 'go-project:sources/go/kubernetes/cluster/images/etcd/rollback/rollback.go':[
 272,
 ],
@@ -341,8 +347,5 @@
 ],
 'go-project:sources/go/kubernetes/test/images/net/main.go':[
 161,
-],
-'project:samples/TooManyParameters.go':[
-7,
 ],
 }

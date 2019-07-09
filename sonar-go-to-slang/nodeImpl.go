@@ -109,6 +109,34 @@ func (t *SlangMapper) mapFuncDeclImpl(decl *ast.FuncDecl, fieldName string) *Nod
 	return t.createNode(decl, children, fieldName+"(FuncDecl)", "FunctionDeclaration", slangField)
 }
 
+func (t *SlangMapper) mapFuncLitImpl(lit *ast.FuncLit, fieldName string) *Node {
+	var children []*Node
+	slangField := make(map[string]interface{})
+
+	children = t.appendNode(children, t.createTokenFromPosAstToken(lit.Type.Func, token.FUNC, "Type.Func"))
+
+	parameters := t.mapFieldListParams(lit.Type.Params, "Params")
+	children = t.appendNode(children, parameters)
+	slangField["formalParameters"] = t.getFormalParameter(parameters)
+
+	funcResults := t.mapFieldListResults(lit.Type.Results, "Results")
+	children = t.appendNode(children, funcResults)
+	slangField["returnType"] = funcResults
+
+	funcBody := t.mapBlockStmt(lit.Body, "Body")
+	children = t.appendNode(children, funcBody)
+	slangField["body"] = funcBody
+
+	//Required by SLang; Go does not have constructors
+	slangField["isConstructor"] = false
+	//Go does not have explicit modifiers
+	slangField["modifiers"] = nil
+	//Other children of the function node
+	slangField["nativeChildren"] = nil
+
+	return t.createNode(lit, children, fieldName+"(FuncLit)", "FunctionDeclaration", slangField)
+}
+
 func (t *SlangMapper) getFormalParameter(node *Node) []*Node {
 	var formalParameters []*Node
 	//Get all FieldListParams lists
@@ -728,10 +756,6 @@ func (t *SlangMapper) mapCompositeLitImpl(lit *ast.CompositeLit, fieldName strin
 }
 
 func (t *SlangMapper) mapEllipsisImpl(ellipsis *ast.Ellipsis, fieldName string) *Node {
-	return nil
-}
-
-func (t *SlangMapper) mapFuncLitImpl(lit *ast.FuncLit, fieldName string) *Node {
 	return nil
 }
 

@@ -2,7 +2,9 @@
   "treeMetaData": {
     "comments": [
             {"text":"/*comment*/", "contentText":"comment", "range":"29:11:29:22", "contentRange": "29:13:29:20"},
-            {"text":"/*comment*/", "contentText":"comment", "range":"31:19:31:30", "contentRange": "31:21:31:28"}
+            {"text":"/*comment*/", "contentText":"comment", "range":"31:19:31:30", "contentRange": "31:21:31:28"},
+            {"text":"// function literal (lambda)", "contentText":" function literal (lambda)", "range":"33:0:33:28", "contentRange": "33:2:33:28"},
+            {"text":"// goroutine", "contentText":" goroutine", "range":"35:4:35:16", "contentRange": "35:6:35:16"}
     ],
     "tokens": [
       {"text":"package","textRange":"1:0:1:7","type":"KEYWORD"},
@@ -161,16 +163,39 @@
       {"text":",","textRange":"31:17:31:18","type":"OTHER"},
       {"text":")","textRange":"31:42:31:43","type":"OTHER"},
       {"text":"{","textRange":"31:44:31:45","type":"OTHER"},
-      {"text":"}","textRange":"31:45:31:46","type":"OTHER"}
+      {"text":"}","textRange":"31:45:31:46","type":"OTHER"},
+      {"text":"var","textRange":"34:0:34:3","type":"KEYWORD"},
+      {"text":"g4","textRange":"34:4:34:6","type":"OTHER"},
+      {"text":"func","textRange":"34:9:34:13","type":"KEYWORD"},
+      {"text":"(","textRange":"34:13:34:14","type":"OTHER"},
+      {"text":"a","textRange":"34:14:34:15","type":"OTHER"},
+      {"text":"int","textRange":"34:16:34:19","type":"OTHER"},
+      {"text":")","textRange":"34:19:34:20","type":"OTHER"},
+      {"text":"int","textRange":"34:21:34:24","type":"OTHER"},
+      {"text":"{","textRange":"34:25:34:26","type":"OTHER"},
+      {"text":"go","textRange":"36:4:36:6","type":"KEYWORD"},
+      {"text":"func","textRange":"36:7:36:11","type":"KEYWORD"},
+      {"text":"(","textRange":"36:11:36:12","type":"OTHER"},
+      {"text":")","textRange":"36:12:36:13","type":"OTHER"},
+      {"text":"{","textRange":"36:13:36:14","type":"OTHER"},
+      {"text":"a","textRange":"36:15:36:16","type":"OTHER"},
+      {"text":"++","textRange":"36:16:36:18","type":"OTHER"},
+      {"text":"}","textRange":"36:19:36:20","type":"OTHER"},
+      {"text":"(","textRange":"36:20:36:21","type":"OTHER"},
+      {"text":")","textRange":"36:21:36:22","type":"OTHER"},
+      {"text":"return","textRange":"37:4:37:10","type":"KEYWORD"},
+      {"text":"a","textRange":"37:11:37:12","type":"OTHER"},
+      {"text":"}","textRange":"38:0:38:1","type":"OTHER"},
+      {"text":"=","textRange":"34:7:34:8","type":"OTHER"}
     ]
   },
   "tree":
-    {"@type": "TopLevel", "metaData": "1:0:32:0","firstCpdToken":null,"declarations":[
+    {"@type": "TopLevel", "metaData": "1:0:38:1","firstCpdToken":null,"declarations":[
       {"@type": "Native", "metaData": "1:0:1:12","nativeKind":"File.Package","children":[
         {"@type": "Native", "metaData": "1:0:1:7","nativeKind":""},
         {"@type": "Identifier", "metaData": "1:8:1:12","name":"main"}
       ]},
-      {"@type": "Native", "metaData": "3:0:31:46","nativeKind":"Decls([]Decl)","children":[
+      {"@type": "Native", "metaData": "3:0:38:1","nativeKind":"Decls([]Decl)","children":[
         {"@type": "FunctionDeclaration", "metaData": "3:0:3:12","returnType":
           null,"nativeChildren":[],"name":
           {"@type": "Identifier", "metaData": "3:5:3:7","name":"f1"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
@@ -358,7 +383,37 @@
             {"@type": "Identifier", "metaData": "31:36:31:42","name":"string"},"modifiers":null,"identifier":
             {"@type": "Identifier", "metaData": "31:34:31:35","name":"l"},"defaultValue":null}
         ],"body":
-          {"@type": "Block", "metaData": "31:44:31:46","statementOrExpressions":[]}}
+          {"@type": "Block", "metaData": "31:44:31:46","statementOrExpressions":[]}},
+        {"@type": "VariableDeclaration", "metaData": "34:0:38:1","type":
+          null,"isVal":false,"initializer":
+          {"@type": "FunctionDeclaration", "metaData": "34:9:38:1","returnType":
+            {"@type": "Native", "metaData": "34:21:34:24","nativeKind":"Results(FieldList)","children":[
+              {"@type": "Native", "metaData": "34:21:34:24","nativeKind":"[0](Field)","children":[
+                {"@type": "Identifier", "metaData": "34:21:34:24","name":"int"}
+              ]}
+            ]},"nativeChildren":null,"modifiers":null,"isConstructor":false,"formalParameters":[
+            {"@type": "Parameter", "metaData": "34:14:34:19","type":
+              {"@type": "Identifier", "metaData": "34:16:34:19","name":"int"},"modifiers":null,"identifier":
+              {"@type": "Identifier", "metaData": "34:14:34:15","name":"a"},"defaultValue":null}
+          ],"body":
+            {"@type": "Block", "metaData": "34:25:38:1","statementOrExpressions":[
+              {"@type": "Native", "metaData": "36:4:36:22","nativeKind":"[0](GoStmt)","children":[
+                {"@type": "Native", "metaData": "36:4:36:6","nativeKind":"Go"},
+                {"@type": "Native", "metaData": "36:7:36:22","nativeKind":"Call(CallExpr)","children":[
+                  {"@type": "FunctionDeclaration", "metaData": "36:7:36:20","returnType":
+                    null,"nativeChildren":null,"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
+                    {"@type": "Block", "metaData": "36:13:36:20","statementOrExpressions":[
+                      {"@type": "UnaryExpression", "metaData": "36:15:36:18","operator":"INCREMENT","operand":
+                        {"@type": "Identifier", "metaData": "36:15:36:16","name":"a"}}
+                    ]}},
+                  {"@type": "Native", "metaData": "36:20:36:21","nativeKind":"Lparen"},
+                  {"@type": "Native", "metaData": "36:21:36:22","nativeKind":"Rparen"}
+                ]}
+              ]},
+              {"@type": "Return", "metaData": "37:4:37:12","keyword":"37:4:37:10","body":
+                {"@type": "Identifier", "metaData": "37:11:37:12","name":"a"}}
+            ]}},"identifier":
+          {"@type": "Identifier", "metaData": "34:4:34:6","name":"g4"}}
       ]}
     ]}
 } 

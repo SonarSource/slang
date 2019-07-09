@@ -29,3 +29,10 @@ func f11(head string, handleFunc func(*store.NodeExtern)) { }
 func g1(i, /*comment*/j int) {}
 
 func g3(i, j  int, /*comment*/ k, l string) {}
+
+// function literal (lambda)
+var g4 = func(a int) int {
+    // goroutine
+    go func(){ a++ }()
+    return a
+}
