@@ -1,12 +1,10 @@
 package org.sonar.go.plugin;
 
 import java.util.List;
-import org.sonarsource.slang.checks.AllBranchesIdenticalCheck;
 import org.sonarsource.slang.checks.BadClassNameCheck;
 import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.CodeAfterJumpCheck;
 import org.sonarsource.slang.checks.CollapsibleIfStatementsCheck;
-import org.sonarsource.slang.checks.DuplicateBranchCheck;
 import org.sonarsource.slang.checks.FunctionCognitiveComplexityCheck;
 import org.sonarsource.slang.checks.OneStatementPerLineCheck;
 import org.sonarsource.slang.checks.RedundantParenthesesCheck;
@@ -26,12 +24,10 @@ public class GoCheckList {
   }
 
   private static final Class[] GO_CHECK_BLACK_LIST = {
-    AllBranchesIdenticalCheck.class,
     BadClassNameCheck.class,
     CodeAfterJumpCheck.class,
     // Can not enable rule S1066, as Go if-trees are containing an initializer, not well handled by SLang
     CollapsibleIfStatementsCheck.class,
-    DuplicateBranchCheck.class,
     FunctionCognitiveComplexityCheck.class,
     OneStatementPerLineCheck.class,
     RedundantParenthesesCheck.class,
