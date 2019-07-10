@@ -1,6 +1,8 @@
 {
 'go-project:ruling/src/test/resources/sources/go/S1862.go':[
 6,
+13,
+20,
 ],
 'go-project:sources/go/kubernetes/cmd/gendocs/gen_kubectl_docs.go':[
 35,

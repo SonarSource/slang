@@ -8,8 +8,6 @@ import org.sonarsource.slang.checks.CodeAfterJumpCheck;
 import org.sonarsource.slang.checks.CollapsibleIfStatementsCheck;
 import org.sonarsource.slang.checks.DuplicateBranchCheck;
 import org.sonarsource.slang.checks.FunctionCognitiveComplexityCheck;
-import org.sonarsource.slang.checks.IdenticalConditionsCheck;
-import org.sonarsource.slang.checks.IfConditionalAlwaysTrueOrFalseCheck;
 import org.sonarsource.slang.checks.OneStatementPerLineCheck;
 import org.sonarsource.slang.checks.RedundantParenthesesCheck;
 import org.sonarsource.slang.checks.TabsCheck;
@@ -35,8 +33,6 @@ public class GoCheckList {
     CollapsibleIfStatementsCheck.class,
     DuplicateBranchCheck.class,
     FunctionCognitiveComplexityCheck.class,
-    IdenticalConditionsCheck.class,
-    IfConditionalAlwaysTrueOrFalseCheck.class,
     OneStatementPerLineCheck.class,
     RedundantParenthesesCheck.class,
     TabsCheck.class,
