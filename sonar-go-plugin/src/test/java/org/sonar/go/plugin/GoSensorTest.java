@@ -186,7 +186,7 @@ public class GoSensorTest {
     assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.CLASSES).value()).isEqualTo(3);
     // FIXME
 //    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.STATEMENTS).value()).isEqualTo(4);
-//    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COGNITIVE_COMPLEXITY).value()).isEqualTo(1);
+    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COGNITIVE_COMPLEXITY).value()).isEqualTo(1);
 
     assertThat(fileLinesContext.saveCount).isEqualTo(1);
 
@@ -229,33 +229,32 @@ public class GoSensorTest {
 
   @Test
   public void cognitive_complexity_metric() {
-    // FIXME
-//    InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
-//        "package main\n" +
-//        "import \"fmt\"\n" +
-//        "func fun1(i int) int {\n" +
-//        "  if i < 0 { // +1\n" +
-//        "    i++\n" +
-//        "  }\n" +
-//        "  return i\n" +
-//        "}\n" +
-//        "func fun2(i int) int {\n" +
-//        "  if i < 0 { // +1\n" +
-//        "    i--\n" +
-//        "  }\n" +
-//        "  f := func(int) int {\n" +
-//        "    if i < 0 { // +2 (incl 1 for nesting)\n" +
-//        "      i++\n" +
-//        "    }\n" +
-//        "    return i\n" +
-//        "  }\n" +
-//        "  return i + f(i)\n" +
-//        "}\n" +
-//        "\n");
-//    sensorContext.fileSystem().add(inputFile);
-//    GoSensor goSensor = getSensor();
-//    goSensor.execute(sensorContext);
-//    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COGNITIVE_COMPLEXITY).value()).isEqualTo(4);
+    InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
+        "package main\n" +
+        "import \"fmt\"\n" +
+        "func fun1(i int) int {\n" +
+        "  if i < 0 { // +1\n" +
+        "    i++\n" +
+        "  }\n" +
+        "  return i\n" +
+        "}\n" +
+        "func fun2(i int) int {\n" +
+        "  if i < 0 { // +1\n" +
+        "    i--\n" +
+        "  }\n" +
+        "  f := func(int) int {\n" +
+        "    if i < 0 { // +2 (incl 1 for nesting)\n" +
+        "      i++\n" +
+        "    }\n" +
+        "    return i\n" +
+        "  }\n" +
+        "  return i + f(i)\n" +
+        "}\n" +
+        "\n");
+    sensorContext.fileSystem().add(inputFile);
+    GoSensor goSensor = getSensor();
+    goSensor.execute(sensorContext);
+    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COGNITIVE_COMPLEXITY).value()).isEqualTo(4);
   }
 
   @Test
