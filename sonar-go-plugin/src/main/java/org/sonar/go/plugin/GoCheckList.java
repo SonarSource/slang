@@ -7,7 +7,6 @@ import org.sonarsource.slang.checks.CodeAfterJumpCheck;
 import org.sonarsource.slang.checks.CollapsibleIfStatementsCheck;
 import org.sonarsource.slang.checks.OneStatementPerLineCheck;
 import org.sonarsource.slang.checks.TabsCheck;
-import org.sonarsource.slang.checks.TooDeeplyNestedStatementsCheck;
 import org.sonarsource.slang.checks.TooManyParametersCheck;
 import org.sonarsource.slang.checks.UnusedFunctionParameterCheck;
 import org.sonarsource.slang.checks.UnusedLocalVariableCheck;
@@ -27,7 +26,6 @@ public class GoCheckList {
     CollapsibleIfStatementsCheck.class,
     OneStatementPerLineCheck.class,
     TabsCheck.class,
-    TooDeeplyNestedStatementsCheck.class,
     TooManyParametersCheck.class,
     UnusedFunctionParameterCheck.class,
     UnusedLocalVariableCheck.class,
