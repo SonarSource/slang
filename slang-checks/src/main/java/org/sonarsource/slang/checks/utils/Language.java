@@ -36,4 +36,6 @@ public enum Language {
 
   public static final String GO_NAMING_DEFAULT = "^[a-zA-Z0-9]+$";
 
+  public static final int GO_NESTED_STATEMENT_MAX_DEPTH = 4;
+
 }

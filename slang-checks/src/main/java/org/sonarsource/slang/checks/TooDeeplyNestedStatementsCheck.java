@@ -38,15 +38,22 @@ import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SecondaryLocation;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.checks.utils.ExpressionUtils;
+import org.sonarsource.slang.checks.utils.Language;
+import org.sonarsource.slang.checks.utils.PropertyDefaultValue;
 
 @Rule(key = "S134")
 public class TooDeeplyNestedStatementsCheck implements SlangCheck {
   private static final int DEFAULT_MAX_DEPTH = 3;
+  private static final String DEFAULT_MAX_DEPTH_VALUE = "" + DEFAULT_MAX_DEPTH;
 
   @RuleProperty(
     key = "max",
-    description = "Maximum allowed control flow statement nesting depth",
-    defaultValue = "" + DEFAULT_MAX_DEPTH)
+    description = "Maximum allowed control flow statement nesting depth"
+  )
+  @PropertyDefaultValue(language = Language.KOTLIN, defaultValue = DEFAULT_MAX_DEPTH_VALUE)
+  @PropertyDefaultValue(language = Language.RUBY, defaultValue = DEFAULT_MAX_DEPTH_VALUE)
+  @PropertyDefaultValue(language = Language.SCALA, defaultValue = DEFAULT_MAX_DEPTH_VALUE)
+  @PropertyDefaultValue(language = Language.GO, defaultValue = "" + Language.GO_NESTED_STATEMENT_MAX_DEPTH)
   public int max = DEFAULT_MAX_DEPTH;
 
   @Override
