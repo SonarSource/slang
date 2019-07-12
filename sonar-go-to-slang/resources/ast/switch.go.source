@@ -36,8 +36,9 @@ func main() {
         case func(int) float64:
             fmt.Println("type of i is func(int)")
             fallthrough
-        case string:
-            fmt.Println("type is string and the value is " + i)
+        case string: {
+                fmt.Println("type is string and the value is " + i)
+            }
         default:
             fmt.Println("don't know the type")
     }

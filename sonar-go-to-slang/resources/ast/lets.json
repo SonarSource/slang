@@ -195,7 +195,7 @@
               {"@type": "Native", "metaData": "12:7:12:8","nativeKind":"CaseExprList","children":[
                 {"@type": "IntegerLiteral", "metaData": "12:7:12:8","value":"2"}
               ]},"body":
-              {"@type": "Native", "metaData": "13:4:15:5","nativeKind":"CaseBodyList","children":[
+              {"@type": "Block", "metaData": "13:4:15:5","statementOrExpressions":[
                 {"@type": "Native", "metaData": "13:4:15:5","nativeKind":"[0](ExprStmt)","children":[
                   {"@type": "Native", "metaData": "13:4:15:5","nativeKind":"X(CallExpr)","children":[
                     {"@type": "Native", "metaData": "13:4:13:15","nativeKind":"Fun(SelectorExpr)","children":[

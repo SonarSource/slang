@@ -473,8 +473,18 @@ func (t *SlangMapper) mapCaseClauseImpl(clause *ast.CaseClause, fieldName string
 		nodeListBody = t.appendNode(nodeListBody, t.mapStmt(clause.Body[i], "["+strconv.Itoa(i)+"]"))
 	}
 
-	//SLang requires a tree as body and not a list, we wrap it in a native node
-	caseBody := t.createNativeNodeWithChildren(nodeListBody, "CaseBodyList")
+	//SLang requires a tree as body and not a list, we wrap it in a block
+	nodeListBodyWithoutComment := t.filterOutComments(nodeListBody)
+	var caseBody *Node
+
+	if len(nodeListBodyWithoutComment) == 1 && nodeListBodyWithoutComment[0].SlangType == "Block" {
+		caseBody = nodeListBodyWithoutComment[0]
+	} else {
+		slangFieldBlock := make(map[string]interface{})
+		slangFieldBlock["statementOrExpressions"] = nodeListBodyWithoutComment
+		caseBody = t.createNode(nil, nodeListBody, fieldName+"(BlockStmt)", "Block", slangFieldBlock)
+	}
+
 	children = t.appendNode(children, caseBody)
 	slangField["body"] = caseBody
 
