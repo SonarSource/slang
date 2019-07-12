@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile>
+  <name>nosonar-profile</name>
+  <language>go</language>
+  <rules>
+    <rule>
+      <repositoryKey>go</repositoryKey>
+      <key>S2068</key> <!-- Credentials should not be hard-coded -->
+      <priority>INFO</priority>
+    </rule>
+  </rules>
+</profile>

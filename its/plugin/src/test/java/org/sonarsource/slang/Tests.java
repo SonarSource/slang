@@ -39,6 +39,7 @@ import org.junit.runners.Suite;
   DuplicationsTest.class,
   ExternalReportTest.class,
   MeasuresTest.class,
+  NoSonarTest.class
 })
 public class Tests {
 
@@ -55,7 +56,10 @@ public class Tests {
     addLanguagePlugins(orchestratorBuilder);
     ORCHESTRATOR = orchestratorBuilder
       .setSonarVersion(System.getProperty(SQ_VERSION_PROPERTY, DEFAULT_SQ_VERSION))
-      .restoreProfileAtStartup(FileLocation.of("src/test/resources/nosonar.xml"))
+      .restoreProfileAtStartup(FileLocation.of("src/test/resources/nosonar-kotlin.xml"))
+      .restoreProfileAtStartup(FileLocation.of("src/test/resources/nosonar-ruby.xml"))
+      .restoreProfileAtStartup(FileLocation.of("src/test/resources/nosonar-scala.xml"))
+      .restoreProfileAtStartup(FileLocation.of("src/test/resources/nosonar-go.xml"))
       .restoreProfileAtStartup(FileLocation.of("src/test/resources/norule.xml"))
       .build();
   }

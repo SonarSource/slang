@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <profile>
   <name>nosonar-profile</name>
-  <language>kotlin</language>
+  <language>scala</language>
   <rules>
     <rule>
-      <repositoryKey>kotlin</repositoryKey>
-      <key>S100</key>
+      <repositoryKey>scala</repositoryKey>
+      <key>S2068</key> <!-- Credentials should not be hard-coded -->
       <priority>INFO</priority>
     </rule>
   </rules>

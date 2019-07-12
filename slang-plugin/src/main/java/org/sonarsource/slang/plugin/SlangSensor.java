@@ -168,8 +168,8 @@ public abstract class SlangSensor implements Sensor {
       return Collections.singletonList(new ChecksVisitor(checks(), statistics));
     } else {
       return Arrays.asList(
-        new ChecksVisitor(checks(), statistics),
         new MetricVisitor(fileLinesContextFactory, noSonarFilter),
+        new ChecksVisitor(checks(), statistics),
         new CpdVisitor(),
         new SyntaxHighlighter());
     }
