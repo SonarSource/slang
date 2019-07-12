@@ -1,3 +1,4 @@
+// S1763
 package samples
 
 import "fmt"
@@ -7,3 +8,28 @@ func sample() {
 	return // Noncompliant
 	fmt.Print("world!")
 }
+
+
+func sample2() {
+	//Continue and break behave as in Java
+	sum := 0
+OUTER:
+	for i := 1; i < 500; i++ {
+		if i%2 != 0 { // skip odd numbers
+			continue  // Noncompliant
+			fmt.Print("Dead code1!")
+		}
+		if i == 100 { // stop at 100
+			break  // Noncompliant
+			fmt.Print("Dead code2!")
+		}
+		if i%2 != 0 { // skip odd numbers
+			continue OUTER  // Noncompliant
+			fmt.Print("Dead code3!")
+		} else {
+		    fmt.Print("Not dead code!")  // Compliant
+		}
+		sum += i
+	}
+}
+

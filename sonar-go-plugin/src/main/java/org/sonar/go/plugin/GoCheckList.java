@@ -3,7 +3,6 @@ package org.sonar.go.plugin;
 import java.util.List;
 import org.sonarsource.slang.checks.BadClassNameCheck;
 import org.sonarsource.slang.checks.CheckList;
-import org.sonarsource.slang.checks.CodeAfterJumpCheck;
 import org.sonarsource.slang.checks.CollapsibleIfStatementsCheck;
 import org.sonarsource.slang.checks.OneStatementPerLineCheck;
 import org.sonarsource.slang.checks.TabsCheck;
@@ -19,7 +18,6 @@ public class GoCheckList {
 
   private static final Class[] GO_CHECK_BLACK_LIST = {
     BadClassNameCheck.class,
-    CodeAfterJumpCheck.class,
     // Can not enable rule S1066, as Go if-trees are containing an initializer, not well handled by SLang
     CollapsibleIfStatementsCheck.class,
     OneStatementPerLineCheck.class,
