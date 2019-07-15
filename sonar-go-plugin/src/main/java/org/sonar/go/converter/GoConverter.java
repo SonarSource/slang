@@ -40,6 +40,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class GoConverter implements ASTConverter {
 
+  private static final long MAX_SUPPORTED_SOURCE_FILE_SIZE = 700_000L;
   private static final Logger LOG = Loggers.get(GoConverter.class);
   private static final long PROCESS_TIMEOUT_MS = 5_000;
 
@@ -58,6 +59,10 @@ public class GoConverter implements ASTConverter {
   @Override
   public Tree parse(String content) {
     try {
+      if (content.length() > MAX_SUPPORTED_SOURCE_FILE_SIZE) {
+        throw new ParseException("The file size is too big and should be excluded," +
+          " its size is " + content.length() + " (maximum allowed is " + MAX_SUPPORTED_SOURCE_FILE_SIZE + " bytes)");
+      }
       return JsonTree.fromJson(executeGoToJsonProcess(content));
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();

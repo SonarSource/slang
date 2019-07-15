@@ -95,9 +95,6 @@
 'go-project:sources/go/kubernetes/staging/src/k8s.io/apiserver/pkg/registry/rest/resttest/resttest.go':[
 0,
 ],
-'go-project:sources/go/kubernetes/staging/src/k8s.io/apiserver/pkg/server/routes/data/swagger/datafile.go':[
-0,
-],
 'go-project:sources/go/kubernetes/staging/src/k8s.io/client-go/pkg/api/types.go':[
 0,
 ],

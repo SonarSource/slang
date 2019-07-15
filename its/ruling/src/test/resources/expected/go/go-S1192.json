@@ -622,9 +622,6 @@
 'go-project:sources/go/kubernetes/staging/src/k8s.io/apiserver/pkg/server/options/encryptionconfig/config.go':[
 122,
 ],
-'go-project:sources/go/kubernetes/staging/src/k8s.io/apiserver/pkg/server/routes/data/swagger/datafile.go':[
-16865,
-],
 'go-project:sources/go/kubernetes/staging/src/k8s.io/apiserver/pkg/storage/cacher.go':[
 388,
 865,

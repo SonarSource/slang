@@ -11,6 +11,7 @@ import org.junit.rules.ExpectedException;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.ReturnTree;
+import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,6 +46,30 @@ public class GoConverterTest {
 
     GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
     converter.parse("$!#@");
+  }
+
+  @Test
+  public void parse_accepted_big_file() {
+    GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
+    String code = "package main\n" +
+      "func foo() {\n" +
+      "}\n";
+    String bigCode = code + new String(new char[700_000 - code.length()]).replace("\0", "\n");
+    Tree tree = converter.parse(bigCode);
+    assertThat(tree).isInstanceOf(TopLevelTree.class);
+  }
+
+  @Test
+  public void parse_rejected_big_file() {
+    exceptionRule.expect(ParseException.class);
+    exceptionRule.expectMessage("The file size is too big and should be excluded, its size is 700028 (maximum allowed is 700000 bytes)");
+
+    GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
+    String code = "package main\n" +
+      "func foo() {\n" +
+      "}\n";
+    String bigCode = code + new String(new char[700_000]).replace("\0", "\n");
+    converter.parse(bigCode);
   }
 
   @Test
