@@ -38,4 +38,8 @@ public enum Language {
   public static final String GO_PARAMETER_NAMING_DEFAULT = "^[a-z][a-zA-Z0-9_]*$";
 
   public static final int GO_NESTED_STATEMENT_MAX_DEPTH = 4;
+  public static final int GO_MATCH_CASES_DEFAULT_MAX = 6;
+  public static final int GO_DEFAULT_MAXIMUM_LINE_LENGTH = 120;
+  public static final int GO_DEFAULT_FILE_LINE_MAX = 750;
+  public static final int GO_DEFAULT_MAXIMUM_FUNCTION_LENGTH = 120;
 }

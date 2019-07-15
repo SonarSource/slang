@@ -24,16 +24,24 @@ import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
+import org.sonarsource.slang.checks.utils.Language;
+import org.sonarsource.slang.checks.utils.PropertyDefaultValue;
 
 @Rule(key = "S104")
 public class TooManyLinesOfCodeFileCheck implements SlangCheck {
 
   private static final int DEFAULT_MAX = 1000;
+  private static final String DEFAULT_MAX_VALUE = "" + DEFAULT_MAX;
+
 
   @RuleProperty(
     key = "Max",
-    description = "Maximum authorized lines of code in a file.",
-    defaultValue = "" + DEFAULT_MAX)
+    description = "Maximum authorized lines of code in a file."
+  )
+  @PropertyDefaultValue(language = Language.KOTLIN, defaultValue = DEFAULT_MAX_VALUE)
+  @PropertyDefaultValue(language = Language.RUBY, defaultValue = DEFAULT_MAX_VALUE)
+  @PropertyDefaultValue(language = Language.SCALA, defaultValue = DEFAULT_MAX_VALUE)
+  @PropertyDefaultValue(language = Language.GO, defaultValue = "" + Language.GO_DEFAULT_FILE_LINE_MAX)
   public int max = DEFAULT_MAX;
 
   @Override
