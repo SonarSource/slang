@@ -15,6 +15,22 @@ To create `sonar-go-to-slang` executable in current directory, run:
 To create `sonar-go-to-slang` executable in `$GOPATH/bin`, run:
 
     go install
+    
+### Building on Windows
+
+When trying to build `sonar-go-to-slang` on Windows, the build may fail with the following error:
+
+     > Create symbolic link at [...]\slang\sonar-go-to-slang\.gogradle\project_gopath\src\github.com\SonarSource\slang\sonar-go-to-slang failed
+     
+Creating the symbolic link by hand solves this problem:
+
+* (Eventually enable [developer mode in Windows](https://docs.microsoft.com/en-us/windows/uwp/get-started/enable-your-device-for-development))
+
+* Run (in `sonar-go-to-slang` folder):
+
+
+     mklink /D ".gogradle\project_gopath\src\github.com\SonarSource\slang\sonar-go-to-slang" "Absolute\Path\To\slang\sonar-go-to-slang"
+
 
 ## Running
 
