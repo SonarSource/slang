@@ -3,7 +3,8 @@
     "comments": [
             {"text":"// missing switch expression means \"true\"", "contentText":" missing switch expression means \"true\"", "range":"17:13:17:54", "contentRange": "17:15:17:54"},
             {"text":"// This is a TypeSwitchStmt (others are SwitchStmt in this file)", "contentText":" This is a TypeSwitchStmt (others are SwitchStmt in this file)", "range":"30:33:30:97", "contentRange": "30:35:30:97"},
-            {"text":"// type of i is type of x (interface{})", "contentText":" type of i is type of x (interface{})", "range":"35:52:35:91", "contentRange": "35:54:35:91"}
+            {"text":"// type of i is type of x (interface{})", "contentText":" type of i is type of x (interface{})", "range":"35:52:35:91", "contentRange": "35:54:35:91"},
+            {"text":"// in Go AST, \";\" is in the children of the switch body (Block), and of the Case body", "contentText":" in Go AST, \";\" is in the children of the switch body (Block), and of the Case body", "range":"48:35:48:120", "contentRange": "48:37:48:120"}
     ],
     "tokens": [
       {"text":"package","textRange":"1:0:1:7","type":"KEYWORD"},
@@ -204,21 +205,36 @@
       {"text":"\"don't know the type\"","textRange":"43:24:43:45","type":"STRING_LITERAL"},
       {"text":")","textRange":"43:45:43:46","type":"OTHER"},
       {"text":"}","textRange":"44:4:44:5","type":"OTHER"},
-      {"text":"}","textRange":"45:0:45:1","type":"OTHER"},
-      {"text":"func","textRange":"47:0:47:4","type":"KEYWORD"},
-      {"text":"f","textRange":"47:5:47:6","type":"OTHER"},
-      {"text":"(","textRange":"47:6:47:7","type":"OTHER"},
-      {"text":")","textRange":"47:7:47:8","type":"OTHER"},
-      {"text":"int","textRange":"47:9:47:12","type":"OTHER"},
-      {"text":"{","textRange":"47:13:47:14","type":"OTHER"},
-      {"text":"return","textRange":"48:1:48:7","type":"KEYWORD"},
-      {"text":"-","textRange":"48:8:48:9","type":"OTHER"},
-      {"text":"42","textRange":"48:9:48:11","type":"OTHER"},
-      {"text":"}","textRange":"49:0:49:1","type":"OTHER"}
+      {"text":"switch","textRange":"46:8:46:14","type":"KEYWORD"},
+      {"text":"{","textRange":"46:15:46:16","type":"OTHER"},
+      {"text":"case","textRange":"47:12:47:16","type":"KEYWORD"},
+      {"text":"x","textRange":"47:17:47:18","type":"OTHER"},
+      {"text":"\u003c","textRange":"47:19:47:20","type":"OTHER"},
+      {"text":"y","textRange":"47:21:47:22","type":"OTHER"},
+      {"text":":","textRange":"47:22:47:23","type":"OTHER"},
+      {"text":"fmt","textRange":"48:16:48:19","type":"OTHER"},
+      {"text":"Println","textRange":"48:20:48:27","type":"OTHER"},
+      {"text":".","textRange":"48:19:48:20","type":"OTHER"},
+      {"text":"(","textRange":"48:27:48:28","type":"OTHER"},
+      {"text":"\"xy\"","textRange":"48:28:48:32","type":"STRING_LITERAL"},
+      {"text":")","textRange":"48:32:48:33","type":"OTHER"},
+      {"text":"}","textRange":"49:8:49:9","type":"OTHER"},
+      {"text":";","textRange":"48:33:48:34","type":"OTHER"},
+      {"text":"}","textRange":"50:0:50:1","type":"OTHER"},
+      {"text":"func","textRange":"52:0:52:4","type":"KEYWORD"},
+      {"text":"f","textRange":"52:5:52:6","type":"OTHER"},
+      {"text":"(","textRange":"52:6:52:7","type":"OTHER"},
+      {"text":")","textRange":"52:7:52:8","type":"OTHER"},
+      {"text":"int","textRange":"52:9:52:12","type":"OTHER"},
+      {"text":"{","textRange":"52:13:52:14","type":"OTHER"},
+      {"text":"return","textRange":"53:1:53:7","type":"KEYWORD"},
+      {"text":"-","textRange":"53:8:53:9","type":"OTHER"},
+      {"text":"42","textRange":"53:9:53:11","type":"OTHER"},
+      {"text":"}","textRange":"54:0:54:1","type":"OTHER"}
     ]
   },
   "tree":
-    {"@type": "TopLevel", "metaData": "1:0:49:1","firstCpdToken":null,"declarations":[
+    {"@type": "TopLevel", "metaData": "1:0:54:1","firstCpdToken":null,"declarations":[
       {"@type": "Native", "metaData": "1:0:1:12","nativeKind":"File.Package","children":[
         {"@type": "Native", "metaData": "1:0:1:7","nativeKind":""},
         {"@type": "Identifier", "metaData": "1:8:1:12","name":"main"}
@@ -231,10 +247,10 @@
           ]}
         ]}
       ]},
-      {"@type": "FunctionDeclaration", "metaData": "5:0:45:1","returnType":
+      {"@type": "FunctionDeclaration", "metaData": "5:0:50:1","returnType":
         null,"nativeChildren":[],"name":
         {"@type": "Identifier", "metaData": "5:5:5:9","name":"main"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
-        {"@type": "Block", "metaData": "5:12:45:1","statementOrExpressions":[
+        {"@type": "Block", "metaData": "5:12:50:1","statementOrExpressions":[
           {"@type": "VariableDeclaration", "metaData": "6:4:6:12","type":null,"isVal":false,"initializer":
             {"@type": "IntegerLiteral", "metaData": "6:11:6:12","value":"1"},"identifier":
             {"@type": "Identifier", "metaData": "6:4:6:7","name":"tag"}},
@@ -585,19 +601,44 @@
                   ]}
                 ]}
               ]}}
+          ]},
+          {"@type": "Match", "metaData": "46:8:49:9","keyword":"46:8:46:14","expression":
+            null,"cases":[
+            {"@type": "MatchCase", "metaData": "47:12:48:33","expression":
+              {"@type": "Native", "metaData": "47:17:47:22","nativeKind":"CaseExprList","children":[
+                {"@type": "BinaryExpression", "metaData": "47:17:47:22","rightOperand":
+                  {"@type": "Identifier", "metaData": "47:21:47:22","name":"y"},"operatorToken":"47:19:47:20","operator":"LESS_THAN","leftOperand":
+                  {"@type": "Identifier", "metaData": "47:17:47:18","name":"x"}}
+              ]},"body":
+              {"@type": "Block", "metaData": "48:16:48:33","statementOrExpressions":[
+                {"@type": "Native", "metaData": "48:16:48:33","nativeKind":"[0](ExprStmt)","children":[
+                  {"@type": "Native", "metaData": "48:16:48:33","nativeKind":"X(CallExpr)","children":[
+                    {"@type": "Native", "metaData": "48:16:48:27","nativeKind":"Fun(SelectorExpr)","children":[
+                      {"@type": "Identifier", "metaData": "48:16:48:19","name":"fmt"},
+                      {"@type": "Native", "metaData": "48:19:48:20","nativeKind":""},
+                      {"@type": "Identifier", "metaData": "48:20:48:27","name":"Println"}
+                    ]},
+                    {"@type": "Native", "metaData": "48:27:48:28","nativeKind":"Lparen"},
+                    {"@type": "Native", "metaData": "48:28:48:32","nativeKind":"Args([]Expr)","children":[
+                      {"@type": "StringLiteral", "metaData": "48:28:48:32","value":"\"xy\"","content":"xy"}
+                    ]},
+                    {"@type": "Native", "metaData": "48:32:48:33","nativeKind":"Rparen"}
+                  ]}
+                ]}
+              ]}}
           ]}
         ]}},
-      {"@type": "FunctionDeclaration", "metaData": "47:0:49:1","returnType":
-        {"@type": "Native", "metaData": "47:9:47:12","nativeKind":"Results(FieldList)","children":[
-          {"@type": "Native", "metaData": "47:9:47:12","nativeKind":"[0](Field)","children":[
-            {"@type": "Identifier", "metaData": "47:9:47:12","name":"int"}
+      {"@type": "FunctionDeclaration", "metaData": "52:0:54:1","returnType":
+        {"@type": "Native", "metaData": "52:9:52:12","nativeKind":"Results(FieldList)","children":[
+          {"@type": "Native", "metaData": "52:9:52:12","nativeKind":"[0](Field)","children":[
+            {"@type": "Identifier", "metaData": "52:9:52:12","name":"int"}
           ]}
         ]},"nativeChildren":[],"name":
-        {"@type": "Identifier", "metaData": "47:5:47:6","name":"f"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
-        {"@type": "Block", "metaData": "47:13:49:1","statementOrExpressions":[
-          {"@type": "Return", "metaData": "48:1:48:11","keyword":"48:1:48:7","body":
-            {"@type": "UnaryExpression", "metaData": "48:8:48:11","operator":"MINUS","operand":
-              {"@type": "IntegerLiteral", "metaData": "48:9:48:11","value":"42"}}}
+        {"@type": "Identifier", "metaData": "52:5:52:6","name":"f"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
+        {"@type": "Block", "metaData": "52:13:54:1","statementOrExpressions":[
+          {"@type": "Return", "metaData": "53:1:53:11","keyword":"53:1:53:7","body":
+            {"@type": "UnaryExpression", "metaData": "53:8:53:11","operator":"MINUS","operand":
+              {"@type": "IntegerLiteral", "metaData": "53:9:53:11","value":"42"}}}
         ]}}
     ]}
 } 

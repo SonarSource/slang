@@ -42,6 +42,11 @@ func main() {
         default:
             fmt.Println("don't know the type")
     }
+
+        switch {
+            case x < y:
+                fmt.Println("xy"); // in Go AST, ";" is in the children of the switch body (Block), and of the Case body
+        }
 }
 
 func f() int {

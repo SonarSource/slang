@@ -711,7 +711,13 @@ func (t *SlangMapper) mapTypeSwitchStmtImpl(stmt *ast.TypeSwitchStmt, fieldName 
 
 func (t *SlangMapper) getMatchCases(node *Node) []*Node {
 	bodyWithoutComment := t.filterOutComments(node.Children)
-	return bodyWithoutComment[1 : len(bodyWithoutComment)-1]
+	var matchCases []*Node
+	for _, child := range bodyWithoutComment {
+		if child.SlangType == "MatchCase" {
+			matchCases = append(matchCases, child)
+		}
+	}
+	return matchCases
 }
 
 func (t *SlangMapper) mapArrayTypeImpl(arrayType *ast.ArrayType, fieldName string) *Node {
