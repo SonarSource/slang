@@ -72,9 +72,13 @@ shadowJar {
         exclude(dependency('org.codehaus.woodstox:.*'))
         exclude(dependency('org.codehaus.staxmate:.*'))
         exclude(dependency('com.google.code.findbugs:jsr305'))
+
+        exclude 'libs/**'
+        exclude 'META-INF/maven/**'
+        exclude 'tmp/**'
     }
     doLast {
-        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 6_600_000L, 7_600_000L)
+        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 6_600_000L, 7_100_000L)
     }
 }
 

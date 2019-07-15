@@ -28,7 +28,7 @@ allprojects {
 
     ext {
         buildNumber = System.getProperty("buildNumber")
-        analyzerCommonsVersion = '1.10.2.456'
+        analyzerCommonsVersion = '1.10.3.509'
         sonarqubeVersion = '7.3'
         orchestratorVersion = '3.26.0.2111'
         sonarlintVersion = '4.2.0.2266'
