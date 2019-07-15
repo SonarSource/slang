@@ -44,7 +44,7 @@ public class VariableAndParameterNameCheck implements SlangCheck {
   @PropertyDefaultValue(language = Language.KOTLIN, defaultValue = DEFAULT_FORMAT)
   @PropertyDefaultValue(language = Language.RUBY, defaultValue = Language.RUBY_NAMING_DEFAULT)
   @PropertyDefaultValue(language = Language.SCALA, defaultValue = Language.SCALA_NAMING_DEFAULT)
-  @PropertyDefaultValue(language = Language.GO, defaultValue = Language.GO_PARAMETER_NAMING_DEFAULT)
+  @PropertyDefaultValue(language = Language.GO, defaultValue = Language.GO_NAMING_DEFAULT)
   public String format = DEFAULT_FORMAT;
 
   @Override

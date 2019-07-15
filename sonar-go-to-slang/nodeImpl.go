@@ -33,22 +33,16 @@ func (t *SlangMapper) mapReturnStmtImpl(stmt *ast.ReturnStmt, fieldName string) 
 func (t *SlangMapper) mapIdentImpl(ident *ast.Ident, fieldName string) *Node {
 	slangField := make(map[string]interface{})
 	var slangType string
-	var children []*Node
 
 	switch ident.Name {
 	case "true", "false", "nil":
 		slangType = "Literal"
 		slangField["value"] = ident.Name
-	case "_":
-		slangType = "PlaceHolder"
-		placeHolderToken := t.createExpectedToken(ident.NamePos, "_", "PlaceHolder", "KEYWORD")
-		children = t.appendNode(children, placeHolderToken)
-		slangField["placeHolderToken"] = placeHolderToken.TextRange
 	default:
 		slangType = "Identifier"
 		slangField["name"] = ident.Name
 	}
-
+	var children []*Node
 	return t.createNode(ident, children, fieldName+"(Ident)", slangType, slangField)
 }
 
@@ -182,9 +176,8 @@ func (t *SlangMapper) mapGenDeclImpl(decl *ast.GenDecl, fieldName string) *Node 
 	}
 
 	valueSpec, ok := decl.Specs[0].(*ast.ValueSpec)
-	if !ok || len(valueSpec.Names) != 1 || valueSpec.Names[0].Name == "_" {
-		// The spec of this declaration is not a valueSpec, or have multiple identifier (i, j := 1, 2)
-		// or is a placeholder, we map it to native
+	if !ok || len(valueSpec.Names) != 1 {
+		// The spec of this declaration is not a valueSpec, or have multiple identifier (i, j := 1, 2), we map it to native
 		return nil
 	}
 
@@ -303,16 +296,11 @@ func (t *SlangMapper) createParameter(ident *ast.Ident, parameterIdent, typ *Nod
 	if typ != nil {
 		children = t.appendNode(children, typ)
 	}
-	if ident.Name == "_" {
-		//Placeholder parameters are mapped to native
-		return t.createNativeNode(ident, children, "Parameter")
-	} else {
-		slangField["identifier"] = parameterIdent
-		slangField["type"] = typ
-		slangField["modifiers"] = nil    //No paramter modifier in Go
-		slangField["defaultValue"] = nil //No default value in Go
-		return t.createNode(ident, children, fieldName+"(Parameter)", "Parameter", slangField)
-	}
+	slangField["identifier"] = parameterIdent
+	slangField["type"] = typ
+	slangField["modifiers"] = nil    //No paramter modifier in Go
+	slangField["defaultValue"] = nil //No default value in Go
+	return t.createNode(ident, children, fieldName+"(Parameter)", "Parameter", slangField)
 }
 
 func (t *SlangMapper) mapStmtImpl(stmt ast.Stmt, fieldName string) *Node {
@@ -403,10 +391,6 @@ func (t *SlangMapper) mapAssignStmtImpl(stmt *ast.AssignStmt, fieldName string) 
 
 	slangField := make(map[string]interface{})
 	if isVarDecl {
-		if leftHandSide.SlangType != "Identifier" {
-			// identifier should be an IdentifierTree, if it not the case (Placeholder, ...), we create a native node
-			return t.createNativeNode(stmt, children, fieldName+"(AssignDefineStmt)")
-		}
 		slangField["identifier"] = leftHandSide
 		slangField["type"] = nil
 		slangField["initializer"] = rightHandSide
