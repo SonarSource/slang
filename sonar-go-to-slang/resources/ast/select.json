@@ -643,8 +643,8 @@
               ]}
             ]}
           ]},
-          {"@type": "Native", "metaData": "57:4:62:5","nativeKind":"[4](ForStmt)","children":[
-            {"@type": "Native", "metaData": "57:4:57:7","nativeKind":"For"},
+          {"@type": "Loop", "metaData": "57:4:62:5","kind":"WHILE","keyword":"57:4:57:7","condition":
+            null,"body":
             {"@type": "Block", "metaData": "57:8:62:5","statementOrExpressions":[
               {"@type": "Native", "metaData": "58:8:61:9","nativeKind":"[0](SelectStmt)","children":[
                 {"@type": "Native", "metaData": "58:8:58:14","nativeKind":"Select"},
@@ -669,8 +669,7 @@
                   ]}
                 ]}
               ]}
-            ]}
-          ]},
+            ]}},
           {"@type": "Native", "metaData": "64:4:64:13","nativeKind":"[5](SelectStmt)","children":[
             {"@type": "Native", "metaData": "64:4:64:10","nativeKind":"Select"},
             {"@type": "Block", "metaData": "64:11:64:13","statementOrExpressions":[]}

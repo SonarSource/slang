@@ -35,7 +35,7 @@ public class GoConverterTest {
     GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
     Tree tree = converter.parse("package main\nfunc foo() {for {}}");
     List<Tree> returnList = tree.descendants().filter(t -> t instanceof LoopTree).collect(Collectors.toList());
-    assertThat(returnList).hasSize(0); // Infinite loop are not mapped to LoopTree
+    assertThat(returnList).hasSize(1);
   }
 
   @Test

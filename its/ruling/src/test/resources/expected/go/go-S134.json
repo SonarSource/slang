@@ -62,6 +62,7 @@
 ],
 'go-project:sources/go/kubernetes/pkg/cloudprovider/providers/aws/aws.go':[
 1514,
+3186,
 ],
 'go-project:sources/go/kubernetes/pkg/cloudprovider/providers/azure/azure_loadbalancer.go':[
 361,
@@ -147,6 +148,9 @@
 595,
 606,
 ],
+'go-project:sources/go/kubernetes/pkg/kubelet/network/hostport/fake_iptables.go':[
+272,
+],
 'go-project:sources/go/kubernetes/pkg/kubelet/volumemanager/reconciler/reconciler.go':[
 296,
 303,
@@ -196,6 +200,9 @@
 'go-project:sources/go/kubernetes/pkg/volume/rbd/rbd_util.go':[
 159,
 ],
+'go-project:sources/go/kubernetes/pkg/volume/util.go':[
+115,
+],
 'go-project:sources/go/kubernetes/plugin/pkg/admission/limitranger/admission.go':[
 472,
 477,
@@ -216,6 +223,11 @@
 332,
 336,
 ],
+'go-project:sources/go/kubernetes/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity_proto.go':[
+245,
+248,
+254,
+],
 'go-project:sources/go/kubernetes/staging/src/k8s.io/apimachinery/pkg/util/net/interface.go':[
 175,
 ],
@@ -235,8 +247,14 @@
 'go-project:sources/go/kubernetes/staging/src/k8s.io/apiserver/pkg/endpoints/installer.go':[
 811,
 ],
+'go-project:sources/go/kubernetes/staging/src/k8s.io/apiserver/pkg/registry/generic/registry/store.go':[
+371,
+],
 'go-project:sources/go/kubernetes/staging/src/k8s.io/apiserver/pkg/util/proxy/transport.go':[
 180,
+],
+'go-project:sources/go/kubernetes/staging/src/k8s.io/client-go/tools/cache/reflector.go':[
+312,
 ],
 'go-project:sources/go/kubernetes/test/e2e/framework/resource_usage_gatherer.go':[
 332,
@@ -260,5 +278,8 @@
 ],
 'go-project:sources/go/kubernetes/test/e2e/stackdriver_monitoring.go':[
 130,
+],
+'go-project:sources/go/kubernetes/test/e2e_node/services/server.go':[
+241,
 ],
 }

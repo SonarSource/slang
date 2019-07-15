@@ -517,11 +517,6 @@ func (t *SlangMapper) mapForStmtImpl(stmt *ast.ForStmt, fieldName string) *Node 
 
 	hasInitOrPost := stmt.Init != nil || stmt.Post != nil
 
-	if stmt.Cond == nil && !hasInitOrPost {
-		//For loop with null header, not possible currently in SLang, we let the caller map it to Native
-		return nil
-	}
-
 	forToken := t.createTokenFromPosAstToken(stmt.For, token.FOR, "For")
 	children = t.appendNode(children, forToken)
 	slangField["keyword"] = forToken.TextRange

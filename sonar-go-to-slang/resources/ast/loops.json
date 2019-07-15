@@ -236,13 +236,12 @@
           {"@type": "VariableDeclaration", "metaData": "14:1:14:9","type":null,"isVal":false,"initializer":
             {"@type": "IntegerLiteral", "metaData": "14:8:14:9","value":"0"},"identifier":
             {"@type": "Identifier", "metaData": "14:1:14:4","name":"sum"}},
-          {"@type": "Native", "metaData": "15:1:17:2","nativeKind":"[4](ForStmt)","children":[
-            {"@type": "Native", "metaData": "15:1:15:4","nativeKind":"For"},
+          {"@type": "Loop", "metaData": "15:1:17:2","kind":"WHILE","keyword":"15:1:15:4","condition":
+            null,"body":
             {"@type": "Block", "metaData": "15:5:17:2","statementOrExpressions":[
               {"@type": "UnaryExpression", "metaData": "16:2:16:7","operator":"INCREMENT","operand":
                 {"@type": "Identifier", "metaData": "16:2:16:5","name":"sum"}}
-            ]}
-          ]},
+            ]}},
           {"@type": "Native", "metaData": "18:1:18:17","nativeKind":"[5](ExprStmt)","children":[
             {"@type": "Native", "metaData": "18:1:18:17","nativeKind":"X(CallExpr)","children":[
               {"@type": "Native", "metaData": "18:1:18:12","nativeKind":"Fun(SelectorExpr)","children":[
