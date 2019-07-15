@@ -194,7 +194,7 @@ loopExpression
   ;
 
 forLoop
-  :  FOR LPAREN declaration RPAREN controlBlock
+  :  FOR (LPAREN declaration RPAREN)? controlBlock
   ;
 
 whileLoop

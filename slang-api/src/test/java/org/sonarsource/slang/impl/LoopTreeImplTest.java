@@ -56,6 +56,10 @@ public class LoopTreeImplTest {
     assertThat(areEquivalent(forTree, doTree)).isFalse();
     assertThat(areEquivalent(whileTree, doTree)).isFalse();
 
+    LoopTreeImpl forTreeWithoutCondition = new LoopTreeImpl(meta, null, body, FOR, forToken);
+    assertThat(forTreeWithoutCondition.condition()).isNull();
+    assertThat(forTree.body()).isEqualTo(body);
+    assertThat(forTree.kind()).isEqualTo(FOR);
   }
 
 }

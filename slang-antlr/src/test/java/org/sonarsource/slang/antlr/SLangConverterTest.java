@@ -430,10 +430,21 @@ public class SLangConverterTest {
     Tree tree = converter.parse("for (var x = list) { x; };").children().get(0);
     assertTree(tree).isInstanceOf(LoopTree.class).hasTextRange(1, 0, 1, 25);
     LoopTree forLoop = (LoopTree) tree;
+    assertThat(forLoop.condition()).isNotNull();
     assertThat(forLoop.condition().children()).hasSize(2);
     assertTree(forLoop.body()).isBlock(IdentifierTree.class);
     assertThat(forLoop.kind()).isEqualTo(FOR);
     assertThat(forLoop.keyword().text()).isEqualTo("for");
+  }
+
+  @Test
+  public void for_loop_without_condition() {
+    Tree tree = converter.parse("for {};").children().get(0);
+    assertTree(tree).isInstanceOf(LoopTree.class).hasTextRange(1, 0, 1, 6);
+    LoopTree forLoop = (LoopTree) tree;
+    assertThat(forLoop.condition()).isNull();
+    assertTree(forLoop.body()).isBlock();
+    assertThat(forLoop.body().children()).hasSize(0);
   }
 
   @Test

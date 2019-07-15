@@ -19,6 +19,8 @@
  */
 package org.sonarsource.slang.api;
 
+import javax.annotation.CheckForNull;
+
 public interface LoopTree extends Tree {
 
   public enum LoopKind {
@@ -27,6 +29,7 @@ public interface LoopTree extends Tree {
     DOWHILE
   }
 
+  @CheckForNull
   Tree condition();
 
   Tree body();

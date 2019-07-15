@@ -336,7 +336,7 @@ public final class JsonTreeConverter {
 
       (ctx, json) -> new LoopTreeImpl(
         ctx.metaData(json),
-        ctx.fieldToObject(json, CONDITION, Tree.class),
+        ctx.fieldToNullableObject(json, CONDITION, Tree.class),
         ctx.fieldToObject(json, BODY, Tree.class),
         ctx.fieldToEnum(json, KIND, LoopTree.LoopKind.class),
         ctx.fieldToToken(json, KEYWORD)));

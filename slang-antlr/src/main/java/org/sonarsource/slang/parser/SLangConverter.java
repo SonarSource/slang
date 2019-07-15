@@ -427,7 +427,7 @@ public class SLangConverter implements ASTConverter {
 
     @Override
     public Tree visitForLoop(SLangParser.ForLoopContext ctx) {
-      Tree condition = visit(ctx.declaration());
+      Tree condition = ctx.declaration() == null ? null : visit(ctx.declaration());
       Tree body = visit(ctx.controlBlock());
       return new LoopTreeImpl(meta(ctx), condition, body, FOR, toSlangToken(ctx.FOR().getSymbol()));
     }

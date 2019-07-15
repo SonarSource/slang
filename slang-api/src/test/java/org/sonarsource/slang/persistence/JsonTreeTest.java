@@ -475,6 +475,7 @@ public class JsonTreeTest extends JsonTestHelper {
     LoopTree initialTree = new LoopTreeImpl(metaData(tokenSwitch, tokenX), condition, body, LoopTree.LoopKind.WHILE, tokenSwitch);
     LoopTree tree = checkJsonSerializationDeserialization(initialTree, "loop.json");
     assertThat(tokens(tree)).isEqualTo("1:0:1:12 - while true x");
+    assertThat(tokens(tree.condition())).isNotNull();
     assertThat(tokens(tree.condition())).isEqualTo("1:6:1:10 - true");
     assertThat(tokens(tree.body())).isEqualTo("1:11:1:12 - x");
     assertThat(tree.kind()).isEqualTo(LoopTree.LoopKind.WHILE);

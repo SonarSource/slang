@@ -19,12 +19,14 @@
  */
 package org.sonarsource.slang.impl;
 
+import java.util.ArrayList;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class LoopTreeImpl extends BaseTreeImpl implements LoopTree {
@@ -34,7 +36,7 @@ public class LoopTreeImpl extends BaseTreeImpl implements LoopTree {
   private final LoopKind kind;
   private final Token keyword;
 
-  public LoopTreeImpl(TreeMetaData metaData, Tree condition, Tree body, LoopKind kind, Token keyword) {
+  public LoopTreeImpl(TreeMetaData metaData, @Nullable Tree condition, Tree body, LoopKind kind, Token keyword) {
     super(metaData);
     this.condition = condition;
     this.body = body;
@@ -43,6 +45,7 @@ public class LoopTreeImpl extends BaseTreeImpl implements LoopTree {
 
   }
 
+  @CheckForNull
   @Override
   public Tree condition() {
     return condition;
@@ -65,6 +68,11 @@ public class LoopTreeImpl extends BaseTreeImpl implements LoopTree {
 
   @Override
   public List<Tree> children() {
-    return Arrays.asList(condition, body);
+    List<Tree> children = new ArrayList<>();
+    if (condition != null) {
+      children.add(condition);
+    }
+    children.add(body);
+    return children;
   }
 }
