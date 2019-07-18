@@ -1,6 +1,3 @@
-import java.nio.file.Files
-import java.nio.file.Path
-
 plugins {
   id 'com.github.blindpirate.gogradle' version '0.11.4'
 }
@@ -14,12 +11,12 @@ sonarqube {
     property 'sonar.test.inclusions', '**/*_test.go'
     property 'sonar.test.exclusions', '**/build/**,**/vendor/**,**/.gogradle/**'
     property 'sonar.go.tests.reportPaths', "${project.projectDir}/.gogradle/reports/test-report.out"
-    property 'sonar.go.coverage.reportPaths', "${project.projectDir}/.gogradle/reports/coverage/profiles/github.com%2FSonarSource%2Fslang-enterprise%2Fsonar-go-to-slang.out"
+    property 'sonar.go.coverage.reportPaths', "${project.projectDir}/.gogradle/reports/coverage/profiles/github.com%2FSonarSource%2Fslang%2Fsonar-go-to-slang.out"
   }
 }
 
 golang {
-  packagePath = 'github.com/SonarSource/slang-enterprise/sonar-go-to-slang'
+  packagePath = 'github.com/SonarSource/slang/sonar-go-to-slang'
   goVersion = '1.12.6'
 }
 
@@ -28,22 +25,11 @@ task generateSource(type: com.github.blindpirate.gogradle.Go) {
 }
 
 task generateTestReport(type: com.github.blindpirate.gogradle.Go) {
-  // make this task depends on goVendor to guarantee all dependency packages are installed into vendor
-  dependsOn goVendor
-  // force module support to enable vendor module
-  environment GO111MODULE: 'on'
-  try {
-    go ('test -json') {
-      stdout writeTo('.gogradle/reports/test-report.out')
-    }
-  } finally {
-    removeReadOnlyPermissions()
+  go ('test -json') {
+    stdout writeTo('.gogradle/reports/test-report.out')
   }
 }
 
-goVendor.doLast {
-  removeReadOnlyPermissions()
-}
 installDependencies.dependsOn generateSource
 clean.dependsOn goClean
 test.dependsOn goCheck
@@ -54,9 +40,4 @@ generateTestReport.dependsOn goTest
 goBuild {
   targetPlatform = ['linux-amd64', 'windows-amd64', 'darwin-amd64']
   outputLocation = './build/sonar-go-to-slang-${GOOS}-${GOARCH}${GOEXE}'
-}
-
-// files in '.gogradle' directory can have readonly flags that prevent "git clean -fdx" to succeed
-def removeReadOnlyPermissions() {
-  Files.walk(file('.gogradle').toPath()).forEach({ Path p -> p.toFile().setWritable(true) })
 }
