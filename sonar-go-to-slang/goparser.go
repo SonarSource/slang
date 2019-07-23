@@ -58,8 +58,12 @@ type TextRange struct {
 	EndColumn   int
 }
 
+const keywordKind = "KEYWORD"
+const nativeSlangType = "Native"
+const nativeKind = "nativeKind"
+
 var isSlangType = map[string]bool{
-	"OTHER": true, "KEYWORD": true, "STRING_LITERAL": true}
+	"OTHER": true, keywordKind: true, "STRING_LITERAL": true}
 
 func toSlangTree(fileSet *token.FileSet, astFile *ast.File, fileContent string) (*Node, []*Node, []*Token) {
 	return NewSlangMapper(fileSet, astFile, fileContent).toSlang()
@@ -151,7 +155,7 @@ func (t *SlangMapper) mapAllComments() []*Node {
 func (t *SlangMapper) mapPackageDecl(file *ast.File) *Node {
 	var children []*Node
 	// "package" node is the very first node, header comments are appended before
-	packageNode := t.createExpectedToken(file.Package, token.PACKAGE.String(), "", "KEYWORD")
+	packageNode := t.createExpectedToken(file.Package, token.PACKAGE.String(), "", keywordKind)
 	if packageNode != nil {
 		children = t.appendCommentOrMissingToken(children, 0, packageNode.offset)
 		children = append(children, packageNode)
@@ -259,9 +263,9 @@ func (t *SlangMapper) appendNodeList(parentList []*Node, children []*Node, nativ
 func (t *SlangMapper) createNativeNode(astNode ast.Node, children []*Node, nativeNode string) *Node {
 	slangField := make(map[string]interface{})
 	slangField["children"] = t.filterOutComments(children)
-	slangField["nativeKind"] = nativeNode
+	slangField[nativeKind] = nativeNode
 
-	return t.createNode(astNode, children, nativeNode, "Native", slangField)
+	return t.createNode(astNode, children, nativeNode, nativeSlangType, slangField)
 }
 
 func (t *SlangMapper) filterOutComments(children []*Node) []*Node {
@@ -297,9 +301,9 @@ func (t *SlangMapper) createNode(astNode ast.Node, children []*Node, nativeNode,
 func (t *SlangMapper) createNativeNodeWithChildren(children []*Node, nativeNode string) *Node {
 	slangField := make(map[string]interface{})
 	slangField["children"] = t.filterOutComments(children)
-	slangField["nativeKind"] = nativeNode
+	slangField[nativeKind] = nativeNode
 
-	return t.createNodeWithChildren(children, "Native", slangField)
+	return t.createNodeWithChildren(children, nativeSlangType, slangField)
 }
 
 func (t *SlangMapper) createNodeWithChildren(children []*Node, slangType string, slangField map[string]interface{}) *Node {
@@ -350,7 +354,7 @@ func (t *SlangMapper) appendMissingToken(children []*Node, offset, endOffset int
 			tokenLength = endOffset - offset
 		} else {
 			if isMissingTokenKeyword[missingTokenValue] {
-				tokenType = "KEYWORD"
+				tokenType = keywordKind
 			}
 		}
 		missingToken := t.createToken(offset, offset+tokenLength, "", tokenType)
@@ -381,7 +385,7 @@ func (t *SlangMapper) createTokenFromPosAstToken(pos token.Pos, tok token.Token,
 
 func (t *SlangMapper) getTokenKind(tok token.Token) string {
 	if tok.IsKeyword() {
-		return "KEYWORD"
+		return keywordKind
 	} else {
 		return "OTHER"
 	}
@@ -457,9 +461,9 @@ func (t *SlangMapper) computeEndOffsetSupportingMultiLineToken(offset int, value
 
 func (t *SlangMapper) createToken(offset, endOffset int, nativeNode, tokenType string) *Node {
 	slangField := make(map[string]interface{})
-	slangField["nativeKind"] = nativeNode
+	slangField[nativeKind] = nativeNode
 
-	return t.createLeafNode(offset, endOffset, nativeNode, "Native", tokenType, slangField)
+	return t.createLeafNode(offset, endOffset, nativeNode, nativeSlangType, tokenType, slangField)
 }
 
 func (t *SlangMapper) createLeafNode(offset, endOffset int, nativeNode, slangType, tokenType string, slangField map[string]interface{}) *Node {

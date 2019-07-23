@@ -6,11 +6,19 @@ import (
 	"strconv"
 )
 
+const keywordField = "keyword"
+const modifiersField = "modifiers"
+const identifierField = "identifier"
+const operatorField = "operator"
+const operandField = "operand"
+const conditionField = "condition"
+const expressionField = "expression"
+
 func (t *SlangMapper) mapReturnStmtImpl(stmt *ast.ReturnStmt, fieldName string) *Node {
 	var children []*Node
 	slangField := make(map[string]interface{})
 	returnToken := t.createTokenFromPosAstToken(stmt.Return, token.RETURN, "Return")
-	slangField["keyword"] = returnToken.Token.TextRange
+	slangField[keywordField] = returnToken.Token.TextRange
 	children = t.appendNode(children, returnToken)
 
 	if len(stmt.Results) == 0 {
@@ -108,7 +116,7 @@ func (t *SlangMapper) mapFuncDeclImpl(decl *ast.FuncDecl, fieldName string) *Nod
 	//Required by SLang; Go does not have constructors
 	slangField["isConstructor"] = false
 	//Go does not have explicit modifiers
-	slangField["modifiers"] = nil
+	slangField[modifiersField] = nil
 	//Other children of the function node
 	slangField["nativeChildren"] = nativeChildren
 
@@ -136,7 +144,7 @@ func (t *SlangMapper) mapFuncLitImpl(lit *ast.FuncLit, fieldName string) *Node {
 	//Required by SLang; Go does not have constructors
 	slangField["isConstructor"] = false
 	//Go does not have explicit modifiers
-	slangField["modifiers"] = nil
+	slangField[modifiersField] = nil
 	//Other children of the function node
 	slangField["nativeChildren"] = nil
 
@@ -187,7 +195,7 @@ func (t *SlangMapper) mapGenDeclImpl(decl *ast.GenDecl, fieldName string) *Node 
 
 	identifier := t.mapIdent(valueSpec.Names[0], "[0]")
 	children = t.appendNode(children, identifier)
-	slangField["identifier"] = identifier
+	slangField[identifierField] = identifier
 
 	typ := t.mapExpr(valueSpec.Type, "Type")
 	children = t.appendNode(children, typ)
@@ -296,9 +304,9 @@ func (t *SlangMapper) createParameter(ident *ast.Ident, parameterIdent, typ *Nod
 	if typ != nil {
 		children = t.appendNode(children, typ)
 	}
-	slangField["identifier"] = parameterIdent
+	slangField[identifierField] = parameterIdent
 	slangField["type"] = typ
-	slangField["modifiers"] = nil    //No paramter modifier in Go
+	slangField[modifiersField] = nil //No paramter modifier in Go
 	slangField["defaultValue"] = nil //No default value in Go
 	return t.createNode(ident, children, fieldName+"(Parameter)", "Parameter", slangField)
 }
@@ -317,7 +325,7 @@ func (t *SlangMapper) mapTypeSpecImpl(spec *ast.TypeSpec, fieldName string) *Nod
 
 	specName := t.mapIdent(spec.Name, "Name")
 	children = t.appendNode(children, specName)
-	slangField["identifier"] = specName.TextRange
+	slangField[identifierField] = specName.TextRange
 
 	children = t.appendNode(children, t.createTokenFromPosAstToken(spec.Assign, token.ASSIGN, "Assign"))
 	children = t.appendNode(children, t.mapExpr(spec.Type, "Type"))
@@ -391,13 +399,13 @@ func (t *SlangMapper) mapAssignStmtImpl(stmt *ast.AssignStmt, fieldName string) 
 
 	slangField := make(map[string]interface{})
 	if isVarDecl {
-		slangField["identifier"] = leftHandSide
+		slangField[identifierField] = leftHandSide
 		slangField["type"] = nil
 		slangField["initializer"] = rightHandSide
 		slangField["isVal"] = false
 		return t.createNode(stmt, children, fieldName+"(AssignDefineStmt)", "VariableDeclaration", slangField)
 	} else {
-		slangField["operator"] = operator
+		slangField[operatorField] = operator
 		slangField["leftHandSide"] = leftHandSide
 		slangField["statementOrExpression"] = rightHandSide
 		return t.createNode(stmt, children, fieldName+"(AssignStmt)", "AssignmentExpression", slangField)
@@ -425,7 +433,7 @@ func (t *SlangMapper) mapBranchStmtImpl(stmt *ast.BranchStmt, fieldName string) 
 
 	branchToken := t.createTokenFromPosAstToken(stmt.TokPos, stmt.Tok, "Tok"+jumpKind)
 	children = t.appendNode(children, branchToken)
-	slangField["keyword"] = branchToken.TextRange
+	slangField[keywordField] = branchToken.TextRange
 	slangField["kind"] = jumpKind
 
 	label := t.mapIdent(stmt.Label, "Label")
@@ -448,7 +456,7 @@ func (t *SlangMapper) mapCaseClauseImpl(clause *ast.CaseClause, fieldName string
 	//SLang requires a tree as expression and not a list, we wrap it in a native node
 	caseExpression := t.createNativeNodeWithChildren(clauseList, "CaseExprList")
 	children = t.appendNode(children, caseExpression)
-	slangField["expression"] = caseExpression
+	slangField[expressionField] = caseExpression
 
 	children = t.appendNode(children, t.createTokenFromPosAstToken(clause.Colon, token.COLON, "Colon"))
 
@@ -503,7 +511,7 @@ func (t *SlangMapper) mapForStmtImpl(stmt *ast.ForStmt, fieldName string) *Node 
 
 	forToken := t.createTokenFromPosAstToken(stmt.For, token.FOR, "For")
 	children = t.appendNode(children, forToken)
-	slangField["keyword"] = forToken.TextRange
+	slangField[keywordField] = forToken.TextRange
 
 	var condition *Node
 	var kind string
@@ -523,7 +531,7 @@ func (t *SlangMapper) mapForStmtImpl(stmt *ast.ForStmt, fieldName string) *Node 
 		children = t.appendNode(children, condition)
 		kind = "FOR"
 	}
-	slangField["condition"] = condition
+	slangField[conditionField] = condition
 	slangField["kind"] = kind
 
 	body := t.mapBlockStmt(stmt.Body, "Body")
@@ -560,7 +568,7 @@ func (t *SlangMapper) mapIfStmtImpl(ifStmt *ast.IfStmt, fieldName string) *Node 
 	slangField := make(map[string]interface{})
 
 	slangField["ifKeyword"] = ifToken.TextRange
-	slangField["condition"] = condition
+	slangField[conditionField] = condition
 	slangField["thenBranch"] = thenBranch
 	slangField["elseKeyword"] = nil
 	slangField["elseBranch"] = elseBranch
@@ -590,11 +598,11 @@ func (t *SlangMapper) mapIncDecStmtImpl(stmt *ast.IncDecStmt, fieldName string) 
 
 	operand := t.mapExpr(stmt.X, "X")
 	children = t.appendNode(children, operand)
-	slangField["operand"] = operand
+	slangField[operandField] = operand
 
 	operator := t.createTokenFromPosAstToken(stmt.TokPos, stmt.Tok, "Tok")
 	children = t.appendNode(children, operator)
-	slangField["operator"] = operatorName
+	slangField[operatorField] = operatorName
 
 	return t.createNode(stmt, children, fieldName+"(UnaryExpression)", "UnaryExpression", slangField)
 }
@@ -609,7 +617,7 @@ func (t *SlangMapper) mapRangeStmtImpl(stmt *ast.RangeStmt, fieldName string) *N
 
 	forToken := t.createTokenFromPosAstToken(stmt.For, token.FOR, "For")
 	children = t.appendNode(children, forToken)
-	slangField["keyword"] = forToken.TextRange
+	slangField[keywordField] = forToken.TextRange
 
 	var rangeHeaderList []*Node
 
@@ -621,7 +629,7 @@ func (t *SlangMapper) mapRangeStmtImpl(stmt *ast.RangeStmt, fieldName string) *N
 	//Wrap all element of the range loop into one single node
 	condition := t.createNativeNodeWithChildren(rangeHeaderList, "RangeHeader")
 	children = t.appendNode(children, condition)
-	slangField["condition"] = condition
+	slangField[conditionField] = condition
 
 	body := t.mapBlockStmt(stmt.Body, "Body")
 	children = t.appendNode(children, body)
@@ -646,7 +654,7 @@ func (t *SlangMapper) mapSwitchStmtImpl(stmt *ast.SwitchStmt, fieldName string) 
 
 	keywordToken := t.createTokenFromPosAstToken(stmt.Switch, token.SWITCH, "Switch")
 	children = t.appendNode(children, keywordToken)
-	slangField["keyword"] = keywordToken.TextRange
+	slangField[keywordField] = keywordToken.TextRange
 
 	var expressionList []*Node
 	expressionList = t.appendNode(expressionList, t.mapStmt(stmt.Init, "Init"))
@@ -655,7 +663,7 @@ func (t *SlangMapper) mapSwitchStmtImpl(stmt *ast.SwitchStmt, fieldName string) 
 	//Wrap the tag and init into one native node
 	expression := t.createNativeNodeWithChildren(expressionList, "InitAndTag")
 	children = t.appendNode(children, expression)
-	slangField["expression"] = expression
+	slangField[expressionField] = expression
 
 	body := t.mapBlockStmt(stmt.Body, "Body")
 	children = t.appendNode(children, body)
@@ -670,7 +678,7 @@ func (t *SlangMapper) mapTypeSwitchStmtImpl(stmt *ast.TypeSwitchStmt, fieldName 
 
 	keywordToken := t.createTokenFromPosAstToken(stmt.Switch, token.SWITCH, "Switch")
 	children = t.appendNode(children, keywordToken)
-	slangField["keyword"] = keywordToken.TextRange
+	slangField[keywordField] = keywordToken.TextRange
 
 	var expressionList []*Node
 	expressionList = t.appendNode(expressionList, t.mapStmt(stmt.Init, "Init"))
@@ -679,7 +687,7 @@ func (t *SlangMapper) mapTypeSwitchStmtImpl(stmt *ast.TypeSwitchStmt, fieldName 
 	//Wrap the init and Assign into one native node
 	expression := t.createNativeNodeWithChildren(expressionList, "InitAndAssign")
 	children = t.appendNode(children, expression)
-	slangField["expression"] = expression
+	slangField[expressionField] = expression
 
 	body := t.mapBlockStmt(stmt.Body, "Body")
 	children = t.appendNode(children, body)
@@ -744,16 +752,16 @@ func (t *SlangMapper) mapBinaryExprImpl(expr *ast.BinaryExpr, fieldName string) 
 	var children []*Node
 	slangField := make(map[string]interface{})
 
-	leftOperand := t.mapExpr(expr.X, "operand")
+	leftOperand := t.mapExpr(expr.X, operandField)
 	children = t.appendNode(children, leftOperand)
 	slangField["leftOperand"] = leftOperand
 
 	operator := t.createTokenFromPosAstToken(expr.OpPos, expr.Op, "Op")
 	children = t.appendNode(children, operator)
-	slangField["operator"] = operatorName
+	slangField[operatorField] = operatorName
 	slangField["operatorToken"] = operator.TextRange
 
-	rightOperand := t.mapExpr(expr.Y, "operand")
+	rightOperand := t.mapExpr(expr.Y, operandField)
 	children = t.appendNode(children, rightOperand)
 	slangField["rightOperand"] = rightOperand
 
@@ -801,7 +809,7 @@ func (t *SlangMapper) mapParenExprImpl(expr *ast.ParenExpr, fieldName string) *N
 	children = t.appendNode(children, leftParen)
 
 	nestedExpr := t.mapExpr(expr.X, "X")
-	slangField["expression"] = nestedExpr
+	slangField[expressionField] = nestedExpr
 	children = t.appendNode(children, nestedExpr)
 
 	rightParen := t.createTokenFromPosAstToken(expr.Rparen, token.RPAREN, "Rparen")
@@ -850,11 +858,11 @@ func (t *SlangMapper) mapUnaryExprImpl(expr *ast.UnaryExpr, fieldName string) *N
 
 	operator := t.createTokenFromPosAstToken(expr.OpPos, expr.Op, "Op")
 	children = t.appendNode(children, operator)
-	slangField["operator"] = operatorName
+	slangField[operatorField] = operatorName
 
 	operand := t.mapExpr(expr.X, "X")
 	children = t.appendNode(children, operand)
-	slangField["operand"] = operand
+	slangField[operandField] = operand
 
 	return t.createNode(expr, children, fieldName+"(UnaryExpression)", "UnaryExpression", slangField)
 }

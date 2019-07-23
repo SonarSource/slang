@@ -128,7 +128,7 @@ public class GoConverter implements ASTConverter {
       return Arrays.asList(command, "-");
     }
 
-    private String extract(File workDir) throws IOException {
+    private static String extract(File workDir) throws IOException {
       String executable = getExecutableForCurrentOS(System.getProperty("os.name"));
       byte[] executableData = getBytesFromResource(executable);
       File dest = new File(workDir, executable);
