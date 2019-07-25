@@ -111,11 +111,16 @@
       {"text":",","textRange":"30:27:30:28","type":"OTHER"},
       {"text":"int","textRange":"30:31:30:34","type":"OTHER"},
       {"text":"}","textRange":"30:35:30:36","type":"OTHER"},
-      {"text":"}","textRange":"31:0:31:1","type":"OTHER"}
+      {"text":"}","textRange":"31:0:31:1","type":"OTHER"},
+      {"text":"type","textRange":"33:0:33:4","type":"KEYWORD"},
+      {"text":"(","textRange":"33:5:33:6","type":"OTHER"},
+      {"text":"RrsType","textRange":"34:1:34:8","type":"OTHER"},
+      {"text":"string","textRange":"34:9:34:15","type":"OTHER"},
+      {"text":")","textRange":"35:0:35:1","type":"OTHER"}
     ]
   },
   "tree":
-    {"@type": "TopLevel", "metaData": "1:0:32:0","firstCpdToken":null,"declarations":[
+    {"@type": "TopLevel", "metaData": "1:0:36:0","firstCpdToken":null,"declarations":[
       {"@type": "PackageDeclaration", "metaData": "1:0:1:11","children":[
         {"@type": "Native", "metaData": "1:0:1:7","nativeKind":""},
         {"@type": "Identifier", "metaData": "1:8:1:11","name":"ast"}
@@ -126,107 +131,91 @@
           {"@type": "StringLiteral", "metaData": "2:7:2:12","value":"\"fmt\"","content":"fmt"}
         ]}
       ]},
-      {"@type": "Native", "metaData": "5:0:5:31","nativeKind":"[1](GenDecl)","children":[
-        {"@type": "Native", "metaData": "5:0:5:4","nativeKind":"Tok"},
-        {"@type": "Native", "metaData": "5:5:5:31","nativeKind":"Specs([]Spec)","children":[
-          {"@type": "ClassDeclaration", "metaData": "5:5:5:31","identifier":"5:5:5:11","classTree":
-            {"@type": "Native", "metaData": "5:5:5:31","nativeKind":"[0](TypeSpecWrapped)","children":[
-              {"@type": "Identifier", "metaData": "5:5:5:11","name":"class1"},
-              {"@type": "Native", "metaData": "5:12:5:31","nativeKind":"Type(StructType)","children":[
-                {"@type": "Native", "metaData": "5:12:5:18","nativeKind":"Struct"},
-                {"@type": "Native", "metaData": "5:19:5:31","nativeKind":"Fields(FieldList)","children":[
-                  {"@type": "Native", "metaData": "5:19:5:20","nativeKind":"Opening"},
-                  {"@type": "Native", "metaData": "5:21:5:29","nativeKind":"[0](Field)","children":[
-                    {"@type": "Native", "metaData": "5:21:5:25","nativeKind":"Names([]*Ident)","children":[
-                      {"@type": "Identifier", "metaData": "5:21:5:22","name":"x"},
-                      {"@type": "Native", "metaData": "5:22:5:23","nativeKind":""},
-                      {"@type": "Identifier", "metaData": "5:24:5:25","name":"y"}
-                    ]},
-                    {"@type": "Identifier", "metaData": "5:26:5:29","name":"int"}
-                  ]},
-                  {"@type": "Native", "metaData": "5:30:5:31","nativeKind":"Closing"}
+      {"@type": "ClassDeclaration", "metaData": "5:0:5:31","identifier":"5:5:5:11","classTree":
+        {"@type": "Native", "metaData": "5:0:5:31","nativeKind":"[1](TypeSpecWrapped)","children":[
+          {"@type": "Native", "metaData": "5:0:5:4","nativeKind":"Tok"},
+          {"@type": "Identifier", "metaData": "5:5:5:11","name":"class1"},
+          {"@type": "Native", "metaData": "5:12:5:31","nativeKind":"Type(StructType)","children":[
+            {"@type": "Native", "metaData": "5:12:5:18","nativeKind":"Struct"},
+            {"@type": "Native", "metaData": "5:19:5:31","nativeKind":"Fields(FieldList)","children":[
+              {"@type": "Native", "metaData": "5:19:5:20","nativeKind":"Opening"},
+              {"@type": "Native", "metaData": "5:21:5:29","nativeKind":"[0](Field)","children":[
+                {"@type": "Native", "metaData": "5:21:5:25","nativeKind":"Names([]*Ident)","children":[
+                  {"@type": "Identifier", "metaData": "5:21:5:22","name":"x"},
+                  {"@type": "Native", "metaData": "5:22:5:23","nativeKind":""},
+                  {"@type": "Identifier", "metaData": "5:24:5:25","name":"y"}
+                ]},
+                {"@type": "Identifier", "metaData": "5:26:5:29","name":"int"}
+              ]},
+              {"@type": "Native", "metaData": "5:30:5:31","nativeKind":"Closing"}
+            ]}
+          ]}
+        ]}},
+      {"@type": "ClassDeclaration", "metaData": "6:0:6:34","identifier":"6:5:6:11","classTree":
+        {"@type": "Native", "metaData": "6:0:6:34","nativeKind":"[2](TypeSpecWrapped)","children":[
+          {"@type": "Native", "metaData": "6:0:6:4","nativeKind":"Tok"},
+          {"@type": "Identifier", "metaData": "6:5:6:11","name":"Class2"},
+          {"@type": "Native", "metaData": "6:12:6:34","nativeKind":"Type(StructType)","children":[
+            {"@type": "Native", "metaData": "6:12:6:18","nativeKind":"Struct"},
+            {"@type": "Native", "metaData": "6:19:6:34","nativeKind":"Fields(FieldList)","children":[
+              {"@type": "Native", "metaData": "6:19:6:20","nativeKind":"Opening"},
+              {"@type": "Native", "metaData": "6:21:6:32","nativeKind":"[0](Field)","children":[
+                {"@type": "Native", "metaData": "6:21:6:25","nativeKind":"Names([]*Ident)","children":[
+                  {"@type": "Identifier", "metaData": "6:21:6:22","name":"a"},
+                  {"@type": "Native", "metaData": "6:22:6:23","nativeKind":""},
+                  {"@type": "Identifier", "metaData": "6:24:6:25","name":"b"}
+                ]},
+                {"@type": "Identifier", "metaData": "6:26:6:32","name":"string"}
+              ]},
+              {"@type": "Native", "metaData": "6:33:6:34","nativeKind":"Closing"}
+            ]}
+          ]}
+        ]}},
+      {"@type": "ClassDeclaration", "metaData": "8:0:12:1","identifier":"8:5:8:11","classTree":
+        {"@type": "Native", "metaData": "8:0:12:1","nativeKind":"[3](TypeSpecWrapped)","children":[
+          {"@type": "Native", "metaData": "8:0:8:4","nativeKind":"Tok"},
+          {"@type": "Identifier", "metaData": "8:5:8:11","name":"class3"},
+          {"@type": "Native", "metaData": "8:12:12:1","nativeKind":"Type(StructType)","children":[
+            {"@type": "Native", "metaData": "8:12:8:18","nativeKind":"Struct"},
+            {"@type": "Native", "metaData": "8:19:12:1","nativeKind":"Fields(FieldList)","children":[
+              {"@type": "Native", "metaData": "8:19:8:20","nativeKind":"Opening"},
+              {"@type": "Native", "metaData": "9:1:9:17","nativeKind":"[0](Field)","children":[
+                {"@type": "Native", "metaData": "9:1:9:6","nativeKind":"Names([]*Ident)","children":[
+                  {"@type": "Identifier", "metaData": "9:1:9:6","name":"Value"}
+                ]},
+                {"@type": "Identifier", "metaData": "9:11:9:17","name":"string"}
+              ]},
+              {"@type": "Native", "metaData": "10:1:10:21","nativeKind":"[1](Field)","children":[
+                {"@type": "Native", "metaData": "10:1:10:10","nativeKind":"Names([]*Ident)","children":[
+                  {"@type": "Identifier", "metaData": "10:1:10:10","name":"TextRange"}
+                ]},
+                {"@type": "Native", "metaData": "10:11:10:21","nativeKind":"Type(StarExpr)","children":[
+                  {"@type": "Native", "metaData": "10:11:10:12","nativeKind":"Star"},
+                  {"@type": "Identifier", "metaData": "10:12:10:21","name":"TextRange"}
                 ]}
-              ]}
-            ]}}
-        ]}
-      ]},
-      {"@type": "Native", "metaData": "6:0:6:34","nativeKind":"[2](GenDecl)","children":[
-        {"@type": "Native", "metaData": "6:0:6:4","nativeKind":"Tok"},
-        {"@type": "Native", "metaData": "6:5:6:34","nativeKind":"Specs([]Spec)","children":[
-          {"@type": "ClassDeclaration", "metaData": "6:5:6:34","identifier":"6:5:6:11","classTree":
-            {"@type": "Native", "metaData": "6:5:6:34","nativeKind":"[0](TypeSpecWrapped)","children":[
-              {"@type": "Identifier", "metaData": "6:5:6:11","name":"Class2"},
-              {"@type": "Native", "metaData": "6:12:6:34","nativeKind":"Type(StructType)","children":[
-                {"@type": "Native", "metaData": "6:12:6:18","nativeKind":"Struct"},
-                {"@type": "Native", "metaData": "6:19:6:34","nativeKind":"Fields(FieldList)","children":[
-                  {"@type": "Native", "metaData": "6:19:6:20","nativeKind":"Opening"},
-                  {"@type": "Native", "metaData": "6:21:6:32","nativeKind":"[0](Field)","children":[
-                    {"@type": "Native", "metaData": "6:21:6:25","nativeKind":"Names([]*Ident)","children":[
-                      {"@type": "Identifier", "metaData": "6:21:6:22","name":"a"},
-                      {"@type": "Native", "metaData": "6:22:6:23","nativeKind":""},
-                      {"@type": "Identifier", "metaData": "6:24:6:25","name":"b"}
-                    ]},
-                    {"@type": "Identifier", "metaData": "6:26:6:32","name":"string"}
-                  ]},
-                  {"@type": "Native", "metaData": "6:33:6:34","nativeKind":"Closing"}
-                ]}
-              ]}
-            ]}}
-        ]}
-      ]},
-      {"@type": "Native", "metaData": "8:0:12:1","nativeKind":"[3](GenDecl)","children":[
-        {"@type": "Native", "metaData": "8:0:8:4","nativeKind":"Tok"},
-        {"@type": "Native", "metaData": "8:5:12:1","nativeKind":"Specs([]Spec)","children":[
-          {"@type": "ClassDeclaration", "metaData": "8:5:12:1","identifier":"8:5:8:11","classTree":
-            {"@type": "Native", "metaData": "8:5:12:1","nativeKind":"[0](TypeSpecWrapped)","children":[
-              {"@type": "Identifier", "metaData": "8:5:8:11","name":"class3"},
-              {"@type": "Native", "metaData": "8:12:12:1","nativeKind":"Type(StructType)","children":[
-                {"@type": "Native", "metaData": "8:12:8:18","nativeKind":"Struct"},
-                {"@type": "Native", "metaData": "8:19:12:1","nativeKind":"Fields(FieldList)","children":[
-                  {"@type": "Native", "metaData": "8:19:8:20","nativeKind":"Opening"},
-                  {"@type": "Native", "metaData": "9:1:9:17","nativeKind":"[0](Field)","children":[
-                    {"@type": "Native", "metaData": "9:1:9:6","nativeKind":"Names([]*Ident)","children":[
-                      {"@type": "Identifier", "metaData": "9:1:9:6","name":"Value"}
-                    ]},
-                    {"@type": "Identifier", "metaData": "9:11:9:17","name":"string"}
-                  ]},
-                  {"@type": "Native", "metaData": "10:1:10:21","nativeKind":"[1](Field)","children":[
-                    {"@type": "Native", "metaData": "10:1:10:10","nativeKind":"Names([]*Ident)","children":[
-                      {"@type": "Identifier", "metaData": "10:1:10:10","name":"TextRange"}
-                    ]},
-                    {"@type": "Native", "metaData": "10:11:10:21","nativeKind":"Type(StarExpr)","children":[
-                      {"@type": "Native", "metaData": "10:11:10:12","nativeKind":"Star"},
-                      {"@type": "Identifier", "metaData": "10:12:10:21","name":"TextRange"}
-                    ]}
-                  ]},
-                  {"@type": "Native", "metaData": "11:1:11:17","nativeKind":"[2](Field)","children":[
-                    {"@type": "Native", "metaData": "11:1:11:10","nativeKind":"Names([]*Ident)","children":[
-                      {"@type": "Identifier", "metaData": "11:1:11:10","name":"TokenType"}
-                    ]},
-                    {"@type": "Identifier", "metaData": "11:11:11:17","name":"string"}
-                  ]},
-                  {"@type": "Native", "metaData": "12:0:12:1","nativeKind":"Closing"}
-                ]}
-              ]}
-            ]}}
-        ]}
-      ]},
-      {"@type": "Native", "metaData": "14:0:14:21","nativeKind":"[4](GenDecl)","children":[
-        {"@type": "Native", "metaData": "14:0:14:4","nativeKind":"Tok"},
-        {"@type": "Native", "metaData": "14:5:14:21","nativeKind":"Specs([]Spec)","children":[
-          {"@type": "ClassDeclaration", "metaData": "14:5:14:21","identifier":"14:5:14:11","classTree":
-            {"@type": "Native", "metaData": "14:5:14:21","nativeKind":"[0](TypeSpecWrapped)","children":[
-              {"@type": "Identifier", "metaData": "14:5:14:11","name":"class4"},
-              {"@type": "Native", "metaData": "14:12:14:21","nativeKind":"Type(StructType)","children":[
-                {"@type": "Native", "metaData": "14:12:14:18","nativeKind":"Struct"},
-                {"@type": "Native", "metaData": "14:19:14:21","nativeKind":"Fields(FieldList)","children":[
-                  {"@type": "Native", "metaData": "14:19:14:20","nativeKind":"Opening"},
-                  {"@type": "Native", "metaData": "14:20:14:21","nativeKind":"Closing"}
-                ]}
-              ]}
-            ]}}
-        ]}
-      ]},
+              ]},
+              {"@type": "Native", "metaData": "11:1:11:17","nativeKind":"[2](Field)","children":[
+                {"@type": "Native", "metaData": "11:1:11:10","nativeKind":"Names([]*Ident)","children":[
+                  {"@type": "Identifier", "metaData": "11:1:11:10","name":"TokenType"}
+                ]},
+                {"@type": "Identifier", "metaData": "11:11:11:17","name":"string"}
+              ]},
+              {"@type": "Native", "metaData": "12:0:12:1","nativeKind":"Closing"}
+            ]}
+          ]}
+        ]}},
+      {"@type": "ClassDeclaration", "metaData": "14:0:14:21","identifier":"14:5:14:11","classTree":
+        {"@type": "Native", "metaData": "14:0:14:21","nativeKind":"[4](TypeSpecWrapped)","children":[
+          {"@type": "Native", "metaData": "14:0:14:4","nativeKind":"Tok"},
+          {"@type": "Identifier", "metaData": "14:5:14:11","name":"class4"},
+          {"@type": "Native", "metaData": "14:12:14:21","nativeKind":"Type(StructType)","children":[
+            {"@type": "Native", "metaData": "14:12:14:18","nativeKind":"Struct"},
+            {"@type": "Native", "metaData": "14:19:14:21","nativeKind":"Fields(FieldList)","children":[
+              {"@type": "Native", "metaData": "14:19:14:20","nativeKind":"Opening"},
+              {"@type": "Native", "metaData": "14:20:14:21","nativeKind":"Closing"}
+            ]}
+          ]}
+        ]}},
       {"@type": "VariableDeclaration", "metaData": "16:0:16:42","type":
         {"@type": "Identifier", "metaData": "16:14:16:20","name":"Class2"},"isVal":false,"initializer":
         {"@type": "Native", "metaData": "16:23:16:42","nativeKind":"[0](CompositeLit)","children":[
@@ -244,70 +233,62 @@
           {"@type": "Native", "metaData": "16:41:16:42","nativeKind":"Rbrace"}
         ]},"identifier":
         {"@type": "Identifier", "metaData": "16:4:16:13","name":"anonymous"}},
-      {"@type": "Native", "metaData": "18:0:21:1","nativeKind":"[6](GenDecl)","children":[
-        {"@type": "Native", "metaData": "18:0:18:4","nativeKind":"Tok"},
-        {"@type": "Native", "metaData": "18:5:21:1","nativeKind":"Specs([]Spec)","children":[
-          {"@type": "ClassDeclaration", "metaData": "18:5:21:1","identifier":"18:5:18:11","classTree":
-            {"@type": "Native", "metaData": "18:5:21:1","nativeKind":"[0](TypeSpecWrapped)","children":[
-              {"@type": "Identifier", "metaData": "18:5:18:11","name":"class5"},
-              {"@type": "Native", "metaData": "18:12:21:1","nativeKind":"Type(InterfaceType)","children":[
-                {"@type": "Native", "metaData": "18:12:18:21","nativeKind":"Interface"},
-                {"@type": "Native", "metaData": "18:22:21:1","nativeKind":"Methods(FieldList)","children":[
-                  {"@type": "Native", "metaData": "18:22:18:23","nativeKind":"Opening"},
-                  {"@type": "Native", "metaData": "19:4:19:16","nativeKind":"[0](Field)","children":[
-                    {"@type": "Native", "metaData": "19:4:19:6","nativeKind":"Names([]*Ident)","children":[
-                      {"@type": "Identifier", "metaData": "19:4:19:6","name":"f1"}
-                    ]},
-                    {"@type": "Native", "metaData": "19:6:19:16","nativeKind":"Type(FuncType)","children":[
-                      {"@type": "Native", "metaData": "19:6:19:8","nativeKind":"Params(FieldList)","children":[
-                        {"@type": "Native", "metaData": "19:6:19:7","nativeKind":"Opening"},
-                        {"@type": "Native", "metaData": "19:7:19:8","nativeKind":"Closing"}
-                      ]},
-                      {"@type": "Native", "metaData": "19:9:19:16","nativeKind":"Results(FieldList)","children":[
-                        {"@type": "Native", "metaData": "19:9:19:16","nativeKind":"[0](Field)","children":[
-                          {"@type": "Identifier", "metaData": "19:9:19:16","name":"float64"}
-                        ]}
-                      ]}
-                    ]}
+      {"@type": "ClassDeclaration", "metaData": "18:0:21:1","identifier":"18:5:18:11","classTree":
+        {"@type": "Native", "metaData": "18:0:21:1","nativeKind":"[6](TypeSpecWrapped)","children":[
+          {"@type": "Native", "metaData": "18:0:18:4","nativeKind":"Tok"},
+          {"@type": "Identifier", "metaData": "18:5:18:11","name":"class5"},
+          {"@type": "Native", "metaData": "18:12:21:1","nativeKind":"Type(InterfaceType)","children":[
+            {"@type": "Native", "metaData": "18:12:18:21","nativeKind":"Interface"},
+            {"@type": "Native", "metaData": "18:22:21:1","nativeKind":"Methods(FieldList)","children":[
+              {"@type": "Native", "metaData": "18:22:18:23","nativeKind":"Opening"},
+              {"@type": "Native", "metaData": "19:4:19:16","nativeKind":"[0](Field)","children":[
+                {"@type": "Native", "metaData": "19:4:19:6","nativeKind":"Names([]*Ident)","children":[
+                  {"@type": "Identifier", "metaData": "19:4:19:6","name":"f1"}
+                ]},
+                {"@type": "Native", "metaData": "19:6:19:16","nativeKind":"Type(FuncType)","children":[
+                  {"@type": "Native", "metaData": "19:6:19:8","nativeKind":"Params(FieldList)","children":[
+                    {"@type": "Native", "metaData": "19:6:19:7","nativeKind":"Opening"},
+                    {"@type": "Native", "metaData": "19:7:19:8","nativeKind":"Closing"}
                   ]},
-                  {"@type": "Native", "metaData": "20:4:20:16","nativeKind":"[1](Field)","children":[
-                    {"@type": "Native", "metaData": "20:4:20:6","nativeKind":"Names([]*Ident)","children":[
-                      {"@type": "Identifier", "metaData": "20:4:20:6","name":"f2"}
-                    ]},
-                    {"@type": "Native", "metaData": "20:6:20:16","nativeKind":"Type(FuncType)","children":[
-                      {"@type": "Native", "metaData": "20:6:20:8","nativeKind":"Params(FieldList)","children":[
-                        {"@type": "Native", "metaData": "20:6:20:7","nativeKind":"Opening"},
-                        {"@type": "Native", "metaData": "20:7:20:8","nativeKind":"Closing"}
-                      ]},
-                      {"@type": "Native", "metaData": "20:9:20:16","nativeKind":"Results(FieldList)","children":[
-                        {"@type": "Native", "metaData": "20:9:20:16","nativeKind":"[0](Field)","children":[
-                          {"@type": "Identifier", "metaData": "20:9:20:16","name":"float64"}
-                        ]}
-                      ]}
+                  {"@type": "Native", "metaData": "19:9:19:16","nativeKind":"Results(FieldList)","children":[
+                    {"@type": "Native", "metaData": "19:9:19:16","nativeKind":"[0](Field)","children":[
+                      {"@type": "Identifier", "metaData": "19:9:19:16","name":"float64"}
                     ]}
+                  ]}
+                ]}
+              ]},
+              {"@type": "Native", "metaData": "20:4:20:16","nativeKind":"[1](Field)","children":[
+                {"@type": "Native", "metaData": "20:4:20:6","nativeKind":"Names([]*Ident)","children":[
+                  {"@type": "Identifier", "metaData": "20:4:20:6","name":"f2"}
+                ]},
+                {"@type": "Native", "metaData": "20:6:20:16","nativeKind":"Type(FuncType)","children":[
+                  {"@type": "Native", "metaData": "20:6:20:8","nativeKind":"Params(FieldList)","children":[
+                    {"@type": "Native", "metaData": "20:6:20:7","nativeKind":"Opening"},
+                    {"@type": "Native", "metaData": "20:7:20:8","nativeKind":"Closing"}
                   ]},
-                  {"@type": "Native", "metaData": "21:0:21:1","nativeKind":"Closing"}
+                  {"@type": "Native", "metaData": "20:9:20:16","nativeKind":"Results(FieldList)","children":[
+                    {"@type": "Native", "metaData": "20:9:20:16","nativeKind":"[0](Field)","children":[
+                      {"@type": "Identifier", "metaData": "20:9:20:16","name":"float64"}
+                    ]}
+                  ]}
                 ]}
-              ]}
-            ]}}
-        ]}
-      ]},
-      {"@type": "Native", "metaData": "23:0:23:24","nativeKind":"[7](GenDecl)","children":[
-        {"@type": "Native", "metaData": "23:0:23:4","nativeKind":"Tok"},
-        {"@type": "Native", "metaData": "23:5:23:24","nativeKind":"Specs([]Spec)","children":[
-          {"@type": "ClassDeclaration", "metaData": "23:5:23:24","identifier":"23:5:23:11","classTree":
-            {"@type": "Native", "metaData": "23:5:23:24","nativeKind":"[0](TypeSpecWrapped)","children":[
-              {"@type": "Identifier", "metaData": "23:5:23:11","name":"Class6"},
-              {"@type": "Native", "metaData": "23:12:23:24","nativeKind":"Type(InterfaceType)","children":[
-                {"@type": "Native", "metaData": "23:12:23:21","nativeKind":"Interface"},
-                {"@type": "Native", "metaData": "23:22:23:24","nativeKind":"Methods(FieldList)","children":[
-                  {"@type": "Native", "metaData": "23:22:23:23","nativeKind":"Opening"},
-                  {"@type": "Native", "metaData": "23:23:23:24","nativeKind":"Closing"}
-                ]}
-              ]}
-            ]}}
-        ]}
-      ]},
+              ]},
+              {"@type": "Native", "metaData": "21:0:21:1","nativeKind":"Closing"}
+            ]}
+          ]}
+        ]}},
+      {"@type": "ClassDeclaration", "metaData": "23:0:23:24","identifier":"23:5:23:11","classTree":
+        {"@type": "Native", "metaData": "23:0:23:24","nativeKind":"[7](TypeSpecWrapped)","children":[
+          {"@type": "Native", "metaData": "23:0:23:4","nativeKind":"Tok"},
+          {"@type": "Identifier", "metaData": "23:5:23:11","name":"Class6"},
+          {"@type": "Native", "metaData": "23:12:23:24","nativeKind":"Type(InterfaceType)","children":[
+            {"@type": "Native", "metaData": "23:12:23:21","nativeKind":"Interface"},
+            {"@type": "Native", "metaData": "23:22:23:24","nativeKind":"Methods(FieldList)","children":[
+              {"@type": "Native", "metaData": "23:22:23:23","nativeKind":"Opening"},
+              {"@type": "Native", "metaData": "23:23:23:24","nativeKind":"Closing"}
+            ]}
+          ]}
+        ]}},
       {"@type": "FunctionDeclaration", "metaData": "25:0:27:1","returnType":
         null,"nativeChildren":[],"name":
         {"@type": "Identifier", "metaData": "25:5:25:8","name":"foo"},"modifiers":null,"isConstructor":false,"formalParameters":[
@@ -362,31 +343,38 @@
       ],"body":
         {"@type": "Block", "metaData": "29:16:31:1","statementOrExpressions":[
           {"@type": "Native", "metaData": "30:5:30:36","nativeKind":"[0](DeclStmt)","children":[
-            {"@type": "Native", "metaData": "30:5:30:36","nativeKind":"Decl(GenDecl)","children":[
-              {"@type": "Native", "metaData": "30:5:30:9","nativeKind":"Tok"},
-              {"@type": "Native", "metaData": "30:10:30:36","nativeKind":"Specs([]Spec)","children":[
-                {"@type": "ClassDeclaration", "metaData": "30:10:30:36","identifier":"30:10:30:16","classTree":
-                  {"@type": "Native", "metaData": "30:10:30:36","nativeKind":"[0](TypeSpecWrapped)","children":[
-                    {"@type": "Identifier", "metaData": "30:10:30:16","name":"class7"},
-                    {"@type": "Native", "metaData": "30:17:30:36","nativeKind":"Type(StructType)","children":[
-                      {"@type": "Native", "metaData": "30:17:30:23","nativeKind":"Struct"},
-                      {"@type": "Native", "metaData": "30:24:30:36","nativeKind":"Fields(FieldList)","children":[
-                        {"@type": "Native", "metaData": "30:24:30:25","nativeKind":"Opening"},
-                        {"@type": "Native", "metaData": "30:26:30:34","nativeKind":"[0](Field)","children":[
-                          {"@type": "Native", "metaData": "30:26:30:30","nativeKind":"Names([]*Ident)","children":[
-                            {"@type": "Identifier", "metaData": "30:26:30:27","name":"x"},
-                            {"@type": "Native", "metaData": "30:27:30:28","nativeKind":""},
-                            {"@type": "Identifier", "metaData": "30:29:30:30","name":"y"}
-                          ]},
-                          {"@type": "Identifier", "metaData": "30:31:30:34","name":"int"}
-                        ]},
-                        {"@type": "Native", "metaData": "30:35:30:36","nativeKind":"Closing"}
-                      ]}
-                    ]}
-                  ]}}
-              ]}
-            ]}
+            {"@type": "ClassDeclaration", "metaData": "30:5:30:36","identifier":"30:10:30:16","classTree":
+              {"@type": "Native", "metaData": "30:5:30:36","nativeKind":"Decl(TypeSpecWrapped)","children":[
+                {"@type": "Native", "metaData": "30:5:30:9","nativeKind":"Tok"},
+                {"@type": "Identifier", "metaData": "30:10:30:16","name":"class7"},
+                {"@type": "Native", "metaData": "30:17:30:36","nativeKind":"Type(StructType)","children":[
+                  {"@type": "Native", "metaData": "30:17:30:23","nativeKind":"Struct"},
+                  {"@type": "Native", "metaData": "30:24:30:36","nativeKind":"Fields(FieldList)","children":[
+                    {"@type": "Native", "metaData": "30:24:30:25","nativeKind":"Opening"},
+                    {"@type": "Native", "metaData": "30:26:30:34","nativeKind":"[0](Field)","children":[
+                      {"@type": "Native", "metaData": "30:26:30:30","nativeKind":"Names([]*Ident)","children":[
+                        {"@type": "Identifier", "metaData": "30:26:30:27","name":"x"},
+                        {"@type": "Native", "metaData": "30:27:30:28","nativeKind":""},
+                        {"@type": "Identifier", "metaData": "30:29:30:30","name":"y"}
+                      ]},
+                      {"@type": "Identifier", "metaData": "30:31:30:34","name":"int"}
+                    ]},
+                    {"@type": "Native", "metaData": "30:35:30:36","nativeKind":"Closing"}
+                  ]}
+                ]}
+              ]}}
           ]}
-        ]}}
+        ]}},
+      {"@type": "Native", "metaData": "33:0:35:1","nativeKind":"[10](GenDecl)","children":[
+        {"@type": "Native", "metaData": "33:0:33:4","nativeKind":"Tok"},
+        {"@type": "Native", "metaData": "33:5:33:6","nativeKind":"Lparen"},
+        {"@type": "Native", "metaData": "34:1:34:15","nativeKind":"Specs([]Spec)","children":[
+          {"@type": "Native", "metaData": "34:1:34:15","nativeKind":"[0](TypeSpec)","children":[
+            {"@type": "Identifier", "metaData": "34:1:34:8","name":"RrsType"},
+            {"@type": "Identifier", "metaData": "34:9:34:15","name":"string"}
+          ]}
+        ]},
+        {"@type": "Native", "metaData": "35:0:35:1","nativeKind":"Rparen"}
+      ]}
     ]}
 } 

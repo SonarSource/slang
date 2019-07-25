@@ -61,6 +61,7 @@ type TextRange struct {
 const keywordKind = "KEYWORD"
 const nativeSlangType = "Native"
 const nativeKind = "nativeKind"
+const childrenField = "children"
 
 var isSlangType = map[string]bool{
 	"OTHER": true, keywordKind: true, "STRING_LITERAL": true}
@@ -163,7 +164,7 @@ func (t *SlangMapper) mapPackageDecl(file *ast.File) *Node {
 	children = t.appendNode(children, t.mapIdent(file.Name, "Name"))
 
 	slangField := make(map[string]interface{})
-	slangField["children"] = t.filterOutComments(children)
+	slangField[childrenField] = t.filterOutComments(children)
 
 	return t.createNode(file, children, "File.Package", "PackageDeclaration", slangField)
 }
@@ -266,7 +267,7 @@ func (t *SlangMapper) appendNodeList(parentList []*Node, children []*Node, nativ
 
 func (t *SlangMapper) createNativeNode(astNode ast.Node, children []*Node, nativeNode string) *Node {
 	slangField := make(map[string]interface{})
-	slangField["children"] = t.filterOutComments(children)
+	slangField[childrenField] = t.filterOutComments(children)
 	slangField[nativeKind] = nativeNode
 
 	return t.createNode(astNode, children, nativeNode, nativeSlangType, slangField)
@@ -304,7 +305,7 @@ func (t *SlangMapper) createNode(astNode ast.Node, children []*Node, nativeNode,
 
 func (t *SlangMapper) createNativeNodeWithChildren(children []*Node, nativeNode string) *Node {
 	slangField := make(map[string]interface{})
-	slangField["children"] = t.filterOutComments(children)
+	slangField[childrenField] = t.filterOutComments(children)
 	slangField[nativeKind] = nativeNode
 
 	return t.createNodeWithChildren(children, nativeSlangType, slangField)

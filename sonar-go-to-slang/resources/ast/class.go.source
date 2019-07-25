@@ -29,3 +29,7 @@ func foo(notClass3 interface{ bar() }) { //Not a TypeSpec, but a InterfaceType; 
 func bar(x int) {
      type class7 struct { x, y int }
 }
+
+type (
+	RrsType string
+)

@@ -13,6 +13,8 @@ const operatorField = "operator"
 const operandField = "operand"
 const conditionField = "condition"
 const expressionField = "expression"
+const lParentKind = "Lparen"
+const rParentKind = "Rparen"
 
 func (t *SlangMapper) mapReturnStmtImpl(stmt *ast.ReturnStmt, fieldName string) *Node {
 	var children []*Node
@@ -168,17 +170,51 @@ func (t *SlangMapper) getFormalParameter(node *Node) []*Node {
 func (t *SlangMapper) mapGenDeclImport(decl *ast.GenDecl, fieldName string) *Node {
 	var children []*Node
 	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.TokPos, decl.Tok, "Tok"))
-	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Lparen, token.LPAREN, "Lparen"))
+	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Lparen, token.LPAREN, lParentKind))
 
 	for i := 0; i < len(decl.Specs); i++ {
 		children = t.appendNode(children, t.mapSpec(decl.Specs[i], "["+strconv.Itoa(i)+"]"))
 	}
-	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Rparen, token.RPAREN, "Rparen"))
+	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Rparen, token.RPAREN, rParentKind))
 
 	slangField := make(map[string]interface{})
 	slangField["children"] = t.filterOutComments(children)
 
 	return t.createNode(decl, children, fieldName+"(ImportSpec)", "ImportDeclaration", slangField)
+}
+
+func (t *SlangMapper) mapGenDeclType(decl *ast.GenDecl, fieldName string) *Node {
+	if len(decl.Specs) != 1 {
+		//The node can not be mapped to a typed Slang node, create a native node
+		return nil
+	}
+
+	spec, ok := decl.Specs[0].(*ast.TypeSpec)
+	if !ok {
+		// The spec of this declaration is not a TypeSpec, we map it to native
+		return nil
+	}
+
+	var children []*Node
+	slangField := make(map[string]interface{})
+
+	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.TokPos, decl.Tok, "Tok"))
+	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Lparen, token.LPAREN, lParentKind))
+
+	specName := t.mapIdent(spec.Name, "Name")
+	children = t.appendNode(children, specName)
+	slangField[identifierField] = specName.TextRange
+
+	children = t.appendNode(children, t.createTokenFromPosAstToken(spec.Assign, token.ASSIGN, "Assign"))
+	children = t.appendNode(children, t.mapExpr(spec.Type, "Type"))
+
+	//ClassTree in SLang contains everything (including identifier), we create a new node for this purpose
+	classTree := t.createNativeNode(spec, children, fieldName+"(TypeSpecWrapped)")
+
+	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Rparen, token.RPAREN, rParentKind))
+
+	slangField["classTree"] = classTree
+	return t.createNode(spec, []*Node{classTree}, fieldName+"(TypeSpec)", "ClassDeclaration", slangField)
 }
 
 func (t *SlangMapper) mapGenDeclImpl(decl *ast.GenDecl, fieldName string) *Node {
@@ -189,11 +225,15 @@ func (t *SlangMapper) mapGenDeclImpl(decl *ast.GenDecl, fieldName string) *Node 
 		slangField["isVal"] = true
 	case token.VAR:
 		slangField["isVal"] = false
+	case token.TYPE:
+		if decl.Lparen == token.NoPos {
+			// token type with parenthesis has no identifier, we map it to Native
+			return t.mapGenDeclType(decl, fieldName)
+		} else {
+			return nil
+		}
 	case token.IMPORT:
 		return t.mapGenDeclImport(decl, fieldName)
-	default:
-		// others mapped to native
-		return nil
 	}
 
 	if len(decl.Specs) != 1 {
@@ -209,7 +249,7 @@ func (t *SlangMapper) mapGenDeclImpl(decl *ast.GenDecl, fieldName string) *Node 
 
 	var children []*Node
 	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.TokPos, decl.Tok, "Tok"))
-	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Lparen, token.LPAREN, "Lparen"))
+	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Lparen, token.LPAREN, lParentKind))
 
 	identifier := t.mapIdent(valueSpec.Names[0], "[0]")
 	children = t.appendNode(children, identifier)
@@ -238,7 +278,7 @@ func (t *SlangMapper) mapGenDeclImpl(decl *ast.GenDecl, fieldName string) *Node 
 	children = t.appendNode(children, initializer)
 	slangField["initializer"] = initializer
 
-	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Rparen, token.RPAREN, "Rparen"))
+	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Rparen, token.RPAREN, rParentKind))
 
 	return t.createNode(decl, children, fieldName+"(GenDecl)", "VariableDeclaration", slangField)
 }
@@ -338,20 +378,7 @@ func (t *SlangMapper) mapImportSpecImpl(spec *ast.ImportSpec, fieldName string) 
 }
 
 func (t *SlangMapper) mapTypeSpecImpl(spec *ast.TypeSpec, fieldName string) *Node {
-	slangField := make(map[string]interface{})
-	var children []*Node
-
-	specName := t.mapIdent(spec.Name, "Name")
-	children = t.appendNode(children, specName)
-	slangField[identifierField] = specName.TextRange
-
-	children = t.appendNode(children, t.createTokenFromPosAstToken(spec.Assign, token.ASSIGN, "Assign"))
-	children = t.appendNode(children, t.mapExpr(spec.Type, "Type"))
-
-	//ClassTree in SLang contains everything (including identifier), we create a new node for this purpose
-	classTree := t.createNativeNode(spec, children, fieldName+"(TypeSpecWrapped)")
-	slangField["classTree"] = classTree
-	return t.createNode(spec, []*Node{classTree}, fieldName+"(TypeSpec)", "ClassDeclaration", slangField)
+	return nil
 }
 
 func (t *SlangMapper) mapValueSpecImpl(spec *ast.ValueSpec, fieldName string) *Node {
@@ -822,7 +849,7 @@ func (t *SlangMapper) mapParenExprImpl(expr *ast.ParenExpr, fieldName string) *N
 	var children []*Node
 	slangField := make(map[string]interface{})
 
-	leftParen := t.createTokenFromPosAstToken(expr.Lparen, token.LPAREN, "Lparen")
+	leftParen := t.createTokenFromPosAstToken(expr.Lparen, token.LPAREN, lParentKind)
 	slangField["leftParenthesis"] = leftParen.TextRange
 	children = t.appendNode(children, leftParen)
 
@@ -830,7 +857,7 @@ func (t *SlangMapper) mapParenExprImpl(expr *ast.ParenExpr, fieldName string) *N
 	slangField[expressionField] = nestedExpr
 	children = t.appendNode(children, nestedExpr)
 
-	rightParen := t.createTokenFromPosAstToken(expr.Rparen, token.RPAREN, "Rparen")
+	rightParen := t.createTokenFromPosAstToken(expr.Rparen, token.RPAREN, rParentKind)
 	children = t.appendNode(children, rightParen)
 	slangField["rightParenthesis"] = rightParen.TextRange
 
