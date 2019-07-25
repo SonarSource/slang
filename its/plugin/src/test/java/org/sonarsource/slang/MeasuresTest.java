@@ -92,4 +92,22 @@ public class MeasuresTest extends TestBase {
     assertThat(issuesForRule).extracting(Issue::line).containsExactly(9);
     assertThat(issuesForRule).extracting(Issue::componentKey).containsExactly(PROJECT_KEY + ":file.scala");
   }
+
+  @Test
+  public void go_measures() {
+    ORCHESTRATOR.executeBuild(getSonarScanner(BASE_DIRECTORY, "go"));
+
+    assertThat(getMeasureAsInt("pivot.go", "ncloc")).isEqualTo(41);
+    assertThat(getMeasureAsInt("pivot.go", "comment_lines")).isEqualTo(0);
+
+    assertThat(getMeasure("pivot.go", "ncloc_data").getValue())
+      .isEqualTo("1=1;3=1;4=1;5=1;6=1;7=1;8=1;10=1;11=1;12=1;13=1;14=1;16=1;17=1;18=1;20=1;21=1;22=1;23=1;24=1;25=1;" +
+        "26=1;27=1;28=1;29=1;30=1;31=1;32=1;33=1;35=1;36=1;37=1;38=1;39=1;40=1;41=1;43=1;44=1;45=1;46=1;47=1");
+    System.out.println(getMeasure("pivot.go", "ncloc_data").getValue());
+
+    assertThat(getMeasureAsInt("pivot.go", "functions")).isEqualTo(3);
+
+    assertThat(getMeasure("pivot.go", "executable_lines_data").getValue())
+      .isEqualTo("32=1;36=1;37=1;38=1;40=1;10=1;11=1;12=1;44=1;13=1;45=1;14=1;46=1;21=1;22=1;23=1;25=1;26=1;27=1;29=1;30=1");
+  }
 }

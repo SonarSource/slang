@@ -169,7 +169,7 @@ public class GoSensorTest {
       /* 11 */"  switch i { // Statement 2\n" +
       /* 12 */"  case 2:\n" +
       /* 13 */"    fmt.Println(\n" +
-      /* 14 */"      \"Statement 3\",\n" +
+      /* 14 */"      \"Not a Statement 3\",\n" +
       /* 15 */"    )\n" +
       /* 16 */"  }\n" +
       /* 17 */"}\n" +
@@ -197,13 +197,12 @@ public class GoSensorTest {
       "2:1", "3:1", "4:1", "5:1", "6:1", "7:1", "8:1", "9:1", "10:1", "11:1",
       "12:1", "13:1", "14:1", "15:1", "16:1", "17:1", "18:1", "19:1", "20:1");
 
-//    assertThat(fileLinesContext.metrics.get(CoreMetrics.EXECUTABLE_LINES_DATA_KEY)).containsExactlyInAnyOrder(
-//      "8:1", "11:1", "12:1", "13:1", "14:1", "19:1");
+    assertThat(fileLinesContext.metrics.get(CoreMetrics.EXECUTABLE_LINES_DATA_KEY)).containsExactlyInAnyOrder(
+      "8:1", "11:1", "13:1", "19:1");
   }
 
   @Test
   public void metrics_for_test_file() {
-    // FIXME
     InputFile inputFile = createInputFile("lets.go", InputFile.Type.TEST,
       "// This is not a line of code\n" +
         "package main\n" +
