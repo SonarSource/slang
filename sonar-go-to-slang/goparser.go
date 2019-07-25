@@ -161,7 +161,11 @@ func (t *SlangMapper) mapPackageDecl(file *ast.File) *Node {
 		children = append(children, packageNode)
 	}
 	children = t.appendNode(children, t.mapIdent(file.Name, "Name"))
-	return t.createNativeNode(nil, children, "File.Package")
+
+	slangField := make(map[string]interface{})
+	slangField["children"] = t.filterOutComments(children)
+
+	return t.createNode(file, children, "File.Package", "PackageDeclaration", slangField)
 }
 
 func (t *SlangMapper) mapBasicLit(astNode *ast.BasicLit, fieldName string) *Node {

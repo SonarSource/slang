@@ -116,7 +116,7 @@
   },
   "tree":
     {"@type": "TopLevel", "metaData": "1:0:32:0","firstCpdToken":null,"declarations":[
-      {"@type": "Native", "metaData": "1:0:1:11","nativeKind":"File.Package","children":[
+      {"@type": "PackageDeclaration", "metaData": "1:0:1:11","children":[
         {"@type": "Native", "metaData": "1:0:1:7","nativeKind":""},
         {"@type": "Identifier", "metaData": "1:8:1:11","name":"ast"}
       ]},
