@@ -80,12 +80,10 @@
         {"@type": "Native", "metaData": "1:0:1:7","nativeKind":""},
         {"@type": "Identifier", "metaData": "1:8:1:12","name":"main"}
       ]},
-      {"@type": "Native", "metaData": "3:0:3:12","nativeKind":"[0](GenDecl)","children":[
+      {"@type": "ImportDeclaration", "metaData": "3:0:3:12","children":[
         {"@type": "Native", "metaData": "3:0:3:6","nativeKind":"Tok"},
-        {"@type": "Native", "metaData": "3:7:3:12","nativeKind":"Specs([]Spec)","children":[
-          {"@type": "Native", "metaData": "3:7:3:12","nativeKind":"[0](ImportSpec)","children":[
-            {"@type": "StringLiteral", "metaData": "3:7:3:12","value":"\"fmt\"","content":"fmt"}
-          ]}
+        {"@type": "Native", "metaData": "3:7:3:12","nativeKind":"[0](ImportSpec)","children":[
+          {"@type": "StringLiteral", "metaData": "3:7:3:12","value":"\"fmt\"","content":"fmt"}
         ]}
       ]},
       {"@type": "FunctionDeclaration", "metaData": "5:0:23:1","returnType":

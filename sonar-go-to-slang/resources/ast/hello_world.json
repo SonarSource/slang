@@ -31,12 +31,10 @@
         {"@type": "Native", "metaData": "3:0:3:7","nativeKind":""},
         {"@type": "Identifier", "metaData": "3:8:3:12","name":"main"}
       ]},
-      {"@type": "Native", "metaData": "5:0:5:12","nativeKind":"[0](GenDecl)","children":[
+      {"@type": "ImportDeclaration", "metaData": "5:0:5:12","children":[
         {"@type": "Native", "metaData": "5:0:5:6","nativeKind":"Tok"},
-        {"@type": "Native", "metaData": "5:7:5:12","nativeKind":"Specs([]Spec)","children":[
-          {"@type": "Native", "metaData": "5:7:5:12","nativeKind":"[0](ImportSpec)","children":[
-            {"@type": "StringLiteral", "metaData": "5:7:5:12","value":"\"fmt\"","content":"fmt"}
-          ]}
+        {"@type": "Native", "metaData": "5:7:5:12","nativeKind":"[0](ImportSpec)","children":[
+          {"@type": "StringLiteral", "metaData": "5:7:5:12","value":"\"fmt\"","content":"fmt"}
         ]}
       ]},
       {"@type": "FunctionDeclaration", "metaData": "7:0:10:1","returnType":

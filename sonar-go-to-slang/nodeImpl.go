@@ -165,6 +165,22 @@ func (t *SlangMapper) getFormalParameter(node *Node) []*Node {
 	return formalParameters
 }
 
+func (t *SlangMapper) mapGenDeclImport(decl *ast.GenDecl, fieldName string) *Node {
+	var children []*Node
+	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.TokPos, decl.Tok, "Tok"))
+	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Lparen, token.LPAREN, "Lparen"))
+
+	for i := 0; i < len(decl.Specs); i++ {
+		children = t.appendNode(children, t.mapSpec(decl.Specs[i], "["+strconv.Itoa(i)+"]"))
+	}
+	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Rparen, token.RPAREN, "Rparen"))
+
+	slangField := make(map[string]interface{})
+	slangField["children"] = t.filterOutComments(children)
+
+	return t.createNode(decl, children, fieldName+"(ImportSpec)", "ImportDeclaration", slangField)
+}
+
 func (t *SlangMapper) mapGenDeclImpl(decl *ast.GenDecl, fieldName string) *Node {
 	slangField := make(map[string]interface{})
 
@@ -173,8 +189,10 @@ func (t *SlangMapper) mapGenDeclImpl(decl *ast.GenDecl, fieldName string) *Node 
 		slangField["isVal"] = true
 	case token.VAR:
 		slangField["isVal"] = false
+	case token.IMPORT:
+		return t.mapGenDeclImport(decl, fieldName)
 	default:
-		// token.IMPORT, token.TYPE, mapped to native
+		// others mapped to native
 		return nil
 	}
 

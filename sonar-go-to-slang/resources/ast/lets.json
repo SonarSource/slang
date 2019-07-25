@@ -88,12 +88,10 @@
         {"@type": "Native", "metaData": "2:0:2:7","nativeKind":""},
         {"@type": "Identifier", "metaData": "2:8:2:12","name":"main"}
       ]},
-      {"@type": "Native", "metaData": "3:0:3:12","nativeKind":"[0](GenDecl)","children":[
+      {"@type": "ImportDeclaration", "metaData": "3:0:3:12","children":[
         {"@type": "Native", "metaData": "3:0:3:6","nativeKind":"Tok"},
-        {"@type": "Native", "metaData": "3:7:3:12","nativeKind":"Specs([]Spec)","children":[
-          {"@type": "Native", "metaData": "3:7:3:12","nativeKind":"[0](ImportSpec)","children":[
-            {"@type": "StringLiteral", "metaData": "3:7:3:12","value":"\"fmt\"","content":"fmt"}
-          ]}
+        {"@type": "Native", "metaData": "3:7:3:12","nativeKind":"[0](ImportSpec)","children":[
+          {"@type": "StringLiteral", "metaData": "3:7:3:12","value":"\"fmt\"","content":"fmt"}
         ]}
       ]},
       {"@type": "Native", "metaData": "4:0:4:31","nativeKind":"[1](GenDecl)","children":[

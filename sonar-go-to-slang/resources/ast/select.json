@@ -251,16 +251,14 @@
         {"@type": "Native", "metaData": "1:0:1:7","nativeKind":""},
         {"@type": "Identifier", "metaData": "1:8:1:12","name":"main"}
       ]},
-      {"@type": "Native", "metaData": "5:0:8:1","nativeKind":"[0](GenDecl)","children":[
+      {"@type": "ImportDeclaration", "metaData": "5:0:8:1","children":[
         {"@type": "Native", "metaData": "5:0:5:6","nativeKind":"Tok"},
         {"@type": "Native", "metaData": "5:7:5:8","nativeKind":"Lparen"},
-        {"@type": "Native", "metaData": "6:1:7:7","nativeKind":"Specs([]Spec)","children":[
-          {"@type": "Native", "metaData": "6:1:6:6","nativeKind":"[0](ImportSpec)","children":[
-            {"@type": "StringLiteral", "metaData": "6:1:6:6","value":"\"fmt\"","content":"fmt"}
-          ]},
-          {"@type": "Native", "metaData": "7:1:7:7","nativeKind":"[1](ImportSpec)","children":[
-            {"@type": "StringLiteral", "metaData": "7:1:7:7","value":"\"time\"","content":"time"}
-          ]}
+        {"@type": "Native", "metaData": "6:1:6:6","nativeKind":"[0](ImportSpec)","children":[
+          {"@type": "StringLiteral", "metaData": "6:1:6:6","value":"\"fmt\"","content":"fmt"}
+        ]},
+        {"@type": "Native", "metaData": "7:1:7:7","nativeKind":"[1](ImportSpec)","children":[
+          {"@type": "StringLiteral", "metaData": "7:1:7:7","value":"\"time\"","content":"time"}
         ]},
         {"@type": "Native", "metaData": "8:0:8:1","nativeKind":"Rparen"}
       ]},
