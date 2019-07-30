@@ -1,16 +1,16 @@
 <p>Shared naming conventions allow teams to collaborate effectively. This rule raises an issue when a local variable or function parameter name does
 not match the provided regular expression.</p>
 <h2>Noncompliant Code Example</h2>
-<p>With the default regular expression <code>^[a-z][a-zA-Z0-9_]*$:</code></p>
+<p>With the default regular expression <code>^(_|[a-zA-Z0-9]+)$</code>:</p>
 <pre>
-func doSomething(PARAM int) { // Noncompliant
-  var LOCAL int; // Noncompliant
+func doSomething(my_param int) { // Noncompliant
+  var local_ int; // Noncompliant
   ...
 }
 </pre>
 <h2>Compliant Solution</h2>
 <pre>
-func doSomething(param int) {
+func doSomething(myParam int) {
   var local int;
   ...
 }{code}
