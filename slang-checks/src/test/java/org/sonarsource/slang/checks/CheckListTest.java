@@ -33,9 +33,12 @@ public class CheckListTest {
 
   @Test
   public void all_checks_should_be_present() {
+    Set<String> languageSpecificChecks = new HashSet<>(Arrays.asList(
+      "HardcodedSalesforceRecordIdCheck.java"
+    ));
     File directory = new File("src/main/java/org/sonarsource/slang/checks");
     File[] checkFiles = directory.listFiles((dir, name) ->
-        name.endsWith("Check.java") && !name.startsWith("Abstract"));
+        name.endsWith("Check.java") && !languageSpecificChecks.contains(name) && !name.startsWith("Abstract"));
     assertThat(CheckList.allChecks().size() + ALL_CHECKS_WITH_LANGUAGE_CONFIG.length).isEqualTo(checkFiles.length);
   }
 
