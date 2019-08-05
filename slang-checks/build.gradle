@@ -4,6 +4,7 @@ dependencies {
     compile 'com.google.code.findbugs:jsr305'
     compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
     testCompile project(':slang-antlr')
+    testCompile project(':slang-testing')
     testCompile 'junit:junit'
     testCompile 'org.assertj:assertj-core'
     testCompile 'org.sonarsource.analyzer-commons:sonar-analyzer-test-commons'
