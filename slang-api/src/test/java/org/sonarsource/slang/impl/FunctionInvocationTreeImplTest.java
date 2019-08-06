@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
 import org.sonarsource.slang.api.FunctionInvocationTree;
+import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
 
@@ -41,5 +42,18 @@ public class FunctionInvocationTreeImplTest {
     assertThat(tree.arguments().get(0)).isEqualTo(arg1);
     assertThat(tree.arguments().get(1)).isEqualTo(arg2);
     assertThat(tree.memberSelect()).isEqualTo(identifierTree);
+  }
+
+  @Test
+  public void function_invocation_with_member_select() {
+    TreeMetaData meta = null;
+    IdentifierTree identifierTree = new IdentifierTreeImpl(meta, "y");
+    Tree member = new IdentifierTreeImpl(meta, "x");
+    Tree memberSelect = new MemberSelectTreeImpl(meta, member, identifierTree);
+    List<Tree> args = new ArrayList<>();
+
+    FunctionInvocationTree tree = new FunctionInvocationTreeImpl(meta, memberSelect, args);
+    assertThat(tree.children()).containsExactly(memberSelect);
+    assertThat(tree.memberSelect()).isEqualTo(memberSelect);
   }
 }

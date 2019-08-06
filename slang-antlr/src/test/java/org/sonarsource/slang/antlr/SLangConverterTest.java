@@ -41,6 +41,7 @@ import org.sonarsource.slang.api.JumpTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.MatchTree;
+import org.sonarsource.slang.api.MemberSelectTree;
 import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.PackageDeclarationTree;
@@ -665,6 +666,23 @@ public class SLangConverterTest {
 
     assertThat(functionInvocationNoArgument.descendants()
       .anyMatch(e -> e instanceof IdentifierTree && ((IdentifierTree) e).name().equals("function"))).isTrue();
+  }
+
+
+  @Test
+  public void memberSelect() {
+    Tree topLevelNoArgument = converter.parse("A.B.F();");
+    assertTree(topLevelNoArgument.children().get(0)).isInstanceOf(FunctionInvocationTree.class);
+    FunctionInvocationTree functionInvocationNoArgument = (FunctionInvocationTree) topLevelNoArgument.children().get(0);
+    assertTree(functionInvocationNoArgument.memberSelect()).isInstanceOf(MemberSelectTree.class);
+
+    MemberSelectTree memberSelectTree = (MemberSelectTree)functionInvocationNoArgument.memberSelect();
+    assertTree(memberSelectTree.identifier()).isIdentifier("F");
+
+    assertTree(memberSelectTree.expression()).isInstanceOf(MemberSelectTree.class);
+    MemberSelectTree nestedMemberSelect = (MemberSelectTree)memberSelectTree.expression();
+    assertTree(nestedMemberSelect.identifier()).isIdentifier("B");
+    assertTree(nestedMemberSelect.expression()).isIdentifier("A");
   }
 
   @Test

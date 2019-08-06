@@ -69,6 +69,7 @@ import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.LoopTreeImpl;
 import org.sonarsource.slang.impl.MatchCaseTreeImpl;
 import org.sonarsource.slang.impl.MatchTreeImpl;
+import org.sonarsource.slang.impl.MemberSelectTreeImpl;
 import org.sonarsource.slang.impl.ModifierTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.PackageDeclarationTreeImpl;
@@ -331,7 +332,17 @@ public class SLangConverter implements ASTConverter {
         arguments.addAll(list(argumentListContext.statement()));
       }
 
-      return new FunctionInvocationTreeImpl(meta(ctx), visit(ctx.methodName()), arguments);
+      return new FunctionInvocationTreeImpl(meta(ctx), visit(ctx.memberSelect()), arguments);
+    }
+
+    @Override
+    public Tree visitMemberSelect(SLangParser.MemberSelectContext ctx) {
+      IdentifierTree identifier = (IdentifierTree) visit(ctx.identifier());
+      if (ctx.memberSelect() != null) {
+        return new MemberSelectTreeImpl(meta(ctx), visit(ctx.memberSelect()), identifier);
+      } else {
+        return identifier;
+      }
     }
 
     @Override
