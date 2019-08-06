@@ -32,6 +32,7 @@ import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.ExceptionHandlingTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
+import org.sonarsource.slang.api.FunctionInvocationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.ImportDeclarationTree;
@@ -640,14 +641,27 @@ public class SLangConverterTest {
 
   @Test
   public void methodInvocations() {
-    Tree functionInvocationNoArgument = converter.parse("function();");
-    assertTree(functionInvocationNoArgument).isEquivalentTo(functionInvocationNoArgument);
-    assertTree(functionInvocationNoArgument).isEquivalentTo(converter.parse("function();"));
-    assertTree(functionInvocationNoArgument).isNotEquivalentTo(converter.parse("function2();"));
-    assertTree(functionInvocationNoArgument).isNotEquivalentTo(converter.parse("function(1);"));
-    assertTree(functionInvocationNoArgument).isNotEquivalentTo(converter.parse("function(1, 2);"));
+    Tree topLevelNoArgument = converter.parse("function();");
+    assertTree(topLevelNoArgument.children().get(0)).isInstanceOf(FunctionInvocationTree.class);
+    FunctionInvocationTree functionInvocationNoArgument = (FunctionInvocationTree) topLevelNoArgument.children().get(0);
+    assertTree(functionInvocationNoArgument.memberSelect()).isIdentifier("function");
+    assertThat(functionInvocationNoArgument.arguments()).isEmpty();
+
+    Tree topLevelTwoArgs = converter.parse("function(1, 2);");
+    assertTree(topLevelTwoArgs.children().get(0)).isInstanceOf(FunctionInvocationTree.class);
+    FunctionInvocationTree functionInvocationTreeTwoArgs = (FunctionInvocationTree) topLevelTwoArgs.children().get(0);
+    assertTree(functionInvocationTreeTwoArgs.memberSelect()).isIdentifier("function");
+    assertThat(functionInvocationTreeTwoArgs.arguments()).hasSize(2);
+    assertThat(functionInvocationTreeTwoArgs.descendants()
+      .anyMatch(e -> e instanceof LiteralTree && ((LiteralTree) e).value().equals("1"))).isTrue();
+
+    assertTree(topLevelNoArgument).isEquivalentTo(topLevelNoArgument);
+    assertTree(topLevelNoArgument).isEquivalentTo(converter.parse("function();"));
+    assertTree(topLevelNoArgument).isNotEquivalentTo(converter.parse("function2();"));
+    assertTree(topLevelNoArgument).isNotEquivalentTo(converter.parse("function(1);"));
+    assertTree(topLevelNoArgument).isNotEquivalentTo(topLevelTwoArgs);
     assertTree(converter.parse("function(1);")).isEquivalentTo(converter.parse("function(1);"));
-    assertTree(converter.parse("function(1);")).isNotEquivalentTo(converter.parse("function(1, 2);"));
+    assertTree(converter.parse("function(1);")).isNotEquivalentTo(topLevelTwoArgs);
 
     assertThat(functionInvocationNoArgument.descendants()
       .anyMatch(e -> e instanceof IdentifierTree && ((IdentifierTree) e).name().equals("function"))).isTrue();
