@@ -33,6 +33,7 @@ import org.sonarsource.slang.impl.MemberSelectTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
 
 import static org.sonarsource.slang.checks.utils.FunctionUtils.hasFunctionCallName;
+import static org.sonarsource.slang.checks.utils.FunctionUtils.hasFunctionCallFullNameIgnoreCase;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class FunctionUtilsTest {
@@ -66,4 +67,38 @@ public class FunctionUtilsTest {
     assertThat(hasFunctionCallName(tree, "function")).isFalse();
   }
 
+  @Test
+  public void test_has_function_full_name_identifier() {
+    FunctionInvocationTree tree = new FunctionInvocationTreeImpl(meta, identifierTree, args);
+    assertThat(hasFunctionCallFullNameIgnoreCase(tree, "function")).isTrue();
+    assertThat(hasFunctionCallFullNameIgnoreCase(tree, "FuNcTioN")).isTrue();
+    assertThat(hasFunctionCallFullNameIgnoreCase(tree, "mySuperFunction")).isFalse();
+    assertThat(hasFunctionCallFullNameIgnoreCase(tree)).isFalse();
+  }
+
+  @Test
+  public void test_has_function_full_name_method_select() {
+    IdentifierTree memberA = new IdentifierTreeImpl(meta, "A");
+    IdentifierTree memberB = new IdentifierTreeImpl(meta, "B");
+    Tree methodSelectAB = new MemberSelectTreeImpl(meta, memberA, memberB);
+    Tree methodSelect = new MemberSelectTreeImpl(meta, methodSelectAB, identifierTree);
+    FunctionInvocationTree tree = new FunctionInvocationTreeImpl(meta, methodSelect, args);
+
+    assertThat(hasFunctionCallFullNameIgnoreCase(tree)).isFalse();
+    assertThat(hasFunctionCallFullNameIgnoreCase(tree, "function")).isFalse();
+    assertThat(hasFunctionCallFullNameIgnoreCase(tree, "A")).isFalse();
+    assertThat(hasFunctionCallFullNameIgnoreCase(tree, "B")).isFalse();
+    assertThat(hasFunctionCallFullNameIgnoreCase(tree, "A", "B")).isFalse();
+    assertThat(hasFunctionCallFullNameIgnoreCase(tree, "A", "function")).isFalse();
+    assertThat(hasFunctionCallFullNameIgnoreCase(tree, "B", "function")).isFalse();
+    assertThat(hasFunctionCallFullNameIgnoreCase(tree, "A", "B", "function")).isTrue();
+    assertThat(hasFunctionCallFullNameIgnoreCase(tree, "A", "B", "function" , "C")).isFalse();
+  }
+
+  @Test
+  public void test_has_function_full_name_unknown() {
+    Tree nativeNode = new NativeTreeImpl(meta, new TypeNativeKind(), null);
+    FunctionInvocationTree tree = new FunctionInvocationTreeImpl(meta, nativeNode, args);
+    assertThat(hasFunctionCallFullNameIgnoreCase(tree, "function")).isFalse();
+  }
 }

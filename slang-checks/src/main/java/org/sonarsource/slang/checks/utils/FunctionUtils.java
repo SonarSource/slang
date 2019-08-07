@@ -20,6 +20,8 @@
 package org.sonarsource.slang.checks.utils;
 
 import java.util.Optional;
+import java.util.Arrays;
+import java.util.List;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.FunctionInvocationTree;
 import org.sonarsource.slang.api.IdentifierTree;
@@ -64,5 +66,27 @@ public class FunctionUtils {
     } else {
       return Optional.empty();
     }
+  }
+
+  public static boolean hasFunctionCallFullNameIgnoreCase(FunctionInvocationTree tree, String... names) {
+    return hasFunctionCallFullNameIgnoreCaseHelper(tree.memberSelect(), Arrays.asList(names));
+  }
+
+  private static boolean hasFunctionCallFullNameIgnoreCaseHelper(Tree tree, List<String> names) {
+    if (tree instanceof IdentifierTree) {
+      return names.size() == 1 && ((IdentifierTree) tree).name().equalsIgnoreCase(names.get(0));
+    } else if (tree instanceof MemberSelectTree) {
+      MemberSelectTree memberSelectTree = (MemberSelectTree) tree;
+      return names.size() > 1
+        && memberSelectTree.identifier().name().equalsIgnoreCase(names.get(names.size()-1))
+        && hasFunctionCallFullNameIgnoreCaseHelper(memberSelectTree.expression(), dropLastElement(names));
+    } else {
+      // Any other node (native, ...): we don't known anything about them!
+      return false;
+    }
+  }
+
+  private static List<String> dropLastElement(List<String> list) {
+    return list.subList(0, list.size()-1);
   }
 }
