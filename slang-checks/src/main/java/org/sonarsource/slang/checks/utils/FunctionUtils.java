@@ -53,7 +53,7 @@ public class FunctionUtils {
       .anyMatch(modifier -> modifier.kind() == kind);
   }
 
-  public static boolean hasFunctionCallName(FunctionInvocationTree tree, String name) {
+  public static boolean hasFunctionCallNameIgnoreCase(FunctionInvocationTree tree, String name) {
     return getFunctionInvocationName(tree).filter(name::equalsIgnoreCase).isPresent();
   }
 
