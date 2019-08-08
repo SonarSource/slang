@@ -19,8 +19,13 @@
  */
 package org.sonarsource.slang.checks.utils;
 
+import java.util.Optional;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
+import org.sonarsource.slang.api.FunctionInvocationTree;
+import org.sonarsource.slang.api.IdentifierTree;
+import org.sonarsource.slang.api.MemberSelectTree;
 import org.sonarsource.slang.api.ModifierTree;
+import org.sonarsource.slang.api.Tree;
 
 import static org.sonarsource.slang.api.ModifierTree.Kind.OVERRIDE;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
@@ -46,4 +51,18 @@ public class FunctionUtils {
       .anyMatch(modifier -> modifier.kind() == kind);
   }
 
+  public static boolean hasFunctionCallName(FunctionInvocationTree tree, String name) {
+    return getFunctionInvocationName(tree).filter(name::equalsIgnoreCase).isPresent();
+  }
+
+  private static Optional<String> getFunctionInvocationName(FunctionInvocationTree tree) {
+    Tree memberSelect = tree.memberSelect();
+    if (memberSelect instanceof IdentifierTree) {
+      return Optional.of(((IdentifierTree) memberSelect).name());
+    } else if (memberSelect instanceof MemberSelectTree) {
+      return Optional.of(((MemberSelectTree)memberSelect).identifier().name());
+    } else {
+      return Optional.empty();
+    }
+  }
 }
