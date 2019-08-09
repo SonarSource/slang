@@ -136,12 +136,12 @@ public class GoSensorTest {
         " pwd := \"secret\"\n" +
         "}");
     failingFile = spy(failingFile);
-    doThrow(new IOException()).when(failingFile).contents();
+    doThrow(new IOException("The file is corrupted")).when(failingFile).contents();
 
     sensorContext.fileSystem().add(failingFile);
     GoSensor goSensor = getSensor("S1135");
     goSensor.execute(sensorContext);
-    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("Cannot read lets.go");
+    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("Cannot read 'lets.go': The file is corrupted");
   }
 
   @Test

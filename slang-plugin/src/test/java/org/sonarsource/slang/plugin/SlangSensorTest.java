@@ -232,7 +232,7 @@ public class SlangSensorTest extends AbstractSensorTest {
     assertThat(analysisErrors).hasSize(1);
     AnalysisError analysisError = analysisErrors.iterator().next();
     assertThat(analysisError.inputFile()).isEqualTo(inputFile);
-    assertThat(logTester.logs()).contains("Cannot analyse file1.slang");
+    assertThat(logTester.logs()).contains("Cannot analyse 'file1.slang': BOUM");
   }
 
   @Test

@@ -58,16 +58,16 @@ public class GoConverter implements ASTConverter {
 
   @Override
   public Tree parse(String content) {
+    if (content.length() > MAX_SUPPORTED_SOURCE_FILE_SIZE) {
+      throw new ParseException("The file size is too big and should be excluded," +
+        " its size is " + content.length() + " (maximum allowed is " + MAX_SUPPORTED_SOURCE_FILE_SIZE + " bytes)");
+    }
     try {
-      if (content.length() > MAX_SUPPORTED_SOURCE_FILE_SIZE) {
-        throw new ParseException("The file size is too big and should be excluded," +
-          " its size is " + content.length() + " (maximum allowed is " + MAX_SUPPORTED_SOURCE_FILE_SIZE + " bytes)");
-      }
       return JsonTree.fromJson(executeGoToJsonProcess(content));
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
-      throw new ParseException(e.getMessage(), null, e);
-    } catch (IOException | RuntimeException e) {
+      throw new ParseException("Go parser external process interrupted: " + e.getMessage(), null, e);
+    } catch (IOException e) {
       throw new ParseException(e.getMessage(), null, e);
     }
   }
@@ -84,11 +84,11 @@ public class GoConverter implements ASTConverter {
     }
     boolean exited = process.waitFor(PROCESS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
     if (exited && process.exitValue() != 0) {
-      throw new IllegalStateException("Parser returned non-zero exit value: " + process.exitValue());
+      throw new ParseException("Go parser external process returned non-zero exit value: " + process.exitValue());
     }
     if (process.isAlive()) {
       process.destroyForcibly();
-      throw new IllegalStateException("Took too long to parse. External process killed forcibly");
+      throw new ParseException("Go parser external process took too long. External process killed forcibly");
     }
     return output;
   }

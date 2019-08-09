@@ -107,24 +107,35 @@ public abstract class SlangSensor implements Sensor {
     String content;
     try {
       content = inputFile.contents();
-    } catch (IOException e) {
-      throw new ParseException("Cannot read " + inputFile);
+    } catch (IOException | RuntimeException e) {
+      throw toParseException("read", inputFile, e);
     }
 
     if (EMPTY_FILE_CONTENT_PATTERN.matcher(content).matches()) {
       return;
     }
 
-    Tree tree = statistics.time("Parse", () -> converter.parse(content));
+    Tree tree = statistics.time("Parse", () -> {
+      try {
+        return converter.parse(content);
+      } catch (RuntimeException e) {
+        throw toParseException("parse", inputFile, e);
+      }
+    });
     for (TreeVisitor<InputFileContext> visitor : visitors) {
       try {
         String visitorId = visitor.getClass().getSimpleName();
         statistics.time(visitorId, () -> visitor.scan(inputFileContext, tree));
       } catch (RuntimeException e) {
         inputFileContext.reportAnalysisError(e.getMessage(), null);
-        LOG.error("Cannot analyse " + inputFile, e);
+        LOG.error("Cannot analyse '" + inputFile +"': " + e.getMessage(), e);
       }
     }
+  }
+
+  private static ParseException toParseException(String action, InputFile inputFile, Exception cause) {
+    TextPointer position = cause instanceof ParseException ? ((ParseException) cause).getPosition() : null;
+    return new ParseException("Cannot " + action + " '" + inputFile + "': " + cause.getMessage(), position, cause);
   }
 
   private static void logParsingError(InputFile inputFile, ParseException e) {

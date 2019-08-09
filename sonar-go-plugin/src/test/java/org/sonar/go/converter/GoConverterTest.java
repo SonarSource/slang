@@ -2,9 +2,9 @@ package org.sonar.go.converter;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -15,6 +15,9 @@ import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.sonar.go.converter.GoConverter.DefaultCommand.getExecutableForCurrentOS;
 
 public class GoConverterTest {
@@ -42,10 +45,21 @@ public class GoConverterTest {
   @Test
   public void parse_error() {
     exceptionRule.expect(ParseException.class);
-    exceptionRule.expectMessage("Parser returned non-zero exit value: 2");
+    exceptionRule.expectMessage("Go parser external process returned non-zero exit value: 2");
 
     GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
     converter.parse("$!#@");
+  }
+
+  @Test
+  public void invalid_command() {
+    exceptionRule.expect(ParseException.class);
+    exceptionRule.expectMessage(containsString("Cannot run program \"invalid-command\""));
+
+    GoConverter.Command command = mock(GoConverter.Command.class);
+    when(command.getCommand()).thenReturn(Collections.singletonList("invalid-command"));
+    GoConverter converter = new GoConverter(command);
+    converter.parse("package main\nfunc foo() {}");
   }
 
   @Test
