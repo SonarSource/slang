@@ -6,9 +6,8 @@ plugins {
 
 ext {
     scoveragePluginVersion = '1.3.0'
-    scalaVersion = '2.12.7'
+    scalaVersion = '2.12.9'
     scalaBinaryVersion = '2.12'
-    kotlinVersion = '1.2.41'
 }
 
 // compile scala before java
@@ -44,7 +43,7 @@ dependencies {
     compile project(':slang-api')
     compile project(':slang-checks')
     compile project(':slang-plugin')
-    compile('org.scalameta:scalameta_2.12:4.0.0') {
+    compile('org.scalameta:scalameta_2.12:4.2.0') {
         exclude group: 'org.scalameta', module: 'semanticdb_2.12'
         exclude group: 'com.lihaoyi', module: 'fansi_2.12'
     }
@@ -54,7 +53,7 @@ dependencies {
     testCompile 'org.assertj:assertj-core'
     testCompile 'org.mockito:mockito-core'
 
-    scoverage 'org.scoverage:scalac-scoverage-plugin_2.12:1.3.1', 'org.scoverage:scalac-scoverage-runtime_2.12:1.3.1'
+    scoverage 'org.scoverage:scalac-scoverage-plugin_2.12:1.4.0', 'org.scoverage:scalac-scoverage-runtime_2.12:1.4.0'
 }
 
 jar {
@@ -99,7 +98,7 @@ shadowJar {
     exclude 'scala/io/*'
     exclude 'scala/util/matching/*'
     doLast {
-        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 9_000_000L, 10_000_000L)
+        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 9_000_000L, 15_000_000L)
     }
 }
 
