@@ -20,7 +20,6 @@
 package org.sonarsource.slang.checks;
 
 import org.sonarsource.slang.api.AssignmentExpressionTree;
-import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.StringLiteralTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.VariableDeclarationTree;
@@ -35,6 +34,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
+import org.sonarsource.slang.checks.utils.ExpressionUtils;
 
 @Rule(key = "S2068")
 public class HardcodedCredentialsCheck implements SlangCheck {
@@ -54,8 +54,9 @@ public class HardcodedCredentialsCheck implements SlangCheck {
   public void initialize(InitContext init) {
     init.register(AssignmentExpressionTree.class, (ctx, tree) -> {
       Tree leftHandSide = tree.leftHandSide();
-      if (leftHandSide instanceof IdentifierTree && tree.statementOrExpression() instanceof StringLiteralTree) {
-        getPasswordVariableName(((IdentifierTree) leftHandSide).name())
+      if (tree.statementOrExpression() instanceof StringLiteralTree) {
+        ExpressionUtils.getMemberSelectOrIdentifierName(tree.leftHandSide())
+          .flatMap(this::getPasswordVariableName)
           .ifPresent(passwordVariableName -> report(ctx, leftHandSide, passwordVariableName));
       }
     });

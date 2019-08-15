@@ -167,7 +167,7 @@ argumentList
   ; 
 
 expressionName
-  :  identifier
+  :  memberSelect
   ;
 
 conditional

@@ -22,13 +22,16 @@ package org.sonarsource.slang.checks.utils;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
+import java.util.Optional;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.ExceptionHandlingTree;
+import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.MatchCaseTree;
+import org.sonarsource.slang.api.MemberSelectTree;
 import org.sonarsource.slang.api.ParenthesizedExpressionTree;
 import org.sonarsource.slang.api.PlaceHolderTree;
 import org.sonarsource.slang.api.TopLevelTree;
@@ -120,6 +123,16 @@ public class ExpressionUtils {
       return child == ifTree.thenBranch() || child == ifTree.elseBranch();
     }
     return false;
+  }
+
+  public static Optional<String> getMemberSelectOrIdentifierName(Tree tree) {
+    if (tree instanceof IdentifierTree) {
+      return Optional.of(((IdentifierTree) tree).name());
+    } else if (tree instanceof MemberSelectTree) {
+      return Optional.of(((MemberSelectTree)tree).identifier().name());
+    } else {
+      return Optional.empty();
+    }
   }
 
 }

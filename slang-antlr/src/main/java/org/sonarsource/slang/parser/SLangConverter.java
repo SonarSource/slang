@@ -337,11 +337,12 @@ public class SLangConverter implements ASTConverter {
 
     @Override
     public Tree visitMemberSelect(SLangParser.MemberSelectContext ctx) {
-      IdentifierTree identifier = (IdentifierTree) visit(ctx.identifier());
+      Tree id = visit(ctx.identifier());
       if (ctx.memberSelect() != null) {
+        IdentifierTree identifier = (IdentifierTree) id;
         return new MemberSelectTreeImpl(meta(ctx), visit(ctx.memberSelect()), identifier);
       } else {
-        return identifier;
+        return id;
       }
     }
 

@@ -668,9 +668,34 @@ public class SLangConverterTest {
       .anyMatch(e -> e instanceof IdentifierTree && ((IdentifierTree) e).name().equals("function"))).isTrue();
   }
 
-
   @Test
   public void memberSelect() {
+    Tree topLevelNoArgument = converter.parse("A.B;");
+    assertTree(topLevelNoArgument.children().get(0)).isInstanceOf(MemberSelectTree.class);
+
+    MemberSelectTree memberSelectTree = (MemberSelectTree) topLevelNoArgument.children().get(0);
+    assertTree(memberSelectTree.identifier()).isIdentifier("B");
+    assertTree(memberSelectTree.expression()).isIdentifier("A");
+  }
+
+  @Test
+  public void memberSelectInAssignment() {
+    Tree topLevelNoArgument = converter.parse("A.B.F = 1;");
+    assertTree(topLevelNoArgument.children().get(0)).isInstanceOf(AssignmentExpressionTree.class);
+    AssignmentExpressionTree assignmentExpressionTree = (AssignmentExpressionTree) topLevelNoArgument.children().get(0);
+    assertTree(assignmentExpressionTree.leftHandSide()).isInstanceOf(MemberSelectTree.class);
+
+    MemberSelectTree memberSelectTree = (MemberSelectTree)assignmentExpressionTree.leftHandSide();
+    assertTree(memberSelectTree.identifier()).isIdentifier("F");
+
+    assertTree(memberSelectTree.expression()).isInstanceOf(MemberSelectTree.class);
+    MemberSelectTree nestedMemberSelect = (MemberSelectTree)memberSelectTree.expression();
+    assertTree(nestedMemberSelect.identifier()).isIdentifier("B");
+    assertTree(nestedMemberSelect.expression()).isIdentifier("A");
+  }
+
+  @Test
+  public void memberSelectInFunctionCall() {
     Tree topLevelNoArgument = converter.parse("A.B.F();");
     assertTree(topLevelNoArgument.children().get(0)).isInstanceOf(FunctionInvocationTree.class);
     FunctionInvocationTree functionInvocationNoArgument = (FunctionInvocationTree) topLevelNoArgument.children().get(0);

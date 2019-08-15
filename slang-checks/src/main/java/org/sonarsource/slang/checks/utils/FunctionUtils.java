@@ -31,6 +31,7 @@ import org.sonarsource.slang.api.Tree;
 
 import static org.sonarsource.slang.api.ModifierTree.Kind.OVERRIDE;
 import static org.sonarsource.slang.api.ModifierTree.Kind.PRIVATE;
+import static org.sonarsource.slang.checks.utils.ExpressionUtils.getMemberSelectOrIdentifierName;
 
 public class FunctionUtils {
 
@@ -58,14 +59,7 @@ public class FunctionUtils {
   }
 
   private static Optional<String> getFunctionInvocationName(FunctionInvocationTree tree) {
-    Tree memberSelect = tree.memberSelect();
-    if (memberSelect instanceof IdentifierTree) {
-      return Optional.of(((IdentifierTree) memberSelect).name());
-    } else if (memberSelect instanceof MemberSelectTree) {
-      return Optional.of(((MemberSelectTree)memberSelect).identifier().name());
-    } else {
-      return Optional.empty();
-    }
+    return getMemberSelectOrIdentifierName(tree.memberSelect());
   }
 
   public static boolean hasFunctionCallFullNameIgnoreCase(FunctionInvocationTree tree, String... names) {
