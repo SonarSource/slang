@@ -24,6 +24,21 @@
             "line": 3,
             "column": 3
           }
+        },
+        {
+          "severity": "warning",
+          "message": "Lint/UselessAssignment: Useless assignment to variable - `param`.",
+          "cop_name": "Lint/UselessAssignment",
+          "corrected": false,
+          "location": {
+            "start_line": 130,
+            "start_column": 3,
+            "last_line": 130,
+            "last_column": 7,
+            "length": 5,
+            "line": 130,
+            "column": 3
+          }
         }
       ]
     },
@@ -64,7 +79,7 @@
     }
   ],
   "summary": {
-    "offense_count": 3,
+    "offense_count": 4,
     "target_file_count": 2,
     "inspected_file_count": 2
   }

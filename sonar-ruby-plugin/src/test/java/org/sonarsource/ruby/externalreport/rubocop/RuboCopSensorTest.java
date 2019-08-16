@@ -74,7 +74,7 @@ public class RuboCopSensorTest {
   @Test
   public void issues_with_sonarqube_72() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "rubocop-report.json");
-    assertThat(externalIssues).hasSize(3);
+    assertThat(externalIssues).hasSize(4);
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:useless-assignment.rb");
@@ -85,20 +85,28 @@ public class RuboCopSensorTest {
     assertThat(location(first)).isEqualTo("from line 3 offset 2 to line 3 offset 7");
 
     ExternalIssue second = externalIssues.get(1);
-    assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:yaml-issue.rb");
-    assertThat(second.ruleKey().toString()).isEqualTo("rubocop:Security/YAMLLoad");
-    assertThat(second.type()).isEqualTo(RuleType.VULNERABILITY);
-    assertThat(second.severity()).isEqualTo(Severity.MAJOR);
-    assertThat(second.primaryLocation().message()).isEqualTo("Security/YAMLLoad: Prefer using `YAML.safe_load` over `YAML.load`.");
-    assertThat(location(second)).isEqualTo("from line 2 offset 7 to line 2 offset 11");
+    assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:useless-assignment.rb");
+    assertThat(first.ruleKey().toString()).isEqualTo("rubocop:Lint/UselessAssignment");
+    assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
+    assertThat(first.severity()).isEqualTo(Severity.MAJOR);
+    assertThat(first.primaryLocation().message()).isEqualTo("Lint/UselessAssignment: Useless assignment to variable - `param`.");
+    assertThat(location(second)).isEqualTo("from line 130 offset 2 to line 130 offset 7");
 
     ExternalIssue third = externalIssues.get(2);
     assertThat(third.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:yaml-issue.rb");
-    assertThat(third.ruleKey().toString()).isEqualTo("rubocop:Style/StringLiterals");
-    assertThat(third.type()).isEqualTo(RuleType.CODE_SMELL);
-    assertThat(third.severity()).isEqualTo(Severity.MINOR);
-    assertThat(third.primaryLocation().message()).isEqualTo("Style/StringLiterals: Prefer single-quoted strings when you don't need string interpolation or special symbols.");
-    assertThat(location(third)).isEqualTo("from line 2 offset 12 to line 2 offset 21");
+    assertThat(third.ruleKey().toString()).isEqualTo("rubocop:Security/YAMLLoad");
+    assertThat(third.type()).isEqualTo(RuleType.VULNERABILITY);
+    assertThat(third.severity()).isEqualTo(Severity.MAJOR);
+    assertThat(third.primaryLocation().message()).isEqualTo("Security/YAMLLoad: Prefer using `YAML.safe_load` over `YAML.load`.");
+    assertThat(location(third)).isEqualTo("from line 2 offset 7 to line 2 offset 11");
+
+    ExternalIssue fourth = externalIssues.get(3);
+    assertThat(fourth.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:yaml-issue.rb");
+    assertThat(fourth.ruleKey().toString()).isEqualTo("rubocop:Style/StringLiterals");
+    assertThat(fourth.type()).isEqualTo(RuleType.CODE_SMELL);
+    assertThat(fourth.severity()).isEqualTo(Severity.MINOR);
+    assertThat(fourth.primaryLocation().message()).isEqualTo("Style/StringLiterals: Prefer single-quoted strings when you don't need string interpolation or special symbols.");
+    assertThat(location(fourth)).isEqualTo("from line 2 offset 12 to line 2 offset 21");
 
     assertNoErrorWarnDebugLogs(logTester);
   }
@@ -171,7 +179,7 @@ public class RuboCopSensorTest {
     assertThat(location(externalIssues.get(2))).isEqualTo("from line 3 offset 0 to line 3 offset 15");
     assertThat(location(externalIssues.get(3))).isEqualTo("from line 3 offset 0 to line 3 offset 15");
 
-    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR))).contains("100 is not a valid line for pointer. File useless-assignment.rb has 5 line(s)");
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR))).contains("1000 is not a valid line for pointer. File useless-assignment.rb has 132 line(s)");
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.WARN)))
       .isEqualTo("Fail to resolve 1 file(s). No RuboCop issues will be imported on the following file(s): invalid-path.json");
     assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
