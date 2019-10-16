@@ -1,0 +1,16 @@
+name: public-sync
+# This workflow is triggered on schedule
+on:
+  schedule:
+  - cron: 0 0 * * *
+ 
+jobs:
+  nightly_build:
+    runs-on: ubuntu-latest
+    name: Run a nightly sync between next and sonarcloud
+    steps:
+    - name: sync public code from slang-enterprise to slang
+      uses: SonarSource/gh-action_public_git_sync@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TARGET_REPOSITORY: 'slang'
