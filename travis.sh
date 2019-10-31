@@ -19,7 +19,6 @@ if [ "${TRAVIS_REPO_SLUG}" == "SonarSource/slang" ];then
     -Dsonar.organization=sonarsource
 
 else
-  echo "Building slang-enterprise"
-  ./private/private-travis.sh
+  echo "ERROR: slang-enterprise should be disabled on travis and activated on cirrus-ci."
+  false
 fi
-
