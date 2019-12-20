@@ -18,6 +18,8 @@ jobs:
     - name: Notify success on Slack
       uses: Ilshidur/action-slack@1.6.2
       env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_USERNAME: Dogfood build action     
         SLACK_OVERRIDE_MESSAGE: 'Nightly public sync: successful'
       with:
         args: 'Succeed to sync slang and slang-enterprise'
