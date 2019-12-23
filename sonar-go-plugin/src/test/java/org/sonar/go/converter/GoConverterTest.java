@@ -29,7 +29,7 @@ public class GoConverterTest {
   @Test
   public void test_parse_return() {
     GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
-    Tree tree = converter.parse("package main\nfunc foo() {return 42}");
+    Tree tree = converter.parse("package main\nfunc foo() {return 0b_0010_1010}");
     List<Tree> returnList = tree.descendants().filter(t -> t instanceof ReturnTree).collect(Collectors.toList());
     assertThat(returnList).hasSize(1);
   }
