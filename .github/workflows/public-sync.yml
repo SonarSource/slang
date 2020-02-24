@@ -14,6 +14,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         GITHUB_TARGET_REPOSITORY: 'slang'
+        BRANCH_NAME: 'master'
     #slack notifications
     - name: Notify success on Slack
       uses: Ilshidur/action-slack@1.6.2
