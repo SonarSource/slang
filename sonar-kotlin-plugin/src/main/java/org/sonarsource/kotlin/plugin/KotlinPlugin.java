@@ -54,7 +54,8 @@ public class KotlinPlugin implements Plugin {
       KotlinLanguage.class,
       KotlinSensor.class,
       KotlinRulesDefinition.class,
-      KotlinProfileDefinition.class);
+      KotlinProfileDefinition.class,
+      KotlinSurefireParser.class);
 
     boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
     if (context.getRuntime().getProduct() != SonarProduct.SONARLINT) {

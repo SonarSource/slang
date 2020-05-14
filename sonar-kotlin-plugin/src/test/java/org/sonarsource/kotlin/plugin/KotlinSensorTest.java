@@ -19,7 +19,6 @@
  */
 package org.sonarsource.kotlin.plugin;
 
-import java.util.Collection;
 import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
@@ -31,7 +30,12 @@ import org.sonar.api.batch.sensor.issue.IssueLocation;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
+import org.sonar.java.DefaultJavaResourceLocator;
+import org.sonar.java.JavaClasspath;
+import org.sonar.plugins.surefire.SurefireJavaParser;
 import org.sonarsource.slang.testing.AbstractSensorTest;
+
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TextRangeAssert.assertTextRange;
@@ -131,7 +135,10 @@ public class KotlinSensorTest extends AbstractSensorTest {
   }
 
   private KotlinSensor sensor(CheckFactory checkFactory) {
-    return new KotlinSensor(checkFactory, fileLinesContextFactory, new NoSonarFilter(), language());
+    return new KotlinSensor(checkFactory, fileLinesContextFactory, new NoSonarFilter(), language(), kotlinSurefireParser());
   }
 
+  private KotlinSurefireParser kotlinSurefireParser() {
+    return new KotlinSurefireParser(new SurefireJavaParser(new DefaultJavaResourceLocator(new JavaClasspath(context.config(),  context.fileSystem()))));
+  }
 }

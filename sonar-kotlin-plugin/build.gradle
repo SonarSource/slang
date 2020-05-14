@@ -12,6 +12,7 @@ dependencies {
     compile project(':slang-plugin')
     compile project(':checkstyle-import')
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
+    compile 'org.sonarsource.java:java-surefire'
     compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
     compile 'org.sonarsource.analyzer-commons:sonar-xml-parsing'
     compile "org.jetbrains.kotlin:kotlin-compiler-embeddable:${kotlinVersion}"

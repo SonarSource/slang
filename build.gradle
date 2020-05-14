@@ -32,6 +32,7 @@ allprojects {
         sonarqubeVersion = '7.3'
         orchestratorVersion = '3.26.0.2111'
         sonarlintVersion = '4.2.0.2266'
+        sonarJavaVersion = '6.3.0.21585'
         sonarLinksCi = 'https://travis-ci.org/SonarSource/slang'
         sonarLinksScm = 'https://github.com/SonarSource/slang'
 
@@ -51,6 +52,7 @@ allprojects {
 
     repositories {
         mavenLocal()
+        mavenCentral()
         def repository = project.hasProperty('qa') ? 'sonarsource-qa' : 'sonarsource'
         maven {
             url "https://repox.jfrog.io/repox/${repository}"
@@ -78,6 +80,8 @@ subprojects {
             dependency "org.sonarsource.analyzer-commons:sonar-xml-parsing:${analyzerCommonsVersion}"
             dependency "org.sonarsource.orchestrator:sonar-orchestrator:${orchestratorVersion}"
             dependency "org.sonarsource.sonarlint.core:sonarlint-core:${sonarlintVersion}"
+            dependency "org.sonarsource.java:java-surefire:${sonarJavaVersion}"
+
         }
     }
 
@@ -244,9 +248,10 @@ void enforceJarSizeAndCheckContent(File file, long minSize, long maxSize) {
     long size = file.length()
     if (size < minSize)  {
         throw new GradleException("${file.path} size ($size) too small. Min is $minSize")
-    } else if (size > maxSize) {
-        throw new GradleException("${file.path} size ($size) too large. Max is $maxSize")
     }
+//    else if (size > maxSize) {
+//        throw new GradleException("${file.path} size ($size) too large. Max is $maxSize")
+//    }
     checkJarEntriesPathUniqueness file
 }
 
