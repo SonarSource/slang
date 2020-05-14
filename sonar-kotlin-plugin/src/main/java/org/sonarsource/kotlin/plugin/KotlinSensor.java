@@ -33,36 +33,36 @@ import org.sonarsource.slang.plugin.SlangSensor;
 
 public class KotlinSensor extends SlangSensor {
 
-    private final Checks<SlangCheck> checks;
-    private final KotlinSurefireParser kotlinSurefireParser;
+  private final Checks<SlangCheck> checks;
+  private final KotlinSurefireParser kotlinSurefireParser;
 
-    public KotlinSensor(CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter, KotlinLanguage language, KotlinSurefireParser kotlinSurefireParser) {
-        super(noSonarFilter, fileLinesContextFactory, language);
-        checks = checkFactory.create(KotlinPlugin.KOTLIN_REPOSITORY_KEY);
-        this.kotlinSurefireParser = kotlinSurefireParser;
-        checks.addAnnotatedChecks((Iterable<?>) KotlinCheckList.checks());
-        checks.addAnnotatedChecks(new CommentedCodeCheck(new KotlinCodeVerifier()));
-    }
+  public KotlinSensor(CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter, KotlinLanguage language, KotlinSurefireParser kotlinSurefireParser) {
+    super(noSonarFilter, fileLinesContextFactory, language);
+    checks = checkFactory.create(KotlinPlugin.KOTLIN_REPOSITORY_KEY);
+    this.kotlinSurefireParser = kotlinSurefireParser;
+    checks.addAnnotatedChecks((Iterable<?>) KotlinCheckList.checks());
+    checks.addAnnotatedChecks(new CommentedCodeCheck(new KotlinCodeVerifier()));
+  }
 
-    @Override
-    public void execute(SensorContext sensorContext) {
-        super.execute(sensorContext);
-        kotlinSurefireParser.collect(sensorContext);
-    }
+  @Override
+  public void execute(SensorContext sensorContext) {
+    super.execute(sensorContext);
+    kotlinSurefireParser.collect(sensorContext);
+  }
 
-    @Override
-    protected ASTConverter astConverter(SensorContext sensorContext) {
-        return new KotlinConverter();
-    }
+  @Override
+  protected ASTConverter astConverter(SensorContext sensorContext) {
+    return new KotlinConverter();
+  }
 
-    @Override
-    protected Checks<SlangCheck> checks() {
-        return checks;
-    }
+  @Override
+  protected Checks<SlangCheck> checks() {
+    return checks;
+  }
 
-    @Override
-    protected String repositoryKey() {
-        return KotlinPlugin.KOTLIN_REPOSITORY_KEY;
-    }
+  @Override
+  protected String repositoryKey() {
+    return KotlinPlugin.KOTLIN_REPOSITORY_KEY;
+  }
 
 }
