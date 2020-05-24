@@ -169,7 +169,14 @@ public class CheckstyleFormatImporter {
   }
 
   protected RuleType ruleType(String ruleKey, @Nullable String severity) {
-    return "error".equals(severity) ? RuleType.BUG : RuleType.CODE_SMELL;
+    switch(severity) {
+      case "fatal":
+        return RuleType.VULNERABILITY;
+      case "error":
+        return RuleType.BUG;
+      default:
+        return RuleType.CODE_SMELL;
+    }
   }
 
   protected Severity severity(String ruleKey, @Nullable String severity) {

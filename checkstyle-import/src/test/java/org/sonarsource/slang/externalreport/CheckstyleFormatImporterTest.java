@@ -82,9 +82,9 @@ public class CheckstyleFormatImporterTest {
   }
 
   @Test
-  public void import_golandci_lint_issues() throws IOException {
-    List<ExternalIssue> externalIssues = importIssues("golandci-lint-report.xml");
-    assertThat(externalIssues).hasSize(1);
+  public void import_golangci_lint_issues() throws IOException {
+    List<ExternalIssue> externalIssues = importIssues("golangci-lint-report.xml");
+    assertThat(externalIssues).hasSize(2);
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("externalreport-project:TabCharacter.go");
@@ -93,6 +93,14 @@ public class CheckstyleFormatImporterTest {
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("`three` is unused");
     assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(4);
+
+    ExternalIssue second = externalIssues.get(1);
+    assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("externalreport-project:HTTPSClient.go");
+    assertThat(second.ruleKey().rule()).isEqualTo("gosec");
+    assertThat(second.type()).isEqualTo(RuleType.VULNERABILITY);
+    assertThat(second.severity()).isEqualTo(Severity.MAJOR);
+    assertThat(second.primaryLocation().message()).isEqualTo("G402: TLS InsecureSkipVerify set true.");
+    assertThat(second.primaryLocation().textRange().start().line()).isEqualTo(11);
 
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
   }
