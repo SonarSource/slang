@@ -1,0 +1,62 @@
+AST node class                             | first…last tokens | line:col   
+-------------------------------------------|-------------------|------------
+TopLevelTree {                             | class … }         | 1:1 … 9:1  
+  ClassDeclarationTree {                   | class … }         | 1:1 … 8:2  
+    ?KtClass? {                            | class … }         | 1:1 … 8:2  
+      FunctionDeclarationTree {            | ( … )             | 1:15 … 1:37
+        ParameterTree {                    | var … >           | 1:16 … 1:35
+          IdentifierTree                   | a                 | 1:20 … 1:21
+          ?KtTypeReference? {              | List … >          | 1:23 … 1:35
+            ?KtUserType? {                 | List … >          | 1:23 … 1:35
+              IdentifierTree               | List              | 1:23 … 1:27
+              ?KtTypeArgumentList? {       | < … >             | 1:27 … 1:35
+                ?KtTypeProjection? {       | String            | 1:28 … 1:34
+                  ?KtTypeReference? {      | String            | 1:28 … 1:34
+                    ?KtUserType? {         | String            | 1:28 … 1:34
+                      IdentifierTree       | String            | 1:28 … 1:34
+                    }                      |                   |            
+                  }                        |                   |            
+                }                          |                   |            
+              }                            |                   |            
+            }                              |                   |            
+          }                                |                   |            
+        }                                  |                   |            
+      }                                    |                   |            
+      ?KtClassBody? {                      | { … }             | 1:38 … 8:2 
+        FunctionDeclarationTree {          | fun … }           | 2:5 … 7:6  
+          IdentifierTree                   | b                 | 2:9 … 2:10 
+          ParameterTree {                  | a … String        | 2:11 … 2:20
+            IdentifierTree                 | a                 | 2:11 … 2:12
+            ?KtTypeReference? {            | String            | 2:14 … 2:20
+              ?KtUserType? {               | String            | 2:14 … 2:20
+                IdentifierTree             | String            | 2:14 … 2:20
+              }                            |                   |            
+            }                              |                   |            
+          }                                |                   |            
+          BlockTree {                      | { … }             | 2:23 … 7:6 
+            AssignmentExpressionTree {     | this … )          | 3:9 … 6:10 
+              ?KtDotQualifiedExpression? { | this … a          | 3:9 … 3:15 
+                ?KtThisExpression? {       | this              | 3:9 … 3:13 
+                  IdentifierTree           | this              | 3:9 … 3:13 
+                }                          |                   |            
+                IdentifierTree             | a                 | 3:14 … 3:15
+              }                            |                   |            
+              ?KtCallExpression? {         | listOf … )        | 3:18 … 6:10
+                IdentifierTree             | listOf            | 3:18 … 3:24
+                ?KtValueArgumentList? {    | ( … )             | 3:24 … 6:10
+                  ?KtValueArgument? {      | a                 | 4:13 … 4:14
+                    IdentifierTree         | a                 | 4:13 … 4:14
+                  }                        |                   |            
+                  ?KtValueArgument? {      | " … "             | 5:13 … 5:15
+                    StringLiteralTree      | " … "             | 5:13 … 5:15
+                  }                        |                   |            
+                }                          |                   |            
+              }                            |                   |            
+            }                              |                   |            
+          }                                |                   |            
+        }                                  |                   |            
+      }                                    |                   |            
+      IdentifierTree                       | Trailing          | 1:7 … 1:15 
+    }                                      |                   |            
+  }                                        |                   |            
+}                                          |                   |            
