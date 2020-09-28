@@ -20,20 +20,19 @@
 package org.sonarsource.slang;
 
 import com.sonar.orchestrator.build.SonarScanner;
-import com.sonar.orchestrator.container.Server;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.sonar.wsclient.SonarClient;
-import org.sonar.wsclient.issue.Issue;
-import org.sonar.wsclient.issue.IssueClient;
-import org.sonar.wsclient.issue.IssueQuery;
+import org.sonarqube.ws.Issues.Issue;
+import org.sonarqube.ws.client.issues.SearchRequest;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,12 +53,12 @@ public class ExternalReportTest extends TestBase {
     if (externalIssuesSupported) {
       assertThat(issues).hasSize(1);
       Issue issue = issues.get(0);
-      assertThat(issue.componentKey()).isEqualTo("project:main.kt");
-      assertThat(issue.ruleKey()).isEqualTo("external_detekt:ForEachOnRange");
-      assertThat(issue.line()).isEqualTo(2);
-      assertThat(issue.message()).isEqualTo("Using the forEach method on ranges has a heavy performance cost. Prefer using simple for loops.");
-      assertThat(issue.severity()).isEqualTo("CRITICAL");
-      assertThat(issue.debt()).isEqualTo("5min");
+      assertThat(issue.getComponent()).isEqualTo("project:main.kt");
+      assertThat(issue.getRule()).isEqualTo("external_detekt:ForEachOnRange");
+      assertThat(issue.getLine()).isEqualTo(2);
+      assertThat(issue.getMessage()).isEqualTo("Using the forEach method on ranges has a heavy performance cost. Prefer using simple for loops.");
+      assertThat(issue.getSeverity().name()).isEqualTo("CRITICAL");
+      assertThat(issue.getDebt()).isEqualTo("5min");
     } else {
       assertThat(issues).isEmpty();
     }
@@ -74,19 +73,19 @@ public class ExternalReportTest extends TestBase {
     boolean externalIssuesSupported = ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2);
     if (externalIssuesSupported) {
       assertThat(issues).hasSize(2);
-      Issue first = issues.stream().filter(issue -> "project:main.kt".equals(issue.componentKey())).findFirst().orElse(null);
-      assertThat(first.ruleKey()).isEqualTo("external_android-lint:UnusedAttribute");
-      assertThat(first.line()).isEqualTo(2);
-      assertThat(first.message()).isEqualTo("Attribute `required` is only used in API level 5 and higher (current min is 1)");
-      assertThat(first.severity()).isEqualTo("MINOR");
-      assertThat(first.debt()).isEqualTo("5min");
+      Issue first = issues.stream().filter(issue -> "project:main.kt".equals(issue.getComponent())).findFirst().orElse(null);
+      assertThat(first.getRule()).isEqualTo("external_android-lint:UnusedAttribute");
+      assertThat(first.getLine()).isEqualTo(2);
+      assertThat(first.getMessage()).isEqualTo("Attribute `required` is only used in API level 5 and higher (current min is 1)");
+      assertThat(first.getSeverity().name()).isEqualTo("MINOR");
+      assertThat(first.getDebt()).isEqualTo("5min");
 
-      Issue second = issues.stream().filter(issue -> "project:build.gradle".equals(issue.componentKey())).findFirst().orElse(null);
-      assertThat(second.ruleKey()).isEqualTo("external_android-lint:GradleDependency");
-      assertThat(second.line()).isEqualTo(3);
-      assertThat(second.message()).isEqualTo("A newer version of com.android.support:recyclerview-v7 than 26.0.0 is available: 27.1.1");
-      assertThat(second.severity()).isEqualTo("MINOR");
-      assertThat(second.debt()).isEqualTo("5min");
+      Issue second = issues.stream().filter(issue -> "project:build.gradle".equals(issue.getComponent())).findFirst().orElse(null);
+      assertThat(second.getRule()).isEqualTo("external_android-lint:GradleDependency");
+      assertThat(second.getLine()).isEqualTo(3);
+      assertThat(second.getMessage()).isEqualTo("A newer version of com.android.support:recyclerview-v7 than 26.0.0 is available: 27.1.1");
+      assertThat(second.getSeverity().name()).isEqualTo("MINOR");
+      assertThat(second.getDebt()).isEqualTo("5min");
     } else {
       assertThat(issues).isEmpty();
     }
@@ -102,11 +101,11 @@ public class ExternalReportTest extends TestBase {
     if (externalIssuesSupported) {
       assertThat(issues).hasSize(1);
       Issue first = issues.get(0);
-      assertThat(first.ruleKey()).isEqualTo("external_rubocop:Security/YAMLLoad");
-      assertThat(first.line()).isEqualTo(2);
-      assertThat(first.message()).isEqualTo("Security/YAMLLoad: Prefer using `YAML.safe_load` over `YAML.load`.");
-      assertThat(first.severity()).isEqualTo("MAJOR");
-      assertThat(first.debt()).isEqualTo("5min");
+      assertThat(first.getRule()).isEqualTo("external_rubocop:Security/YAMLLoad");
+      assertThat(first.getLine()).isEqualTo(2);
+      assertThat(first.getMessage()).isEqualTo("Security/YAMLLoad: Prefer using `YAML.safe_load` over `YAML.load`.");
+      assertThat(first.getSeverity().name()).isEqualTo("MAJOR");
+      assertThat(first.getDebt()).isEqualTo("5min");
     } else {
       assertThat(issues).isEmpty();
     }
@@ -124,16 +123,16 @@ public class ExternalReportTest extends TestBase {
     boolean externalIssuesSupported = ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2);
     if (externalIssuesSupported) {
       assertThat(issues).hasSize(2);
-      assertThat(issues.stream().map(Issue::ruleKey).sorted().collect(Collectors.toList())).containsExactly(
+      assertThat(issues.stream().map(Issue::getRule).sorted().collect(Collectors.toList())).containsExactly(
         "external_scalastyle:org.scalastyle.file.HeaderMatchesChecker",
         "external_scalastyle:org.scalastyle.file.RegexChecker"
       );
-      assertThat(issues.stream().map(Issue::line).sorted().collect(Collectors.toList())).containsExactly(
+      assertThat(issues.stream().map(Issue::getLine).sorted().collect(Collectors.toList())).containsExactly(
         1,
         6
       );
       Issue first = issues.get(0);
-      assertThat(first.debt()).isEqualTo("5min");
+      assertThat(first.getDebt()).isEqualTo("5min");
     } else {
       assertThat(issues).isEmpty();
     }
@@ -151,18 +150,18 @@ public class ExternalReportTest extends TestBase {
     boolean externalIssuesSupported = ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2);
     if (externalIssuesSupported) {
       assertThat(issues).hasSize(3);
-      assertThat(issues.stream().map(Issue::ruleKey).sorted().collect(Collectors.toList())).containsExactly(
+      assertThat(issues.stream().map(Issue::getRule).sorted().collect(Collectors.toList())).containsExactly(
         "external_scapegoat:com.sksamuel.scapegoat.inspections.EmptyCaseClass",
         "external_scapegoat:com.sksamuel.scapegoat.inspections.FinalModifierOnCaseClass",
         "external_scapegoat:com.sksamuel.scapegoat.inspections.unsafe.IsInstanceOf"
       );
-      assertThat(issues.stream().map(Issue::line).sorted().collect(Collectors.toList())).containsExactly(
+      assertThat(issues.stream().map(Issue::getLine).sorted().collect(Collectors.toList())).containsExactly(
         5,
         9,
         9
       );
       Issue first = issues.get(0);
-      assertThat(first.debt()).isEqualTo("5min");
+      assertThat(first.getDebt()).isEqualTo("5min");
     } else {
       assertThat(issues).isEmpty();
     }
@@ -251,10 +250,9 @@ public class ExternalReportTest extends TestBase {
   }
 
   private List<Issue> getExternalIssues() {
-    Server server = ORCHESTRATOR.getServer();
-    IssueClient issueClient = SonarClient.create(server.getUrl()).issueClient();
-    return issueClient.find(IssueQuery.create().componentRoots(PROJECT_KEY)).list().stream()
-      .filter(issue -> issue.ruleKey().startsWith("external_"))
+    return newWsClient().issues().search(new SearchRequest().setComponentKeys(Collections.singletonList(PROJECT_KEY)))
+      .getIssuesList().stream()
+      .filter(issue -> issue.getRule().startsWith("external_"))
       .collect(Collectors.toList());
   }
 
@@ -269,17 +267,17 @@ public class ExternalReportTest extends TestBase {
   private static String formatIssues(List<Issue> issues) {
     return issues.stream()
       .map(issue -> filePath(issue) + "|" +
-        issue.ruleKey() + "|" +
-        issue.severity() + "|" +
-        issue.debt() + "|" +
-        "line:" + issue.line() + "|" +
-        issue.message())
+        issue.getRule() + "|" +
+        issue.getSeverity().name() + "|" +
+        issue.getDebt() + "|" +
+        "line:" + issue.getLine() + "|" +
+        issue.getMessage())
       .sorted()
       .collect(Collectors.joining("\n"));
   }
 
   private static String filePath(Issue issue) {
-    return issue.componentKey().substring(issue.componentKey().indexOf(':') + 1);
+    return issue.getComponent().substring(issue.getComponent().indexOf(':') + 1);
   }
 
 }

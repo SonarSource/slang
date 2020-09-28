@@ -21,21 +21,20 @@ package org.sonarsource.slang;
 
 import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.build.SonarScanner;
-import com.sonar.orchestrator.container.Server;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
 import org.junit.ClassRule;
-import org.sonar.wsclient.SonarClient;
-import org.sonar.wsclient.issue.Issue;
-import org.sonar.wsclient.issue.IssueClient;
-import org.sonar.wsclient.issue.IssueQuery;
+import org.sonarqube.ws.Issues;
 import org.sonarqube.ws.Measures.ComponentWsResponse;
 import org.sonarqube.ws.Measures.Measure;
 import org.sonarqube.ws.client.HttpConnector;
 import org.sonarqube.ws.client.PostRequest;
 import org.sonarqube.ws.client.WsClient;
 import org.sonarqube.ws.client.WsClientFactories;
+import org.sonarqube.ws.client.issues.SearchRequest;
 import org.sonarqube.ws.client.measures.ComponentRequest;
 
 import static java.util.Collections.singletonList;
@@ -84,10 +83,8 @@ public abstract class TestBase {
     return measures.size() == 1 ? measures.get(0) : null;
   }
 
-  protected List<Issue> getIssuesForRule(String rule) {
-    Server server = ORCHESTRATOR.getServer();
-    IssueClient issueClient = SonarClient.create(server.getUrl()).issueClient();
-    return issueClient.find(IssueQuery.create().componentRoots(PROJECT_KEY).rules(rule)).list();
+  protected List<Issues.Issue> getIssuesForRule(String rule) {
+    return newWsClient().issues().search(new SearchRequest().setRules(Collections.singletonList(rule))).getIssuesList();
   }
 
   protected Integer getMeasureAsInt(String metricKey) {

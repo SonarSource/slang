@@ -21,7 +21,7 @@ package org.sonarsource.slang;
 
 import java.util.List;
 import org.junit.Test;
-import org.sonar.wsclient.issue.Issue;
+import org.sonarqube.ws.Issues;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,10 +56,10 @@ public class MeasuresTest extends TestBase {
 
     assertThat(getMeasure("file1.kt", "executable_lines_data").getValue()).isEqualTo("4=1;8=1;13=1");
 
-    List<Issue> issuesForRule = getIssuesForRule("kotlin:S100");
+    List<Issues.Issue> issuesForRule = getIssuesForRule("kotlin:S100");
     String file2Component = PROJECT_KEY + ":file2.kt";
-    assertThat(issuesForRule).extracting(Issue::line).containsExactly(2, 7);
-    assertThat(issuesForRule).extracting(Issue::componentKey).containsExactly(file2Component, file2Component);
+    assertThat(issuesForRule).extracting(Issues.Issue::getLine).containsExactly(2, 7);
+    assertThat(issuesForRule).extracting(Issues.Issue::getComponent).containsExactly(file2Component, file2Component);
   }
 
   @Test
@@ -74,9 +74,9 @@ public class MeasuresTest extends TestBase {
     assertThat(getMeasure("file.rb", "ncloc_data").getValue()).isEqualTo("16=1;2=1;3=1;20=1;6=1;7=1;14=1;15=1");
     assertThat(getMeasure("file.rb", "executable_lines_data").getValue()).isEqualTo("3=1;20=1;7=1;14=1;15=1");
 
-    List<Issue> issuesForRule = getIssuesForRule("ruby:S1135");
-    assertThat(issuesForRule).extracting(Issue::line).containsExactly(18);
-    assertThat(issuesForRule).extracting(Issue::componentKey).containsExactly(PROJECT_KEY + ":file.rb");
+    List<Issues.Issue> issuesForRule = getIssuesForRule("ruby:S1135");
+    assertThat(issuesForRule).extracting(Issues.Issue::getLine).containsExactly(18);
+    assertThat(issuesForRule).extracting(Issues.Issue::getComponent).containsExactly(PROJECT_KEY + ":file.rb");
   }
 
   @Test
@@ -88,9 +88,9 @@ public class MeasuresTest extends TestBase {
     assertThat(getMeasure("file.scala", "ncloc_data").getValue()).isEqualTo("1=1;3=1;7=1;10=1;11=1;12=1;13=1;15=1");
     assertThat(getMeasureAsInt("file.scala", "functions")).isEqualTo(1);
 
-    List<Issue> issuesForRule = getIssuesForRule("scala:S1135");
-    assertThat(issuesForRule).extracting(Issue::line).containsExactly(9);
-    assertThat(issuesForRule).extracting(Issue::componentKey).containsExactly(PROJECT_KEY + ":file.scala");
+    List<Issues.Issue> issuesForRule = getIssuesForRule("scala:S1135");
+    assertThat(issuesForRule).extracting(Issues.Issue::getLine).containsExactly(9);
+    assertThat(issuesForRule).extracting(Issues.Issue::getComponent).containsExactly(PROJECT_KEY + ":file.scala");
   }
 
   @Test
