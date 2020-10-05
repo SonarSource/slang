@@ -19,7 +19,6 @@
  */
 package org.sonarsource.slang.checks;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -38,14 +37,6 @@ import static org.sonarsource.slang.utils.SyntacticEquivalence.getUniqueIdentifi
 
 @Rule(key = "S1144")
 public class UnusedPrivateMethodCheck implements SlangCheck {
-  // Serializable method should not raise any issue in Kotlin. Either change it as parameter when adding new language,
-  // or add all exceptions here
-  private static final Set<String> IGNORED_METHODS = new HashSet<>(Arrays.asList(
-    "writeObject",
-    "readObject",
-    "writeReplace",
-    "readResolve",
-    "readObjectNoData"));
 
   @Override
   public void initialize(InitContext init) {
@@ -79,7 +70,7 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
         .filter(UnusedPrivateMethodCheck::isValidPrivateMethod)
         .forEach(tree -> {
           IdentifierTree identifier = tree.name();
-          if (isUnusedMethod(identifier, usedUniqueIdentifiers) && !IGNORED_METHODS.contains(identifier.name())) {
+          if (isUnusedMethod(identifier, usedUniqueIdentifiers)) {
             String message = String.format("Remove this unused private \"%s\" method.", identifier.name());
             ctx.reportIssue(tree.rangeToHighlight(), message);
           }
@@ -91,7 +82,7 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
     return FunctionUtils.isPrivateMethod(method) && !FunctionUtils.isOverrideMethod(method);
   }
 
-  private static boolean isUnusedMethod(@Nullable IdentifierTree identifier, Set<String> usedIdentifierNames) {
+  protected boolean isUnusedMethod(@Nullable IdentifierTree identifier, Set<String> usedIdentifierNames) {
     return identifier != null && !usedIdentifierNames.contains(getUniqueIdentifier(identifier));
   }
 

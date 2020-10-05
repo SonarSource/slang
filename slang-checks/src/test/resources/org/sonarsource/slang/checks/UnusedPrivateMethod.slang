@@ -25,7 +25,7 @@ class B {
 
     fun h(C c) { native[] {  [c;][f2();] } } // FN of current approach, another class has same identifier for a method call "f2" (c.f2();)
 
-    private fun writeObject() {} // OK - this is ignored in default rule implementation for now (Serializable in Kotlin)
+    private fun writeObject() {} // Noncompliant
 }
 
 class C {
