@@ -67,7 +67,7 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
         .collect(Collectors.toCollection(HashSet::new));
 
       methods.stream()
-        .filter(UnusedPrivateMethodCheck::isValidPrivateMethod)
+        .filter(this::isValidPrivateMethod)
         .forEach(tree -> {
           IdentifierTree identifier = tree.name();
           if (isUnusedMethod(identifier, usedUniqueIdentifiers)) {
@@ -78,7 +78,7 @@ public class UnusedPrivateMethodCheck implements SlangCheck {
     });
   }
 
-  private static boolean isValidPrivateMethod(FunctionDeclarationTree method) {
+  protected boolean isValidPrivateMethod(FunctionDeclarationTree method) {
     return FunctionUtils.isPrivateMethod(method) && !FunctionUtils.isOverrideMethod(method);
   }
 

@@ -1,18 +1,25 @@
+// S1144 Copyright
 class UnusedPrivateMethodKotlinCheckTest() {
     private val map = mutableMapOf<String, String>()
 
     private fun unused() {} // Noncompliant
-    private fun used() {} // Compliant
-    fun callUsed() {
-        used();
-    }
 
     // Serializable method should not raise any issue in Kotlin.
-    private fun writeObject() {}
-    private fun readObject() {}
-    private fun writeReplace() {}
-    private fun readResolve() {}
-    private fun readObjectNoData() {}
+    private fun writeObject() {
+        // Not empty
+    }
+    private fun readObject() {
+        // Not empty
+    }
+    private fun writeReplace() {
+        // Not empty
+    }
+    private fun readResolve() {
+        // Not empty
+    }
+    private fun readObjectNoData() {
+        // Not empty
+    }
 
     private operator fun set(index: String, value: String) { // Compliant, called by "callGet"
         map[index] = value

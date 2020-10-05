@@ -23,9 +23,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.Nullable;
+import org.sonar.check.Rule;
+import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.checks.UnusedPrivateMethodCheck;
+import org.sonarsource.slang.impl.NativeTreeImpl;
 
+@Rule(key = "S1144")
 public class UnusedPrivateMethodKotlinCheck extends UnusedPrivateMethodCheck {
 
   // Serializable method should not raise any issue in Kotlin.
@@ -37,8 +41,18 @@ public class UnusedPrivateMethodKotlinCheck extends UnusedPrivateMethodCheck {
     "readObjectNoData"));
 
   @Override
+  protected boolean isValidPrivateMethod(FunctionDeclarationTree method) {
+    return super.isValidPrivateMethod(method) &&
+      // Functions with "operator" modifier will not be used by identifiers, resulting in false positives.
+      // This modifier is not mapped to Slang, we have to use the native Kotlin AST to detect it.
+      method.modifiers().stream().filter(mod -> mod instanceof NativeTreeImpl)
+        .map(m -> ((NativeTreeImpl) m).nativeKind().toString())
+        .noneMatch("LeafPsiElement[operator]"::equals);
+  }
+
+  @Override
   protected boolean isUnusedMethod(@Nullable IdentifierTree identifier, Set<String> usedIdentifierNames) {
-    return super.isUnusedMethod(identifier, usedIdentifierNames) && !IGNORED_METHODS.contains(identifier.name());
+    return identifier != null && super.isUnusedMethod(identifier, usedIdentifierNames) && !IGNORED_METHODS.contains(identifier.name());
   }
 
 }
