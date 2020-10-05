@@ -6,7 +6,7 @@
 This is a developer documentation. If you want to analyze source code in SonarQube read one of the following documentations:
 
 * Kotlin language: [analysis of Kotlin documentation](https://docs.sonarqube.org/display/PLUG/SonarKotlin)
-* Ruby language: [SonarRuby documentation](https://docs.sonarqube.org/display/PLUG/SonarRuby)
+* Ruby language: [analysis of Ruby documentation](https://docs.sonarqube.org/display/PLUG/SonarRuby)
 * Scala language: [analysis of Scala documentation](https://docs.sonarqube.org/display/PLUG/SonarScala)
 * Go language: [analysis of Go documentation](https://docs.sonarqube.org/display/PLUG/SonarGo)
 

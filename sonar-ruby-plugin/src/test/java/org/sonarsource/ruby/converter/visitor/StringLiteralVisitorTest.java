@@ -58,7 +58,7 @@ public class StringLiteralVisitorTest extends AbstractRubyConverterTest {
   @Test
   public void file_macro() {
     NativeTree tree = (NativeTree) rubyStatement("__FILE__");
-    assertThat(((NativeTree) tree.children().get(0)).nativeKind()).isEqualTo(nativeKind("(SonarRuby analysis)"));
+    assertThat(((NativeTree) tree.children().get(0)).nativeKind()).isEqualTo(nativeKind("(Analysis of Ruby)"));
   }
 
   @Test

@@ -61,7 +61,7 @@ jar {
                 'Plugin-IssueTrackerUrl': 'https://jira.sonarsource.com/browse/SONARSLANG',
                 'Plugin-Key': 'ruby',
                 'Plugin-License': 'GNU LGPL 3',
-                'Plugin-Name': 'SonarRuby',
+                'Plugin-Name': 'Ruby Code Quality and Security',
                 'Plugin-Organization': 'SonarSource',
                 'Plugin-OrganizationUrl': 'http://www.sonarsource.com',
                 'Plugin-SourcesUrl': 'https://github.com/SonarSource/slang',
