@@ -73,7 +73,7 @@ jar {
                 'Plugin-IssueTrackerUrl': 'https://jira.sonarsource.com/browse/SONARSLANG',
                 'Plugin-Key': 'sonarscala',
                 'Plugin-License': 'GNU LGPL 3',
-                'Plugin-Name': 'SonarScala',
+                'Plugin-Name': 'Scala Code Quality and Security',
                 'Plugin-Organization': 'SonarSource',
                 'Plugin-OrganizationUrl': 'http://www.sonarsource.com',
                 'Plugin-SourcesUrl': 'https://github.com/SonarSource/slang',

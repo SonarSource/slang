@@ -7,7 +7,7 @@ This is a developer documentation. If you want to analyze source code in SonarQu
 
 * Kotlin language: [SonarKotlin documentation](https://docs.sonarqube.org/display/PLUG/SonarKotlin)
 * Ruby language: [SonarRuby documentation](https://docs.sonarqube.org/display/PLUG/SonarRuby)
-* Scala language: [SonarScala documentation](https://docs.sonarqube.org/display/PLUG/SonarScala)
+* Scala language: [analysis of Scala documentation](https://docs.sonarqube.org/display/PLUG/SonarScala)
 * Go language: [SonarGo documentation](https://docs.sonarqube.org/display/PLUG/SonarGo)
 
 SLang (SonarSource Language) is a framework to quickly develop code analyzers for SonarQube. SLang defines language agnostic AST. Using this AST
