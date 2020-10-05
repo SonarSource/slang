@@ -45,7 +45,7 @@ jar {
                 'Plugin-IssueTrackerUrl': 'https://jira.sonarsource.com/browse/SONARSLANG',
                 'Plugin-Key': 'kotlin',
                 'Plugin-License': 'GNU LGPL 3',
-                'Plugin-Name': 'SonarKotlin',
+                'Plugin-Name': 'Kotlin Code Quality and Security',
                 'Plugin-Organization': 'SonarSource',
                 'Plugin-OrganizationUrl': 'http://www.sonarsource.com',
                 'Plugin-SourcesUrl': 'https://github.com/SonarSource/slang',
