@@ -89,7 +89,7 @@ public class GoSensorTest {
     DefaultSensorDescriptor descriptor = new DefaultSensorDescriptor();
 
     getSensor("S2068").describe(descriptor);
-    assertThat(descriptor.name()).isEqualTo("SonarGo");
+    assertThat(descriptor.name()).isEqualTo("Code Quality and Security for Go");
     assertThat(descriptor.languages()).containsOnly("go");
   }
 
