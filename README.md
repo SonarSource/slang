@@ -52,11 +52,11 @@ If you want to run them, you need first to retrieve the related projects which a
 
 Then build and run the Integration Tests using the `its` property:
 
-    ./gradlew build -Pits --info --no-daemon -Dsonar.runtimeVersion=7.4
+    ./gradlew build -Pits --info --no-daemon -Dsonar.runtimeVersion=7.9
 
 You can also build and run only Ruling Tests using the `ruling` property:
 
-    ./gradlew build -Pruling --info --no-daemon -Dsonar.runtimeVersion=7.4
+    ./gradlew build -Pruling --info --no-daemon -Dsonar.runtimeVersion=7.9
 
 ## License headers
 
