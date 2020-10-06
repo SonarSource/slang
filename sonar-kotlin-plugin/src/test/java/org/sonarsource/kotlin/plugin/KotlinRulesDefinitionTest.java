@@ -48,7 +48,7 @@ public class KotlinRulesDefinitionTest {
 
     RulesDefinition.Rule ruleWithConfig = repository.rule("S100");
     RulesDefinition.Param param = ruleWithConfig.param("format");
-    assertThat(param.defaultValue()).isEqualTo("^[a-z][a-zA-Z0-9]*$");
+    assertThat(param.defaultValue()).isEqualTo("^[a-zA-Z][a-zA-Z0-9]*$");
   }
 
 }

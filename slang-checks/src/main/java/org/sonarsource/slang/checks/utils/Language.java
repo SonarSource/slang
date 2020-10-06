@@ -36,6 +36,8 @@ public enum Language {
 
   public static final String GO_NAMING_DEFAULT = "^(_|[a-zA-Z0-9]+)$";
 
+  public static final String KOTLIN_FUNCTION_NAMING = "^[a-zA-Z][a-zA-Z0-9]*$";
+
   public static final int GO_NESTED_STATEMENT_MAX_DEPTH = 4;
   public static final int GO_MATCH_CASES_DEFAULT_MAX = 6;
   public static final int GO_DEFAULT_MAXIMUM_LINE_LENGTH = 120;
