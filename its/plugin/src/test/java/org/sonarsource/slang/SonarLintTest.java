@@ -100,8 +100,10 @@ public class SonarLintTest {
   @Test
   public void test_ruby() throws Exception {
     ClientInputFile inputFile = prepareInputFile("foo.rb",
-      "def fooBar \n"
-        + "  password = 'blabla' \n"
+      "def fooBar() \n"
+        + "  if true \n"
+        + "    password = 'blabla' \n"
+        + "  end \n"
         + "end \n",
       false, "ruby");
 
@@ -112,15 +114,17 @@ public class SonarLintTest {
 
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
       tuple("ruby:S100", 1, inputFile.getPath(), "MINOR"),
-      tuple("ruby:S1481", 2, inputFile.getPath(), "MINOR"),
-      tuple("ruby:S2068", 2, inputFile.getPath(), "BLOCKER"));
+      tuple("ruby:S1145", 2, inputFile.getPath(), "MAJOR"),
+      tuple("ruby:S1481", 3, inputFile.getPath(), "MINOR"));
   }
 
   @Test
   public void test_kotlin() throws Exception {
     ClientInputFile inputFile = prepareInputFile("foo.kt",
       "fun foo_bar() {\n" +
-        "    val password = \"blabla\"\n" +
+        "    if (true) { \n" +
+        "        val password = \"blabla\"\n" +
+        "    } \n" +
         "}",
       false, "kotlin");
 
@@ -131,8 +135,8 @@ public class SonarLintTest {
 
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
       tuple("kotlin:S100", 1, inputFile.getPath(), "MINOR"),
-      tuple("kotlin:S1481", 2, inputFile.getPath(), "MINOR"),
-      tuple("kotlin:S2068", 2, inputFile.getPath(), "BLOCKER"));
+      tuple("kotlin:S1145", 2, inputFile.getPath(), "MAJOR"),
+      tuple("kotlin:S1481", 3, inputFile.getPath(), "MINOR"));
   }
 
   @Test
@@ -140,7 +144,9 @@ public class SonarLintTest {
     ClientInputFile inputFile = prepareInputFile("foo.scala",
       "object Code {\n" +
         "  def foo_bar() = {\n" + // scala:S100 (Method name)
-        "    val password = \"blabla\"\n" +  // scala:S181 (Unused variable) scala:S2068 (Credentials should not be hard-coded)
+        "    if (true) { \n" + // scala:S1145 (Useless if(true))
+        "        val password = \"blabla\"\n" +  // scala:S181 (Unused variable)
+        "    } \n" +
         "  }\n" +
         "}",
       false, "scala");
@@ -152,8 +158,8 @@ public class SonarLintTest {
 
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
       tuple("scala:S100", 2, inputFile.getPath(), "MINOR"),
-      tuple("scala:S1481", 3, inputFile.getPath(), "MINOR"),
-      tuple("scala:S2068", 3, inputFile.getPath(), "BLOCKER"));
+      tuple("scala:S1145", 3, inputFile.getPath(), "MAJOR"),
+      tuple("scala:S1481", 4, inputFile.getPath(), "MINOR"));
   }
 
   private ClientInputFile prepareInputFile(String relativePath, String content, final boolean isTest, String language) throws IOException {

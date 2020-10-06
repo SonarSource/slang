@@ -27,7 +27,7 @@ public class NoSonarTest extends TestBase {
 
   private static final String BASE_DIRECTORY = "projects/nosonar/";
   private static final String NO_SONAR_PROFILE_NAME = "nosonar-profile";
-  private static final String RULE_KEY = "S2068";
+  private static final String RULE_KEY = "S1145";
 
   @Test
   public void test_kotlin_nosonar() {

@@ -1,7 +1,9 @@
-def foo(args)
-
-  pwd = "secret" # NOSONAR
-  pwd = "secret" # raise an issue S2068
-
-  return pwd
+def foo()
+  
+  if true # NOSONAR
+  end
+  
+  if true # raise an issue S1145
+  end
+  
 end

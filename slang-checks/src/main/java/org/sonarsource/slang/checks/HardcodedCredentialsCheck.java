@@ -110,7 +110,7 @@ public class HardcodedCredentialsCheck implements SlangCheck {
   }
 
   private static void report(CheckContext ctx, Tree tree, String matchName) {
-    String message = String.format("\"%s\" detected in this expression, review this potentially hardcoded credential.", matchName);
+    String message = String.format("\"%s\" detected here, make sure this is not a hard-coded credential.", matchName);
     ctx.reportIssue(tree, message);
   }
 

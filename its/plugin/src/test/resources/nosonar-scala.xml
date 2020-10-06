@@ -5,7 +5,7 @@
   <rules>
     <rule>
       <repositoryKey>scala</repositoryKey>
-      <key>S2068</key> <!-- Credentials should not be hard-coded -->
+      <key>S1145</key> <!-- Useless "if(true) {...}" and "if(false){...}" blocks should be removed -->
       <priority>INFO</priority>
     </rule>
   </rules>

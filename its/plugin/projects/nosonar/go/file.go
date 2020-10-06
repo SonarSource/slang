@@ -1,6 +1,8 @@
 package main
 
-func foo() {
-  pwd := "secret" // NOSONAR
-  pwd = "secret"  // raise an issue S2068
+func foo(name string) {
+  if true {  // NOSONAR
+  }
+  if true {  // raise an issue S1145
+  }
 }
