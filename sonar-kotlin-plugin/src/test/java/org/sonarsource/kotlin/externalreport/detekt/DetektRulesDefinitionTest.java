@@ -28,17 +28,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DetektRulesDefinitionTest {
 
   @Test
-  public void external_repositories_not_supported() {
-    RulesDefinition.Context context = new RulesDefinition.Context();
-    DetektRulesDefinition rulesDefinition = new DetektRulesDefinition(false);
-    rulesDefinition.define(context);
-    assertThat(context.repositories()).isEmpty();
-  }
-
-  @Test
   public void detekt_external_repository() {
     RulesDefinition.Context context = new RulesDefinition.Context();
-    DetektRulesDefinition rulesDefinition = new DetektRulesDefinition(true);
+    DetektRulesDefinition rulesDefinition = new DetektRulesDefinition();
     rulesDefinition.define(context);
 
     assertThat(context.repositories()).hasSize(1);

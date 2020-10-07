@@ -57,15 +57,13 @@ public class ScalaPlugin implements Plugin {
 
     if (context.getRuntime().getProduct() != SonarProduct.SONARLINT) {
 
-      boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
-
       context.addExtensions(
         ScalaProfileDefinition.class,
         ScoverageSensor.class,
         ScalastyleSensor.class,
         ScapegoatSensor.class,
-        new ScalastyleRulesDefinition(externalIssuesSupported),
-        new ScapegoatRulesDefinition(externalIssuesSupported),
+        ScalastyleRulesDefinition.class,
+        ScapegoatRulesDefinition.class,
 
         PropertyDefinition.builder(SCALA_FILE_SUFFIXES_KEY)
           .defaultValue(SCALA_FILE_SUFFIXES_DEFAULT_VALUE)
@@ -84,11 +82,8 @@ public class ScalaPlugin implements Plugin {
           .subCategory(TEST_COVERAGE_SUBCATEGORY)
           .onQualifiers(Qualifiers.PROJECT)
           .multiValues(true)
-          .build()
-      );
+          .build(),
 
-      if (externalIssuesSupported) {
-        context.addExtensions(
           PropertyDefinition.builder(ScalastyleSensor.REPORT_PROPERTY_KEY)
             .name("Scalastyle Report Files")
             .description("Paths (absolute or relative) to scalastyle xml files with Scalastyle issues.")
@@ -97,6 +92,7 @@ public class ScalaPlugin implements Plugin {
             .onQualifiers(Qualifiers.PROJECT)
             .multiValues(true)
             .build(),
+
           PropertyDefinition.builder(ScapegoatSensor.REPORT_PROPERTY_KEY)
             .name("Scapegoat Report Files")
             .description("Paths (absolute or relative) to scapegoat xml files using scalastyle format. For example: scapegoat-scalastyle.xml")
@@ -107,8 +103,5 @@ public class ScalaPlugin implements Plugin {
             .build()
           );
       }
-    }
-
   }
-
 }

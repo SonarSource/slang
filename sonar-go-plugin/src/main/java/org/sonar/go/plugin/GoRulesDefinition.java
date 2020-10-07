@@ -32,12 +32,6 @@ public class GoRulesDefinition implements RulesDefinition {
 
   public static final String REPOSITORY_KEY = "go";
 
-  private boolean externalIssuesSupported;
-
-  public GoRulesDefinition(boolean externalIssuesSupported) {
-    this.externalIssuesSupported = externalIssuesSupported;
-  }
-
   @Override
   public void define(Context context) {
     NewRepository repository = context.createRepository(REPOSITORY_KEY, GoLanguage.KEY)
@@ -51,9 +45,7 @@ public class GoRulesDefinition implements RulesDefinition {
 
     repository.done();
 
-    if (externalIssuesSupported) {
-      AbstractReportSensor.createExternalRuleRepository(context, GoVetReportSensor.LINTER_ID, GoVetReportSensor.LINTER_NAME);
-      AbstractReportSensor.createExternalRuleRepository(context, GoLintReportSensor.LINTER_ID, GoLintReportSensor.LINTER_NAME);
-    }
+    AbstractReportSensor.createExternalRuleRepository(context, GoVetReportSensor.LINTER_ID, GoVetReportSensor.LINTER_NAME);
+    AbstractReportSensor.createExternalRuleRepository(context, GoLintReportSensor.LINTER_ID, GoLintReportSensor.LINTER_NAME);
   }
 }

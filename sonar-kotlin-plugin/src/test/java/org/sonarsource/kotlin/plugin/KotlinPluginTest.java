@@ -44,17 +44,6 @@ public class KotlinPluginTest {
   }
 
   @Test
-  public void test_SQ_67() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(6, 7), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
-    Plugin.Context context = new PluginContextImpl.Builder().setSonarRuntime(runtime).build();
-    KotlinPlugin kotlinPlugin = new KotlinPlugin();
-
-    kotlinPlugin.define(context);
-
-    assertThat(context.getExtensions()).hasSize(9);
-  }
-
-  @Test
   public void test_sonarlint() {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarLint(Version.create(3, 9));
     Plugin.Context context = new PluginContextImpl.Builder().setSonarRuntime(runtime).build();

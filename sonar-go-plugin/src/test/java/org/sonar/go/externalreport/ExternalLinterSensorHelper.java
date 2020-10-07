@@ -27,15 +27,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sonar.api.SonarEdition;
-import org.sonar.api.SonarQubeSide;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
-import org.sonar.api.internal.SonarRuntimeImpl;
-import org.sonar.api.utils.Version;
 import org.sonar.go.plugin.GoLanguage;
 
 public class ExternalLinterSensorHelper {
@@ -47,7 +43,7 @@ public class ExternalLinterSensorHelper {
     return new ArrayList<>(context.allExternalIssues());
   }
 
-  static SensorContextTester createContext(int majorVersion, int minorVersion) throws IOException {
+  static SensorContextTester createContext() throws IOException {
     Path workDir = Files.createTempDirectory("gotemp");
     workDir.toFile().deleteOnExit();
     Path projectDir = Files.createTempDirectory("goproject");
@@ -66,7 +62,6 @@ public class ExternalLinterSensorHelper {
       .setType(InputFile.Type.MAIN)
       .build();
     context.fileSystem().add(mainInputFile);
-    context.setRuntime(SonarRuntimeImpl.forSonarQube(Version.create(majorVersion, minorVersion), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
     return context;
   }
 

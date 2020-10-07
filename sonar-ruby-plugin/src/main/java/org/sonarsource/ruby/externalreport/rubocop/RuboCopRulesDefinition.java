@@ -34,17 +34,9 @@ public class RuboCopRulesDefinition implements RulesDefinition {
 
   static final ExternalRuleLoader RULE_LOADER = new ExternalRuleLoader(LINTER_KEY, LINTER_NAME, RULES_JSON, RULE_REPOSITORY_LANGUAGE);
 
-  private final boolean externalIssuesSupported;
-
-  public RuboCopRulesDefinition(boolean externalIssuesSupported) {
-    this.externalIssuesSupported = externalIssuesSupported;
-  }
-
   @Override
   public void define(Context context) {
-    if (externalIssuesSupported) {
-      RULE_LOADER.createExternalRuleRepository(context);
-    }
+    RULE_LOADER.createExternalRuleRepository(context);
   }
 
 }

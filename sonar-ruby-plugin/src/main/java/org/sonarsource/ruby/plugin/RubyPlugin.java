@@ -55,11 +55,9 @@ public class RubyPlugin implements Plugin {
       RubyProfileDefinition.class,
       RubyRulesDefinition.class);
 
-    boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
-
     if (context.getRuntime().getProduct() != SonarProduct.SONARLINT) {
       context.addExtensions(
-        new RuboCopRulesDefinition(externalIssuesSupported),
+        RuboCopRulesDefinition.class,
         RuboCopSensor.class,
         SimpleCovSensor.class,
 
@@ -81,20 +79,16 @@ public class RubyPlugin implements Plugin {
           .subCategory(TEST_COVERAGE_SUBCATEGORY)
           .onQualifiers(Qualifiers.PROJECT)
           .multiValues(true)
-          .build()
-      );
+          .build(),
 
-      if (externalIssuesSupported) {
-        context.addExtension(
-          PropertyDefinition.builder(RuboCopSensor.REPORT_PROPERTY_KEY)
-            .name("RuboCop Report Files")
-            .description("Paths (absolute or relative) to json files with RuboCop issues.")
-            .category(EXTERNAL_ANALYZERS_CATEGORY)
-            .subCategory(RUBY_CATEGORY)
-            .onQualifiers(Qualifiers.PROJECT)
-            .multiValues(true)
-            .build());
-      }
+        PropertyDefinition.builder(RuboCopSensor.REPORT_PROPERTY_KEY)
+          .name("RuboCop Report Files")
+          .description("Paths (absolute or relative) to json files with RuboCop issues.")
+          .category(EXTERNAL_ANALYZERS_CATEGORY)
+          .subCategory(RUBY_CATEGORY)
+          .onQualifiers(Qualifiers.PROJECT)
+          .multiValues(true)
+          .build());
     }
   }
 }

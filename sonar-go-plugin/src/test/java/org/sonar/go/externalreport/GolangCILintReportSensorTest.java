@@ -48,17 +48,8 @@ public class GolangCILintReportSensorTest {
   }
 
   @Test
-  public void no_issues_with_sonarqube_71() throws IOException {
-    SensorContextTester context = ExternalLinterSensorHelper.createContext(7, 1);
-    context.settings().setProperty("sonar.go.golangci-lint.reportPaths", REPORT_BASE_PATH.resolve("golandci-lint-report.xml").toString());
-    List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GolangCILintReportSensor(), context);
-    assertThat(externalIssues).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Import of external issues requires SonarQube 7.2 or greater.");
-  }
-
-  @Test
-  public void issues_with_sonarqube_72() throws IOException {
-    SensorContextTester context = ExternalLinterSensorHelper.createContext(7, 2);
+  public void issues_with_sonarqube() throws IOException {
+    SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golangci-lint.reportPaths", REPORT_BASE_PATH.resolve("golandci-lint-report.xml").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GolangCILintReportSensor(), context);
     assertThat(externalIssues).hasSize(1);

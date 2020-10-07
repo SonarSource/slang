@@ -32,23 +32,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RubyPluginTest {
 
-  private static final Version VERSION_6_7 = Version.create(6, 7);
-  private static final Version VERSION_7_2 = Version.create(7, 2);
-  private RubyPlugin rubyPlugin = new RubyPlugin();
-
   @Test
-  public void sonarqube_6_7_extensions() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(VERSION_6_7, SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
+  public void sonarqube_7_9_extensions() {
+    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 9), SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
     Plugin.Context context = new Plugin.Context(runtime);
-    rubyPlugin.define(context);
-    assertThat(context.getExtensions()).hasSize(9);
-  }
-
-  @Test
-  public void sonarqube_7_2_extensions() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(VERSION_7_2, SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
-    Plugin.Context context = new Plugin.Context(runtime);
-    rubyPlugin.define(context);
+    new RubyPlugin().define(context);
     assertThat(context.getExtensions()).hasSize(10);
   }
 
@@ -56,9 +44,7 @@ public class RubyPluginTest {
   public void test_sonarlint() {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarLint(Version.create(3, 9));
     Plugin.Context context = new PluginContextImpl.Builder().setSonarRuntime(runtime).build();
-
-    rubyPlugin.define(context);
-
+    new RubyPlugin().define(context);
     assertThat(context.getExtensions()).hasSize(4);
   }
 

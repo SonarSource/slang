@@ -30,8 +30,8 @@ public class ScapegoatRulesDefinition extends ScalastyleFamilyRulesDefinition {
   static final ExternalRuleLoader RULE_LOADER = new ExternalRuleLoader(
     ScapegoatSensor.LINTER_KEY, ScapegoatSensor.LINTER_NAME, RULES_JSON, ScalaPlugin.SCALA_LANGUAGE_KEY);
 
-  public ScapegoatRulesDefinition(boolean externalIssuesSupported) {
-    super(externalIssuesSupported, RULE_LOADER);
+  public ScapegoatRulesDefinition() {
+    super(RULE_LOADER);
   }
 
 }

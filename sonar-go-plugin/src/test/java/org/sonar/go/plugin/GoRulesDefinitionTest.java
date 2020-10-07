@@ -33,11 +33,11 @@ public class GoRulesDefinitionTest {
 
   @Test
   public void test() {
-    GoRulesDefinition rulesDefinition = new GoRulesDefinition(false);
+    GoRulesDefinition rulesDefinition = new GoRulesDefinition();
     RulesDefinition.Context context = new RulesDefinition.Context();
     rulesDefinition.define(context);
 
-    assertThat(context.repositories()).hasSize(1);
+    assertThat(context.repositories()).hasSize(3);
 
     RulesDefinition.Repository goRepository = context.repository("go");
 
@@ -54,7 +54,7 @@ public class GoRulesDefinitionTest {
 
   @Test
   public void test_external_repositories() {
-    GoRulesDefinition rulesDefinition = new GoRulesDefinition(true);
+    GoRulesDefinition rulesDefinition = new GoRulesDefinition();
     RulesDefinition.Context context = new RulesDefinition.Context();
     rulesDefinition.define(context);
     RulesDefinition.Repository golintRepository = context.repository("external_golint");

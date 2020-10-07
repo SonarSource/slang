@@ -50,17 +50,8 @@ public class GoLintReportSensorTest {
   }
 
   @Test
-  public void no_issues_with_sonarqube_71() throws IOException {
-    SensorContextTester context = ExternalLinterSensorHelper.createContext(7, 1);
-    context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("golint-report.txt").toString());
-    List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GoLintReportSensor(), context);
-    assertThat(externalIssues).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("GoLintReportSensor: Import of external issues requires SonarQube 7.2 or greater.");
-  }
-
-  @Test
-  public void issues_with_sonarqube_72() throws IOException {
-    SensorContextTester context = ExternalLinterSensorHelper.createContext(7, 2);
+  public void issues_with_sonarqube() throws IOException {
+    SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("golint-report.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GoLintReportSensor(), context);
     assertThat(externalIssues).hasSize(2);
@@ -86,7 +77,7 @@ public class GoLintReportSensorTest {
 
   @Test
   public void no_issues_without_golint_property() throws IOException {
-    SensorContextTester context = ExternalLinterSensorHelper.createContext(7, 2);
+    SensorContextTester context = ExternalLinterSensorHelper.createContext();
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GoLintReportSensor(), context);
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
@@ -94,7 +85,7 @@ public class GoLintReportSensorTest {
 
   @Test
   public void no_issues_with_invalid_report_path() throws IOException {
-    SensorContextTester context = ExternalLinterSensorHelper.createContext(7, 2);
+    SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("invalid-path.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GoLintReportSensor(), context);
     assertThat(externalIssues).isEmpty();
@@ -104,7 +95,7 @@ public class GoLintReportSensorTest {
 
   @Test
   public void no_issues_with_invalid_report_line() throws IOException {
-    SensorContextTester context = ExternalLinterSensorHelper.createContext(7, 2);
+    SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("golint-report-with-error.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GoLintReportSensor(), context);
     assertThat(externalIssues).hasSize(1);
@@ -128,7 +119,7 @@ public class GoLintReportSensorTest {
 
   @Test
   public void should_match_golint_all_keys() throws IOException {
-    SensorContextTester context = ExternalLinterSensorHelper.createContext(7, 2);
+    SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("all-golint-report.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GoLintReportSensor(), context);
     assertThat(externalIssues).hasSize(102);
@@ -141,7 +132,7 @@ public class GoLintReportSensorTest {
 
   @Test
   public void should_match_to_generic_issue_if_match_not_found() throws IOException {
-    SensorContextTester context = ExternalLinterSensorHelper.createContext(7, 2);
+    SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("golint-with-unknown-message.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GoLintReportSensor(), context);
     assertThat(externalIssues.get(0).ruleKey().rule()).isEqualTo(GENERIC_ISSUE_KEY);

@@ -59,15 +59,8 @@ public class AndroidLintSensorTest {
   }
 
   @Test
-  public void no_issues_with_sonarqube_71() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7,1, "lint-results.xml");
-    assertThat(externalIssues).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Import of external issues requires SonarQube 7.2 or greater.");
-  }
-
-  @Test
-  public void issues_with_sonarqube_72() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"lint-results.xml");
+  public void issues_with_sonarqube() throws IOException {
+    List<ExternalIssue> externalIssues = executeSensorImporting("lint-results.xml");
     assertThat(externalIssues).hasSize(4);
 
     ExternalIssue first = externalIssues.get(0);
@@ -99,14 +92,14 @@ public class AndroidLintSensorTest {
 
   @Test
   public void no_issues_without_report_paths_property() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,null);
+    List<ExternalIssue> externalIssues = executeSensorImporting(null);
     assertThat(externalIssues).isEmpty();
     assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
   public void no_issues_with_invalid_report_path() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"invalid-path.txt");
+    List<ExternalIssue> externalIssues = executeSensorImporting("invalid-path.txt");
     assertThat(externalIssues).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
       .startsWith("No issues information will be saved as the report file '")
@@ -115,7 +108,7 @@ public class AndroidLintSensorTest {
 
   @Test
   public void no_issues_with_invalid_checkstyle_file() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"not-android-lint-file.xml");
+    List<ExternalIssue> externalIssues = executeSensorImporting("not-android-lint-file.xml");
     assertThat(externalIssues).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
       .startsWith("No issues information will be saved as the report file '")
@@ -124,7 +117,7 @@ public class AndroidLintSensorTest {
 
   @Test
   public void no_issues_with_invalid_xml_report() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"invalid-file.xml");
+    List<ExternalIssue> externalIssues = executeSensorImporting("invalid-file.xml");
     assertThat(externalIssues).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
       .startsWith("No issues information will be saved as the report file '")
@@ -133,7 +126,7 @@ public class AndroidLintSensorTest {
 
   @Test
   public void issues_when_xml_file_has_errors() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7,2,"lint-results-with-errors.xml");
+    List<ExternalIssue> externalIssues = executeSensorImporting("lint-results-with-errors.xml");
     assertThat(externalIssues).hasSize(1);
 
     ExternalIssue first = externalIssues.get(0);
@@ -155,8 +148,8 @@ public class AndroidLintSensorTest {
       "Missing information or unsupported file type for id:'', file:'', message:''");
   }
 
-  private List<ExternalIssue> executeSensorImporting(int majorVersion, int minorVersion, @Nullable String fileName) throws IOException {
-    SensorContextTester context = createContext(PROJECT_DIR, majorVersion, minorVersion);
+  private List<ExternalIssue> executeSensorImporting(@Nullable String fileName) throws IOException {
+    SensorContextTester context = createContext(PROJECT_DIR);
     if (fileName != null) {
       String path = PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();
       context.settings().setProperty("sonar.androidLint.reportPaths", path);

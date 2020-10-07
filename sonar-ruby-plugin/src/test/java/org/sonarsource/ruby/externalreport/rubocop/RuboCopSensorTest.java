@@ -28,8 +28,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
-import org.sonar.api.SonarEdition;
-import org.sonar.api.SonarQubeSide;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
@@ -37,9 +35,7 @@ import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
-import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.rules.RuleType;
-import org.sonar.api.utils.Version;
 import org.sonar.api.utils.log.LoggerLevel;
 import org.sonar.api.utils.log.ThreadLocalLogTester;
 import org.sonarsource.ruby.plugin.RubyPlugin;
@@ -66,15 +62,8 @@ public class RuboCopSensorTest {
   }
 
   @Test
-  public void no_issues_with_sonarqube_71() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 1, "rubocop-report.json");
-    assertThat(externalIssues).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Import of external issues requires SonarQube 7.2 or greater.");
-  }
-
-  @Test
-  public void issues_with_sonarqube_72() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "rubocop-report.json");
+  public void issues_with_sonarqube() throws IOException {
+    List<ExternalIssue> externalIssues = executeSensorImporting("rubocop-report.json");
     assertThat(externalIssues).hasSize(4);
 
     ExternalIssue first = externalIssues.get(0);
@@ -114,14 +103,14 @@ public class RuboCopSensorTest {
 
   @Test
   public void no_issues_without_report_paths_property() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, null);
+    List<ExternalIssue> externalIssues = executeSensorImporting(null);
     assertThat(externalIssues).isEmpty();
     assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
   public void no_issues_with_invalid_report_path() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "invalid-path.txt");
+    List<ExternalIssue> externalIssues = executeSensorImporting("invalid-path.txt");
     assertThat(externalIssues).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
       .startsWith("No issues information will be saved as the report file '")
@@ -130,7 +119,7 @@ public class RuboCopSensorTest {
 
   @Test
   public void no_issues_with_invalid_rubocop_file() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "not-rubocop-file.json");
+    List<ExternalIssue> externalIssues = executeSensorImporting("not-rubocop-file.json");
     assertThat(externalIssues).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
       .startsWith("No issues information will be saved as the report file '")
@@ -139,14 +128,14 @@ public class RuboCopSensorTest {
 
   @Test
   public void no_issues_with_empty_rubocop_file() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "rubocop-report-empty.json");
+    List<ExternalIssue> externalIssues = executeSensorImporting("rubocop-report-empty.json");
     assertThat(externalIssues).isEmpty();
     assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
   public void issues_when_rubocop_file_has_errors() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "rubocop-report-with-errors.json");
+    List<ExternalIssue> externalIssues = executeSensorImporting("rubocop-report-with-errors.json");
     assertThat(externalIssues).hasSize(7);
 
     ExternalIssue first = externalIssues.get(0);
@@ -172,7 +161,7 @@ public class RuboCopSensorTest {
 
   @Test
   public void issues_when_rubocop_file_and_line_errors() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "rubocop-report-with-file-and-line-errors.json");
+    List<ExternalIssue> externalIssues = executeSensorImporting("rubocop-report-with-file-and-line-errors.json");
     assertThat(externalIssues).hasSize(4);
 
     assertThat(location(externalIssues.get(0))).isEqualTo("from line 3 offset 2 to line 3 offset 7");
@@ -186,11 +175,10 @@ public class RuboCopSensorTest {
     assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
   }
 
-  private List<ExternalIssue> executeSensorImporting(int majorVersion, int minorVersion, @Nullable String fileName) throws IOException {
+  private List<ExternalIssue> executeSensorImporting(@Nullable String fileName) throws IOException {
     SensorContextTester context = SensorContextTester.create(PROJECT_DIR);
     Files.list(PROJECT_DIR)
       .forEach(file -> addFileToContext(context, PROJECT_DIR, file));
-    context.setRuntime(SonarRuntimeImpl.forSonarQube(Version.create(majorVersion, minorVersion), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
     if (fileName != null) {
       String path = PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();
       context.settings().setProperty("sonar.ruby.rubocop.reportPaths", path);

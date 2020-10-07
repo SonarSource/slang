@@ -24,20 +24,15 @@ import org.sonarsource.analyzer.commons.ExternalRuleLoader;
 
 public class ScalastyleFamilyRulesDefinition implements RulesDefinition {
 
-  private final boolean externalIssuesSupported;
-
   private final ExternalRuleLoader ruleLoader;
 
-  public ScalastyleFamilyRulesDefinition(boolean externalIssuesSupported, ExternalRuleLoader ruleLoader) {
-    this.externalIssuesSupported = externalIssuesSupported;
+  public ScalastyleFamilyRulesDefinition(ExternalRuleLoader ruleLoader) {
     this.ruleLoader = ruleLoader;
   }
 
   @Override
   public void define(RulesDefinition.Context context) {
-    if (externalIssuesSupported) {
-      ruleLoader.createExternalRuleRepository(context);
-    }
+    ruleLoader.createExternalRuleRepository(context);
   }
 
 }

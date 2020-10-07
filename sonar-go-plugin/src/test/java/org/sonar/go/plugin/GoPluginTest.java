@@ -32,17 +32,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GoPluginTest {
 
   @Test
-  public void count_extension_points_6_7() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(6, 7), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
-    Plugin.Context context = new Plugin.Context(runtime);
-    Plugin underTest = new GoPlugin();
-    underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(15);
-  }
-
-  @Test
-  public void count_extension_points_7_2() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 2), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
+  public void count_extension_points_7_9() {
+    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 9), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
     Plugin.Context context = new Plugin.Context(runtime);
     Plugin underTest = new GoPlugin();
     underTest.define(context);

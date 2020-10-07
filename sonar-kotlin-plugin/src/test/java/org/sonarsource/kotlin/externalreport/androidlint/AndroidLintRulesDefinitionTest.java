@@ -29,17 +29,9 @@ import static org.sonarsource.kotlin.externalreport.androidlint.AndroidLintRules
 public class AndroidLintRulesDefinitionTest {
 
   @Test
-  public void external_repositories_not_supported() {
-    RulesDefinition.Context context = new RulesDefinition.Context();
-    AndroidLintRulesDefinition rulesDefinition = new AndroidLintRulesDefinition(false);
-    rulesDefinition.define(context);
-    assertThat(context.repositories()).isEmpty();
-  }
-
-  @Test
   public void android_lint_external_repository() {
     RulesDefinition.Context context = new RulesDefinition.Context();
-    AndroidLintRulesDefinition rulesDefinition = new AndroidLintRulesDefinition(true);
+    AndroidLintRulesDefinition rulesDefinition = new AndroidLintRulesDefinition();
     rulesDefinition.define(context);
 
     assertThat(context.repositories()).hasSize(1);

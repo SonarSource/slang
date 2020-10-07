@@ -24,13 +24,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.sonar.api.SonarEdition;
-import org.sonar.api.SonarQubeSide;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
-import org.sonar.api.internal.SonarRuntimeImpl;
-import org.sonar.api.utils.Version;
 import org.sonar.api.utils.log.LoggerLevel;
 import org.sonar.api.utils.log.ThreadLocalLogTester;
 import org.sonarsource.kotlin.plugin.KotlinPlugin;
@@ -44,11 +40,10 @@ public final class ExternalReportTestUtils {
     // utility class
   }
 
-  public static SensorContextTester createContext(Path projectDir, int majorVersion, int minorVersion) throws IOException {
+  public static SensorContextTester createContext(Path projectDir) throws IOException {
     SensorContextTester context = SensorContextTester.create(projectDir);
     Files.list(projectDir)
       .forEach(file -> addFileToContext(context, projectDir, file));
-    context.setRuntime(SonarRuntimeImpl.forSonarQube(Version.create(majorVersion, minorVersion), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
     return context;
   }
 
@@ -72,6 +67,7 @@ public final class ExternalReportTestUtils {
         .setContents(new String(Files.readAllBytes(file), UTF_8))
         .setType(InputFile.Type.MAIN)
         .build());
+
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }

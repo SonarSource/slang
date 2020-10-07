@@ -47,8 +47,8 @@ public class ScapegoatSensorTest {
   }
 
   @Test
-  public void scapegoat_issues_with_sonarqube_72() throws IOException {
-    List<ExternalIssue> externalIssues = ScalastyleSensorTest.executeSensorImporting(sensor,7, 2, "scapegoat-scalastyle.xml");
+  public void scapegoat_issues_with_sonarqube() throws IOException {
+    List<ExternalIssue> externalIssues = ScalastyleSensorTest.executeSensorImporting(sensor, "scapegoat-scalastyle.xml");
     assertThat(externalIssues).hasSize(3);
 
     ExternalIssue first = externalIssues.get(0);

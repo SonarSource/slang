@@ -28,17 +28,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ScapegoatRulesDefinitionTest {
 
   @Test
-  public void external_repositories_not_supported() {
-    RulesDefinition.Context context = new RulesDefinition.Context();
-    ScapegoatRulesDefinition rulesDefinition = new ScapegoatRulesDefinition(false);
-    rulesDefinition.define(context);
-    assertThat(context.repositories()).isEmpty();
-  }
-
-  @Test
   public void external_repository() {
     RulesDefinition.Context context = new RulesDefinition.Context();
-    ScapegoatRulesDefinition rulesDefinition = new ScapegoatRulesDefinition(true);
+    ScapegoatRulesDefinition rulesDefinition = new ScapegoatRulesDefinition();
     rulesDefinition.define(context);
 
     assertThat(context.repositories()).hasSize(1);

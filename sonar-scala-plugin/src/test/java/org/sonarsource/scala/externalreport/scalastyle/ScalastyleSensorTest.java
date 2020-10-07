@@ -29,8 +29,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
-import org.sonar.api.SonarEdition;
-import org.sonar.api.SonarQubeSide;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
@@ -39,9 +37,7 @@ import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
-import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.rules.RuleType;
-import org.sonar.api.utils.Version;
 import org.sonar.api.utils.log.LoggerLevel;
 import org.sonar.api.utils.log.ThreadLocalLogTester;
 
@@ -76,15 +72,8 @@ public class ScalastyleSensorTest {
   }
 
   @Test
-  public void no_issues_with_sonarqube_71() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 1, "scalastyle-output.xml");
-    assertThat(externalIssues).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactly("Import of external issues requires SonarQube 7.2 or greater.");
-  }
-
-  @Test
-  public void scalastyle_issues_with_sonarqube_72() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "scalastyle-output.xml");
+  public void scalastyle_issues_with_sonarqube() throws IOException {
+    List<ExternalIssue> externalIssues = executeSensorImporting("scalastyle-output.xml");
     assertThat(externalIssues).hasSize(2);
 
     ExternalIssue first = externalIssues.get(0);
@@ -108,14 +97,14 @@ public class ScalastyleSensorTest {
 
   @Test
   public void no_issues_without_report_paths_property() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, null);
+    List<ExternalIssue> externalIssues = executeSensorImporting(null);
     assertThat(externalIssues).isEmpty();
     assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
   public void no_issues_with_invalid_report_path() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "invalid-path.txt");
+    List<ExternalIssue> externalIssues = executeSensorImporting("invalid-path.txt");
     assertThat(externalIssues).isEmpty();
     String realPath = PROJECT_DIR.toRealPath().resolve("invalid-path.txt").toString();
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
@@ -125,7 +114,7 @@ public class ScalastyleSensorTest {
 
   @Test
   public void no_issues_with_invalid_scalastyle_file() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "invalid-scalastyle.txt");
+    List<ExternalIssue> externalIssues = executeSensorImporting("invalid-scalastyle.txt");
     assertThat(externalIssues).isEmpty();
     String realPath = PROJECT_DIR.toRealPath().resolve("invalid-scalastyle.txt").toString();
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
@@ -136,7 +125,7 @@ public class ScalastyleSensorTest {
 
   @Test
   public void no_issues_with_invalid_xml_report() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "invalid.xml");
+    List<ExternalIssue> externalIssues = executeSensorImporting("invalid.xml");
     assertThat(externalIssues).isEmpty();
     String realPath = PROJECT_DIR.toRealPath().resolve("invalid.xml").toString();
     assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactlyInAnyOrder(
@@ -146,7 +135,7 @@ public class ScalastyleSensorTest {
 
   @Test
   public void issues_when_xml_file_has_errors() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "scalastyle-with-errors.xml");
+    List<ExternalIssue> externalIssues = executeSensorImporting("scalastyle-with-errors.xml");
     assertThat(externalIssues).hasSize(2);
 
     ExternalIssue first = externalIssues.get(0);
@@ -176,7 +165,7 @@ public class ScalastyleSensorTest {
 
   @Test
   public void invalid_line_number() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "scalastyle-invalid-line.xml");
+    List<ExternalIssue> externalIssues = executeSensorImporting("scalastyle-invalid-line.xml");
     assertThat(externalIssues).isEmpty();
     String realPath = PROJECT_DIR.toRealPath().resolve("scalastyle-invalid-line.xml").toString();
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
@@ -186,7 +175,7 @@ public class ScalastyleSensorTest {
 
   @Test
   public void issues_when_xml_file_has_a_lot_of_errors() throws IOException {
-    List<ExternalIssue> externalIssues = executeSensorImporting(7, 2, "scalastyle-with-a-lot-of-errors.xml");
+    List<ExternalIssue> externalIssues = executeSensorImporting("scalastyle-with-a-lot-of-errors.xml");
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.WARN)).containsExactlyInAnyOrder("" +
@@ -201,16 +190,15 @@ public class ScalastyleSensorTest {
     assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
   }
 
-  public List<ExternalIssue> executeSensorImporting(int majorVersion, int minorVersion, @Nullable String fileName) throws IOException {
-    return executeSensorImporting(sensor, majorVersion, minorVersion, fileName);
+  public List<ExternalIssue> executeSensorImporting(@Nullable String fileName) throws IOException {
+    return executeSensorImporting(sensor, fileName);
   }
 
-  public static List<ExternalIssue> executeSensorImporting(ScalastyleFamilySensor sensor, int majorVersion, int minorVersion, @Nullable String fileName) throws IOException {
+  public static List<ExternalIssue> executeSensorImporting(ScalastyleFamilySensor sensor, @Nullable String fileName) throws IOException {
     SensorContextTester context = SensorContextTester.create(PROJECT_DIR.toRealPath());
     DefaultFileSystem defaultFileSystem = new DefaultFileSystem(new File(VIRTUAL_FILE_SYSTEM));
     defaultFileSystem.add(inputFile("HelloWorld.scala"));
     context.setFileSystem(defaultFileSystem);
-    context.setRuntime(SonarRuntimeImpl.forSonarQube(Version.create(majorVersion, minorVersion), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
     if (fileName != null) {
       String path = PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();
       context.settings().setProperty(sensor.reportPropertyKey(), path);

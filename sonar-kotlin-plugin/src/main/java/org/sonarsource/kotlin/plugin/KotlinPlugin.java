@@ -56,12 +56,11 @@ public class KotlinPlugin implements Plugin {
       KotlinRulesDefinition.class,
       KotlinProfileDefinition.class);
 
-    boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
     if (context.getRuntime().getProduct() != SonarProduct.SONARLINT) {
       context.addExtensions(
-        new DetektRulesDefinition(externalIssuesSupported),
+        DetektRulesDefinition.class,
         DetektSensor.class,
-        new AndroidLintRulesDefinition(externalIssuesSupported),
+        AndroidLintRulesDefinition.class,
         AndroidLintSensor.class,
         PropertyDefinition.builder(KOTLIN_FILE_SUFFIXES_KEY)
           .defaultValue(KOTLIN_FILE_SUFFIXES_DEFAULT_VALUE)
@@ -71,27 +70,23 @@ public class KotlinPlugin implements Plugin {
           .category(KOTLIN_CATEGORY)
           .multiValues(true)
           .onQualifiers(Qualifiers.PROJECT)
+          .build(),
+        PropertyDefinition.builder(DetektSensor.REPORT_PROPERTY_KEY)
+          .name("Detekt Report Files")
+          .description("Paths (absolute or relative) to checkstyle xml files with detekt issues.")
+          .category(EXTERNAL_ANALYZERS_CATEGORY)
+          .subCategory(KOTLIN_SUBCATEGORY)
+          .onQualifiers(Qualifiers.PROJECT)
+          .multiValues(true)
+          .build(),
+        PropertyDefinition.builder(AndroidLintSensor.REPORT_PROPERTY_KEY)
+          .name("Android Lint Report Files")
+          .description("Paths (absolute or relative) to xml files with Android Lint issues.")
+          .category(EXTERNAL_ANALYZERS_CATEGORY)
+          .subCategory(ANDROID_SUBCATEGORY)
+          .onQualifiers(Qualifiers.PROJECT)
+          .multiValues(true)
           .build());
-
-      if (externalIssuesSupported) {
-        context.addExtensions(
-          PropertyDefinition.builder(DetektSensor.REPORT_PROPERTY_KEY)
-            .name("Detekt Report Files")
-            .description("Paths (absolute or relative) to checkstyle xml files with detekt issues.")
-            .category(EXTERNAL_ANALYZERS_CATEGORY)
-            .subCategory(KOTLIN_SUBCATEGORY)
-            .onQualifiers(Qualifiers.PROJECT)
-            .multiValues(true)
-            .build(),
-          PropertyDefinition.builder(AndroidLintSensor.REPORT_PROPERTY_KEY)
-            .name("Android Lint Report Files")
-            .description("Paths (absolute or relative) to xml files with Android Lint issues.")
-            .category(EXTERNAL_ANALYZERS_CATEGORY)
-            .subCategory(ANDROID_SUBCATEGORY)
-            .onQualifiers(Qualifiers.PROJECT)
-            .multiValues(true)
-            .build());
-      }
     }
   }
 }

@@ -31,17 +31,9 @@ public class DetektRulesDefinition implements RulesDefinition {
     "org/sonar/l10n/kotlin/rules/detekt/rules.json",
     KotlinPlugin.KOTLIN_LANGUAGE_KEY);
 
-  private final boolean externalIssuesSupported;
-
-  public DetektRulesDefinition(boolean externalIssuesSupported) {
-    this.externalIssuesSupported = externalIssuesSupported;
-  }
-
   @Override
   public void define(Context context) {
-    if (externalIssuesSupported) {
-      RULE_LOADER.createExternalRuleRepository(context);
-    }
+    RULE_LOADER.createExternalRuleRepository(context);
   }
 
 }

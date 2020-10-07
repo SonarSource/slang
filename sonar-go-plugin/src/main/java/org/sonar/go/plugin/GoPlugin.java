@@ -44,15 +44,13 @@ public class GoPlugin implements Plugin {
 
   @Override
   public void define(Context context) {
-    boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
-
     context.addExtensions(
       GoLanguage.class,
       GoSensor.class,
       GoTestSensor.class,
       GoCoverSensor.class,
       GoExclusionsFileFilter.class,
-      new GoRulesDefinition(externalIssuesSupported),
+      GoRulesDefinition.class,
       GoProfileDefinition.class,
       GoVetReportSensor.class,
       GoLintReportSensor.class,
@@ -99,53 +97,50 @@ public class GoPlugin implements Plugin {
         .subCategory(TEST_COVERAGE_SUBCATEGORY)
         .onQualifiers(Qualifiers.PROJECT)
         .multiValues(true)
+        .build(),
+
+      PropertyDefinition.builder(GoVetReportSensor.PROPERTY_KEY)
+        .index(30)
+        .name("\"go vet\" Report Files")
+        .description("Paths (absolute or relative) to the files with \"go vet\" issues.")
+        .category(GO_CATEGORY)
+        .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
+        .onQualifiers(Qualifiers.PROJECT)
+        .defaultValue("")
+        .multiValues(true)
+        .build(),
+
+      PropertyDefinition.builder(GoLintReportSensor.PROPERTY_KEY)
+        .index(31)
+        .name("Golint Report Files")
+        .description("Paths (absolute or relative) to the files with Golint issues.")
+        .category(GO_CATEGORY)
+        .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
+        .onQualifiers(Qualifiers.PROJECT)
+        .defaultValue("")
+        .multiValues(true)
+        .build(),
+
+      PropertyDefinition.builder(GoMetaLinterReportSensor.PROPERTY_KEY)
+        .index(32)
+        .name("GoMetaLinter Report Files")
+        .description("Paths (absolute or relative) to the files with GoMetaLinter issues.")
+        .category(GO_CATEGORY)
+        .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
+        .onQualifiers(Qualifiers.PROJECT)
+        .defaultValue("")
+        .multiValues(true)
+        .build(),
+
+      PropertyDefinition.builder(GolangCILintReportSensor.PROPERTY_KEY)
+        .index(33)
+        .name("GolangCI-Lint Report Files")
+        .description("Paths (absolute or relative) to the files with GolangCI-Lint issues.")
+        .category(GO_CATEGORY)
+        .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
+        .onQualifiers(Qualifiers.PROJECT)
+        .defaultValue("")
+        .multiValues(true)
         .build());
-
-    if (externalIssuesSupported) {
-      context.addExtensions(
-        PropertyDefinition.builder(GoVetReportSensor.PROPERTY_KEY)
-          .index(30)
-          .name("\"go vet\" Report Files")
-          .description("Paths (absolute or relative) to the files with \"go vet\" issues.")
-          .category(GO_CATEGORY)
-          .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
-          .onQualifiers(Qualifiers.PROJECT)
-          .defaultValue("")
-          .multiValues(true)
-          .build(),
-
-        PropertyDefinition.builder(GoLintReportSensor.PROPERTY_KEY)
-          .index(31)
-          .name("Golint Report Files")
-          .description("Paths (absolute or relative) to the files with Golint issues.")
-          .category(GO_CATEGORY)
-          .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
-          .onQualifiers(Qualifiers.PROJECT)
-          .defaultValue("")
-          .multiValues(true)
-          .build(),
-
-        PropertyDefinition.builder(GoMetaLinterReportSensor.PROPERTY_KEY)
-          .index(32)
-          .name("GoMetaLinter Report Files")
-          .description("Paths (absolute or relative) to the files with GoMetaLinter issues.")
-          .category(GO_CATEGORY)
-          .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
-          .onQualifiers(Qualifiers.PROJECT)
-          .defaultValue("")
-          .multiValues(true)
-          .build(),
-
-        PropertyDefinition.builder(GolangCILintReportSensor.PROPERTY_KEY)
-          .index(33)
-          .name("GolangCI-Lint Report Files")
-          .description("Paths (absolute or relative) to the files with GolangCI-Lint issues.")
-          .category(GO_CATEGORY)
-          .subCategory(EXTERNAL_LINTER_SUBCATEGORY)
-          .onQualifiers(Qualifiers.PROJECT)
-          .defaultValue("")
-          .multiValues(true)
-          .build());
-    }
   }
 }

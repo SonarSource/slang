@@ -49,8 +49,8 @@ public class GoMetaLinterReportSensorTest {
   }
 
   @Test
-  public void issues_with_sonarqube_72() throws IOException {
-    SensorContextTester context = ExternalLinterSensorHelper.createContext(7, 2);
+  public void issues_with_sonarqube() throws IOException {
+    SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.gometalinter.reportPaths", REPORT_BASE_PATH.resolve("gometalinter-report.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GoMetaLinterReportSensor(), context);
     assertThat(externalIssues).hasSize(3);
@@ -84,7 +84,7 @@ public class GoMetaLinterReportSensorTest {
 
   @Test
   public void no_issues_with_invalid_report_line() throws IOException {
-    SensorContextTester context = ExternalLinterSensorHelper.createContext(7, 2);
+    SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.gometalinter.reportPaths", REPORT_BASE_PATH.resolve("gometalinter-report-with-error.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GoMetaLinterReportSensor(), context);
     assertThat(externalIssues).hasSize(1);

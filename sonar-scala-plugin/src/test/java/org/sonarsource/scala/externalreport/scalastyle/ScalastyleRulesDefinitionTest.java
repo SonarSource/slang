@@ -28,17 +28,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ScalastyleRulesDefinitionTest {
 
   @Test
-  public void external_repositories_not_supported() {
-    RulesDefinition.Context context = new RulesDefinition.Context();
-    ScalastyleRulesDefinition rulesDefinition = new ScalastyleRulesDefinition(false);
-    rulesDefinition.define(context);
-    assertThat(context.repositories()).isEmpty();
-  }
-
-  @Test
   public void scalastyle_external_repository() {
     RulesDefinition.Context context = new RulesDefinition.Context();
-    ScalastyleRulesDefinition rulesDefinition = new ScalastyleRulesDefinition(true);
+    ScalastyleRulesDefinition rulesDefinition = new ScalastyleRulesDefinition();
     rulesDefinition.define(context);
 
     assertThat(context.repositories()).hasSize(1);
