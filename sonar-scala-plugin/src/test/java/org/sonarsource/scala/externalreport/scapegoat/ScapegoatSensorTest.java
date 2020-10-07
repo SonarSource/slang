@@ -53,7 +53,7 @@ public class ScapegoatSensorTest {
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("project:HelloWorld.scala");
-    assertThat(first.ruleKey().toString()).isEqualTo("external_scapegoat:com.sksamuel.scapegoat.inspections.EmptyCaseClass");
+    assertThat(first.ruleKey()).hasToString("external_scapegoat:com.sksamuel.scapegoat.inspections.EmptyCaseClass");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MINOR);
     assertThat(first.primaryLocation().message()).isEqualTo("Empty case class");
@@ -61,7 +61,7 @@ public class ScapegoatSensorTest {
 
     ExternalIssue second = externalIssues.get(1);
     assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("project:HelloWorld.scala");
-    assertThat(second.ruleKey().toString()).isEqualTo("external_scapegoat:com.sksamuel.scapegoat.inspections.FinalModifierOnCaseClass");
+    assertThat(second.ruleKey()).hasToString("external_scapegoat:com.sksamuel.scapegoat.inspections.FinalModifierOnCaseClass");
     assertThat(second.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(second.severity()).isEqualTo(Severity.MINOR);
     assertThat(second.primaryLocation().message()).isEqualTo("Missing final modifier on case class");
@@ -69,7 +69,7 @@ public class ScapegoatSensorTest {
 
     ExternalIssue third = externalIssues.get(2);
     assertThat(third.primaryLocation().inputComponent().key()).isEqualTo("project:HelloWorld.scala");
-    assertThat(third.ruleKey().toString()).isEqualTo("external_scapegoat:com.sksamuel.scapegoat.inspections.unsafe.IsInstanceOf");
+    assertThat(third.ruleKey()).hasToString("external_scapegoat:com.sksamuel.scapegoat.inspections.unsafe.IsInstanceOf");
     assertThat(third.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(third.severity()).isEqualTo(Severity.MAJOR);
     assertThat(third.primaryLocation().message()).isEqualTo("Use of isInstanceOf");

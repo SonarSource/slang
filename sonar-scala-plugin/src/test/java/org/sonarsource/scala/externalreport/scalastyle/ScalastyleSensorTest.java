@@ -78,7 +78,7 @@ public class ScalastyleSensorTest {
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("project:HelloWorld.scala");
-    assertThat(first.ruleKey().toString()).isEqualTo("external_scalastyle:org.scalastyle.file.HeaderMatchesChecker");
+    assertThat(first.ruleKey()).hasToString("external_scalastyle:org.scalastyle.file.HeaderMatchesChecker");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MINOR);
     assertThat(first.primaryLocation().message()).isEqualTo("Header does not match expected text");
@@ -86,7 +86,7 @@ public class ScalastyleSensorTest {
 
     ExternalIssue second = externalIssues.get(1);
     assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("project:HelloWorld.scala");
-    assertThat(second.ruleKey().toString()).isEqualTo("external_scalastyle:org.scalastyle.file.RegexChecker");
+    assertThat(second.ruleKey()).hasToString("external_scalastyle:org.scalastyle.file.RegexChecker");
     assertThat(second.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(second.severity()).isEqualTo(Severity.MINOR);
     assertThat(second.primaryLocation().message()).isEqualTo("Regular expression matched 'println'");
@@ -140,7 +140,7 @@ public class ScalastyleSensorTest {
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("project:HelloWorld.scala");
-    assertThat(first.ruleKey().toString()).isEqualTo("external_scalastyle:com.sksamuel.scapegoat.inspections.EmptyCaseClass");
+    assertThat(first.ruleKey()).hasToString("external_scalastyle:com.sksamuel.scapegoat.inspections.EmptyCaseClass");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("Valid issue");
@@ -148,7 +148,7 @@ public class ScalastyleSensorTest {
 
     ExternalIssue second = externalIssues.get(1);
     assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("project:HelloWorld.scala");
-    assertThat(second.ruleKey().toString()).isEqualTo("external_scalastyle:unknown.key");
+    assertThat(second.ruleKey()).hasToString("external_scalastyle:unknown.key");
     assertThat(second.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(second.severity()).isEqualTo(Severity.MAJOR);
     assertThat(second.primaryLocation().message()).isEqualTo("Missing line");

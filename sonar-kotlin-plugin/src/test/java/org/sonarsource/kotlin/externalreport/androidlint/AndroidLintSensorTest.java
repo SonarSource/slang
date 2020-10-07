@@ -44,15 +44,13 @@ public class AndroidLintSensorTest {
 
   private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport", "androidlint");
 
-  private static AndroidLintSensor androidLintSensor = new AndroidLintSensor();
-
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
   public void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
-    androidLintSensor.describe(sensorDescriptor);
+    new AndroidLintSensor().describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of Android Lint issues");
     assertThat(sensorDescriptor.languages()).isEmpty();
     assertNoErrorWarnDebugLogs(logTester);
@@ -65,7 +63,7 @@ public class AndroidLintSensorTest {
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:AndroidManifest.xml");
-    assertThat(first.ruleKey().toString()).isEqualTo("external_android-lint:AllowBackup");
+    assertThat(first.ruleKey()).hasToString("external_android-lint:AllowBackup");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MINOR);
     assertThat(first.primaryLocation().message()).isEqualTo(
@@ -74,17 +72,17 @@ public class AndroidLintSensorTest {
 
     ExternalIssue second = externalIssues.get(1);
     assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:A.java");
-    assertThat(second.ruleKey().toString()).isEqualTo("external_android-lint:GoogleAppIndexingWarning");
+    assertThat(second.ruleKey()).hasToString("external_android-lint:GoogleAppIndexingWarning");
     assertThat(second.primaryLocation().textRange().start().line()).isEqualTo(1);
 
     ExternalIssue third = externalIssues.get(2);
     assertThat(third.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:B.kt");
-    assertThat(third.ruleKey().toString()).isEqualTo("external_android-lint:GoogleAppIndexingWarning");
+    assertThat(third.ruleKey()).hasToString("external_android-lint:GoogleAppIndexingWarning");
     assertThat(third.primaryLocation().textRange().start().line()).isEqualTo(2);
 
     ExternalIssue fourth = externalIssues.get(3);
     assertThat(fourth.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:build.gradle");
-    assertThat(fourth.ruleKey().toString()).isEqualTo("external_android-lint:GradleDependency");
+    assertThat(fourth.ruleKey()).hasToString("external_android-lint:GradleDependency");
     assertThat(fourth.primaryLocation().textRange().start().line()).isEqualTo(3);
 
     assertNoErrorWarnDebugLogs(logTester);
@@ -131,7 +129,7 @@ public class AndroidLintSensorTest {
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:AndroidManifest.xml");
-    assertThat(first.ruleKey().toString()).isEqualTo("external_android-lint:UnknownRuleKey");
+    assertThat(first.ruleKey()).hasToString("external_android-lint:UnknownRuleKey");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("Unknown rule.");
@@ -154,7 +152,7 @@ public class AndroidLintSensorTest {
       String path = PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();
       context.settings().setProperty("sonar.androidLint.reportPaths", path);
     }
-    androidLintSensor.execute(context);
+    new AndroidLintSensor().execute(context);
     return new ArrayList<>(context.allExternalIssues());
   }
 

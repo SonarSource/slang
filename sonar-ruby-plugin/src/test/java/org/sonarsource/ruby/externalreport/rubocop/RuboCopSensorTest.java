@@ -68,7 +68,7 @@ public class RuboCopSensorTest {
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:useless-assignment.rb");
-    assertThat(first.ruleKey().toString()).isEqualTo("external_rubocop:Lint/UselessAssignment");
+    assertThat(first.ruleKey()).hasToString("external_rubocop:Lint/UselessAssignment");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("Lint/UselessAssignment: Useless assignment to variable - `param`.");
@@ -76,7 +76,7 @@ public class RuboCopSensorTest {
 
     ExternalIssue second = externalIssues.get(1);
     assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:useless-assignment.rb");
-    assertThat(first.ruleKey().toString()).isEqualTo("external_rubocop:Lint/UselessAssignment");
+    assertThat(first.ruleKey()).hasToString("external_rubocop:Lint/UselessAssignment");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("Lint/UselessAssignment: Useless assignment to variable - `param`.");
@@ -84,7 +84,7 @@ public class RuboCopSensorTest {
 
     ExternalIssue third = externalIssues.get(2);
     assertThat(third.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:yaml-issue.rb");
-    assertThat(third.ruleKey().toString()).isEqualTo("external_rubocop:Security/YAMLLoad");
+    assertThat(third.ruleKey()).hasToString("external_rubocop:Security/YAMLLoad");
     assertThat(third.type()).isEqualTo(RuleType.VULNERABILITY);
     assertThat(third.severity()).isEqualTo(Severity.MAJOR);
     assertThat(third.primaryLocation().message()).isEqualTo("Security/YAMLLoad: Prefer using `YAML.safe_load` over `YAML.load`.");
@@ -92,7 +92,7 @@ public class RuboCopSensorTest {
 
     ExternalIssue fourth = externalIssues.get(3);
     assertThat(fourth.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:yaml-issue.rb");
-    assertThat(fourth.ruleKey().toString()).isEqualTo("external_rubocop:Style/StringLiterals");
+    assertThat(fourth.ruleKey()).hasToString("external_rubocop:Style/StringLiterals");
     assertThat(fourth.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(fourth.severity()).isEqualTo(Severity.MINOR);
     assertThat(fourth.primaryLocation().message()).isEqualTo("Style/StringLiterals: Prefer single-quoted strings when you don't need string interpolation or special symbols.");
@@ -140,7 +140,7 @@ public class RuboCopSensorTest {
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:useless-assignment.rb");
-    assertThat(first.ruleKey().toString()).isEqualTo("external_rubocop:ruleKey1");
+    assertThat(first.ruleKey()).hasToString("external_rubocop:ruleKey1");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("message 1");
