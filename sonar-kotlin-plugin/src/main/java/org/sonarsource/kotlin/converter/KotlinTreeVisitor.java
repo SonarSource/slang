@@ -589,9 +589,15 @@ class KotlinTreeVisitor {
   }
 
   private Tree createBinaryExpression(TreeMetaData metaData, KtBinaryExpression element) {
+    KtToken operationToken = element.getOperationReference().getOperationSignTokenType();
+    Operator operator = BINARY_OPERATOR_MAP.get(operationToken);
+    AssignmentExpressionTree.Operator assignmentOperator = ASSIGNMENTS_OPERATOR_MAP.get(operationToken);
+    if (operator == null && assignmentOperator == null) {
+      return createNativeOperationExpression(metaData, element);
+    }
+
     Tree leftOperand = createElement(element.getLeft());
     Tree rightOperand = createElement(element.getRight());
-    KtToken operationToken = element.getOperationReference().getOperationSignTokenType();
     if (leftOperand == null || rightOperand == null) {
       // Binary expression with a single or no operand, which cannot exist in Slang AST
       List<Tree> children = Stream.of(leftOperand, rightOperand)
@@ -600,16 +606,12 @@ class KotlinTreeVisitor {
       return createNativeTree(metaData, new KotlinNativeKind(element, operationToken), children);
     }
 
-    Operator operator = BINARY_OPERATOR_MAP.get(operationToken);
-    AssignmentExpressionTree.Operator assignmentOperator = ASSIGNMENTS_OPERATOR_MAP.get(operationToken);
     if (operator != null) {
       TokenImpl operatorToken = toSlangToken(element.getOperationReference(), Token.Type.OTHER);
       return new BinaryExpressionTreeImpl(metaData, operator, operatorToken, leftOperand, rightOperand);
-    } else if (assignmentOperator != null) {
-      return new AssignmentExpressionTreeImpl(metaData, assignmentOperator, leftOperand, rightOperand);
     } else {
       // FIXME ensure they are all supported. Ex: Add '/=' for assignments
-      return createNativeOperationExpression(metaData, element);
+      return new AssignmentExpressionTreeImpl(metaData, assignmentOperator, leftOperand, rightOperand);
     }
   }
 
