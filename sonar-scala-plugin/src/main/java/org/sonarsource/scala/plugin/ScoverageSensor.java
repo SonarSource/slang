@@ -45,7 +45,7 @@ import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.coverage.NewCoverage;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonarsource.analyzer.commons.xml.SafetyFactory;
+import org.sonarsource.analyzer.commons.xml.SafeStaxParserFactory;
 
 import static org.sonarsource.scala.plugin.ScalaPlugin.COVERAGE_REPORT_PATHS_KEY;
 
@@ -121,7 +121,7 @@ public class ScoverageSensor implements Sensor {
   private static void readReportFile(InputStream in, SensorContext context, Set<String> unresolvedInputFile) throws XMLStreamException {
     Map<String, Map<Integer,Integer>> linesHitPerFiles = new HashMap<>();
 
-    XMLEventReader reader = SafetyFactory.createXMLInputFactory().createXMLEventReader(in);
+    XMLEventReader reader = SafeStaxParserFactory.createXMLInputFactory().createXMLEventReader(in);
     while (reader.hasNext()) {
       XMLEvent event = reader.nextEvent();
       if (event.isStartElement() && STATEMENT_ELEMENT.equals(event.asStartElement().getName())) {

@@ -76,7 +76,7 @@ shadowJar {
     exclude 'org/jetbrains/kotlin/types/**'
     exclude 'org/jetbrains/org/**'
     doLast {
-        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 7_200_000L, 8_200_000L)
+        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 6_500_000L, 7_000_000L)
     }
 }
 

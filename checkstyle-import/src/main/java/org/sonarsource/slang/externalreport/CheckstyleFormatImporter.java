@@ -40,7 +40,7 @@ import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonarsource.analyzer.commons.xml.SafetyFactory;
+import org.sonarsource.analyzer.commons.xml.SafeStaxParserFactory;
 
 /**
  * Import external linter reports having a "Checkstyle" xml format into SonarQube
@@ -85,7 +85,7 @@ public class CheckstyleFormatImporter {
   public void importFile(File reportPath) {
     try (InputStream in = new FileInputStream(reportPath)) {
       LOG.info("Importing {}", reportPath);
-      XMLEventReader reader = SafetyFactory.createXMLInputFactory().createXMLEventReader(in);
+      XMLEventReader reader = SafeStaxParserFactory.createXMLInputFactory().createXMLEventReader(in);
       level = 0;
       while (reader.hasNext()) {
         XMLEvent event = reader.nextEvent();

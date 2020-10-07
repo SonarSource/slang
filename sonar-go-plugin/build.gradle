@@ -78,7 +78,7 @@ shadowJar {
         exclude 'tmp/**'
     }
     doLast {
-        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 6_600_000L, 7_100_000L)
+        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 5_500_000L, 6_000_000L)
     }
 }
 
