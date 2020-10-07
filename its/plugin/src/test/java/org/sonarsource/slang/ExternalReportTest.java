@@ -49,19 +49,14 @@ public class ExternalReportTest extends TestBase {
     sonarScanner.setProperty("sonar.kotlin.detekt.reportPaths", "detekt-checkstyle.xml");
     ORCHESTRATOR.executeBuild(sonarScanner);
     List<Issue> issues = getExternalIssues();
-    boolean externalIssuesSupported = ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2);
-    if (externalIssuesSupported) {
-      assertThat(issues).hasSize(1);
-      Issue issue = issues.get(0);
-      assertThat(issue.getComponent()).isEqualTo("project:main.kt");
-      assertThat(issue.getRule()).isEqualTo("external_detekt:ForEachOnRange");
-      assertThat(issue.getLine()).isEqualTo(2);
-      assertThat(issue.getMessage()).isEqualTo("Using the forEach method on ranges has a heavy performance cost. Prefer using simple for loops.");
-      assertThat(issue.getSeverity().name()).isEqualTo("CRITICAL");
-      assertThat(issue.getDebt()).isEqualTo("5min");
-    } else {
-      assertThat(issues).isEmpty();
-    }
+    assertThat(issues).hasSize(1);
+    Issue issue = issues.get(0);
+    assertThat(issue.getComponent()).isEqualTo("project:main.kt");
+    assertThat(issue.getRule()).isEqualTo("external_detekt:ForEachOnRange");
+    assertThat(issue.getLine()).isEqualTo(2);
+    assertThat(issue.getMessage()).isEqualTo("Using the forEach method on ranges has a heavy performance cost. Prefer using simple for loops.");
+    assertThat(issue.getSeverity().name()).isEqualTo("CRITICAL");
+    assertThat(issue.getDebt()).isEqualTo("5min");
   }
 
   @Test
@@ -70,25 +65,20 @@ public class ExternalReportTest extends TestBase {
     sonarScanner.setProperty("sonar.androidLint.reportPaths", "lint-results.xml");
     ORCHESTRATOR.executeBuild(sonarScanner);
     List<Issue> issues = getExternalIssues();
-    boolean externalIssuesSupported = ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2);
-    if (externalIssuesSupported) {
-      assertThat(issues).hasSize(2);
-      Issue first = issues.stream().filter(issue -> "project:main.kt".equals(issue.getComponent())).findFirst().orElse(null);
-      assertThat(first.getRule()).isEqualTo("external_android-lint:UnusedAttribute");
-      assertThat(first.getLine()).isEqualTo(2);
-      assertThat(first.getMessage()).isEqualTo("Attribute `required` is only used in API level 5 and higher (current min is 1)");
-      assertThat(first.getSeverity().name()).isEqualTo("MINOR");
-      assertThat(first.getDebt()).isEqualTo("5min");
+    assertThat(issues).hasSize(2);
+    Issue first = issues.stream().filter(issue -> "project:main.kt".equals(issue.getComponent())).findFirst().orElse(null);
+    assertThat(first.getRule()).isEqualTo("external_android-lint:UnusedAttribute");
+    assertThat(first.getLine()).isEqualTo(2);
+    assertThat(first.getMessage()).isEqualTo("Attribute `required` is only used in API level 5 and higher (current min is 1)");
+    assertThat(first.getSeverity().name()).isEqualTo("MINOR");
+    assertThat(first.getDebt()).isEqualTo("5min");
 
-      Issue second = issues.stream().filter(issue -> "project:build.gradle".equals(issue.getComponent())).findFirst().orElse(null);
-      assertThat(second.getRule()).isEqualTo("external_android-lint:GradleDependency");
-      assertThat(second.getLine()).isEqualTo(3);
-      assertThat(second.getMessage()).isEqualTo("A newer version of com.android.support:recyclerview-v7 than 26.0.0 is available: 27.1.1");
-      assertThat(second.getSeverity().name()).isEqualTo("MINOR");
-      assertThat(second.getDebt()).isEqualTo("5min");
-    } else {
-      assertThat(issues).isEmpty();
-    }
+    Issue second = issues.stream().filter(issue -> "project:build.gradle".equals(issue.getComponent())).findFirst().orElse(null);
+    assertThat(second.getRule()).isEqualTo("external_android-lint:GradleDependency");
+    assertThat(second.getLine()).isEqualTo(3);
+    assertThat(second.getMessage()).isEqualTo("A newer version of com.android.support:recyclerview-v7 than 26.0.0 is available: 27.1.1");
+    assertThat(second.getSeverity().name()).isEqualTo("MINOR");
+    assertThat(second.getDebt()).isEqualTo("5min");
   }
 
   @Test
@@ -97,18 +87,13 @@ public class ExternalReportTest extends TestBase {
     sonarScanner.setProperty("sonar.ruby.rubocop.reportPaths", "rubocop-report.json");
     ORCHESTRATOR.executeBuild(sonarScanner);
     List<Issue> issues = getExternalIssues();
-    boolean externalIssuesSupported = ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2);
-    if (externalIssuesSupported) {
-      assertThat(issues).hasSize(1);
-      Issue first = issues.get(0);
-      assertThat(first.getRule()).isEqualTo("external_rubocop:Security/YAMLLoad");
-      assertThat(first.getLine()).isEqualTo(2);
-      assertThat(first.getMessage()).isEqualTo("Security/YAMLLoad: Prefer using `YAML.safe_load` over `YAML.load`.");
-      assertThat(first.getSeverity().name()).isEqualTo("MAJOR");
-      assertThat(first.getDebt()).isEqualTo("5min");
-    } else {
-      assertThat(issues).isEmpty();
-    }
+    assertThat(issues).hasSize(1);
+    Issue first = issues.get(0);
+    assertThat(first.getRule()).isEqualTo("external_rubocop:Security/YAMLLoad");
+    assertThat(first.getLine()).isEqualTo(2);
+    assertThat(first.getMessage()).isEqualTo("Security/YAMLLoad: Prefer using `YAML.safe_load` over `YAML.load`.");
+    assertThat(first.getSeverity().name()).isEqualTo("MAJOR");
+    assertThat(first.getDebt()).isEqualTo("5min");
   }
 
   @Test
@@ -120,22 +105,17 @@ public class ExternalReportTest extends TestBase {
     sonarScanner.setProperty("sonar.scala.scalastyle.reportPaths", scalastyleReportPath.toString());
     ORCHESTRATOR.executeBuild(sonarScanner);
     List<Issue> issues = getExternalIssues();
-    boolean externalIssuesSupported = ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2);
-    if (externalIssuesSupported) {
-      assertThat(issues).hasSize(2);
-      assertThat(issues.stream().map(Issue::getRule).sorted().collect(Collectors.toList())).containsExactly(
-        "external_scalastyle:org.scalastyle.file.HeaderMatchesChecker",
-        "external_scalastyle:org.scalastyle.file.RegexChecker"
-      );
-      assertThat(issues.stream().map(Issue::getLine).sorted().collect(Collectors.toList())).containsExactly(
-        1,
-        6
-      );
-      Issue first = issues.get(0);
-      assertThat(first.getDebt()).isEqualTo("5min");
-    } else {
-      assertThat(issues).isEmpty();
-    }
+    assertThat(issues).hasSize(2);
+    assertThat(issues.stream().map(Issue::getRule).sorted().collect(Collectors.toList())).containsExactly(
+      "external_scalastyle:org.scalastyle.file.HeaderMatchesChecker",
+      "external_scalastyle:org.scalastyle.file.RegexChecker"
+    );
+    assertThat(issues.stream().map(Issue::getLine).sorted().collect(Collectors.toList())).containsExactly(
+      1,
+      6
+    );
+    Issue first = issues.get(0);
+    assertThat(first.getDebt()).isEqualTo("5min");
   }
 
   @Test
@@ -147,24 +127,19 @@ public class ExternalReportTest extends TestBase {
     sonarScanner.setProperty("sonar.scala.scapegoat.reportPaths", scapegoatReportPath.toString());
     ORCHESTRATOR.executeBuild(sonarScanner);
     List<Issue> issues = getExternalIssues();
-    boolean externalIssuesSupported = ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2);
-    if (externalIssuesSupported) {
-      assertThat(issues).hasSize(3);
-      assertThat(issues.stream().map(Issue::getRule).sorted().collect(Collectors.toList())).containsExactly(
-        "external_scapegoat:com.sksamuel.scapegoat.inspections.EmptyCaseClass",
-        "external_scapegoat:com.sksamuel.scapegoat.inspections.FinalModifierOnCaseClass",
-        "external_scapegoat:com.sksamuel.scapegoat.inspections.unsafe.IsInstanceOf"
-      );
-      assertThat(issues.stream().map(Issue::getLine).sorted().collect(Collectors.toList())).containsExactly(
-        5,
-        9,
-        9
-      );
-      Issue first = issues.get(0);
-      assertThat(first.getDebt()).isEqualTo("5min");
-    } else {
-      assertThat(issues).isEmpty();
-    }
+    assertThat(issues).hasSize(3);
+    assertThat(issues.stream().map(Issue::getRule).sorted().collect(Collectors.toList())).containsExactly(
+      "external_scapegoat:com.sksamuel.scapegoat.inspections.EmptyCaseClass",
+      "external_scapegoat:com.sksamuel.scapegoat.inspections.FinalModifierOnCaseClass",
+      "external_scapegoat:com.sksamuel.scapegoat.inspections.unsafe.IsInstanceOf"
+    );
+    assertThat(issues.stream().map(Issue::getLine).sorted().collect(Collectors.toList())).containsExactly(
+      5,
+      9,
+      9
+    );
+    Issue first = issues.get(0);
+    assertThat(first.getDebt()).isEqualTo("5min");
   }
 
   @Test
@@ -173,14 +148,10 @@ public class ExternalReportTest extends TestBase {
     sonarScanner.setProperty("sonar.go.govet.reportPaths", "go-vet.out");
     ORCHESTRATOR.executeBuild(sonarScanner);
     List<Issue> issues = getExternalIssues();
-    if (ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2)) {
-      assertThat(issues).hasSize(2);
-      assertThat(formatIssues(issues)).isEqualTo(
-        "SelfAssignement.go|external_govet:assign|MAJOR|5min|line:7|self-assignment of name to name\n" +
-          "SelfAssignement.go|external_govet:assign|MAJOR|5min|line:9|self-assignment of user.name to user.name");
-    } else {
-      assertThat(issues).isEmpty();
-    }
+    assertThat(issues).hasSize(2);
+    assertThat(formatIssues(issues)).isEqualTo(
+      "SelfAssignement.go|external_govet:assign|MAJOR|5min|line:7|self-assignment of name to name\n" +
+        "SelfAssignement.go|external_govet:assign|MAJOR|5min|line:9|self-assignment of user.name to user.name");
   }
 
   @Test
@@ -189,24 +160,20 @@ public class ExternalReportTest extends TestBase {
     sonarScanner.setProperty("sonar.go.golint.reportPaths", "golint.out");
     ORCHESTRATOR.executeBuild(sonarScanner);
     List<Issue> issues = getExternalIssues();
-    if (ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2)) {
-      assertThat(issues).hasSize(11);
-      assertThat(formatIssues(issues)).isEqualTo(
-        "SelfAssignement.go|external_golint:Exported|MAJOR|5min|line:4|exported type User should have comment or be unexported\n" +
-          "SelfAssignement.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
-          "TabCharacter.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
-          "TodoTagPresence.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
-          "TooLongLine.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
-          "TooManyParameters.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
-          "pivot.go|external_golint:Names|MAJOR|5min|line:10|don't use underscores in Go names; var ascii_uppercase should be asciiUppercase\n" +
-          "pivot.go|external_golint:Names|MAJOR|5min|line:11|don't use underscores in Go names; var ascii_lowercase should be asciiLowercase\n" +
-          "pivot.go|external_golint:Names|MAJOR|5min|line:12|don't use underscores in Go names; var ascii_uppercase_len should be asciiUppercaseLen\n" +
-          "pivot.go|external_golint:Names|MAJOR|5min|line:13|don't use underscores in Go names; var ascii_lowercase_len should be asciiLowercaseLen\n" +
-          "pivot.go|external_golint:Names|MAJOR|5min|line:14|don't use underscores in Go names; var ascii_allowed should be asciiAllowed"
-      );
-    } else {
-      assertThat(issues).isEmpty();
-    }
+    assertThat(issues).hasSize(11);
+    assertThat(formatIssues(issues)).isEqualTo(
+      "SelfAssignement.go|external_golint:Exported|MAJOR|5min|line:4|exported type User should have comment or be unexported\n" +
+        "SelfAssignement.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
+        "TabCharacter.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
+        "TodoTagPresence.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
+        "TooLongLine.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
+        "TooManyParameters.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
+        "pivot.go|external_golint:Names|MAJOR|5min|line:10|don't use underscores in Go names; var ascii_uppercase should be asciiUppercase\n" +
+        "pivot.go|external_golint:Names|MAJOR|5min|line:11|don't use underscores in Go names; var ascii_lowercase should be asciiLowercase\n" +
+        "pivot.go|external_golint:Names|MAJOR|5min|line:12|don't use underscores in Go names; var ascii_uppercase_len should be asciiUppercaseLen\n" +
+        "pivot.go|external_golint:Names|MAJOR|5min|line:13|don't use underscores in Go names; var ascii_lowercase_len should be asciiLowercaseLen\n" +
+        "pivot.go|external_golint:Names|MAJOR|5min|line:14|don't use underscores in Go names; var ascii_allowed should be asciiAllowed"
+    );
   }
 
   @Test
@@ -215,20 +182,16 @@ public class ExternalReportTest extends TestBase {
     sonarScanner.setProperty("sonar.go.gometalinter.reportPaths", "gometalinter.out");
     ORCHESTRATOR.executeBuild(sonarScanner);
     List<Issue> issues = getExternalIssues();
-    if (ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2)) {
-      assertThat(issues).hasSize(8);
-      assertThat(formatIssues(issues)).isEqualTo(
-        "SelfAssignement.go|external_golint:Exported|MAJOR|5min|line:4|exported type User should have comment or be unexported\n" +
-          "SelfAssignement.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
-          "SelfAssignement.go|external_govet:assign|MAJOR|5min|line:7|self-assignment of name to name\n" +
-          "SelfAssignement.go|external_govet:assign|MAJOR|5min|line:9|self-assignment of user.name to user.name\n" +
-          "SelfAssignement.go|external_megacheck:SA4018|MAJOR|5min|line:7|self-assignment of name to name\n" +
-          "SelfAssignement.go|external_megacheck:SA4018|MAJOR|5min|line:9|self-assignment of user.name to user.name\n" +
-          "SelfAssignement.go|external_megacheck:U1000|MAJOR|5min|line:4|field name is unused\n" +
-          "SelfAssignement.go|external_megacheck:U1000|MAJOR|5min|line:6|func (*User).rename is unused");
-    } else {
-      assertThat(issues).isEmpty();
-    }
+    assertThat(issues).hasSize(8);
+    assertThat(formatIssues(issues)).isEqualTo(
+      "SelfAssignement.go|external_golint:Exported|MAJOR|5min|line:4|exported type User should have comment or be unexported\n" +
+        "SelfAssignement.go|external_golint:PackageComment|MAJOR|5min|line:1|package comment should be of the form \"Package samples ...\"\n" +
+        "SelfAssignement.go|external_govet:assign|MAJOR|5min|line:7|self-assignment of name to name\n" +
+        "SelfAssignement.go|external_govet:assign|MAJOR|5min|line:9|self-assignment of user.name to user.name\n" +
+        "SelfAssignement.go|external_megacheck:SA4018|MAJOR|5min|line:7|self-assignment of name to name\n" +
+        "SelfAssignement.go|external_megacheck:SA4018|MAJOR|5min|line:9|self-assignment of user.name to user.name\n" +
+        "SelfAssignement.go|external_megacheck:U1000|MAJOR|5min|line:4|field name is unused\n" +
+        "SelfAssignement.go|external_megacheck:U1000|MAJOR|5min|line:6|func (*User).rename is unused");
   }
 
   @Test
@@ -237,16 +200,12 @@ public class ExternalReportTest extends TestBase {
     sonarScanner.setProperty("sonar.go.golangci-lint.reportPaths", "golangci-lint-checkstyle.xml");
     ORCHESTRATOR.executeBuild(sonarScanner);
     List<Issue> issues = getExternalIssues();
-    if (ORCHESTRATOR.getServer().version().isGreaterThanOrEquals(7, 2)) {
-      assertThat(issues).hasSize(4);
-      assertThat(formatIssues(issues)).isEqualTo(
-        "SelfAssignement.go|external_golangci-lint:govet|MAJOR|5min|line:7|assign: self-assignment of name to name\n" +
-          "SelfAssignement.go|external_golangci-lint:govet|MAJOR|5min|line:9|assign: self-assignment of user.name to user.name\n" +
-          "SelfAssignement.go|external_golangci-lint:unused|MAJOR|5min|line:4|U1000: field `name` is unused\n" +
-          "SelfAssignement.go|external_golangci-lint:unused|MAJOR|5min|line:6|U1000: func `(*User).rename` is unused");
-    } else {
-      assertThat(issues).isEmpty();
-    }
+    assertThat(issues).hasSize(4);
+    assertThat(formatIssues(issues)).isEqualTo(
+      "SelfAssignement.go|external_golangci-lint:govet|MAJOR|5min|line:7|assign: self-assignment of name to name\n" +
+        "SelfAssignement.go|external_golangci-lint:govet|MAJOR|5min|line:9|assign: self-assignment of user.name to user.name\n" +
+        "SelfAssignement.go|external_golangci-lint:unused|MAJOR|5min|line:4|U1000: field `name` is unused\n" +
+        "SelfAssignement.go|external_golangci-lint:unused|MAJOR|5min|line:6|U1000: func `(*User).rename` is unused");
   }
 
   private List<Issue> getExternalIssues() {
