@@ -19,11 +19,15 @@
  */
 package org.sonarsource.scala.plugin;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import org.sonarsource.scala.checks.UnusedPrivateMethodScalaCheck;
 import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.MatchWithoutElseCheck;
 import org.sonarsource.slang.checks.OctalValuesCheck;
 import org.sonarsource.slang.checks.RedundantParenthesesCheck;
+import org.sonarsource.slang.checks.UnusedPrivateMethodCheck;
 import org.sonarsource.slang.checks.WrongAssignmentOperatorCheck;
 
 public final class ScalaCheckList {
@@ -36,11 +40,18 @@ public final class ScalaCheckList {
     MatchWithoutElseCheck.class,
     OctalValuesCheck.class,
     RedundantParenthesesCheck.class,
-    WrongAssignmentOperatorCheck.class
+    WrongAssignmentOperatorCheck.class,
+    // Language specific implementation is provided.
+    UnusedPrivateMethodCheck.class
   };
 
+  private static final List<Class> SCALA_LANGUAGE_SPECIFIC_CHECKS = Collections.singletonList(
+    UnusedPrivateMethodScalaCheck.class);
+
   public static List<Class> checks() {
-    return CheckList.excludeChecks(SCALA_CHECK_BLACK_LIST);
+    List<Class> list = new ArrayList<>(CheckList.excludeChecks(SCALA_CHECK_BLACK_LIST));
+    list.addAll(SCALA_LANGUAGE_SPECIFIC_CHECKS);
+    return list;
   }
 
 }
