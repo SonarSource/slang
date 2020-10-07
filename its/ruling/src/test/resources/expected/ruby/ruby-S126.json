@@ -12,17 +12,11 @@
 'ruby-project:sources/ruby/devdocs/lib/docs/core/entry_index.rb':[
 75,
 ],
-'ruby-project:sources/ruby/devdocs/lib/docs/core/scrapers/url_scraper.rb':[
-54,
-],
 'ruby-project:sources/ruby/devdocs/lib/docs/core/url.rb':[
 75,
 ],
 'ruby-project:sources/ruby/devdocs/lib/docs/filters/angular/clean_html_v2.rb':[
 22,
-],
-'ruby-project:sources/ruby/devdocs/lib/docs/filters/angular/entries_v2.rb':[
-16,
 ],
 'ruby-project:sources/ruby/devdocs/lib/docs/filters/angularjs/clean_html.rb':[
 79,
@@ -200,7 +194,6 @@
 ],
 'ruby-project:sources/ruby/fastlane/fastlane_core/lib/fastlane_core/configuration/config_item.rb':[
 243,
-248,
 ],
 'ruby-project:sources/ruby/fastlane/fastlane_core/lib/fastlane_core/itunes_transporter.rb':[
 128,
@@ -324,9 +317,6 @@
 ],
 'ruby-project:sources/ruby/rails/actionpack/lib/action_dispatch/http/filter_redirect.rb':[
 30,
-],
-'ruby-project:sources/ruby/rails/actionpack/lib/action_dispatch/http/mime_negotiation.rb':[
-141,
 ],
 'ruby-project:sources/ruby/rails/actionpack/lib/action_dispatch/http/mime_type.rb':[
 106,
@@ -543,9 +533,6 @@
 'ruby-project:sources/ruby/rails/guides/rails_guides/markdown.rb':[
 124,
 ],
-'ruby-project:sources/ruby/rails/railties/lib/rails/app_loader.rb':[
-55,
-],
 'ruby-project:sources/ruby/rails/railties/lib/rails/application.rb':[
 580,
 ],
@@ -564,14 +551,10 @@
 'ruby-project:sources/ruby/rails/railties/lib/rails/dev_caching.rb':[
 29,
 ],
-'ruby-project:sources/ruby/rails/railties/lib/rails/generators/rails/app/app_generator.rb':[
-524,
-],
 'ruby-project:sources/ruby/rails/railties/lib/rails/generators/rails/plugin/plugin_generator.rb':[
 27,
 141,
 152,
-398,
 ],
 'ruby-project:sources/ruby/rails/railties/lib/rails/mailers_controller.rb':[
 79,
@@ -600,9 +583,6 @@
 ],
 'ruby-project:sources/ruby/vagrant/plugins/commands/box/command/update.rb':[
 75,
-],
-'ruby-project:sources/ruby/vagrant/plugins/commands/login/command.rb':[
-49,
 ],
 'ruby-project:sources/ruby/vagrant/plugins/communicators/ssh/communicator.rb':[
 245,
@@ -641,9 +621,6 @@
 'ruby-project:sources/ruby/vagrant/plugins/providers/docker/action/wait_for_running.rb':[
 20,
 ],
-'ruby-project:sources/ruby/vagrant/plugins/providers/docker/command/logs.rb':[
-50,
-],
 'ruby-project:sources/ruby/vagrant/plugins/providers/virtualbox/action/network.rb':[
 72,
 ],
@@ -653,9 +630,6 @@
 'ruby-project:sources/ruby/vagrant/plugins/providers/virtualbox/driver/base.rb':[
 69,
 ],
-'ruby-project:sources/ruby/vagrant/plugins/providers/virtualbox/driver/meta.rb':[
-171,
-],
 'ruby-project:sources/ruby/vagrant/plugins/providers/virtualbox/driver/version_4_0.rb':[
 59,
 186,
@@ -663,7 +637,6 @@
 288,
 343,
 402,
-418,
 ],
 'ruby-project:sources/ruby/vagrant/plugins/providers/virtualbox/driver/version_4_1.rb':[
 70,
@@ -672,7 +645,6 @@
 391,
 446,
 505,
-521,
 ],
 'ruby-project:sources/ruby/vagrant/plugins/providers/virtualbox/driver/version_4_2.rb':[
 59,
@@ -681,7 +653,6 @@
 316,
 379,
 436,
-452,
 ],
 'ruby-project:sources/ruby/vagrant/plugins/providers/virtualbox/driver/version_4_3.rb':[
 71,
@@ -690,7 +661,6 @@
 426,
 490,
 547,
-563,
 ],
 'ruby-project:sources/ruby/vagrant/plugins/providers/virtualbox/driver/version_5_0.rb':[
 352,
@@ -698,7 +668,6 @@
 447,
 511,
 568,
-584,
 ],
 'ruby-project:sources/ruby/vagrant/plugins/provisioners/ansible/config/base.rb':[
 134,
