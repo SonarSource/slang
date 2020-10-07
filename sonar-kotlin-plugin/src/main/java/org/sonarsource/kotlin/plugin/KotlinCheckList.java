@@ -43,14 +43,12 @@ public final class KotlinCheckList {
     UnusedPrivateMethodCheck.class
   };
 
-  private static final List<Class> KOTLIN_LANGUAGE_SPECIFIC_CHECKS = Collections.singletonList(
+  private static final List<Class<?>> KOTLIN_LANGUAGE_SPECIFIC_CHECKS = Collections.singletonList(
     UnusedPrivateMethodKotlinCheck.class);
 
-
-  public static List<Class> checks() {
-    List<Class> list = new ArrayList<>(CheckList.excludeChecks(KOTLIN_CHECK_BLACK_LIST));
+  public static List<Class<?>> checks() {
+    List<Class<?>> list = new ArrayList<>(CheckList.excludeChecks(KOTLIN_CHECK_BLACK_LIST));
     list.addAll(KOTLIN_LANGUAGE_SPECIFIC_CHECKS);
     return list;
   }
-
 }

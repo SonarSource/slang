@@ -33,7 +33,7 @@ public class ScalaRulesDefinitionTest {
 
   @Test
   public void rules() {
-    RulesDefinition rulesDefinition = new ScalaRulesDefinition(SonarRuntimeImpl.forSonarQube(Version.create(7,9), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
+    RulesDefinition rulesDefinition = new ScalaRulesDefinition();
     RulesDefinition.Context context = new RulesDefinition.Context();
     rulesDefinition.define(context);
 

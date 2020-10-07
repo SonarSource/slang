@@ -45,13 +45,12 @@ public final class ScalaCheckList {
     UnusedPrivateMethodCheck.class
   };
 
-  private static final List<Class> SCALA_LANGUAGE_SPECIFIC_CHECKS = Collections.singletonList(
+  private static final List<Class<?>> SCALA_LANGUAGE_SPECIFIC_CHECKS = Collections.singletonList(
     UnusedPrivateMethodScalaCheck.class);
 
-  public static List<Class> checks() {
-    List<Class> list = new ArrayList<>(CheckList.excludeChecks(SCALA_CHECK_BLACK_LIST));
+  public static List<Class<?>> checks() {
+    List<Class<?>> list = new ArrayList<>(CheckList.excludeChecks(SCALA_CHECK_BLACK_LIST));
     list.addAll(SCALA_LANGUAGE_SPECIFIC_CHECKS);
     return list;
   }
-
 }

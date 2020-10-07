@@ -38,7 +38,7 @@ public class GoRulesDefinition implements RulesDefinition {
       .setName("SonarAnalyzer");
     RuleMetadataLoader metadataLoader = new RuleMetadataLoader(GoPlugin.RESOURCE_FOLDER);
 
-    List<Class> checks = GoCheckList.checks();
+    List<Class<?>> checks = GoCheckList.checks();
     metadataLoader.addRulesByAnnotatedClass(repository, checks);
 
     RulesDefinitionUtils.setDefaultValuesForParameters(repository, checks, Language.GO);

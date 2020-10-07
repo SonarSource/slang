@@ -316,7 +316,7 @@ public class GoSensorTest {
 
   private GoSensor getSensor(String... activeRuleArray) {
     Set<String> activeRuleSet = new HashSet<>(Arrays.asList(activeRuleArray));
-    List<Class> ruleClasses = GoCheckList.checks();
+    List<Class<?>> ruleClasses = GoCheckList.checks();
     List<String> allKeys = ruleClasses.stream().map(ruleClass -> ((org.sonar.check.Rule) ruleClass.getAnnotations()[0]).key()).collect(Collectors.toList());
     ActiveRulesBuilder rulesBuilder = new ActiveRulesBuilder();
     allKeys.forEach(key -> {

@@ -33,7 +33,7 @@ public class KotlinRulesDefinitionTest {
 
   @Test
   public void rules() {
-    RulesDefinition rulesDefinition = new KotlinRulesDefinition(SonarRuntimeImpl.forSonarQube(Version.create(7,9), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
+    RulesDefinition rulesDefinition = new KotlinRulesDefinition();
     RulesDefinition.Context context = new RulesDefinition.Context();
     rulesDefinition.define(context);
 

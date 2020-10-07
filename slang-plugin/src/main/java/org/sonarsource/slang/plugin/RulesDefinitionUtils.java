@@ -35,8 +35,8 @@ public class RulesDefinitionUtils {
   private RulesDefinitionUtils() {
   }
 
-  public static void setDefaultValuesForParameters(RulesDefinition.NewRepository repository, List<Class> checks, Language language) {
-    for (Class check : checks) {
+  public static void setDefaultValuesForParameters(RulesDefinition.NewRepository repository, List<Class<?>> checks, Language language) {
+    for (Class<?> check : checks) {
       org.sonar.check.Rule ruleAnnotation = AnnotationUtils.getAnnotation(check, org.sonar.check.Rule.class);
       String ruleKey = ruleAnnotation.key();
       for (Field field : check.getDeclaredFields()) {

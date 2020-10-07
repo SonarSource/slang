@@ -26,7 +26,7 @@ public class GoCheckList {
     UnusedPrivateMethodCheck.class
   };
 
-  public static List<Class> checks() {
+  public static List<Class<?>> checks() {
     return CheckList.excludeChecks(GO_CHECK_BLACK_LIST);
   }
 }

@@ -35,7 +35,7 @@ public class CheckList {
   private CheckList() {
   }
 
-  static List<Class> allChecks() {
+  static List<Class<?>> allChecks() {
     return Arrays.asList(
       AllBranchesIdenticalCheck.class,
       BadClassNameCheck.class,
@@ -83,8 +83,8 @@ public class CheckList {
       WrongAssignmentOperatorCheck.class);
   }
 
-  public static List<Class> excludeChecks(Class[] blackList) {
-    List<Class> checks = new ArrayList<>(allChecks());
+  public static List<Class<?>> excludeChecks(Class[] blackList) {
+    List<Class<?>> checks = new ArrayList<>(allChecks());
     checks.removeAll(Arrays.asList(blackList));
     return checks;
   }

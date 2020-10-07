@@ -31,20 +31,15 @@ import org.sonarsource.slang.plugin.RulesDefinitionUtils;
 public class ScalaRulesDefinition implements RulesDefinition {
 
   private static final String RESOURCE_FOLDER = "org/sonar/l10n/scala/rules/scala";
-  private final SonarRuntime sonarRuntime;
-
-  public ScalaRulesDefinition(SonarRuntime sonarRuntime) {
-    this.sonarRuntime = sonarRuntime;
-  }
 
   @Override
   public void define(RulesDefinition.Context context) {
     NewRepository repository = context
       .createRepository(ScalaPlugin.SCALA_REPOSITORY_KEY, ScalaPlugin.SCALA_LANGUAGE_KEY)
       .setName(ScalaPlugin.REPOSITORY_NAME);
-    RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER, ScalaProfileDefinition.PATH_TO_JSON, sonarRuntime);
+    RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER, ScalaProfileDefinition.PATH_TO_JSON);
 
-    List<Class> checks = new ArrayList<>(ScalaCheckList.checks());
+    List<Class<?>> checks = new ArrayList<>(ScalaCheckList.checks());
     checks.add(CommentedCodeCheck.class);
     ruleMetadataLoader.addRulesByAnnotatedClass(repository, checks);
 

@@ -35,7 +35,7 @@ public class RubyRulesDefinitionTest {
 
   @Test
   public void rules() {
-    RulesDefinition rulesDefinition = new RubyRulesDefinition(SonarRuntimeImpl.forSonarQube(Version.create(7, 9), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
+    RulesDefinition rulesDefinition = new RubyRulesDefinition();
     RulesDefinition.Context context = new RulesDefinition.Context();
     rulesDefinition.define(context);
 

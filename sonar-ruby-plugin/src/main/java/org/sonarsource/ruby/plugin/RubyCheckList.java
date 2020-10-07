@@ -35,7 +35,7 @@ public final class RubyCheckList {
     UnusedPrivateMethodCheck.class,
   };
 
-  public static List<Class> checks() {
+  public static List<Class<?>> checks() {
     return CheckList.excludeChecks(RUBY_CHECK_BLACK_LIST);
   }
 

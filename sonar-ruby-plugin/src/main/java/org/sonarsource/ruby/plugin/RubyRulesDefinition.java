@@ -29,20 +29,15 @@ import org.sonarsource.slang.plugin.RulesDefinitionUtils;
 public class RubyRulesDefinition implements RulesDefinition {
 
   private static final String RESOURCE_FOLDER = "org/sonar/l10n/ruby/rules/ruby";
-  private final SonarRuntime sonarRuntime;
-
-  public RubyRulesDefinition(SonarRuntime sonarRuntime) {
-    this.sonarRuntime = sonarRuntime;
-  }
 
   @Override
   public void define(Context context) {
     NewRepository repository = context
       .createRepository(RubyPlugin.RUBY_REPOSITORY_KEY, RubyPlugin.RUBY_LANGUAGE_KEY)
       .setName(RubyPlugin.REPOSITORY_NAME);
-    RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER, RubyProfileDefinition.PATH_TO_JSON, sonarRuntime);
+    RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER, RubyProfileDefinition.PATH_TO_JSON);
 
-    List<Class> checks = RubyCheckList.checks();
+    List<Class<?>> checks = RubyCheckList.checks();
     ruleMetadataLoader.addRulesByAnnotatedClass(repository, checks);
 
     RulesDefinitionUtils.setDefaultValuesForParameters(repository, checks, Language.RUBY);

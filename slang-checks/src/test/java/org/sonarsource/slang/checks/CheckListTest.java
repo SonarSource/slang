@@ -41,19 +41,19 @@ public class CheckListTest {
 
   @Test
   public void exclude_checks() {
-    List<Class> allChecks = CheckList.allChecks();
+    List<Class<?>> allChecks = CheckList.allChecks();
     assertThat(allChecks.size()).isGreaterThanOrEqualTo(40);
 
-    List<Class> includedChecks = CheckList.excludeChecks(new Class[] {AllBranchesIdenticalCheck.class});
+    List<Class<?>> includedChecks = CheckList.excludeChecks(new Class[] {AllBranchesIdenticalCheck.class});
     assertThat(includedChecks.size()).isEqualTo(allChecks.size() - 1);
   }
 
   @Test
   public void configured_checks() {
-    List<Class> checksWithConfig = Arrays.asList(ALL_CHECKS_WITH_LANGUAGE_CONFIG);
+    List<Class<?>> checksWithConfig = Arrays.asList(ALL_CHECKS_WITH_LANGUAGE_CONFIG);
     assertThat(checksWithConfig).hasSize(1);
 
-    Set<Class> allChecks = new HashSet<>(CheckList.allChecks());
+    Set<Class<?>> allChecks = new HashSet<>(CheckList.allChecks());
     allChecks.removeAll(checksWithConfig);
     assertThat(allChecks).hasSize(CheckList.allChecks().size());
   }
