@@ -19,9 +19,23 @@
  */
 package org.sonarsource.slang.api;
 
+import javax.annotation.Nullable;
+
 public interface ASTConverter {
 
+  /**
+   * Use {@link ASTConverter#parse(String, String)} instead.
+   * It provides improved logging when used with ASTConverterValidation.
+   *
+   * @deprecated
+   * @since 1.8
+   */
+  @Deprecated
   Tree parse(String content);
+
+  default Tree parse(String content, @Nullable String currentFile) {
+    return parse(content);
+  }
 
   default void terminate() {
     // Nothing to do by default

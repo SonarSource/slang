@@ -315,6 +315,18 @@ public class ASTConverterValidationTest {
         "IdentifierTreeImpl metaData is null (line: 1, column: 1)");
   }
 
+  @Test
+  public void source_file_name_in_logs_when_set() {
+    String fileName = "my/file/name.java";
+    String code = "a";
+    Tree tree = identifier(0, 0, 1, 0, "a");
+    SimpleConverter wrappedConverter = new SimpleConverter(tree);
+    ASTConverterValidation validationConverter = new ASTConverterValidation(wrappedConverter, ValidationMode.LOG_ERROR);
+    assertThat(validationConverter.parse(code, fileName)).isSameAs(tree);
+    assertThat(validationConverter.errors())
+      .containsExactly("IdentifierTreeImpl invalid range TextRange[0, 0, 1, 0] (line: 0, column: 1) in file: " + fileName);
+  }
+
   private ListAssert<String> assertValidationErrors(String code, Tree tree) {
     return assertValidationErrors(code, tree, ValidationMode.LOG_ERROR);
   }

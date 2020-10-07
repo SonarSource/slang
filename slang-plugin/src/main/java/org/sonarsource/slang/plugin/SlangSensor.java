@@ -105,8 +105,10 @@ public abstract class SlangSensor implements Sensor {
                                   List<TreeVisitor<InputFileContext>> visitors,
                                   DurationStatistics statistics) {
     String content;
+    String fileName;
     try {
       content = inputFile.contents();
+      fileName = inputFile.toString();
     } catch (IOException | RuntimeException e) {
       throw toParseException("read", inputFile, e);
     }
@@ -117,7 +119,7 @@ public abstract class SlangSensor implements Sensor {
 
     Tree tree = statistics.time("Parse", () -> {
       try {
-        return converter.parse(content);
+        return converter.parse(content, fileName);
       } catch (RuntimeException e) {
         throw toParseException("parse", inputFile, e);
       }

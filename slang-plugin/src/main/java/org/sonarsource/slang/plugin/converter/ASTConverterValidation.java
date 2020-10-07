@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.internal.google.common.annotations.VisibleForTesting;
 import org.sonar.api.utils.log.Logger;
@@ -65,6 +66,9 @@ public class ASTConverterValidation implements ASTConverter {
     LOG_ERROR
   }
 
+  @Nullable
+  private String currentFile = null;
+
   public ASTConverterValidation(ASTConverter wrapped, ValidationMode mode) {
     this.wrapped = wrapped;
     this.mode = mode;
@@ -85,7 +89,13 @@ public class ASTConverterValidation implements ASTConverter {
 
   @Override
   public Tree parse(String content) {
-    Tree tree = wrapped.parse(content);
+    return parse(content, null);
+  }
+
+  @Override
+  public Tree parse(String content, @Nullable String currentFile) {
+    this.currentFile = currentFile;
+    Tree tree = wrapped.parse(content, currentFile);
     assertTreeIsValid(tree);
     assertTokensMatchSourceCode(tree, content);
     return tree;
@@ -95,7 +105,8 @@ public class ASTConverterValidation implements ASTConverter {
   public void terminate() {
     List<String> errors = errors();
     if (!errors.isEmpty()) {
-      LOG.error("AST Converter Validation:\n  [AST ERROR] " + String.join("\n  [AST ERROR] ", errors));
+      LOG.error("AST Converter Validation detected " + errors.size() + " errors:\n  [AST ERROR] "
+        + String.join("\n  [AST ERROR] ", errors));
     }
     wrapped.terminate();
   }
@@ -117,7 +128,10 @@ public class ASTConverterValidation implements ASTConverter {
       throw new IllegalStateException("ASTConverterValidationException: " + messageKey + messageDetails +
         " at  " + position.line() + ":" + position.lineOffset());
     } else {
-      String positionDetails = " (line: " + position.line() + ", column: " + (position.lineOffset() + 1) + ")";
+      String positionDetails = String.format(" (line: %d, column: %d)", position.line(), (position.lineOffset() + 1));
+      if (currentFile != null) {
+        positionDetails += " in file: " + currentFile;
+      }
       firstErrorOfEachKind.putIfAbsent(messageKey, messageDetails + positionDetails);
     }
   }
