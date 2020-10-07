@@ -58,7 +58,7 @@ public class GoMetaLinterReportSensorTest {
     org.sonar.api.batch.sensor.issue.ExternalIssue first = externalIssues.get(0);
     assertThat(first.type()).isEqualTo(RuleType.BUG);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
-    assertThat(first.ruleKey().repository()).isEqualTo("govet");
+    assertThat(first.ruleKey().repository()).isEqualTo("external_govet");
     assertThat(first.ruleKey().rule()).isEqualTo("assign");
     assertThat(first.primaryLocation().message()).isEqualTo("self-assignment of name to name");
     assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(1);
@@ -66,7 +66,7 @@ public class GoMetaLinterReportSensorTest {
     org.sonar.api.batch.sensor.issue.ExternalIssue second = externalIssues.get(1);
     assertThat(second.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(second.severity()).isEqualTo(Severity.MAJOR);
-    assertThat(second.ruleKey().repository()).isEqualTo("interfacer");
+    assertThat(second.ruleKey().repository()).isEqualTo("external_interfacer");
     assertThat(second.ruleKey().rule()).isEqualTo("issue");
     assertThat(second.primaryLocation().message()).isEqualTo("other (declaration) of ascii_allowed");
     assertThat(second.primaryLocation().textRange().start().line()).isEqualTo(2);
@@ -74,7 +74,7 @@ public class GoMetaLinterReportSensorTest {
     org.sonar.api.batch.sensor.issue.ExternalIssue third = externalIssues.get(2);
     assertThat(third.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(third.severity()).isEqualTo(Severity.MAJOR);
-    assertThat(third.ruleKey().repository()).isEqualTo("golint");
+    assertThat(third.ruleKey().repository()).isEqualTo("external_golint");
     assertThat(third.ruleKey().rule()).isEqualTo("Exported");
     assertThat(third.primaryLocation().message()).isEqualTo("exported type User should have comment or be unexported");
     assertThat(third.primaryLocation().textRange().start().line()).isEqualTo(3);

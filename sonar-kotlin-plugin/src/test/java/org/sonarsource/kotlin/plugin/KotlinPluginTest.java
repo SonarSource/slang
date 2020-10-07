@@ -21,6 +21,7 @@ package org.sonarsource.kotlin.plugin;
 
 import org.junit.Test;
 import org.sonar.api.Plugin;
+import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.internal.PluginContextImpl;
@@ -33,7 +34,7 @@ public class KotlinPluginTest {
 
   @Test
   public void test() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 3), SonarQubeSide.SCANNER);
+    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 9), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
     Plugin.Context context = new PluginContextImpl.Builder().setSonarRuntime(runtime).build();
     KotlinPlugin kotlinPlugin = new KotlinPlugin();
 
@@ -44,7 +45,7 @@ public class KotlinPluginTest {
 
   @Test
   public void test_SQ_67() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(6, 7), SonarQubeSide.SCANNER);
+    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(6, 7), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
     Plugin.Context context = new PluginContextImpl.Builder().setSonarRuntime(runtime).build();
     KotlinPlugin kotlinPlugin = new KotlinPlugin();
 

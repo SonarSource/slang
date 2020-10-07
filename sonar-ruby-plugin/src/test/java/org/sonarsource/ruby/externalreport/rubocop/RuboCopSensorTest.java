@@ -28,6 +28,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
+import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextRange;
@@ -78,7 +79,7 @@ public class RuboCopSensorTest {
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:useless-assignment.rb");
-    assertThat(first.ruleKey().toString()).isEqualTo("rubocop:Lint/UselessAssignment");
+    assertThat(first.ruleKey().toString()).isEqualTo("external_rubocop:Lint/UselessAssignment");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("Lint/UselessAssignment: Useless assignment to variable - `param`.");
@@ -86,7 +87,7 @@ public class RuboCopSensorTest {
 
     ExternalIssue second = externalIssues.get(1);
     assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:useless-assignment.rb");
-    assertThat(first.ruleKey().toString()).isEqualTo("rubocop:Lint/UselessAssignment");
+    assertThat(first.ruleKey().toString()).isEqualTo("external_rubocop:Lint/UselessAssignment");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("Lint/UselessAssignment: Useless assignment to variable - `param`.");
@@ -94,7 +95,7 @@ public class RuboCopSensorTest {
 
     ExternalIssue third = externalIssues.get(2);
     assertThat(third.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:yaml-issue.rb");
-    assertThat(third.ruleKey().toString()).isEqualTo("rubocop:Security/YAMLLoad");
+    assertThat(third.ruleKey().toString()).isEqualTo("external_rubocop:Security/YAMLLoad");
     assertThat(third.type()).isEqualTo(RuleType.VULNERABILITY);
     assertThat(third.severity()).isEqualTo(Severity.MAJOR);
     assertThat(third.primaryLocation().message()).isEqualTo("Security/YAMLLoad: Prefer using `YAML.safe_load` over `YAML.load`.");
@@ -102,7 +103,7 @@ public class RuboCopSensorTest {
 
     ExternalIssue fourth = externalIssues.get(3);
     assertThat(fourth.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:yaml-issue.rb");
-    assertThat(fourth.ruleKey().toString()).isEqualTo("rubocop:Style/StringLiterals");
+    assertThat(fourth.ruleKey().toString()).isEqualTo("external_rubocop:Style/StringLiterals");
     assertThat(fourth.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(fourth.severity()).isEqualTo(Severity.MINOR);
     assertThat(fourth.primaryLocation().message()).isEqualTo("Style/StringLiterals: Prefer single-quoted strings when you don't need string interpolation or special symbols.");
@@ -150,7 +151,7 @@ public class RuboCopSensorTest {
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:useless-assignment.rb");
-    assertThat(first.ruleKey().toString()).isEqualTo("rubocop:ruleKey1");
+    assertThat(first.ruleKey().toString()).isEqualTo("external_rubocop:ruleKey1");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("message 1");
@@ -189,7 +190,7 @@ public class RuboCopSensorTest {
     SensorContextTester context = SensorContextTester.create(PROJECT_DIR);
     Files.list(PROJECT_DIR)
       .forEach(file -> addFileToContext(context, PROJECT_DIR, file));
-    context.setRuntime(SonarRuntimeImpl.forSonarQube(Version.create(majorVersion, minorVersion), SonarQubeSide.SERVER));
+    context.setRuntime(SonarRuntimeImpl.forSonarQube(Version.create(majorVersion, minorVersion), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
     if (fileName != null) {
       String path = PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();
       context.settings().setProperty("sonar.ruby.rubocop.reportPaths", path);

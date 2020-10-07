@@ -72,7 +72,7 @@ public class AndroidLintSensorTest {
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:AndroidManifest.xml");
-    assertThat(first.ruleKey().toString()).isEqualTo("android-lint:AllowBackup");
+    assertThat(first.ruleKey().toString()).isEqualTo("external_android-lint:AllowBackup");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MINOR);
     assertThat(first.primaryLocation().message()).isEqualTo(
@@ -81,17 +81,17 @@ public class AndroidLintSensorTest {
 
     ExternalIssue second = externalIssues.get(1);
     assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:A.java");
-    assertThat(second.ruleKey().toString()).isEqualTo("android-lint:GoogleAppIndexingWarning");
+    assertThat(second.ruleKey().toString()).isEqualTo("external_android-lint:GoogleAppIndexingWarning");
     assertThat(second.primaryLocation().textRange().start().line()).isEqualTo(1);
 
     ExternalIssue third = externalIssues.get(2);
     assertThat(third.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:B.kt");
-    assertThat(third.ruleKey().toString()).isEqualTo("android-lint:GoogleAppIndexingWarning");
+    assertThat(third.ruleKey().toString()).isEqualTo("external_android-lint:GoogleAppIndexingWarning");
     assertThat(third.primaryLocation().textRange().start().line()).isEqualTo(2);
 
     ExternalIssue fourth = externalIssues.get(3);
     assertThat(fourth.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:build.gradle");
-    assertThat(fourth.ruleKey().toString()).isEqualTo("android-lint:GradleDependency");
+    assertThat(fourth.ruleKey().toString()).isEqualTo("external_android-lint:GradleDependency");
     assertThat(fourth.primaryLocation().textRange().start().line()).isEqualTo(3);
 
     assertNoErrorWarnDebugLogs(logTester);
@@ -138,7 +138,7 @@ public class AndroidLintSensorTest {
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("androidlint-project:AndroidManifest.xml");
-    assertThat(first.ruleKey().toString()).isEqualTo("android-lint:UnknownRuleKey");
+    assertThat(first.ruleKey().toString()).isEqualTo("external_android-lint:UnknownRuleKey");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("Unknown rule.");

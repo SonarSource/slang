@@ -26,6 +26,7 @@ import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
+import org.sonar.api.batch.rule.internal.NewActiveRule;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
@@ -58,18 +59,18 @@ public abstract class AbstractSensorTest {
     when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
   }
 
-
   protected CheckFactory checkFactory(String... ruleKeys) {
     ActiveRulesBuilder builder = new ActiveRulesBuilder();
     for (String ruleKey : ruleKeys) {
-      builder.create(RuleKey.of(repositoryKey(), ruleKey))
+      NewActiveRule newRule = new NewActiveRule.Builder()
+        .setRuleKey(RuleKey.of(repositoryKey(), ruleKey))
         .setName(ruleKey)
-        .activate();
+        .build();
+      builder.addRule(newRule);
     }
     context.setActiveRules(builder.build());
     return new CheckFactory(context.activeRules());
   }
-
 
   protected InputFile createInputFile(String relativePath, String content) {
     return new TestInputFileBuilder("moduleKey", relativePath)

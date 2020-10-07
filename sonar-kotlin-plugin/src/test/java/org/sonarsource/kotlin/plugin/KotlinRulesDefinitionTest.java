@@ -20,6 +20,7 @@
 package org.sonarsource.kotlin.plugin;
 
 import org.junit.Test;
+import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.rules.RuleType;
@@ -32,7 +33,7 @@ public class KotlinRulesDefinitionTest {
 
   @Test
   public void rules() {
-    RulesDefinition rulesDefinition = new KotlinRulesDefinition(SonarRuntimeImpl.forSonarQube(Version.create(7,2), SonarQubeSide.SERVER));
+    RulesDefinition rulesDefinition = new KotlinRulesDefinition(SonarRuntimeImpl.forSonarQube(Version.create(7,9), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
     RulesDefinition.Context context = new RulesDefinition.Context();
     rulesDefinition.define(context);
 

@@ -68,7 +68,7 @@ public class GoLintReportSensorTest {
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
-    assertThat(first.ruleKey().repository()).isEqualTo("golint");
+    assertThat(first.ruleKey().repository()).isEqualTo("external_golint");
     assertThat(first.ruleKey().rule()).isEqualTo("PackageComment");
     assertThat(first.primaryLocation().message()).isEqualTo("package comment should be of the form \"Package samples ...\"");
     assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(1);
@@ -76,7 +76,7 @@ public class GoLintReportSensorTest {
     ExternalIssue second = externalIssues.get(1);
     assertThat(second.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(second.severity()).isEqualTo(Severity.MAJOR);
-    assertThat(second.ruleKey().repository()).isEqualTo("golint");
+    assertThat(second.ruleKey().repository()).isEqualTo("external_golint");
     assertThat(second.ruleKey().rule()).isEqualTo("Exported");
     assertThat(second.primaryLocation().message()).isEqualTo("exported type User should have comment or be unexported");
     assertThat(second.primaryLocation().textRange().start().line()).isEqualTo(2);

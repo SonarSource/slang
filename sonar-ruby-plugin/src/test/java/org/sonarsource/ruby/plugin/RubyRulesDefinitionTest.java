@@ -20,6 +20,7 @@
 package org.sonarsource.ruby.plugin;
 
 import org.junit.Test;
+import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.rules.RuleType;
@@ -34,7 +35,7 @@ public class RubyRulesDefinitionTest {
 
   @Test
   public void rules() {
-    RulesDefinition rulesDefinition = new RubyRulesDefinition(SonarRuntimeImpl.forSonarQube(Version.create(7,2), SonarQubeSide.SERVER));
+    RulesDefinition rulesDefinition = new RubyRulesDefinition(SonarRuntimeImpl.forSonarQube(Version.create(7,2), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
     RulesDefinition.Context context = new RulesDefinition.Context();
     rulesDefinition.define(context);
 

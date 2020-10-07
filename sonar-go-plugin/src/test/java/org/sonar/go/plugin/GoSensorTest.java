@@ -321,19 +321,12 @@ public class GoSensorTest {
     ActiveRulesBuilder rulesBuilder = new ActiveRulesBuilder();
     allKeys.forEach(key -> {
       if (activeRuleSet.contains(key)) {
-        NewActiveRule newActiveRule = rulesBuilder.create(RuleKey.of(GoRulesDefinition.REPOSITORY_KEY, key))
-          .setName(key);
+        NewActiveRule.Builder newActiveRuleBuilder = new NewActiveRule.Builder()
+          .setRuleKey(RuleKey.of(GoRulesDefinition.REPOSITORY_KEY, key));
         if (key.equals("S1451")) {
-          newActiveRule.setParam("headerFormat", "some header format");
+          newActiveRuleBuilder.setParam("headerFormat", "some header format");
         }
-        newActiveRule.activate();
-// FIXME use latest SQ api
-//        NewActiveRule.Builder newActiveRuleBuilder = new NewActiveRule.Builder()
-//          .setRuleKey(RuleKey.of(GoRulesDefinition.REPOSITORY_KEY, key));
-//        if (key.equals("S1451")) {
-//          rulesBuilder.setParam("headerFormat", "some header format");
-//        }
-//        rulesBuilder.addRule(newActiveRuleBuilder.build());
+        rulesBuilder.addRule(newActiveRuleBuilder.build());
       }
     });
     ActiveRules activeRules = rulesBuilder.build();

@@ -66,7 +66,7 @@ public class GolangCILintReportSensorTest {
     org.sonar.api.batch.sensor.issue.ExternalIssue first = externalIssues.get(0);
     assertThat(first.type()).isEqualTo(RuleType.BUG);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
-    assertThat(first.ruleKey().repository()).isEqualTo("golangci-lint");
+    assertThat(first.ruleKey().repository()).isEqualTo("external_golangci-lint");
     assertThat(first.ruleKey().rule()).isEqualTo("deadcode");
     assertThat(first.primaryLocation().message()).isEqualTo("`three` is unused");
     assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(3);

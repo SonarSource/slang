@@ -29,6 +29,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
+import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
@@ -88,7 +89,7 @@ public class ScalastyleSensorTest {
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("project:HelloWorld.scala");
-    assertThat(first.ruleKey().toString()).isEqualTo("scalastyle:org.scalastyle.file.HeaderMatchesChecker");
+    assertThat(first.ruleKey().toString()).isEqualTo("external_scalastyle:org.scalastyle.file.HeaderMatchesChecker");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MINOR);
     assertThat(first.primaryLocation().message()).isEqualTo("Header does not match expected text");
@@ -96,7 +97,7 @@ public class ScalastyleSensorTest {
 
     ExternalIssue second = externalIssues.get(1);
     assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("project:HelloWorld.scala");
-    assertThat(second.ruleKey().toString()).isEqualTo("scalastyle:org.scalastyle.file.RegexChecker");
+    assertThat(second.ruleKey().toString()).isEqualTo("external_scalastyle:org.scalastyle.file.RegexChecker");
     assertThat(second.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(second.severity()).isEqualTo(Severity.MINOR);
     assertThat(second.primaryLocation().message()).isEqualTo("Regular expression matched 'println'");
@@ -150,7 +151,7 @@ public class ScalastyleSensorTest {
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("project:HelloWorld.scala");
-    assertThat(first.ruleKey().toString()).isEqualTo("scalastyle:com.sksamuel.scapegoat.inspections.EmptyCaseClass");
+    assertThat(first.ruleKey().toString()).isEqualTo("external_scalastyle:com.sksamuel.scapegoat.inspections.EmptyCaseClass");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("Valid issue");
@@ -158,7 +159,7 @@ public class ScalastyleSensorTest {
 
     ExternalIssue second = externalIssues.get(1);
     assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("project:HelloWorld.scala");
-    assertThat(second.ruleKey().toString()).isEqualTo("scalastyle:unknown.key");
+    assertThat(second.ruleKey().toString()).isEqualTo("external_scalastyle:unknown.key");
     assertThat(second.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(second.severity()).isEqualTo(Severity.MAJOR);
     assertThat(second.primaryLocation().message()).isEqualTo("Missing line");
@@ -209,7 +210,7 @@ public class ScalastyleSensorTest {
     DefaultFileSystem defaultFileSystem = new DefaultFileSystem(new File(VIRTUAL_FILE_SYSTEM));
     defaultFileSystem.add(inputFile("HelloWorld.scala"));
     context.setFileSystem(defaultFileSystem);
-    context.setRuntime(SonarRuntimeImpl.forSonarQube(Version.create(majorVersion, minorVersion), SonarQubeSide.SERVER));
+    context.setRuntime(SonarRuntimeImpl.forSonarQube(Version.create(majorVersion, minorVersion), SonarQubeSide.SERVER, SonarEdition.COMMUNITY));
     if (fileName != null) {
       String path = PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();
       context.settings().setProperty(sensor.reportPropertyKey(), path);

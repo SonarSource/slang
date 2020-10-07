@@ -19,13 +19,14 @@
  */
 package org.sonarsource.slang;
 
-import com.google.common.collect.ImmutableSet;
 import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.OrchestratorBuilder;
 import com.sonar.orchestrator.locator.FileLocation;
 import com.sonar.orchestrator.locator.Location;
 import com.sonar.orchestrator.locator.MavenLocation;
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.junit.ClassRule;
@@ -46,7 +47,7 @@ public class Tests {
   static final String SQ_VERSION_PROPERTY = "sonar.runtimeVersion";
   static final String DEFAULT_SQ_VERSION = "LATEST_RELEASE";
 
-  private static final Set<String> LANGUAGES = ImmutableSet.of("kotlin", "ruby", "scala", "go");
+  private static final Set<String> LANGUAGES = new HashSet<>(Arrays.asList("kotlin", "ruby", "scala", "go"));
 
   @ClassRule
   public static final Orchestrator ORCHESTRATOR;
