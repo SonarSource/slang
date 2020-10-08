@@ -178,6 +178,7 @@ public class RuboCopSensorTest {
   private List<ExternalIssue> executeSensorImporting(@Nullable String fileName) throws IOException {
     SensorContextTester context = SensorContextTester.create(PROJECT_DIR);
     Files.list(PROJECT_DIR)
+      .filter(file -> !Files.isDirectory(file))
       .forEach(file -> addFileToContext(context, PROJECT_DIR, file));
     if (fileName != null) {
       String path = PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();

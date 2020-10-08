@@ -43,6 +43,7 @@ public final class ExternalReportTestUtils {
   public static SensorContextTester createContext(Path projectDir) throws IOException {
     SensorContextTester context = SensorContextTester.create(projectDir);
     Files.list(projectDir)
+      .filter(file -> !Files.isDirectory(file))
       .forEach(file -> addFileToContext(context, projectDir, file));
     return context;
   }
