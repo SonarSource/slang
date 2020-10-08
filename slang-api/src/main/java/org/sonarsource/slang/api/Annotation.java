@@ -20,18 +20,14 @@
 package org.sonarsource.slang.api;
 
 import java.util.List;
-import java.util.Set;
 
-public interface TreeMetaData {
+public interface Annotation extends HasTextRange {
 
-  TextRange textRange();
+  /**
+   * Short name of the annotation, without qualified name.
+   */
+  String shortName();
 
-  List<Comment> commentsInside();
-
-  List<Annotation> annotations();
-
-  List<Token> tokens();
-
-  Set<Integer> linesOfCode();
+  List<String> argumentsText();
 
 }

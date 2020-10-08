@@ -19,11 +19,29 @@ typeDeclaration
   ;
 
 classDeclaration
-  :  CLASS identifier? LCURLY typeDeclaration* RCURLY
+  :  annotation* CLASS identifier? LCURLY typeDeclaration* RCURLY
   ;
 
 methodDeclaration
-  :  methodModifier* methodHeader methodBody
+  :  annotation* methodModifier* methodHeader methodBody
+  ;
+
+annotation
+  : AT identifier (LPAREN annotationParameters RPAREN)?
+  ;
+
+annotationParameters
+  : annotationParameter (COMMA annotationParameter)*
+  ;
+
+annotationParameter
+  : literal
+  | identifier assignmentOperator annotationParameterList
+  ;
+
+annotationParameterList
+  : literal
+  | LCURLY literal (COMMA literal)* RCURLY
   ;
 
 methodModifier
@@ -52,7 +70,7 @@ formalParameters
   ;
 
 formalParameter
-  :  parameterModifier* simpleType? variableDeclaratorId ('=' expression)?
+  :  annotation* parameterModifier* simpleType? variableDeclaratorId ('=' expression)?
   ;
 
 parameterModifier
@@ -88,7 +106,7 @@ statement
   ;
 
 declaration
-  :  simpleType? declarationModifier identifier ('=' expression)?
+  :  annotation* simpleType? declarationModifier identifier ('=' expression)?
   ;
 
 declarationModifier
@@ -475,6 +493,7 @@ RBRACK : ']' ;
 RCURLY : '}' ;
 RPAREN : ')' ;
 SEMICOLON :  ';' ;
+AT : '@' ;
 
 // Operators
 GT : '>' ;

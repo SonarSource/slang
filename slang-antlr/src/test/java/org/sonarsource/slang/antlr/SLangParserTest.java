@@ -50,6 +50,11 @@ public class SLangParserTest {
   }
 
   @Test
+  public void testAnnotationsFile() throws IOException {
+    testFile("src/test/resources/annotations.slang");
+  }
+
+  @Test
   public void testBinaryExpression() {
     SLangLexer lexer = new SLangLexer(CharStreams.fromString("x = 1;\n//comment\ny = 2 + \"1\";"));
     CommonTokenStream tokens = new CommonTokenStream(lexer);

@@ -19,7 +19,9 @@
  */
 package org.sonarsource.slang.impl;
 
+import java.util.Collections;
 import java.util.List;
+import org.sonarsource.slang.api.Annotation;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.Token;
 import java.util.Arrays;
@@ -42,6 +44,69 @@ public class TreeMetaDataProviderTest {
     assertThat(provider.metaData(new TextRangeImpl(1, 1, 1, 20)).commentsInside()).isEmpty();
     assertThat(provider.metaData(new TextRangeImpl(2, 1, 2, 20)).commentsInside()).containsExactly(comment);
     assertThat(provider.metaData(new TextRangeImpl(2, 5, 2, 20)).commentsInside()).containsExactly(comment);
+  }
+
+  @Test
+  public void single_annotation() {
+    Annotation annotation = new AnnotationImpl("MyAnnotation", emptyList(), range(2, 5, 2, 13));
+    Token token1 = new TokenImpl(new TextRangeImpl(2, 5, 2, 6), "@", Token.Type.OTHER);
+    Token token2 = new TokenImpl(new TextRangeImpl(2, 6, 2, 13), "MyAnnotation", Token.Type.OTHER);
+
+    Token token3 = new TokenImpl(new TextRangeImpl(3, 5, 3, 6), "class", Token.Type.OTHER);
+
+    TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2, token3), singletonList(annotation));
+
+    List<Annotation> oneAnnotation = provider.metaData(new TextRangeImpl(2, 5, 25, 25)).annotations();
+    assertThat(oneAnnotation).containsExactly(annotation);
+  }
+
+  @Test
+  public void multiple_annotations() {
+    Annotation annotation1 = new AnnotationImpl("MyAnnotation", emptyList(), range(2, 5, 2, 13));
+    Token token1 = new TokenImpl(new TextRangeImpl(2, 5, 2, 6), "@", Token.Type.OTHER);
+    Token token2 = new TokenImpl(new TextRangeImpl(2, 6, 2, 13), "MyAnnotation", Token.Type.OTHER);
+
+    Annotation annotation2 = new AnnotationImpl("MyAnnotation2", Collections.singletonList("abc"), range(3, 5, 3, 14));
+    Token token3 = new TokenImpl(new TextRangeImpl(3, 5, 3, 6), "@", Token.Type.OTHER);
+    Token token4 = new TokenImpl(new TextRangeImpl(3, 6, 3, 14), "MyAnnotation2", Token.Type.OTHER);
+
+    // A token between the second and the third annotation
+    Token token5 = new TokenImpl(new TextRangeImpl(4, 6, 4, 9), "fun", Token.Type.OTHER);
+
+    Annotation annotation3 = new AnnotationImpl("MyAnnotation3", emptyList(), range(5, 5, 5, 14));
+    Token token6 = new TokenImpl(new TextRangeImpl(5, 5, 5, 6), "@", Token.Type.OTHER);
+    Token token7 = new TokenImpl(new TextRangeImpl(5, 6, 5, 14), "MyAnnotation3", Token.Type.OTHER);
+
+    TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(),
+      Arrays.asList(token1, token2, token3, token4, token5, token6, token7),
+      Arrays.asList(annotation1, annotation2, annotation3));
+    // Annotations have to start the same place as the range. All annotations directly following the first one will be returned.
+
+    List<Annotation> twoAnnotations = provider.metaData(new TextRangeImpl(2, 5, 10, 13)).annotations();
+    assertThat(twoAnnotations).containsExactly(annotation1, annotation2);
+    Annotation firstAnnotation = twoAnnotations.get(0);
+    assertThat(firstAnnotation.shortName()).isEqualTo("MyAnnotation");
+    assertThat(firstAnnotation.argumentsText()).isEmpty();
+    Annotation secondAnnotation = twoAnnotations.get(1);
+    assertThat(secondAnnotation.shortName()).isEqualTo("MyAnnotation2");
+    assertThat(secondAnnotation.argumentsText()).containsExactly("abc");
+    // The end position does not matters
+    assertThat(provider.metaData(new TextRangeImpl(2, 5, 25, 14)).annotations()).containsExactly(annotation1, annotation2);
+    assertThat(provider.metaData(new TextRangeImpl(2, 6, 10, 13)).annotations()).isEmpty();
+    assertThat(provider.metaData(new TextRangeImpl(3, 5, 10, 13)).annotations()).containsExactly(annotation2);
+    assertThat(provider.metaData(new TextRangeImpl(3, 1, 10, 13)).annotations()).isEmpty();
+    assertThat(provider.metaData(new TextRangeImpl(9, 1, 10, 13)).annotations()).isEmpty();
+    assertThat(provider.metaData(new TextRangeImpl(5, 5, 10, 6)).annotations()).containsExactly(annotation3);
+  }
+
+  @Test
+  public void annotations_are_cached() {
+    Annotation annotation = new AnnotationImpl("MyAnnotation", emptyList(), range(2, 5, 2, 13));
+    TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), emptyList(), singletonList(annotation));
+    TreeMetaData metaData = provider.metaData(new TextRangeImpl(2, 5, 2, 13));
+    List<Annotation> firstCall = metaData.annotations();
+    List<Annotation> secondCall = metaData.annotations();
+    assertThat(firstCall).isSameAs(secondCall);
   }
 
   @Test

@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
+import org.sonarsource.slang.api.Annotation;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.Comment;
@@ -255,6 +256,11 @@ public class TreeAssertTest {
       @Override
       public List<Comment> commentsInside() {
         return null;
+      }
+
+      @Override
+      public List<Annotation> annotations() {
+        return Collections.emptyList();
       }
 
       @Override

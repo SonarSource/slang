@@ -17,21 +17,36 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.api;
+package org.sonarsource.slang.impl;
 
 import java.util.List;
-import java.util.Set;
+import org.sonarsource.slang.api.Annotation;
+import org.sonarsource.slang.api.TextRange;
 
-public interface TreeMetaData {
+public class AnnotationImpl implements Annotation {
 
-  TextRange textRange();
+  private final String shortName;
+  private final List<String> argumentsText;
+  private final TextRange range;
 
-  List<Comment> commentsInside();
+  public AnnotationImpl(String shortName, List<String> argumentsText, TextRange range) {
+    this.shortName = shortName;
+    this.argumentsText = argumentsText;
+    this.range = range;
+  }
 
-  List<Annotation> annotations();
+  @Override
+  public String shortName() {
+    return shortName;
+  }
 
-  List<Token> tokens();
+  @Override
+  public List<String> argumentsText() {
+    return argumentsText;
+  }
 
-  Set<Integer> linesOfCode();
-
+  @Override
+  public TextRange textRange() {
+    return range;
+  }
 }

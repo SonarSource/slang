@@ -19,6 +19,7 @@
  */
 package org.sonarsource.slang.plugin.converter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,6 +34,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.sonar.api.config.Configuration;
 import org.sonarsource.slang.api.ASTConverter;
+import org.sonarsource.slang.api.Annotation;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.HasTextRange;
 import org.sonarsource.slang.api.IdentifierTree;
@@ -380,6 +382,11 @@ public class ASTConverterValidationTest {
       @Override
       public List<Comment> commentsInside() {
         return comments;
+      }
+
+      @Override
+      public List<Annotation> annotations() {
+        return Collections.emptyList();
       }
 
       @Override

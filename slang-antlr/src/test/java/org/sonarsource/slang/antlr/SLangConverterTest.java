@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.sonarsource.slang.api.Annotation;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
@@ -55,6 +56,7 @@ import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.UnaryExpressionTree;
 import org.sonarsource.slang.api.VariableDeclarationTree;
+import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.ModifierTreeImpl;
 import org.sonarsource.slang.parser.SLangConverter;
 
@@ -203,6 +205,17 @@ public class SLangConverterTest {
   }
 
   @Test
+  public void variable_declaration_annotated() {
+    Tree tree = converter.parse("@MyAnnotation\n" +
+      "int val x;").children().get(0);
+    List<Annotation> annotations = tree.metaData().annotations();
+    assertThat(annotations).hasSize(1);
+    Annotation annotation = annotations.get(0);
+    assertThat(annotation.shortName()).isEqualTo("MyAnnotation");
+    assertThat(annotation.argumentsText()).isEmpty();
+  }
+
+  @Test
   public void variable_declaration_with_initializer() {
     Tree tree = converter.parse("int var x = 0;").children().get(0);
     Tree anotherTree = converter.parse("int val x = 0;").children().get(0);
@@ -302,6 +315,46 @@ public class SLangConverterTest {
   }
 
   @Test
+  public void class_with_annotation() {
+    ClassDeclarationTree classe = parseClass("@MyAnnotation(\"abc\") class { } ");
+    List<Annotation> annotations = classe.metaData().annotations();
+    assertThat(annotations).hasSize(1);
+    Annotation annotation = annotations.get(0);
+    assertThat(annotation.shortName()).isEqualTo("MyAnnotation");
+    assertThat(annotation.argumentsText()).hasSize(1).containsExactly("\"abc\"");
+  }
+
+  @Test
+  public void class_with_annotation_complex_arguments() {
+    ClassDeclarationTree classe = parseClass("@MyAnnotation(\"abc\", value =\"b\", value={\"b\",\"c\"}) class { } ");
+    List<Annotation> annotations = classe.metaData().annotations();
+    assertThat(annotations).hasSize(1);
+    Annotation annotation = annotations.get(0);
+    assertThat(annotation.shortName()).isEqualTo("MyAnnotation");
+    assertThat(annotation.argumentsText()).hasSize(3).containsExactly("\"abc\"", "value=\"b\"", "value={\"b\",\"c\"}");
+  }
+
+  @Test
+  public void class_and_method_with_annotation() {
+    ClassDeclarationTree classe = parseClass("@MyAnnotation1   @MyAnnotation2(\"abc\")   class { @MyFunAnnotation(\"cba\") fun foo() { } } ");
+    List<Annotation> annotations = classe.metaData().annotations();
+    assertThat(annotations).hasSize(2);
+    Annotation annotation1 = annotations.get(0);
+    assertThat(annotation1.shortName()).isEqualTo("MyAnnotation1");
+    assertThat(annotation1.argumentsText()).isEmpty();
+    Annotation annotation2 = annotations.get(1);
+    assertThat(annotation2.shortName()).isEqualTo("MyAnnotation2");
+    assertThat(annotation2.argumentsText()).containsExactly("\"abc\"");
+
+    FunctionDeclarationTree nestedFunction = (FunctionDeclarationTree) classe.children().get(0).children().get(0);
+    List<Annotation> functionAnnotations = nestedFunction.metaData().annotations();
+    assertThat(functionAnnotations).hasSize(1);
+    Annotation myFunAnnotation = functionAnnotations.get(0);
+    assertThat(myFunAnnotation.shortName()).isEqualTo("MyFunAnnotation");
+    assertThat(myFunAnnotation.argumentsText()).containsExactly("\"cba\"");
+  }
+
+  @Test
   public void function() {
     FunctionDeclarationTree function = parseFunction("private int fun foo(x1, x2) { x1 + x2 }");
     assertThat(function.name().name()).isEqualTo("foo");
@@ -363,6 +416,40 @@ public class SLangConverterTest {
     assertThat(((ParameterTree) p1Mod).modifiers()).isEmpty();
     assertThat(((ParameterTree) p2Mod).modifiers()).hasSize(1);
     assertThat(((ParameterTree) p2Mod).modifiers().get(0)).isInstanceOf(NativeTree.class);
+  }
+
+  @Test
+  public void function_with_local_annotations() {
+    FunctionDeclarationTree function = parseFunction("private int fun foo() {\n" +
+      "@MyAnnotation\n" +
+      "val i = 1;\n" +
+      "}");
+    List<Annotation> localVariableAnnotations = function.body().statementOrExpressions().get(0).metaData().annotations();
+    assertThat(localVariableAnnotations).hasSize(1);
+    Annotation annotation = localVariableAnnotations.get(0);
+    assertThat(annotation.shortName()).isEqualTo("MyAnnotation");
+    assertThat(annotation.argumentsText()).isEmpty();
+  }
+
+  @Test
+  public void function_with_annotated_parameters() {
+    FunctionDeclarationTree function = parseFunction("private int fun foo(int a, @B int b, @C int c, int d) {}");
+    List<Tree> parameters = function.formalParameters();
+
+    List<Annotation> bAnnotations = parameters.get(1).metaData().annotations();
+    List<Annotation> cAnnotations = parameters.get(2).metaData().annotations();
+
+    assertThat(parameters.get(0).metaData().annotations()).isEmpty();
+    assertThat(bAnnotations).hasSize(1);
+    assertThat(cAnnotations).hasSize(1);
+    assertThat(parameters.get(3).metaData().annotations()).isEmpty();
+
+    Annotation bAnnotation = bAnnotations.get(0);
+    assertThat(bAnnotation.shortName()).isEqualTo("B");
+    assertThat(bAnnotation.argumentsText()).isEmpty();
+    Annotation cAnnotation = cAnnotations.get(0);
+    assertThat(cAnnotation.shortName()).isEqualTo("C");
+    assertThat(cAnnotation.argumentsText()).isEmpty();
   }
 
   @Test

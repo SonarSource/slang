@@ -27,13 +27,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.sonarsource.analyzer.commons.TokenLocation;
 import org.sonarsource.slang.api.ASTConverter;
+import org.sonarsource.slang.api.Annotation;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import org.sonarsource.slang.api.BlockTree;
@@ -51,6 +54,7 @@ import org.sonarsource.slang.api.Token.Type;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
 import org.sonarsource.slang.api.UnaryExpressionTree;
+import org.sonarsource.slang.impl.AnnotationImpl;
 import org.sonarsource.slang.impl.AssignmentExpressionTreeImpl;
 import org.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import org.sonarsource.slang.impl.BlockTreeImpl;
@@ -118,12 +122,9 @@ public class SLangConverter implements ASTConverter {
 
   @Override
   public Tree parse(String slangCode) {
-    SLangLexer lexer = new SLangLexer(CharStreams.fromString(slangCode));
+    CommonTokenStream antlrTokens = getTokenStream(slangCode);
 
     List<Comment> comments = new ArrayList<>();
-    CommonTokenStream antlrTokens = new CommonTokenStream(lexer);
-    antlrTokens.fill();
-
     List<org.sonarsource.slang.api.Token> tokens = new ArrayList<>();
 
     for (int index = 0; index < antlrTokens.size(); index++) {
@@ -142,11 +143,26 @@ public class SLangConverter implements ASTConverter {
       }
     }
 
+    // We can not re-use the same SlangParser to visit the tree multiples times, we have to parse a second time for annotations.
+    // This is not optimal, but this converter is used only for tests, it won't impact production's performance.
+    SLangParser parserAnnotation = new SLangParser(getTokenStream(slangCode));
+    parserAnnotation.setErrorHandler(new ErrorStrategy());
+
+    SlangParseTreeAnnotationsVisitor annotationsVisitor = new SlangParseTreeAnnotationsVisitor();
+    annotationsVisitor.visit(parserAnnotation.slangFile());
+
     SLangParser parser = new SLangParser(antlrTokens);
     parser.setErrorHandler(new ErrorStrategy());
 
-    SLangParseTreeVisitor slangVisitor = new SLangParseTreeVisitor(comments, tokens);
+    SLangParseTreeVisitor slangVisitor = new SLangParseTreeVisitor(comments, tokens, annotationsVisitor.annotations);
     return slangVisitor.visit(parser.slangFile());
+  }
+
+  private static CommonTokenStream getTokenStream(String slangCode) {
+    SLangLexer lexer = new SLangLexer(CharStreams.fromString(slangCode));
+    CommonTokenStream antlrTokens = new CommonTokenStream(lexer);
+    antlrTokens.fill();
+    return antlrTokens;
   }
 
   private static CommentImpl comment(Token token, TextRange range) {
@@ -207,12 +223,33 @@ public class SLangConverter implements ASTConverter {
     return new TextRangeImpl(location.startLine(), location.startLineOffset(), location.endLine(), location.endLineOffset());
   }
 
+  private static class SlangParseTreeAnnotationsVisitor extends SLangBaseVisitor<Tree> {
+
+    List<Annotation> annotations = new ArrayList<>();
+
+    @Override
+    public Tree visitAnnotation(SLangParser.AnnotationContext ctx) {
+      String simpleName = ctx.identifier().Identifier().toString();
+
+      List<String> argumentsText = new ArrayList<>();
+      SLangParser.AnnotationParametersContext argument = ctx.annotationParameters();
+      if (argument != null) {
+        argumentsText.addAll(argument.annotationParameter().stream().map(RuleContext::getText).collect(Collectors.toList()));
+      }
+
+      annotations.add(new AnnotationImpl(simpleName, argumentsText,
+          new TextRangeImpl(SLangParseTreeVisitor.startOf(ctx.start), SLangParseTreeVisitor.endOf(ctx.stop))));
+
+      return super.visitAnnotation(ctx);
+    }
+  }
+
   private static class SLangParseTreeVisitor extends SLangBaseVisitor<Tree> {
 
     private final TreeMetaDataProvider metaDataProvider;
 
-    public SLangParseTreeVisitor(List<Comment> comments, List<org.sonarsource.slang.api.Token> tokens) {
-      metaDataProvider = new TreeMetaDataProvider(comments, tokens);
+    public SLangParseTreeVisitor(List<Comment> comments, List<org.sonarsource.slang.api.Token> tokens, List<Annotation> annotations) {
+      metaDataProvider = new TreeMetaDataProvider(comments, tokens, annotations);
     }
 
     @Override
