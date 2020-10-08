@@ -34,7 +34,6 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
-import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ExternalReportProvider;
@@ -92,9 +91,9 @@ public abstract class ScalastyleFamilySensor implements Sensor {
     }
   }
 
-  private void saveIssue(SensorContext context, String file, String line, String source, String message, Set<String> unresolvedInputFiles) {
-    if (source.isEmpty() || message.isEmpty()) {
-      LOG.debug("Missing information or unsupported file type for source:'{}', file:'{}', message:'{}'", source, file, message);
+  private void saveIssue(SensorContext context, String file, String line, String ruleId, String message, Set<String> unresolvedInputFiles) {
+    if (ruleId.isEmpty() || message.isEmpty()) {
+      LOG.debug("Missing information or unsupported file type for source:'{}', file:'{}', message:'{}'", ruleId, file, message);
       return;
     }
     InputFile inputFile = context.fileSystem().inputFile(context.fileSystem().predicates().hasAbsolutePath(file));
@@ -103,12 +102,11 @@ public abstract class ScalastyleFamilySensor implements Sensor {
       return;
     }
 
-    RuleKey ruleKey = RuleKey.of(reportLinterKey(), source);
     NewExternalIssue newExternalIssue = context.newExternalIssue();
     newExternalIssue
-      .type(ruleLoader().ruleType(ruleKey.rule()))
-      .severity(ruleLoader().ruleSeverity(ruleKey.rule()))
-      .remediationEffortMinutes(ruleLoader().ruleConstantDebtMinutes(ruleKey.rule()));
+      .type(ruleLoader().ruleType(ruleId))
+      .severity(ruleLoader().ruleSeverity(ruleId))
+      .remediationEffortMinutes(ruleLoader().ruleConstantDebtMinutes(ruleId));
 
     NewIssueLocation primaryLocation = newExternalIssue.newLocation()
       .message(message)
@@ -120,8 +118,8 @@ public abstract class ScalastyleFamilySensor implements Sensor {
 
     newExternalIssue
       .at(primaryLocation)
-      .engineId(ruleKey.repository())
-      .ruleId(ruleKey.rule())
+      .engineId(reportLinterKey())
+      .ruleId(ruleId)
       .save();
   }
 

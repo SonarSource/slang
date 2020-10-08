@@ -35,7 +35,6 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
-import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ExternalReportProvider;
@@ -101,15 +100,13 @@ public class RuboCopSensor implements Sensor {
       unresolvedInputFile.add(issue.filePath);
       return;
     }
-    RuleKey qualifiedRuleKey = RuleKey.of(LINTER_KEY, issue.ruleKey);
     NewExternalIssue newExternalIssue = context.newExternalIssue();
-    String ruleKey = qualifiedRuleKey.rule();
 
     ExternalRuleLoader externalRuleLoader = RuboCopRulesDefinition.RULE_LOADER;
     newExternalIssue
-      .type(externalRuleLoader.ruleType(ruleKey))
-      .severity(externalRuleLoader.ruleSeverity(ruleKey))
-      .remediationEffortMinutes(externalRuleLoader.ruleConstantDebtMinutes(ruleKey));
+      .type(externalRuleLoader.ruleType(issue.ruleKey))
+      .severity(externalRuleLoader.ruleSeverity(issue.ruleKey))
+      .remediationEffortMinutes(externalRuleLoader.ruleConstantDebtMinutes(issue.ruleKey));
 
     NewIssueLocation primaryLocation = newExternalIssue.newLocation()
       .message(issue.message)
@@ -127,8 +124,8 @@ public class RuboCopSensor implements Sensor {
 
     newExternalIssue
       .at(primaryLocation)
-      .engineId(qualifiedRuleKey.repository())
-      .ruleId(qualifiedRuleKey.rule())
+      .engineId(LINTER_KEY)
+      .ruleId(issue.ruleKey)
       .save();
   }
 

@@ -37,7 +37,6 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
-import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition.Context;
 import org.sonar.api.server.rule.RulesDefinition.NewRepository;
@@ -145,7 +144,8 @@ public abstract class AbstractReportSensor implements Sensor {
 
       newExternalIssue
         .at(primaryLocation)
-        .forRule(RuleKey.of(issue.linter, issue.ruleKey))
+        .ruleId(issue.ruleKey)
+        .engineId(issue.linter)
         .type(issue.type)
         .severity(DEFAULT_SEVERITY)
         .remediationEffortMinutes(DEFAULT_REMEDIATION_COST)

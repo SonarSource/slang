@@ -32,7 +32,6 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
-import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ExternalReportProvider;
@@ -84,15 +83,13 @@ public class AndroidLintSensor implements Sensor {
       LOG.warn("No input file found for {}. No android lint issues will be imported on this file.", file);
       return;
     }
-    RuleKey ruleKey = RuleKey.of(LINTER_KEY, id);
     NewExternalIssue newExternalIssue = context.newExternalIssue();
-    String ruleKey1 = ruleKey.rule();
 
     ExternalRuleLoader externalRuleLoader = AndroidLintRulesDefinition.RULE_LOADER;
     newExternalIssue
-      .type(externalRuleLoader.ruleType(ruleKey1))
-      .severity(externalRuleLoader.ruleSeverity(ruleKey1))
-      .remediationEffortMinutes(externalRuleLoader.ruleConstantDebtMinutes(ruleKey1));
+      .type(externalRuleLoader.ruleType(id))
+      .severity(externalRuleLoader.ruleSeverity(id))
+      .remediationEffortMinutes(externalRuleLoader.ruleConstantDebtMinutes(id));
 
     NewIssueLocation primaryLocation = newExternalIssue.newLocation()
       .message(message)
@@ -104,8 +101,8 @@ public class AndroidLintSensor implements Sensor {
 
     newExternalIssue
       .at(primaryLocation)
-      .engineId(ruleKey.repository())
-      .ruleId(ruleKey.rule())
+      .engineId(LINTER_KEY)
+      .ruleId(id)
       .save();
   }
 
