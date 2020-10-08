@@ -58,6 +58,10 @@ You can also build and run only Ruling Tests using the `ruling` property:
 
     ./gradlew build -Pruling --info --no-daemon -Dsonar.runtimeVersion=7.9
 
+If you want to run ruling tests for specific language, you can use `ruling-{lang}` property (`ruling-kotlin`, `ruling-scala`, `ruling-ruby`, `ruling-go`). For example:
+
+    ./gradlew build -Pruling-kotlin --info --no-daemon -Dsonar.runtimeVersion=7.9
+
 ## License headers
 
 When adding a new source file, you will need to add license headers. Instead of copy-pasting blocks, the following command line can be used:
