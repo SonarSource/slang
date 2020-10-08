@@ -68,7 +68,7 @@ public class MetricVisitorTest {
     scan("");
     assertThat(visitor.linesOfCode()).isEmpty();
     assertThat(visitor.commentLines()).isEmpty();
-    assertThat(visitor.numberOfFunctions()).isEqualTo(0);
+    assertThat(visitor.numberOfFunctions()).isZero();
     verify(mockNoSonarFilter).noSonarInFile(inputFile, new HashSet<>());
   }
 
@@ -120,7 +120,7 @@ public class MetricVisitorTest {
     scan("" +
       "x + 1;\n" +
       "x = true || false;");
-    assertThat(visitor.numberOfFunctions()).isEqualTo(0);
+    assertThat(visitor.numberOfFunctions()).isZero();
     scan("" +
       "x + 1;\n" +
       "fun noBodyFunction();\n" + // Only functions with implementation bodies are considered for the metric
@@ -135,7 +135,7 @@ public class MetricVisitorTest {
     scan("" +
             "x + 1;\n" +
             "x = true || false;");
-    assertThat(visitor.numberOfClasses()).isEqualTo(0);
+    assertThat(visitor.numberOfClasses()).isZero();
     scan("" +
             "class C {}\n" +
             "fun function() {}\n" +

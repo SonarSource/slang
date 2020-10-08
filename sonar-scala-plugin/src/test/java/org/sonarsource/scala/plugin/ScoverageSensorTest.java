@@ -72,9 +72,9 @@ public class ScoverageSensorTest {
 
     //File1
     assertThat(context.lineHits(fileKey1, 5)).isNull();
-    assertThat(context.lineHits(fileKey1, 6)).isEqualTo(0);
+    assertThat(context.lineHits(fileKey1, 6)).isZero();
     assertThat(context.lineHits(fileKey1, 7)).isEqualTo(1);
-    assertThat(context.lineHits(fileKey1, 8)).isEqualTo(0);
+    assertThat(context.lineHits(fileKey1, 8)).isZero();
     assertThat(context.lineHits(fileKey1, 9)).isNull();
 
     //File2
@@ -82,7 +82,7 @@ public class ScoverageSensorTest {
     assertThat(context.lineHits(fileKey2, 6)).isNull();
     assertThat(context.lineHits(fileKey2, 7)).isEqualTo(2);
     assertThat(context.lineHits(fileKey2, 8)).isNull();
-    assertThat(context.lineHits(fileKey2, 9)).isEqualTo(0);
+    assertThat(context.lineHits(fileKey2, 9)).isZero();
   }
 
   @Test

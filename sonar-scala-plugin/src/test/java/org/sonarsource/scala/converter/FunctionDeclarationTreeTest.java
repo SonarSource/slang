@@ -237,7 +237,7 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
 
     FunctionDeclarationTree publicFunc = scalaMethod(
       "def foo(p1: String) = {p1}");
-    assertThat(publicFunc.modifiers()).hasSize(0);
+    assertThat(publicFunc.modifiers()).isEmpty();
   }
 
 }

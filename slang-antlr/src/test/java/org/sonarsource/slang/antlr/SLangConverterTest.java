@@ -290,7 +290,7 @@ public class SLangConverterTest {
     assertThat(classe.classTree()).isInstanceOf(NativeTree.class);
     assertTree(classe.identifier()).isNull();
     NativeTree classChildren = (NativeTree) classe.classTree();
-    assertThat(classChildren.children()).hasSize(0);
+    assertThat(classChildren.children()).isEmpty();
   }
 
   @Test
@@ -446,7 +446,7 @@ public class SLangConverterTest {
     LoopTree forLoop = (LoopTree) tree;
     assertThat(forLoop.condition()).isNull();
     assertTree(forLoop.body()).isBlock();
-    assertThat(forLoop.body().children()).hasSize(0);
+    assertThat(forLoop.body().children()).isEmpty();
   }
 
   @Test
@@ -503,7 +503,7 @@ public class SLangConverterTest {
     assertTree(tree).isInstanceOf(ExceptionHandlingTree.class).hasTextRange(1, 0, 1, 20);
     ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) tree;
     assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
-    assertThat(exceptionHandlingTree.catchBlocks()).hasSize(0);
+    assertThat(exceptionHandlingTree.catchBlocks()).isEmpty();
     assertTree(exceptionHandlingTree.finallyBlock()).isBlock();
   }
 

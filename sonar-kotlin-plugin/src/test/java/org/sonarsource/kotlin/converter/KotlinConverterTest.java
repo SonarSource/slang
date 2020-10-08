@@ -607,7 +607,7 @@ public class KotlinConverterTest {
     ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) kotlinStatement;
     assertTree(exceptionHandlingTree.tryBlock()).isBlock(LiteralTree.class);
     List<CatchTree> catchTreeList = exceptionHandlingTree.catchBlocks();
-    assertThat(catchTreeList).hasSize(0);
+    assertThat(catchTreeList).isEmpty();
     assertThat(exceptionHandlingTree.finallyBlock()).isNotNull();
     assertTree(exceptionHandlingTree.finallyBlock()).isBlock(LiteralTree.class);
   }

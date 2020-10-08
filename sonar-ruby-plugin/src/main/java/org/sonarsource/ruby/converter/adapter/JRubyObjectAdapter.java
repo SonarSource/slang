@@ -28,7 +28,7 @@ public abstract class JRubyObjectAdapter<T extends IRubyObject> {
   protected final Ruby runtime;
   protected final T underlyingRubyObject;
 
-  public JRubyObjectAdapter(Ruby runtime, T underlyingRubyObject) {
+  protected JRubyObjectAdapter(Ruby runtime, T underlyingRubyObject) {
     this.runtime = runtime;
     this.underlyingRubyObject = underlyingRubyObject;
   }

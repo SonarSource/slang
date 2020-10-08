@@ -65,7 +65,7 @@ public class SimpleCovSensorTest {
     assertThat(context.lineHits(fileKey, 4)).isNull();
     assertThat(context.lineHits(fileKey, 5)).isNull();
     assertThat(context.lineHits(fileKey, 6)).isEqualTo(1);
-    assertThat(context.lineHits(fileKey, 7)).isEqualTo(0);
+    assertThat(context.lineHits(fileKey, 7)).isZero();
   }
 
   @Test
@@ -85,7 +85,7 @@ public class SimpleCovSensorTest {
     assertThat(context.lineHits(fileKey, 4)).isNull();
     assertThat(context.lineHits(fileKey, 5)).isNull();
     assertThat(context.lineHits(fileKey, 6)).isEqualTo(1);
-    assertThat(context.lineHits(fileKey, 7)).isEqualTo(0);
+    assertThat(context.lineHits(fileKey, 7)).isZero();
   }
 
   @Test
@@ -99,7 +99,7 @@ public class SimpleCovSensorTest {
     assertThat(context.lineHits(fileKey, 1)).isEqualTo(1);
     assertThat(context.lineHits(fileKey, 3)).isEqualTo(2);
     assertThat(context.lineHits(fileKey, 4)).isNull();
-    assertThat(context.lineHits(fileKey, 7)).isEqualTo(0);
+    assertThat(context.lineHits(fileKey, 7)).isZero();
   }
 
   @Test
@@ -108,10 +108,10 @@ public class SimpleCovSensorTest {
     new SimpleCovSensor().execute(context);
 
     String file1Key = MODULE_KEY + ":file1.rb";
-    assertThat(context.lineHits(file1Key, 1)).isEqualTo(0);
-    assertThat(context.lineHits(file1Key, 2)).isEqualTo(0);
+    assertThat(context.lineHits(file1Key, 1)).isZero();
+    assertThat(context.lineHits(file1Key, 2)).isZero();
     assertThat(context.lineHits(file1Key, 3)).isEqualTo(1);
-    assertThat(context.lineHits(file1Key, 4)).isEqualTo(0);
+    assertThat(context.lineHits(file1Key, 4)).isZero();
     assertThat(context.lineHits(file1Key, 5)).isNull();
     assertThat(context.lineHits(file1Key, 6)).isEqualTo(1);
     assertThat(context.lineHits(file1Key, 7)).isEqualTo(1);
@@ -128,10 +128,10 @@ public class SimpleCovSensorTest {
     new SimpleCovSensor().execute(context);
 
     String file1Key = MODULE_KEY + ":file1.rb";
-    assertThat(context.lineHits(file1Key, 1)).isEqualTo(0);
-    assertThat(context.lineHits(file1Key, 2)).isEqualTo(0);
+    assertThat(context.lineHits(file1Key, 1)).isZero();
+    assertThat(context.lineHits(file1Key, 2)).isZero();
     assertThat(context.lineHits(file1Key, 3)).isEqualTo(1);
-    assertThat(context.lineHits(file1Key, 4)).isEqualTo(0);
+    assertThat(context.lineHits(file1Key, 4)).isZero();
     assertThat(context.lineHits(file1Key, 5)).isNull();
     assertThat(context.lineHits(file1Key, 6)).isEqualTo(1);
     assertThat(context.lineHits(file1Key, 7)).isEqualTo(1);

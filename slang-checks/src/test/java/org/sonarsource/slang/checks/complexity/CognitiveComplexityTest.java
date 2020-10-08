@@ -31,7 +31,7 @@ public class CognitiveComplexityTest {
 
   @Test
   public void unrelated_statement() {
-    assertThat(complexity("42;").value()).isEqualTo(0);
+    assertThat(complexity("42;").value()).isZero();
   }
 
   @Test
@@ -77,21 +77,21 @@ public class CognitiveComplexityTest {
 
   @Test
   public void try_catch_statements() {
-    assertThat(complexity("try { foo; };").value()).isEqualTo(0);
+    assertThat(complexity("try { foo; };").value()).isZero();
     assertThat(complexity("try { foo; } catch (e1) { bar; };").value()).isEqualTo(1);
     assertThat(complexity("try { foo; } catch (e1) { bar; } catch (e2) { baz; };").value()).isEqualTo(2);
-    assertThat(complexity("try { foo; } finally { bar; };").value()).isEqualTo(0);
+    assertThat(complexity("try { foo; } finally { bar; };").value()).isZero();
   }
 
   @Test
   public void functions() {
-    assertThat(complexity("fun foo() { 42 }").value()).isEqualTo(0);
-    assertThat(complexity("fun foo() { f = fun() { 42 }; }").value()).isEqualTo(0);
+    assertThat(complexity("fun foo() { 42 }").value()).isZero();
+    assertThat(complexity("fun foo() { f = fun() { 42 }; }").value()).isZero();
   }
 
   @Test
   public void binary_operators() {
-    assertThat(complexity("a == b;").value()).isEqualTo(0);
+    assertThat(complexity("a == b;").value()).isZero();
     assertThat(complexity("a && b;").value()).isEqualTo(1);
     assertThat(complexity("a || b;").value()).isEqualTo(1);
     assertThat(complexity("a && b && c;").value()).isEqualTo(1);
@@ -102,12 +102,12 @@ public class CognitiveComplexityTest {
 
   @Test
   public void jumps() {
-    assertThat(complexity("break;").value()).isEqualTo(0);
+    assertThat(complexity("break;").value()).isZero();
     assertThat(complexity("break foo;").value()).isEqualTo(1);
     assertThat(complexity("while (x) break;").value()).isEqualTo(1);
     assertThat(complexity("while (x) break foo;").value()).isEqualTo(2);
 
-    assertThat(complexity("continue;").value()).isEqualTo(0);
+    assertThat(complexity("continue;").value()).isZero();
     assertThat(complexity("continue foo;").value()).isEqualTo(1);
     assertThat(complexity("while (x) continue;").value()).isEqualTo(1);
     assertThat(complexity("while (x) continue foo;").value()).isEqualTo(2);
