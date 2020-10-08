@@ -19,10 +19,17 @@
  */
 package org.sonarsource.kotlin.converter;
 
+import java.util.stream.Collectors;
+import org.jetbrains.kotlin.com.intellij.extapi.psi.ASTDelegatePsiElement;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.psi.KtAnnotationEntry;
+import org.jetbrains.kotlin.psi.KtValueArgument;
+import org.sonarsource.slang.api.Annotation;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
+import org.sonarsource.slang.impl.AnnotationImpl;
 import org.sonarsource.slang.impl.CommentImpl;
 import org.sonarsource.slang.impl.TextPointerImpl;
 import org.sonarsource.slang.impl.TextRangeImpl;
@@ -45,7 +52,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.DOC_COMMENT;
 import static org.jetbrains.kotlin.lexer.KtTokens.EOL_COMMENT;
 import static org.jetbrains.kotlin.lexer.KtTokens.SHEBANG_COMMENT;
 
-public class CommentAndTokenVisitor extends KtTreeVisitorVoid {
+public class CommentAnnotationsAndTokenVisitor extends KtTreeVisitorVoid {
   private static final int MIN_BLOCK_COMMENT_LENGTH = 4;
   private static final int MIN_DOC_COMMENT_LENGTH = 5;
   private static final int MIN_LINE_COMMENT_LENGTH = 2;
@@ -57,9 +64,10 @@ public class CommentAndTokenVisitor extends KtTreeVisitorVoid {
 
   private final Document psiDocument;
   private final List<Comment> allComments = new ArrayList<>();
+  private final List<Annotation> allAnnotations = new ArrayList<>();
   private final List<Token> tokens = new ArrayList<>();
 
-  public CommentAndTokenVisitor(Document psiDocument) {
+  public CommentAnnotationsAndTokenVisitor(Document psiDocument) {
     this.psiDocument = psiDocument;
   }
 
@@ -77,6 +85,18 @@ public class CommentAndTokenVisitor extends KtTreeVisitorVoid {
         type = Token.Type.STRING_LITERAL;
       }
       tokens.add(new TokenImpl(KotlinTextRanges.textRange(psiDocument, leaf), text, type));
+    } else if (element instanceof KtAnnotationEntry) {
+      KtAnnotationEntry annotationEntry = (KtAnnotationEntry) element;
+      Name shortName = annotationEntry.getShortName();
+      if (shortName != null) {
+        List<String> argumentsText = annotationEntry.getValueArguments().stream()
+          .filter(v -> v instanceof KtValueArgument)
+          .map(KtValueArgument.class::cast)
+          .map(ASTDelegatePsiElement::getText)
+          .collect(Collectors.toList());
+        TextRange range = KotlinTextRanges.textRange(psiDocument, element);
+        allAnnotations.add(new AnnotationImpl(shortName.asString(), argumentsText, range));
+      }
     }
     super.visitElement(element);
   }
@@ -113,6 +133,10 @@ public class CommentAndTokenVisitor extends KtTreeVisitorVoid {
 
   public List<Comment> getAllComments() {
     return allComments;
+  }
+
+  public List<Annotation> getAllAnnotations() {
+    return allAnnotations;
   }
 
   public List<Token> getTokens() {

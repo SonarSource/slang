@@ -101,6 +101,34 @@ public class KotlinSensorTest extends AbstractSensorTest {
   }
 
   @Test
+  public void test_issue_suppression() {
+    InputFile inputFile = createInputFile("file1.kt", "" +
+      "@SuppressWarnings(\"kotlin:S1764\")\n" +
+      "fun main() {\nprint (1 == 1);}\n" +
+      "@SuppressWarnings(value=[\"kotlin:S1764\"])\n" +
+      "fun main2() {\nprint (1 == 1);}");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S1764");
+    sensor(checkFactory).execute(context);
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).isEmpty();
+  }
+
+  @Test
+  public void test_issue_not_suppressed() {
+    InputFile inputFile = createInputFile("file1.kt", "" +
+      "@SuppressWarnings(\"S1764\")\n" +
+      "fun main() {\nprint (1 == 1);}\n" +
+      "@SuppressWarnings(value=[\"scala:S1764\"])\n" +
+      "fun main2() {\nprint (1 == 1);}");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S1764");
+    sensor(checkFactory).execute(context);
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).hasSize(2);
+  }
+
+  @Test
   public void test_fail_parsing() {
     InputFile inputFile = createInputFile("file1.kt", "" +
       "enum class A { <!REDECLARATION!>FOO<!>,<!REDECLARATION!>FOO<!> }");

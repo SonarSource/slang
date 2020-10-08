@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.sonarsource.slang.api.Annotation;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.CatchTree;
@@ -247,6 +248,54 @@ public class KotlinConverterTest {
   }
 
   @Test
+  public void testClassWithTwoAnnotation() {
+    Tree twoAnnotations = kotlin("@my.test.MyAnnotation(\"something\")\n" +
+      "@MyAnnotation2\n" +
+      "class A {}");
+
+    List<Annotation> annotations = twoAnnotations.metaData().annotations();
+    assertThat(annotations).hasSize(2);
+    Annotation firstAnnotation = annotations.get(0);
+    assertThat(firstAnnotation.shortName()).isEqualTo("MyAnnotation");
+    assertThat(firstAnnotation.argumentsText()).containsExactly("\"something\"");
+    Annotation secondAnnotation = annotations.get(1);
+    assertThat(secondAnnotation.shortName()).isEqualTo("MyAnnotation2");
+    assertThat(secondAnnotation.argumentsText()).isEmpty();
+  }
+
+  @Test
+  public void testClassWithComplexAnnotation() {
+    Tree twoAnnotations = kotlin("@my.test.MyAnnotation(value = \"something\", \"somethingElse\", otherValue = [\"a\", \"b\"])\n" +
+      "class A {}");
+
+    List<Annotation> annotations = twoAnnotations.metaData().annotations();
+    assertThat(annotations).hasSize(1);
+    Annotation firstAnnotation = annotations.get(0);
+    assertThat(firstAnnotation.shortName()).isEqualTo("MyAnnotation");
+    assertThat(firstAnnotation.argumentsText()).containsExactly("value = \"something\"", "\"somethingElse\"", "otherValue = [\"a\", \"b\"]");
+  }
+
+  @Test
+  public void testClassWithAnnotatedMember() {
+    Tree tree = kotlin("class A {\n" +
+      "@MyAnnotation\n" +
+      "fun f(@MyAnnotation i: Int){ }" +
+      "}\n");
+
+    assertThat(tree.metaData().annotations()).isEmpty();
+
+    List<Tree> annotatedDescendants = tree.descendants().filter(d -> !d.metaData().annotations().isEmpty()).collect(Collectors.toList());
+    assertThat(annotatedDescendants).hasSize(2);
+    annotatedDescendants.forEach(descendant -> {
+      List<Annotation> annotations = descendant.metaData().annotations();
+      assertThat(annotations).hasSize(1);
+      Annotation annotation = annotations.get(0);
+      assertThat(annotation.shortName()).isEqualTo("MyAnnotation");
+      assertThat(annotation.argumentsText()).isEmpty();
+    });
+  }
+
+  @Test
   public void testClassWithoutBody() {
     Tree tree = kotlin("class A {}");
     assertTree(tree).isInstanceOf(ClassDeclarationTree.class);
@@ -343,7 +392,7 @@ public class KotlinConverterTest {
   @Test
   public void testFunctionDeclarationWithDefaultValue() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) kotlin(
-        "fun function1(p1: Int = 1, p2: String, p3: String = \"def\") {}");
+      "fun function1(p1: Int = 1, p2: String, p3: String = \"def\") {}");
 
     assertThat(func.formalParameters()).hasSize(3);
     assertTree(func).hasParameterNames("p1", "p2", "p3");

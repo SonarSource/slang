@@ -119,9 +119,9 @@ public class KotlinConverter implements ASTConverter {
         // A KotlinLexerException may occur when attempting to read invalid files
         throw new ParseException("Cannot correctly map AST with a null Document object");
       }
-      CommentAndTokenVisitor commentsAndTokens = new CommentAndTokenVisitor(document);
+      CommentAnnotationsAndTokenVisitor commentsAndTokens = new CommentAnnotationsAndTokenVisitor(document);
       psiFile.accept(commentsAndTokens);
-      metaDataProvider = new TreeMetaDataProvider(commentsAndTokens.getAllComments(), commentsAndTokens.getTokens());
+      metaDataProvider = new TreeMetaDataProvider(commentsAndTokens.getAllComments(), commentsAndTokens.getTokens(), commentsAndTokens.getAllAnnotations());
       checkParsingErrors(psiFile, document, metaDataProvider);
 
     }
