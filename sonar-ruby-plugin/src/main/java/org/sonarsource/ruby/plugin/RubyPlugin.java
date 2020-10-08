@@ -23,7 +23,6 @@ import org.sonar.api.Plugin;
 import org.sonar.api.SonarProduct;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
-import org.sonar.api.utils.Version;
 import org.sonarsource.ruby.externalreport.rubocop.RuboCopRulesDefinition;
 import org.sonarsource.ruby.externalreport.rubocop.RuboCopSensor;
 

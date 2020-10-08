@@ -21,7 +21,6 @@ package org.sonarsource.scala.plugin;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.sonar.api.SonarRuntime;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
 import org.sonarsource.slang.checks.CommentedCodeCheck;

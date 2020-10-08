@@ -23,7 +23,6 @@ import org.sonar.api.Plugin;
 import org.sonar.api.SonarProduct;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
-import org.sonar.api.utils.Version;
 import org.sonarsource.kotlin.externalreport.androidlint.AndroidLintRulesDefinition;
 import org.sonarsource.kotlin.externalreport.androidlint.AndroidLintSensor;
 import org.sonarsource.kotlin.externalreport.detekt.DetektRulesDefinition;

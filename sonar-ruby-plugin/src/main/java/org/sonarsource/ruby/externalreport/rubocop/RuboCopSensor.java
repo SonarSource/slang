@@ -127,7 +127,8 @@ public class RuboCopSensor implements Sensor {
 
     newExternalIssue
       .at(primaryLocation)
-      .forRule(qualifiedRuleKey)
+      .engineId(qualifiedRuleKey.repository())
+      .ruleId(qualifiedRuleKey.rule())
       .save();
   }
 

@@ -120,7 +120,8 @@ public abstract class ScalastyleFamilySensor implements Sensor {
 
     newExternalIssue
       .at(primaryLocation)
-      .forRule(ruleKey)
+      .engineId(ruleKey.repository())
+      .ruleId(ruleKey.rule())
       .save();
   }
 

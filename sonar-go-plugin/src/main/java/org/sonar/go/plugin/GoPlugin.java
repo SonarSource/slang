@@ -22,7 +22,6 @@ package org.sonar.go.plugin;
 import org.sonar.api.Plugin;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
-import org.sonar.api.utils.Version;
 import org.sonar.go.coverage.GoCoverSensor;
 import org.sonar.go.externalreport.GoLintReportSensor;
 import org.sonar.go.externalreport.GoMetaLinterReportSensor;

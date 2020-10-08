@@ -159,7 +159,8 @@ public class CheckstyleFormatImporter {
 
     newExternalIssue
       .at(primaryLocation)
-      .forRule(ruleRepoAndKey)
+      .engineId(ruleRepoAndKey.repository())
+      .ruleId(ruleRepoAndKey.rule())
       .save();
   }
 

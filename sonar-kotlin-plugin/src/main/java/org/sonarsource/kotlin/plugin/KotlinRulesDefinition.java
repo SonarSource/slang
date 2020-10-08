@@ -20,7 +20,6 @@
 package org.sonarsource.kotlin.plugin;
 
 import java.util.ArrayList;
-import org.sonar.api.SonarRuntime;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
 import org.sonarsource.slang.checks.CommentedCodeCheck;

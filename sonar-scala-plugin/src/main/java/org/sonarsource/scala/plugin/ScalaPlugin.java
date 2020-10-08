@@ -23,7 +23,6 @@ import org.sonar.api.Plugin;
 import org.sonar.api.SonarProduct;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
-import org.sonar.api.utils.Version;
 import org.sonarsource.scala.externalreport.scalastyle.ScalastyleRulesDefinition;
 import org.sonarsource.scala.externalreport.scalastyle.ScalastyleSensor;
 import org.sonarsource.scala.externalreport.scapegoat.ScapegoatRulesDefinition;
