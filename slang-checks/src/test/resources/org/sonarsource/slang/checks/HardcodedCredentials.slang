@@ -23,3 +23,7 @@ variableNameWithPasswordInIt = native[] { [ "NativeFunctionCall" ] };
 val constValue = "login=a&password=xxx"; // Noncompliant
 var passwd = "xxxx"; // Noncompliant
 var okVariable = "xxxx";
+variableNameWithPasswdInIt = "";
+A.B.variableNameWithPwdInIt = "";
+var passwd = "";
+var passwd = 2;

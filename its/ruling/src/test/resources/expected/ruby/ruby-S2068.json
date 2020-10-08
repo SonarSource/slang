@@ -1,7 +1,4 @@
 {
-'ruby-project:sources/ruby/fastlane/fastlane/lib/fastlane/actions/setup_travis.rb':[
-12,
-],
 'ruby-project:sources/ruby/fastlane/fastlane/spec/actions_specs/import_certificate_spec.rb':[
 11,
 38,
@@ -18,8 +15,5 @@
 ],
 'ruby-project:sources/ruby/vagrant/plugins/communicators/winrm/config.rb':[
 36,
-],
-'ruby-project:sources/ruby/vagrant/plugins/providers/docker/config.rb':[
-236,
 ],
 }

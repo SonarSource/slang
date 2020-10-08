@@ -36,6 +36,8 @@ import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 import org.sonarsource.slang.checks.utils.ExpressionUtils;
 
+import javax.annotation.Nullable;
+
 @Rule(key = "S2068")
 public class HardcodedCredentialsCheck implements SlangCheck {
 
@@ -53,16 +55,16 @@ public class HardcodedCredentialsCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(AssignmentExpressionTree.class, (ctx, tree) -> {
-      Tree leftHandSide = tree.leftHandSide();
-      if (tree.statementOrExpression() instanceof StringLiteralTree) {
-        ExpressionUtils.getMemberSelectOrIdentifierName(tree.leftHandSide())
+      if (isNotEmptyString(tree.statementOrExpression())) {
+        Tree leftHandSide = tree.leftHandSide();
+        ExpressionUtils.getMemberSelectOrIdentifierName(leftHandSide)
           .flatMap(this::getPasswordVariableName)
           .ifPresent(passwordVariableName -> report(ctx, leftHandSide, passwordVariableName));
       }
     });
 
     init.register(VariableDeclarationTree.class, (ctx, tree) -> {
-      if (tree.initializer() instanceof StringLiteralTree) {
+      if (isNotEmptyString(tree.initializer())) {
         getPasswordVariableName(tree.identifier().name())
           .ifPresent(passwordVariableName -> report(ctx, tree.identifier(), passwordVariableName));
       }
@@ -74,6 +76,11 @@ public class HardcodedCredentialsCheck implements SlangCheck {
       .map(matcher -> matcher.group(1))
       .forEach(credential -> report(ctx, tree, credential)));
 
+  }
+
+  private static boolean isNotEmptyString(@Nullable Tree tree) {
+    return tree instanceof StringLiteralTree
+      && !((StringLiteralTree)tree).content().isEmpty();
   }
 
   private static void report(CheckContext ctx, Tree tree, String matchName) {
