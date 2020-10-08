@@ -20,6 +20,9 @@ notAnIp3 = "1234.0.0.0.0.1234";
 notAnIp4 = ".0.0.0.0";
 notAnIp5 = "0.256.0.0";
 
+ip = "0.00.0.0"; // Compliant
+ip = "1.2.03.4"; // Compliant
+
 fileName = "v0.0.1.200__do_something.sql"; // Compliant - suffixed and prefixed
 version = "1.0.0.0-1"; // Compliant - suffixed
 

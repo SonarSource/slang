@@ -46,6 +46,7 @@ public class HardcodedIpCheck implements SlangCheck {
 
   private static final Pattern IPV6_LOOPBACK = Pattern.compile("[0:]++0*+1");
   private static final Pattern IPV6_NON_ROUTABLE = Pattern.compile("[0:]++");
+  private static final Pattern INVALID_IPV4_PART_PATTERN = Pattern.compile("^0\\d{1,2}");
 
   private static final String MESSAGE = "Make sure using this hardcoded IP address is safe here.";
 
@@ -76,7 +77,9 @@ public class HardcodedIpCheck implements SlangCheck {
 
   private static boolean isValidIPV4(String ip) {
     String[] numbersAsStrings = ip.split("\\.");
-    return Arrays.stream(numbersAsStrings).noneMatch(value -> Integer.valueOf(value) > 255);
+    return Arrays.stream(numbersAsStrings).noneMatch(
+      (INVALID_IPV4_PART_PATTERN.asPredicate())
+      .or(value -> Integer.valueOf(value) > 255));
   }
 
   private static boolean isValidIPV6(String ipv6, @Nullable String ipv4) {
