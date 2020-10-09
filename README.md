@@ -16,7 +16,7 @@ analyzers use this approach.
 
 ## Kotlin
 
-We use [embeddable library](https://search.maven.org/artifact/org.jetbrains.kotlin/kotlin-compiler-embeddable/1.2.61/jar) of Kotlin compiler to create AST and [visitor](sonar-kotlin-plugin/src/main/java/org/sonarsource/kotlin/converter/KotlinTreeVisitor.java) to create SLang AST.
+We use [embeddable library](https://search.maven.org/artifact/org.jetbrains.kotlin/kotlin-compiler-embeddable/1.4.10/jar) of Kotlin compiler to create AST and [visitor](sonar-kotlin-plugin/src/main/java/org/sonarsource/kotlin/converter/KotlinTreeVisitor.java) to create SLang AST.
 
 ## Ruby
 
