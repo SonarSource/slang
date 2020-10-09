@@ -88,7 +88,7 @@ public class GoMetaLinterReportSensorTest {
     context.settings().setProperty("sonar.go.gometalinter.reportPaths", REPORT_BASE_PATH.resolve("gometalinter-report-with-error.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GoMetaLinterReportSensor(), context);
     assertThat(externalIssues).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(0);
+    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.DEBUG)).hasSize(1);
     assertThat(logTester.logs(LoggerLevel.DEBUG).get(0)).startsWith("GoMetaLinterReportSensor: Unexpected line: invalid-invalid-invalid");
   }

@@ -65,7 +65,7 @@ public class TreeMetaDataProviderTest {
     TreeMetaData metaData = provider.metaData(new TextRangeImpl(1, 1, 1, 20));
     assertThat(metaData.linesOfCode()).containsExactly(1);
     assertThat(metaData.linesOfCode()).containsExactly(1);
-    assertThat(metaData.textRange().toString()).isEqualTo("TextRange[1, 1, 1, 20]");
+    assertThat(metaData.textRange()).hasToString("TextRange[1, 1, 1, 20]");
     assertThat(provider.metaData(new TextRangeImpl(1, 1, 2, 20)).linesOfCode()).containsExactly(1, 2);
     assertThat(provider.metaData(new TextRangeImpl(1, 1, 3, 20)).linesOfCode()).containsExactly(1, 2);
     assertThat(provider.metaData(new TextRangeImpl(1, 1, 6, 20)).linesOfCode()).containsExactly(1, 2, 4, 5, 6);
@@ -106,8 +106,8 @@ public class TreeMetaDataProviderTest {
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2));
     assertThat(provider.indexOfFirstToken(range(1, 0, 1, 1))).isEqualTo(-1);
     assertThat(provider.indexOfFirstToken(range(1, 0, 1, 2))).isEqualTo(-1);
-    assertThat(provider.indexOfFirstToken(range(1, 0, 1, 3))).isEqualTo(0);
-    assertThat(provider.indexOfFirstToken(range(1, 1, 1, 3))).isEqualTo(0);
+    assertThat(provider.indexOfFirstToken(range(1, 0, 1, 3))).isZero();
+    assertThat(provider.indexOfFirstToken(range(1, 1, 1, 3))).isZero();
     assertThat(provider.indexOfFirstToken(range(1, 2, 1, 3))).isEqualTo(-1);
     assertThat(provider.indexOfFirstToken(range(1, 2, 1, 6))).isEqualTo(1);
     assertThat(provider.indexOfFirstToken(range(1, 4, 1, 6))).isEqualTo(1);
@@ -122,10 +122,10 @@ public class TreeMetaDataProviderTest {
     Token token1 = new TokenImpl(range(1, 1, 1, 3), "ab", Token.Type.KEYWORD);
     Token token2 = new TokenImpl(range(1, 4, 1, 6), "cd", Token.Type.KEYWORD);
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2));
-    assertThat(provider.firstToken(range(1, 0, 1, 1)).isPresent()).isFalse();
+    assertThat(provider.firstToken(range(1, 0, 1, 1))).isNotPresent();
     assertThat(provider.firstToken(range(1, 1, 1, 3)).get().text()).isEqualTo("ab");
     assertThat(provider.firstToken(range(1, 2, 1, 20)).get().text()).isEqualTo("cd");
-    assertThat(provider.firstToken(range(1, 5, 1, 20)).isPresent()).isFalse();
+    assertThat(provider.firstToken(range(1, 5, 1, 20))).isNotPresent();
   }
 
   @Test

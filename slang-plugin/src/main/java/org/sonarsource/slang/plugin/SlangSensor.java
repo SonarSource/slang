@@ -57,7 +57,7 @@ public abstract class SlangSensor implements Sensor {
   private final Language language;
   private FileLinesContextFactory fileLinesContextFactory;
 
-  public SlangSensor(NoSonarFilter noSonarFilter, FileLinesContextFactory fileLinesContextFactory, Language language) {
+  protected SlangSensor(NoSonarFilter noSonarFilter, FileLinesContextFactory fileLinesContextFactory, Language language) {
     this.noSonarFilter = noSonarFilter;
     this.fileLinesContextFactory = fileLinesContextFactory;
     this.language = language;

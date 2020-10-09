@@ -110,10 +110,10 @@ public class GoCoverSensorTest {
   @Test
   public void line_coverage() {
     LineCoverage line = new LineCoverage();
-    assertThat(line.hits).isEqualTo(0);
+    assertThat(line.hits).isZero();
 
     line.add(new CoverageStat(2, "main.go:2.2,2.5 1 0"));
-    assertThat(line.hits).isEqualTo(0);
+    assertThat(line.hits).isZero();
 
     line.add(new CoverageStat(2, "main.go:2.2,2.5 1 3"));
     assertThat(line.hits).isEqualTo(3);
@@ -135,8 +135,8 @@ public class GoCoverSensorTest {
     assertThat(file.lineMap.keySet()).containsExactlyInAnyOrder(5, 6, 7);
     assertThat(file.lineMap.get(4)).isNull();
     assertThat(file.lineMap.get(5).hits).isEqualTo(3);
-    assertThat(file.lineMap.get(6).hits).isEqualTo(0);
-    assertThat(file.lineMap.get(7).hits).isEqualTo(0);
+    assertThat(file.lineMap.get(6).hits).isZero();
+    assertThat(file.lineMap.get(7).hits).isZero();
     assertThat(file.lineMap.get(8)).isNull();
   }
 
@@ -257,8 +257,8 @@ public class GoCoverSensorTest {
     assertThat(context.lineHits(fileKey, 5)).isEqualTo(2);
     assertThat(context.conditions(fileKey, 5)).isNull();
     assertThat(context.coveredConditions(fileKey, 5)).isNull();
-    assertThat(context.lineHits(fileKey, 6)).isEqualTo(0);
-    assertThat(context.lineHits(fileKey, 7)).isEqualTo(0);
+    assertThat(context.lineHits(fileKey, 6)).isZero();
+    assertThat(context.lineHits(fileKey, 7)).isZero();
     assertThat(context.lineHits(fileKey, 8)).isNull();
   }
 
@@ -285,8 +285,8 @@ public class GoCoverSensorTest {
     assertThat(context.lineHits(fileKey, 5)).isEqualTo(2);
     assertThat(context.conditions(fileKey, 5)).isNull();
     assertThat(context.coveredConditions(fileKey, 5)).isNull();
-    assertThat(context.lineHits(fileKey, 6)).isEqualTo(0);
-    assertThat(context.lineHits(fileKey, 7)).isEqualTo(0);
+    assertThat(context.lineHits(fileKey, 6)).isZero();
+    assertThat(context.lineHits(fileKey, 7)).isZero();
     assertThat(context.lineHits(fileKey, 8)).isNull();
 
     String ignoredFileLog = "File 'doesntexists.go' is not included in the project, ignoring coverage";
@@ -304,9 +304,9 @@ public class GoCoverSensorTest {
     assertThat(fileCoverage.lineMap.get(3).hits).isEqualTo(1);
     assertThat(fileCoverage.lineMap.get(4).hits).isEqualTo(2);
     assertThat(fileCoverage.lineMap.get(5).hits).isEqualTo(2);
-    assertThat(fileCoverage.lineMap.get(6).hits).isEqualTo(0);
-    assertThat(fileCoverage.lineMap.get(7).hits).isEqualTo(0);
-    assertThat(fileCoverage.lineMap.get(8).hits).isEqualTo(0);
+    assertThat(fileCoverage.lineMap.get(6).hits).isZero();
+    assertThat(fileCoverage.lineMap.get(7).hits).isZero();
+    assertThat(fileCoverage.lineMap.get(8).hits).isZero();
     assertThat(fileCoverage.lineMap.get(9)).isNull();
   }
 

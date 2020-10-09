@@ -101,7 +101,7 @@ public class GoVetReportSensorTest {
     context.settings().setProperty("sonar.go.govet.reportPaths", REPORT_BASE_PATH.resolve("govet-report-with-error.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GoVetReportSensor(), context);
     assertThat(externalIssues).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(0);
+    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.DEBUG)).hasSize(1);
     assertThat(logTester.logs(LoggerLevel.DEBUG).get(0)).startsWith("GoVetReportSensor: Unexpected line: abcdefghijkl");
   }
@@ -129,7 +129,7 @@ public class GoVetReportSensorTest {
     Stream<String> uniqueKeys = externalIssues.stream().map(externalIssue -> externalIssue.ruleKey().rule()).distinct();
     assertThat(uniqueKeys).hasSize(19);
     // all messages are associated to a rule key
-    assertThat(externalIssues).filteredOn(i -> i.ruleKey().rule().equals(GENERIC_ISSUE_KEY)).hasSize(0);
+    assertThat(externalIssues).filteredOn(i -> i.ruleKey().rule().equals(GENERIC_ISSUE_KEY)).isEmpty();
   }
 
   @Test

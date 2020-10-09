@@ -99,7 +99,7 @@ public class GoLintReportSensorTest {
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("golint-report-with-error.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GoLintReportSensor(), context);
     assertThat(externalIssues).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(0);
+    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.DEBUG)).hasSize(1);
     assertThat(logTester.logs(LoggerLevel.DEBUG).get(0)).startsWith("GoLintReportSensor: Unexpected line: xyz");
   }
@@ -127,7 +127,7 @@ public class GoLintReportSensorTest {
     Stream<String> uniqueKeys = externalIssues.stream().map(externalIssue -> externalIssue.ruleKey().rule()).distinct();
     assertThat(uniqueKeys).hasSize(18);
     // all messages are associated to a rule key
-    assertThat(externalIssues).filteredOn(i -> i.ruleKey().rule().equals(GENERIC_ISSUE_KEY)).hasSize(0);
+    assertThat(externalIssues).filteredOn(i -> i.ruleKey().rule().equals(GENERIC_ISSUE_KEY)).isEmpty();
   }
 
   @Test

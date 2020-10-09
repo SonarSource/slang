@@ -454,7 +454,7 @@ public class JsonTreeTest extends JsonTestHelper {
     TreeMetaData metaData = literal.metaData();
     assertThat(metaData.textRange()).isEqualTo(token.textRange());
     assertThat(metaData.linesOfCode()).containsExactly(1);
-    assertThat(metaData.commentsInside()).hasSize(0);
+    assertThat(metaData.commentsInside()).isEmpty();
     assertThat(metaData.tokens()).hasSize(1);
     Token metaDataToken = metaData.tokens().get(0);
     assertThat(metaDataToken.text()).isEqualTo("true");
@@ -548,9 +548,9 @@ public class JsonTreeTest extends JsonTestHelper {
         new NativeTreeImpl(metaData(token21), StringNativeKind.of("CHILD"), emptyList()),
         new NativeTreeImpl(metaData(token22), StringNativeKind.of("CHILD"), emptyList())));
     NativeTree tree = checkJsonSerializationDeserialization(initialTree, "native_tree.json");
-    assertThat(tree.nativeKind().toString()).isEqualTo("PARENT");
+    assertThat(tree.nativeKind()).hasToString("PARENT");
     assertThat(tree.children()).hasSize(2);
-    assertThat(((NativeTree) tree.children().get(0)).nativeKind().toString()).isEqualTo("CHILD");
+    assertThat(((NativeTree) tree.children().get(0)).nativeKind()).hasToString("CHILD");
     assertThat(tokens(tree.children().get(0))).isEqualTo("21:0:21:7 - token21");
     assertThat(tokens(tree.children().get(1))).isEqualTo("22:0:22:7 - token22");
 
@@ -644,7 +644,7 @@ public class JsonTreeTest extends JsonTestHelper {
     TreeMetaData metaData = returnTree.metaData();
     assertThat(metaData.textRange()).isEqualTo(new TextRangeImpl(1, 0, 1, 12));
     assertThat(metaData.linesOfCode()).containsExactly(1);
-    assertThat(metaData.commentsInside()).hasSize(0);
+    assertThat(metaData.commentsInside()).isEmpty();
     assertThat(metaData.tokens()).hasSize(3);
 
     assertThat(methodNames(ReturnTree.class))
@@ -661,7 +661,7 @@ public class JsonTreeTest extends JsonTestHelper {
     TreeMetaData metaData = literal.metaData();
     assertThat(metaData.textRange()).isEqualTo(token.textRange());
     assertThat(metaData.linesOfCode()).containsExactly(1);
-    assertThat(metaData.commentsInside()).hasSize(0);
+    assertThat(metaData.commentsInside()).isEmpty();
     assertThat(metaData.tokens()).hasSize(1);
     Token metaDataToken = metaData.tokens().get(0);
     assertThat(metaDataToken.text()).isEqualTo("\"a\"");

@@ -47,8 +47,9 @@ public class CyclomaticComplexityVisitorTest {
       "      else -> return \"it's complicated\";" +
       "    };";
     List<HasTextRange> trees = getComplexityTrees(content);
-    assertThat(trees).hasSize(3);
-    assertThat(trees).allMatch(tree -> tree instanceof MatchCaseTree);
+    assertThat(trees)
+      .hasSize(3)
+      .allMatch(tree -> tree instanceof MatchCaseTree);
   }
 
   @Test
@@ -75,13 +76,15 @@ public class CyclomaticComplexityVisitorTest {
       "  };" +
       "};";
     List<HasTextRange> trees = getComplexityTrees(content);
-    assertThat(trees).hasSize(2);
-    assertThat(trees).allMatch(tree -> tree instanceof LoopTree);
+    assertThat(trees)
+      .hasSize(2)
+      .allMatch(tree -> tree instanceof LoopTree);
 
     content = "do { x = x-1; } while (x > y);";
     trees = getComplexityTrees(content);
-    assertThat(trees).hasSize(1);
-    assertThat(trees).allMatch(tree -> tree instanceof LoopTree);
+    assertThat(trees)
+      .hasSize(1)
+      .allMatch(tree -> tree instanceof LoopTree);
 
   }
 

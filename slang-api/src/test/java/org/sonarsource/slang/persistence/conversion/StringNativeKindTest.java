@@ -34,8 +34,8 @@ public class StringNativeKindTest {
 
   @Test
   public void to_string() {
-    assertThat(new StringNativeKind("ast.Element").toString()).isEqualTo("ast.Element");
-    assertThat(StringNativeKind.of("ast.Element").toString()).isEqualTo("ast.Element");
+    assertThat(new StringNativeKind("ast.Element")).hasToString("ast.Element");
+    assertThat(StringNativeKind.of("ast.Element")).hasToString("ast.Element");
     assertThat(StringNativeKind.toString(null)).isNull();
     assertThat(StringNativeKind.toString(new StringNativeKind("ast.Element"))).isEqualTo("ast.Element");
   }
