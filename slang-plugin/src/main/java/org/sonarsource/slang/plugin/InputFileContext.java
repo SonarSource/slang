@@ -19,8 +19,12 @@
  */
 package org.sonarsource.slang.plugin;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import javax.annotation.Nullable;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
@@ -36,6 +40,7 @@ import org.sonarsource.slang.visitors.TreeContext;
 public class InputFileContext extends TreeContext {
 
   private static final String PARSING_ERROR_RULE_KEY = "ParsingError";
+  private Map<String, Set<org.sonarsource.slang.api.TextRange>> filteredRules = new HashMap<>();
 
   public final SensorContext sensorContext;
 
@@ -59,6 +64,13 @@ public class InputFileContext extends TreeContext {
                           String message,
                           List<SecondaryLocation> secondaryLocations,
                           @Nullable Double gap) {
+
+    if (textRange != null && filteredRules.getOrDefault(ruleKey.toString(), Collections.emptySet())
+      .stream().anyMatch(textRange::isInside)) {
+      // Issue is filtered by one of the filter.
+      return;
+    }
+
     NewIssue issue = sensorContext.newIssue();
     NewIssueLocation issueLocation = issue.newLocation()
       .on(inputFile)
@@ -116,6 +128,10 @@ public class InputFileContext extends TreeContext {
     }
 
     error.save();
+  }
+
+  public void setFilteredRules(Map<String, Set<org.sonarsource.slang.api.TextRange>> filteredRules) {
+    this.filteredRules = filteredRules;
   }
 
 }

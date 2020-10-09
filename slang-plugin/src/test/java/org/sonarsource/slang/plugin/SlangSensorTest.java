@@ -142,6 +142,102 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
+  public void suppress_issues_in_class() {
+    InputFile inputFile = createInputFile("file1.slang", "" +
+      "@Suppress(\"slang:S1764\")\n" +
+      "class { fun main() {\nprint (1 == 1);} }");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S1764");
+    sensor(checkFactory).execute(context);
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).isEmpty();
+  }
+
+  @Test
+  public void suppress_issues_in_method() {
+    InputFile inputFile = createInputFile("file1.slang", "" +
+      "class { " +
+      "@Suppress(\"slang:S1764\")\n" +
+      "fun suppressed() {\nprint (1 == 1);} " +
+      "fun notSuppressed() {\nprint (123 == 123);} " +
+      "}");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S1764");
+    sensor(checkFactory).execute(context);
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).hasSize(1);
+    Issue issue = issues.iterator().next();
+    IssueLocation location = issue.primaryLocation();
+    assertTextRange(location.textRange()).hasRange(4, 14, 4, 17);
+  }
+
+  @Test
+  public void suppress_issues_in_var() {
+    InputFile inputFile = createInputFile("file1.slang", "class A {void fun bar() {\n" +
+      "@Suppress(\"slang:S1764\")\n" +
+      "int val b = (1 == 1);\n" +
+      "int val c = (1 == 1);\n" +
+      "}}");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S1764");
+    sensor(checkFactory).execute(context);
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).hasSize(1);
+    Issue issue = issues.iterator().next();
+    IssueLocation location = issue.primaryLocation();
+    assertTextRange(location.textRange()).hasRange(4, 18, 4, 19);
+  }
+
+  @Test
+  public void suppress_issues_in_parameter() {
+    InputFile inputFile = createInputFile("file1.slang",
+      "class A {void fun bar(@Suppress(\"slang:S1764\") int a = (1 == 1), int b = (1 == 1)) {} }");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S1764");
+    sensor(checkFactory).execute(context);
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).hasSize(1);
+    Issue issue = issues.iterator().next();
+    IssueLocation location = issue.primaryLocation();
+    assertTextRange(location.textRange()).hasRange(1, 79, 1, 80);
+  }
+
+  @Test
+  public void suppress_multiples_issues() {
+    InputFile inputFile = createInputFile("file1.slang", "" +
+      "@Suppress(\"slang:S1764\", value=\"slang:S1192\")\n" +
+      "fun suppressed() {\nprint (1 == 1);print(\"string literal\"); print(\"string literal\"); print(\"string literal\"); } " +
+      "@Suppress(value={\"slang:S1764\",\"slang:S1192\"})\n" +
+      "fun suppressed() {\nprint (1 == 1);print(\"string literal\"); print(\"string literal\"); print(\"string literal\"); } " +
+      "@Suppress(\"slang:S1192\")\n" +
+      "@Suppress(\"slang:S1764\")\n" +
+      "fun suppressed() {\nprint (1 == 1);print(\"string literal\"); print(\"string literal\"); print(\"string literal\"); } " +
+      "@Suppress(value={\"slang:S1764\"})\n" +
+      "fun suppressed() {\nprint (1 == 1);}");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S1764", "S1192");
+    sensor(checkFactory).execute(context);
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).isEmpty();
+  }
+
+  @Test
+  public void do_not_suppress_bad_key() {
+    InputFile inputFile = createInputFile("file1.slang", "" +
+      "@Suppress(\"slang:S1234\")\n" +
+      "fun notSuppressed() {\nprint (1 == 1);} " +
+      "@Suppress(\"EQUALITY\")\n" +
+      "fun notSuppressed1() {\nprint (123 == 123);} " +
+      "@SuppressSonarIssue(\"slang:S1764\")\n" +
+      "fun notSuppressed1() {\nprint (1 == 1);} ");
+    context.fileSystem().add(inputFile);
+    CheckFactory checkFactory = checkFactory("S1764");
+    sensor(checkFactory).execute(context);
+    Collection<Issue> issues = context.allIssues();
+    assertThat(issues).hasSize(3);
+  }
+
+  @Test
   public void test_fail_input() throws IOException {
     InputFile inputFile = createInputFile("fakeFile.slang", "");
     InputFile spyInputFile = spy(inputFile);

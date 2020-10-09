@@ -21,7 +21,6 @@ package org.sonarsource.slang.plugin;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -178,9 +177,13 @@ public abstract class SlangSensor implements Sensor {
 
   private List<TreeVisitor<InputFileContext>> visitors(SensorContext sensorContext, DurationStatistics statistics) {
     if (sensorContext.runtime().getProduct() == SonarProduct.SONARLINT) {
-      return Collections.singletonList(new ChecksVisitor(checks(), statistics));
+      return Arrays.asList(
+        new IssueSuppressionVisitor(),
+        new ChecksVisitor(checks(), statistics)
+      );
     } else {
       return Arrays.asList(
+        new IssueSuppressionVisitor(),
         new MetricVisitor(fileLinesContextFactory, noSonarFilter),
         new ChecksVisitor(checks(), statistics),
         new CpdVisitor(),
