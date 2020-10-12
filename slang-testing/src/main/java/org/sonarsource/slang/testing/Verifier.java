@@ -19,7 +19,6 @@
  */
 package org.sonarsource.slang.testing;
 
-import com.sonarsource.checks.verifier.CommentParser;
 import com.sonarsource.checks.verifier.SingleFileVerifier;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,6 +32,7 @@ import org.sonarsource.slang.api.HasTextRange;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.checks.api.CheckContext;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SecondaryLocation;
@@ -61,14 +61,18 @@ public final class Verifier {
     SingleFileVerifier verifier = SingleFileVerifier.create(path, UTF_8);
 
     String testFileContent = readFile(path);
-    Tree root = converter.parse(testFileContent);
+    Tree root = converter.parse(testFileContent, null);
 
+    ((TopLevelTree) root).allComments()
+      .forEach(comment -> {
+        TextPointer start = comment.textRange().start();
+        verifier.addComment(start.line(), start.lineOffset()+1, comment.text(), 2, 0);
+      });
+    
     TestContext ctx = new TestContext(verifier, path.getFileName().toString(), testFileContent);
     check.initialize(ctx);
     ctx.scan(root);
 
-    CommentParser commentParser = CommentParser.create().addSingleLineCommentSyntax("//");
-    commentParser.parseInto(path, verifier);
     return verifier;
   }
 
