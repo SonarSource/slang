@@ -24,7 +24,7 @@ import java.util.Collections.{emptyList, singletonList}
 
 import org.sonarsource.slang
 import org.sonarsource.slang.api
-import org.sonarsource.slang.api.{BinaryExpressionTree, CatchTree, IdentifierTree, TextRange, Token, TreeMetaData, UnaryExpressionTree}
+import org.sonarsource.slang.api.{Annotation, BinaryExpressionTree, CatchTree, IdentifierTree, TextRange, Token, TreeMetaData, UnaryExpressionTree}
 import org.sonarsource.slang.api.LoopTree.LoopKind
 import org.sonarsource.slang.impl._
 
@@ -77,8 +77,19 @@ class ScalaConverter extends slang.api.ASTConverter {
       .map(t => createComment(t))
       .asJava
 
-    val metaDataProvider = new TreeMetaDataProvider(allComments, allTokens)
+    val metaDataProvider = new TreeMetaDataProvider(allComments, allTokens, collectAnnotations(metaTree).asJava)
     new TreeConversion(metaDataProvider).convert(metaTree)
+  }
+
+  private def collectAnnotations(tree: Tree): List[Annotation] = tree match {
+    case Mod.Annot(init) =>
+      List(new AnnotationImpl(getShortName(init.tpe), init.argss.flatten.map(_.toString()).asJava, textRange(tree.pos)))
+    case _ => tree.children.flatMap(collectAnnotations)
+  }
+
+  private def getShortName(tpe: Type): String = tpe match {
+    case Type.Select(_, name) => name.toString()
+    case _ => tpe.toString()
   }
 
   private class TreeConversion(metaDataProvider: TreeMetaDataProvider) {
