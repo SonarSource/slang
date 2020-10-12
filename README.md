@@ -39,6 +39,13 @@ To provide feedback (request a feature, report a bug etc.) use the [SonarQube Co
 
 ## Building
 
+### Setup
+
+If you are on Windows, read the [sonar-go-to-slang/README.md](sonar-go-to-slang/README.md) instructions.
+
+*SonarSource internal usage: Configure your `gradle.properties` - read the [private/README.md](private/README.md) instructions.*
+
+### Build
 Build and run Unit Tests:
 
     ./gradlew build
