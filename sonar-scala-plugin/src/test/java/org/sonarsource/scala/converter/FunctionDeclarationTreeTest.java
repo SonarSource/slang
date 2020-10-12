@@ -214,7 +214,7 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
     assertThat(nativeChildren).hasSize(1);
 
     FunctionDeclarationTree secondaryConstructor = (FunctionDeclarationTree)nativeChildren.get(0);
-    assertThat(secondaryConstructor.formalParameters()).hasSize(0);
+    assertThat(secondaryConstructor.formalParameters()).isEmpty();
     assertThat(secondaryConstructor.isConstructor()).isTrue();
     List<Tree> expressions = secondaryConstructor.body().statementOrExpressions();
     assertThat(expressions).hasSize(1);

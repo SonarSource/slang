@@ -37,7 +37,7 @@ public class RuboCopRulesDefinitionTest {
     RulesDefinition.Repository repository = context.repository("external_rubocop");
     assertThat(repository.name()).isEqualTo("RuboCop");
     assertThat(repository.language()).isEqualTo("ruby");
-    assertThat(repository.isExternal()).isEqualTo(true);
+    assertThat(repository.isExternal()).isTrue();
     assertThat(repository.rules().size()).isEqualTo(425);
 
     RulesDefinition.Rule rule = repository.rule("Lint/MultipleCompare");

@@ -29,11 +29,11 @@ public class RubyNativeKindTest {
   public void kinds() {
     RubyNativeKind nativeKind = new RubyNativeKind("test");
 
-    assertThat(nativeKind).isEqualTo(nativeKind);
-    assertThat(nativeKind).isEqualTo(new RubyNativeKind("test"));
-    assertThat(nativeKind).isNotEqualTo(new RubyNativeKind("test_other"));
-    assertThat(nativeKind).isNotEqualTo(null);
-    assertThat(nativeKind).isNotEqualTo(new Object());
+    assertThat(nativeKind)
+      .isEqualTo(new RubyNativeKind("test"))
+      .isNotEqualTo(new RubyNativeKind("test_other"))
+      .isNotNull()
+      .isNotEqualTo(new Object());
 
     assertThat(nativeKind.hashCode()).isEqualTo(nativeKind.hashCode());
     assertThat(nativeKind.hashCode()).isNotEqualTo(new RubyNativeKind("test_other").hashCode());
