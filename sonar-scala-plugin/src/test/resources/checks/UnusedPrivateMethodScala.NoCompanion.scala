@@ -4,7 +4,7 @@ class MyClass {
   }
   private def used() = {}
 
-  private def usedByCompanionObject(): Unit = {}
+  private def usedByCompanionObject(): Unit = {} // Noncompliant
 
   def notPrivate() = {}
 
@@ -14,21 +14,4 @@ class MyClass {
   private def writeReplace() {}
   private def readResolve() {}
   private def readObjectNoData() {}
-}
-
-object MyClass {
-  def apply(name: String): MyClass = {
-    var p = new MyClass
-    p.usedByCompanionObject()
-    p
-  }
-}
-
-class OtherClass {}
-
-object OtherObject {
-  def apply(name: String): OtherClass = {
-    // for code coverage
-    new OtherClass
-  }
 }

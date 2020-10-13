@@ -20,12 +20,16 @@
 package org.sonarsource.scala.checks;
 
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
-import javax.annotation.Nullable;
 import org.sonar.check.Rule;
+import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
+import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.checks.UnusedPrivateMethodCheck;
+import org.sonarsource.slang.checks.api.CheckContext;
+import org.sonarsource.slang.impl.NativeTreeImpl;
 
 @Rule(key = "S1144")
 public class UnusedPrivateMethodScalaCheck extends UnusedPrivateMethodCheck {
@@ -38,9 +42,44 @@ public class UnusedPrivateMethodScalaCheck extends UnusedPrivateMethodCheck {
     "readResolve",
     "readObjectNoData"));
 
+  // companion objects may use methods in the main class
+  private Set<String> usagesInCompanionObjects = new HashSet<>();
+
   @Override
-  protected boolean isUnusedMethod(@Nullable IdentifierTree identifier, Set<String> usedIdentifierNames) {
-    return identifier != null && super.isUnusedMethod(identifier, usedIdentifierNames) && !IGNORED_METHODS.contains(identifier.name());
+  protected void processClassDeclaration(CheckContext context, ClassDeclarationTree classDeclarationTree) {
+    // only verify the outermost class in the file, to avoid raising the same issue multiple times
+    IdentifierTree identifier = classDeclarationTree.identifier();
+    if (context.ancestors().stream().noneMatch(ClassDeclarationTree.class::isInstance) &&
+        identifier != null) {
+      collectUsagesInCompanionObject(identifier.name(), context.ancestors());
+      reportUnusedPrivateMethods(context, classDeclarationTree);
+    }
+  }
+
+  @Override
+  protected boolean isUnusedMethod(IdentifierTree identifier, Set<String> usedIdentifierNames) {
+    return super.isUnusedMethod(identifier, usedIdentifierNames) &&
+      !IGNORED_METHODS.contains(identifier.name()) &&
+      !usagesInCompanionObjects.contains(identifier.name());
+  }
+
+  private void collectUsagesInCompanionObject(String className, Deque<Tree> ancestors) {
+    if (ancestors.size() == 1) {
+      // search for the companion object and collect what's inside
+      ancestors.getFirst().descendants()
+        .filter(d -> d instanceof NativeTreeImpl)
+        .map(n -> (NativeTreeImpl) n)
+        .filter(n -> isObjectCompanionForClass(className, n))
+        .forEach(n -> {
+          MethodAndIdentifierCollector collector = new MethodAndIdentifierCollector(n.descendants());
+          usagesInCompanionObjects = collector.getUsedUniqueIdentifiers();
+        });
+    }
+  }
+
+  private static boolean isObjectCompanionForClass(String className, NativeTreeImpl nativeTree) {
+    return nativeTree.nativeKind().toString().contains("scala.meta.Defn$Object$DefnObjectImpl") &&
+      nativeTree.children().stream().anyMatch(i -> i instanceof IdentifierTree && ((IdentifierTree)i).identifier().equals(className));
   }
 
 }

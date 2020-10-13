@@ -24,8 +24,17 @@ import org.junit.Test;
 public class UnusedPrivateMethodScalaCheckTest {
 
   @Test
-  public void test() {
+  public void test_with_companion_object() {
     ScalaVerifier.verify("UnusedPrivateMethodScala.scala", new UnusedPrivateMethodScalaCheck());
   }
 
+  @Test
+  public void test() {
+    ScalaVerifier.verify("UnusedPrivateMethodScala.NoCompanion.scala", new UnusedPrivateMethodScalaCheck());
+  }
+
+  @Test
+  public void test_inner_class() {
+    ScalaVerifier.verify("UnusedPrivateMethodScala.InnerClass.scala", new UnusedPrivateMethodScalaCheck());
+  }
 }
