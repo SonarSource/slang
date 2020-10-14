@@ -1,5 +1,12 @@
 {
 'scala-project:ruling/src/test/resources/sources/scala/S1763.scala':[
 4,
+9,
+],
+'scala-project:sources/scala/finagle/finagle-mysql/src/test/scala/com/twitter/finagle/mysql/unit/TransactionTest.scala':[
+52,
+],
+'scala-project:sources/scala/playframework/framework/src/play-jdbc/src/test/scala/play/api/db/DatabasesSpec.scala':[
+116,
 ],
 }

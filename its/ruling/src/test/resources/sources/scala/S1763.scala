@@ -4,4 +4,9 @@ object Main {
     return
     print("Hello World")
   }
+
+  def print(x: Int) = {
+    throw new Exception()
+    println("Will not execute")
+  }
 }

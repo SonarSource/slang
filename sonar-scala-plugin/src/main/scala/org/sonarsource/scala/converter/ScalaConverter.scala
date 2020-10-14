@@ -168,7 +168,10 @@ class ScalaConverter extends slang.api.ASTConverter {
           new ModifierTreeImpl(metaData, slang.api.ModifierTree.Kind.OVERRIDE)
         case Term.Return(expr) =>
           createReturnTree(metaData, expr)
-        case Term.Placeholder() => new PlaceHolderTreeImpl(metaData, metaDataProvider.keyword(metaData.textRange()))
+        case Term.Placeholder() =>
+          new PlaceHolderTreeImpl(metaData, metaDataProvider.keyword(metaData.textRange()))
+        case Term.Throw(expr) =>
+          createThrowTree(metaData, expr)
         case _ =>
           createNativeTree(metaData, metaTree)
       }
@@ -190,8 +193,17 @@ class ScalaConverter extends slang.api.ASTConverter {
 
     private def createReturnTree(metaData: TreeMetaData, expr: Term) = {
       val convertedExpr = convert(expr)
-      val end = if (convertedExpr == null) metaData.textRange.end else start(convertedExpr)
-      new ReturnTreeImpl(metaData, keyword(metaData.textRange.start, end), convertedExpr)
+      new ReturnTreeImpl(metaData, createKeyword(metaData, convertedExpr), convertedExpr)
+    }
+
+    private def createThrowTree(metaData: TreeMetaData, expr: Term) = {
+      val convertedExpr = convert(expr)
+      new ThrowTreeImpl(metaData, createKeyword(metaData, convertedExpr), convertedExpr)
+    }
+
+    private def createKeyword(metaData: TreeMetaData, expr: slang.api.Tree) = {
+      val end = if (expr == null) metaData.textRange.end else start(expr)
+      keyword(metaData.textRange.start, end)
     }
 
     // private => like Java

@@ -777,6 +777,7 @@ public class KotlinConverterTest {
     ThrowTree throwTree = (ThrowTree) tree;
     assertThat(throwTree.keyword().text()).isEqualTo("throw");
     assertTree(throwTree.body()).isInstanceOf(NativeTree.class);
+    assertTree(throwTree.body()).isEquivalentTo(kotlinStatement("Exception();"));
   }
 
 
