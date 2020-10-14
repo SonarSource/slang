@@ -22,6 +22,8 @@ package org.sonar.go.externalreport;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
+
+import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
@@ -37,14 +39,8 @@ public class GoMetaLinterReportSensor extends AbstractReportSensor {
 
   private static final Pattern RULE_KEY_REGEX = Pattern.compile("\\((?<ruleKey>[A-Za-z0-9_-]{1,20})\\)$");
 
-  @Override
-  String linterName() {
-    return "GoMetaLinter";
-  }
-
-  @Override
-  String reportsPropertyName() {
-    return PROPERTY_KEY;
+  public GoMetaLinterReportSensor(AnalysisWarnings analysisWarnings) {
+    super(analysisWarnings, "gometalinter", "GoMetaLinter", PROPERTY_KEY);
   }
 
   @Nullable

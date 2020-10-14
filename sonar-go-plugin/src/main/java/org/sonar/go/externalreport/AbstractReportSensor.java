@@ -28,27 +28,28 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.function.Consumer;
+import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.Severity;
-import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
+import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition.Context;
 import org.sonar.api.server.rule.RulesDefinition.NewRepository;
 import org.sonar.api.server.rule.RulesDefinition.NewRule;
-import org.sonar.api.utils.Version;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.go.plugin.GoLanguage;
+import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public abstract class AbstractReportSensor implements Sensor {
+public abstract class AbstractReportSensor extends AbstractPropertyHandlerSensor {
 
   private static final Logger LOG = Loggers.get(AbstractReportSensor.class);
 
@@ -56,30 +57,16 @@ public abstract class AbstractReportSensor implements Sensor {
   static final Severity DEFAULT_SEVERITY = Severity.MAJOR;
   static final String GENERIC_ISSUE_KEY = "issue";
 
-  abstract String linterName();
-
-  abstract String reportsPropertyName();
+  protected AbstractReportSensor(AnalysisWarnings analysisWarnings, String propertyKey, String propertyName, String configurationkey) {
+    super(analysisWarnings, propertyKey, propertyName, configurationkey, GoLanguage.KEY);
+  }
 
   @Nullable
   abstract ExternalIssue parse(String line);
 
   @Override
-  public void execute(SensorContext context) {
-    boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
-    String[] reportPaths = context.config().getStringArray(reportsPropertyName());
-    if (reportPaths.length == 0) {
-      return;
-    }
-
-    if (!externalIssuesSupported) {
-      LOG.error(logPrefix() + "Import of external issues requires SonarQube 7.2 or greater.");
-      return;
-    }
-
-    for (String reportPath : reportPaths) {
-      File report = getIOFile(context.fileSystem().baseDir(), reportPath);
-      importReport(context, report);
-    }
+  public Consumer<File> reportConsumer(SensorContext context) {
+    return file -> importReport(context, file);
   }
 
   protected String logPrefix() {
@@ -88,7 +75,6 @@ public abstract class AbstractReportSensor implements Sensor {
 
   private void importReport(SensorContext context, File report) {
     try {
-      LOG.info(logPrefix() + "Importing {}", report.getPath());
       for (String line : Files.readAllLines(report.toPath(), UTF_8)) {
         if (!line.isEmpty()) {
           ExternalIssue issue = parse(line);
@@ -103,14 +89,6 @@ public abstract class AbstractReportSensor implements Sensor {
     }
   }
 
-  @Override
-  public void describe(SensorDescriptor sensorDescriptor) {
-    sensorDescriptor
-      .onlyOnLanguage(GoLanguage.KEY)
-      .onlyWhenConfiguration(conf -> conf.hasKey(reportsPropertyName()))
-      .name("Import of " + linterName() + " issues");
-  }
-
   /**
     * Returns a java.io.File for the given path.
     * If path is not absolute, returns a File with module base directory as parent path.
@@ -123,12 +101,12 @@ public abstract class AbstractReportSensor implements Sensor {
     return file;
   }
 
+  @CheckForNull
   InputFile getInputFile(SensorContext context, String filePath) {
     FilePredicates predicates = context.fileSystem().predicates();
     InputFile inputFile = context.fileSystem().inputFile(predicates.or(predicates.hasRelativePath(filePath), predicates.hasAbsolutePath(filePath)));
     if (inputFile == null) {
-      LOG.warn(logPrefix() + "No input file found for {}. No {} issues will be imported on this file.", filePath, linterName());
-      return null;
+      LOG.warn(logPrefix() + "No input file found for {}. No {} issues will be imported on this file.", filePath, propertyName());
     }
     return inputFile;
   }

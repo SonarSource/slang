@@ -20,33 +20,28 @@
 package org.sonar.go.externalreport;
 
 import java.io.File;
-import java.util.List;
-import org.sonar.api.batch.sensor.Sensor;
+import java.util.function.Consumer;
+
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
+import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.go.plugin.GoLanguage;
-import org.sonarsource.analyzer.commons.ExternalReportProvider;
 import org.sonarsource.slang.externalreport.CheckstyleFormatImporter;
+import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
 
-public class GolangCILintReportSensor implements Sensor {
+public class GolangCILintReportSensor extends AbstractPropertyHandlerSensor {
 
   public static final String LINTER_KEY = "golangci-lint";
+  public static final String LINTER_NAME = "GolangCI-Lint";
 
   public static final String PROPERTY_KEY = "sonar.go.golangci-lint.reportPaths";
 
-  @Override
-  public void describe(SensorDescriptor sensorDescriptor) {
-    sensorDescriptor
-      .onlyOnLanguage(GoLanguage.KEY)
-      .onlyWhenConfiguration(conf -> conf.hasKey(PROPERTY_KEY))
-      .name("Import of GolangCI-Lint issues");
+  public GolangCILintReportSensor(AnalysisWarnings analysisWarnings) {
+    super(analysisWarnings, LINTER_KEY, LINTER_NAME, PROPERTY_KEY, GoLanguage.KEY);
   }
 
   @Override
-  public void execute(SensorContext context) {
-    List<File> reportFiles = ExternalReportProvider.getReportFiles(context, PROPERTY_KEY);
-    CheckstyleFormatImporter importer = new CheckstyleFormatImporter(context, LINTER_KEY);
-    reportFiles.forEach(importer::importFile);
+  public Consumer<File> reportConsumer(SensorContext context) {
+    return new CheckstyleFormatImporter(context, LINTER_KEY)::importFile;
   }
-
 }

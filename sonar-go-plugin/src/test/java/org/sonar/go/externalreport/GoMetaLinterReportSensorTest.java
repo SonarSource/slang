@@ -20,7 +20,10 @@
 package org.sonar.go.externalreport;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.rule.Severity;
@@ -37,13 +40,20 @@ import static org.sonar.go.externalreport.ExternalLinterSensorHelper.REPORT_BASE
 
 public class GoMetaLinterReportSensorTest {
 
+  private final List<String> analysisWarnings = new ArrayList<>();
+
+  @Before
+  public void setup() {
+    analysisWarnings.clear();
+  }
+
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
   public void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
-    new GoMetaLinterReportSensor().describe(sensorDescriptor);
+    goMetaLinterReportSensor().describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of GoMetaLinter issues");
     assertThat(sensorDescriptor.languages()).containsOnly("go");
   }
@@ -52,7 +62,7 @@ public class GoMetaLinterReportSensorTest {
   public void issues_with_sonarqube() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.gometalinter.reportPaths", REPORT_BASE_PATH.resolve("gometalinter-report.txt").toString());
-    List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GoMetaLinterReportSensor(), context);
+    List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goMetaLinterReportSensor(), context);
     assertThat(externalIssues).hasSize(3);
 
     org.sonar.api.batch.sensor.issue.ExternalIssue first = externalIssues.get(0);
@@ -86,7 +96,7 @@ public class GoMetaLinterReportSensorTest {
   public void no_issues_with_invalid_report_line() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.gometalinter.reportPaths", REPORT_BASE_PATH.resolve("gometalinter-report-with-error.txt").toString());
-    List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GoMetaLinterReportSensor(), context);
+    List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goMetaLinterReportSensor(), context);
     assertThat(externalIssues).hasSize(1);
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
     assertThat(logTester.logs(LoggerLevel.DEBUG)).hasSize(1);
@@ -96,7 +106,7 @@ public class GoMetaLinterReportSensorTest {
   @Test
   public void should_parse_gometalinter_report_warning_line() {
     String line = "SelfAssignement.go:4:6:warning: exported type User should have comment or be unexported (golint)";
-    org.sonar.go.externalreport.ExternalIssue issue = new GoMetaLinterReportSensor().parse(line);
+    org.sonar.go.externalreport.ExternalIssue issue = goMetaLinterReportSensor().parse(line);
     assertThat(issue).isNotNull();
     assertThat(issue.linter).isEqualTo("golint");
     assertThat(issue.type).isEqualTo(RuleType.CODE_SMELL);
@@ -109,7 +119,7 @@ public class GoMetaLinterReportSensorTest {
   @Test
   public void should_parse_gometalinter_report_error_line() {
     String line = "duplication/pivot.go:14:5:error: ascii_allowed redeclared in this block (gotype)";
-    org.sonar.go.externalreport.ExternalIssue issue = new GoMetaLinterReportSensor().parse(line);
+    org.sonar.go.externalreport.ExternalIssue issue = goMetaLinterReportSensor().parse(line);
     assertThat(issue).isNotNull();
     assertThat(issue.linter).isEqualTo("gotype");
     assertThat(issue.type).isEqualTo(RuleType.BUG);
@@ -122,7 +132,7 @@ public class GoMetaLinterReportSensorTest {
   @Test
   public void should_parse_gometalinter_report_error_line_with_rulekey() {
     String line = "SelfAssignement.go:6:19:warning: func (*User).rename is unused (U1000) (megacheck)";
-    org.sonar.go.externalreport.ExternalIssue issue = new GoMetaLinterReportSensor().parse(line);
+    org.sonar.go.externalreport.ExternalIssue issue = goMetaLinterReportSensor().parse(line);
     assertThat(issue).isNotNull();
     assertThat(issue.linter).isEqualTo("megacheck");
     assertThat(issue.type).isEqualTo(RuleType.CODE_SMELL);
@@ -135,7 +145,7 @@ public class GoMetaLinterReportSensorTest {
   @Test
   public void should_parse_gometalinter_report_error_line_with_invalid_rulekey() {
     String line = "SelfAssignement.go:6:19:warning: func (*User).rename is unused (Not a rule key) (megacheck)";
-    org.sonar.go.externalreport.ExternalIssue issue = new GoMetaLinterReportSensor().parse(line);
+    org.sonar.go.externalreport.ExternalIssue issue = goMetaLinterReportSensor().parse(line);
     assertThat(issue).isNotNull();
     assertThat(issue.linter).isEqualTo("megacheck");
     assertThat(issue.type).isEqualTo(RuleType.CODE_SMELL);
@@ -145,4 +155,7 @@ public class GoMetaLinterReportSensorTest {
     assertThat(issue.message).isEqualTo("func (*User).rename is unused (Not a rule key)");
   }
 
+  private GoMetaLinterReportSensor goMetaLinterReportSensor() {
+    return new GoMetaLinterReportSensor(analysisWarnings::add);
+  }
 }

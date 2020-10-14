@@ -20,7 +20,10 @@
 package org.sonar.go.externalreport;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.rule.Severity;
@@ -36,22 +39,33 @@ import static org.sonar.go.externalreport.ExternalLinterSensorHelper.REPORT_BASE
 
 public class GolangCILintReportSensorTest {
 
+  private final List<String> analysisWarnings = new ArrayList<>();
+
+  @Before
+  public void setup() {
+    analysisWarnings.clear();
+  }
+
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
   public void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
-    new GolangCILintReportSensor().describe(sensorDescriptor);
+    golangCILintReportSensor().describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of GolangCI-Lint issues");
     assertThat(sensorDescriptor.languages()).containsOnly("go");
+  }
+
+  private GolangCILintReportSensor golangCILintReportSensor() {
+    return new GolangCILintReportSensor(analysisWarnings::add);
   }
 
   @Test
   public void issues_with_sonarqube() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golangci-lint.reportPaths", REPORT_BASE_PATH.resolve("golandci-lint-report.xml").toString());
-    List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(new GolangCILintReportSensor(), context);
+    List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(golangCILintReportSensor(), context);
     assertThat(externalIssues).hasSize(1);
 
     org.sonar.api.batch.sensor.issue.ExternalIssue first = externalIssues.get(0);
