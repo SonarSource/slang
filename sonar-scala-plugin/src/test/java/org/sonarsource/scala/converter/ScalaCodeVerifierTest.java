@@ -19,10 +19,9 @@
  */
 package org.sonarsource.scala.converter;
 
+import org.assertj.core.api.AbstractAssert;
 import org.junit.Test;
 import org.sonarsource.slang.api.CodeVerifier;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class ScalaCodeVerifierTest {
 
@@ -30,60 +29,75 @@ public class ScalaCodeVerifierTest {
 
   @Test
   public void testContainsCode() {
-    assertThat(verifier.containsCode("val hello = 1")).isTrue();
-    assertThat(verifier.containsCode("if (cond) true else false")).isTrue();
 
-    assertThat(verifier.containsCode("")).isFalse();
-    assertThat(verifier.containsCode("  ")).isFalse();
+    CodeVerifierAssert.assertThat(verifier)
+      .hasCode("val hello = 1")
+      .hasCode("if (cond) true else false")
+      .hasCode("return foo(bar, baz)")
+      .hasCode("new line(x, y)")
+      .hasCode("try x catch { y }")
+      .hasCode("exec(param1, param2)")
+      .hasCode("exec(\n param1, param2)")
+      .hasCode("exec(x.y(z))")
+      .hasCode("case None => true")
+      .hasNoCode("")
+      .hasNoCode("  ")
+      .hasNoCode("1.0")
+      .hasNoCode("hello")
+      .hasNoCode("hello world")
+      .hasNoCode("hello world and")
+      .hasNoCode("hello world and John")
+      .hasNoCode("TODO: remove when cats.Foldable support export-hook")
+      .hasNoCode("abc:off")
+      .hasNoCode("TODO: put something meaningful here?")
+      .hasNoCode("1: The previous character was CR")
+      .hasNoCode("Replace charset= parameter(s)")
+      .hasNoCode("done (almost)")
+      .hasNoCode("* Set Content-Type header to application/json;charset=utf-8")
+      .hasNoCode("RSPEC-325")
+      .hasNoCode("return something very useful")
+      .hasNoCode("new line")
+      .hasNoCode("try something different")
+      .hasNoCode("done (almost done)")
+      .hasNoCode("array[int]")
+      .hasNoCode("(x, y) => z")
+      .hasNoCode("* (42)")
+      .hasNoCode("(name, persons)")
+      .hasNoCode("* Copyright (c) 2012-2014");
 
-    assertThat(verifier.containsCode("1.0")).isFalse();
-
-    assertThat(verifier.containsCode("hello")).isFalse();
-    assertThat(verifier.containsCode("hello world")).isFalse();
-    assertThat(verifier.containsCode("hello world and")).isFalse();
-    assertThat(verifier.containsCode("hello world and John")).isFalse();
-    assertThat(verifier.containsCode("TODO: remove when cats.Foldable support export-hook")).isFalse();
-    assertThat(verifier.containsCode("abc:off")).isFalse();
-    assertThat(verifier.containsCode("TODO: put something meaningful here?")).isFalse();
-    assertThat(verifier.containsCode("1: The previous character was CR")).isFalse();
-    assertThat(verifier.containsCode("Replace charset= parameter(s)")).isFalse();
-    assertThat(verifier.containsCode("* Set Content-Type header to application/json;charset=utf-8")).isFalse();
-    assertThat(verifier.containsCode("RSPEC-325")).isFalse();
-
-    assertThat(verifier.containsCode("return something very useful")).isFalse();
-    assertThat(verifier.containsCode("return foo(bar, baz)")).isTrue();
-
-    assertThat(verifier.containsCode("new line")).isFalse();
-    assertThat(verifier.containsCode("new line(x, y)")).isTrue();
-
-    assertThat(verifier.containsCode("try something different")).isFalse();
-    assertThat(verifier.containsCode("try x catch { y }")).isTrue();
-
-    assertThat(verifier.containsCode("exec(param1, param2)")).isTrue();
-    assertThat(verifier.containsCode("exec(\n param1, param2)")).isTrue();
-    assertThat(verifier.containsCode("exec(x.y(z))")).isTrue();
-    assertThat(verifier.containsCode("done (almost)")).isFalse();
-    assertThat(verifier.containsCode("done (almost done)")).isFalse();
-
-    assertThat(verifier.containsCode("array[int]")).isFalse();
-    assertThat(verifier.containsCode("(x, y) => z")).isFalse();
-    assertThat(verifier.containsCode("* (42)")).isFalse();
-    assertThat(verifier.containsCode("(name, persons)")).isFalse();
-
-    assertThat(verifier.containsCode("case None => true")).isTrue();
-
-
-    assertThat(verifier.containsCode("* Copyright (c) 2012-2014")).isFalse();
     // Catch UnreachableError exception
-    assertThat(verifier.containsCode("TODO can we avoid the map() ?")).isFalse();
-    assertThat(verifier.containsCode("case None => true")).isTrue();
-    assertThat(verifier.containsCode("case None => true")).isTrue();
+    CodeVerifierAssert.assertThat(verifier)
+      .hasCode("case None => true")
+      .hasCode("case None => true")
+      .hasCode(".set(123)")
+      .hasCode("                     .set(123)")
+      .hasNoCode(".Hello")
+      .hasNoCode("TODO can we avoid the map() ?")
+      .hasNoCode("hello.set 123")
+      .hasNoCode("          .Hello")
+      .hasNoCode("hello.World");
+  }
 
-    assertThat(verifier.containsCode("hello.set 123")).isFalse();
-    assertThat(verifier.containsCode(".set(123)")).isTrue();
-    assertThat(verifier.containsCode("                     .set(123)")).isTrue();
-    assertThat(verifier.containsCode(".Hello")).isFalse();
-    assertThat(verifier.containsCode("          .Hello")).isFalse();
-    assertThat(verifier.containsCode("hello.World")).isFalse();
+  private static class CodeVerifierAssert extends AbstractAssert<CodeVerifierAssert, CodeVerifier> {
+
+    private CodeVerifierAssert(CodeVerifier actual) {
+      super(actual, CodeVerifierAssert.class);
+    }
+
+    static CodeVerifierAssert assertThat(CodeVerifier actual) {
+      return new CodeVerifierAssert(actual);
+    }
+
+    CodeVerifierAssert hasCode(String code) {
+      if (!actual.containsCode(code))
+        failWithMessage(String.format("No code with name: '%s' found", code));
+      return this;
+    }
+
+    CodeVerifierAssert hasNoCode(String code) {
+      if (actual.containsCode(code))
+        failWithMessage(String.format("Code with name: '%s' found, but should be absent", code));
+      return this;
+    }
   }
 }
