@@ -9,6 +9,13 @@
 'ruby-project:sources/ruby/rails/actionpack/test/controller/http_basic_authentication_test.rb':[
 110,
 ],
+'ruby-project:sources/ruby/rails/actionpack/test/controller/url_rewriter_test.rb':[
+50,
+57,
+],
+'ruby-project:sources/ruby/rails/actionpack/test/dispatch/request_test.rb':[
+57,
+],
 'ruby-project:sources/ruby/rails/activerecord/test/cases/connection_specification/resolver_test.rb':[
 90,
 ],
@@ -18,4 +25,8 @@
 'ruby-project:sources/ruby/vagrant/plugins/communicators/winrm/config.rb':[
 36,
 ],
+'ruby-project:sources/ruby/vagrant/test/unit/vagrant/util/downloader_test.rb':[
+136,
+157,
+]
 }

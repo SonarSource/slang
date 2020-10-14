@@ -19,6 +19,8 @@
  */
 package org.sonarsource.slang.checks;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.StringLiteralTree;
 import org.sonarsource.slang.api.Tree;
@@ -41,6 +43,7 @@ import javax.annotation.Nullable;
 public class HardcodedCredentialsCheck implements SlangCheck {
 
   private static final String DEFAULT_VALUE = "password,passwd,pwd,passphrase";
+  private static final Pattern URI_PREFIX = Pattern.compile("^\\w{1,8}://");
 
   @RuleProperty(
     key = "credentialWords",
@@ -65,13 +68,32 @@ public class HardcodedCredentialsCheck implements SlangCheck {
 
     init.register(StringLiteralTree.class, (ctx, tree) -> {
       String content = tree.content();
-      literalPatterns()
-        .map(pattern -> pattern.matcher(content))
-        .filter(Matcher::find)
-        .map(matcher -> matcher.group(1))
-        .filter(match -> !isQuery(content, match))
-        .forEach(credential -> report(ctx, tree, credential));
+      if (isURIWithCredentials(content)) {
+        ctx.reportIssue(tree, "Review this hard-coded URL, which may contain a credential.");
+      } else {
+        literalPatterns()
+          .map(pattern -> pattern.matcher(content))
+          .filter(Matcher::find)
+          .map(matcher -> matcher.group(1))
+          .filter(match -> !isQuery(content, match))
+          .forEach(credential -> report(ctx, tree, credential));
+      }
     });
+  }
+
+  private static boolean isURIWithCredentials(String stringLiteral) {
+    if (URI_PREFIX.matcher(stringLiteral).find()) {
+      try {
+        String userInfo = new URI(stringLiteral).getUserInfo();
+        if (userInfo != null) {
+          String[] parts = userInfo.split(":");
+          return parts.length > 1 && !parts[0].equals(parts[1]);
+        }
+      } catch (URISyntaxException e) {
+        // ignore, stringLiteral is not a valid URI
+      }
+    }
+    return false;
   }
 
   private static boolean isNotEmptyString(@Nullable Tree tree) {

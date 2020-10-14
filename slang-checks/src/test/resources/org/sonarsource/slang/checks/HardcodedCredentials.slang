@@ -45,3 +45,13 @@ query = "password=:param";
 query = "password='" + password + "'";
 query = "password=%s";
 query = "password=%v";
+
+// Support URI
+var uri = "http://user:azer:ty123@domain.com"; // Noncompliant
+var uri = "https://:azerty123@domain.com/path"; // Noncompliant {{Review this hard-coded URL, which may contain a credential.}}
+var uri = "http://anonymous:anonymous@domain.com"; // Compliant, user and password are the same
+var uri = "http://user:@domain.com";
+var uri = "http://user@domain.com:80";
+var uri = "http://domain.com/user:azerty123";
+var uri = "too-long-url-scheme://user:123456@server.com";
+var uri = "https://invalid::url::format";
