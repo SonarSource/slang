@@ -26,6 +26,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile;
@@ -47,7 +49,14 @@ public class RuboCopSensorTest {
 
   private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport", "rubocop");
 
-  private static RuboCopSensor ruboCopSensor = new RuboCopSensor();
+  private RuboCopSensor ruboCopSensor;
+  private final List<String> analysisWarnings = new ArrayList<>();
+
+  @Before
+  public void setup() {
+    analysisWarnings.clear();
+    ruboCopSensor = new RuboCopSensor(analysisWarnings::add);
+  }
 
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
@@ -57,7 +66,7 @@ public class RuboCopSensorTest {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     ruboCopSensor.describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of RuboCop issues");
-    assertThat(sensorDescriptor.languages()).isEmpty();
+    assertThat(sensorDescriptor.languages()).containsOnly("ruby");
     assertNoErrorWarnDebugLogs(logTester);
   }
 
@@ -112,9 +121,14 @@ public class RuboCopSensorTest {
   public void no_issues_with_invalid_report_path() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("invalid-path.txt");
     assertThat(externalIssues).isEmpty();
-    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
-      .startsWith("No issues information will be saved as the report file '")
-      .contains("invalid-path.txt' can't be read.");
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.WARN)))
+      .startsWith("Unable to import RuboCop report file(s):")
+      .contains("invalid-path.txt")
+      .endsWith("The report file(s) can not be found. Check that the property 'sonar.ruby.rubocop.reportPaths' is correctly configured.");
+    assertThat(analysisWarnings).hasSize(1);
+    assertThat(analysisWarnings.get(0))
+      .startsWith("Unable to import 1 RuboCop report file(s).")
+      .endsWith("Please check that property 'sonar.ruby.rubocop.reportPaths' is correctly configured and the analysis logs for more details.");
   }
 
   @Test

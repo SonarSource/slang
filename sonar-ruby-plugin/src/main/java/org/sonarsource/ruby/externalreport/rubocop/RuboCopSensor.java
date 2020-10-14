@@ -24,24 +24,24 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
+import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonarsource.analyzer.commons.ExternalReportProvider;
 import org.sonarsource.analyzer.commons.ExternalRuleLoader;
 import org.sonarsource.analyzer.commons.internal.json.simple.parser.ParseException;
+import org.sonarsource.ruby.plugin.RubyPlugin;
+import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
 
-public class RuboCopSensor implements Sensor {
+public class RuboCopSensor extends AbstractPropertyHandlerSensor {
 
   private static final Logger LOG = Loggers.get(RuboCopSensor.class);
 
@@ -50,25 +50,27 @@ public class RuboCopSensor implements Sensor {
   static final String LINTER_NAME = "RuboCop";
 
   public static final String REPORT_PROPERTY_KEY = "sonar.ruby.rubocop.reportPaths";
+  private final Set<String> unresolvedInputFile = new HashSet<>();
 
   private static final int MAX_LOGGED_FILE_NAMES = 20;
 
-  @Override
-  public void describe(SensorDescriptor descriptor) {
-    descriptor
-      .onlyWhenConfiguration(conf -> conf.hasKey(REPORT_PROPERTY_KEY))
-      .name("Import of RuboCop issues");
+  public RuboCopSensor(AnalysisWarnings analysisWarnings) {
+    super(analysisWarnings, LINTER_KEY, LINTER_NAME, REPORT_PROPERTY_KEY, RubyPlugin.RUBY_LANGUAGE_KEY);
   }
 
   @Override
   public void execute(SensorContext context) {
-    List<File> reportFiles = ExternalReportProvider.getReportFiles(context, REPORT_PROPERTY_KEY);
-    Set<String> unresolvedInputFile = new HashSet<>();
-    reportFiles.forEach(report -> importReport(report, context, unresolvedInputFile));
-    logUnresolvedInputFiles(unresolvedInputFile);
+    unresolvedInputFile.clear();
+    super.execute(context);
+    logUnresolvedInputFiles();
   }
 
-  private static void logUnresolvedInputFiles(Set<String> unresolvedInputFile) {
+  @Override
+  public Consumer<File> reportConsumer(SensorContext context) {
+    return file -> importReport(file, context, unresolvedInputFile);
+  }
+
+  private void logUnresolvedInputFiles() {
     if (unresolvedInputFile.isEmpty()) {
       return;
     }
@@ -81,7 +83,6 @@ public class RuboCopSensor implements Sensor {
 
   private static void importReport(File reportPath, SensorContext context, Set<String> unresolvedInputFile) {
     try (InputStream in = new FileInputStream(reportPath)) {
-      LOG.info("Importing {}", reportPath);
       RuboCopJsonReportReader.read(in, issue -> saveIssue(context, issue, unresolvedInputFile));
     } catch (IOException | RuntimeException | ParseException e) {
       LOG.error("No issues information will be saved as the report file '{}' can't be read. " + e.getMessage(), reportPath, e);
