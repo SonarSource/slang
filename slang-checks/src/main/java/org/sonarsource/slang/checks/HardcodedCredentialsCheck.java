@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
 @Rule(key = "S2068")
 public class HardcodedCredentialsCheck implements SlangCheck {
 
-  private static final String DEFAULT_VALUE = "password,passwd,pwd";
+  private static final String DEFAULT_VALUE = "password,passwd,pwd,passphrase";
 
   @RuleProperty(
     key = "credentialWords",

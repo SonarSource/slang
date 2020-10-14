@@ -11,6 +11,7 @@ x = "login=a&password=xxx"; // Noncompliant {{"password" detected in this expres
 "login=a&password=xxx"; // Noncompliant
 "login=a&passwd=xxx"; // Noncompliant {{"passwd" detected in this expression, review this potentially hardcoded credential.}}
 "login=a&pwd=xxx"; // Noncompliant {{"pwd" detected in this expression, review this potentially hardcoded credential.}}
+"login=a&passphrase=xxx"; // Noncompliant {{"passphrase" detected in this expression, review this potentially hardcoded credential.}}
   variableNameWithPasswordInIt = "xxx"; // Noncompliant {{"Password" detected in this expression, review this potentially hardcoded credential.}}
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 variableNameWithPasswdInIt = "xxx"; // Noncompliant
@@ -22,6 +23,7 @@ otherVariableNameWithPasswordInIt;
 variableNameWithPasswordInIt = native[] { [ "NativeFunctionCall" ] };
 val constValue = "login=a&password=xxx"; // Noncompliant
 var passwd = "xxxx"; // Noncompliant
+var passphrase = "xxx"; // Noncompliant
 var okVariable = "xxxx";
 variableNameWithPasswdInIt = "";
 A.B.variableNameWithPwdInIt = "";
