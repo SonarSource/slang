@@ -84,7 +84,6 @@ public class CheckstyleFormatImporter {
    */
   public void importFile(File reportPath) {
     try (InputStream in = new FileInputStream(reportPath)) {
-      LOG.info("Importing {}", reportPath);
       XMLEventReader reader = SafeStaxParserFactory.createXMLInputFactory().createXMLEventReader(in);
       level = 0;
       while (reader.hasNext()) {
