@@ -54,4 +54,4 @@ var uri = "http://user:@domain.com";
 var uri = "http://user@domain.com:80";
 var uri = "http://domain.com/user:azerty123";
 var uri = "too-long-url-scheme://user:123456@server.com";
-var uri = "https://invalid::url::format";
+var uri = "https:// invalid::url::format";
