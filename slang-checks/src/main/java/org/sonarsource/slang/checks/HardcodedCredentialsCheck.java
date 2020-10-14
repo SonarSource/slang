@@ -63,16 +63,28 @@ public class HardcodedCredentialsCheck implements SlangCheck {
       checkVariable(ctx, tree.identifier(), tree.identifier().name(), tree.initializer())
     );
 
-    init.register(StringLiteralTree.class, (ctx, tree) -> literalPatterns()
-      .map(pattern -> pattern.matcher(tree.content()))
-      .filter(Matcher::find)
-      .map(matcher -> matcher.group(1))
-      .forEach(credential -> report(ctx, tree, credential)));
+    init.register(StringLiteralTree.class, (ctx, tree) -> {
+      String content = tree.content();
+      literalPatterns()
+        .map(pattern -> pattern.matcher(content))
+        .filter(Matcher::find)
+        .map(matcher -> matcher.group(1))
+        .filter(match -> !isQuery(content, match))
+        .forEach(credential -> report(ctx, tree, credential));
+    });
   }
 
   private static boolean isNotEmptyString(@Nullable Tree tree) {
     return tree instanceof StringLiteralTree
       && !((StringLiteralTree)tree).content().isEmpty();
+  }
+
+  private static boolean isQuery(String value, String match) {
+    String followingString = value.substring(value.indexOf(match) + match.length());
+    return followingString.startsWith("=?")
+      || followingString.startsWith("=%")
+      || followingString.startsWith("=:")
+      || followingString.equals("='");
   }
 
   private static void report(CheckContext ctx, Tree tree, String matchName) {

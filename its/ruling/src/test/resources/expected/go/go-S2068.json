@@ -11,7 +11,4 @@
 'go-project:sources/go/kubernetes/pkg/kubectl/cmd/create_secret.go':[
 148,
 ],
-'go-project:sources/go/kubernetes/pkg/volume/azure_file/azure_file.go':[
-215,
-],
 }

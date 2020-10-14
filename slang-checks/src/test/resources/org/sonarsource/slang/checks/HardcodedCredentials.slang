@@ -36,3 +36,10 @@ var myPassword = "secretPasswd"; // Noncompliant {{"Password" detected in this e
 myPassword = "secretPasswd"; // Noncompliant {{"Password" detected in this expression, review this potentially hardcoded credential.}}
 var params = "user=admin&password=Password123"; // Noncompliant {{"password" detected in this expression, review this potentially hardcoded credential.}}
 
+// Database queries are compliant
+var query = "password=?";
+query = "password=:password";
+query = "password=:param";
+query = "password='" + password + "'";
+query = "password=%s";
+query = "password=%v";
