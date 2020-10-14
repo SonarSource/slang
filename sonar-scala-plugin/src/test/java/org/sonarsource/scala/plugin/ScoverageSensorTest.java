@@ -25,6 +25,10 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile;
@@ -42,20 +46,45 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ScoverageSensorTest {
 
-
   private static final Path COVERAGE_DIR = Paths.get("src", "test", "resources", "coverage");
   private static final String MODULE_KEY = "/Absolute/Path/To/";
+  private static final List<String> ANALYSIS_WARNINGS = new ArrayList<>();
+
+  @Before
+  public void setup() {
+    ANALYSIS_WARNINGS.clear();
+  }
 
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
-  private static ScoverageSensor scoverageSensor = new ScoverageSensor();
-
   @Test
   public void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
-    scoverageSensor.describe(sensorDescriptor);
+    newSCoverageSensor().describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Scoverage sensor for Scala coverage");
+  }
+
+  @Test
+  public void test_missing_file() throws IOException {
+    Path baseDir = COVERAGE_DIR.toAbsolutePath();
+    Path reportPath = baseDir.resolve("missing-file.xml");
+
+    SensorContextTester context = getSensorContext(reportPath.toString());
+
+    newSCoverageSensor().execute(context);
+
+    List<String> warnings = logTester.logs(LoggerLevel.WARN);
+    assertThat(warnings)
+      .hasSize(1)
+      .hasSameSizeAs(ANALYSIS_WARNINGS);
+    assertThat(warnings.get(0))
+      .startsWith("Unable to import Scoverage report file(s):")
+      .contains("missing-file.xml")
+      .endsWith("The report file(s) can not be found. Check that the property 'sonar.scala.coverage.reportPaths' is correctly configured.");
+    assertThat(ANALYSIS_WARNINGS.get(0))
+      .startsWith("Unable to import 1 Scoverage report file(s).")
+      .endsWith("Please check that property 'sonar.scala.coverage.reportPaths' is correctly configured and the analysis logs for more details.");
   }
 
   @Test
@@ -65,7 +94,7 @@ public class ScoverageSensorTest {
 
     SensorContextTester context = getSensorContext(reportPath.toString(), "file1.scala", "file2.scala");
 
-    new ScoverageSensor().execute(context);
+    newSCoverageSensor().execute(context);
 
     String fileKey1 = MODULE_KEY + ":file1.scala";
     String fileKey2 = MODULE_KEY + ":file2.scala";
@@ -92,7 +121,7 @@ public class ScoverageSensorTest {
 
     SensorContextTester context = getSensorContext(reportPath.toString(), "file1.scala", "file2.scala");
 
-    new ScoverageSensor().execute(context);
+    newSCoverageSensor().execute(context);
 
     String expectedMessage = "File '" + reportPath.toString() + "' can't be read. java.lang.NumberFormatException: null";
     assertThat(logTester.logs().contains(expectedMessage)).isTrue();
@@ -105,7 +134,7 @@ public class ScoverageSensorTest {
 
     SensorContextTester context = getSensorContext(reportPath.toString());
 
-    new ScoverageSensor().execute(context);
+    newSCoverageSensor().execute(context);
 
     String expectedMessage = "Fail to resolve 2 file(s). No coverage data will be imported on the following file(s): /Absolute/Path/To/file1.scala;/Absolute/Path/To/file2.scala";
 
@@ -119,7 +148,7 @@ public class ScoverageSensorTest {
 
     SensorContextTester context = getSensorContext(reportPath.toString());
 
-    new ScoverageSensor().execute(context);
+    newSCoverageSensor().execute(context);
 
     String expectedMessage = String.format("File '" + reportPath.toString() +
         "' can't be read. com.ctc.wstx.exc.WstxUnexpectedCharException: Unexpected character 's' (code 115) in prolog; expected '<'");
@@ -134,12 +163,16 @@ public class ScoverageSensorTest {
 
     SensorContextTester context = getSensorContext(reportPath.toString());
 
-    new ScoverageSensor().execute(context);
+    newSCoverageSensor().execute(context);
+
     String expectedMessage = "File '" + reportPath.toString() + "' can't be read. java.lang.NumberFormatException";
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
     assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains(expectedMessage);
   }
 
+  private static ScoverageSensor newSCoverageSensor() {
+    return new ScoverageSensor(ANALYSIS_WARNINGS::add);
+  }
 
   private SensorContextTester getSensorContext(String coverageReportPath, String... fileNames) throws IOException {
     Path baseDir = COVERAGE_DIR.toAbsolutePath();

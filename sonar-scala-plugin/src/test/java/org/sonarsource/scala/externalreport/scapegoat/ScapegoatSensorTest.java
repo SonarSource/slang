@@ -20,34 +20,28 @@
 package org.sonarsource.scala.externalreport.scapegoat;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.utils.log.ThreadLocalLogTester;
-import org.sonarsource.scala.externalreport.scalastyle.ScalastyleFamilySensor;
 import org.sonarsource.scala.externalreport.scalastyle.ScalastyleSensorTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ScapegoatSensorTest {
 
-  private static ScalastyleFamilySensor sensor = new ScapegoatSensor();
-
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
-  public void test_config() {
-    assertThat(sensor.reportLinterKey()).isEqualTo("scapegoat");
-    assertThat(sensor.reportLinterName()).isEqualTo("Scapegoat");
-    assertThat(sensor.reportPropertyKey()).isEqualTo("sonar.scala.scapegoat.reportPaths");
-  }
-
-  @Test
   public void scapegoat_issues_with_sonarqube() throws IOException {
+    ScapegoatSensor sensor = new ScapegoatSensor(new ArrayList<String>()::add);
     List<ExternalIssue> externalIssues = ScalastyleSensorTest.executeSensorImporting(sensor, "scapegoat-scalastyle.xml");
     assertThat(externalIssues).hasSize(3);
 

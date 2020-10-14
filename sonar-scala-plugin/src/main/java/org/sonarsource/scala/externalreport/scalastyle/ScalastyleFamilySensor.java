@@ -24,53 +24,48 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.xml.stream.XMLStreamException;
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
+import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonarsource.analyzer.commons.ExternalReportProvider;
 import org.sonarsource.analyzer.commons.ExternalRuleLoader;
 import org.sonarsource.scala.plugin.ScalaPlugin;
+import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
 
-public abstract class ScalastyleFamilySensor implements Sensor {
+public abstract class ScalastyleFamilySensor extends AbstractPropertyHandlerSensor {
 
   private static final Logger LOG = Loggers.get(ScalastyleFamilySensor.class);
 
   private static final int MAX_LOGGED_FILE_NAMES = 20;
 
-  public abstract String reportPropertyKey();
-
-  public abstract String reportLinterKey();
-
-  public abstract String reportLinterName();
+  private final Set<String> unresolvedInputFiles = new HashSet<>();
 
   public abstract ExternalRuleLoader ruleLoader();
 
-  @Override
-  public void describe(SensorDescriptor descriptor) {
-    descriptor
-      .onlyWhenConfiguration(conf -> conf.hasKey(reportPropertyKey()))
-      .onlyOnLanguage(ScalaPlugin.SCALA_LANGUAGE_KEY)
-      .name("Import of " + reportLinterName() + " issues");
+  protected ScalastyleFamilySensor(AnalysisWarnings analysisWarnings, String propertyKey, String propertyName, String configurationKey) {
+    super(analysisWarnings, propertyKey, propertyName, configurationKey, ScalaPlugin.SCALA_LANGUAGE_KEY);
   }
 
   @Override
   public void execute(SensorContext context) {
-    Set<String> unresolvedInputFiles = new HashSet<>();
-    List<File> reportFiles = ExternalReportProvider.getReportFiles(context, reportPropertyKey());
-    reportFiles.forEach(report -> importReport(report, context, unresolvedInputFiles));
-    logUnresolvedInputFiles(unresolvedInputFiles);
+    unresolvedInputFiles.clear();
+    super.execute(context);
+    logUnresolvedInputFiles();
   }
 
-  private void logUnresolvedInputFiles(Set<String> unresolvedInputFiles) {
+  @Override
+  public Consumer<File> reportConsumer(SensorContext context) {
+    return report -> importReport(report, context, unresolvedInputFiles);
+  }
+
+  private void logUnresolvedInputFiles() {
     if (unresolvedInputFiles.isEmpty()) {
       return;
     }
@@ -78,12 +73,11 @@ public abstract class ScalastyleFamilySensor implements Sensor {
     if (unresolvedInputFiles.size() > MAX_LOGGED_FILE_NAMES) {
       fileList += ";...";
     }
-    LOG.warn("Fail to resolve {} file path(s) in " + reportLinterName() + " report. No issues imported related to file(s): {}", unresolvedInputFiles.size(), fileList);
+    LOG.warn("Fail to resolve {} file path(s) in " + propertyName() + " report. No issues imported related to file(s): {}", unresolvedInputFiles.size(), fileList);
   }
 
   private void importReport(File reportPath, SensorContext context, Set<String> unresolvedInputFiles) {
     try (InputStream in = new FileInputStream(reportPath)) {
-      LOG.info("Importing {}", reportPath);
       ScalastyleXmlReportReader.read(in, (file, line, source, message) -> saveIssue(context, file, line, source, message, unresolvedInputFiles));
     } catch (IOException | XMLStreamException | RuntimeException e) {
       LOG.error("No issues information will be saved as the report file '{}' can't be read. " +
@@ -118,7 +112,7 @@ public abstract class ScalastyleFamilySensor implements Sensor {
 
     newExternalIssue
       .at(primaryLocation)
-      .engineId(reportLinterKey())
+      .engineId(propertyKey())
       .ruleId(ruleId)
       .save();
   }

@@ -23,13 +23,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -39,17 +37,18 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.coverage.NewCoverage;
+import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.xml.SafeStaxParserFactory;
+import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
 
 import static org.sonarsource.scala.plugin.ScalaPlugin.COVERAGE_REPORT_PATHS_KEY;
 
-public class ScoverageSensor implements Sensor {
+public class ScoverageSensor extends AbstractPropertyHandlerSensor {
 
   private static final QName STATEMENT_ELEMENT = new QName("statement");
 
@@ -60,75 +59,47 @@ public class ScoverageSensor implements Sensor {
   private static final Logger LOG = Loggers.get(ScoverageSensor.class);
 
   private static final int MAX_LOGGED_FILE_NAMES = 20;
+  private final Set<String> unresolvedInputFile = new HashSet<>();
+
+  public ScoverageSensor(AnalysisWarnings analysisWarnings) {
+    super(analysisWarnings, "scoverage", "Scoverage", COVERAGE_REPORT_PATHS_KEY, ScalaPlugin.SCALA_LANGUAGE_KEY);
+  }
 
   @Override
   public void describe(SensorDescriptor descriptor) {
     descriptor
+        .onlyOnLanguage(ScalaPlugin.SCALA_LANGUAGE_KEY)
         .onlyWhenConfiguration(conf -> conf.hasKey(COVERAGE_REPORT_PATHS_KEY))
         .name("Scoverage sensor for Scala coverage");
   }
 
   @Override
+  public Consumer<File> reportConsumer(SensorContext context) {
+    return file -> readReportFile(file, context, unresolvedInputFile);
+  }
+
+  @Override
   public void execute(SensorContext context) {
-    List<File> reportFiles = getReportFiles(context);
-
-    if (reportFiles.isEmpty()) {
-      return;
-    }
-    Set<String> unresolvedInputFile = new HashSet<>();
-
-    for (File f : reportFiles) {
-      LOG.info("Importing coverage from {}", f.getPath());
-      try(InputStream in = new FileInputStream(f)){
-        readReportFile(in, context, unresolvedInputFile);
-      } catch (IOException | XMLStreamException | NumberFormatException e) {
-        LOG.error("File '{}' can't be read. " + e.toString(), f, e);
-      }
-    }
-
+    unresolvedInputFile.clear();
+    super.execute(context);
     logUnresolvedInputFiles(unresolvedInputFile);
   }
 
-  private static List<File> getReportFiles(SensorContext context) {
-    String[] reportPaths = context.config().getStringArray(COVERAGE_REPORT_PATHS_KEY);
-
-    if (reportPaths.length == 0) {
-      return Collections.emptyList();
-    }
-
-    List<File> result = new ArrayList<>();
-    for (String reportPath : reportPaths) {
-      File report = getIOFile(context.fileSystem().baseDir(), reportPath);
-      result.add(report);
-    }
-
-    return result;
-  }
-
-  /**
-   * Returns a java.io.File for the given path.
-   * If path is not absolute, returns a File with module base directory as parent path.
-   */
-  private static File getIOFile(File baseDir, String path) {
-    File file = new File(path);
-    if (!file.isAbsolute()) {
-      file = new File(baseDir, path);
-    }
-
-    return file;
-  }
-
-  private static void readReportFile(InputStream in, SensorContext context, Set<String> unresolvedInputFile) throws XMLStreamException {
+  private static void readReportFile(File file, SensorContext context, Set<String> unresolvedInputFile) {
     Map<String, Map<Integer,Integer>> linesHitPerFiles = new HashMap<>();
 
-    XMLEventReader reader = SafeStaxParserFactory.createXMLInputFactory().createXMLEventReader(in);
-    while (reader.hasNext()) {
-      XMLEvent event = reader.nextEvent();
-      if (event.isStartElement() && STATEMENT_ELEMENT.equals(event.asStartElement().getName())) {
-        parseStatementAttributes(linesHitPerFiles, event.asStartElement());
+    try (InputStream in = new FileInputStream(file)) {
+      XMLEventReader reader = SafeStaxParserFactory.createXMLInputFactory().createXMLEventReader(in);
+      while (reader.hasNext()) {
+        XMLEvent event = reader.nextEvent();
+        if (event.isStartElement() && STATEMENT_ELEMENT.equals(event.asStartElement().getName())) {
+          parseStatementAttributes(linesHitPerFiles, event.asStartElement());
+        }
       }
+      addLineHitToContext(linesHitPerFiles, context, unresolvedInputFile);
+    } catch (IOException | XMLStreamException | NumberFormatException e) {
+      LOG.error("File '{}' can't be read. " + e.toString(), file, e);
     }
-    addLineHitToContext(linesHitPerFiles, context, unresolvedInputFile);
   }
 
 

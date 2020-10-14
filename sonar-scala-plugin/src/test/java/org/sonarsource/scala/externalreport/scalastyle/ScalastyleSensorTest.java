@@ -27,6 +27,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile;
@@ -37,6 +39,7 @@ import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
+import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.utils.log.LoggerLevel;
 import org.sonar.api.utils.log.ThreadLocalLogTester;
@@ -50,21 +53,20 @@ public class ScalastyleSensorTest {
 
   private static final String VIRTUAL_FILE_SYSTEM = "/absolute/path/to";
 
-  private static ScalastyleFamilySensor sensor = new ScalastyleSensor();
+  private final List<String> analysisWarnings = new ArrayList<>();
+
+  @Before
+  public void setup() {
+    analysisWarnings.clear();
+  }
 
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
-  public void test_config() {
-    assertThat(sensor.reportLinterKey()).isEqualTo("scalastyle");
-    assertThat(sensor.reportLinterName()).isEqualTo("Scalastyle");
-    assertThat(sensor.reportPropertyKey()).isEqualTo("sonar.scala.scalastyle.reportPaths");
-  }
-
-  @Test
   public void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
+    ScalastyleSensor sensor = new ScalastyleSensor(analysisWarnings::add);
     sensor.describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of Scalastyle issues");
     assertThat(sensorDescriptor.languages()).containsExactly("scala");
@@ -107,9 +109,17 @@ public class ScalastyleSensorTest {
     List<ExternalIssue> externalIssues = executeSensorImporting("invalid-path.txt");
     assertThat(externalIssues).isEmpty();
     String realPath = PROJECT_DIR.toRealPath().resolve("invalid-path.txt").toString();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).startsWith(
-      "No issues information will be saved as the report file '" + realPath + "' can't be read. FileNotFoundException: ");
+    List<String> warnings = logTester.logs(LoggerLevel.WARN);
+    assertThat(warnings)
+      .hasSize(1)
+      .hasSameSizeAs(analysisWarnings);
+    assertThat(warnings.get(0))
+      .startsWith("Unable to import Scalastyle report file(s):")
+      .contains("invalid-path.txt")
+      .endsWith("The report file(s) can not be found. Check that the property 'sonar.scala.scalastyle.reportPaths' is correctly configured.");
+    assertThat(analysisWarnings.get(0))
+      .startsWith("Unable to import 1 Scalastyle report file(s).")
+      .endsWith("Please check that property 'sonar.scala.scalastyle.reportPaths' is correctly configured and the analysis logs for more details.");
   }
 
   @Test
@@ -191,7 +201,7 @@ public class ScalastyleSensorTest {
   }
 
   public List<ExternalIssue> executeSensorImporting(@Nullable String fileName) throws IOException {
-    return executeSensorImporting(sensor, fileName);
+    return executeSensorImporting(new ScalastyleSensor(analysisWarnings::add), fileName);
   }
 
   public static List<ExternalIssue> executeSensorImporting(ScalastyleFamilySensor sensor, @Nullable String fileName) throws IOException {
@@ -201,7 +211,7 @@ public class ScalastyleSensorTest {
     context.setFileSystem(defaultFileSystem);
     if (fileName != null) {
       String path = PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();
-      context.settings().setProperty(sensor.reportPropertyKey(), path);
+      context.settings().setProperty(sensor.configurationKey(), path);
     }
     sensor.execute(context);
     return new ArrayList<>(context.allExternalIssues());

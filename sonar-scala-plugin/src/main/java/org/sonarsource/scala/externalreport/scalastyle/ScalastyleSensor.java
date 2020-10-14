@@ -19,6 +19,7 @@
  */
 package org.sonarsource.scala.externalreport.scalastyle;
 
+import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonarsource.analyzer.commons.ExternalRuleLoader;
 
 public class ScalastyleSensor extends ScalastyleFamilySensor {
@@ -28,20 +29,8 @@ public class ScalastyleSensor extends ScalastyleFamilySensor {
 
   public static final String REPORT_PROPERTY_KEY = "sonar.scala.scalastyle.reportPaths";
 
-
-  @Override
-  public String reportLinterKey() {
-    return LINTER_KEY;
-  }
-
-  @Override
-  public String reportLinterName() {
-    return LINTER_NAME;
-  }
-
-  @Override
-  public String reportPropertyKey() {
-    return REPORT_PROPERTY_KEY;
+  public ScalastyleSensor(AnalysisWarnings analysisWarnings) {
+    super(analysisWarnings, LINTER_KEY, LINTER_NAME, REPORT_PROPERTY_KEY);
   }
 
   @Override
