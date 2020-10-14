@@ -23,21 +23,22 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.util.function.Consumer;
 import javax.xml.stream.XMLStreamException;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
+import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonarsource.analyzer.commons.ExternalReportProvider;
 import org.sonarsource.analyzer.commons.ExternalRuleLoader;
+import org.sonarsource.kotlin.plugin.KotlinPlugin;
+import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
 
-public class AndroidLintSensor implements Sensor {
+public class AndroidLintSensor extends AbstractPropertyHandlerSensor {
 
   private static final Logger LOG = Loggers.get(AndroidLintSensor.class);
 
@@ -47,22 +48,25 @@ public class AndroidLintSensor implements Sensor {
 
   public static final String REPORT_PROPERTY_KEY = "sonar.androidLint.reportPaths";
 
-  @Override
-  public void describe(SensorDescriptor descriptor) {
-    descriptor
-      .onlyWhenConfiguration(conf -> conf.hasKey(REPORT_PROPERTY_KEY))
-      .name("Import of Android Lint issues");
+  public AndroidLintSensor(AnalysisWarnings analysisWarnings) {
+    super(analysisWarnings, LINTER_KEY, LINTER_NAME, REPORT_PROPERTY_KEY, KotlinPlugin.KOTLIN_LANGUAGE_KEY);
   }
 
   @Override
-  public void execute(SensorContext context) {
-    List<File> reportFiles = ExternalReportProvider.getReportFiles(context, REPORT_PROPERTY_KEY);
-    reportFiles.forEach(report -> importReport(report, context));
+  public void describe(SensorDescriptor descriptor) {
+    descriptor
+      // potentially covers multiple languages, not only kotlin
+      .onlyWhenConfiguration(conf -> conf.hasKey(REPORT_PROPERTY_KEY))
+      .name("Import of " + LINTER_NAME + " issues");
+  }
+
+  @Override
+  public Consumer<File> reportConsumer(SensorContext context) {
+    return file -> importReport(file, context);
   }
 
   private static void importReport(File reportPath, SensorContext context) {
     try (InputStream in = new FileInputStream(reportPath)) {
-      LOG.info("Importing {}", reportPath);
       AndroidLintXmlReportReader.read(in, (id, file, line, message) -> saveIssue(context, id, file, line, message));
     } catch (IOException | XMLStreamException | RuntimeException e) {
       LOG.error("No issues information will be saved as the report file '{}' can't be read.", reportPath, e);

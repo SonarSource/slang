@@ -23,8 +23,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.rule.Severity;
@@ -44,14 +47,20 @@ public class DetektSensorTest {
 
   private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport", "detekt");
 
-  private static DetektSensor detektSensor = new DetektSensor();
+  private final List<String> analysisWarnings = new ArrayList<>();
 
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
+  @Before
+  public void setup() {
+    analysisWarnings.clear();
+  }
+
   @Test
   public void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
+    DetektSensor detektSensor = new DetektSensor(analysisWarnings::add);
     detektSensor.describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of detekt issues");
     assertThat(sensorDescriptor.languages()).containsOnly("kotlin");
@@ -99,12 +108,48 @@ public class DetektSensorTest {
   }
 
   @Test
-  public void no_issues_with_invalid_report_path() throws IOException {
+  public void invalid_report_path_triggers_warnings_in_SQ_UI_and_error_log() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting( "invalid-path.txt");
     assertThat(externalIssues).isEmpty();
-    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
-      .startsWith("No issue information will be saved as the report file '")
-      .endsWith("invalid-path.txt' can't be read.");
+    List<String> warnings = logTester.logs(LoggerLevel.WARN);
+    assertThat(warnings)
+      .hasSize(1)
+      .hasSameSizeAs(analysisWarnings);
+    assertThat(warnings.get(0))
+      .startsWith("Unable to import detekt report file(s):")
+      .contains("invalid-path.txt")
+      .endsWith("The report file(s) can not be found. Check that the property 'sonar.kotlin.detekt.reportPaths' is correctly configured.");
+    assertThat(analysisWarnings.get(0))
+      .startsWith("Unable to import 1 detekt report file(s).")
+      .endsWith("Please check that property 'sonar.kotlin.detekt.reportPaths' is correctly configured and the analysis logs for more details.");
+  }
+
+  @Test
+  public void multiple_missing_files_are_reported_in_SQ_UI() throws Exception {
+    SensorContextTester context = createContext(PROJECT_DIR);
+    String validFile = PROJECT_DIR.resolve("detekt-checkstyle.xml").toAbsolutePath().toString();
+    context.settings().setProperty("sonar.kotlin.detekt.reportPaths", "invalid1.xml," + validFile + ",invalid2.txt");
+    DetektSensor detektSensor = new DetektSensor(analysisWarnings::add);
+    detektSensor.execute(context);
+    Collection<ExternalIssue> externalIssues = context.allExternalIssues();
+
+    assertThat(externalIssues).hasSize(3);
+    assertThat(logTester.logs(LoggerLevel.INFO))
+      .hasSize(1)
+      .allMatch(info -> info.startsWith("Importing") && info.endsWith("detekt-checkstyle.xml"));
+
+    List<String> warnings = logTester.logs(LoggerLevel.WARN);
+    assertThat(warnings)
+      .hasSize(1)
+      .hasSameSizeAs(analysisWarnings);
+    assertThat(warnings.get(0))
+      .startsWith("Unable to import detekt report file(s):")
+      .contains("invalid1.xml")
+      .contains("invalid2.txt")
+      .endsWith("The report file(s) can not be found. Check that the property 'sonar.kotlin.detekt.reportPaths' is correctly configured.");
+    assertThat(analysisWarnings.get(0))
+      .startsWith("Unable to import 2 detekt report file(s).")
+      .endsWith("Please check that property 'sonar.kotlin.detekt.reportPaths' is correctly configured and the analysis logs for more details.");
   }
 
   @Test
@@ -152,6 +197,7 @@ public class DetektSensorTest {
       String path = PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();
       context.settings().setProperty("sonar.kotlin.detekt.reportPaths", path);
     }
+    DetektSensor detektSensor = new DetektSensor(analysisWarnings::add);
     detektSensor.execute(context);
     return new ArrayList<>(context.allExternalIssues());
   }

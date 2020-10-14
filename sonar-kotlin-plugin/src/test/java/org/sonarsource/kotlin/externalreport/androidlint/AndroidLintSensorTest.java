@@ -25,6 +25,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.rule.Severity;
@@ -44,13 +46,20 @@ public class AndroidLintSensorTest {
 
   private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport", "androidlint");
 
+  private final List<String> analysisWarnings = new ArrayList<>();
+
+  @Before
+  public void setup() {
+    analysisWarnings.clear();
+  }
+
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
   public void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
-    new AndroidLintSensor().describe(sensorDescriptor);
+    new AndroidLintSensor(analysisWarnings::add).describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of Android Lint issues");
     assertThat(sensorDescriptor.languages()).isEmpty();
     assertNoErrorWarnDebugLogs(logTester);
@@ -99,9 +108,14 @@ public class AndroidLintSensorTest {
   public void no_issues_with_invalid_report_path() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("invalid-path.txt");
     assertThat(externalIssues).isEmpty();
-    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
-      .startsWith("No issues information will be saved as the report file '")
-      .endsWith("invalid-path.txt' can't be read.");
+    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.WARN)))
+      .startsWith("Unable to import Android Lint report file(s):")
+      .contains("invalid-path.txt")
+      .endsWith("The report file(s) can not be found. Check that the property 'sonar.androidLint.reportPaths' is correctly configured.");
+    assertThat(analysisWarnings).hasSize(1);
+    assertThat(analysisWarnings.get(0))
+      .startsWith("Unable to import 1 Android Lint report file(s).")
+      .endsWith("Please check that property 'sonar.androidLint.reportPaths' is correctly configured and the analysis logs for more details.");
   }
 
   @Test
@@ -152,7 +166,7 @@ public class AndroidLintSensorTest {
       String path = PROJECT_DIR.resolve(fileName).toAbsolutePath().toString();
       context.settings().setProperty("sonar.androidLint.reportPaths", path);
     }
-    new AndroidLintSensor().execute(context);
+    new AndroidLintSensor(analysisWarnings::add).execute(context);
     return new ArrayList<>(context.allExternalIssues());
   }
 

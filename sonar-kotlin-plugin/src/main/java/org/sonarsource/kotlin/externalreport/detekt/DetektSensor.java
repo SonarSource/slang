@@ -20,19 +20,19 @@
 package org.sonarsource.kotlin.externalreport.detekt;
 
 import java.io.File;
-import java.util.List;
+import java.util.function.Consumer;
 import javax.annotation.Nullable;
-import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
+import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonarsource.analyzer.commons.ExternalReportProvider;
 import org.sonarsource.kotlin.plugin.KotlinPlugin;
 import org.sonarsource.slang.externalreport.CheckstyleFormatImporterWithRuleLoader;
+import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
 
-public class DetektSensor implements Sensor {
+public class DetektSensor extends AbstractPropertyHandlerSensor {
 
   private static final Logger LOG = Loggers.get(DetektSensor.class);
 
@@ -44,19 +44,13 @@ public class DetektSensor implements Sensor {
 
   public static final String REPORT_PROPERTY_KEY = "sonar.kotlin.detekt.reportPaths";
 
-  @Override
-  public void describe(SensorDescriptor descriptor) {
-    descriptor
-      .onlyOnLanguage(KotlinPlugin.KOTLIN_LANGUAGE_KEY)
-      .onlyWhenConfiguration(conf -> conf.hasKey(REPORT_PROPERTY_KEY))
-      .name("Import of detekt issues");
+  public DetektSensor(AnalysisWarnings analysisWarnings) {
+    super(analysisWarnings, LINTER_KEY, LINTER_NAME, REPORT_PROPERTY_KEY, KotlinPlugin.KOTLIN_LANGUAGE_KEY);
   }
 
   @Override
-  public void execute(SensorContext context) {
-    List<File> reportFiles = ExternalReportProvider.getReportFiles(context, REPORT_PROPERTY_KEY);
-    ReportImporter importer = new ReportImporter(context);
-    reportFiles.forEach(importer::importFile);
+  public Consumer<File> reportConsumer(SensorContext context) {
+    return new ReportImporter(context)::importFile;
   }
 
   private static class ReportImporter extends CheckstyleFormatImporterWithRuleLoader {
