@@ -1,6 +1,8 @@
 {
 'go-project:ruling/src/test/resources/sources/go/S2068.go':[
 4,
+9,
+10,
 ],
 'go-project:sources/go/kubernetes/pkg/generated/bindata.go':[
 209,

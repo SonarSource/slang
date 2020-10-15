@@ -1,4 +1,14 @@
 {
+'scala-project:ruling/src/test/resources/sources/scala/S2068.scala':[
+3,
+4,
+8,
+12,
+16,
+20,
+24,
+28,
+],
 'scala-project:sources/scala/cats/free/src/test/scala/cats/free/FreeTSuite.scala':[
 201,
 ],

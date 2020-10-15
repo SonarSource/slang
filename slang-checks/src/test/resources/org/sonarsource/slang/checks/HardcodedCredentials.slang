@@ -27,3 +27,12 @@ variableNameWithPasswdInIt = "";
 A.B.variableNameWithPwdInIt = "";
 var passwd = "";
 var passwd = 2;
+
+// No issue is raised when the matched wordlist item is present in both symbol name and literal string value.
+var password = "password"; // Compliant
+var myPassword = "users/connection.secretPassword"; // Compliant
+myPassword = "users/connection.secretPassword"; // Compliant
+var myPassword = "secretPasswd"; // Noncompliant {{"Password" detected in this expression, review this potentially hardcoded credential.}}
+myPassword = "secretPasswd"; // Noncompliant {{"Password" detected in this expression, review this potentially hardcoded credential.}}
+var params = "user=admin&password=Password123"; // Noncompliant {{"password" detected in this expression, review this potentially hardcoded credential.}}
+

@@ -1,9 +1,10 @@
 {
+'scala-project:ruling/src/test/resources/sources/scala/S2068.scala':[
+3,
+4,
+],
 'scala-project:sources/scala/finagle/finagle-netty3/src/test/scala/com/twitter/finagle/netty3/socks/SocksConnectHandlerTest.scala':[
 221,
 273,
-],
-'scala-project:sources/scala/playframework/documentation/manual/working/scalaGuide/main/ws/code/ScalaWSSpec.scala':[
-118,
 ],
 }

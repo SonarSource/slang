@@ -27,7 +27,6 @@ import org.sonarsource.slang.checks.api.CheckContext;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -55,27 +54,20 @@ public class HardcodedCredentialsCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(AssignmentExpressionTree.class, (ctx, tree) -> {
-      if (isNotEmptyString(tree.statementOrExpression())) {
-        Tree leftHandSide = tree.leftHandSide();
-        ExpressionUtils.getMemberSelectOrIdentifierName(leftHandSide)
-          .flatMap(this::getPasswordVariableName)
-          .ifPresent(passwordVariableName -> report(ctx, leftHandSide, passwordVariableName));
-      }
+      Tree leftHandSide = tree.leftHandSide();
+      ExpressionUtils.getMemberSelectOrIdentifierName(leftHandSide)
+          .ifPresent(variableName -> checkVariable(ctx, leftHandSide, variableName, tree.statementOrExpression()));
     });
 
-    init.register(VariableDeclarationTree.class, (ctx, tree) -> {
-      if (isNotEmptyString(tree.initializer())) {
-        getPasswordVariableName(tree.identifier().name())
-          .ifPresent(passwordVariableName -> report(ctx, tree.identifier(), passwordVariableName));
-      }
-    });
+    init.register(VariableDeclarationTree.class, (ctx, tree) ->
+      checkVariable(ctx, tree.identifier(), tree.identifier().name(), tree.initializer())
+    );
 
     init.register(StringLiteralTree.class, (ctx, tree) -> literalPatterns()
       .map(pattern -> pattern.matcher(tree.content()))
       .filter(Matcher::find)
       .map(matcher -> matcher.group(1))
       .forEach(credential -> report(ctx, tree, credential)));
-
   }
 
   private static boolean isNotEmptyString(@Nullable Tree tree) {
@@ -88,12 +80,19 @@ public class HardcodedCredentialsCheck implements SlangCheck {
     ctx.reportIssue(tree, message);
   }
 
-  private Optional<String> getPasswordVariableName(String name) {
-    return variablePatterns()
-      .map(pattern -> pattern.matcher(name))
-      .filter(Matcher::find)
-      .map(matcher -> matcher.group(1))
-      .findAny();
+  private void checkVariable(CheckContext ctx, Tree variable, String variableName, @Nullable Tree value) {
+    if (isNotEmptyString(value)) {
+      variablePatterns()
+        .map(pattern -> pattern.matcher(variableName))
+        .filter(Matcher::find)
+        .forEach(matcher -> checkAssignedValue(ctx, matcher, variable, ((StringLiteralTree) value).value()));
+    }
+  }
+
+  private static void checkAssignedValue(CheckContext ctx, Matcher matcher, Tree leftHand, String value) {
+    if (!matcher.pattern().matcher(value).find()) {
+      report(ctx, leftHand, matcher.group(1));
+    }
   }
 
   private Stream<Pattern> variablePatterns() {
