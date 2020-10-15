@@ -33,3 +33,11 @@ OUTER:
 	}
 }
 
+func fn(x int) int {
+	if (x > 10) {
+		goto Foo
+	}
+	return 42 // Compliant
+FOO:
+	return 21
+}

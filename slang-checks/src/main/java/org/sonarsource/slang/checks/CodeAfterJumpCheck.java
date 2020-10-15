@@ -41,13 +41,26 @@ public class CodeAfterJumpCheck implements SlangCheck {
     init.register(BlockTree.class, (ctx, blockTree) -> checkStatements(ctx, blockTree.statementOrExpressions()));
   }
 
-  private static void checkStatements(CheckContext ctx, List<Tree> statementsOrExpressions) {
+  protected boolean isValidAfterJump(Tree tree) {
+    return false;
+  }
+
+  private void checkStatements(CheckContext ctx, List<Tree> statementsOrExpressions) {
     if (statementsOrExpressions.size() < 2) {
       return;
     }
-    statementsOrExpressions.subList(0, statementsOrExpressions.size() - 1).stream()
-      .filter(tree -> tree instanceof JumpTree || tree instanceof ReturnTree || tree instanceof ThrowTree)
-      .forEach(tree -> ctx.reportIssue(tree, String.format(MESSAGE, ((HasKeyword) tree).keyword().text())));
+
+    for (int index = 0; index < statementsOrExpressions.size() - 1; index++) {
+      Tree current = statementsOrExpressions.get(index);
+      if (isJump(current) &&
+          !isValidAfterJump(statementsOrExpressions.get(index + 1))) {
+        ctx.reportIssue(current, String.format(MESSAGE, ((HasKeyword) current).keyword().text()));
+      }
+    }
+  }
+
+  private static boolean isJump(Tree tree){
+    return tree instanceof JumpTree || tree instanceof ReturnTree || tree instanceof ThrowTree;
   }
 
 }
