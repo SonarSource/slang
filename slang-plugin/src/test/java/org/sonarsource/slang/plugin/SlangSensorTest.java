@@ -229,12 +229,16 @@ public class SlangSensorTest extends AbstractSensorTest {
       "@Suppress(\"EQUALITY\")\n" +
       "fun notSuppressed1() {\nprint (123 == 123);} " +
       "@SuppressSonarIssue(\"slang:S1764\")\n" +
-      "fun notSuppressed1() {\nprint (1 == 1);} ");
+      "fun notSuppressed2() {\nprint (1 == 1);}\n" +
+      "@Suppress(\"UNUSED_PARAMETER\")\n" +
+      "fun notSuppressed3() {\nprint (1 == 1);}\n" +
+      "@Suppress(\"unused_parameter\")\n" +
+      "fun notSuppressed4() {\nprint (1 == 1);} ");
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("S1764");
     sensor(checkFactory).execute(context);
     Collection<Issue> issues = context.allIssues();
-    assertThat(issues).hasSize(3);
+    assertThat(issues).hasSize(5);
   }
 
   @Test
