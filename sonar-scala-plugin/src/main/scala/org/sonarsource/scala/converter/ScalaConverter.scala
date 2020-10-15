@@ -150,9 +150,9 @@ class ScalaConverter extends slang.api.ASTConverter {
         case classDecl: Defn.Class =>
           val identifier = convert(classDecl.name).asInstanceOf[IdentifierTree]
           new ClassDeclarationTreeImpl(metaData, identifier, createNativeTree(metaData, classDecl))
-        case v: Defn.Val if v.parent.exists(_.is[Template]) =>
+        case v: Defn.Val if grandParentIsNewAnonymous(v) =>
           createNativeTree(metaData, metaTree)
-        case v: Defn.Var if v.parent.exists(_.is[Template]) =>
+        case v: Defn.Var if grandParentIsNewAnonymous(v) =>
           createNativeTree(metaData, metaTree)
         case Defn.Val(List(), List(Pat.Var(name)), decltpe, rhs) =>
           createVariableDeclarationTree(metaData, name, decltpe, convert(rhs), true)
@@ -186,6 +186,10 @@ class ScalaConverter extends slang.api.ASTConverter {
         case _ =>
           createNativeTree(metaData, metaTree)
       }
+    }
+
+    def grandParentIsNewAnonymous(variable: Stat) = {
+      variable.parent.exists(p => p.is[Template] && p.parent.exists(gp => gp.is[Term.NewAnonymous]))
     }
 
     def convertModImplicit(metaTree: Mod.Implicit): api.Tree = {

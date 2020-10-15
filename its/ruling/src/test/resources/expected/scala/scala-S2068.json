@@ -1,8 +1,9 @@
 {
 'scala-project:ruling/src/test/resources/sources/scala/S2068.scala':[
 3,
-4,
-41,
+6,
+7,
+44,
 ],
 'scala-project:sources/scala/finagle/finagle-http/src/test/scala/com/twitter/finagle/http/RequestBuilderTest.scala':[
 8,

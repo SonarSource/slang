@@ -1,4 +1,7 @@
 object Code {
+
+  val password = "azerty"
+
   def foo() = {
     val params = "user=admin&password=Password123"   // Sensitive
     val sqlserver = "pgsql:host=localhost port=5432 dbname=test user=postgres password=postgres"   // Sensitive
