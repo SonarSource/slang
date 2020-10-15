@@ -44,7 +44,7 @@ public class TooManyParametersCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(FunctionDeclarationTree.class, (ctx, tree) -> {
-      if (!tree.isConstructor() && !isOverrideMethod(tree) &&  tree.formalParameters().size() > max) {
+      if (isCandidateMethod(tree)) {
         String message = String.format(
           "This function has %s parameters, which is greater than the %s authorized.",
           tree.formalParameters().size(),
@@ -61,6 +61,12 @@ public class TooManyParametersCheck implements SlangCheck {
         }
       }
     });
+  }
+
+  protected boolean isCandidateMethod(FunctionDeclarationTree functionDeclarationTree) {
+    return !functionDeclarationTree.isConstructor()
+      && !isOverrideMethod(functionDeclarationTree)
+      && functionDeclarationTree.formalParameters().size() > max;
   }
 
   private static boolean isOverrideMethod(FunctionDeclarationTree tree) {

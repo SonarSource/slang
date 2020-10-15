@@ -20,12 +20,15 @@
 package org.sonarsource.kotlin.plugin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.sonarsource.kotlin.checks.TooManyParametersKotlinCheck;
 import org.sonarsource.kotlin.checks.UnusedPrivateMethodKotlinCheck;
 import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.MatchWithoutElseCheck;
 import org.sonarsource.slang.checks.OctalValuesCheck;
+import org.sonarsource.slang.checks.TooManyParametersCheck;
 import org.sonarsource.slang.checks.UnusedPrivateMethodCheck;
 
 public final class KotlinCheckList {
@@ -40,11 +43,14 @@ public final class KotlinCheckList {
     // Rule does not apply here as octal values do not exist in Kotlin
     OctalValuesCheck.class,
     // Language specific implementation is provided.
-    UnusedPrivateMethodCheck.class
+    UnusedPrivateMethodCheck.class,
+    TooManyParametersCheck.class
   };
 
-  private static final List<Class<?>> KOTLIN_LANGUAGE_SPECIFIC_CHECKS = Collections.singletonList(
-    UnusedPrivateMethodKotlinCheck.class);
+  private static final List<Class<?>> KOTLIN_LANGUAGE_SPECIFIC_CHECKS = Arrays.asList(
+    UnusedPrivateMethodKotlinCheck.class,
+    TooManyParametersKotlinCheck.class
+  );
 
   public static List<Class<?>> checks() {
     List<Class<?>> list = new ArrayList<>(CheckList.excludeChecks(KOTLIN_CHECK_BLACK_LIST));
