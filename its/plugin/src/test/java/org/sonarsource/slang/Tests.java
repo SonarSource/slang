@@ -40,7 +40,8 @@ import org.junit.runners.Suite;
   DuplicationsTest.class,
   ExternalReportTest.class,
   MeasuresTest.class,
-  NoSonarTest.class
+  NoSonarTest.class,
+  SurefireTest.class
 })
 public class Tests {
 

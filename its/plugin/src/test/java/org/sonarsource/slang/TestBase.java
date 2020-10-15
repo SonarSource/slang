@@ -23,8 +23,12 @@ import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.build.SonarScanner;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.junit.ClassRule;
 import org.sonarqube.ws.Issues;
@@ -81,6 +85,15 @@ public abstract class TestBase {
       .setMetricKeys(singletonList(metricKey)));
     List<Measure> measures = response.getComponent().getMeasuresList();
     return measures.size() == 1 ? measures.get(0) : null;
+  }  
+  
+  protected Map<String, Measure> getMeasures(String projectKey, String... metricKeys) {
+    return newWsClient().measures().component(new ComponentRequest()
+      .setComponent(projectKey)
+      .setMetricKeys(Arrays.asList(metricKeys)))
+      .getComponent().getMeasuresList()
+      .stream()
+      .collect(Collectors.toMap(Measure::getMetric, Function.identity()));
   }
 
   protected List<Issues.Issue> getIssuesForRule(String rule) {
