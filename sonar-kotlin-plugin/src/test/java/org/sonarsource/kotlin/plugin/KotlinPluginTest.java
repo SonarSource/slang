@@ -40,7 +40,7 @@ public class KotlinPluginTest {
 
     kotlinPlugin.define(context);
 
-    assertThat(context.getExtensions()).hasSize(11);
+    assertThat(context.getExtensions()).hasSize(14);
   }
 
   @Test

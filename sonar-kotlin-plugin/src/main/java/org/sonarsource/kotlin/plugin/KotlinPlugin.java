@@ -27,6 +27,9 @@ import org.sonarsource.kotlin.externalreport.androidlint.AndroidLintRulesDefinit
 import org.sonarsource.kotlin.externalreport.androidlint.AndroidLintSensor;
 import org.sonarsource.kotlin.externalreport.detekt.DetektRulesDefinition;
 import org.sonarsource.kotlin.externalreport.detekt.DetektSensor;
+import org.sonarsource.kotlin.plugin.surefire.KotlinResourcesLocator;
+import org.sonarsource.kotlin.plugin.surefire.KotlinSurefireParser;
+import org.sonarsource.kotlin.plugin.surefire.KotlinSurefireSensor;
 
 public class KotlinPlugin implements Plugin {
 
@@ -53,10 +56,14 @@ public class KotlinPlugin implements Plugin {
       KotlinLanguage.class,
       KotlinSensor.class,
       KotlinRulesDefinition.class,
-      KotlinProfileDefinition.class);
+      KotlinProfileDefinition.class
+    );
 
     if (context.getRuntime().getProduct() != SonarProduct.SONARLINT) {
       context.addExtensions(
+        KotlinResourcesLocator.class,
+        KotlinSurefireParser.class,
+        KotlinSurefireSensor.class,
         DetektRulesDefinition.class,
         DetektSensor.class,
         AndroidLintRulesDefinition.class,
