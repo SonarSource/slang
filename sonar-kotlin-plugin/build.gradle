@@ -16,6 +16,7 @@ dependencies {
     compile 'org.sonarsource.analyzer-commons:sonar-xml-parsing'
     compile "org.jetbrains.kotlin:kotlin-compiler-embeddable:${kotlinVersion}"
     compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+    compile 'com.fasterxml.staxmate:staxmate:2.3.1'
     testCompile 'junit:junit'
     testCompile 'org.assertj:assertj-core'
     testCompile 'org.mockito:mockito-core'
