@@ -18,3 +18,20 @@ func foo() {
   password = "connection.password" // Compliant
   password = "/users/resetUserPassword" // Compliant
 }
+
+func databaseQuery() {
+  query := "password=?"                 // Compliant
+  query = "password=:password"          // Compliant
+  query = "password=:param"             // Compliant
+  query = "password='" + password + "'" // Compliant
+  query = "password=%s"                 // Compliant
+  query = "password=%v"                 // Compliant
+}
+
+func uriUserInfo() {
+  url := "scheme://user:azerty123@domain.com" // Sensitive
+  url = "scheme://user:@domain.com"           // Compliant
+  url = "scheme://user@domain.com:80"         // Compliant
+  url = "scheme://user@domain.com"            // Compliant
+  url = "scheme://domain.com/user:azerty123"  // Compliant
+}

@@ -27,4 +27,21 @@ object Code {
   def f6 = {
     val password = "/users/resetUserPassword" // Compliant
   }
+
+  def databaseQuery(password : String) = {
+    val query = "password=?"                  // Compliant
+    val query = "password=:password"          // Compliant
+    val query = "password=:param"             // Compliant
+    val query = "password='" + password + "'" // Compliant
+    val query = "password=%s"                 // Compliant
+    val query = "password=%v"                 // Compliant
+  }
+
+  def uriUserInfo() = {
+    val url = "scheme://user:azerty123@domain.com"  // Sensitive
+    val url = "scheme://user:@domain.com"           // Compliant
+    val url = "scheme://user@domain.com:80"         // Compliant
+    val url = "scheme://user@domain.com"            // Compliant
+    val url = "scheme://domain.com/user:azerty123"  // Compliant
+  }
 }

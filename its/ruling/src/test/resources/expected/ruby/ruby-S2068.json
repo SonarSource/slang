@@ -2,6 +2,7 @@
 'ruby-project:ruling/src/test/resources/sources/ruby/S2068.rb':[
 1,
 2,
+20,
 ],
 'ruby-project:sources/ruby/fastlane/fastlane/spec/actions_specs/import_certificate_spec.rb':[
 38,
@@ -28,5 +29,5 @@
 'ruby-project:sources/ruby/vagrant/test/unit/vagrant/util/downloader_test.rb':[
 136,
 157,
-]
+],
 }
