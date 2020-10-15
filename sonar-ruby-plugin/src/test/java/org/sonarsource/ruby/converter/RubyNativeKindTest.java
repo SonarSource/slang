@@ -38,7 +38,7 @@ public class RubyNativeKindTest {
     assertThat(nativeKind.hashCode()).isEqualTo(nativeKind.hashCode());
     assertThat(nativeKind.hashCode()).isNotEqualTo(new RubyNativeKind("test_other").hashCode());
 
-    assertThat(nativeKind.toString()).isEqualTo("test");
+    assertThat(nativeKind).hasToString("test");
   }
 
 }

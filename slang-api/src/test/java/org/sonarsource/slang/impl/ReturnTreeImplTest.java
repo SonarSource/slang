@@ -34,7 +34,7 @@ public class ReturnTreeImplTest {
     TokenImpl returnKeyword = new TokenImpl(new TextRangeImpl(1, 0, 1, 6), "return", Token.Type.KEYWORD);
     ReturnTreeImpl returnWithoutValue = new ReturnTreeImpl(meta, returnKeyword, null);
 
-    assertThat(returnWithoutValue.children()).hasSize(0);
+    assertThat(returnWithoutValue.children()).isEmpty();
     assertThat(returnWithoutValue.keyword().text()).isEqualTo("return");
     assertThat(returnWithoutValue.body()).isNull();
 

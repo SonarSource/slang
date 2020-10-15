@@ -28,12 +28,13 @@ public class TextPointerImplTest {
   @Test
   public void test_equals() {
     TextPointerImpl p1 = new TextPointerImpl(1, 2);
-    assertThat(p1).isEqualTo(p1);
-    assertThat(p1).isEqualTo(new TextPointerImpl(1, 2));
-    assertThat(p1).isNotEqualTo(new TextPointerImpl(1, 3));
-    assertThat(p1).isNotEqualTo(new TextPointerImpl(3, 2));
-    assertThat(p1).isNotEqualTo(null);
-    assertThat(p1).isNotEqualTo("");
+    assertThat(p1)
+      .isEqualTo(p1)
+      .isEqualTo(new TextPointerImpl(1, 2))
+      .isNotEqualTo(new TextPointerImpl(1, 3))
+      .isNotEqualTo(new TextPointerImpl(3, 2))
+      .isNotEqualTo(null)
+      .isNotEqualTo("");
   }
 
   @Test
@@ -44,7 +45,7 @@ public class TextPointerImplTest {
 
   @Test
   public void test_compareTo() {
-    assertThat(new TextPointerImpl(1, 2).compareTo(new TextPointerImpl(1, 2))).isEqualTo(0);
+    assertThat(new TextPointerImpl(1, 2)).isEqualByComparingTo(new TextPointerImpl(1, 2));
     assertThat(new TextPointerImpl(1, 2).compareTo(new TextPointerImpl(1, 4))).isEqualTo(-1);
     assertThat(new TextPointerImpl(1, 2).compareTo(new TextPointerImpl(2, 1))).isEqualTo(-1);
     assertThat(new TextPointerImpl(1, 2).compareTo(new TextPointerImpl(1, 1))).isEqualTo(1);

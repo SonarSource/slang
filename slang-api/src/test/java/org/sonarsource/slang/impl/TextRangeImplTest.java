@@ -32,12 +32,13 @@ public class TextRangeImplTest {
   @Test
   public void test_equals() {
     TextRangeImpl range1 = new TextRangeImpl(p1, p2);
-    assertThat(range1).isEqualTo(range1);
-    assertThat(range1).isEqualTo(new TextRangeImpl(p1, p2));
-    assertThat(range1).isNotEqualTo(new TextRangeImpl(p1, p1));
-    assertThat(range1).isNotEqualTo(new TextRangeImpl(p2, p2));
-    assertThat(range1).isNotEqualTo(null);
-    assertThat(range1).isNotEqualTo("");
+    assertThat(range1)
+      .isEqualTo(range1)
+      .isEqualTo(new TextRangeImpl(p1, p2))
+      .isNotEqualTo(new TextRangeImpl(p1, p1))
+      .isNotEqualTo(new TextRangeImpl(p2, p2))
+      .isNotEqualTo(null)
+      .isNotEqualTo("");
   }
 
   @Test
@@ -48,6 +49,6 @@ public class TextRangeImplTest {
 
   @Test
   public void test_toString() {
-    assertThat(new TextRangeImpl(p1, p2).toString()).isEqualTo("TextRange[1, 2, 3, 4]");
+    assertThat(new TextRangeImpl(p1, p2)).hasToString("TextRange[1, 2, 3, 4]");
   }
 }

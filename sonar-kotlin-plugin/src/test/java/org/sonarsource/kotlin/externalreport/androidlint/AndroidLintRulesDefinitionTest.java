@@ -38,7 +38,7 @@ public class AndroidLintRulesDefinitionTest {
     RulesDefinition.Repository repository = context.repository("external_android-lint");
     assertThat(repository.name()).isEqualTo("Android Lint");
     assertThat(repository.language()).isEqualTo("kotlin");
-    assertThat(repository.isExternal()).isEqualTo(true);
+    assertThat(repository.isExternal()).isTrue();
     assertThat(repository.rules().size()).isEqualTo(313);
 
     RulesDefinition.Rule rule = repository.rule("AaptCrash");

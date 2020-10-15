@@ -179,7 +179,7 @@ public class GoSensorTest {
     sensorContext.fileSystem().add(inputFile);
     GoSensor goSensor = getSensor();
     goSensor.execute(sensorContext);
-    assertThat(sensorContext.allIssues()).hasSize(0);
+    assertThat(sensorContext.allIssues()).isEmpty();
     assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.NCLOC).value()).isEqualTo(19);
     assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COMMENT_LINES).value()).isEqualTo(3);
     assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.FUNCTIONS).value()).isEqualTo(3);
@@ -213,7 +213,7 @@ public class GoSensorTest {
     sensorContext.fileSystem().add(inputFile);
     GoSensor goSensor = getSensor();
     goSensor.execute(sensorContext);
-    assertThat(sensorContext.allIssues()).hasSize(0);
+    assertThat(sensorContext.allIssues()).isEmpty();
     assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.NCLOC)).isNull();
     assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COMMENT_LINES)).isNull();
     assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.CLASSES)).isNull();
@@ -221,7 +221,7 @@ public class GoSensorTest {
     assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.STATEMENTS)).isNull();
     assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.COGNITIVE_COMPLEXITY)).isNull();
 
-    assertThat(fileLinesContext.saveCount).isEqualTo(0);
+    assertThat(fileLinesContext.saveCount).isZero();
     assertThat(fileLinesContext.metrics.keySet()).isEmpty();
   }
 

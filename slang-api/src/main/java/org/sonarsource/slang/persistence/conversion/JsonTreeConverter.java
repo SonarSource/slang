@@ -22,6 +22,7 @@ package org.sonarsource.slang.persistence.conversion;
 import com.eclipsesource.json.Json;
 import java.util.List;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
+import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.CatchTree;
 import org.sonarsource.slang.api.Comment;
@@ -181,7 +182,7 @@ public final class JsonTreeConverter {
 
       (ctx, json) -> new BinaryExpressionTreeImpl(
         ctx.metaData(json),
-        ctx.fieldToEnum(json, OPERATOR, BinaryExpressionTreeImpl.Operator.class),
+        ctx.fieldToEnum(json, OPERATOR, Operator.class),
         ctx.fieldToToken(json, OPERATOR_TOKEN),
         ctx.fieldToObject(json, LEFT_OPERAND, Tree.class),
         ctx.fieldToObject(json, RIGHT_OPERAND, Tree.class)));

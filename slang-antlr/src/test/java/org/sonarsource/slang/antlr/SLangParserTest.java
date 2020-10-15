@@ -56,8 +56,9 @@ public class SLangParserTest {
     SLangParser parser = new SLangParser(tokens);
     SLangParser.SlangFileContext tree = parser.slangFile();
 
-    assertThat(tree.children).isNotNull();
-    assertThat(tree.children).isNotEmpty();
+    assertThat(tree.children)
+      .isNotNull()
+      .isNotEmpty();
 
   }
 }

@@ -37,7 +37,7 @@ public class DetektRulesDefinitionTest {
     RulesDefinition.Repository repository = context.repository("external_detekt");
     assertThat(repository.name()).isEqualTo("detekt");
     assertThat(repository.language()).isEqualTo("kotlin");
-    assertThat(repository.isExternal()).isEqualTo(true);
+    assertThat(repository.isExternal()).isTrue();
 
     assertThat(repository.rules().size()).isEqualTo(111);
 

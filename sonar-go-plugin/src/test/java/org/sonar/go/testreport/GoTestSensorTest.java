@@ -144,14 +144,14 @@ public class GoTestSensorTest {
     goTestSensor.execute(context);
 
     assertThat(context.measure(fooTestFile.key(), CoreMetrics.TESTS).value()).isEqualTo(3); // one test comes from report1.out
-    assertThat(context.measure(fooTestFile.key(), CoreMetrics.SKIPPED_TESTS).value()).isEqualTo(0);
+    assertThat(context.measure(fooTestFile.key(), CoreMetrics.SKIPPED_TESTS).value()).isZero();
     assertThat(context.measure(fooTestFile.key(), CoreMetrics.TEST_FAILURES).value()).isEqualTo(1);
     assertThat(context.measure(fooTestFile.key(), CoreMetrics.TEST_ERRORS)).isNull();
     assertThat(context.measure(fooTestFile.key(), CoreMetrics.TEST_EXECUTION_TIME).value()).isEqualTo(4);
 
     assertThat(context.measure(barTestFile.key(), CoreMetrics.TESTS).value()).isEqualTo(1);
     assertThat(context.measure(barTestFile.key(), CoreMetrics.SKIPPED_TESTS).value()).isEqualTo(1);
-    assertThat(context.measure(barTestFile.key(), CoreMetrics.TEST_FAILURES).value()).isEqualTo(0);
+    assertThat(context.measure(barTestFile.key(), CoreMetrics.TEST_FAILURES).value()).isZero();
     assertThat(context.measure(barTestFile.key(), CoreMetrics.TEST_ERRORS)).isNull();
     assertThat(context.measure(barTestFile.key(), CoreMetrics.TEST_EXECUTION_TIME).value()).isEqualTo(7);
     assertThat(String.join("\n", logTester.logs(LoggerLevel.ERROR)))

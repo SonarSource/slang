@@ -68,8 +68,8 @@ public class GoRulesDefinitionTest {
     assertThat(golintRepository.language()).isEqualTo("go");
     assertThat(govetRepository.language()).isEqualTo("go");
 
-    assertThat(golintRepository.isExternal()).isEqualTo(true);
-    assertThat(govetRepository.isExternal()).isEqualTo(true);
+    assertThat(golintRepository.isExternal()).isTrue();
+    assertThat(govetRepository.isExternal()).isTrue();
 
     assertThat(golintRepository.rules().size()).isEqualTo(18);
     assertThat(ExternalKeyUtils.GO_LINT_KEYS.size()).isEqualTo(18);

@@ -62,21 +62,23 @@ public class SimpleCovSensor implements Sensor {
       if (reports.isEmpty()) {
         return;
       }
-
+      
       JSONParser parser = new JSONParser();
       Map<String, Map<Integer, Integer>> mergedCoverages = new HashMap<>();
-      for (Entry<Path, String> report : reports.entrySet()) {
-        try {
-          JSONObject parseResult = (JSONObject) parser.parse(report.getValue());
-          mergeFileCoverages(mergedCoverages, parseResult.entrySet());
-        } catch (Exception e) {
-          LOG.error("Cannot read coverage report file, expecting standard SimpleCov resultset JSON format: '{}'", report.getKey(), e);
-        }
-      }
+      reports.forEach((path, report) -> safeReadCoverageReport(parser, mergedCoverages, path, report));
 
       saveCoverage(context, mergedCoverages);
     } catch (IOException e) {
       LOG.error("Error reading coverage reports", e);
+    }
+  }
+
+  private static void safeReadCoverageReport(JSONParser parser, Map<String, Map<Integer, Integer>> mergedCoverages, Path reportPath, String report) {
+    try {
+      JSONObject parseResult = (JSONObject) parser.parse(report);
+      mergeFileCoverages(mergedCoverages, parseResult.entrySet());
+    } catch (Exception e) {
+      LOG.error("Cannot read coverage report file, expecting standard SimpleCov resultset JSON format: '{}'", reportPath, e);
     }
   }
 

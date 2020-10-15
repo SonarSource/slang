@@ -34,7 +34,7 @@ public class ThrowTreeImplTest {
     TokenImpl throwKeyword = new TokenImpl(new TextRangeImpl(1, 0, 1, 6), "throw", Token.Type.KEYWORD);
     ThrowTreeImpl throwWithoutValue = new ThrowTreeImpl(meta, throwKeyword, null);
 
-    assertThat(throwWithoutValue.children()).hasSize(0);
+    assertThat(throwWithoutValue.children()).isEmpty();
     assertThat(throwWithoutValue.keyword().text()).isEqualTo("throw");
     assertThat(throwWithoutValue.body()).isNull();
 
