@@ -52,6 +52,7 @@ dependencies {
     testCompile 'junit:junit'
     testCompile 'org.assertj:assertj-core'
     testCompile 'org.mockito:mockito-core'
+    testCompile 'io.github.classgraph:classgraph'
 
     scoverage 'org.scoverage:scalac-scoverage-plugin_2.12:1.4.0', 'org.scoverage:scalac-scoverage-runtime_2.12:1.4.0'
 }

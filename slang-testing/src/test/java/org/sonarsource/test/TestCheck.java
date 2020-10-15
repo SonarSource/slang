@@ -17,26 +17,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.ruby.plugin;
+package org.sonarsource.test;
 
-import java.util.List;
-import org.sonarsource.slang.checks.BooleanLiteralCheck;
-import org.sonarsource.slang.checks.CheckList;
-import org.sonarsource.slang.checks.UnusedPrivateMethodCheck;
+import org.sonarsource.slang.checks.api.InitContext;
+import org.sonarsource.slang.checks.api.SlangCheck;
 
-public final class RubyCheckList {
-
-  private RubyCheckList() {
-    // utility class
-  }
-
-  static final Class[] RUBY_CHECK_BLACK_LIST = {
-    BooleanLiteralCheck.class,
-    UnusedPrivateMethodCheck.class,
-  };
-
-  public static List<Class<?>> checks() {
-    return CheckList.excludeChecks(RUBY_CHECK_BLACK_LIST);
-  }
-
+// Used in the test for PackageScanner
+class TestCheck implements SlangCheck {
+  @Override
+  public void initialize(InitContext init) { }
 }

@@ -19,6 +19,7 @@ dependencies {
     testCompile 'junit:junit'
     testCompile 'org.assertj:assertj-core'
     testCompile 'org.mockito:mockito-core'
+    testCompile 'io.github.classgraph:classgraph'
     testCompile project(':slang-antlr')
     testCompile project(':slang-testing')
 }

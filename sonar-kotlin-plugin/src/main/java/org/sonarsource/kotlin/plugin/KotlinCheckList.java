@@ -21,7 +21,6 @@ package org.sonarsource.kotlin.plugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import org.sonarsource.kotlin.checks.TooManyParametersKotlinCheck;
 import org.sonarsource.kotlin.checks.UnusedPrivateMethodKotlinCheck;
@@ -37,7 +36,7 @@ public final class KotlinCheckList {
     // utility class
   }
 
-  private static final Class[] KOTLIN_CHECK_BLACK_LIST = {
+  static final Class[] KOTLIN_CHECK_BLACK_LIST = {
     // FP rate too high for now in Kotlin on 'when' statements due to enum/sealed class that have all branches covered
     MatchWithoutElseCheck.class,
     // Rule does not apply here as octal values do not exist in Kotlin
@@ -47,7 +46,7 @@ public final class KotlinCheckList {
     TooManyParametersCheck.class
   };
 
-  private static final List<Class<?>> KOTLIN_LANGUAGE_SPECIFIC_CHECKS = Arrays.asList(
+  static final List<Class<?>> KOTLIN_LANGUAGE_SPECIFIC_CHECKS = Arrays.asList(
     UnusedPrivateMethodKotlinCheck.class,
     TooManyParametersKotlinCheck.class
   );

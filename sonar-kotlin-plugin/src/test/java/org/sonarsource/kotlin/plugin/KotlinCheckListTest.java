@@ -19,14 +19,50 @@
  */
 package org.sonarsource.kotlin.plugin;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.sonarsource.slang.testing.PackageScanner;
+
+import static org.assertj.core.api.Java6Assertions.assertThat;
 
 public class KotlinCheckListTest {
+
+  private static final String KOTLIN_CHECKS_PACKAGE = "org.sonarsource.kotlin.checks";
 
   @Test
   public void kotlin_checks_size() {
     Assertions.assertThat(KotlinCheckList.checks().size()).isGreaterThanOrEqualTo(40);
   }
 
+  @Test
+  public void kotlin_specific_checks_are_added_to_check_list() {
+    List<String> languageImplementation = PackageScanner.findSlangChecksInPackage(KOTLIN_CHECKS_PACKAGE);
+
+    List<String> checkListNames = KotlinCheckList.checks().stream().map(Class::getName).collect(Collectors.toList());
+    List<String> kotlinSpecificCheckList = KotlinCheckList.KOTLIN_LANGUAGE_SPECIFIC_CHECKS.stream().map(Class::getName).collect(Collectors.toList());
+
+    for (String languageCheck : languageImplementation) {
+      assertThat(checkListNames).contains(languageCheck);
+      assertThat(kotlinSpecificCheckList).contains(languageCheck);
+      assertThat(languageCheck).endsWith("KotlinCheck");
+    }
+  }
+
+  @Test
+  public void kotlin_excluded_not_present() {
+    List<Class<?>> checks = KotlinCheckList.checks();
+    for (Class excluded : KotlinCheckList.KOTLIN_CHECK_BLACK_LIST) {
+      assertThat(checks).doesNotContain(excluded);
+    }
+  }
+
+  @Test
+  public void kotlin_included_are_present() {
+    List<Class<?>> checks = KotlinCheckList.checks();
+    for (Class specificCheck : KotlinCheckList.KOTLIN_LANGUAGE_SPECIFIC_CHECKS) {
+      assertThat(checks).contains(specificCheck);
+    }
+  }
 }

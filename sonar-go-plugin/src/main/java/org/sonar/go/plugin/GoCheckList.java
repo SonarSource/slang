@@ -22,7 +22,7 @@ public class GoCheckList {
     // utility class
   }
 
-  private static final Class[] GO_CHECK_BLACK_LIST = {
+  static final Class[] GO_CHECK_BLACK_LIST = {
     BadClassNameCheck.class,
     // Can not enable rule S1066, as Go if-trees are containing an initializer, not well handled by SLang
     CollapsibleIfStatementsCheck.class,

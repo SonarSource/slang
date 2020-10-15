@@ -4,6 +4,7 @@ dependencies {
     compile 'org.sonarsource.analyzer-commons:sonar-analyzer-test-commons'
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
     compileOnly 'junit:junit'
+    compileOnly 'io.github.classgraph:classgraph'
     compileOnly 'org.assertj:assertj-core'
     compileOnly 'org.mockito:mockito-core'
 }

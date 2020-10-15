@@ -40,7 +40,7 @@ public final class ScalaCheckList {
     // utility class
   }
 
-  private static final Class[] SCALA_CHECK_BLACK_LIST = {
+  static final Class[] SCALA_CHECK_BLACK_LIST = {
     MatchWithoutElseCheck.class,
     OctalValuesCheck.class,
     RedundantParenthesesCheck.class,
@@ -51,7 +51,7 @@ public final class ScalaCheckList {
     DuplicateBranchCheck.class
   };
 
-  private static final List<Class<?>> SCALA_LANGUAGE_SPECIFIC_CHECKS = Arrays.asList(
+  static final List<Class<?>> SCALA_LANGUAGE_SPECIFIC_CHECKS = Arrays.asList(
     UnusedPrivateMethodScalaCheck.class,
     AllBranchesIdenticalScalaCheck.class,
     DuplicateBranchScalaCheck.class);

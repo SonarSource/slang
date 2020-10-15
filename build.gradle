@@ -73,6 +73,7 @@ subprojects {
             dependency 'junit:junit:4.12'
             dependency 'org.mockito:mockito-core:2.21.0'
             dependency 'org.assertj:assertj-core:3.6.1'
+            dependency 'io.github.classgraph:classgraph:4.8.90'
             dependency "org.sonarsource.analyzer-commons:sonar-analyzer-test-commons:${analyzerCommonsVersion}"
             dependency "org.sonarsource.analyzer-commons:sonar-analyzer-commons:${analyzerCommonsVersion}"
             dependency "org.sonarsource.analyzer-commons:sonar-xml-parsing:${analyzerCommonsVersion}"

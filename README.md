@@ -71,6 +71,8 @@ If you want to run ruling tests for specific language, you can use `ruling-{lang
 
 ## License headers
 
+Note: The license check is not working correctly, see [SONARSLANG-367](https://jira.sonarsource.com/browse/SONARSLANG-367).
+
 When adding a new source file, you will need to add license headers. Instead of copy-pasting blocks, the following command line can be used:
 
     ./gradlew licenseFormat

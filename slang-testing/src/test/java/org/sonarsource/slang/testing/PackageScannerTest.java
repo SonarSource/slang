@@ -17,26 +17,19 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.ruby.plugin;
+package org.sonarsource.slang.testing;
 
 import java.util.List;
-import org.sonarsource.slang.checks.BooleanLiteralCheck;
-import org.sonarsource.slang.checks.CheckList;
-import org.sonarsource.slang.checks.UnusedPrivateMethodCheck;
+import org.junit.Test;
 
-public final class RubyCheckList {
+import static org.assertj.core.api.Java6Assertions.assertThat;
 
-  private RubyCheckList() {
-    // utility class
-  }
+public class PackageScannerTest {
 
-  static final Class[] RUBY_CHECK_BLACK_LIST = {
-    BooleanLiteralCheck.class,
-    UnusedPrivateMethodCheck.class,
-  };
-
-  public static List<Class<?>> checks() {
-    return CheckList.excludeChecks(RUBY_CHECK_BLACK_LIST);
+  @Test
+  public void finds_classes_that_implement_slangcheck() {
+    List<String> result = PackageScanner.findSlangChecksInPackage("org.sonarsource.test");
+    assertThat(result).containsExactly("org.sonarsource.test.TestCheck");
   }
 
 }

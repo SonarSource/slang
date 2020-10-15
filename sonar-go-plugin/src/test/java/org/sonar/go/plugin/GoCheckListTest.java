@@ -19,12 +19,38 @@
  */
 package org.sonar.go.plugin;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.sonarsource.slang.testing.PackageScanner;
+
+import static org.assertj.core.api.Java6Assertions.assertThat;
 
 public class GoCheckListTest {
+
+  private static final String GO_CHECKS_PACKAGE = "org.sonar.go.checks";
+
   @Test
   public void go_checks_size() {
     Assertions.assertThat(GoCheckList.checks().size()).isEqualTo(38);
+  }
+
+  @Test
+  public void go_specific_checks_are_added_to_check_list() {
+    List<String> checkListNames = GoCheckList.checks().stream().map(Class::getName).collect(Collectors.toList());
+    List<String> languageImplementation = PackageScanner.findSlangChecksInPackage(GO_CHECKS_PACKAGE);
+    for (String languageCheck : languageImplementation) {
+      assertThat(checkListNames).contains(languageCheck);
+      assertThat(languageCheck).endsWith("GoCheck");
+    }
+  }
+
+  @Test
+  public void go_excluded_not_present() {
+    List<Class<?>> checks = GoCheckList.checks();
+    for (Class excluded : GoCheckList.GO_CHECK_BLACK_LIST) {
+      assertThat(checks).doesNotContain(excluded);
+    }
   }
 }
