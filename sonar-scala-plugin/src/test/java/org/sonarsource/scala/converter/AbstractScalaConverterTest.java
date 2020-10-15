@@ -38,7 +38,7 @@ public abstract class AbstractScalaConverterTest {
   private final ASTConverter converter = new ASTConverterValidation(new ScalaConverter(), ValidationMode.THROW_EXCEPTION);
 
   Tree parse(String scalaCode) {
-    return converter.parse(scalaCode);
+    return converter.parse(scalaCode, null);
   }
 
   Tree scalaStatement(String scalaCode) {

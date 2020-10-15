@@ -38,7 +38,7 @@ public class ScalaSensorTest extends AbstractSensorTest {
 
   @Test
   public void test_fail_parsing() {
-    InputFile inputFile = createInputFile("file1.scala", "invalid scala source code");
+    InputFile inputFile = createInputFile("file1.scala", "#define invalid scala source code");
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("ParsingError");
     sensor(checkFactory).execute(context);
@@ -50,7 +50,7 @@ public class ScalaSensorTest extends AbstractSensorTest {
     TextPointer textPointer = analysisError.location();
     assertThat(textPointer).isNotNull();
     assertThat(textPointer.line()).isEqualTo(1);
-    assertThat(textPointer.lineOffset()).isEqualTo(0);
+    assertThat(textPointer.lineOffset()).isZero();
 
     assertThat(logTester.logs()).contains(String.format("Unable to parse file: %s. Parse error at position 1:0", inputFile.uri()));
   }

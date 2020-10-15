@@ -22,18 +22,20 @@ package org.sonarsource.scala.converter
 import java.util
 import java.util.Collections.{emptyList, singletonList}
 
+import javax.annotation.Nullable
 import org.sonarsource.slang
 import org.sonarsource.slang.api
-import org.sonarsource.slang.api.{Annotation, BinaryExpressionTree, CatchTree, IdentifierTree, TextRange, Token, TreeMetaData, UnaryExpressionTree}
+import org.sonarsource.slang.api.{ASTConverter, Annotation, BinaryExpressionTree, CatchTree, IdentifierTree, TextRange, Token, TreeMetaData, UnaryExpressionTree}
 import org.sonarsource.slang.api.LoopTree.LoopKind
 import org.sonarsource.slang.impl._
 
 import scala.collection.JavaConverters._
 import scala.meta._
 import scala.meta.internal.tokenizers.keywords
+import scala.meta.parsers.Parsed.{Error, Success}
 import scala.meta.tokens.Token.{CR, Comment, LF, Space, Tab}
 
-class ScalaConverter extends slang.api.ASTConverter {
+class ScalaConverter extends ASTConverter {
   val BINARY_OPERATOR_MAP = Map(
     "+" -> BinaryExpressionTree.Operator.PLUS,
     "-" -> BinaryExpressionTree.Operator.MINUS,
@@ -57,12 +59,18 @@ class ScalaConverter extends slang.api.ASTConverter {
     "-"  -> UnaryExpressionTree.Operator.MINUS
   )
 
-  def parse(code: String): slang.api.Tree = {
-    scala.meta.internal.tokenizers.PlatformTokenizerCache.megaCache.clear
+  override def parse(code: String, @Nullable fileName: String): slang.api.Tree = {
+
+    scala.meta.internal.tokenizers.PlatformTokenizerCache.megaCache.clear()
+
     val metaTree: scala.meta.Tree = code.parse[Source] match {
-      case scala.meta.parsers.Parsed.Success(tree) => tree
-      case scala.meta.parsers.Parsed.Error(pos, _, _) =>
-        throw new slang.api.ParseException("Unable to parse file content.", textRange(pos).start())
+      case Success(tree) => tree
+      case Error(pos, _, _) =>
+        dialects.Sbt1(code).parse[Source] match {
+          case Success(t) => t
+          case Error(_, _, _) =>
+            throw new slang.api.ParseException("Unable to parse file content.", textRange(pos).start())
+        }
     }
 
     val allTokens = metaTree.tokens
@@ -79,6 +87,10 @@ class ScalaConverter extends slang.api.ASTConverter {
 
     val metaDataProvider = new TreeMetaDataProvider(allComments, allTokens, collectAnnotations(metaTree).asJava)
     new TreeConversion(metaDataProvider).convert(metaTree)
+  }
+
+  override def parse(code: String): slang.api.Tree = {
+    parse(code, fileName = null)
   }
 
   private def collectAnnotations(tree: Tree): List[Annotation] = tree match {
@@ -155,9 +167,9 @@ class ScalaConverter extends slang.api.ASTConverter {
         case v: Defn.Var if grandParentIsNewAnonymous(v) =>
           createNativeTree(metaData, metaTree)
         case Defn.Val(List(), List(Pat.Var(name)), decltpe, rhs) =>
-          createVariableDeclarationTree(metaData, name, decltpe, convert(rhs), true)
+          createVariableDeclarationTree(metaData, name, decltpe, convert(rhs), isVal = true)
         case Defn.Var(List(), List(Pat.Var(name)), decltpe, rhs) =>
-          createVariableDeclarationTree(metaData, name, decltpe, convert(rhs).orNull, false)
+          createVariableDeclarationTree(metaData, name, decltpe, convert(rhs).orNull, isVal = false)
         case infix: Term.ApplyInfix =>
           BINARY_OPERATOR_MAP.get(infix.op.value) match {
             case Some(operator) => createBinaryExpressionTree(metaData, infix, operator)
@@ -192,11 +204,11 @@ class ScalaConverter extends slang.api.ASTConverter {
       variable.parent.exists(p => p.is[Template] && p.parent.exists(gp => gp.is[Term.NewAnonymous]))
     }
 
-    def convertModImplicit(metaTree: Mod.Implicit): api.Tree = {
+    def convertModImplicit(metaTree: Mod.Implicit): slang.api.Tree = {
       // Implicit modifier position is broken in Scalameta, we need to retrieve
       // "implicit" token ourselves (https://github.com/scalameta/scalameta/issues/1132)
       val metaData = treeMetaData(metaTree.parent.get)
-      var previousToken : java.util.Optional[Token] = metaDataProvider.previousToken(metaData.textRange)
+      var previousToken: java.util.Optional[Token] = metaDataProvider.previousToken(metaData.textRange)
       while (previousToken.isPresent && !previousToken.get.text.equals("implicit")) {
         previousToken = metaDataProvider.previousToken(previousToken.get.textRange)
       }
@@ -370,9 +382,9 @@ class ScalaConverter extends slang.api.ASTConverter {
       new MatchTreeImpl(metaData, convertedExpression, convertedCases.asJava, matchKeyword)
     }
 
-    private def createCaseTree(c: Case): api.MatchCaseTree = {
-      return new MatchCaseTreeImpl(treeMetaData(c), convertCaseExpression(c), convert(c.body)).asInstanceOf[slang.api.MatchCaseTree]
-    }
+    private def createCaseTree(c: Case): api.MatchCaseTree =
+      new MatchCaseTreeImpl(treeMetaData(c), convertCaseExpression(c), convert(c.body)).asInstanceOf[slang.api.MatchCaseTree]
+    
 
     private def convertCaseExpression(c: Case): api.Tree = {
       c.cond match {
