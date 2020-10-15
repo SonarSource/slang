@@ -17,24 +17,26 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.checks;
+package org.sonarsource.scala.checks;
 
-import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.checks.api.CheckContext;
-import java.util.List;
 import org.sonar.check.Rule;
+import org.sonarsource.slang.api.MatchTree;
+import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.checks.AllBranchesIdenticalCheck;
+import org.sonarsource.slang.checks.api.CheckContext;
 
 @Rule(key = "S3923")
-public class AllBranchesIdenticalCheck extends AbstractBranchDuplicationCheck {
-
-  @Override
-  protected void checkDuplicatedBranches(CheckContext ctx, Tree tree, List<Tree> branches) {
-    // handled by S1871
-  }
+public class AllBranchesIdenticalScalaCheck extends AllBranchesIdenticalCheck {
 
   @Override
   protected void onAllIdenticalBranches(CheckContext ctx, Tree tree) {
-    ctx.reportIssue(tree, "Remove this conditional structure or edit its code blocks so that they're not all the same.");
+    if (!hasPatternMatchCase(tree)) {
+      ctx.reportIssue(tree, "Remove this conditional structure or edit its code blocks so that they're not all the same.");
+    }
   }
 
+  private static boolean hasPatternMatchCase(Tree tree) {
+    return tree instanceof MatchTree &&
+      ((MatchTree)tree).cases().stream().anyMatch(PatternMatchHelper::hasPatternMatchedVariable);
+  }
 }

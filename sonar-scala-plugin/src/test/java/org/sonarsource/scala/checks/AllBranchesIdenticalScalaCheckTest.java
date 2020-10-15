@@ -17,24 +17,15 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.checks;
+package org.sonarsource.scala.checks;
 
-import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.checks.api.CheckContext;
-import java.util.List;
-import org.sonar.check.Rule;
+import org.junit.Test;
 
-@Rule(key = "S3923")
-public class AllBranchesIdenticalCheck extends AbstractBranchDuplicationCheck {
+public class AllBranchesIdenticalScalaCheckTest {
 
-  @Override
-  protected void checkDuplicatedBranches(CheckContext ctx, Tree tree, List<Tree> branches) {
-    // handled by S1871
-  }
-
-  @Override
-  protected void onAllIdenticalBranches(CheckContext ctx, Tree tree) {
-    ctx.reportIssue(tree, "Remove this conditional structure or edit its code blocks so that they're not all the same.");
+  @Test
+  public void test() {
+    ScalaVerifier.verify("AllBranchesIdenticalScala.scala", new AllBranchesIdenticalScalaCheck());
   }
 
 }

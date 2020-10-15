@@ -24,6 +24,8 @@ import org.junit.Test;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.ImportDeclarationTree;
 import org.sonarsource.slang.api.LiteralTree;
+import org.sonarsource.slang.api.MatchCaseTree;
+import org.sonarsource.slang.api.MatchTree;
 import org.sonarsource.slang.api.PackageDeclarationTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
@@ -102,6 +104,30 @@ public class ScalaConverterTest extends AbstractScalaConverterTest {
     assertRange(comments.get(0).contentRange()).hasRange(1, 14, 2, 6);
     assertRange(comments.get(1).textRange()).hasRange(3, 16, 3, 24);
     assertRange(comments.get(1).contentRange()).hasRange(3, 18, 3, 24);
+  }
+
+  @Test
+  public void matchTreeCase_textRange_correction() {
+    Tree tree = parse("class MyClass {\n" +
+      "  def myMethod(cond: Any) = {\n" +
+      "    cond match {\n" +
+      "      case 1 =>\n" +
+      "        val x: Int = 1 + 1\n" +
+      "        x\n" +
+      "      case _ =>\n" +
+      "        1\n" +
+      "    }\n" +
+      "  }\n" +
+      "}");
+    assertRange(tree.metaData().textRange()).hasRange(1, 0, 11, 1);
+    Tree matchTree = tree.descendants().filter(t -> t instanceof MatchTree).findFirst().get();
+    Tree firstMatchCase = tree.descendants().filter(t -> t instanceof MatchCaseTree).findFirst().get();
+    Tree defaultMatchCase = tree.descendants().filter(t -> t instanceof MatchCaseTree).skip(1).findFirst().get();
+    assertRange(firstMatchCase.metaData().textRange()).hasRange(4,6,7,0);
+    assertRange(defaultMatchCase.metaData().textRange()).hasRange(7,6,8,9);
+    // note that the parent 'matchTree' ends when the last child ends (not on the next line, with the ending curly brace token)
+    // normally it should end at line 9 column 5
+    assertRange(matchTree.metaData().textRange()).hasRange(3,4,8,9);
   }
 
   @Test

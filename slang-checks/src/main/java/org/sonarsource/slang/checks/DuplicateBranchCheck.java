@@ -33,7 +33,7 @@ import org.sonar.check.Rule;
 public class DuplicateBranchCheck extends AbstractBranchDuplicationCheck {
 
   @Override
-  protected void checkDuplicatedBranches(CheckContext ctx, List<Tree> branches) {
+  protected void checkDuplicatedBranches(CheckContext ctx, Tree tree, List<Tree> branches) {
     for (List<Tree> group : SyntacticEquivalence.findDuplicatedGroups(branches)) {
       Tree original = group.get(0);
       group.stream().skip(1)
@@ -54,7 +54,7 @@ public class DuplicateBranchCheck extends AbstractBranchDuplicationCheck {
     // handled by S3923
   }
 
-  private static boolean spansMultipleLines(@Nullable Tree tree) {
+  protected static boolean spansMultipleLines(@Nullable Tree tree) {
     if (tree == null) {
       return false;
     }

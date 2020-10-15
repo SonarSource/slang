@@ -433,7 +433,16 @@ class ScalaConverter extends slang.api.ASTConverter {
   }
 
   def textRange(tree: scala.meta.Tree): TextRange = {
-    textRange(tree.pos)
+    val treePosition = tree.pos
+    tree.children match {
+      // We've seen this happen in the case of MatchCaseTree blocks.
+      // To avoid ending on column 0, we make a compromise on ending where the last child ends.
+      // The downside of this approach is that there could be other tokens after the last child (e.g. curly brace), which we ignore.
+      case _ :+ last if treePosition.endLine != last.pos.endLine =>
+        TextRanges.range(treePosition.startLine + 1, treePosition.startColumn, last.pos.endLine + 1, last.pos.endColumn)
+      case _ =>
+        textRange(treePosition)
+    }
   }
 
   def textRange(pos: scala.meta.Position): TextRange = {

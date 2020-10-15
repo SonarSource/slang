@@ -33,7 +33,7 @@ import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 
 public abstract class AbstractBranchDuplicationCheck implements SlangCheck {
 
-  protected abstract void checkDuplicatedBranches(CheckContext ctx, List<Tree> branches);
+  protected abstract void checkDuplicatedBranches(CheckContext ctx, Tree tree, List<Tree> branches);
 
   protected abstract void onAllIdenticalBranches(CheckContext ctx, Tree tree);
 
@@ -54,11 +54,11 @@ public abstract class AbstractBranchDuplicationCheck implements SlangCheck {
     if (conditional.allBranchesArePresent && conditional.allBranchesAreIdentical()) {
       onAllIdenticalBranches(ctx, tree);
     } else {
-      checkDuplicatedBranches(ctx, conditional.branches);
+      checkDuplicatedBranches(ctx, tree, conditional.branches);
     }
   }
 
-  protected static class ConditionalStructure {
+  private static class ConditionalStructure {
 
     private boolean allBranchesArePresent = false;
 
