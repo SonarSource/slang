@@ -22,13 +22,13 @@ package org.sonarsource.kotlin.plugin.surefire;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
-import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.config.internal.MapSettings;
@@ -45,19 +45,21 @@ public class KotlinSurefireSensorTest {
 
   private KotlinResourcesLocator kotlinResourcesLocator;
   private KotlinSurefireSensor surefireSensor;
-  private DefaultFileSystem fs;
+  private SensorContextTester context;
   private final PathResolver pathResolver = new PathResolver();
 
   @Before
   public void before() {
-    fs = new DefaultFileSystem(new File("src/test/resources"));
+    DefaultFileSystem fs = new DefaultFileSystem(new File("src/test/resources"));
     DefaultInputFile kotlinFile = new TestInputFileBuilder("", "src/org/foo/kotlin").setLanguage("kotlin").build();
     fs.add(kotlinFile);
-
+    context = SensorContextTester.create(new File(""));
+    context.setFileSystem(fs);
+    
     kotlinResourcesLocator = mock(KotlinResourcesLocator.class);
-    when(kotlinResourcesLocator.findResourceByClassName(anyString())).thenAnswer(invocation -> resource((String) invocation.getArguments()[0]));
+    when(kotlinResourcesLocator.findResourceByClassName(anyString())).thenAnswer(invocation -> Optional.of(resource((String) invocation.getArguments()[0])));
 
-    surefireSensor = new KotlinSurefireSensor(new KotlinSurefireParser(kotlinResourcesLocator), new MapSettings().asConfig(), fs, pathResolver);
+    surefireSensor = new KotlinSurefireSensor(new KotlinSurefireParser(kotlinResourcesLocator), new MapSettings().asConfig(), pathResolver);
   }
 
   private DefaultInputFile resource(String key) {
@@ -66,7 +68,7 @@ public class KotlinSurefireSensorTest {
 
   @Test
   public void should_execute_if_filesystem_contains_kotlin_files() {
-    surefireSensor = new KotlinSurefireSensor(new KotlinSurefireParser(kotlinResourcesLocator), new MapSettings().asConfig(), fs, pathResolver);
+    surefireSensor = new KotlinSurefireSensor(new KotlinSurefireParser(kotlinResourcesLocator), new MapSettings().asConfig(), pathResolver);
     DefaultSensorDescriptor defaultSensorDescriptor = new DefaultSensorDescriptor();
     surefireSensor.describe(defaultSensorDescriptor);
     assertThat(defaultSensorDescriptor.languages()).containsOnly("kotlin");
@@ -77,8 +79,8 @@ public class KotlinSurefireSensorTest {
     MapSettings settings = new MapSettings();
     settings.setProperty(SurefireUtils.SUREFIRE_REPORT_PATHS_PROPERTY, "unknown");
 
-    KotlinSurefireSensor surefireSensor = new KotlinSurefireSensor(mock(KotlinSurefireParser.class), settings.asConfig(), fs, pathResolver);
-    surefireSensor.execute(mock(SensorContext.class));
+    KotlinSurefireSensor surefireSensor = new KotlinSurefireSensor(mock(KotlinSurefireParser.class), settings.asConfig(), pathResolver);
+    surefireSensor.execute(context);
   }
 
   @Test

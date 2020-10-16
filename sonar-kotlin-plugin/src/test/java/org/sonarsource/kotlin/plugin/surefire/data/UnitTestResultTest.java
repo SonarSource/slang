@@ -59,12 +59,10 @@ public class UnitTestResultTest {
   @Test
   public void shouldGetClassName() {
     UnitTestResult result = new UnitTestResult()
-      .setTestSuiteClassName("MyClass")
-      .setStackTrace("stackTrace");
+      .setTestSuiteClassName("MyClass");
 
     assertThat(result)
-      .hasTestSuiteClassName("MyClass")
-      .hasStacktrace("stackTrace");
+      .hasTestSuiteClassName("MyClass");
   }
   
   static class UnitTestResultAssert extends AbstractAssert<UnitTestResultAssert, UnitTestResult> {
@@ -119,12 +117,6 @@ public class UnitTestResultTest {
       return this;
     }
 
-    UnitTestResultAssert hasStacktrace(String stackTrace) {
-      if (!actual.getStackTrace().equals(stackTrace)) {
-        fail(String.format("Test stackTrace should be %s, but was: '%s'.", stackTrace, actual.getStackTrace()));
-      }
-      return this;
-    }
   }
   
 }

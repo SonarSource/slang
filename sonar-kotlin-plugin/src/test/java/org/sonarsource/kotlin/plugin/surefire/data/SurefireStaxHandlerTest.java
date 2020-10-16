@@ -88,7 +88,6 @@ public class SurefireStaxHandlerTest {
     assertThat(failure.getDurationMilliseconds()).isEqualTo(5L);
     assertThat(failure.getStatus()).isEqualTo(UnitTestResult.STATUS_FAILURE);
     assertThat(failure.getName()).isEqualTo("testOne");
-    assertThat(failure.getMessage()).startsWith("expected");
 
     // error
     UnitTestResult error = report.getResults().get(1);

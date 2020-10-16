@@ -2,6 +2,7 @@ package org.sonarsource.kotlin.plugin.surefire;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.FileSystem;
@@ -19,16 +20,16 @@ public class KotlinResourcesLocator {
     this.fs = fs;
   }
   
-  public InputFile findResourceByClassName(String className) {
+  public Optional<InputFile> findResourceByClassName(String className) {
     String fileName = className.replace(".", "/");
-    LOGGER.warn("Searching for {}", fileName);
+    LOGGER.info("Searching for {}", fileName);
     FilePredicates p = fs.predicates();
     FilePredicate fileNamePredicates =
       getFileNamePredicateFromSuffixes(p, fileName, new String[]{".kt"});
     if (fs.hasFiles(fileNamePredicates)) {
-      return fs.inputFiles(fileNamePredicates).iterator().next();
+      return Optional.of(fs.inputFiles(fileNamePredicates).iterator().next());
     } else {
-      return null;
+      return Optional.empty();
     }
   }
 

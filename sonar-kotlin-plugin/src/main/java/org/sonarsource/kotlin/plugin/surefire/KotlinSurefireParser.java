@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.xml.stream.XMLStreamException;
 import org.sonar.api.batch.fs.InputFile;
@@ -28,9 +29,7 @@ public class KotlinSurefireParser {
   }
 
   public void collect(SensorContext context, List<File> reportsDirs, boolean reportDirSetByUser) {
-    LOGGER.warn(reportsDirs.toString());
     List<File> xmlFiles = getReports(reportsDirs, reportDirSetByUser);
-    LOGGER.warn(xmlFiles.toString());
     if (!xmlFiles.isEmpty()) {
       parseFiles(context, xmlFiles);
     }
@@ -99,9 +98,9 @@ public class KotlinSurefireParser {
       UnitTestClassReport report = entry.getValue();
       if (report.getTests() > 0) {
         negativeTimeTestNumber += report.getNegativeTimeTestNumber();
-        InputFile inputFile = kotlinResourcesLocator.findResourceByClassName(entry.getKey());
-        if (inputFile != null) {
-          save(report, inputFile, context);
+        Optional<InputFile> inputFile = kotlinResourcesLocator.findResourceByClassName(entry.getKey());
+        if (inputFile.isPresent()) {
+          save(report, inputFile.get(), context);
         } else {
           LOGGER.warn("Resource not found: {}", entry.getKey());
         }

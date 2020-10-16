@@ -2,7 +2,6 @@ package org.sonarsource.kotlin.plugin.surefire;
 
 import java.io.File;
 import java.util.List;
-import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
@@ -17,13 +16,11 @@ public class KotlinSurefireSensor implements Sensor {
 
   private final KotlinSurefireParser kotlinSurefireParser;
   private final Configuration settings;
-  private final FileSystem fs;
   private final PathResolver pathResolver;
 
-  public KotlinSurefireSensor(KotlinSurefireParser kotlinSurefireParser, Configuration settings, FileSystem fs, PathResolver pathResolver) {
+  public KotlinSurefireSensor(KotlinSurefireParser kotlinSurefireParser, Configuration settings, PathResolver pathResolver) {
     this.kotlinSurefireParser = kotlinSurefireParser;
     this.settings = settings;
-    this.fs = fs;
     this.pathResolver = pathResolver;
   }
 
@@ -34,7 +31,7 @@ public class KotlinSurefireSensor implements Sensor {
 
   @Override
   public void execute(SensorContext context) {
-    List<File> dirs = SurefireUtils.getReportsDirectories(settings, fs, pathResolver);
+    List<File> dirs = SurefireUtils.getReportsDirectories(settings, context.fileSystem(), pathResolver);
     collect(context, dirs);
   }
 

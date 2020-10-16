@@ -22,6 +22,7 @@ package org.sonarsource.kotlin.plugin.surefire;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.Before;
@@ -59,10 +60,10 @@ public class KotlinSurefireParserTest {
     parser = spy(new KotlinSurefireParser(kotlinResourcesLocator));
 
     doAnswer(
-            invocation ->
-                TestInputFileBuilder.create("", (String) invocation.getArguments()[0]).build())
-        .when(kotlinResourcesLocator)
-        .findResourceByClassName(anyString());
+      invocation -> Optional.of(TestInputFileBuilder.create("", (String) invocation.getArguments()[0]).build())
+    )
+      .when(kotlinResourcesLocator)
+      .findResourceByClassName(anyString());
   }
 
   @Test
@@ -79,8 +80,8 @@ public class KotlinSurefireParserTest {
 
   @Test
   public void should_store_zero_tests_when_source_file_is_not_found() {
-    
-    when(kotlinResourcesLocator.findResourceByClassName(anyString())).thenReturn(null);
+
+    when(kotlinResourcesLocator.findResourceByClassName(anyString())).thenReturn(Optional.empty());
 
     SensorContext context = mock(SensorContext.class);
     parser.collect(context, getDirs("multipleReports"), false);

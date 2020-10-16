@@ -11,8 +11,6 @@ public final class UnitTestResult {
   private String name;
   private String testSuiteClassName;
   private String status;
-  private String stackTrace;
-  private String message;
   private long durationMilliseconds = 0L;
 
   public UnitTestResult() {
@@ -34,24 +32,6 @@ public final class UnitTestResult {
 
   public UnitTestResult setStatus(String status) {
     this.status = status;
-    return this;
-  }
-
-  public String getStackTrace() {
-    return stackTrace;
-  }
-
-  public UnitTestResult setStackTrace(String stackTrace) {
-    this.stackTrace = stackTrace;
-    return this;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public UnitTestResult setMessage(String message) {
-    this.message = message;
     return this;
   }
 
