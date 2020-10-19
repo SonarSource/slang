@@ -19,25 +19,10 @@
  */
 package org.sonar.go.checks;
 
-import org.sonar.check.Rule;
-import org.sonarsource.slang.api.NativeTree;
-import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.checks.CodeAfterJumpCheck;
+public final class NativeKinds {
+  public static final String LABEL = "LabeledStmt";
+  public static final String SEMICOLON = "Semicolon";
 
-import static org.sonar.go.checks.NativeKinds.LABEL;
-import static org.sonar.go.checks.NativeKinds.SEMICOLON;
-
-@Rule(key = "S1763")
-public class CodeAfterJumpGoCheck extends CodeAfterJumpCheck {
-  @Override
-  protected boolean isValidAfterJump(Tree tree) {
-    return tree instanceof NativeTree &&
-           ((NativeTree) tree).nativeKind().toString().contains(LABEL);
-  }
-
-  @Override
-  protected boolean shouldIgnore(Tree tree) {
-    return tree instanceof NativeTree &&
-           ((NativeTree) tree).nativeKind().toString().equals(SEMICOLON);
+  private NativeKinds() {
   }
 }

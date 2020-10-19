@@ -40,8 +40,13 @@ public class OneStatementPerLineCheck implements SlangCheck {
     init.register(BlockTree.class, (ctx, blockTree) -> checkStatements(ctx, blockTree.statementOrExpressions()));
   }
 
-  private static void checkStatements(CheckContext ctx, List<Tree> statementsOrExpressions) {
+  protected boolean shouldIgnore(Tree tree) {
+    return false;
+  }
+
+  private void checkStatements(CheckContext ctx, List<Tree> statementsOrExpressions) {
     statementsOrExpressions.stream()
+      .filter(tree -> !shouldIgnore(tree))
       .collect(Collectors.groupingBy(OneStatementPerLineCheck::getLine))
       .forEach((line, statements) -> {
         if (statements.size() > 1) {

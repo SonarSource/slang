@@ -21,3 +21,7 @@ func foo() {
 func bar() int {
   return 0
 }
+
+func fn(x int) {
+  x = 42; // Compliant
+}
