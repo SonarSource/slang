@@ -22,7 +22,6 @@ package org.sonarsource.slang;
 import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.build.SonarScanner;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +34,6 @@ import org.sonarqube.ws.Issues;
 import org.sonarqube.ws.Measures.ComponentWsResponse;
 import org.sonarqube.ws.Measures.Measure;
 import org.sonarqube.ws.client.HttpConnector;
-import org.sonarqube.ws.client.PostRequest;
 import org.sonarqube.ws.client.WsClient;
 import org.sonarqube.ws.client.WsClientFactories;
 import org.sonarqube.ws.client.issues.SearchRequest;
@@ -45,40 +43,36 @@ import static java.util.Collections.singletonList;
 
 public abstract class TestBase {
 
-  public static final String PROJECT_KEY = "project";
-  public static final PostRequest RESET_REQUEST = new PostRequest("/api/orchestrator/reset");
-
   @ClassRule
   public static final Orchestrator ORCHESTRATOR = Tests.ORCHESTRATOR;
 
-  protected SonarScanner getSonarScanner(String directoryToScan, String languageKey) {
-    return getSonarScanner(directoryToScan, languageKey, null);
+  protected SonarScanner getSonarScanner(String projectKey, String directoryToScan, String languageKey) {
+    return getSonarScanner(projectKey, directoryToScan, languageKey, null);
   }
 
-  protected SonarScanner getSonarScanner(String directoryToScan, String languageKey, @Nullable String profileName) {
-    newWsClient().wsConnector().call(RESET_REQUEST);
-    ORCHESTRATOR.getServer().provisionProject(PROJECT_KEY, PROJECT_KEY);
+  protected SonarScanner getSonarScanner(String projectKey, String directoryToScan, String languageKey, @Nullable String profileName) {
+    ORCHESTRATOR.getServer().provisionProject(projectKey, projectKey);
     if (profileName != null) {
-      ORCHESTRATOR.getServer().associateProjectToQualityProfile(PROJECT_KEY, languageKey, profileName);
+      ORCHESTRATOR.getServer().associateProjectToQualityProfile(projectKey, languageKey, profileName);
     }
     return SonarScanner.create()
       .setProjectDir(new File(directoryToScan, languageKey))
-      .setProjectKey(PROJECT_KEY)
-      .setProjectName(PROJECT_KEY)
+      .setProjectKey(projectKey)
+      .setProjectName(projectKey)
       .setProjectVersion("1")
       .setSourceDirs(".");
   }
 
-  protected Measure getMeasure(String metricKey) {
-    return getMeasure(null, metricKey);
+  protected Measure getMeasure(String projectKey, String metricKey) {
+    return getMeasure(projectKey, null, metricKey);
   }
 
-  protected Measure getMeasure(@Nullable String componentKey, String metricKey) {
+  protected Measure getMeasure(String projectKey, @Nullable String componentKey, String metricKey) {
     String component;
     if (componentKey != null) {
-      component = PROJECT_KEY + ":" + componentKey;
+      component = projectKey + ":" + componentKey;
     } else {
-      component = PROJECT_KEY;
+      component = projectKey;
     }
     ComponentWsResponse response = newWsClient().measures().component(new ComponentRequest()
       .setComponent(component)
@@ -96,15 +90,13 @@ public abstract class TestBase {
       .collect(Collectors.toMap(Measure::getMetric, Function.identity()));
   }
 
-  protected List<Issues.Issue> getIssuesForRule(String rule) {
-    return newWsClient().issues().search(new SearchRequest().setRules(Collections.singletonList(rule))).getIssuesList();
+  protected List<Issues.Issue> getIssuesForRule(String componentKey, String rule) {
+    return newWsClient().issues().search(new SearchRequest()
+      .setRules(Collections.singletonList(rule))
+      .setComponentKeys(Collections.singletonList(componentKey))).getIssuesList();
   }
 
-  protected Integer getMeasureAsInt(String metricKey) {
-    return getMeasureAsInt(null, metricKey);
-  }
-
-  protected Integer getMeasureAsInt(@Nullable String componentKey, String metricKey) {
+  protected Integer getMeasureAsInt(String componentKey, String metricKey) {
     Measure measure = getMeasure(componentKey, metricKey);
     return (measure == null) ? null : Integer.parseInt(measure.getValue());
   }

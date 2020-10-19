@@ -31,83 +31,93 @@ public class MeasuresTest extends TestBase {
 
   @Test
   public void kotlin_measures() {
-    ORCHESTRATOR.executeBuild(getSonarScanner(BASE_DIRECTORY, "kotlin"));
+    final String projectKey = "kotlinMeasures";
+    ORCHESTRATOR.executeBuild(getSonarScanner(projectKey, BASE_DIRECTORY, "kotlin"));
 
-    assertThat(getMeasureAsInt("files")).isEqualTo(3);
+    assertThat(getMeasureAsInt(projectKey, "files")).isEqualTo(3);
 
-    assertThat(getMeasure("empty_file.kt", "ncloc")).isNull();
-    assertThat(getMeasureAsInt("file1.kt", "ncloc")).isEqualTo(7);
-    assertThat(getMeasureAsInt("file2.kt", "ncloc")).isEqualTo(8);
+    final String emptyFile = projectKey + ":empty_file.kt";
+    final String file1 = projectKey + ":file1.kt";
+    final String file2 = projectKey + ":file2.kt";
 
-    assertThat(getMeasure("empty_file.kt", "comment_lines")).isNull();
-    assertThat(getMeasureAsInt("file1.kt", "comment_lines")).isEqualTo(8);
-    assertThat(getMeasureAsInt("file2.kt", "comment_lines")).isEqualTo(3);
+    assertThat(getMeasure(emptyFile, "ncloc")).isNull();
+    assertThat(getMeasureAsInt(file1, "ncloc")).isEqualTo(7);
+    assertThat(getMeasureAsInt(file2, "ncloc")).isEqualTo(8);
 
-    assertThat(getMeasure("empty_file.kt", "statements")).isNull();
-    assertThat(getMeasureAsInt("file1.kt", "statements")).isEqualTo(3);
-    assertThat(getMeasureAsInt("file2.kt", "statements")).isEqualTo(2);
+    assertThat(getMeasure(emptyFile, "comment_lines")).isNull();
+    assertThat(getMeasureAsInt(file1, "comment_lines")).isEqualTo(8);
+    assertThat(getMeasureAsInt(file2, "comment_lines")).isEqualTo(3);
 
-    assertThat(getMeasureAsInt("file1.kt", "cognitive_complexity")).isEqualTo(0);
-    assertThat(getMeasureAsInt("file2.kt", "cognitive_complexity")).isEqualTo(3);
+    assertThat(getMeasure(emptyFile, "statements")).isNull();
+    assertThat(getMeasureAsInt(file1, "statements")).isEqualTo(3);
+    assertThat(getMeasureAsInt(file2, "statements")).isEqualTo(2);
 
-    assertThat(getMeasure("empty_file.kt", "ncloc_data")).isNull();
-    assertThat(getMeasure("file1.kt", "ncloc_data").getValue()).isEqualTo("1=1;3=1;4=1;7=1;8=1;13=1;14=1");
-    assertThat(getMeasure("file2.kt", "ncloc_data").getValue()).isEqualTo("1=1;2=1;3=1;4=1;5=1;7=1;10=1;11=1");
+    assertThat(getMeasureAsInt(file1, "cognitive_complexity")).isEqualTo(0);
+    assertThat(getMeasureAsInt(file2, "cognitive_complexity")).isEqualTo(3);
 
-    assertThat(getMeasure("file1.kt", "executable_lines_data").getValue()).isEqualTo("4=1;8=1;13=1");
+    assertThat(getMeasure(emptyFile, "ncloc_data")).isNull();
+    assertThat(getMeasure(file1, "ncloc_data").getValue()).isEqualTo("1=1;3=1;4=1;7=1;8=1;13=1;14=1");
+    assertThat(getMeasure(file2, "ncloc_data").getValue()).isEqualTo("1=1;2=1;3=1;4=1;5=1;7=1;10=1;11=1");
 
-    List<Issues.Issue> issuesForRule = getIssuesForRule("kotlin:S100");
-    String file2Component = PROJECT_KEY + ":file2.kt";
+    assertThat(getMeasure(file1, "executable_lines_data").getValue()).isEqualTo("4=1;8=1;13=1");
+
+    List<Issues.Issue> issuesForRule = getIssuesForRule(projectKey, "kotlin:S100");
     assertThat(issuesForRule).extracting(Issues.Issue::getLine).containsExactly(2, 7);
-    assertThat(issuesForRule).extracting(Issues.Issue::getComponent).containsExactly(file2Component, file2Component);
+    assertThat(issuesForRule).extracting(Issues.Issue::getComponent).containsExactly(file2, file2);
   }
 
   @Test
   public void ruby_measures() {
-    ORCHESTRATOR.executeBuild(getSonarScanner(BASE_DIRECTORY, "ruby"));
+    final String projectKey = "rubyMeasures";
+    ORCHESTRATOR.executeBuild(getSonarScanner(projectKey, BASE_DIRECTORY, "ruby"));
 
-    assertThat(getMeasureAsInt("files")).isEqualTo(2);
-    assertThat(getMeasureAsInt("file.rb", "ncloc")).isEqualTo(8);
-    assertThat(getMeasureAsInt("file.rb", "comment_lines")).isEqualTo(12);
-    assertThat(getMeasureAsInt("file.rb", "statements")).isEqualTo(5);
-    assertThat(getMeasureAsInt("file.rb", "cognitive_complexity")).isEqualTo(0);
-    assertThat(getMeasure("file.rb", "ncloc_data").getValue()).isEqualTo("16=1;2=1;3=1;20=1;6=1;7=1;14=1;15=1");
-    assertThat(getMeasure("file.rb", "executable_lines_data").getValue()).isEqualTo("3=1;20=1;7=1;14=1;15=1");
+    final String componentKey = projectKey + ":file.rb";
+    assertThat(getMeasureAsInt(projectKey, "files")).isEqualTo(2);
+    assertThat(getMeasureAsInt(componentKey, "ncloc")).isEqualTo(8);
+    assertThat(getMeasureAsInt(componentKey, "comment_lines")).isEqualTo(12);
+    assertThat(getMeasureAsInt(componentKey, "statements")).isEqualTo(5);
+    assertThat(getMeasureAsInt(componentKey, "cognitive_complexity")).isEqualTo(0);
+    assertThat(getMeasure(componentKey, "ncloc_data").getValue()).isEqualTo("16=1;2=1;3=1;20=1;6=1;7=1;14=1;15=1");
+    assertThat(getMeasure(componentKey, "executable_lines_data").getValue()).isEqualTo("3=1;20=1;7=1;14=1;15=1");
 
-    List<Issues.Issue> issuesForRule = getIssuesForRule("ruby:S1135");
+    List<Issues.Issue> issuesForRule = getIssuesForRule(projectKey, "ruby:S1135");
     assertThat(issuesForRule).extracting(Issues.Issue::getLine).containsExactly(18);
-    assertThat(issuesForRule).extracting(Issues.Issue::getComponent).containsExactly(PROJECT_KEY + ":file.rb");
+    assertThat(issuesForRule).extracting(Issues.Issue::getComponent).containsExactly(componentKey);
   }
 
   @Test
   public void scala_measures() {
-    ORCHESTRATOR.executeBuild(getSonarScanner(BASE_DIRECTORY, "scala"));
+    final String projectKey = "scalaMeasures";
+    ORCHESTRATOR.executeBuild(getSonarScanner(projectKey, BASE_DIRECTORY, "scala"));
 
-    assertThat(getMeasureAsInt("file.scala", "ncloc")).isEqualTo(8);
-    assertThat(getMeasureAsInt("file.scala", "comment_lines")).isEqualTo(3);
-    assertThat(getMeasure("file.scala", "ncloc_data").getValue()).isEqualTo("1=1;3=1;7=1;10=1;11=1;12=1;13=1;15=1");
-    assertThat(getMeasureAsInt("file.scala", "functions")).isEqualTo(1);
+    final String componentKey = projectKey + ":file.scala";
+    assertThat(getMeasureAsInt(componentKey, "ncloc")).isEqualTo(8);
+    assertThat(getMeasureAsInt(componentKey, "comment_lines")).isEqualTo(3);
+    assertThat(getMeasure(componentKey, "ncloc_data").getValue()).isEqualTo("1=1;3=1;7=1;10=1;11=1;12=1;13=1;15=1");
+    assertThat(getMeasureAsInt(componentKey, "functions")).isEqualTo(1);
 
-    List<Issues.Issue> issuesForRule = getIssuesForRule("scala:S1135");
+    List<Issues.Issue> issuesForRule = getIssuesForRule(projectKey, "scala:S1135");
     assertThat(issuesForRule).extracting(Issues.Issue::getLine).containsExactly(9);
-    assertThat(issuesForRule).extracting(Issues.Issue::getComponent).containsExactly(PROJECT_KEY + ":file.scala");
+    assertThat(issuesForRule).extracting(Issues.Issue::getComponent).containsExactly(componentKey);
   }
 
   @Test
   public void go_measures() {
-    ORCHESTRATOR.executeBuild(getSonarScanner(BASE_DIRECTORY, "go"));
+    final String projectKey = "goMeasures";
+    ORCHESTRATOR.executeBuild(getSonarScanner(projectKey, BASE_DIRECTORY, "go"));
 
-    assertThat(getMeasureAsInt("pivot.go", "ncloc")).isEqualTo(41);
-    assertThat(getMeasureAsInt("pivot.go", "comment_lines")).isEqualTo(0);
+    final String componentKey = projectKey + ":pivot.go";
+    assertThat(getMeasureAsInt(componentKey, "ncloc")).isEqualTo(41);
+    assertThat(getMeasureAsInt(componentKey, "comment_lines")).isEqualTo(0);
 
-    assertThat(getMeasure("pivot.go", "ncloc_data").getValue())
+    assertThat(getMeasure(componentKey, "ncloc_data").getValue())
       .isEqualTo("1=1;3=1;4=1;5=1;6=1;7=1;8=1;10=1;11=1;12=1;13=1;14=1;16=1;17=1;18=1;20=1;21=1;22=1;23=1;24=1;25=1;" +
         "26=1;27=1;28=1;29=1;30=1;31=1;32=1;33=1;35=1;36=1;37=1;38=1;39=1;40=1;41=1;43=1;44=1;45=1;46=1;47=1");
-    System.out.println(getMeasure("pivot.go", "ncloc_data").getValue());
+    System.out.println(getMeasure(componentKey, "ncloc_data").getValue());
 
-    assertThat(getMeasureAsInt("pivot.go", "functions")).isEqualTo(3);
+    assertThat(getMeasureAsInt(componentKey, "functions")).isEqualTo(3);
 
-    assertThat(getMeasure("pivot.go", "executable_lines_data").getValue())
+    assertThat(getMeasure(componentKey, "executable_lines_data").getValue())
       .isEqualTo("32=1;36=1;37=1;38=1;40=1;10=1;11=1;12=1;44=1;13=1;45=1;14=1;46=1;21=1;22=1;23=1;25=1;26=1;27=1;29=1;30=1");
   }
 }

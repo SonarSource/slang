@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,13 +44,14 @@ public class ExternalReportTest extends TestBase {
 
   @Test
   public void detekt() {
-    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "detekt");
+    final String projectKey = "detekt";
+    SonarScanner sonarScanner = getSonarScanner(projectKey, BASE_DIRECTORY, "detekt");
     sonarScanner.setProperty("sonar.kotlin.detekt.reportPaths", "detekt-checkstyle.xml");
     ORCHESTRATOR.executeBuild(sonarScanner);
-    List<Issue> issues = getExternalIssues();
+    List<Issue> issues = getExternalIssues(projectKey);
     assertThat(issues).hasSize(1);
     Issue issue = issues.get(0);
-    assertThat(issue.getComponent()).isEqualTo("project:main.kt");
+    assertThat(issue.getComponent()).isEqualTo(projectKey + ":main.kt");
     assertThat(issue.getRule()).isEqualTo("external_detekt:ForEachOnRange");
     assertThat(issue.getLine()).isEqualTo(2);
     assertThat(issue.getMessage()).isEqualTo("Using the forEach method on ranges has a heavy performance cost. Prefer using simple for loops.");
@@ -61,19 +61,20 @@ public class ExternalReportTest extends TestBase {
 
   @Test
   public void android_lint() {
-    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "androidlint");
+    final String projectKey = "androidLint";
+    SonarScanner sonarScanner = getSonarScanner(projectKey, BASE_DIRECTORY, "androidlint");
     sonarScanner.setProperty("sonar.androidLint.reportPaths", "lint-results.xml");
     ORCHESTRATOR.executeBuild(sonarScanner);
-    List<Issue> issues = getExternalIssues();
+    List<Issue> issues = getExternalIssues(projectKey);
     assertThat(issues).hasSize(2);
-    Issue first = issues.stream().filter(issue -> "project:main.kt".equals(issue.getComponent())).findFirst().orElse(null);
+    Issue first = issues.stream().filter(issue -> (projectKey + ":main.kt").equals(issue.getComponent())).findFirst().orElse(null);
     assertThat(first.getRule()).isEqualTo("external_android-lint:UnusedAttribute");
     assertThat(first.getLine()).isEqualTo(2);
     assertThat(first.getMessage()).isEqualTo("Attribute `required` is only used in API level 5 and higher (current min is 1)");
     assertThat(first.getSeverity().name()).isEqualTo("MINOR");
     assertThat(first.getDebt()).isEqualTo("5min");
 
-    Issue second = issues.stream().filter(issue -> "project:build.gradle".equals(issue.getComponent())).findFirst().orElse(null);
+    Issue second = issues.stream().filter(issue -> (projectKey + ":build.gradle").equals(issue.getComponent())).findFirst().orElse(null);
     assertThat(second.getRule()).isEqualTo("external_android-lint:GradleDependency");
     assertThat(second.getLine()).isEqualTo(3);
     assertThat(second.getMessage()).isEqualTo("A newer version of com.android.support:recyclerview-v7 than 26.0.0 is available: 27.1.1");
@@ -83,10 +84,11 @@ public class ExternalReportTest extends TestBase {
 
   @Test
   public void rubocop() {
-    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "rubocop");
+    final String projectKey = "rubocop";
+    SonarScanner sonarScanner = getSonarScanner(projectKey, BASE_DIRECTORY, "rubocop");
     sonarScanner.setProperty("sonar.ruby.rubocop.reportPaths", "rubocop-report.json");
     ORCHESTRATOR.executeBuild(sonarScanner);
-    List<Issue> issues = getExternalIssues();
+    List<Issue> issues = getExternalIssues(projectKey);
     assertThat(issues).hasSize(1);
     Issue first = issues.get(0);
     assertThat(first.getRule()).isEqualTo("external_rubocop:Security/YAMLLoad");
@@ -98,13 +100,15 @@ public class ExternalReportTest extends TestBase {
 
   @Test
   public void scalastyle() throws IOException {
-    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "scalastyle");
+    final String projectKey = "scalastyle";
+
+    SonarScanner sonarScanner = getSonarScanner(projectKey, BASE_DIRECTORY, "scalastyle");
     Path projectDir = new File(BASE_DIRECTORY, "scalastyle").toPath();
     Path scalastyleReportPath = createTemporaryReportFromTemplate(projectDir.resolve("scalastyle-output.xml"),
       "{ABSOLUTE_HELLO_WORLD_PATH}", projectDir.resolve("HelloWorld.scala").toRealPath().toString());
     sonarScanner.setProperty("sonar.scala.scalastyle.reportPaths", scalastyleReportPath.toString());
     ORCHESTRATOR.executeBuild(sonarScanner);
-    List<Issue> issues = getExternalIssues();
+    List<Issue> issues = getExternalIssues(projectKey);
     assertThat(issues).hasSize(2);
     assertThat(issues.stream().map(Issue::getRule).sorted().collect(Collectors.toList())).containsExactly(
       "external_scalastyle:org.scalastyle.file.HeaderMatchesChecker",
@@ -120,13 +124,15 @@ public class ExternalReportTest extends TestBase {
 
   @Test
   public void scapegoat() throws IOException {
-    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "scapegoat");
+    final String projectKey = "scapegoat";
+
+    SonarScanner sonarScanner = getSonarScanner(projectKey, BASE_DIRECTORY, "scapegoat");
     Path projectDir = new File(BASE_DIRECTORY, "scapegoat").toPath();
     Path scapegoatReportPath = createTemporaryReportFromTemplate(projectDir.resolve("scapegoat-scalastyle.xml"),
       "{ABSOLUTE_HELLO_WORLD_PATH}", projectDir.resolve("HelloWorld.scala").toRealPath().toString());
     sonarScanner.setProperty("sonar.scala.scapegoat.reportPaths", scapegoatReportPath.toString());
     ORCHESTRATOR.executeBuild(sonarScanner);
-    List<Issue> issues = getExternalIssues();
+    List<Issue> issues = getExternalIssues(projectKey);
     assertThat(issues).hasSize(3);
     assertThat(issues.stream().map(Issue::getRule).sorted().collect(Collectors.toList())).containsExactly(
       "external_scapegoat:com.sksamuel.scapegoat.inspections.EmptyCaseClass",
@@ -144,10 +150,12 @@ public class ExternalReportTest extends TestBase {
 
   @Test
   public void govet() {
-    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "govet");
+    final String projectKey = "govet";
+
+    SonarScanner sonarScanner = getSonarScanner(projectKey, BASE_DIRECTORY, "govet");
     sonarScanner.setProperty("sonar.go.govet.reportPaths", "go-vet.out");
     ORCHESTRATOR.executeBuild(sonarScanner);
-    List<Issue> issues = getExternalIssues();
+    List<Issue> issues = getExternalIssues(projectKey);
     assertThat(issues).hasSize(2);
     assertThat(formatIssues(issues)).isEqualTo(
       "SelfAssignement.go|external_govet:assign|MAJOR|5min|line:7|self-assignment of name to name\n" +
@@ -156,10 +164,12 @@ public class ExternalReportTest extends TestBase {
 
   @Test
   public void golint() {
-    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "golint");
+    final String projectKey = "golint";
+
+    SonarScanner sonarScanner = getSonarScanner(projectKey, BASE_DIRECTORY, "golint");
     sonarScanner.setProperty("sonar.go.golint.reportPaths", "golint.out");
     ORCHESTRATOR.executeBuild(sonarScanner);
-    List<Issue> issues = getExternalIssues();
+    List<Issue> issues = getExternalIssues(projectKey);
     assertThat(issues).hasSize(11);
     assertThat(formatIssues(issues)).isEqualTo(
       "SelfAssignement.go|external_golint:Exported|MAJOR|5min|line:4|exported type User should have comment or be unexported\n" +
@@ -178,10 +188,12 @@ public class ExternalReportTest extends TestBase {
 
   @Test
   public void gometalinter() {
-    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "gometalinter");
+    final String projectKey = "gometalinter";
+
+    SonarScanner sonarScanner = getSonarScanner(projectKey, BASE_DIRECTORY, "gometalinter");
     sonarScanner.setProperty("sonar.go.gometalinter.reportPaths", "gometalinter.out");
     ORCHESTRATOR.executeBuild(sonarScanner);
-    List<Issue> issues = getExternalIssues();
+    List<Issue> issues = getExternalIssues(projectKey);
     assertThat(issues).hasSize(8);
     assertThat(formatIssues(issues)).isEqualTo(
       "SelfAssignement.go|external_golint:Exported|MAJOR|5min|line:4|exported type User should have comment or be unexported\n" +
@@ -196,10 +208,12 @@ public class ExternalReportTest extends TestBase {
 
   @Test
   public void golangcilint() {
-    SonarScanner sonarScanner = getSonarScanner(BASE_DIRECTORY, "golangci-lint");
+    final String projectKey = "golangcilint";
+
+    SonarScanner sonarScanner = getSonarScanner(projectKey, BASE_DIRECTORY, "golangci-lint");
     sonarScanner.setProperty("sonar.go.golangci-lint.reportPaths", "golangci-lint-checkstyle.xml");
     ORCHESTRATOR.executeBuild(sonarScanner);
-    List<Issue> issues = getExternalIssues();
+    List<Issue> issues = getExternalIssues(projectKey);
     assertThat(issues).hasSize(4);
     assertThat(formatIssues(issues)).isEqualTo(
       "SelfAssignement.go|external_golangci-lint:govet|MAJOR|5min|line:7|assign: self-assignment of name to name\n" +
@@ -208,8 +222,8 @@ public class ExternalReportTest extends TestBase {
         "SelfAssignement.go|external_golangci-lint:unused|MAJOR|5min|line:6|U1000: func `(*User).rename` is unused");
   }
 
-  private List<Issue> getExternalIssues() {
-    return newWsClient().issues().search(new SearchRequest().setComponentKeys(Collections.singletonList(PROJECT_KEY)))
+  private List<Issue> getExternalIssues(String componentKey) {
+    return newWsClient().issues().search(new SearchRequest().setComponentKeys(Collections.singletonList(componentKey)))
       .getIssuesList().stream()
       .filter(issue -> issue.getRule().startsWith("external_"))
       .collect(Collectors.toList());

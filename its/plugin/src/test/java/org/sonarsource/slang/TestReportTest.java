@@ -37,24 +37,26 @@ public class TestReportTest extends TestBase {
 
   @Test
   public void go_test_report() {
-    SonarScanner goScanner = getSonarScanner(BASE_DIRECTORY.toString(), "go");
+    final String projectKey = "goTestReport";
+    SonarScanner goScanner = getSonarScanner(projectKey, BASE_DIRECTORY.toString(), "go");
     goScanner.setProperty("sonar.tests", ".");
     goScanner.setProperty("sonar.test.inclusions", "**/*_test.go");
     goScanner.setProperty("sonar.go.tests.reportPaths", "go-test-report.out");
 
     ORCHESTRATOR.executeBuild(goScanner);
 
-    assertThat(getMeasureAsInt("tests")).isEqualTo(4);
-    assertThat(getMeasureAsInt("test_failures")).isEqualTo(2);
-    assertThat(getMeasureAsInt("test_errors")).isNull();
-    assertThat(getMeasureAsInt("skipped_tests")).isEqualTo(1);
-    assertThat(getMeasureAsInt("test_execution_time")).isEqualTo(4);
+    assertThat(getMeasureAsInt(projectKey, "tests")).isEqualTo(4);
+    assertThat(getMeasureAsInt(projectKey, "test_failures")).isEqualTo(2);
+    assertThat(getMeasureAsInt(projectKey, "test_errors")).isNull();
+    assertThat(getMeasureAsInt(projectKey, "skipped_tests")).isEqualTo(1);
+    assertThat(getMeasureAsInt(projectKey, "test_execution_time")).isEqualTo(4);
 
-    assertThat(getMeasureAsInt("pivot_test.go", "tests")).isEqualTo(4);
-    assertThat(getMeasureAsInt("pivot_test.go", "test_failures")).isEqualTo(2);
-    assertThat(getMeasureAsInt("pivot_test.go", "test_errors")).isEqualTo(0);
-    assertThat(getMeasureAsInt("pivot_test.go", "skipped_tests")).isEqualTo(1);
-    assertThat(getMeasureAsInt("pivot_test.go", "test_execution_time")).isEqualTo(4);
+    final String componentKey = projectKey + ":pivot_test.go";
+    assertThat(getMeasureAsInt(componentKey, "tests")).isEqualTo(4);
+    assertThat(getMeasureAsInt(componentKey, "test_failures")).isEqualTo(2);
+    assertThat(getMeasureAsInt(componentKey, "test_errors")).isEqualTo(0);
+    assertThat(getMeasureAsInt(componentKey, "skipped_tests")).isEqualTo(1);
+    assertThat(getMeasureAsInt(componentKey, "test_execution_time")).isEqualTo(4);
   }
 
 }

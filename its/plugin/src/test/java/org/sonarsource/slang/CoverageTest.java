@@ -55,19 +55,22 @@ public class CoverageTest extends TestBase {
 
   @Test
   public void ruby_coverage() throws Exception {
+    final String projectKey = "rubyCoverage";
     setUpRuby();
-    SonarScanner rubyScanner = getSonarScanner(workDir.getParent().toString(), "ruby");
+    SonarScanner rubyScanner = getSonarScanner(projectKey, workDir.getParent().toString(), "ruby");
     ORCHESTRATOR.executeBuild(rubyScanner);
 
-    assertThat(getMeasureAsInt("file.rb", "lines_to_cover")).isEqualTo(7);
-    assertThat(getMeasureAsInt("file.rb", "uncovered_lines")).isEqualTo(1);
-    assertThat(getMeasureAsInt("file.rb", "conditions_to_cover")).isNull();
-    assertThat(getMeasureAsInt("file.rb", "uncovered_conditions")).isNull();
+    String componentKey = projectKey + ":file.rb";
+    assertThat(getMeasureAsInt(componentKey, "lines_to_cover")).isEqualTo(7);
+    assertThat(getMeasureAsInt(componentKey, "uncovered_lines")).isEqualTo(1);
+    assertThat(getMeasureAsInt(componentKey, "conditions_to_cover")).isNull();
+    assertThat(getMeasureAsInt(componentKey, "uncovered_conditions")).isNull();
 
-    assertThat(getMeasureAsInt("file_not_in_report.rb", "lines_to_cover")).isEqualTo(3);
-    assertThat(getMeasureAsInt("file_not_in_report.rb", "uncovered_lines")).isEqualTo(3);
-    assertThat(getMeasureAsInt("file_not_in_report.rb", "conditions_to_cover")).isNull();
-    assertThat(getMeasureAsInt("file_not_in_report.rb", "uncovered_conditions")).isNull();
+    componentKey = projectKey + ":file_not_in_report.rb";
+    assertThat(getMeasureAsInt(componentKey, "lines_to_cover")).isEqualTo(3);
+    assertThat(getMeasureAsInt(componentKey, "uncovered_lines")).isEqualTo(3);
+    assertThat(getMeasureAsInt(componentKey, "conditions_to_cover")).isNull();
+    assertThat(getMeasureAsInt(componentKey, "uncovered_conditions")).isNull();
   }
 
   public void setUpScala() throws Exception {
@@ -85,29 +88,33 @@ public class CoverageTest extends TestBase {
 
   @Test
   public void scala_coverage() throws Exception {
+    final String projectKey = "scalaCoverage";
     setUpScala();
-    SonarScanner scalaScanner = getSonarScanner(workDir.getParent().toString(), "scala");
+    SonarScanner scalaScanner = getSonarScanner(projectKey, workDir.getParent().toString(), "scala");
     scalaScanner.setProperty("sonar.scala.coverage.reportPaths", "coverage/.scoverage.xml");
 
     ORCHESTRATOR.executeBuild(scalaScanner);
 
-    assertThat(getMeasureAsInt("file2.scala", "lines_to_cover")).isEqualTo(3);
-    assertThat(getMeasureAsInt("file2.scala", "uncovered_lines")).isEqualTo(1);
-    assertThat(getMeasureAsInt("file2.scala", "conditions_to_cover")).isNull();
-    assertThat(getMeasureAsInt("file2.scala", "uncovered_conditions")).isNull();
+    String componentKey = projectKey + ":file2.scala";
+    assertThat(getMeasureAsInt(componentKey, "lines_to_cover")).isEqualTo(3);
+    assertThat(getMeasureAsInt(componentKey, "uncovered_lines")).isEqualTo(1);
+    assertThat(getMeasureAsInt(componentKey, "conditions_to_cover")).isNull();
+    assertThat(getMeasureAsInt(componentKey, "uncovered_conditions")).isNull();
   }
 
   @Test
   public void go_coverage() {
-    SonarScanner goScanner = getSonarScanner(BASE_DIRECTORY.toString(), "go");
+    final String projectKey = "goCoverage";
+    SonarScanner goScanner = getSonarScanner(projectKey, BASE_DIRECTORY.toString(), "go");
     goScanner.setProperty("sonar.go.coverage.reportPaths", "coverage.out");
 
     ORCHESTRATOR.executeBuild(goScanner);
 
-    assertThat(getMeasureAsInt("pivot.go", "lines_to_cover")).isEqualTo(16);
-    assertThat(getMeasureAsInt("pivot.go", "uncovered_lines")).isEqualTo(4);
-    assertThat(getMeasureAsInt("pivot.go", "conditions_to_cover")).isNull();
-    assertThat(getMeasureAsInt("pivot.go", "uncovered_conditions")).isNull();
+    String componentKey = projectKey + ":pivot.go";
+    assertThat(getMeasureAsInt(componentKey, "lines_to_cover")).isEqualTo(16);
+    assertThat(getMeasureAsInt(componentKey, "uncovered_lines")).isEqualTo(4);
+    assertThat(getMeasureAsInt(componentKey, "conditions_to_cover")).isNull();
+    assertThat(getMeasureAsInt(componentKey, "uncovered_conditions")).isNull();
   }
 
 }
