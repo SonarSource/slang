@@ -29,6 +29,15 @@ We use [whitequark parser](https://github.com/whitequark/parser) to parse Ruby l
 
 We use [Scalameta](https://scalameta.org/) to parse Scala language.
 
+### Scala coverage
+
+For Scala files, we will import both [Scoverage](http://scoverage.org/) and JaCoCo coverage reports. Note that this will result in strange behavior since:
+
+* Only line coverage will be used from the Scoverage report.
+* JaCoCo can be imprecise when computing conditions coverage on Scala code, generating FP (typically on pattern matching).
+
+This situation only applies to two Scala files, this current situation is acceptable.
+
 ## Go
 
 We use the native Go parser to parse Go language.
