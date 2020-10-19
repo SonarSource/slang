@@ -37,4 +37,9 @@ public class UnusedPrivateMethodScalaCheckTest {
   public void test_inner_class() {
     ScalaVerifier.verify("UnusedPrivateMethodScala.InnerClass.scala", new UnusedPrivateMethodScalaCheck());
   }
+
+  @Test
+  public void test_class_in_package() {
+    ScalaVerifier.verify("UnusedPrivateMethodScala.Package.scala", new UnusedPrivateMethodScalaCheck());
+  }
 }

@@ -26,6 +26,7 @@ import java.util.Set;
 import org.sonar.check.Rule;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
+import org.sonarsource.slang.api.PackageDeclarationTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.checks.UnusedPrivateMethodCheck;
 import org.sonarsource.slang.checks.api.CheckContext;
@@ -64,7 +65,8 @@ public class UnusedPrivateMethodScalaCheck extends UnusedPrivateMethodCheck {
   }
 
   private void collectUsagesInCompanionObject(String className, Deque<Tree> ancestors) {
-    if (ancestors.size() == 1) {
+    // a top-level class either has 1 ancestor (TopLevelTree) or could be inside a package
+    if (ancestors.size() == 1 ||  isInsidePackage(ancestors)) {
       // search for the companion object and collect what's inside
       ancestors.getFirst().descendants()
         .filter(d -> d instanceof NativeTreeImpl)
@@ -82,4 +84,8 @@ public class UnusedPrivateMethodScalaCheck extends UnusedPrivateMethodCheck {
       nativeTree.children().stream().anyMatch(i -> i instanceof IdentifierTree && ((IdentifierTree)i).identifier().equals(className));
   }
 
+  // Two ancestors: PackageDeclarationTree and TopLevelTree
+  private static boolean isInsidePackage(Deque<Tree> ancestors) {
+    return ancestors.size() == 2 && ancestors.getFirst() instanceof PackageDeclarationTree;
+  }
 }

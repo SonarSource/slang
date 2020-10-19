@@ -4,7 +4,7 @@ class MyClass {
   }
   private def used() = {}
 
-  private def usedByCompanionObject(): Unit = {}
+  private def usedByCompanionObject(): Unit = {} // ok, used in the companion object below
 
   def notPrivate() = {}
 
