@@ -1,7 +1,7 @@
 { 
   "treeMetaData": {
     "comments": [
-            {"text":"//Currently mapped to a native node", "contentText":"Currently mapped to a native node", "range":"21:18:21:53", "contentRange": "21:20:21:53"}
+            {"text":"// Expressions are wrapped in a native node, and this node is used as body of the return tree", "contentText":" Expressions are wrapped in a native node, and this node is used as body of the return tree", "range":"21:18:21:111", "contentRange": "21:20:21:111"}
     ],
     "tokens": [
       {"text":"package","textRange":"1:0:1:7","type":"KEYWORD"},
@@ -127,14 +127,14 @@
           {"@type": "VariableDeclaration", "metaData": "20:1:20:9","type":null,"isVal":false,"initializer":
             {"@type": "StringLiteral", "metaData": "20:6:20:9","value":"\"b\"","content":"b"},"identifier":
             {"@type": "Identifier", "metaData": "20:1:20:2","name":"b"}},
-          {"@type": "Native", "metaData": "21:1:21:17","nativeKind":"[1](ReturnStmt)","children":[
-            {"@type": "Native", "metaData": "21:1:21:7","nativeKind":"Return"},
-            {"@type": "Identifier", "metaData": "21:8:21:9","name":"b"},
-            {"@type": "Native", "metaData": "21:9:21:10","nativeKind":""},
-            {"@type": "IntegerLiteral", "metaData": "21:11:21:12","value":"2"},
-            {"@type": "Native", "metaData": "21:12:21:13","nativeKind":""},
-            {"@type": "StringLiteral", "metaData": "21:14:21:17","value":"\"c\"","content":"c"}
-          ]}
+          {"@type": "Return", "metaData": "21:1:21:17","keyword":"21:1:21:7","body":
+            {"@type": "Native", "metaData": "21:8:21:17","nativeKind":"ReturnExprList","children":[
+              {"@type": "Identifier", "metaData": "21:8:21:9","name":"b"},
+              {"@type": "Native", "metaData": "21:9:21:10","nativeKind":""},
+              {"@type": "IntegerLiteral", "metaData": "21:11:21:12","value":"2"},
+              {"@type": "Native", "metaData": "21:12:21:13","nativeKind":""},
+              {"@type": "StringLiteral", "metaData": "21:14:21:17","value":"\"c\"","content":"c"}
+            ]}}
         ]}}
     ]}
 } 

@@ -30,11 +30,14 @@ func (t *SlangMapper) mapReturnStmtImpl(stmt *ast.ReturnStmt, fieldName string) 
 		slangField["body"] = body
 		children = t.appendNode(children, body)
 	} else {
-		//Slang does not support multiple body, map the whole node to native
+		//Slang does not support return with multiple expressions, we wrap it in a native node
+		var returnBodyList []*Node
 		for i := 0; i < len(stmt.Results); i++ {
-			children = t.appendNode(children, t.mapExpr(stmt.Results[i], "["+strconv.Itoa(i)+"]"))
+			returnBodyList = t.appendNode(returnBodyList, t.mapExpr(stmt.Results[i], "["+strconv.Itoa(i)+"]"))
 		}
-		return t.createNativeNode(stmt, children, fieldName+"(ReturnStmt)")
+		returnExpressions := t.createNativeNodeWithChildren(returnBodyList, "ReturnExprList")
+		slangField["body"] = returnExpressions
+		children = t.appendNode(children, returnExpressions)
 	}
 
 	return t.createNode(stmt, children, fieldName+"(ReturnStmt)", "Return", slangField)

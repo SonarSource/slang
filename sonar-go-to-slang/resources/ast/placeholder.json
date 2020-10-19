@@ -164,12 +164,12 @@
         ]},"nativeChildren":[],"name":
         {"@type": "Identifier", "metaData": "17:6:17:9","name":"foo"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
         {"@type": "Block", "metaData": "17:26:19:2","statementOrExpressions":[
-          {"@type": "Native", "metaData": "18:5:18:20","nativeKind":"[0](ReturnStmt)","children":[
-            {"@type": "Native", "metaData": "18:5:18:11","nativeKind":"Return"},
-            {"@type": "IntegerLiteral", "metaData": "18:12:18:14","value":"42"},
-            {"@type": "Native", "metaData": "18:14:18:15","nativeKind":""},
-            {"@type": "StringLiteral", "metaData": "18:16:18:20","value":"\"42\"","content":"42"}
-          ]}
+          {"@type": "Return", "metaData": "18:5:18:20","keyword":"18:5:18:11","body":
+            {"@type": "Native", "metaData": "18:12:18:20","nativeKind":"ReturnExprList","children":[
+              {"@type": "IntegerLiteral", "metaData": "18:12:18:14","value":"42"},
+              {"@type": "Native", "metaData": "18:14:18:15","nativeKind":""},
+              {"@type": "StringLiteral", "metaData": "18:16:18:20","value":"\"42\"","content":"42"}
+            ]}}
         ]}}
     ]}
 } 

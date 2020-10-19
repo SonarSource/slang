@@ -13,6 +13,11 @@ func return_after_return() {
     return
 }
 
+func statement_after_multi_values_return() (int, string) {
+    return 42, "42" // Noncompliant
+    fmt.Print("Will not execute")
+}
+
 func label_after_return(x int) int {
     if (x > 10) {
         goto Foo

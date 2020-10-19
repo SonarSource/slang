@@ -18,5 +18,5 @@ func twoReturn() string {
 
 func multipleReturnValue() (string, int, string) {
 	b := "b"
-	return b, 2, "c" //Currently mapped to a native node
+	return b, 2, "c" // Expressions are wrapped in a native node, and this node is used as body of the return tree
 }
