@@ -27,10 +27,17 @@ import org.sonarsource.slang.checks.CodeAfterJumpCheck;
 @Rule(key = "S1763")
 public class CodeAfterJumpGoCheck extends CodeAfterJumpCheck {
   private static final String LABEL = "LabeledStmt";
+  private static final String SEMICOLON = "Semicolon";
 
   @Override
   protected boolean isValidAfterJump(Tree tree) {
     return tree instanceof NativeTree &&
            ((NativeTree) tree).nativeKind().toString().contains(LABEL);
+  }
+
+  @Override
+  protected boolean shouldIgnore(Tree tree) {
+    return tree instanceof NativeTree &&
+           ((NativeTree) tree).nativeKind().toString().equals(SEMICOLON);
   }
 }

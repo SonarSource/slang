@@ -185,7 +185,7 @@
               {"@type": "VariableDeclaration", "metaData": "20:4:20:11","type":null,"isVal":false,"initializer":
                 {"@type": "IntegerLiteral", "metaData": "20:9:20:11","value":"42"},"identifier":
                 {"@type": "Identifier", "metaData": "20:4:20:5","name":"x"}},
-              {"@type": "Native", "metaData": "20:11:20:12","nativeKind":""},
+              {"@type": "Native", "metaData": "20:11:20:12","nativeKind":"Semicolon"},
               {"@type": "BinaryExpression", "metaData": "20:13:20:26","rightOperand":
                 {"@type": "BinaryExpression", "metaData": "20:21:20:26","rightOperand":
                   {"@type": "IntegerLiteral", "metaData": "20:25:20:26","value":"0"},"operatorToken":"20:23:20:24","operator":"GREATER_THAN","leftOperand":

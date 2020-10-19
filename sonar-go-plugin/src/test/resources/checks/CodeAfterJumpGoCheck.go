@@ -49,3 +49,26 @@ Foo:
         fmt.Print("Will not execute")
     }
 }
+
+func return_simple(){
+  return // Compliant
+}
+
+func return_with_semicolon() int{
+  return 0; // Compliant
+}
+
+func return_with_semicolon_and_empty_statement() int{
+  return 0;; // Noncompliant
+}
+
+func return_followed_by_return() int{
+  return 0; // Noncompliant
+  return 0;
+}
+
+func return_semicolon_label() int{
+  return 0; // Compliant
+Foo:
+  return 1;
+}

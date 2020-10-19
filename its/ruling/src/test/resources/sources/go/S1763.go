@@ -41,3 +41,7 @@ func fn(x int) int {
 FOO:
 	return 21
 }
+
+func fn() int{
+  return 0; // Compliant
+}

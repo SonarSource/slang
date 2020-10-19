@@ -334,6 +334,9 @@ var missingTokens = map[byte]string{
 	',': ",", ';': ";", '.': ".", '[': "[", ']': "]", '=': "=", ':': ":",
 	't': "type", 'r': "range", 'e': "else", 'c': "chan", '<': "<-"}
 
+var missingTokenNativeNode = map[string]string{
+	";": "Semicolon"}
+
 var isMissingTokenKeyword = map[string]bool{
 	"else": true, "range": true, "type": true, "chan": true}
 
@@ -362,7 +365,8 @@ func (t *SlangMapper) appendMissingToken(children []*Node, offset, endOffset int
 				tokenType = keywordKind
 			}
 		}
-		missingToken := t.createToken(offset, offset+tokenLength, "", tokenType)
+		var nativeNode = missingTokenNativeNode[missingTokenValue]
+		missingToken := t.createToken(offset, offset+tokenLength, nativeNode, tokenType)
 		children = t.appendNodeCheckOrder(children, missingToken)
 		offset += tokenLength
 		for offset < endOffset && t.fileContent[offset] <= ' ' {

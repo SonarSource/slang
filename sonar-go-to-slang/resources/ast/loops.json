@@ -206,11 +206,11 @@
               {"@type": "VariableDeclaration", "metaData": "4:5:4:11","type":null,"isVal":false,"initializer":
                 {"@type": "IntegerLiteral", "metaData": "4:10:4:11","value":"0"},"identifier":
                 {"@type": "Identifier", "metaData": "4:5:4:6","name":"i"}},
-              {"@type": "Native", "metaData": "4:11:4:12","nativeKind":""},
+              {"@type": "Native", "metaData": "4:11:4:12","nativeKind":"Semicolon"},
               {"@type": "BinaryExpression", "metaData": "4:13:4:19","rightOperand":
                 {"@type": "IntegerLiteral", "metaData": "4:17:4:19","value":"10"},"operatorToken":"4:15:4:16","operator":"LESS_THAN","leftOperand":
                 {"@type": "Identifier", "metaData": "4:13:4:14","name":"i"}},
-              {"@type": "Native", "metaData": "4:19:4:20","nativeKind":""},
+              {"@type": "Native", "metaData": "4:19:4:20","nativeKind":"Semicolon"},
               {"@type": "UnaryExpression", "metaData": "4:21:4:24","operator":"INCREMENT","operand":
                 {"@type": "Identifier", "metaData": "4:21:4:22","name":"i"}}
             ]},"body":
@@ -310,11 +310,11 @@
                 {"@type": "VariableDeclaration", "metaData": "29:5:29:11","type":null,"isVal":false,"initializer":
                   {"@type": "IntegerLiteral", "metaData": "29:10:29:11","value":"1"},"identifier":
                   {"@type": "Identifier", "metaData": "29:5:29:6","name":"i"}},
-                {"@type": "Native", "metaData": "29:11:29:12","nativeKind":""},
+                {"@type": "Native", "metaData": "29:11:29:12","nativeKind":"Semicolon"},
                 {"@type": "BinaryExpression", "metaData": "29:13:29:20","rightOperand":
                   {"@type": "IntegerLiteral", "metaData": "29:17:29:20","value":"500"},"operatorToken":"29:15:29:16","operator":"LESS_THAN","leftOperand":
                   {"@type": "Identifier", "metaData": "29:13:29:14","name":"i"}},
-                {"@type": "Native", "metaData": "29:20:29:21","nativeKind":""},
+                {"@type": "Native", "metaData": "29:20:29:21","nativeKind":"Semicolon"},
                 {"@type": "UnaryExpression", "metaData": "29:22:29:25","operator":"INCREMENT","operand":
                   {"@type": "Identifier", "metaData": "29:22:29:23","name":"i"}}
               ]},"body":
@@ -378,7 +378,7 @@
                   {"@type": "StringLiteral", "metaData": "43:22:43:25","value":"\"a\"","content":"a"}
                 ]}
               ]},
-              {"@type": "Native", "metaData": "43:25:43:26","nativeKind":""},
+              {"@type": "Native", "metaData": "43:25:43:26","nativeKind":"Semicolon"},
               {"@type": "BinaryExpression", "metaData": "43:27:43:59","rightOperand":
                 {"@type": "BinaryExpression", "metaData": "43:47:43:59","rightOperand":
                   {"@type": "StringLiteral", "metaData": "43:52:43:59","value":"\"aaaaa\"","content":"aaaaa"},"operatorToken":"43:49:43:51","operator":"NOT_EQUAL_TO","leftOperand":
@@ -390,7 +390,7 @@
                   {"@type": "BinaryExpression", "metaData": "43:27:43:32","rightOperand":
                     {"@type": "IntegerLiteral", "metaData": "43:31:43:32","value":"3"},"operatorToken":"43:29:43:30","operator":"LESS_THAN","leftOperand":
                     {"@type": "Identifier", "metaData": "43:27:43:28","name":"i"}}}},
-              {"@type": "Native", "metaData": "43:59:43:60","nativeKind":""},
+              {"@type": "Native", "metaData": "43:59:43:60","nativeKind":"Semicolon"},
               {"@type": "AssignmentExpression", "metaData": "43:61:43:86","statementOrExpression":
                 {"@type": "Native", "metaData": "43:71:43:86","nativeKind":"Rhs([]Expr)","children":[
                   {"@type": "BinaryExpression", "metaData": "43:71:43:74","rightOperand":

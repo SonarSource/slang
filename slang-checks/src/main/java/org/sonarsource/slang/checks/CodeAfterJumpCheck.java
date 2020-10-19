@@ -20,6 +20,7 @@
 package org.sonarsource.slang.checks;
 
 import java.util.List;
+
 import org.sonar.check.Rule;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.HasKeyword;
@@ -45,15 +46,29 @@ public class CodeAfterJumpCheck implements SlangCheck {
     return false;
   }
 
+  protected boolean shouldIgnore(Tree tree) {
+    return false;
+  }
+
   private void checkStatements(CheckContext ctx, List<Tree> statementsOrExpressions) {
     if (statementsOrExpressions.size() < 2) {
       return;
     }
 
-    for (int index = 0; index < statementsOrExpressions.size() - 1; index++) {
+    int index = 0;
+    while (index < statementsOrExpressions.size() - 1){
       Tree current = statementsOrExpressions.get(index);
+      index++;
+
+      Tree next = statementsOrExpressions.get(index);
+      while (index < statementsOrExpressions.size() && shouldIgnore(next)){
+        next = statementsOrExpressions.get(index);
+        index++;
+      }
+
       if (isJump(current) &&
-          !isValidAfterJump(statementsOrExpressions.get(index + 1))) {
+         !shouldIgnore(next) &&
+         !isValidAfterJump(next)) {
         ctx.reportIssue(current, String.format(MESSAGE, ((HasKeyword) current).keyword().text()));
       }
     }
@@ -62,5 +77,4 @@ public class CodeAfterJumpCheck implements SlangCheck {
   private static boolean isJump(Tree tree){
     return tree instanceof JumpTree || tree instanceof ReturnTree || tree instanceof ThrowTree;
   }
-
 }

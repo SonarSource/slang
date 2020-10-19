@@ -7,6 +7,9 @@
 13,
 17,
 ],
+'go-project:ruling/src/test/resources/sources/go/S1763.go':[
+46,
+],
 'go-project:sources/go/kubernetes/plugin/pkg/admission/noderestriction/admission.go':[
 144,
 149,
