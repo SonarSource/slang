@@ -9,12 +9,12 @@ class MyClass {
       case None =>
         val a: Int = value + 1 // Noncompliant {{This branch's code block is the same as the block for the branch on line 7.}}
         a
-      case d: BigDecimal =>
-        val decimal = Decimal(d)
-        Literal(decimal, DecimalType.fromDecimal(decimal))
-      case d: JavaBigDecimal =>
-        val decimal = Decimal(d)
-        Literal(decimal, DecimalType.fromDecimal(decimal))
+      case d: String =>
+        val x = "" + d
+        1
+      case d: Boolean => // ok, we see a type pattern and ignore
+        val x = "" + d
+        1
       case _ =>
         val a: Int = value + 1 // Noncompliant {{This branch's code block is the same as the block for the branch on line 7.}}
         a
@@ -22,13 +22,13 @@ class MyClass {
 
     cond match {
       case None =>
-        val a: Int = value + 1
+        val a: String = "" + value + 1
         a
       case Some(3) =>
-        val a: Int = value + 1 // Noncompliant
+        val a: String = "" + value + 1 // Noncompliant
         a
       case Some(value) =>
-        val a: Int = value + 1 // Ok
+        val a: String = "" + value + 1 // Ok
         a
       case _ =>
         1
@@ -65,17 +65,86 @@ class MyClass {
     // S3923
     cond match {
       case None =>
-        val a: Int = value + 1
+        val a: String = "" + value + 1
         a
       case Some(3) =>
-        val a: Int = value + 1
+        val a: String = "" + value + 1
         a
       case Some(value) =>
-        val a: Int = value + 1
+        val a: String = "" + value + 1
         a
       case _ =>
-        val a: Int = value + 1
+        val a: String = "" + value + 1
         a
+    }
+  }
+
+  def firstCaseIsPatternMatch(cond: Any, value: Int) : String = {
+    cond match {
+      case value: Boolean =>
+        val a: String = "" + value + 1 // Ok
+        a
+      case None =>
+        val a: String = "" + value + 1 // this is the original block
+        a
+      case 3 =>
+        val a: String = "" + value + 1 // Noncompliant {{This branch's code block is the same as the block for the branch on line 88.}}
+        a
+      case _ =>
+        ""
+    }
+  }
+
+  def lastCaseIsPatternMatch(cond: Any, value: Int) : String = {
+    cond match {
+      case None =>
+        val a: String = "" + value + 1
+        a
+      case Some(3) =>
+        val a: String = "" + value + 1 // Noncompliant
+        a
+      case 2 => // this is just to not have all branches identical (S3923)
+        "3"
+      case Some(value) =>
+        val a: String = "" + value + 1 // Ok
+        a
+    }
+  }
+
+  // This FN has been introduced in SONARSLANG-351 - when seeing pattern matching in the case, we ignore it
+  def patternMatchNotShadowed(cond: Any) : String = {
+    cond match {
+      case Some(value) =>
+        val a: String = "" + value + 1
+        a
+      case value: Int =>
+        val a: String = "" + value + 1 // should be non compliant
+        a
+      case value: Float =>
+        val a: String = "" + value + 1 // should be non compliant
+        a
+      case _ =>
+        ""
+    }
+  }
+
+  // SONARSLANG-514 - FPs with complex pattern matching
+  def knownIssues(cond: Any, x : Int) : String = {
+    cond match {
+      case 4 =>
+        val a: String = "" + x + 1
+        a
+      case (Some(x: Int), y) => // FP, shadowing the variable
+        val a: String = "" + x + 1 // Noncompliant
+        a
+      case (1 | 2) :: x :: tail => // FP, shadowing the variable
+        val a: String = "" + x + 1 // Noncompliant
+        a
+      case x: Long if x == 0 => // FP, shadowing the variable
+        val a: String = "" + x + 1 // Noncompliant
+        a
+      case _ =>
+        "1"
     }
   }
 }

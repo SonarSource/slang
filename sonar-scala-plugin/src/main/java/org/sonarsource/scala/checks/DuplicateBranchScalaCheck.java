@@ -21,6 +21,7 @@ package org.sonarsource.scala.checks;
 
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Nullable;
 import org.sonar.check.Rule;
 import org.sonarsource.slang.api.MatchCaseTree;
 import org.sonarsource.slang.api.MatchTree;
@@ -34,16 +35,20 @@ import org.sonarsource.slang.utils.SyntacticEquivalence;
 @Rule(key = "S1871")
 public class DuplicateBranchScalaCheck extends DuplicateBranchCheck {
 
+  // We ignore the duplicated blocks that have some pattern matching in the "case" clause,
+  // to avoid FPs when the variable in the pattern shadows a variable from outside.
   @Override
-  protected void checkDuplicatedBranches(CheckContext ctx, Tree tree, List<Tree> branches) {
+  protected void checkDuplicatedBranches(CheckContext ctx, Tree matchTree, List<Tree> branches) {
     for (List<Tree> group : SyntacticEquivalence.findDuplicatedGroups(branches)) {
-      Tree originalBlock = group.get(0);
-      if (!hasPatternMatchCondition(tree, originalBlock)) {
-        group.stream().skip(1)
+
+      final Optional<TreeAndIndex> originalBlock = findFirstCaseTreeWithoutPattern(matchTree, group);
+      if (originalBlock.isPresent()) {
+        int shouldSkip = originalBlock.get().index + 1;
+        group.stream().skip(shouldSkip)
           .filter(DuplicateBranchCheck::spansMultipleLines)
-          .filter(block -> !hasPatternMatchCondition(tree, block))
+          .filter(block -> !hasPatternMatchCondition(matchTree, block))
           .forEach(duplicated -> {
-            TextRange originalRange = originalBlock.metaData().textRange();
+            TextRange originalRange = originalBlock.get().tree.metaData().textRange();
             ctx.reportIssue(
               duplicated,
               "This branch's code block is the same as the block for the branch on line " + originalRange.start().line() + ".",
@@ -53,9 +58,20 @@ public class DuplicateBranchScalaCheck extends DuplicateBranchCheck {
     }
   }
 
-  private static boolean hasPatternMatchCondition(Tree parent, Tree body) {
-    if (parent instanceof MatchTree) {
-      Optional<MatchCaseTree> matchCaseTree = getMatchCaseTree((MatchTree)parent, body);
+  // Returns the first case block (and its index) that doesn't have a pattern in its "case" clause.
+  private static Optional<TreeAndIndex> findFirstCaseTreeWithoutPattern(Tree matchTree, List<Tree> duplicatedCaseBlocks) {
+    for (int i = 0; i < duplicatedCaseBlocks.size(); i++) {
+      Tree caseBody = duplicatedCaseBlocks.get(i);
+      if (!hasPatternMatchCondition(matchTree, caseBody)) {
+        return Optional.of(new TreeAndIndex(caseBody, i));
+      }
+    }
+    return Optional.empty();
+  }
+
+  private static boolean hasPatternMatchCondition(Tree matchTree, Tree caseBody) {
+    if (matchTree instanceof MatchTree) {
+      Optional<MatchCaseTree> matchCaseTree = getMatchCaseTree((MatchTree)matchTree, caseBody);
       return matchCaseTree.isPresent() && PatternMatchHelper.hasPatternMatchedVariable(matchCaseTree.get());
     }
     return false;
@@ -63,5 +79,14 @@ public class DuplicateBranchScalaCheck extends DuplicateBranchCheck {
 
   private static Optional<MatchCaseTree> getMatchCaseTree(MatchTree parent, Tree caseBody) {
     return parent.cases().stream().filter(c -> c.body() == caseBody).findFirst();
+  }
+
+  private static class TreeAndIndex {
+    Tree tree;
+    int index;
+    TreeAndIndex(@Nullable Tree tree, int index) {
+      this.tree = tree;
+      this.index = index;
+    }
   }
 }
