@@ -21,9 +21,7 @@ package org.sonar.go.externalreport;
 
 import java.io.File;
 import java.util.function.Consumer;
-
 import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.go.plugin.GoLanguage;
 import org.sonarsource.slang.externalreport.CheckstyleFormatImporter;

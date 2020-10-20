@@ -74,7 +74,7 @@ public class GoPlugin implements Plugin {
         .description("List of file path patterns to be excluded from analysis of Go files.")
         .category(GO_CATEGORY)
         .subCategory(GENERAL_SUBCATEGORY)
-        .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
+        .onQualifiers(Qualifiers.PROJECT)
         .multiValues(true)
         .build(),
 

@@ -23,7 +23,6 @@ import java.io.File;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
 import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
