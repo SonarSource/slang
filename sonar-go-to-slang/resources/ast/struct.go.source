@@ -1,0 +1,7 @@
+package main
+
+type AccessRequest struct {
+ Id string "id"
+ Name string "name"
+ Status string "status"
+}

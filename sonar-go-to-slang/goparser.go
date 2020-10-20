@@ -62,6 +62,7 @@ const keywordKind = "KEYWORD"
 const nativeSlangType = "Native"
 const nativeKind = "nativeKind"
 const childrenField = "children"
+const basicLiteral = "(BasicLit)"
 
 var isSlangType = map[string]bool{
 	"OTHER": true, keywordKind: true, "STRING_LITERAL": true}
@@ -169,6 +170,14 @@ func (t *SlangMapper) mapPackageDecl(file *ast.File) *Node {
 	return t.createNode(file, children, "File.Package", "PackageDeclaration", slangField)
 }
 
+func (t *SlangMapper) mapBasicLitTag(astNode *ast.BasicLit, fieldName string) *Node {
+	if astNode == nil {
+		return nil
+	}
+	var tokenType = "OTHER"
+	return t.createExpectedToken(astNode.Pos(), astNode.Value, fieldName+basicLiteral, tokenType)
+}
+
 func (t *SlangMapper) mapBasicLit(astNode *ast.BasicLit, fieldName string) *Node {
 	if astNode == nil {
 		return nil
@@ -181,7 +190,7 @@ func (t *SlangMapper) mapBasicLit(astNode *ast.BasicLit, fieldName string) *Node
 	case token.STRING:
 		if strings.HasPrefix(astNode.Value, "`") {
 			// discard multi-line strings
-			return t.createExpectedToken(astNode.Pos(), astNode.Value, fieldName+"(BasicLit)", tokenType)
+			return t.createExpectedToken(astNode.Pos(), astNode.Value, fieldName+basicLiteral, tokenType)
 		}
 		slangType = "StringLiteral"
 		tokenType = "STRING_LITERAL"
@@ -194,7 +203,7 @@ func (t *SlangMapper) mapBasicLit(astNode *ast.BasicLit, fieldName string) *Node
 		return t.createExpectedNode(astNode.Pos(), astNode.Value, fieldName+"(IntLit)", tokenType, slangType, slangField)
 	default:
 		//Binary literal are expected in GO 1.13 (https://github.com/golang/go/issues/19308)
-		return t.createExpectedToken(astNode.Pos(), astNode.Value, fieldName+"(BasicLit)", tokenType)
+		return t.createExpectedToken(astNode.Pos(), astNode.Value, fieldName+basicLiteral, tokenType)
 	}
 }
 

@@ -342,7 +342,7 @@ func (t *SlangMapper) mapFieldParamImpl(field *ast.Field, fieldName string) *Nod
 	if nNames <= 0 {
 		return nil
 	}
-	//Go paramter can share the type with multiple identifier ex: f(a, b int)
+	//Go parameter can share the type with multiple identifier ex: f(a, b int)
 	//We will create a parameter node without type for the firsts and with type for the last
 	for i := 0; i < nNames-1; i++ {
 		paramterIdent := t.mapIdent(field.Names[i], fieldName+"["+strconv.Itoa(i)+"]")
@@ -354,7 +354,6 @@ func (t *SlangMapper) mapFieldParamImpl(field *ast.Field, fieldName string) *Nod
 
 	lastParameter := t.createParameter(field.Names[nNames-1], lastParameterIdent, lastParameterType, fieldName)
 	children = t.appendNode(children, lastParameter)
-	children = t.appendNode(children, t.mapBasicLit(field.Tag, "Tag"))
 
 	return t.createNativeNode(field, children, fieldName+"(Field)")
 }

@@ -121,7 +121,7 @@ import (
 		},
 		StructVariations: map[string][]string{
 			// By default one mapping function is generated for each ast.* struct, e.g. "mapFile" for "ast.File"
-			// But if the caller of the mapping function need a specific behavior (like specific: uast kinds,
+			// But if the caller of the mapping function needs a specific behavior (like specific: uast kinds,
 			// fields override, token value, ...) then several mapping functions can be generated using the
 			// given suffixes. For example providing the suffix "Result" for the type "Field" will generate
 			// the mapping function "mapFieldResult". And an alias of "Field" called "FieldResult" can be used
@@ -153,6 +153,9 @@ import (
 			"FuncDecl#Recv":            "Params",
 			"FieldListParams#List[i]":  "Param",
 			"FieldListResults#List[i]": "Result",
+			"Field#Tag":                "Tag",
+			"FieldResult#Tag":          "Tag",
+			"FieldParam#Tag":           "Tag",
 		},
 		MatchingTokenPos: map[string]string{
 			// Some ast.* struct fields with type "token.Pos" has no "token.Token" fields to specify their string

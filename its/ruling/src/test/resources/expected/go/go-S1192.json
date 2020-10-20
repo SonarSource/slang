@@ -1,4 +1,7 @@
 {
+'go-project:ruling/src/test/resources/sources/go/S1192.go':[
+15,
+],
 'go-project:sources/go/kubernetes/cmd/cloud-controller-manager/app/controllermanager.go':[
 66,
 ],
