@@ -18,20 +18,21 @@ key: go
 
 You can discover and update the Go-specific [properties](/analysis/analysis-parameters/) in: <!-- sonarcloud -->Project <!-- /sonarcloud -->**[Administration > General Settings > Go](/#sonarqube-admin#/admin/settings?category=go)**
 
+By default, all the `vendor` directories are excluded from the analysis. However, you can change the property `sonar.go.exclusions` to a different pattern if you want to force their analysis (not recommended).
+
 ## "sonar-project.properties" Sample
 
-Here is a good first version of a `sonar-project.properties`, correctly excluding "vendor" directories and categorizing files as "main" or "test":
+Here is a first version of a `sonar-project.properties` file, valid for a simple `Go` project:
 
 ```
   sonar.projectKey=com.company.projectkey1
   sonar.projectName=My Project Name
 
   sonar.sources=.
-  sonar.exclusions=**/*_test.go,**/vendor/**
+  sonar.exclusions=**/*_test.go
 
   sonar.tests=.
   sonar.test.inclusions=**/*_test.go
-  sonar.test.exclusions=**/vendor/**
 ```
 
 ## Related Pages
