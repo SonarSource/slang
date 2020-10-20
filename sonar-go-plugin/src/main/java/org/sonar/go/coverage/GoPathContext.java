@@ -20,6 +20,7 @@
 package org.sonar.go.coverage;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -33,9 +34,9 @@ import javax.annotation.Nullable;
 import org.sonar.api.batch.fs.FileSystem;
 
 public class GoPathContext {
-  private static final String LINUX_ABSOLUTE_PREFIX = "_/";
-  private static final String WINDOWS_ABSOLUTE_PREFIX = "_\\";
-  private static final Pattern WINDOWS_ABSOLUTE_REGEX = Pattern.compile("^_\\\\(\\w)_\\\\");
+  private static final String LINUX_ABSOLUTE_OLD_PREFIX = "_/";
+  private static final String WINDOWS_ABSOLUTE_OLD_PREFIX = "_\\";
+  private static final Pattern WINDOWS_ABSOLUTE_OLD_REGEX = Pattern.compile("^_\\\\(\\w)_\\\\");
   private static final int MAX_PATH_CACHE_SIZE = 100;
 
   public static final GoPathContext DEFAULT = new GoPathContext(File.separatorChar, File.pathSeparator, System.getenv("GOPATH"));
@@ -76,19 +77,35 @@ public class GoPathContext {
    * See {@link GoCoverSensor#findInputFile(String, FileSystem)}
    */
   public String resolve(String filePath) {
-    return resolvedPaths.computeIfAbsent(filePath, path -> {
-      if (path.startsWith(LINUX_ABSOLUTE_PREFIX)) {
-        return path.substring(1);
-      } else if (path.startsWith(WINDOWS_ABSOLUTE_PREFIX)) {
-        Matcher matcher = WINDOWS_ABSOLUTE_REGEX.matcher(path);
-        if (matcher.find()) {
-          matcher.reset();
-          return matcher.replaceFirst("$1:\\\\");
-        }
+    return resolvedPaths.computeIfAbsent(filePath, path ->
+      getAbsolutePathForOldGoVersions(path)
+        .orElseGet(() -> getAbsolutePath(path)
+        .orElseGet(() -> prefixByFirstValidGoPath(path)
+        .orElseGet(() -> prefixByFirstGoPath(path)))));
+  }
+
+  /**
+   * Old go versions, for projects outside GOPATH, prefix the absolute path with '_'.
+   * Newer versions (tested using 1.11.4 and later) do not use the prefix anymore.
+   * e.g.
+   * unix: "_/mnt/c/src..." vs "/mnt/c/src..."
+   * windows: "_\c_\src..." vs "c:\src..."
+   */
+  private static Optional<String> getAbsolutePathForOldGoVersions(String path){
+    if (path.startsWith(LINUX_ABSOLUTE_OLD_PREFIX)) {
+      return Optional.of(path.substring(1));
+    } else if (path.startsWith(WINDOWS_ABSOLUTE_OLD_PREFIX)) {
+      Matcher matcher = WINDOWS_ABSOLUTE_OLD_REGEX.matcher(path);
+      if (matcher.find()) {
+        matcher.reset();
+        return Optional.of(matcher.replaceFirst("$1:\\\\"));
       }
-      return prefixByFirstValidGoPath(path)
-        .orElseGet(() -> prefixByFirstGoPath(path));
-    });
+    }
+    return Optional.empty();
+  }
+
+  private static Optional<String> getAbsolutePath(String path) {
+    return Paths.get(path).isAbsolute() ? Optional.of(path) : Optional.empty();
   }
 
   private Optional<String> prefixByFirstValidGoPath(String filePath) {

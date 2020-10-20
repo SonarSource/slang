@@ -92,7 +92,7 @@ public class GoPathContextTest {
   }
 
   @Test
-  public void resolve_existing_file() throws IOException {
+  public void resolve_existing_file() {
     String goPath = tmpDirWithFile[0];
     GoPathContext context = new GoPathContext(File.separatorChar, File.pathSeparator, goPath);
     assertThat(context.resolve("file.go")).isEqualTo(existingFileAbsolutePath[0]);
@@ -101,7 +101,7 @@ public class GoPathContextTest {
   }
 
   @Test
-  public void resolve_existing_directory() throws IOException {
+  public void resolve_existing_directory() {
     String goPath = tmpDirWithFile[0];
     GoPathContext context = new GoPathContext(File.separatorChar, File.pathSeparator, goPath);
     String expected = tmpDirWithFile[0] + File.separatorChar + "src" + File.separatorChar + "my-package";
@@ -109,7 +109,7 @@ public class GoPathContextTest {
   }
 
   @Test
-  public void resolve_existing_file_multiple_go_path_entries() throws IOException {
+  public void resolve_existing_file_multiple_go_path_entries() {
     String goPath = tmpDirWithFile[0] + File.pathSeparator + tmpDirWithFile[1];
     GoPathContext context = new GoPathContext(File.separatorChar, File.pathSeparator, goPath);
     assertThat(context.resolve("file.go")).isEqualTo(existingFileAbsolutePath[0]);
@@ -118,21 +118,21 @@ public class GoPathContextTest {
   }
 
   @Test
-  public void resolve_existing_file_in_the_first_go_path_entry() throws IOException {
+  public void resolve_existing_file_in_the_first_go_path_entry() {
     String goPath = tmpDirWithFile[0] + File.pathSeparator + tmpDirWithoutFile + File.pathSeparator + invalidTmpDir;
     GoPathContext context = new GoPathContext(File.separatorChar, File.pathSeparator, goPath);
     assertThat(context.resolve("file.go")).isEqualTo(existingFileAbsolutePath[0]);
   }
 
   @Test
-  public void resolve_existing_file_in_the_last_go_path_entry() throws IOException {
+  public void resolve_existing_file_in_the_last_go_path_entry() {
     String goPath = invalidTmpDir + File.pathSeparator + tmpDirWithoutFile + File.pathSeparator + tmpDirWithFile[0];
     GoPathContext context = new GoPathContext(File.separatorChar, File.pathSeparator, goPath);
     assertThat(context.resolve("file.go")).isEqualTo(existingFileAbsolutePath[0]);
   }
 
   @Test
-  public void resolve_none_existing_file_with_multiple_go_path_entries() throws IOException {
+  public void resolve_none_existing_file_with_multiple_go_path_entries() {
     String goPath = tmpDirWithoutFile + File.pathSeparator + invalidTmpDir;
     GoPathContext context = new GoPathContext(File.separatorChar, File.pathSeparator, goPath);
     String expected = tmpDirWithoutFile + File.separatorChar + "src" + File.separatorChar + "file.go";
@@ -140,29 +140,37 @@ public class GoPathContextTest {
   }
 
   @Test
-  public void resolve_none_existing_file_with_empty_go_path() throws IOException {
+  public void resolve_none_existing_file_with_empty_go_path() {
     String goPath = File.pathSeparator + File.pathSeparator;
     GoPathContext context = new GoPathContext(File.separatorChar, File.pathSeparator, goPath);
     assertThat(context.resolve("file.go")).isEqualTo("file.go");
   }
 
   @Test
-  public void resolve_none_existing_file_with_null_go_path() throws IOException {
+  public void resolve_none_existing_file_with_null_go_path() {
     String goPath = null;
     GoPathContext context = new GoPathContext(File.separatorChar, File.pathSeparator, goPath);
     assertThat(context.resolve("file.go")).isEqualTo("file.go");
   }
 
   @Test
-  public void resolve_absolute_path_linux() throws IOException {
+  public void resolve_absolute_path_linux() {
     GoPathContext context = new GoPathContext('/', ":", "/home/paul/go");
     assertThat(context.resolve("_/my-app/my-app.go")).isEqualTo("/my-app/my-app.go");
   }
 
   @Test
-  public void resolve_absolute_path_windows() throws IOException {
+  public void resolve_absolute_path_windows() {
     GoPathContext context = new GoPathContext('\\', ";", "C:\\Users\\paul\\go");
     assertThat(context.resolve("_\\C_\\my-app\\my-app.go")).isEqualTo("C:\\my-app\\my-app.go");
   }
 
+  @Test
+  public void resolve_absolute_path() throws IOException {
+    File file = Files.createTempFile("temp_file", null).toFile();
+    file.deleteOnExit();
+
+    GoPathContext context = new GoPathContext(File.separatorChar, File.pathSeparator, "/home/paul/go");
+    assertThat(context.resolve(file.getAbsolutePath())).isEqualTo(file.getAbsolutePath());
+  }
 }
