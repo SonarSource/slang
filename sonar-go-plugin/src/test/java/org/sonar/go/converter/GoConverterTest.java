@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.sonarsource.slang.api.ClassDeclarationTree;
+import org.sonarsource.slang.api.IntegerLiteralTree;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.ReturnTree;
@@ -24,16 +26,45 @@ public class GoConverterTest {
 
   @Rule
   public ExpectedException exceptionRule = ExpectedException.none();
-
-
+  
   @Test
   public void test_parse_return() {
     GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
     Tree tree = converter.parse("package main\nfunc foo() {return 42}");
-    List<Tree> returnList = tree.descendants().filter(t -> t instanceof ReturnTree).collect(Collectors.toList());
+    List<ReturnTree> returnList = getReturnsList(tree);
+    assertThat(returnList).hasSize(1);
+
+    checkIntegerValue(returnList.get(0), "42");
+  }
+  
+  @Test
+  public void test_parse_binary_notation() {
+    GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
+    Tree tree = converter.parse("package main\nfunc foo() {return 0b_0010_1010}");
+    List<ReturnTree> returnList = getReturnsList(tree);
+    assertThat(returnList).hasSize(1);
+
+    checkIntegerValue(returnList.get(0), "_0010_1010");
+  }
+
+  @Test
+  public void test_parse_imaginary_literals() {
+    GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
+    Tree tree = converter.parse("package main\nfunc foo() {return 6.67428e-11i}");
+    List<ReturnTree> returnList = getReturnsList(tree);
     assertThat(returnList).hasSize(1);
   }
 
+  @Test
+  public void test_parse_embed_overlapping_interfaces() {
+    GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
+    Tree tree = converter.parse("package main\ntype A interface{\n     DoX() string\n}\ntype B interface{\n     DoX() \n}\ntype AB interface{\n    A\n    B\n}");
+    List<Tree> classList = tree.descendants()
+      .filter(t -> t instanceof ClassDeclarationTree)
+      .collect(Collectors.toList());
+    assertThat(classList).hasSize(3);
+  }
+  
   @Test
   public void test_parse_infinite_for() {
     GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
@@ -99,5 +130,17 @@ public class GoConverterTest {
     assertThat(getExecutableForCurrentOS("Linux")).isEqualTo("sonar-go-to-slang-linux-amd64");
     assertThat(getExecutableForCurrentOS("Windows 10")).isEqualTo("sonar-go-to-slang-windows-amd64.exe");
     assertThat(getExecutableForCurrentOS("Mac OS X")).isEqualTo("sonar-go-to-slang-darwin-amd64");
+  }
+
+  private List<ReturnTree> getReturnsList(Tree tree) {
+    return tree.descendants()
+      .filter(t -> t instanceof ReturnTree)
+      .map(ReturnTree.class::cast)
+      .collect(Collectors.toList());
+  }
+
+  private void checkIntegerValue(ReturnTree returnTree, String s) {
+    IntegerLiteralTree integerLiteralTree = (IntegerLiteralTree) returnTree.body();
+    assertThat(integerLiteralTree.getNumericPart()).isEqualTo(s);
   }
 }
