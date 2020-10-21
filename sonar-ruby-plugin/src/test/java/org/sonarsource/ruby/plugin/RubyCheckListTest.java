@@ -41,9 +41,11 @@ public class RubyCheckListTest {
     List<String> languageImplementation = PackageScanner.findSlangChecksInPackage(RUBY_CHECKS_PACKAGE);
 
     List<String> checkListNames = RubyCheckList.checks().stream().map(Class::getName).collect(Collectors.toList());
+    List<String> rubySpecificChecks = RubyCheckList.RUBY_SPECIFIC_CHECKS.stream().map(Class::getName).collect(Collectors.toList());
 
     for (String languageCheck : languageImplementation) {
       assertThat(checkListNames).contains(languageCheck);
+      assertThat(rubySpecificChecks).contains(languageCheck);
       assertThat(languageCheck).endsWith("RubyCheck");
     }
   }

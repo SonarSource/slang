@@ -19,9 +19,12 @@
  */
 package org.sonarsource.ruby.plugin;
 
+import java.util.Arrays;
 import java.util.List;
+import org.sonarsource.ruby.checks.UnusedLocalVariableRubyCheck;
 import org.sonarsource.slang.checks.BooleanLiteralCheck;
 import org.sonarsource.slang.checks.CheckList;
+import org.sonarsource.slang.checks.UnusedLocalVariableCheck;
 import org.sonarsource.slang.checks.UnusedPrivateMethodCheck;
 
 public final class RubyCheckList {
@@ -33,10 +36,18 @@ public final class RubyCheckList {
   static final Class[] RUBY_CHECK_BLACK_LIST = {
     BooleanLiteralCheck.class,
     UnusedPrivateMethodCheck.class,
+    // Language specific implementation is provided.
+    UnusedLocalVariableCheck.class
   };
 
+  static final List<Class<?>> RUBY_SPECIFIC_CHECKS = Arrays.asList(
+    UnusedLocalVariableRubyCheck.class
+  );
+
   public static List<Class<?>> checks() {
-    return CheckList.excludeChecks(RUBY_CHECK_BLACK_LIST);
+    List<Class<?>> list = CheckList.excludeChecks(RUBY_CHECK_BLACK_LIST);
+    list.addAll(RUBY_SPECIFIC_CHECKS);
+    return list;
   }
 
 }

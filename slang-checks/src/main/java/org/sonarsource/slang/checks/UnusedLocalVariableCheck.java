@@ -42,22 +42,26 @@ public class UnusedLocalVariableCheck implements SlangCheck {
         return;
       }
 
-      Set<IdentifierTree> variableIdentifiers =
-        functionDeclarationTree.descendants()
-          .filter(tree -> tree instanceof VariableDeclarationTree)
-          .map(VariableDeclarationTree.class::cast)
-          .map(VariableDeclarationTree::identifier)
-          .collect(Collectors.toSet());
-
-      Set<Tree> identifierTrees =
-        functionDeclarationTree.descendants()
-          .filter(tree -> !variableIdentifiers.contains(tree))
-          .collect(Collectors.toSet());
+      Set<IdentifierTree> variableIdentifiers = getVariableIdentifierTrees(functionDeclarationTree);
+      Set<Tree> identifierTrees = getIdentifierTrees(functionDeclarationTree, variableIdentifiers);
 
       variableIdentifiers.stream()
         .filter(var -> identifierTrees.stream().noneMatch(identifier -> SyntacticEquivalence.areEquivalent(var, identifier)))
         .forEach(identifier -> ctx.reportIssue(identifier, "Remove this unused \"" + identifier.name() + "\" local variable."));
-
     });
+  }
+
+  protected Set<IdentifierTree> getVariableIdentifierTrees(FunctionDeclarationTree functionDeclarationTree) {
+    return functionDeclarationTree.descendants()
+      .filter(tree -> tree instanceof VariableDeclarationTree)
+      .map(VariableDeclarationTree.class::cast)
+      .map(VariableDeclarationTree::identifier)
+      .collect(Collectors.toSet());
+  }
+
+  protected Set<Tree> getIdentifierTrees(FunctionDeclarationTree functionDeclarationTree, Set<IdentifierTree> variableIdentifiers) {
+    return functionDeclarationTree.descendants()
+      .filter(tree -> !variableIdentifiers.contains(tree))
+      .collect(Collectors.toSet());
   }
 }
