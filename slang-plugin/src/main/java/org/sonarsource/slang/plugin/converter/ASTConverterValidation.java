@@ -45,6 +45,7 @@ import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
+import org.sonarsource.slang.impl.PlaceHolderTreeImpl;
 import org.sonarsource.slang.impl.TextPointerImpl;
 
 public class ASTConverterValidation implements ASTConverter {
@@ -202,7 +203,7 @@ public class ASTConverterValidation implements ASTConverter {
   }
 
   private void assertUnexpectedTokenKind(Tree tree, Set<Token> tokens) {
-    if (tree instanceof NativeTreeImpl || tree instanceof LiteralTreeImpl) {
+    if (tree instanceof NativeTreeImpl || tree instanceof LiteralTreeImpl || tree instanceof PlaceHolderTreeImpl) {
       return;
     }
     List<Token> unexpectedTokens;

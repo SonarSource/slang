@@ -47,15 +47,21 @@ func (t *SlangMapper) mapIdentImpl(ident *ast.Ident, fieldName string) *Node {
 	slangField := make(map[string]interface{})
 	var slangType string
 
+	var children []*Node
 	switch ident.Name {
 	case "true", "false", "nil":
 		slangType = "Literal"
 		slangField["value"] = ident.Name
+	case "_":
+		slangType = "PlaceHolder"
+		placeHolderToken := t.createExpectedToken(ident.NamePos, "_", "PlaceHolder", "KEYWORD")
+		children = t.appendNode(children, placeHolderToken)
+		slangField["placeHolderToken"] = placeHolderToken.TextRange
 	default:
 		slangType = "Identifier"
 		slangField["name"] = ident.Name
 	}
-	var children []*Node
+
 	return t.createNode(ident, children, fieldName+"(Ident)", slangType, slangField)
 }
 
@@ -366,7 +372,7 @@ func (t *SlangMapper) createParameter(ident *ast.Ident, parameterIdent, typ *Nod
 	}
 	slangField[identifierField] = parameterIdent
 	slangField["type"] = typ
-	slangField[modifiersField] = nil //No paramter modifier in Go
+	slangField[modifiersField] = nil //No parameter modifier in Go
 	slangField["defaultValue"] = nil //No default value in Go
 	return t.createNode(ident, children, fieldName+"(Parameter)", "Parameter", slangField)
 }

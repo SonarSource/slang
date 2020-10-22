@@ -7,11 +7,11 @@ import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
 
-public class PlaceHolderTreeImpl extends BaseTreeImpl implements PlaceHolderTree {
+public class PlaceHolderTreeImpl extends IdentifierTreeImpl implements PlaceHolderTree {
   private final Token placeHolderToken;
 
   public PlaceHolderTreeImpl(TreeMetaData metaData, Token placeHolderToken) {
-    super(metaData);
+    super(metaData, "_");
     this.placeHolderToken = placeHolderToken;
   }
 

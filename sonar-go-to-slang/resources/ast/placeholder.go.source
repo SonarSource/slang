@@ -17,3 +17,7 @@ package ast
  func foo() (int, string) {
      return 42, "42"
  }
+
+ func _() {
+    // Empty
+ }

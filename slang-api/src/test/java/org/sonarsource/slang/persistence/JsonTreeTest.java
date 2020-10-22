@@ -628,7 +628,7 @@ public class JsonTreeTest extends JsonTestHelper {
     assertThat(tree.placeHolderToken().text()).isEqualTo("_");
 
     assertThat(methodNames(PlaceHolderTree.class))
-      .containsExactlyInAnyOrder(PLACE_HOLDER_TOKEN);
+      .containsExactlyInAnyOrder(PLACE_HOLDER_TOKEN, IDENTIFIER, NAME);
   }
 
   @Test

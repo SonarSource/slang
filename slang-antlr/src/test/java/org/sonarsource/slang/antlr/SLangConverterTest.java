@@ -827,6 +827,19 @@ public class SLangConverterTest {
   }
 
   @Test
+  public void placeholderAssignment() {
+    Tree placeholderAssignment = converter.parse("A._=\"xxx\";");
+    assertTree(placeholderAssignment.children().get(0)).isInstanceOf(AssignmentExpressionTree.class);
+    AssignmentExpressionTree assignment = (AssignmentExpressionTree) placeholderAssignment.children().get(0);
+
+    assertTree(assignment.leftHandSide()).isInstanceOf(MemberSelectTree.class);
+    MemberSelectTree lhs = (MemberSelectTree) assignment.leftHandSide();
+
+    assertTree(lhs.expression()).isInstanceOf(IdentifierTree.class);
+    assertTree(lhs.identifier()).isInstanceOf(PlaceHolderTree.class);
+  }
+
+  @Test
   public void parse_failure_1() {
     expected.expect(ParseException.class);
     expected.expectMessage("missing ';' before '<EOF>' at position 1:5");
