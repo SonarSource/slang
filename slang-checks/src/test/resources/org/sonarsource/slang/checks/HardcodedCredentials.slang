@@ -46,6 +46,9 @@ query = "password='" + password + "'";
 query = "password=%s";
 query = "password=%v";
 
+// String format is compliant
+query = "password={0}";
+
 // Support URI
 var uri = "http://user:azer:ty123@domain.com"; // Noncompliant
 var uri = "https://:azerty123@domain.com/path"; // Noncompliant {{Review this hard-coded URL, which may contain a credential.}}

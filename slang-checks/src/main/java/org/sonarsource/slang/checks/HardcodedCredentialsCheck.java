@@ -106,6 +106,7 @@ public class HardcodedCredentialsCheck implements SlangCheck {
     return followingString.startsWith("=?")
       || followingString.startsWith("=%")
       || followingString.startsWith("=:")
+      || followingString.startsWith("={") // string format
       || followingString.equals("='");
   }
 
