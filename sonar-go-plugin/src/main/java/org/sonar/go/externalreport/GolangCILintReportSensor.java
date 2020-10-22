@@ -21,8 +21,10 @@ package org.sonar.go.externalreport;
 
 import java.io.File;
 import java.util.function.Consumer;
+import javax.annotation.Nullable;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.notifications.AnalysisWarnings;
+import org.sonar.api.rules.RuleType;
 import org.sonar.go.plugin.GoLanguage;
 import org.sonarsource.slang.externalreport.CheckstyleFormatImporter;
 import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
@@ -40,6 +42,22 @@ public class GolangCILintReportSensor extends AbstractPropertyHandlerSensor {
 
   @Override
   public Consumer<File> reportConsumer(SensorContext context) {
-    return new CheckstyleFormatImporter(context, LINTER_KEY)::importFile;
+    return new GolangCILintCheckstyleFormatImporter(context, LINTER_KEY)::importFile;
+  }
+
+  static class GolangCILintCheckstyleFormatImporter extends CheckstyleFormatImporter {
+
+    public GolangCILintCheckstyleFormatImporter(SensorContext context, String linterKey) {
+      super(context, linterKey);
+    }
+
+    @Override
+    protected RuleType ruleType(String ruleKey, @Nullable String severity, String source) {
+      if ("gosec".equals(source)) {
+        return RuleType.VULNERABILITY;
+      }
+      return super.ruleType(ruleKey, severity, source);
+    }
+
   }
 }

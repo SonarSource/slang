@@ -44,7 +44,7 @@ public class CheckstyleFormatImporterWithRuleLoader extends CheckstyleFormatImpo
   }
 
   @Override
-  protected RuleType ruleType(String ruleKey, @Nullable String severity) {
+  protected RuleType ruleType(String ruleKey, @Nullable String severity, String source) {
     return externalRuleLoader.ruleType(ruleKey);
   }
 

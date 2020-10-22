@@ -66,7 +66,7 @@ public class GolangCILintReportSensorTest {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golangci-lint.reportPaths", REPORT_BASE_PATH.resolve("golandci-lint-report.xml").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(golangCILintReportSensor(), context);
-    assertThat(externalIssues).hasSize(1);
+    assertThat(externalIssues).hasSize(2);
 
     org.sonar.api.batch.sensor.issue.ExternalIssue first = externalIssues.get(0);
     assertThat(first.type()).isEqualTo(RuleType.BUG);
@@ -75,6 +75,15 @@ public class GolangCILintReportSensorTest {
     assertThat(first.ruleKey().rule()).isEqualTo("deadcode");
     assertThat(first.primaryLocation().message()).isEqualTo("`three` is unused");
     assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(3);
+
+    ExternalIssue second = externalIssues.get(1);
+    assertThat(second.type()).isEqualTo(RuleType.VULNERABILITY);
+    assertThat(second.severity()).isEqualTo(Severity.MAJOR);
+    assertThat(second.ruleKey().repository()).isEqualTo("external_golangci-lint");
+    assertThat(second.ruleKey().rule()).isEqualTo("gosec");
+    assertThat(second.primaryLocation().message()).isEqualTo("G402: TLS InsecureSkipVerify set true.");
+    assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("module:main.go");
+    assertThat(second.primaryLocation().textRange().start().line()).isEqualTo(4);
 
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
   }
