@@ -25,6 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -33,6 +35,7 @@ import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
+import org.sonar.api.config.Configuration;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.utils.log.ThreadLocalLogTester;
 
@@ -53,10 +56,17 @@ public class SimpleCovSensorTest {
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
+  private SimpleCovSensor sensor;
+
+  @Before
+  public void setup() {
+    sensor = new SimpleCovSensor(new RubyExclusionsFileFilter(new MapSettings().asConfig()));
+  }
+
   @Test
   public void test_relative_report_path() throws IOException {
     SensorContextTester context = getSensorContext("resultset.json", "file1.rb");
-    new SimpleCovSensor().execute(context);
+    sensor.execute(context);
 
     String fileKey = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(fileKey, 1)).isEqualTo(1);
@@ -76,7 +86,7 @@ public class SimpleCovSensorTest {
     // simulate default value being set
     context.settings().setProperty(RubyPlugin.REPORT_PATHS_KEY, RubyPlugin.REPORT_PATHS_DEFAULT_VALUE);
     context.fileSystem().add(createInputFile("coverage/.resultset.json", fileContent(COVERAGE_DIR, "resultset.json")));
-    new SimpleCovSensor().execute(context);
+    sensor.execute(context);
 
     String fileKey = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(fileKey, 1)).isEqualTo(1);
@@ -93,7 +103,7 @@ public class SimpleCovSensorTest {
     Path baseDir = COVERAGE_DIR.toAbsolutePath();
     Path reportPath = baseDir.resolve("resultset.json");
     SensorContextTester context = getSensorContext(reportPath.toString(), "file1.rb");
-    new SimpleCovSensor().execute(context);
+    sensor.execute(context);
 
     String fileKey = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(fileKey, 1)).isEqualTo(1);
@@ -105,7 +115,7 @@ public class SimpleCovSensorTest {
   @Test
   public void test_merged_resultset() throws IOException {
     SensorContextTester context = getSensorContext("merged_resultset.json", "file1.rb", "file2.rb");
-    new SimpleCovSensor().execute(context);
+    sensor.execute(context);
 
     String file1Key = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(file1Key, 1)).isZero();
@@ -125,7 +135,7 @@ public class SimpleCovSensorTest {
   @Test
   public void test_multi_resultsets() throws IOException {
     SensorContextTester context = getSensorContext("resultset_1.json, resultset_2.json", "file1.rb", "file2.rb");
-    new SimpleCovSensor().execute(context);
+    sensor.execute(context);
 
     String file1Key = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(file1Key, 1)).isZero();
@@ -145,7 +155,7 @@ public class SimpleCovSensorTest {
   @Test
   public void no_measure_on_files_not_in_context() throws IOException {
     SensorContextTester context = spy(getSensorContext("additional_file_resultset.json", "file2.rb"));
-    new SimpleCovSensor().execute(context);
+    sensor.execute(context);
 
     // assert that newCoverage method is called only once on file2
     verify(context, times(1)).newCoverage();
@@ -155,36 +165,51 @@ public class SimpleCovSensorTest {
   @Test
   public void log_when_wrong_line_numbers() throws IOException {
     SensorContextTester context = getSensorContext("wrong_lines_resultset.json", "file2.rb");
-    new SimpleCovSensor().execute(context);
+    sensor.execute(context);
 
     String expectedMessage = "Invalid coverage information on file: '/Absolute/Path/To/file2.rb'";
-    assertThat(logTester.logs().contains(expectedMessage)).isTrue();
+    assertThat(logTester.logs()).contains(expectedMessage);
   }
 
   @Test
   public void log_when_invalid_format() throws IOException {
     SensorContextTester context = getSensorContext("invalid_resultset.json", "file1.rb");
-    new SimpleCovSensor().execute(context);
+    sensor.execute(context);
 
     String expectedMessage = String.format(
       "Cannot read coverage report file, expecting standard SimpleCov resultset JSON format: 'invalid_resultset.json'");
-    assertThat(logTester.logs().contains(expectedMessage)).isTrue();
+    assertThat(logTester.logs()).contains(expectedMessage);
   }
 
   @Test
   public void log_when_invalid_report_path() throws IOException {
     SensorContextTester context = getSensorContext("noFile.json", "file1.rb");
-    new SimpleCovSensor().execute(context);
+    sensor.execute(context);
 
-    assertThat(logTester.logs().contains("SimpleCov report not found: 'noFile.json'")).isTrue();
+    assertThat(logTester.logs()).contains("SimpleCov report not found: 'noFile.json'");
+  }
+
+  @Test
+  public void log_when_can_not_find_file_path() throws IOException {
+    Configuration config = new MapSettings()
+      .setProperty(RubyPlugin.EXCLUSIONS_KEY, RubyPlugin.EXCLUSIONS_DEFAULT_VALUE)
+      .asConfig();
+    SensorContextTester context = getSensorContext("resultset_missing_and_vendor_files.json", "file1.rb");
+
+    sensor = new SimpleCovSensor(new RubyExclusionsFileFilter(config));
+    sensor.execute(context);
+
+    assertThat(logTester.logs())
+      .hasSize(1)
+      .contains("File '/Absolute/Path/To/missing_file.rb' is present in coverage report but cannot be found in filesystem");
   }
 
   @Test
   public void success_for_report_present() throws IOException {
     SensorContextTester context = getSensorContext("noFile2.json,resultset_2.json", "file1.rb", "file2.rb");
-    new SimpleCovSensor().execute(context);
+    sensor.execute(context);
 
-    assertThat(logTester.logs().contains("SimpleCov report not found: 'noFile2.json'")).isTrue();
+    assertThat(logTester.logs()).contains("SimpleCov report not found: 'noFile2.json'");
 
     assertThat(context.lineHits(MODULE_KEY + ":file1.rb", 9)).isEqualTo(1);
     assertThat(context.lineHits(MODULE_KEY + ":file2.rb", 1)).isEqualTo(3);
@@ -236,5 +261,4 @@ public class SimpleCovSensorTest {
     Path filePath = baseDir.resolve(fileName);
     return new String(Files.readAllBytes(filePath), UTF_8);
   }
-
 }

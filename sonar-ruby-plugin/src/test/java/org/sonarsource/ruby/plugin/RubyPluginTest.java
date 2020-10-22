@@ -37,7 +37,7 @@ public class RubyPluginTest {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 9), SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
     Plugin.Context context = new Plugin.Context(runtime);
     new RubyPlugin().define(context);
-    assertThat(context.getExtensions()).hasSize(10);
+    assertThat(context.getExtensions()).hasSize(12);
   }
 
   @Test
@@ -45,7 +45,7 @@ public class RubyPluginTest {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarLint(Version.create(3, 9));
     Plugin.Context context = new PluginContextImpl.Builder().setSonarRuntime(runtime).build();
     new RubyPlugin().define(context);
-    assertThat(context.getExtensions()).hasSize(4);
+    assertThat(context.getExtensions()).hasSize(5);
   }
 
 }

@@ -37,6 +37,9 @@ public class RubyPlugin implements Plugin {
   static final String REPORT_PATHS_DEFAULT_VALUE = "coverage/.resultset.json";
   static final String REPORT_PATHS_KEY = "sonar.ruby.coverage.reportPaths";
 
+  static final String EXCLUSIONS_KEY = "sonar.ruby.exclusions";
+  static final String EXCLUSIONS_DEFAULT_VALUE = "**/vendor/**";
+
   static final String RUBY_REPOSITORY_KEY = "ruby";
   static final String REPOSITORY_NAME = "SonarAnalyzer";
   static final String PROFILE_NAME = "Sonar way";
@@ -51,6 +54,7 @@ public class RubyPlugin implements Plugin {
     context.addExtensions(
       RubyLanguage.class,
       RubySensor.class,
+      RubyExclusionsFileFilter.class,
       RubyProfileDefinition.class,
       RubyRulesDefinition.class);
 
@@ -64,6 +68,16 @@ public class RubyPlugin implements Plugin {
           .defaultValue(RUBY_FILE_SUFFIXES_DEFAULT_VALUE)
           .name("File Suffixes")
           .description("List of suffixes for files to analyze.")
+          .subCategory(GENERAL)
+          .category(RUBY_CATEGORY)
+          .multiValues(true)
+          .onQualifiers(Qualifiers.PROJECT)
+          .build(),
+
+        PropertyDefinition.builder(EXCLUSIONS_KEY)
+          .defaultValue(EXCLUSIONS_DEFAULT_VALUE)
+          .name("Ruby Exclusions")
+          .description("List of file path patterns to be excluded from analysis of Ruby files.")
           .subCategory(GENERAL)
           .category(RUBY_CATEGORY)
           .multiValues(true)

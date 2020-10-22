@@ -47,7 +47,11 @@ import org.sonarsource.analyzer.commons.internal.json.simple.parser.JSONParser;
 public class SimpleCovSensor implements Sensor {
 
   private static final Logger LOG = Loggers.get(SimpleCovSensor.class);
+  private final RubyExclusionsFileFilter rubyExclusionsFileFilter;
 
+  public SimpleCovSensor(RubyExclusionsFileFilter rubyExclusionsFileFilter) {
+    this.rubyExclusionsFileFilter = rubyExclusionsFileFilter;
+  }
 
   @Override
   public void describe(SensorDescriptor descriptor) {
@@ -82,7 +86,7 @@ public class SimpleCovSensor implements Sensor {
     }
   }
 
-  private static void saveCoverage(SensorContext context, Map<String, Map<Integer, Integer>> mergedCoverages) {
+  private void saveCoverage(SensorContext context, Map<String, Map<Integer, Integer>> mergedCoverages) {
     FileSystem fileSystem = context.fileSystem();
     FilePredicates predicates = fileSystem.predicates();
 
@@ -95,7 +99,7 @@ public class SimpleCovSensor implements Sensor {
         } catch (IllegalStateException e) {
           LOG.error("Invalid coverage information on file: '{}'", filePath, e);
         }
-      } else {
+      } else if (rubyExclusionsFileFilter.isNotExcluded(filePath)){
         LOG.warn("File '{}' is present in coverage report but cannot be found in filesystem", filePath);
       }
     }
