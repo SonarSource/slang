@@ -236,10 +236,16 @@ public class GoCoverSensor implements Sensor {
       int startLine = findStartIgnoringBrace(coverage);
       int endLine = findEndIgnoringBrace(coverage, startLine);
       for (int line = startLine; line <= endLine; line++) {
-        lineMap
-          .computeIfAbsent(line, key -> new LineCoverage())
-          .add(coverage);
+        if (!isEmpty(line - 1)) {
+          lineMap.computeIfAbsent(line, key -> new LineCoverage())
+                 .add(coverage);
+        }
       }
+    }
+
+    private boolean isEmpty(int line) {
+      return lines != null &&
+             lines.get(line).trim().isEmpty();
     }
 
     int findStartIgnoringBrace(CoverageStat coverage) {

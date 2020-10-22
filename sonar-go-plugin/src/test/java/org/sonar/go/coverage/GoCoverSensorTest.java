@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -138,6 +139,15 @@ public class GoCoverSensorTest {
     assertThat(file.lineMap.get(6).hits).isZero();
     assertThat(file.lineMap.get(7).hits).isZero();
     assertThat(file.lineMap.get(8)).isNull();
+  }
+
+  @Test
+  public void file_coverage_empty_lines() throws Exception {
+    final String fileName = "cover_empty_lines.go";
+    List<CoverageStat> coverageStats = Collections.singletonList(new CoverageStat(2, fileName + ":3.28,9.2 2 1"));
+    FileCoverage file = new FileCoverage(coverageStats, Files.readAllLines(COVERAGE_DIR.resolve(fileName)));
+
+    assertThat(file.lineMap.keySet()).containsExactlyInAnyOrder(5, 7);
   }
 
   @Test
