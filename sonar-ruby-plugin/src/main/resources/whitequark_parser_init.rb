@@ -18,7 +18,7 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
-require 'parser/ruby25'
+require 'parser/ruby27'
 require 'java'
 
 # Custom builder in order to avoid throwing an error when literals contain an escape sequences incompatible with UTF-8
@@ -43,7 +43,7 @@ end
 # However, the 'tokenize' method takes directly a Buffer object as parameter. Here, we map the string content to the Buffer object the
 # same way it is done in the 'Parser::Base.parse' and 'Parser::Base.setup_source_buffer' methods.
 def parse_with_tokens(content, filename)
-  parser = Parser::Ruby25.new(Builder.new)
+  parser = Parser::Ruby27.new(Builder.new)
   parser.diagnostics.all_errors_are_fatal = true
   parser.diagnostics.ignore_warnings = true
 

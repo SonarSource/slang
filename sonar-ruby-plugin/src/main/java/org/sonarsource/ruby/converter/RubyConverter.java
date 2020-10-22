@@ -59,10 +59,10 @@ import static java.util.Collections.singletonList;
 public class RubyConverter implements ASTConverter {
 
   private static final Logger LOG = Loggers.get(RubyConverter.class);
-  private static final String SETUP_SCRIPT_PATH = "/whitequark_parser_init.rb";
-  private static final String RACC_RUBYGEM_PATH = "/racc-1.4.13-java/lib";
-  private static final String AST_RUBYGEM_PATH = "/ast-2.4.0/lib";
-  private static final String PARSER_RUBYGEM_PATH = "/parser-2.5.1.2/lib";
+  private static final String SETUP_SCRIPT_PATH = "whitequark_parser_init.rb";
+  private static final String RACC_RUBYGEM_PATH = "racc-1.5.0-java/lib";
+  private static final String AST_RUBYGEM_PATH = "ast-2.4.1/lib";
+  private static final String PARSER_RUBYGEM_PATH = "parser-2.7.2.0/lib";
   private static final String COMMENT_TOKEN_TYPE = "tCOMMENT";
   static final String FILENAME = "(Analysis of Ruby)";
 
@@ -117,7 +117,7 @@ public class RubyConverter implements ASTConverter {
 
   Tree parseContent(String content) {
     Object[] parameters = {content, FILENAME};
-    List rubyParseResult = (List) invokeMethod(runtime.getObject(), "parse_with_tokens", parameters);
+    List<Object> rubyParseResult = (List<Object>) invokeMethod(runtime.getObject(), "parse_with_tokens", parameters);
     if (rubyParseResult == null) {
       throw new ParseException("Unable to parse file content");
     }
@@ -174,10 +174,10 @@ public class RubyConverter implements ASTConverter {
   }
 
   private Ruby initializeRubyRuntime() throws IOException {
-    URL raccRubygem = RubyConverter.class.getResource(RACC_RUBYGEM_PATH);
-    URL astRubygem = RubyConverter.class.getResource(AST_RUBYGEM_PATH);
-    URL parserRubygem = RubyConverter.class.getResource(PARSER_RUBYGEM_PATH);
-    URL initParserScriptUrl = RubyConverter.class.getResource(SETUP_SCRIPT_PATH);
+    URL raccRubygem = RubyConverter.class.getResource(fromRoot(RACC_RUBYGEM_PATH));
+    URL astRubygem = RubyConverter.class.getResource(fromRoot(AST_RUBYGEM_PATH));
+    URL parserRubygem = RubyConverter.class.getResource(fromRoot(PARSER_RUBYGEM_PATH));
+    URL initParserScriptUrl = RubyConverter.class.getResource(fromRoot(SETUP_SCRIPT_PATH));
 
     Ruby rubyRuntime = JavaEmbedUtils.initialize(Arrays.asList(raccRubygem.toString(), astRubygem.toString(), parserRubygem.toString()));
     System.setProperty("jruby.thread.pool.enabled", "true");
@@ -195,6 +195,10 @@ public class RubyConverter implements ASTConverter {
       }
     }
     return out.toByteArray();
+  }
+  
+  private static String fromRoot(String path) {
+    return "/" + path;
   }
 
 }

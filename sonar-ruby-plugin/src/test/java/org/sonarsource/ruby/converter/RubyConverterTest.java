@@ -236,6 +236,56 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
     assertThat(tokens).extracting(Token::text).containsExactly("if", "a", "==", "1", "a", "=", "ABC", "end");
     assertThat(tokens).extracting(Token::type).containsExactly(KEYWORD, OTHER, OTHER, OTHER, OTHER, OTHER, STRING_LITERAL, KEYWORD);
   }
+  
+  // Since 2.6 version
+  @Test
+  public void yieldSelf() {
+    Tree tree = converter.parse("class MyClass\n" +
+      "  def some_method\n" +
+      "    @path.yield_self(&File.method(:read)).yield_self(&Parser.method(:new)) ...\n" +
+      "  end\n" +
+      "end");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(30);
+  }
+
+  // Since 2.6 version
+  @Test
+  public void endless() {
+    Tree tree = converter.parse("(1..).each {|index| }");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(11);
+    assertThat(tokens).extracting(Token::text).containsExactly("(", "1", "..", ")", ".", "each", "{", "|", "index", "|", "}");
+  }
+
+  // Since 2.6 version
+  @Test
+  public void composition() {
+    Tree tree = converter.parse("f = proc{|x| x + 2}\n" +
+      "g = proc{|x| x * 3}\n" +
+      "(f << g).call(3)\n" +
+      "(f >> g).call(3)");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(42);
+  }
+
+  // Since 2.7 version
+  @Test
+  public void beginless() {
+    Tree tree = converter.parse("ary[..3]\n" +
+      "rel.where(sales: ..100)\n");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(13);
+    assertThat(tokens).extracting(Token::text).containsExactly("ary", "[", "..", "3", "]", "rel", ".", "where", "(", "sales", "..", "100", ")");
+  }
 
   private void assertComment(String input, String entireComment, String content, TextRange entireRange, TextRange contentRange) {
     TopLevelTree tree = (TopLevelTree) converter.parse(input);

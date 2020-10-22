@@ -114,8 +114,7 @@ public class ArgVisitorTest extends AbstractRubyConverterTest {
     Tree tree = rubyStatement("[].each do |(regex, sub)| url = url.sub(regex, sub) end");
     Tree args = tree.children().get(1);
     Tree procarg = args.children().get(0);
-    // it seems that regex node is not processed correctly, see issue opened on parser side https://github.com/whitequark/parser/issues/527
-    assertTree(procarg.children().get(0)).isEquivalentTo(nativeTree("(arg :regex)", "(", "regex", ",", "sub", ")"));
+    assertTree(procarg.children().get(0)).isEquivalentTo(parameter("regex"));
     assertTree(procarg.children().get(1)).isEquivalentTo(parameter("sub"));
 
     tree = rubyStatement("[].each do |regex, sub| url = url.sub(regex, sub) end");

@@ -7,9 +7,9 @@ import com.github.jrubygradle.JRubyPrepare
 
 ext {
     jrubyVersion = '9.2.0.0'
-    rubygemsRaccVersion = '1.4.13'
-    rubygemsAstVersion = '2.4.0'
-    rubygemsParserVersion = '2.5.1.2'
+    rubygemsRaccVersion = '1.5.0'
+    rubygemsAstVersion = '2.4.1'
+    rubygemsParserVersion = '2.7.2.0'
 }
 
 processResources.from("src/main/resources", "${buildDir}/dependency_gems/gems")
@@ -79,13 +79,13 @@ shadowJar {
     // https://imperceptiblethoughts.com/shadow/configuration/dependencies/#embedding-jar-files-inside-your-shadow-jar
     // the workaround used here, is to put jar in jar
     from file("${buildDir}/tmp/shadowBugWorkaround.jar")
-    exclude 'ast-2.4.0/a*'
-    exclude 'ast-2.4.0/C*'
-    exclude 'ast-2.4.0/G*'
-    exclude 'ast-2.4.0/L*'
-    exclude 'ast-2.4.0/R*'
-    exclude 'ast-2.4.0/test/**'
-    exclude 'ast-2.4.0/.*'
+    exclude "ast-${rubygemsAstVersion}/a*"
+    exclude "ast-${rubygemsAstVersion}/C*"
+    exclude "ast-${rubygemsAstVersion}/G*"
+    exclude "ast-${rubygemsAstVersion}/L*"
+    exclude "ast-${rubygemsAstVersion}/R*"
+    exclude "ast-${rubygemsAstVersion}/test/**"
+    exclude "ast-${rubygemsAstVersion}/.*"
     exclude 'com/headius/options/example/**'
     exclude 'com/headius/racc/**' // also exclude extracted content of racc-1.4.13-java/lib/racc/cparse-jruby.jar
     exclude 'com/jcraft/**'
@@ -162,42 +162,42 @@ shadowJar {
     exclude 'org/jruby/org/objectweb/asm/tree/analysis/**'
     exclude 'org/jruby/runtime/callback/**'
     exclude 'org/jruby/runtime/component/**'
-    exclude 'parser-2.5.1.2/bin/**'
-    exclude 'parser-2.5.1.2/C*'
-    exclude 'parser-2.5.1.2/doc/**'
-    exclude 'parser-2.5.1.2/G*'
-    exclude 'parser-2.5.1.2/lib/parser/lexer.rl'
-    exclude 'parser-2.5.1.2/lib/parser/ma*'
-    exclude 'parser-2.5.1.2/lib/parser/ruby1*'
-    exclude 'parser-2.5.1.2/lib/parser/ruby20*'
-    exclude 'parser-2.5.1.2/lib/parser/ruby21*'
-    exclude 'parser-2.5.1.2/lib/parser/ruby22*'
-    exclude 'parser-2.5.1.2/lib/parser/ruby23*'
-    exclude 'parser-2.5.1.2/lib/parser/ruby24*'
-    exclude 'parser-2.5.1.2/lib/parser/ruby25.y'
-    exclude 'parser-2.5.1.2/lib/parser/ruby26*'
-    exclude 'parser-2.5.1.2/lib/parser/rubym*'
-    exclude 'parser-2.5.1.2/lib/parser/runner/**'
-    exclude 'parser-2.5.1.2/L*'
-    exclude 'parser-2.5.1.2/p*'
-    exclude 'parser-2.5.1.2/R*'
-    exclude 'parser-2.5.1.2/test/**'
-    exclude 'parser-2.5.1.2/.*'
-    exclude 'racc-1.4.13-java/bin/**'
-    exclude 'racc-1.4.13-java/C*'
-    exclude 'racc-1.4.13-java/D*'
-    exclude 'racc-1.4.13-java/ext/**'
-    exclude 'racc-1.4.13-java/fastcache/**'
-    exclude 'racc-1.4.13-java/.*'
-    exclude 'racc-1.4.13-java/M*'
-    exclude 'racc-1.4.13-java/misc/**'
-    exclude 'racc-1.4.13-java/R*'
-    exclude 'racc-1.4.13-java/rdoc/**'
-    exclude 'racc-1.4.13-java/sample/**'
-    exclude 'racc-1.4.13-java/s*'
-    exclude 'racc-1.4.13-java/tasks/**'
-    exclude 'racc-1.4.13-java/test/**'
-    exclude 'racc-1.4.13-java/web/**'
+    exclude "parser-${rubygemsParserVersion}/bin/**"
+    exclude "parser-${rubygemsParserVersion}/C*"
+    exclude "parser-${rubygemsParserVersion}/doc/**"
+    exclude "parser-${rubygemsParserVersion}/G*"
+    exclude "parser-${rubygemsParserVersion}/lib/parser/lexer.rl"
+    exclude "parser-${rubygemsParserVersion}/lib/parser/mac*"
+    exclude "parser-${rubygemsParserVersion}/lib/parser/ruby1*"
+    exclude "parser-${rubygemsParserVersion}/lib/parser/ruby20*"
+    exclude "parser-${rubygemsParserVersion}/lib/parser/ruby21*"
+    exclude "parser-${rubygemsParserVersion}/lib/parser/ruby22*"
+    exclude "parser-${rubygemsParserVersion}/lib/parser/ruby23*"
+    exclude "parser-${rubygemsParserVersion}/lib/parser/ruby24*"
+    exclude "parser-${rubygemsParserVersion}/lib/parser/ruby25.y"
+    exclude "parser-${rubygemsParserVersion}/lib/parser/ruby26*"
+    exclude "parser-${rubygemsParserVersion}/lib/parser/rubym*"
+    exclude "parser-${rubygemsParserVersion}/lib/parser/runner/**"
+    exclude "parser-${rubygemsParserVersion}/L*"
+    exclude "parser-${rubygemsParserVersion}/p*"
+    exclude "parser-${rubygemsParserVersion}/R*"
+    exclude "parser-${rubygemsParserVersion}/test/**"
+    exclude "parser-${rubygemsParserVersion}/.*"
+    exclude "racc-${rubygemsAstVersion}-java/bin/**"
+    exclude "racc-${rubygemsAstVersion}-java/C*"
+    exclude "racc-${rubygemsAstVersion}-java/D*"
+    exclude "racc-${rubygemsAstVersion}-java/ext/**"
+    exclude "racc-${rubygemsAstVersion}-java/fastcache/**"
+    exclude "racc-${rubygemsAstVersion}-java/.*"
+    exclude "racc-${rubygemsAstVersion}-java/M*"
+    exclude "racc-${rubygemsAstVersion}-java/misc/**"
+    exclude "racc-${rubygemsAstVersion}-java/R*"
+    exclude "racc-${rubygemsAstVersion}-java/rdoc/**"
+    exclude "racc-${rubygemsAstVersion}-java/sample/**"
+    exclude "racc-${rubygemsAstVersion}-java/s*"
+    exclude "racc-${rubygemsAstVersion}-java/tasks/**"
+    exclude "racc-${rubygemsAstVersion}-java/test/**"
+    exclude "racc-${rubygemsAstVersion}-java/web/**"
     exclude 'tables/Ca*'
     exclude 'tables/Transcoder_B*'
     exclude 'tables/Transcoder_C*'
@@ -211,7 +211,7 @@ shadowJar {
     exclude 'tables/Transcoder_Utf8*'
     exclude 'Test.class'
     doLast {
-        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 9_500_000L, 10_500_000L)
+        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 10_000_000L, 11_000_000L)
     }
 }
 
