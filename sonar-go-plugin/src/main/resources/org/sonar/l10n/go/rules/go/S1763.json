@@ -1,5 +1,5 @@
 {
-  "title": "Jump statements should not be followed by dead code",
+  "title": "All code should be reachable",
   "type": "BUG",
   "status": "ready",
   "remediation": {
