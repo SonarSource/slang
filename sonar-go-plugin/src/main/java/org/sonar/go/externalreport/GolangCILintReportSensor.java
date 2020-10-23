@@ -21,8 +21,10 @@ package org.sonar.go.externalreport;
 
 import java.io.File;
 import java.util.function.Consumer;
+import javax.annotation.Nullable;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.notifications.AnalysisWarnings;
+import org.sonar.api.rules.RuleType;
 import org.sonar.go.plugin.GoLanguage;
 import org.sonarsource.slang.externalreport.CheckstyleFormatImporter;
 import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
@@ -40,6 +42,32 @@ public class GolangCILintReportSensor extends AbstractPropertyHandlerSensor {
 
   @Override
   public Consumer<File> reportConsumer(SensorContext context) {
-    return new CheckstyleFormatImporter(context, LINTER_KEY)::importFile;
+    return new GolangCILintCheckstyleFormatImporter(context, LINTER_KEY)::importFile;
+  }
+
+  private static class GolangCILintCheckstyleFormatImporter extends CheckstyleFormatImporter {
+
+    public GolangCILintCheckstyleFormatImporter(SensorContext context, String linterKey) {
+      super(context, linterKey);
+    }
+
+    /**
+     * Current strategy to define rule type for Golangci-lint:
+     * <ul>
+     * <li> (null, null, "gosec") -> VULNERABILITY
+     * <li> (null, "error", null) -> BUG
+     * <li> (null, not "error", null) -> CODE_SMELL
+     * </ul>
+     *
+     * <a href="https://github.com/securego/gosec">Gosec</a> is the only linter importing VULNERABILITY issues for now.
+     */
+    @Override
+    protected RuleType ruleType(String ruleKey, @Nullable String severity, String source) {
+      if ("gosec".equals(source)) {
+        return RuleType.VULNERABILITY;
+      }
+      return super.ruleType(ruleKey, severity, source);
+    }
+
   }
 }

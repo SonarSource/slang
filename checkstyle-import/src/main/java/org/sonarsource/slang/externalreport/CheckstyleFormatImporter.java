@@ -137,14 +137,14 @@ public class CheckstyleFormatImporter {
     }
     RuleKey ruleKey = createRuleKey(source);
     if (ruleKey != null) {
-      saveIssue(ruleKey, line, severity, message);
+      saveIssue(ruleKey, line, severity, source, message);
     }
   }
 
-  private void saveIssue(RuleKey ruleRepoAndKey, String line, String severity, String message) {
+  private void saveIssue(RuleKey ruleRepoAndKey, String line, String severity, String source, String message) {
     String ruleKey = ruleRepoAndKey.rule();
     NewExternalIssue newExternalIssue = context.newExternalIssue()
-      .type(ruleType(ruleKey, severity))
+      .type(ruleType(ruleKey, severity, source))
       .severity(severity(ruleKey, severity))
       .remediationEffortMinutes(effort(ruleKey));
 
@@ -168,14 +168,35 @@ public class CheckstyleFormatImporter {
     return RuleKey.of(linterKey, source);
   }
 
-  protected RuleType ruleType(String ruleKey, @Nullable String severity) {
+  /**
+   * Return a RuleType equivalent based on the different parameters.
+   *
+   * @param ruleKey rule key of the current issue.
+   * @param severity "severity" attribute's value of the report. Ex: "info", "error".
+   * @param source "source" attribute's value of the report. Ex: "gosec", "detekt.MagicNumber".
+   * @return the RuleType defined by the given parameters.
+   */
+  protected RuleType ruleType(String ruleKey, @Nullable String severity, String source) {
     return "error".equals(severity) ? RuleType.BUG : RuleType.CODE_SMELL;
   }
 
+  /**
+   * Return a Severity equivalent based on the different parameters.
+   *
+   * @param ruleKey rule key of the current issue.
+   * @param severity "severity" attribute's value of the report. Ex: "info", "error".
+   * @return the Severity defined by the given parameters.
+   */
   protected Severity severity(String ruleKey, @Nullable String severity) {
     return "info".equals(severity) ? Severity.MINOR : Severity.MAJOR;
   }
 
+  /**
+   * Return an Effort value based on the ruleKey.
+   *
+   * @param ruleKey rule key of the current issue.
+   * @return the Effort defined by the given ruleKey.
+   */
   protected Long effort(String ruleKey) {
     return DEFAULT_CONSTANT_DEBT_MINUTES;
   }
