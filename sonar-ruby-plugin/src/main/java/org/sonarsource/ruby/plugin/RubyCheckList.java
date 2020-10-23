@@ -21,9 +21,11 @@ package org.sonarsource.ruby.plugin;
 
 import java.util.Arrays;
 import java.util.List;
+import org.sonarsource.ruby.checks.UnusedFunctionParameterRubyCheck;
 import org.sonarsource.ruby.checks.UnusedLocalVariableRubyCheck;
 import org.sonarsource.slang.checks.BooleanLiteralCheck;
 import org.sonarsource.slang.checks.CheckList;
+import org.sonarsource.slang.checks.UnusedFunctionParameterCheck;
 import org.sonarsource.slang.checks.UnusedLocalVariableCheck;
 import org.sonarsource.slang.checks.UnusedPrivateMethodCheck;
 
@@ -37,10 +39,12 @@ public final class RubyCheckList {
     BooleanLiteralCheck.class,
     UnusedPrivateMethodCheck.class,
     // Language specific implementation is provided.
+    UnusedFunctionParameterCheck.class,
     UnusedLocalVariableCheck.class
   };
 
   static final List<Class<?>> RUBY_SPECIFIC_CHECKS = Arrays.asList(
+    UnusedFunctionParameterRubyCheck.class,
     UnusedLocalVariableRubyCheck.class
   );
 

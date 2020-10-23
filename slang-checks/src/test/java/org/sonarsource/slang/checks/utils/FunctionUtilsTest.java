@@ -21,7 +21,10 @@ package org.sonarsource.slang.checks.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.junit.Test;
+import org.sonarsource.slang.api.ASTConverter;
+import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.FunctionInvocationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.NativeKind;
@@ -31,6 +34,7 @@ import org.sonarsource.slang.impl.FunctionInvocationTreeImpl;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 import org.sonarsource.slang.impl.MemberSelectTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
+import org.sonarsource.slang.parser.SLangConverter;
 
 import static org.sonarsource.slang.checks.utils.FunctionUtils.hasFunctionCallFullNameIgnoreCase;
 import static org.sonarsource.slang.checks.utils.FunctionUtils.hasFunctionCallNameIgnoreCase;
@@ -42,6 +46,8 @@ public class FunctionUtilsTest {
   private static TreeMetaData meta = null;
   private static IdentifierTree identifierTree = new IdentifierTreeImpl(meta, "function");
   private static List<Tree> args = new ArrayList<>();
+
+  private static final ASTConverter CONVERTER = new SLangConverter();
 
   @Test
   public void test_has_function_name_identifier() {
@@ -100,5 +106,19 @@ public class FunctionUtilsTest {
     Tree nativeNode = new NativeTreeImpl(meta, new TypeNativeKind(), null);
     FunctionInvocationTree tree = new FunctionInvocationTreeImpl(meta, nativeNode, args);
     assertThat(hasFunctionCallFullNameIgnoreCase(tree, "function")).isFalse();
+  }
+
+  @Test
+  public void test_get_strings_tokens_returns_tokens() {
+    String code = "void fun fooBar() {\n" +
+      "    val a = \"one,two,three\"; \n"+
+      "    foo(\"one,two$four\"); \n"+
+      "}";
+
+    FunctionDeclarationTree root = (FunctionDeclarationTree)CONVERTER.parse(code, null).children().get(0);
+
+    Set<String> tokens = FunctionUtils.getStringsTokens(root, ",|\\$");
+
+    assertThat(tokens).containsExactlyInAnyOrder("one", "two", "three", "four");
   }
 }

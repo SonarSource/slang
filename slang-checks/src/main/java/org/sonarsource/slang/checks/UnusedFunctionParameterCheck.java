@@ -40,7 +40,7 @@ import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 public class UnusedFunctionParameterCheck implements SlangCheck {
 
   // Currently we ignore all functions named "main", however this should be configurable based on the analyzed language in the future.
-  private static final Pattern IGNORED_PATTERN = Pattern.compile("main", Pattern.CASE_INSENSITIVE);
+  protected static final Pattern IGNORED_PATTERN = Pattern.compile("main", Pattern.CASE_INSENSITIVE);
 
   @Override
   public void initialize(InitContext init) {
@@ -49,40 +49,50 @@ public class UnusedFunctionParameterCheck implements SlangCheck {
         return;
       }
 
-      List<ParameterTree> unusedParameters =
-          functionDeclarationTree.formalParameters().stream()
-            .filter(ParameterTree.class::isInstance)
-            .map(ParameterTree.class::cast)
-              .filter(parameterTree -> parameterTree.modifiers().isEmpty() && functionDeclarationTree.descendants()
-              .noneMatch(tree -> !tree.equals(parameterTree.identifier()) && areEquivalent(tree, parameterTree.identifier())))
-            .collect(Collectors.toList());
+      List<ParameterTree> unusedParameters = getUnusedParameters(functionDeclarationTree);
 
       if (unusedParameters.isEmpty()) {
         return;
       }
 
-      List<SecondaryLocation> secondaryLocations = unusedParameters.stream()
-          .map(unusedParameter ->
-              new SecondaryLocation(unusedParameter.identifier(), "Remove this unused method parameter " + unusedParameter.identifier().name() + "\"."))
-          .collect(Collectors.toList());
-
-      IdentifierTree firstUnused = unusedParameters.get(0).identifier();
-      String msg;
-
-      if (unusedParameters.size() > 1) {
-        msg = "Remove these unused function parameters.";
-      } else {
-        msg = "Remove this unused function parameter \"" + firstUnused.name() + "\".";
-      }
-
-      ctx.reportIssue(firstUnused, msg, secondaryLocations);
+      reportUnusedParameters(ctx, unusedParameters);
     });
-
   }
 
-  private static boolean shouldBeIgnored(CheckContext ctx, FunctionDeclarationTree tree) {
+  protected static List<ParameterTree> getUnusedParameters(FunctionDeclarationTree functionDeclarationTree) {
+    return functionDeclarationTree.formalParameters().stream()
+      .filter(ParameterTree.class::isInstance)
+      .map(ParameterTree.class::cast)
+        .filter(parameterTree -> parameterTree.modifiers().isEmpty() && functionDeclarationTree.descendants()
+        .noneMatch(tree -> !tree.equals(parameterTree.identifier()) && areEquivalent(tree, parameterTree.identifier())))
+      .collect(Collectors.toList());
+  }
+
+  protected void reportUnusedParameters(CheckContext ctx, List<ParameterTree> unusedParameters) {
+    List<SecondaryLocation> secondaryLocations = unusedParameters.stream()
+        .map(unusedParameter ->
+            new SecondaryLocation(unusedParameter.identifier(), "Remove this unused method parameter " + unusedParameter.identifier().name() + "\"."))
+        .collect(Collectors.toList());
+
+    IdentifierTree firstUnused = unusedParameters.get(0).identifier();
+    String msg;
+
+    if (unusedParameters.size() > 1) {
+      msg = "Remove these unused function parameters.";
+    } else {
+      msg = "Remove this unused function parameter \"" + firstUnused.name() + "\".";
+    }
+
+    ctx.reportIssue(firstUnused, msg, secondaryLocations);
+  }
+
+  protected boolean isValidFunctionForRule(CheckContext ctx, FunctionDeclarationTree tree) {
+    return ctx.parent() instanceof TopLevelTreeImpl || (isPrivateMethod(tree) && !isOverrideMethod(tree));
+  }
+
+  protected boolean shouldBeIgnored(CheckContext ctx, FunctionDeclarationTree tree) {
     IdentifierTree name = tree.name();
-    boolean validFunctionForRule = ctx.parent() instanceof TopLevelTreeImpl || (isPrivateMethod(tree) && !isOverrideMethod(tree));
+    boolean validFunctionForRule = isValidFunctionForRule(ctx, tree);
     return !validFunctionForRule
       || tree.body() == null
       || (name != null && IGNORED_PATTERN.matcher(name.name()).matches());

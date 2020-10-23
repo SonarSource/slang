@@ -19,24 +19,12 @@
  */
 package org.sonarsource.ruby.checks;
 
-import org.junit.Test;
-import org.sonarsource.slang.checks.UnusedFunctionParameterCheck;
-
-public class UnusedFunctionParameterCheckTest {
-
-  @Test
-  public void test(){
-    RubyVerifier.verify("UnusedFunctionParameter.rb", new UnusedFunctionParameterRubyCheck());
+public class Constants {
+  private Constants() {
+    // static usage
   }
 
-  @Test
-  public void test_single_function(){
-    RubyVerifier.verify("UnusedFunctionParameter.SingleFunction.rb", new UnusedFunctionParameterRubyCheck());
-  }
+  // Delimiters for string interpolation and query language prefix.
+  static final String SPECIAL_STRING_DELIMITERS = "\\s|#\\{|}|:";
 
-  @Test
-  public void test_single_class(){
-    // SONARSLANG-520 access modifiers are not supported (we cannot see a method is private)
-    RubyVerifier.verifyNoIssue("UnusedFunctionParameter.SingleClass.rb", new UnusedFunctionParameterRubyCheck());
-  }
 }

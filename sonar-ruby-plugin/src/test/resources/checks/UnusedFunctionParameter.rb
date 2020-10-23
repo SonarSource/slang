@@ -6,7 +6,7 @@ def is_not_used( a ) # FN, string interpolation needs double quotes
   puts 'Hello, #{a}'
 end
 
-def is_not_used( a ) # FN
+def is_not_used( a ) # Noncompliant
   puts "Hello"
 end
 
@@ -28,5 +28,10 @@ class Foo
 
     def is_not_used(a) # FN
       puts "Hello, World!"
+    end
+end
+
+def nested_inside(not_used) # Noncompliant
+    def nested_function(not_used_inside) # FN
     end
 end

@@ -19,14 +19,17 @@
  */
 package org.sonarsource.slang.checks.utils;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.FunctionInvocationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.MemberSelectTree;
 import org.sonarsource.slang.api.ModifierTree;
+import org.sonarsource.slang.api.StringLiteralTree;
 import org.sonarsource.slang.api.Tree;
 
 import static org.sonarsource.slang.api.ModifierTree.Kind.OVERRIDE;
@@ -56,6 +59,16 @@ public class FunctionUtils {
 
   public static boolean hasFunctionCallNameIgnoreCase(FunctionInvocationTree tree, String name) {
     return getFunctionInvocationName(tree).filter(name::equalsIgnoreCase).isPresent();
+  }
+
+  public static Set<String> getStringsTokens(FunctionDeclarationTree functionDeclarationTree, String delimitersRegex) {
+    Set<String> stringLiteralTokens = new HashSet<>();
+    functionDeclarationTree.descendants()
+      .filter(StringLiteralTree.class::isInstance)
+      .map(StringLiteralTree.class::cast)
+      .map(StringLiteralTree::content)
+      .forEach(literal -> stringLiteralTokens.addAll(Arrays.asList(literal.split(delimitersRegex))));
+    return stringLiteralTokens;
   }
 
   private static Optional<String> getFunctionInvocationName(FunctionInvocationTree tree) {

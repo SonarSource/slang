@@ -21,44 +21,47 @@ package org.sonarsource.ruby.checks;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
-import org.sonarsource.slang.api.IdentifierTree;
-import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.checks.UnusedLocalVariableCheck;
+import org.sonarsource.slang.api.ParameterTree;
+import org.sonarsource.slang.checks.UnusedFunctionParameterCheck;
+import org.sonarsource.slang.checks.api.CheckContext;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.utils.FunctionUtils;
-import org.sonarsource.slang.utils.SyntacticEquivalence;
+import org.sonarsource.slang.impl.BlockTreeImpl;
+import org.sonarsource.slang.impl.TopLevelTreeImpl;
 
-public class UnusedLocalVariableRubyCheck extends UnusedLocalVariableCheck {
+public class UnusedFunctionParameterRubyCheck extends UnusedFunctionParameterCheck {
 
   @Override
   public void initialize(InitContext init) {
     init.register(FunctionDeclarationTree.class, (ctx, functionDeclarationTree) -> {
-
-      if (ctx.ancestors().stream().anyMatch(tree -> tree instanceof FunctionDeclarationTree)) {
+      if (functionDeclarationTree.isConstructor() || shouldBeIgnored(ctx, functionDeclarationTree)) {
         return;
       }
 
-      Set<IdentifierTree> variableIdentifiers = getVariableIdentifierTrees(functionDeclarationTree);
-      Set<Tree> identifierTrees = getIdentifierTrees(functionDeclarationTree, variableIdentifiers);
+      List<ParameterTree> unusedParameters = getUnusedParameters(functionDeclarationTree);
 
-      List<IdentifierTree> unusedVariables = variableIdentifiers.stream()
-        .filter(var -> identifierTrees.stream().noneMatch(identifier -> SyntacticEquivalence.areEquivalent(var, identifier)))
-        .collect(Collectors.toList());
-
-      if (unusedVariables.isEmpty()) {
+      if (unusedParameters.isEmpty()) {
         return;
       }
 
-      // the unused variables may actually be used inside interpolated strings, eval or prepared statements
+      // the unused parameters may actually be used inside interpolated strings, eval or prepared statements
       Set<String> stringLiteralTokens = FunctionUtils.getStringsTokens(functionDeclarationTree, Constants.SPECIAL_STRING_DELIMITERS);
-      unusedVariables.stream()
-        .filter(var -> !stringLiteralTokens.contains(var.name()))
-        .forEach(identifier -> ctx.reportIssue(identifier, "Remove this unused \"" + identifier.name() + "\" local variable."));
+      unusedParameters.stream()
+        .filter(var -> !stringLiteralTokens.contains(var.identifier().name()))
+        .forEach(identifier -> reportUnusedParameters(ctx, unusedParameters));
     });
   }
 
+  @Override
+  protected boolean isValidFunctionForRule(CheckContext ctx, FunctionDeclarationTree tree) {
+    return parentIsBlockUnderTopLevel(ctx) || super.isValidFunctionForRule(ctx, tree);
+  }
 
+  private static boolean parentIsBlockUnderTopLevel(CheckContext ctx) {
+    return ctx.parent() instanceof BlockTreeImpl &&
+      ctx.ancestors().size() == 2 &&
+      ctx.ancestors().getLast() instanceof TopLevelTreeImpl;
+  }
 
 }
