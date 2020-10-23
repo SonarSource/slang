@@ -190,11 +190,9 @@ public class GoTestSensor implements Sensor {
 
     Path path = Paths.get(packagePath);
     if (path.getNameCount() == 1) {
-      if (path.getName(0).toString().equals(fileSystem.baseDir().getName())) {
-        return fileSystem.baseDir().toString();
-      } else {
-        return null;
-      }
+      // It either means that the package last element was the baseDir, or that the test is in the root dir of a go project
+      // with module (the "Package" will be the name of the module, we should ignore it).
+      return fileSystem.baseDir().toString();
     } else {
       Path subpath = path.subpath(1, path.getNameCount());
       return findPackageDirectory(subpath.toString(), fileSystem);

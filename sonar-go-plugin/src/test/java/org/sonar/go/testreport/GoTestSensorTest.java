@@ -149,11 +149,14 @@ public class GoTestSensorTest {
     assertThat(context.measure(fooTestFile.key(), CoreMetrics.TEST_ERRORS)).isNull();
     assertThat(context.measure(fooTestFile.key(), CoreMetrics.TEST_EXECUTION_TIME).value()).isEqualTo(4);
 
-    assertThat(context.measure(barTestFile.key(), CoreMetrics.TESTS).value()).isEqualTo(1);
-    assertThat(context.measure(barTestFile.key(), CoreMetrics.SKIPPED_TESTS).value()).isEqualTo(1);
+    // TestBar is present two times, once with a correct package path, and once with an incorrect one.
+    // We can not differentiate the second invalid path from a module name (see go_module_report_test),
+    // so we consider it as valid. It is really unlikely to happen in a real situation.
+    assertThat(context.measure(barTestFile.key(), CoreMetrics.TESTS).value()).isEqualTo(2);
+    assertThat(context.measure(barTestFile.key(), CoreMetrics.SKIPPED_TESTS).value()).isEqualTo(2);
     assertThat(context.measure(barTestFile.key(), CoreMetrics.TEST_FAILURES).value()).isZero();
     assertThat(context.measure(barTestFile.key(), CoreMetrics.TEST_ERRORS)).isNull();
-    assertThat(context.measure(barTestFile.key(), CoreMetrics.TEST_EXECUTION_TIME).value()).isEqualTo(7);
+    assertThat(context.measure(barTestFile.key(), CoreMetrics.TEST_EXECUTION_TIME).value()).isEqualTo(7 + 7);
     assertThat(String.join("\n", logTester.logs(LoggerLevel.ERROR)))
       .contains("Test report can't be loaded, file not found");
   }
@@ -182,6 +185,30 @@ public class GoTestSensorTest {
 
     MapSettings settings = new MapSettings();
     String absoluteReportPath = baseDir.resolve("subtest_report.json").toString();
+    settings.setProperty(GoTestSensor.REPORT_PATH_KEY, absoluteReportPath);
+    context.setSettings(settings);
+
+    goTestSensor.execute(context);
+
+    assertThat(context.measure(mulTestFile.key(), CoreMetrics.TESTS).value()).isEqualTo(4);
+  }
+
+  @Test
+  public void go_module_report_test() throws Exception {
+    GoTestSensor goTestSensor = new GoTestSensor();
+    goTestSensor.goPathContext = new GoPathContext(File.separatorChar, File.pathSeparator, goPath.toString());
+
+    Path baseDir = goPath.resolve("src").resolve(packagePath);
+
+    SensorContextTester context = SensorContextTester.create(baseDir);
+    DefaultFileSystem fs = context.fileSystem();
+    DefaultInputFile mulTestFile = getTestInputFile(fs, new String(Files.readAllBytes(baseDir.resolve("mul_test.go"))), "mul_test.go");
+
+    MapSettings settings = new MapSettings();
+    // Reports created from Go projects with modules contains the module name instead of the package path in the "Package". Ex:
+    // "my/module/subpackage" is in fact referring to the subpackage folder.
+    // "my/module" is referring to the root.
+    String absoluteReportPath = baseDir.resolve("module_report.json").toString();
     settings.setProperty(GoTestSensor.REPORT_PATH_KEY, absoluteReportPath);
     context.setSettings(settings);
 

@@ -1,0 +1,19 @@
+{"Time":"2019-05-28T16:23:38.1469798+02:00","Action":"run","Package":"my/module","Test":"TestMultiply"}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"output","Package":"my/module","Test":"TestMultiply","Output":"=== RUN   TestMultiply\n"}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"run","Package":"my/module","Test":"TestMultiply/negative_multiplication"}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"output","Package":"my/module","Test":"TestMultiply/negative_multiplication","Output":"=== RUN   TestMultiply/negative_multiplication\n"}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"run","Package":"my/module","Test":"TestMultiply/x_less_than_y"}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"output","Package":"my/module","Test":"TestMultiply/x_less_than_y","Output":"=== RUN   TestMultiply/x_less_than_y\n"}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"run","Package":"my/module","Test":"TestMultiply/y_less_than_x"}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"output","Package":"my/module","Test":"TestMultiply/y_less_than_x","Output":"=== RUN   TestMultiply/y_less_than_x\n"}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"output","Package":"my/module","Test":"TestMultiply","Output":"--- PASS: TestMultiply (0.00s)\n"}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"output","Package":"my/module","Test":"TestMultiply/negative_multiplication","Output":"    --- PASS: TestMultiply/negative_multiplication (0.00s)\n"}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"pass","Package":"my/module","Test":"TestMultiply/negative_multiplication","Elapsed":0}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"output","Package":"my/module","Test":"TestMultiply/x_less_than_y","Output":"    --- PASS: TestMultiply/x_less_than_y (0.00s)\n"}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"pass","Package":"my/module","Test":"TestMultiply/x_less_than_y","Elapsed":0}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"output","Package":"my/module","Test":"TestMultiply/y_less_than_x","Output":"    --- PASS: TestMultiply/y_less_than_x (0.00s)\n"}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"pass","Package":"my/module","Test":"TestMultiply/y_less_than_x","Elapsed":0}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"pass","Package":"my/module","Test":"TestMultiply","Elapsed":0}
+{"Time":"2019-05-28T16:23:38.1479765+02:00","Action":"output","Package":"my/module","Output":"PASS\n"}
+{"Time":"2019-05-28T16:23:38.1590056+02:00","Action":"output","Package":"my/module","Output":"ok  \tgithub.com/myOrg/myProject\t0.321s\n"}
+{"Time":"2019-05-28T16:23:38.1590056+02:00","Action":"pass","Package":"my/module","Elapsed":0.322}
