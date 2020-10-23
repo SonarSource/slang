@@ -24,4 +24,22 @@ object Main {
     print(p1)
     print(p2)
   }
+
+  private def foo(name: String,
+                  value: Integer,
+                  person: String,
+                  height: Double,
+                  notUsed: String) = {
+    println(s"Hello, $name")
+
+    println(s"1 + 1 = ${value + 1}")
+
+    println(f"$person%s is $height%2.2f meters tall")
+  }
+
+  private def bar(name: String,
+                  notUsed1: Integer,
+                  notUsed2: String) {
+    println(s"Hello, $name")
+  }
 }
