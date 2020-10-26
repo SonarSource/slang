@@ -63,30 +63,33 @@ class ScalaConverter extends ASTConverter {
 
     scala.meta.internal.tokenizers.PlatformTokenizerCache.megaCache.clear()
 
-    val metaTree: scala.meta.Tree = code.parse[Source] match {
-      case Success(tree) => tree
-      case Error(pos, _, _) =>
-        dialects.Sbt1(code).parse[Source] match {
-          case Success(t) => t
-          case Error(_, _, _) =>
-            throw new slang.api.ParseException("Unable to parse file content.", textRange(pos).start())
-        }
+    try {
+      val metaTree: scala.meta.Tree = code.parse[Source] match {
+        case Success(tree) => tree
+        case Error(pos, _, _) =>
+          dialects.Sbt1(code).parse[Source] match {
+            case Success(t) => t
+            case Error(_, _, _) =>
+              throw new slang.api.ParseException("Unable to parse file content.", textRange(pos).start())
+          }
+      }
+      val allTokens = metaTree.tokens
+        .filter(t => t.isNot[Comment])
+        .filter(t => t.pos.start < t.pos.end && t.isNot[Space] && t.isNot[Tab] && t.isNot[CR] && t.isNot[LF])
+        .map(t => new TokenImpl(textRange(t.pos), t.text, tokenType(t)))
+        .asInstanceOf[IndexedSeq[Token]]
+        .asJava
+
+      val allComments = metaTree.tokens
+        .filter(t => t.is[Comment])
+        .map(t => createComment(t))
+        .asJava
+
+      val metaDataProvider = new TreeMetaDataProvider(allComments, allTokens, collectAnnotations(metaTree).asJava)
+      new TreeConversion(metaDataProvider).convert(metaTree)
+    } catch {
+      case e: org.scalameta.UnreachableError => throw new slang.api.ParseException("Unable to parse file content.", null, e)
     }
-
-    val allTokens = metaTree.tokens
-      .filter(t => t.isNot[Comment])
-      .filter(t => t.pos.start < t.pos.end && t.isNot[Space] && t.isNot[Tab] && t.isNot[CR] && t.isNot[LF])
-      .map(t => new TokenImpl(textRange(t.pos), t.text, tokenType(t)))
-      .asInstanceOf[IndexedSeq[Token]]
-      .asJava
-
-    val allComments = metaTree.tokens
-      .filter(t => t.is[Comment])
-      .map(t => createComment(t))
-      .asJava
-
-    val metaDataProvider = new TreeMetaDataProvider(allComments, allTokens, collectAnnotations(metaTree).asJava)
-    new TreeConversion(metaDataProvider).convert(metaTree)
   }
 
   override def parse(code: String): slang.api.Tree = {

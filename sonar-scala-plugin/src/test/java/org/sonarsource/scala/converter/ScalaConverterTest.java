@@ -22,6 +22,7 @@ package org.sonarsource.scala.converter;
 import java.util.List;
 import org.junit.Test;
 import org.sonarsource.slang.api.Comment;
+import org.sonarsource.slang.api.ExceptionHandlingTree;
 import org.sonarsource.slang.api.ImportDeclarationTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.MatchCaseTree;
@@ -43,13 +44,24 @@ import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 public class ScalaConverterTest extends AbstractScalaConverterTest {
 
   @Test
-  public void parser_error() {
+  public void parser_return_error() {
     assertThatThrownBy(() -> parse("object Main {..."))
       .isInstanceOf(ParseException.class)
       .hasMessage("Unable to parse file content.")
       .matches(e -> {
         TextPointer position = ((ParseException) e).getPosition();
         return position.line() == 1 && position.lineOffset() == 13;
+      });
+  }
+
+  @Test
+  public void parser_throw_error() {
+    assertThatThrownBy(() -> parse("trait HasSelf { (this: Forbidden) => }"))
+      .isInstanceOf(ParseException.class)
+      .hasMessage("Unable to parse file content.")
+      .matches(e -> {
+        TextPointer position = ((ParseException) e).getPosition();
+        return position == null && e.getCause() instanceof org.scalameta.UnreachableError;
       });
   }
 
