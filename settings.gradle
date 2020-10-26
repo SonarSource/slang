@@ -22,6 +22,7 @@ include 'sonar-go-plugin'
 include 'checkstyle-import'
 include 'its:plugin'
 include 'its:ruling'
+include 'jruby-repackaged'
 
 // "extraSettings.gradle" should not be renamed "settings.gradle" to not create a wrong project rootDir
 File extraSettings = new File(rootDir, 'private/extraSettings.gradle')
