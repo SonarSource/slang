@@ -6,7 +6,7 @@ plugins {
 import com.github.jrubygradle.JRubyPrepare
 
 ext {
-    jrubyVersion = '9.2.0.0'
+    jrubyVersion = '9.2.13.0'
     rubygemsRaccVersion = '1.5.0'
     rubygemsAstVersion = '2.4.1'
     rubygemsParserVersion = '2.7.2.0'
@@ -20,7 +20,7 @@ dependencies {
     compile project(':slang-plugin')
     compile project(':slang-checks')
     compile project(':slang-api')
-    compile "org.jruby:jruby-core:${jrubyVersion}"
+    compile "org.jruby:jruby-complete:${jrubyVersion}"
     gems "rubygems:racc:${rubygemsRaccVersion}"
     gems "rubygems:ast:${rubygemsAstVersion}"
     gems "rubygems:parser:${rubygemsParserVersion}"
@@ -73,7 +73,6 @@ jar {
         )
     }
 }
-
 shadowJar {
     // shadowJar can not embed jar files, it always extract them.
     // https://imperceptiblethoughts.com/shadow/configuration/dependencies/#embedding-jar-files-inside-your-shadow-jar
@@ -110,7 +109,6 @@ shadowJar {
     exclude 'jnr/ffi/M*'
     exclude 'jnr/ffi/N*'
     exclude 'jnr/ffi/O*'
-    exclude 'jnr/ffi/Pl*'
     exclude 'jnr/ffi/provider/**'
     exclude 'jnr/ffi/R*'
     exclude 'jnr/ffi/Struct$*'
@@ -210,8 +208,46 @@ shadowJar {
     exclude 'tables/Transcoder_S*'
     exclude 'tables/Transcoder_Utf8*'
     exclude 'Test.class'
+    exclude 'META-INF/jruby.home/bin/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/org/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/rdoc/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/openssl*'
+    exclude 'META-INF/jruby.home/lib/ruby/gems/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/jopenssl*'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/rubygems/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/api/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/cgi/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/date/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/digest/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/etc/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/fcntl/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/ffi/io/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/ffi/jffi/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/io/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/mathn/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/net/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/nkf/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/pathname/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/ripper/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/securerandom/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/socket/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/strscan/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/tempfile/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/timeout/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/zlib/**'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/unicode*'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/web*'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/rss*'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/rss*'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/rexml*'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/psych*'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/net*'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/jline*'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/cgi*'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/drb*'
+    exclude 'META-INF/jruby.home/lib/ruby/stdlib/fiddle*'
     doLast {
-        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 10_000_000L, 11_000_000L)
+        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 12_600_000L, 13_100_000L)
     }
 }
 
