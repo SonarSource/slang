@@ -71,7 +71,7 @@ public class RangeConverterTest extends JsonTestHelper {
   @Test
   public void token_reference() {
     Token token = otherToken(3, 7, "foo");
-    assertThat(RangeConverter.tokenReference(token)).isEqualTo("3:7:3:10");
+    assertThat(RangeConverter.tokenReference(token)).isEqualTo("3:7::10");
     assertThat(RangeConverter.tokenReference(null)).isNull();
   }
 
@@ -95,7 +95,7 @@ public class RangeConverterTest extends JsonTestHelper {
   public void metadata_reference() {
     Token token = otherToken(1,0,"true");
     Tree tree = new LiteralTreeImpl(metaData(token), token.text());
-    assertThat(RangeConverter.metaDataReference(tree)).isEqualTo("1:0:1:4");
+    assertThat(RangeConverter.metaDataReference(tree)).isEqualTo("1:0::4");
   }
 
   @Test

@@ -96,11 +96,15 @@ public class DeserializationContext {
   }
 
   public NativeKind fieldToNativeKind(JsonObject parent, String fieldName) {
-    return StringNativeKind.of(fieldToString(parent, fieldName));
+    return StringNativeKind.of(fieldToString(parent, fieldName, ""));
   }
 
   public <T extends Enum<T>> T fieldToEnum(JsonObject parent, String fieldName, Class<T> enumType) {
     return Enum.valueOf(enumType, fieldToString(parent, fieldName));
+  }
+
+  public <T extends Enum<T>> T fieldToEnum(JsonObject parent, String fieldName, String defaultValue, Class<T> enumType) {
+    return Enum.valueOf(enumType, fieldToString(parent, fieldName, defaultValue));
   }
 
   public <T extends Tree> List<T> fieldToObjectList(JsonObject parent, String fieldName, Class<T> expectedClass) {
@@ -147,6 +151,10 @@ public class DeserializationContext {
         "' for field '" + fieldName + "'", json);
     }
     return value.asString();
+  }
+
+  public String fieldToString(JsonObject json, String fieldName, String defaultValue){
+    return json.getString(fieldName, defaultValue);
   }
 
   public TextRange fieldToRange(JsonObject json, String fieldName) {

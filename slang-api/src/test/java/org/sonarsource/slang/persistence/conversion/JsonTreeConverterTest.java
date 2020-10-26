@@ -21,17 +21,22 @@ package org.sonarsource.slang.persistence.conversion;
 
 import com.eclipsesource.json.Json;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.JumpTree;
+import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
 import org.sonarsource.slang.impl.BaseTreeImpl;
+import org.sonarsource.slang.impl.IdentifierTreeImpl;
+import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.TextRangeImpl;
 import org.sonarsource.slang.impl.TokenImpl;
 import org.sonarsource.slang.impl.TreeMetaDataProvider;
@@ -109,10 +114,10 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void token() throws IOException {
+  public void token_other() throws IOException {
     Token initialToken = otherToken(3, 7, "foo");
     String actual = indentedJson(TOKEN_TO_JSON.apply(writeContext, initialToken).toString());
-    assertThat(actual).isEqualTo(indentedJsonFromFile("token.json"));
+    assertThat(actual).isEqualTo(indentedJsonFromFile("token_other.json"));
     Token token = TOKEN_FROM_JSON.apply(readContext, Json.parse(actual).asObject());
     assertThat(token.textRange()).isEqualTo(initialToken.textRange());
     assertThat(token.text()).isEqualTo("foo");
@@ -120,6 +125,45 @@ public class JsonTreeConverterTest extends JsonTestHelper {
 
     assertThat(methodNames(Token.class))
       .containsExactlyInAnyOrder(TEXT, TYPE);
+  }
+
+  @Test
+  public void token_keyword() throws IOException{
+    Token initialToken = keywordToken(1, 2, "key");
+    String actual = indentedJson(TOKEN_TO_JSON.apply(writeContext, initialToken).toString());
+    assertThat(actual).isEqualTo(indentedJsonFromFile("token_keyword.json"));
+    Token token = TOKEN_FROM_JSON.apply(readContext, Json.parse(actual).asObject());
+    assertThat(token.textRange()).isEqualTo(initialToken.textRange());
+    assertThat(token.text()).isEqualTo("key");
+    assertThat(token.type()).isEqualTo(Token.Type.KEYWORD);
+  }
+
+  @Test
+  public void nativeTree_emptyKind() throws IOException {
+    TreeMetaData metaData = metaData(otherToken(1, 0, "x"));
+    IdentifierTreeImpl className = new IdentifierTreeImpl(metaData, "MyClass");
+    Tree classDecl = new NativeTreeImpl(metaData, new NativeKind() {
+      @Override
+      public String toString() {
+        return "";
+      }
+    }, Collections.singletonList(className));
+    String actual = indentedJson(JsonTree.toJson(classDecl));
+    assertThat(actual).isEqualTo(indentedJsonFromFile("native_tree_empty_kind.json"));
+  }
+
+  @Test
+  public void nativeTree_withKind() throws IOException {
+    TreeMetaData metaData = metaData(otherToken(1, 0, "x"));
+    IdentifierTreeImpl className = new IdentifierTreeImpl(metaData, "MyClass");
+    Tree classDecl = new NativeTreeImpl(metaData, new NativeKind() {
+      @Override
+      public String toString() {
+        return "kind";
+      }
+    }, Collections.singletonList(className));
+    String actual = indentedJson(JsonTree.toJson(classDecl));
+    assertThat(actual).isEqualTo(indentedJsonFromFile("native_tree_with_kind.json"));
   }
 
   @Test

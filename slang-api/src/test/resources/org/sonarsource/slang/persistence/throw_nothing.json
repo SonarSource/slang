@@ -2,8 +2,8 @@
   "treeMetaData": {
     "comments": [],
     "tokens": [
-      {"textRange": "1:0:1:5", "text": "throw", "type": "KEYWORD"}
+      {"textRange": "1:0::5", "text": "throw", "type": "KEYWORD"}
     ]
   },
-  "tree": {"@type": "Throw", "metaData": "1:0:1:5", "keyword": "1:0:1:5", "body": null}
+  "tree": {"@type": "Throw", "metaData": "1:0::5", "keyword": "1:0::5", "body": null}
 }

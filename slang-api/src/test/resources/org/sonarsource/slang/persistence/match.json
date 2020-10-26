@@ -2,24 +2,24 @@
   "treeMetaData": {
     "comments": [],
     "tokens": [
-      {"textRange": "1:0:1:6", "text": "switch", "type": "KEYWORD"},
-      {"textRange": "1:7:1:8", "text": "x", "type": "OTHER"},
-      {"textRange": "1:9:1:16", "text": "default", "type": "KEYWORD"},
-      {"textRange": "1:17:1:19", "text": "42", "type": "OTHER"}
+      {"textRange": "1:0::6", "text": "switch", "type": "KEYWORD"},
+      {"textRange": "1:7::8", "text": "x"},
+      {"textRange": "1:9::16", "text": "default", "type": "KEYWORD"},
+      {"textRange": "1:17::19", "text": "42"}
     ]
   },
   "tree": {
     "@type": "Match",
-    "metaData": "1:0:1:19",
-    "expression": {"@type": "Identifier", "metaData": "1:7:1:8", "name": "x"},
+    "metaData": "1:0::19",
+    "expression": {"@type": "Identifier", "metaData": "1:7::8", "name": "x"},
     "cases": [
       {
         "@type": "MatchCase",
-        "metaData": "1:9:1:19",
+        "metaData": "1:9::19",
         "expression": null,
-        "body": {"@type": "IntegerLiteral", "metaData": "1:17:1:19", "value": "42"}
+        "body": {"@type": "IntegerLiteral", "metaData": "1:17::19", "value": "42"}
       }
     ],
-    "keyword": "1:0:1:6"
+    "keyword": "1:0::6"
   }
 }

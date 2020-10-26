@@ -20,6 +20,7 @@
 package org.sonarsource.slang.persistence.conversion;
 
 import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonObject;
 import java.util.List;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
@@ -124,18 +125,24 @@ public final class JsonTreeConverter {
   public static final String TRY_KEYWORD = "tryKeyword";
   public static final String TYPE = "type";
   public static final String VALUE = "value";
+  public static final String OTHER = "OTHER";
 
   public static final PolymorphicConverter POLYMORPHIC_CONVERTER = new PolymorphicConverter();
 
-  public static final Serialize<Token> TOKEN_TO_JSON = (ctx, token) -> Json.object()
-    .add(TEXT_RANGE, ctx.toJson(token.textRange()))
-    .add(TEXT, token.text())
-    .add(TYPE, ctx.toJson(token.type()));
+  public static final Serialize<Token> TOKEN_TO_JSON = (ctx, token) -> {
+    JsonObject json = Json.object()
+            .add(TEXT_RANGE, ctx.toJson(token.textRange()))
+            .add(TEXT, token.text());
+
+    return token.type().name().equals(OTHER)
+            ? json
+            : json.add(TYPE, ctx.toJson(token.type()));
+  };
 
   public static final Deserialize<Token> TOKEN_FROM_JSON = (ctx, json) -> new TokenImpl(
     ctx.fieldToRange(json, TEXT_RANGE),
     ctx.fieldToString(json, TEXT),
-    ctx.fieldToEnum(json, TYPE, Token.Type.class));
+    ctx.fieldToEnum(json, TYPE, OTHER, Token.Type.class));
 
   public static final Serialize<Comment> COMMENT_TO_JSON = (ctx, comment) -> Json.object()
     .add(TEXT, comment.text())
@@ -377,9 +384,15 @@ public final class JsonTreeConverter {
 
     register(NativeTreeImpl.class,
 
-      (ctx, tree) -> ctx.newTypedObject(tree)
-        .add(NATIVE_KIND, ctx.toJson(tree.nativeKind()))
-        .add(CHILDREN, ctx.toJsonArray(tree.children())),
+      (ctx, tree) -> {
+        JsonObject json = ctx.newTypedObject(tree);
+
+        if (!tree.nativeKind().toString().isEmpty()){
+          json.add(NATIVE_KIND, ctx.toJson(tree.nativeKind()));
+        }
+
+        return json.add(CHILDREN, ctx.toJsonArray(tree.children()));
+      },
 
       (ctx, json) -> new NativeTreeImpl(
         ctx.metaData(json),

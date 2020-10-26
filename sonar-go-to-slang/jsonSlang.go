@@ -58,12 +58,10 @@ func marshallSlangMetaData(dst *bytes.Buffer, comments []*Node, tokens []*Token,
 	sizeTokens := len(tokens)
 	if sizeTokens != 0 {
 		for i := 0; i < sizeTokens-1; i++ {
-			dst.WriteString(strings.Repeat(indent, 3))
-			writeObjectSlang(dst, tokens[i])
+			marshallToken(dst, tokens[i], strings.Repeat(indent, 3))
 			dst.WriteString(",\n")
 		}
-		dst.WriteString(strings.Repeat(indent, 3))
-		writeObjectSlang(dst, tokens[sizeTokens-1])
+		marshallToken(dst, tokens[sizeTokens-1], strings.Repeat(indent, 3))
 		dst.WriteString("\n")
 	}
 	dst.WriteString(strings.Repeat(indent, 2) + "]\n")
@@ -99,6 +97,19 @@ func marshallComment(dst *bytes.Buffer, comment *Node, prefix string) {
 	dst.WriteString("}")
 }
 
+func marshallToken(dst *bytes.Buffer, token *Token, prefix string) {
+	dst.WriteString(prefix + "{\"text\":")
+	writeObjectSlang(dst, token.Value)
+	dst.WriteString(",\"textRange\":")
+	writeObjectSlang(dst, token.TextRange)
+
+	if token.TokenType != other {
+		dst.WriteString(",\"type\":")
+		writeObjectSlang(dst, token.TokenType)
+	}
+	dst.WriteString("}")
+}
+
 func marshalIndentSlang(dst *bytes.Buffer, node *Node, prefix, indent string) {
 	if node == nil {
 		dst.WriteString(prefix + "null")
@@ -118,6 +129,10 @@ func marshalIndentSlang(dst *bytes.Buffer, node *Node, prefix, indent string) {
 		sortedField := sortSlangField(node.SlangField)
 
 		for _, kv := range sortedField {
+			if kv.Key == nativeKind && kv.Value == "" {
+				continue
+			}
+
 			dst.WriteString(",\"" + kv.Key + "\":")
 
 			switch obj := kv.Value.(type) {
@@ -125,24 +140,28 @@ func marshalIndentSlang(dst *bytes.Buffer, node *Node, prefix, indent string) {
 				dst.WriteString("\n")
 				marshalIndentSlang(dst, obj, prefix+indent, indent)
 			case []*Node:
-				size := len(obj)
-				if size == 0 {
-					dst.WriteString("[]")
-				} else {
-					dst.WriteString("[\n")
-					for i := 0; i < size-1; i++ {
-						marshalIndentSlang(dst, obj[i], prefix+indent, indent)
-						dst.WriteString(",\n")
-					}
-					marshalIndentSlang(dst, obj[size-1], prefix+indent, indent)
-					dst.WriteString("\n" + prefix + "]")
-				}
+				marshalNodeArray(dst, obj, prefix, indent)
 			default:
 				writeObjectSlang(dst, obj)
 			}
 		}
 	}
 	dst.WriteString("}")
+}
+
+func marshalNodeArray(dst *bytes.Buffer, nodes []*Node, prefix, indent string){
+	size := len(nodes)
+	if size == 0 {
+		dst.WriteString("[]")
+	} else {
+		dst.WriteString("[\n")
+		for i := 0; i < size-1; i++ {
+			marshalIndentSlang(dst, nodes[i], prefix+indent, indent)
+			dst.WriteString(",\n")
+		}
+		marshalIndentSlang(dst, nodes[size-1], prefix+indent, indent)
+		dst.WriteString("\n" + prefix + "]")
+	}
 }
 
 type KeyValue struct {
@@ -173,5 +192,8 @@ func writeObjectSlang(dst *bytes.Buffer, obj interface{}) {
 }
 
 func (t TextRange) MarshalJSON() ([]byte, error) {
+	if t.StartLine == t.EndLine {
+		return []byte(fmt.Sprintf("\"%d:%d::%d\"", t.StartLine, t.StartColumn-1, t.EndColumn-1)), nil
+	}
 	return []byte(fmt.Sprintf("\"%d:%d:%d:%d\"", t.StartLine, t.StartColumn-1, t.EndLine, t.EndColumn-1)), nil
 }

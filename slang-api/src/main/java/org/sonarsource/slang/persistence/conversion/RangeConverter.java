@@ -42,7 +42,9 @@ public final class RangeConverter {
     }
     TextPointer start = range.start();
     TextPointer end = range.end();
-    return start.line() + ":" + start.lineOffset() + ":" + end.line() + ":" + end.lineOffset();
+
+    String endLine = start.line() == end.line() ? "" : Integer.toString(end.line());
+    return start.line() + ":" + start.lineOffset() + ":" + endLine + ":" + end.lineOffset();
   }
 
   @Nullable
@@ -56,7 +58,7 @@ public final class RangeConverter {
     }
     int startLine = Integer.parseInt(values[0]);
     int startLineOffset = Integer.parseInt(values[1]);
-    int endLine = Integer.parseInt(values[2]);
+    int endLine = values[2].isEmpty() ? startLine : Integer.parseInt(values[2]);
     int endLineOffset = Integer.parseInt(values[3]);
     return new TextRangeImpl(startLine, startLineOffset, endLine, endLineOffset);
   }

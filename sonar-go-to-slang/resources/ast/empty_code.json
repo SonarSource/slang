@@ -1,18 +1,18 @@
 { 
   "treeMetaData": {
     "comments": [
-            {"text":"//This comment should be in the metadata", "contentText":"This comment should be in the metadata", "range":"1:12:1:52", "contentRange": "1:14:1:52"}
+            {"text":"//This comment should be in the metadata", "contentText":"This comment should be in the metadata", "range":"1:12::52", "contentRange": "1:14::52"}
     ],
     "tokens": [
-      {"text":"package","textRange":"1:0:1:7","type":"KEYWORD"},
-      {"text":"ast","textRange":"1:8:1:11","type":"OTHER"}
+      {"text":"package","textRange":"1:0::7","type":"KEYWORD"},
+      {"text":"ast","textRange":"1:8::11"}
     ]
   },
   "tree":
     {"@type": "TopLevel", "metaData": "1:0:5:0","firstCpdToken":null,"declarations":[
-      {"@type": "PackageDeclaration", "metaData": "1:0:1:11","children":[
-        {"@type": "Native", "metaData": "1:0:1:7","nativeKind":""},
-        {"@type": "Identifier", "metaData": "1:8:1:11","name":"ast"}
+      {"@type": "PackageDeclaration", "metaData": "1:0::11","children":[
+        {"@type": "Native", "metaData": "1:0::7"},
+        {"@type": "Identifier", "metaData": "1:8::11","name":"ast"}
       ]}
     ]}
 } 

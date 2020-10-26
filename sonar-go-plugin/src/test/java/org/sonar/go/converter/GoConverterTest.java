@@ -107,13 +107,13 @@ public class GoConverterTest {
   @Test
   public void parse_rejected_big_file() {
     exceptionRule.expect(ParseException.class);
-    exceptionRule.expectMessage("The file size is too big and should be excluded, its size is 700028 (maximum allowed is 700000 bytes)");
+    exceptionRule.expectMessage("The file size is too big and should be excluded, its size is 1500028 (maximum allowed is 1500000 bytes)");
 
     GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
     String code = "package main\n" +
       "func foo() {\n" +
       "}\n";
-    String bigCode = code + new String(new char[700_000]).replace("\0", "\n");
+    String bigCode = code + new String(new char[1_500_000]).replace("\0", "\n");
     converter.parse(bigCode);
   }
 

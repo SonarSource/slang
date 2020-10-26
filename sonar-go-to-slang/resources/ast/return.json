@@ -1,139 +1,139 @@
 { 
   "treeMetaData": {
     "comments": [
-            {"text":"// Expressions are wrapped in a native node, and this node is used as body of the return tree", "contentText":" Expressions are wrapped in a native node, and this node is used as body of the return tree", "range":"21:18:21:111", "contentRange": "21:20:21:111"}
+            {"text":"// Expressions are wrapped in a native node, and this node is used as body of the return tree", "contentText":" Expressions are wrapped in a native node, and this node is used as body of the return tree", "range":"21:18::111", "contentRange": "21:20::111"}
     ],
     "tokens": [
-      {"text":"package","textRange":"1:0:1:7","type":"KEYWORD"},
-      {"text":"main","textRange":"1:8:1:12","type":"OTHER"},
-      {"text":"func","textRange":"3:0:3:4","type":"KEYWORD"},
-      {"text":"returnTrue","textRange":"3:5:3:15","type":"OTHER"},
-      {"text":"(","textRange":"3:15:3:16","type":"OTHER"},
-      {"text":")","textRange":"3:16:3:17","type":"OTHER"},
-      {"text":"bool","textRange":"3:18:3:22","type":"OTHER"},
-      {"text":"{","textRange":"3:23:3:24","type":"OTHER"},
-      {"text":"return","textRange":"4:1:4:7","type":"KEYWORD"},
-      {"text":"true","textRange":"4:8:4:12","type":"OTHER"},
-      {"text":"}","textRange":"5:0:5:1","type":"OTHER"},
-      {"text":"func","textRange":"7:0:7:4","type":"KEYWORD"},
-      {"text":"emptyReturn","textRange":"7:5:7:16","type":"OTHER"},
-      {"text":"(","textRange":"7:16:7:17","type":"OTHER"},
-      {"text":")","textRange":"7:17:7:18","type":"OTHER"},
-      {"text":"{","textRange":"7:19:7:20","type":"OTHER"},
-      {"text":"return","textRange":"8:1:8:7","type":"KEYWORD"},
-      {"text":"}","textRange":"9:0:9:1","type":"OTHER"},
-      {"text":"func","textRange":"11:0:11:4","type":"KEYWORD"},
-      {"text":"twoReturn","textRange":"11:5:11:14","type":"OTHER"},
-      {"text":"(","textRange":"11:14:11:15","type":"OTHER"},
-      {"text":")","textRange":"11:15:11:16","type":"OTHER"},
-      {"text":"string","textRange":"11:17:11:23","type":"OTHER"},
-      {"text":"{","textRange":"11:24:11:25","type":"OTHER"},
-      {"text":"if","textRange":"12:1:12:3","type":"KEYWORD"},
-      {"text":"true","textRange":"12:4:12:8","type":"OTHER"},
-      {"text":"{","textRange":"12:9:12:10","type":"OTHER"},
-      {"text":"return","textRange":"13:2:13:8","type":"KEYWORD"},
-      {"text":"\"true\"","textRange":"13:9:13:15","type":"STRING_LITERAL"},
-      {"text":"}","textRange":"14:1:14:2","type":"OTHER"},
-      {"text":"{","textRange":"14:8:14:9","type":"OTHER"},
-      {"text":"return","textRange":"15:2:15:8","type":"KEYWORD"},
-      {"text":"\"false\"","textRange":"15:9:15:16","type":"STRING_LITERAL"},
-      {"text":"}","textRange":"16:1:16:2","type":"OTHER"},
-      {"text":"else","textRange":"14:3:14:7","type":"KEYWORD"},
-      {"text":"}","textRange":"17:0:17:1","type":"OTHER"},
-      {"text":"func","textRange":"19:0:19:4","type":"KEYWORD"},
-      {"text":"multipleReturnValue","textRange":"19:5:19:24","type":"OTHER"},
-      {"text":"(","textRange":"19:24:19:25","type":"OTHER"},
-      {"text":")","textRange":"19:25:19:26","type":"OTHER"},
-      {"text":"(","textRange":"19:27:19:28","type":"OTHER"},
-      {"text":"string","textRange":"19:28:19:34","type":"OTHER"},
-      {"text":"int","textRange":"19:36:19:39","type":"OTHER"},
-      {"text":",","textRange":"19:34:19:35","type":"OTHER"},
-      {"text":"string","textRange":"19:41:19:47","type":"OTHER"},
-      {"text":",","textRange":"19:39:19:40","type":"OTHER"},
-      {"text":")","textRange":"19:47:19:48","type":"OTHER"},
-      {"text":"{","textRange":"19:49:19:50","type":"OTHER"},
-      {"text":"b","textRange":"20:1:20:2","type":"OTHER"},
-      {"text":":=","textRange":"20:3:20:5","type":"OTHER"},
-      {"text":"\"b\"","textRange":"20:6:20:9","type":"STRING_LITERAL"},
-      {"text":"return","textRange":"21:1:21:7","type":"KEYWORD"},
-      {"text":"b","textRange":"21:8:21:9","type":"OTHER"},
-      {"text":"2","textRange":"21:11:21:12","type":"OTHER"},
-      {"text":",","textRange":"21:9:21:10","type":"OTHER"},
-      {"text":"\"c\"","textRange":"21:14:21:17","type":"STRING_LITERAL"},
-      {"text":",","textRange":"21:12:21:13","type":"OTHER"},
-      {"text":"}","textRange":"22:0:22:1","type":"OTHER"}
+      {"text":"package","textRange":"1:0::7","type":"KEYWORD"},
+      {"text":"main","textRange":"1:8::12"},
+      {"text":"func","textRange":"3:0::4","type":"KEYWORD"},
+      {"text":"returnTrue","textRange":"3:5::15"},
+      {"text":"(","textRange":"3:15::16"},
+      {"text":")","textRange":"3:16::17"},
+      {"text":"bool","textRange":"3:18::22"},
+      {"text":"{","textRange":"3:23::24"},
+      {"text":"return","textRange":"4:1::7","type":"KEYWORD"},
+      {"text":"true","textRange":"4:8::12"},
+      {"text":"}","textRange":"5:0::1"},
+      {"text":"func","textRange":"7:0::4","type":"KEYWORD"},
+      {"text":"emptyReturn","textRange":"7:5::16"},
+      {"text":"(","textRange":"7:16::17"},
+      {"text":")","textRange":"7:17::18"},
+      {"text":"{","textRange":"7:19::20"},
+      {"text":"return","textRange":"8:1::7","type":"KEYWORD"},
+      {"text":"}","textRange":"9:0::1"},
+      {"text":"func","textRange":"11:0::4","type":"KEYWORD"},
+      {"text":"twoReturn","textRange":"11:5::14"},
+      {"text":"(","textRange":"11:14::15"},
+      {"text":")","textRange":"11:15::16"},
+      {"text":"string","textRange":"11:17::23"},
+      {"text":"{","textRange":"11:24::25"},
+      {"text":"if","textRange":"12:1::3","type":"KEYWORD"},
+      {"text":"true","textRange":"12:4::8"},
+      {"text":"{","textRange":"12:9::10"},
+      {"text":"return","textRange":"13:2::8","type":"KEYWORD"},
+      {"text":"\"true\"","textRange":"13:9::15","type":"STRING_LITERAL"},
+      {"text":"}","textRange":"14:1::2"},
+      {"text":"{","textRange":"14:8::9"},
+      {"text":"return","textRange":"15:2::8","type":"KEYWORD"},
+      {"text":"\"false\"","textRange":"15:9::16","type":"STRING_LITERAL"},
+      {"text":"}","textRange":"16:1::2"},
+      {"text":"else","textRange":"14:3::7","type":"KEYWORD"},
+      {"text":"}","textRange":"17:0::1"},
+      {"text":"func","textRange":"19:0::4","type":"KEYWORD"},
+      {"text":"multipleReturnValue","textRange":"19:5::24"},
+      {"text":"(","textRange":"19:24::25"},
+      {"text":")","textRange":"19:25::26"},
+      {"text":"(","textRange":"19:27::28"},
+      {"text":"string","textRange":"19:28::34"},
+      {"text":"int","textRange":"19:36::39"},
+      {"text":",","textRange":"19:34::35"},
+      {"text":"string","textRange":"19:41::47"},
+      {"text":",","textRange":"19:39::40"},
+      {"text":")","textRange":"19:47::48"},
+      {"text":"{","textRange":"19:49::50"},
+      {"text":"b","textRange":"20:1::2"},
+      {"text":":=","textRange":"20:3::5"},
+      {"text":"\"b\"","textRange":"20:6::9","type":"STRING_LITERAL"},
+      {"text":"return","textRange":"21:1::7","type":"KEYWORD"},
+      {"text":"b","textRange":"21:8::9"},
+      {"text":"2","textRange":"21:11::12"},
+      {"text":",","textRange":"21:9::10"},
+      {"text":"\"c\"","textRange":"21:14::17","type":"STRING_LITERAL"},
+      {"text":",","textRange":"21:12::13"},
+      {"text":"}","textRange":"22:0::1"}
     ]
   },
   "tree":
     {"@type": "TopLevel", "metaData": "1:0:23:0","firstCpdToken":null,"declarations":[
-      {"@type": "PackageDeclaration", "metaData": "1:0:1:12","children":[
-        {"@type": "Native", "metaData": "1:0:1:7","nativeKind":""},
-        {"@type": "Identifier", "metaData": "1:8:1:12","name":"main"}
+      {"@type": "PackageDeclaration", "metaData": "1:0::12","children":[
+        {"@type": "Native", "metaData": "1:0::7"},
+        {"@type": "Identifier", "metaData": "1:8::12","name":"main"}
       ]},
       {"@type": "FunctionDeclaration", "metaData": "3:0:5:1","returnType":
-        {"@type": "Native", "metaData": "3:18:3:22","nativeKind":"Results(FieldList)","children":[
-          {"@type": "Native", "metaData": "3:18:3:22","nativeKind":"[0](Field)","children":[
-            {"@type": "Identifier", "metaData": "3:18:3:22","name":"bool"}
+        {"@type": "Native", "metaData": "3:18::22","nativeKind":"Results(FieldList)","children":[
+          {"@type": "Native", "metaData": "3:18::22","nativeKind":"[0](Field)","children":[
+            {"@type": "Identifier", "metaData": "3:18::22","name":"bool"}
           ]}
         ]},"nativeChildren":[],"name":
-        {"@type": "Identifier", "metaData": "3:5:3:15","name":"returnTrue"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
+        {"@type": "Identifier", "metaData": "3:5::15","name":"returnTrue"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
         {"@type": "Block", "metaData": "3:23:5:1","statementOrExpressions":[
-          {"@type": "Return", "metaData": "4:1:4:12","keyword":"4:1:4:7","body":
-            {"@type": "Literal", "metaData": "4:8:4:12","value":"true"}}
+          {"@type": "Return", "metaData": "4:1::12","keyword":"4:1::7","body":
+            {"@type": "Literal", "metaData": "4:8::12","value":"true"}}
         ]}},
       {"@type": "FunctionDeclaration", "metaData": "7:0:9:1","returnType":
         null,"nativeChildren":[],"name":
-        {"@type": "Identifier", "metaData": "7:5:7:16","name":"emptyReturn"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
+        {"@type": "Identifier", "metaData": "7:5::16","name":"emptyReturn"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
         {"@type": "Block", "metaData": "7:19:9:1","statementOrExpressions":[
-          {"@type": "Return", "metaData": "8:1:8:7","keyword":"8:1:8:7","body":null}
+          {"@type": "Return", "metaData": "8:1::7","keyword":"8:1::7","body":null}
         ]}},
       {"@type": "FunctionDeclaration", "metaData": "11:0:17:1","returnType":
-        {"@type": "Native", "metaData": "11:17:11:23","nativeKind":"Results(FieldList)","children":[
-          {"@type": "Native", "metaData": "11:17:11:23","nativeKind":"[0](Field)","children":[
-            {"@type": "Identifier", "metaData": "11:17:11:23","name":"string"}
+        {"@type": "Native", "metaData": "11:17::23","nativeKind":"Results(FieldList)","children":[
+          {"@type": "Native", "metaData": "11:17::23","nativeKind":"[0](Field)","children":[
+            {"@type": "Identifier", "metaData": "11:17::23","name":"string"}
           ]}
         ]},"nativeChildren":[],"name":
-        {"@type": "Identifier", "metaData": "11:5:11:14","name":"twoReturn"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
+        {"@type": "Identifier", "metaData": "11:5::14","name":"twoReturn"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
         {"@type": "Block", "metaData": "11:24:17:1","statementOrExpressions":[
           {"@type": "If", "metaData": "12:1:16:2","thenBranch":
             {"@type": "Block", "metaData": "12:9:14:2","statementOrExpressions":[
-              {"@type": "Return", "metaData": "13:2:13:15","keyword":"13:2:13:8","body":
-                {"@type": "StringLiteral", "metaData": "13:9:13:15","value":"\"true\"","content":"true"}}
-            ]},"ifKeyword":"12:1:12:3","elseKeyword":"14:3:14:7","elseBranch":
+              {"@type": "Return", "metaData": "13:2::15","keyword":"13:2::8","body":
+                {"@type": "StringLiteral", "metaData": "13:9::15","value":"\"true\"","content":"true"}}
+            ]},"ifKeyword":"12:1::3","elseKeyword":"14:3::7","elseBranch":
             {"@type": "Block", "metaData": "14:8:16:2","statementOrExpressions":[
-              {"@type": "Return", "metaData": "15:2:15:16","keyword":"15:2:15:8","body":
-                {"@type": "StringLiteral", "metaData": "15:9:15:16","value":"\"false\"","content":"false"}}
+              {"@type": "Return", "metaData": "15:2::16","keyword":"15:2::8","body":
+                {"@type": "StringLiteral", "metaData": "15:9::16","value":"\"false\"","content":"false"}}
             ]},"condition":
-            {"@type": "Literal", "metaData": "12:4:12:8","value":"true"}}
+            {"@type": "Literal", "metaData": "12:4::8","value":"true"}}
         ]}},
       {"@type": "FunctionDeclaration", "metaData": "19:0:22:1","returnType":
-        {"@type": "Native", "metaData": "19:27:19:48","nativeKind":"Results(FieldList)","children":[
-          {"@type": "Native", "metaData": "19:27:19:28","nativeKind":"Opening"},
-          {"@type": "Native", "metaData": "19:28:19:34","nativeKind":"[0](Field)","children":[
-            {"@type": "Identifier", "metaData": "19:28:19:34","name":"string"}
+        {"@type": "Native", "metaData": "19:27::48","nativeKind":"Results(FieldList)","children":[
+          {"@type": "Native", "metaData": "19:27::28","nativeKind":"Opening"},
+          {"@type": "Native", "metaData": "19:28::34","nativeKind":"[0](Field)","children":[
+            {"@type": "Identifier", "metaData": "19:28::34","name":"string"}
           ]},
-          {"@type": "Native", "metaData": "19:34:19:35","nativeKind":""},
-          {"@type": "Native", "metaData": "19:36:19:39","nativeKind":"[1](Field)","children":[
-            {"@type": "Identifier", "metaData": "19:36:19:39","name":"int"}
+          {"@type": "Native", "metaData": "19:34::35"},
+          {"@type": "Native", "metaData": "19:36::39","nativeKind":"[1](Field)","children":[
+            {"@type": "Identifier", "metaData": "19:36::39","name":"int"}
           ]},
-          {"@type": "Native", "metaData": "19:39:19:40","nativeKind":""},
-          {"@type": "Native", "metaData": "19:41:19:47","nativeKind":"[2](Field)","children":[
-            {"@type": "Identifier", "metaData": "19:41:19:47","name":"string"}
+          {"@type": "Native", "metaData": "19:39::40"},
+          {"@type": "Native", "metaData": "19:41::47","nativeKind":"[2](Field)","children":[
+            {"@type": "Identifier", "metaData": "19:41::47","name":"string"}
           ]},
-          {"@type": "Native", "metaData": "19:47:19:48","nativeKind":"Closing"}
+          {"@type": "Native", "metaData": "19:47::48","nativeKind":"Closing"}
         ]},"nativeChildren":[],"name":
-        {"@type": "Identifier", "metaData": "19:5:19:24","name":"multipleReturnValue"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
+        {"@type": "Identifier", "metaData": "19:5::24","name":"multipleReturnValue"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
         {"@type": "Block", "metaData": "19:49:22:1","statementOrExpressions":[
-          {"@type": "VariableDeclaration", "metaData": "20:1:20:9","type":null,"isVal":false,"initializer":
-            {"@type": "StringLiteral", "metaData": "20:6:20:9","value":"\"b\"","content":"b"},"identifier":
-            {"@type": "Identifier", "metaData": "20:1:20:2","name":"b"}},
-          {"@type": "Return", "metaData": "21:1:21:17","keyword":"21:1:21:7","body":
-            {"@type": "Native", "metaData": "21:8:21:17","nativeKind":"ReturnExprList","children":[
-              {"@type": "Identifier", "metaData": "21:8:21:9","name":"b"},
-              {"@type": "Native", "metaData": "21:9:21:10","nativeKind":""},
-              {"@type": "IntegerLiteral", "metaData": "21:11:21:12","value":"2"},
-              {"@type": "Native", "metaData": "21:12:21:13","nativeKind":""},
-              {"@type": "StringLiteral", "metaData": "21:14:21:17","value":"\"c\"","content":"c"}
+          {"@type": "VariableDeclaration", "metaData": "20:1::9","type":null,"isVal":false,"initializer":
+            {"@type": "StringLiteral", "metaData": "20:6::9","value":"\"b\"","content":"b"},"identifier":
+            {"@type": "Identifier", "metaData": "20:1::2","name":"b"}},
+          {"@type": "Return", "metaData": "21:1::17","keyword":"21:1::7","body":
+            {"@type": "Native", "metaData": "21:8::17","nativeKind":"ReturnExprList","children":[
+              {"@type": "Identifier", "metaData": "21:8::9","name":"b"},
+              {"@type": "Native", "metaData": "21:9::10"},
+              {"@type": "IntegerLiteral", "metaData": "21:11::12","value":"2"},
+              {"@type": "Native", "metaData": "21:12::13"},
+              {"@type": "StringLiteral", "metaData": "21:14::17","value":"\"c\"","content":"c"}
             ]}}
         ]}}
     ]}

@@ -63,9 +63,10 @@ const nativeSlangType = "Native"
 const nativeKind = "nativeKind"
 const childrenField = "children"
 const basicLiteral = "(BasicLit)"
+const other = "OTHER"
 
 var isSlangType = map[string]bool{
-	"OTHER": true, keywordKind: true, "STRING_LITERAL": true}
+	other: true, keywordKind: true, "STRING_LITERAL": true}
 
 func toSlangTree(fileSet *token.FileSet, astFile *ast.File, fileContent string) (*Node, []*Node, []*Token) {
 	return NewSlangMapper(fileSet, astFile, fileContent).toSlang()
@@ -174,7 +175,7 @@ func (t *SlangMapper) mapBasicLitTag(astNode *ast.BasicLit, fieldName string) *N
 	if astNode == nil {
 		return nil
 	}
-	var tokenType = "OTHER"
+	var tokenType = other
 	return t.createExpectedToken(astNode.Pos(), astNode.Value, fieldName+basicLiteral, tokenType)
 }
 
@@ -184,7 +185,7 @@ func (t *SlangMapper) mapBasicLit(astNode *ast.BasicLit, fieldName string) *Node
 	}
 	slangField := make(map[string]interface{})
 	var slangType string
-	var tokenType = "OTHER"
+	var tokenType = other
 
 	switch astNode.Kind {
 	case token.STRING:
@@ -300,13 +301,13 @@ func (t *SlangMapper) createNode(astNode ast.Node, children []*Node, nativeNode,
 		//We create a leaf node, that is not a Native node
 		offset := t.file.Offset(astNode.Pos())
 		endOffset := t.file.Offset(astNode.End())
-		return t.createLeafNode(offset, endOffset, nativeNode, slangType, "OTHER", slangField)
+		return t.createLeafNode(offset, endOffset, nativeNode, slangType, other, slangField)
 	} else if astNode != nil {
 		//We create a node that is a token, required since the original mapping to compute the range
 		//In meantime, this node will have slang Native type.
 		offset := t.file.Offset(astNode.Pos())
 		endOffset := t.file.Offset(astNode.End())
-		return t.createToken(offset, endOffset, nativeNode, "OTHER")
+		return t.createToken(offset, endOffset, nativeNode, other)
 	} else {
 		return nil
 	}
@@ -362,7 +363,7 @@ func (t *SlangMapper) appendMissingToken(children []*Node, offset, endOffset int
 	for offset < endOffset {
 		missingTokenValue := missingTokens[t.fileContent[offset]]
 		tokenLength := len(missingTokenValue)
-		var tokenType = "OTHER"
+		var tokenType = other
 		if tokenLength == 0 || t.fileContent[offset:offset+tokenLength] != missingTokenValue {
 			if t.paranoiac {
 				location := t.location(offset, endOffset)
@@ -405,7 +406,7 @@ func (t *SlangMapper) getTokenKind(tok token.Token) string {
 	if tok.IsKeyword() {
 		return keywordKind
 	} else {
-		return "OTHER"
+		return other
 	}
 }
 

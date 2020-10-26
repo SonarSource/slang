@@ -1,61 +1,61 @@
 { 
   "treeMetaData": {
     "comments": [
-            {"text":"// +build ignore", "contentText":" +build ignore", "range":"1:0:1:16", "contentRange": "1:2:1:16"}
+            {"text":"// +build ignore", "contentText":" +build ignore", "range":"1:0::16", "contentRange": "1:2::16"}
     ],
     "tokens": [
-      {"text":"package","textRange":"3:0:3:7","type":"KEYWORD"},
-      {"text":"main","textRange":"3:8:3:12","type":"OTHER"},
-      {"text":"import","textRange":"5:0:5:6","type":"KEYWORD"},
-      {"text":"\"fmt\"","textRange":"5:7:5:12","type":"STRING_LITERAL"},
-      {"text":"func","textRange":"7:0:7:4","type":"KEYWORD"},
-      {"text":"main","textRange":"7:5:7:9","type":"OTHER"},
-      {"text":"(","textRange":"7:9:7:10","type":"OTHER"},
-      {"text":")","textRange":"7:10:7:11","type":"OTHER"},
-      {"text":"{","textRange":"7:12:7:13","type":"OTHER"},
-      {"text":"msg","textRange":"8:1:8:4","type":"OTHER"},
-      {"text":":=","textRange":"8:5:8:7","type":"OTHER"},
-      {"text":"\"hello, world\"","textRange":"8:8:8:22","type":"STRING_LITERAL"},
-      {"text":"fmt","textRange":"9:1:9:4","type":"OTHER"},
-      {"text":"Println","textRange":"9:5:9:12","type":"OTHER"},
-      {"text":".","textRange":"9:4:9:5","type":"OTHER"},
-      {"text":"(","textRange":"9:12:9:13","type":"OTHER"},
-      {"text":"msg","textRange":"9:13:9:16","type":"OTHER"},
-      {"text":")","textRange":"9:16:9:17","type":"OTHER"},
-      {"text":"}","textRange":"10:0:10:1","type":"OTHER"}
+      {"text":"package","textRange":"3:0::7","type":"KEYWORD"},
+      {"text":"main","textRange":"3:8::12"},
+      {"text":"import","textRange":"5:0::6","type":"KEYWORD"},
+      {"text":"\"fmt\"","textRange":"5:7::12","type":"STRING_LITERAL"},
+      {"text":"func","textRange":"7:0::4","type":"KEYWORD"},
+      {"text":"main","textRange":"7:5::9"},
+      {"text":"(","textRange":"7:9::10"},
+      {"text":")","textRange":"7:10::11"},
+      {"text":"{","textRange":"7:12::13"},
+      {"text":"msg","textRange":"8:1::4"},
+      {"text":":=","textRange":"8:5::7"},
+      {"text":"\"hello, world\"","textRange":"8:8::22","type":"STRING_LITERAL"},
+      {"text":"fmt","textRange":"9:1::4"},
+      {"text":"Println","textRange":"9:5::12"},
+      {"text":".","textRange":"9:4::5"},
+      {"text":"(","textRange":"9:12::13"},
+      {"text":"msg","textRange":"9:13::16"},
+      {"text":")","textRange":"9:16::17"},
+      {"text":"}","textRange":"10:0::1"}
     ]
   },
   "tree":
     {"@type": "TopLevel", "metaData": "1:0:11:0","firstCpdToken":null,"declarations":[
       {"@type": "PackageDeclaration", "metaData": "1:0:3:12","children":[
-        {"@type": "Native", "metaData": "3:0:3:7","nativeKind":""},
-        {"@type": "Identifier", "metaData": "3:8:3:12","name":"main"}
+        {"@type": "Native", "metaData": "3:0::7"},
+        {"@type": "Identifier", "metaData": "3:8::12","name":"main"}
       ]},
-      {"@type": "ImportDeclaration", "metaData": "5:0:5:12","children":[
-        {"@type": "Native", "metaData": "5:0:5:6","nativeKind":"Tok"},
-        {"@type": "Native", "metaData": "5:7:5:12","nativeKind":"[0](ImportSpec)","children":[
-          {"@type": "StringLiteral", "metaData": "5:7:5:12","value":"\"fmt\"","content":"fmt"}
+      {"@type": "ImportDeclaration", "metaData": "5:0::12","children":[
+        {"@type": "Native", "metaData": "5:0::6","nativeKind":"Tok"},
+        {"@type": "Native", "metaData": "5:7::12","nativeKind":"[0](ImportSpec)","children":[
+          {"@type": "StringLiteral", "metaData": "5:7::12","value":"\"fmt\"","content":"fmt"}
         ]}
       ]},
       {"@type": "FunctionDeclaration", "metaData": "7:0:10:1","returnType":
         null,"nativeChildren":[],"name":
-        {"@type": "Identifier", "metaData": "7:5:7:9","name":"main"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
+        {"@type": "Identifier", "metaData": "7:5::9","name":"main"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
         {"@type": "Block", "metaData": "7:12:10:1","statementOrExpressions":[
-          {"@type": "VariableDeclaration", "metaData": "8:1:8:22","type":null,"isVal":false,"initializer":
-            {"@type": "StringLiteral", "metaData": "8:8:8:22","value":"\"hello, world\"","content":"hello, world"},"identifier":
-            {"@type": "Identifier", "metaData": "8:1:8:4","name":"msg"}},
-          {"@type": "Native", "metaData": "9:1:9:17","nativeKind":"[1](ExprStmt)","children":[
-            {"@type": "Native", "metaData": "9:1:9:17","nativeKind":"X(CallExpr)","children":[
-              {"@type": "Native", "metaData": "9:1:9:12","nativeKind":"Fun(SelectorExpr)","children":[
-                {"@type": "Identifier", "metaData": "9:1:9:4","name":"fmt"},
-                {"@type": "Native", "metaData": "9:4:9:5","nativeKind":""},
-                {"@type": "Identifier", "metaData": "9:5:9:12","name":"Println"}
+          {"@type": "VariableDeclaration", "metaData": "8:1::22","type":null,"isVal":false,"initializer":
+            {"@type": "StringLiteral", "metaData": "8:8::22","value":"\"hello, world\"","content":"hello, world"},"identifier":
+            {"@type": "Identifier", "metaData": "8:1::4","name":"msg"}},
+          {"@type": "Native", "metaData": "9:1::17","nativeKind":"[1](ExprStmt)","children":[
+            {"@type": "Native", "metaData": "9:1::17","nativeKind":"X(CallExpr)","children":[
+              {"@type": "Native", "metaData": "9:1::12","nativeKind":"Fun(SelectorExpr)","children":[
+                {"@type": "Identifier", "metaData": "9:1::4","name":"fmt"},
+                {"@type": "Native", "metaData": "9:4::5"},
+                {"@type": "Identifier", "metaData": "9:5::12","name":"Println"}
               ]},
-              {"@type": "Native", "metaData": "9:12:9:13","nativeKind":"Lparen"},
-              {"@type": "Native", "metaData": "9:13:9:16","nativeKind":"Args([]Expr)","children":[
-                {"@type": "Identifier", "metaData": "9:13:9:16","name":"msg"}
+              {"@type": "Native", "metaData": "9:12::13","nativeKind":"Lparen"},
+              {"@type": "Native", "metaData": "9:13::16","nativeKind":"Args([]Expr)","children":[
+                {"@type": "Identifier", "metaData": "9:13::16","name":"msg"}
               ]},
-              {"@type": "Native", "metaData": "9:16:9:17","nativeKind":"Rparen"}
+              {"@type": "Native", "metaData": "9:16::17","nativeKind":"Rparen"}
             ]}
           ]}
         ]}}
