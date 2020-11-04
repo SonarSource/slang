@@ -1,4 +1,7 @@
 {
+'scala-project:ruling/src/test/resources/sources/scala/S138.scala':[
+1,
+],
 'scala-project:sources/scala/finagle/finagle-benchmark/src/main/scala/com/twitter/finagle/loadbalancer/Simulation.scala':[
 30,
 ],

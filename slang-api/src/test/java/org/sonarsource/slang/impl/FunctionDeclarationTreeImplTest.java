@@ -111,4 +111,15 @@ public class FunctionDeclarationTreeImplTest {
       .isEqualTo(range(5, 1, 5, 15));
   }
 
+  @Test
+  public void rangeToHighlight_with_no_name_no_body_but_some_signature() {
+    TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(emptyList(), Arrays.asList(
+      new TokenImpl(range(5, 1, 5, 10), "fun", Token.Type.KEYWORD),
+      new TokenImpl(range(5, 11, 5, 12), "(", Token.Type.OTHER),
+      new TokenImpl(range(5, 13, 5, 14), ")", Token.Type.OTHER)));
+    TreeMetaData functionMetaData = metaDataProvider.metaData(range(5, 1, 5, 14));
+    assertThat(new FunctionDeclarationTreeImpl(functionMetaData, emptyList(), false, null, null, emptyList(), null, emptyList()).rangeToHighlight())
+      .isEqualTo(range(5, 1, 5, 14));
+  }
+
 }

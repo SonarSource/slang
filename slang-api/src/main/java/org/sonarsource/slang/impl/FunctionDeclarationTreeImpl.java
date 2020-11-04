@@ -119,6 +119,9 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
     if (name != null) {
       return name.metaData().textRange();
     }
+    if (body == null) {
+      return metaData().textRange();
+    }
     TextRange bodyRange = body.metaData().textRange();
     List<TextRange> tokenRangesBeforeBody = metaData().tokens().stream()
       .map(Token::textRange)
