@@ -17,3 +17,32 @@ fun f1() {
   // comment
   a;
 }
+
+int fun foo( // Compliant, no line of code
+p1,
+p2,
+p3,
+p4)
+{
+}
+
+int fun foo(
+p1,
+p2,
+p3,
+p4);
+
+int fun (
+p1,
+p2,
+p3,
+p4);
+
+    int fun () // Noncompliant
+//  ^^^^^^^^^^
+{
+  a;
+  a;
+  a;
+  a;
+}
