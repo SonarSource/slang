@@ -20,9 +20,6 @@
 63,
 79,
 ],
-'scala-project:sources/scala/finagle/finagle-thrift/src/main/scala/com/twitter/finagle/thrift/ThriftRichClient.scala':[
-254,
-],
 'scala-project:sources/scala/incubator-openwhisk/tests/src/test/scala/whisk/core/cli/test/ApiGwRestTests.scala':[
 169,
 ],

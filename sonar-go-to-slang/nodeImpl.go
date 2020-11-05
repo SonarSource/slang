@@ -119,8 +119,9 @@ func (t *SlangMapper) mapFuncDeclImpl(decl *ast.FuncDecl, fieldName string) *Nod
 
 	children = t.appendNode(children, t.createTokenFromPosAstToken(decl.Type.Func, token.FUNC, "Type.Func"))
 
-	receiver := t.mapFieldListParams(decl.Recv, "Recv")
+	receiver := t.mapFieldListReceiver(decl.Recv, "Recv")
 	children = t.appendNode(children, receiver)
+	nativeChildren = t.appendNode(nativeChildren, receiver)
 
 	funcName := t.mapIdent(decl.Name, "Name")
 	children = t.appendNode(children, funcName)
@@ -129,9 +130,6 @@ func (t *SlangMapper) mapFuncDeclImpl(decl *ast.FuncDecl, fieldName string) *Nod
 	parameters := t.mapFieldListParams(decl.Type.Params, "Params")
 	children = t.appendNode(children, parameters)
 	formalParameters := t.getFormalParameter(parameters)
-	if receiver != nil {
-		formalParameters = append([]*Node{receiver}, formalParameters...)
-	}
 	slangField["formalParameters"] = formalParameters
 
 	funcResults := t.mapFieldListResults(decl.Type.Results, "Results")
@@ -315,6 +313,10 @@ func (t *SlangMapper) mapFieldListParamsImpl(list *ast.FieldList, fieldName stri
 }
 
 func (t *SlangMapper) mapFieldListResultsImpl(list *ast.FieldList, fieldName string) *Node {
+	return nil
+}
+
+func (t *SlangMapper) mapFieldListReceiverImpl(list *ast.FieldList, fieldName string) *Node {
 	return nil
 }
 

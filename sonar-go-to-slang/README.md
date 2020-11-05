@@ -45,3 +45,11 @@ Print the SLANG Json tree for some `source.go`:
 Dump the native raw AST for some `source.go`:
 
     sonar-go-to-slang -d source.go
+    
+## Testing
+
+To perform the tests, run:
+
+    go test
+    
+To update test results, use the method `fix_all_go_files_test_automatically` in `goparser_test.go`

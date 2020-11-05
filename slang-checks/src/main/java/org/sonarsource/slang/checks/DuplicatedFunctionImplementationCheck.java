@@ -94,7 +94,8 @@ public class DuplicatedFunctionImplementationCheck implements SlangCheck {
   }
 
   private static boolean areDuplicatedImplementation(FunctionDeclarationTree original, FunctionDeclarationTree possibleDuplicate) {
-    return areEquivalent(original.formalParameters(), possibleDuplicate.formalParameters())
+    return areEquivalent(original.nativeChildren(), possibleDuplicate.nativeChildren())
+      && areEquivalent(original.formalParameters(), possibleDuplicate.formalParameters())
       && areEquivalent(original.body(), possibleDuplicate.body());
   }
 

@@ -1,0 +1,3 @@
+package main
+
+func (v Vertex) foo(p1 int) {}

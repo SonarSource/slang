@@ -312,21 +312,22 @@
             ]}}
         ]}},
       {"@type": "FunctionDeclaration", "metaData": "25:0::31","returnType":
-        null,"nativeChildren":[],"name":
-        {"@type": "Identifier", "metaData": "25:22::25","name":"f10"},"modifiers":null,"isConstructor":false,"formalParameters":[
+        null,"nativeChildren":[
         {"@type": "Native", "metaData": "25:5::21","nativeKind":"Recv(FieldList)","children":[
           {"@type": "Native", "metaData": "25:5::6","nativeKind":"Opening"},
           {"@type": "Native", "metaData": "25:6::20","nativeKind":"[0](Field)","children":[
-            {"@type": "Parameter", "metaData": "25:6::20","type":
-              {"@type": "Native", "metaData": "25:8::20","nativeKind":"Type(StarExpr)","children":[
-                {"@type": "Native", "metaData": "25:8::9","nativeKind":"Star"},
-                {"@type": "Identifier", "metaData": "25:9::20","name":"SlangMapper"}
-              ]},"modifiers":null,"identifier":
-              {"@type": "Identifier", "metaData": "25:6::7","name":"t"},"defaultValue":null}
+            {"@type": "Native", "metaData": "25:6::7","nativeKind":"Names([]*Ident)","children":[
+              {"@type": "Identifier", "metaData": "25:6::7","name":"t"}
+            ]},
+            {"@type": "Native", "metaData": "25:8::20","nativeKind":"Type(StarExpr)","children":[
+              {"@type": "Native", "metaData": "25:8::9","nativeKind":"Star"},
+              {"@type": "Identifier", "metaData": "25:9::20","name":"SlangMapper"}
+            ]}
           ]},
           {"@type": "Native", "metaData": "25:20::21","nativeKind":"Closing"}
         ]}
-      ],"body":
+      ],"name":
+        {"@type": "Identifier", "metaData": "25:22::25","name":"f10"},"modifiers":null,"isConstructor":false,"formalParameters":[],"body":
         {"@type": "Block", "metaData": "25:28::31","statementOrExpressions":[]}},
       {"@type": "FunctionDeclaration", "metaData": "27:0::61","returnType":
         null,"nativeChildren":[],"name":
