@@ -30,7 +30,7 @@ allprojects {
         buildNumber = System.getProperty("buildNumber")
         analyzerCommonsVersion = '1.12.0.632'
         sonarqubeVersion = '7.9'
-        orchestratorVersion = '3.31.0.2646'
+        orchestratorVersion = '3.34.0.2692'
         sonarlintVersion = '4.2.0.2266'
         sonarLinksCi = 'https://travis-ci.org/SonarSource/slang'
         sonarLinksScm = 'https://github.com/SonarSource/slang'
