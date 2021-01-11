@@ -1,6 +1,6 @@
 /*
- * Sonar Kotlin Plugin
- * Copyright (C) 2010-2020 SonarSource SA & Community
+ * SonarSource SLang
+ * Copyright (C) 2018-2021 SonarSource SA
  * mailto:info AT sonarsource DOT com
  *
  * This program is free software; you can redistribute it and/or
