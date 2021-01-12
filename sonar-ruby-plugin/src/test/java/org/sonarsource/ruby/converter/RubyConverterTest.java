@@ -295,5 +295,108 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
     assertThat(comment.textRange()).isEqualTo(entireRange);
     assertThat(comment.contentRange()).isEqualTo(contentRange);
   }
+  
+  // Since 3.0 version
+  
+  @Test
+  public void inReturnsFalse() {
+    Tree tree = converter.parse("0 in 1");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(3);
+    assertThat(tokens).extracting(Token::text).containsExactly("0", "in", "1");
+  }
+
+  @Test
+  public void endlessMethodDef() {
+    Tree tree = converter.parse("def square(x) = x * x");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(9);
+    assertThat(tokens).extracting(Token::text).containsExactly("def", "square", "(", "x", ")", "=", "x", "*", "x");
+  }
+  
+  @Test
+  public void ractor() {
+    Tree tree = converter.parse("def tarai(x, y, z) =\n" +
+      "  x <= y ? y : tarai(tarai(x-1, y, z),\n" +
+      "                     tarai(y-1, z, x),\n" +
+      "                     tarai(z-1, x, y))\n" +
+      "require 'benchmark'\n" +
+      "Benchmark.bm do |x|\n" +
+      "  # sequential version\n" +
+      "  x.report('seq'){ 4.times{ tarai(14, 7, 0) } }\n" +
+      "\n" +
+      "  # parallel version\n" +
+      "  x.report('par'){\n" +
+      "    4.times.map do\n" +
+      "      Ractor.new { tarai(14, 7, 0) }\n" +
+      "    end.each(&:take)\n" +
+      "  }\n" +
+      "end");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(116);
+  }
+  
+  @Test
+  public void fiberScheduler() {
+    Tree tree = converter.parse("require 'async'\n" +
+      "require 'net/http'\n" +
+      "require 'uri'\n" +
+      "\n" +
+      "Async do\n" +
+      "  [\"ruby\", \"rails\", \"async\"].each do |topic|\n" +
+      "    Async do\n" +
+      "      Net::HTTP.get(URI \"https://www.google.com/search?q=#{topic}\")\n" +
+      "    end\n" +
+      "  end\n" +
+      "end");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(40);
+  }
+  
+  @Test
+  public void onelinePatternMatching() {
+    Tree tree = converter.parse("0 => a\n" +
+      "p a #=> 0\n" +
+      "\n" +
+      "{b: 0, c: 1} => {b:}\n" +
+      "p b #=> 0");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(18);
+  }
+  
+  @Test
+  public void findPattern() {
+    Tree tree = converter.parse("case [\"a\", 1, \"b\", \"c\", 2, \"d\", \"e\", \"f\", 3]\n" +
+      "in [*pre, String => x, String => y, *post]\n" +
+      "  p pre  #=> [\"a\", 1]\n" +
+      "  p x    #=> \"b\"\n" +
+      "  p y    #=> \"c\"\n" +
+      "  p post #=> [2, \"d\", \"e\", \"f\", 3]\n" +
+      "end");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(45);
+  }
+
+  @Test
+  public void hashExcept() {
+    Tree tree = converter.parse("h = { a: 1, b: 2, c: 3 }\n" +
+      "p h.except(:a) #=> {:b=>2, :c=>3}");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(19);
+  }
 
 }

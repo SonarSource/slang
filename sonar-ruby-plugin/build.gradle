@@ -6,9 +6,9 @@ plugins {
 import com.github.jrubygradle.JRubyPrepare
 
 ext {
-    rubygemsRaccVersion = '1.5.0'
+    rubygemsRaccVersion = '1.5.2'
     rubygemsAstVersion = '2.4.1'
-    rubygemsParserVersion = '2.7.2.0'
+    rubygemsParserVersion = '3.0.0.0'
 }
 
 processResources.from("src/main/resources", "${buildDir}/dependency_gems/gems")
@@ -126,7 +126,7 @@ shadowJar {
     exclude "racc-${rubygemsAstVersion}-java/web/**"
 
     doLast {
-        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 12_600_000L, 13_100_000L)
+        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 13_000_000L, 13_500_000L)
     }
 }
 
