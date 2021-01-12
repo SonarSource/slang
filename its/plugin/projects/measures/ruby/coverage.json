@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "simplecov_version": "0.20.0"
+  },
+  "coverage": {
+    "{ABSOLUTE_PATH_PLACEHOLDER}": {
+      "lines": [
+        null,
+        1,
+        1,
+        null,
+        null,
+        1,
+        1,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        1,
+        1,
+        null,
+        null,
+        null,
+        null,
+        0,
+        null,
+        null,
+        null
+      ]
+    }
+  }
+}

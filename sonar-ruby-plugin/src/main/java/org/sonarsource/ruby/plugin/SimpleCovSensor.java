@@ -28,7 +28,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import javax.annotation.CheckForNull;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.FileSystem;
@@ -80,9 +79,9 @@ public class SimpleCovSensor implements Sensor {
   private static void safeReadCoverageReport(JSONParser parser, Map<String, Map<Integer, Integer>> mergedCoverages, Path reportPath, String report) {
     try {
       JSONObject parseResult = (JSONObject) parser.parse(report);
-      mergeFileCoverages(mergedCoverages, parseResult.entrySet());
+      mergeFileCoverages(mergedCoverages, parseResult);
     } catch (Exception e) {
-      LOG.error("Cannot read coverage report file, expecting standard SimpleCov resultset JSON format: '{}'", reportPath, e);
+      LOG.error("Cannot read coverage report file, expecting standard SimpleCov JSON formatter output: '{}'", reportPath, e);
     }
   }
 
@@ -113,25 +112,39 @@ public class SimpleCovSensor implements Sensor {
     newCoverage.save();
   }
 
-  private static void mergeFileCoverages(Map<String, Map<Integer, Integer>> coveragePerFiles, Set<Entry<String, JSONObject>> testFrameworkResults) {
-    for (Entry<String, JSONObject> testFrameworkResult : testFrameworkResults) {
-      JSONObject testFrameworkCoverage = (JSONObject) testFrameworkResult.getValue().get("coverage");
-      Set<Entry<String, JSONArray>> testFrameworkCoveragePerFiles = testFrameworkCoverage.entrySet();
-      mergeFrameworkCoverages(coveragePerFiles, testFrameworkCoveragePerFiles);
-    }
+  private static void mergeFileCoverages(Map<String, Map<Integer, Integer>> coveragePerFiles, Map<String, JSONObject> upperJsonObjects) {
+    upperJsonObjects.forEach((key, value) -> {
+      if ("coverage".equals(key)) {
+        mergeFrameworkCoveragesFromJsonFormatter(coveragePerFiles, value);
+      }
+      JSONObject testFrameworkCoverage = (JSONObject) value.get("coverage");
+      if (testFrameworkCoverage != null) {
+        LOG.warn("Importing SimpleCov resultset JSON will not be supported from simplecov 18.0. Consider using the JSON formatter, available from SimpleCov 20.0");
+        mergeFrameworkCoveragesFromResultSet(coveragePerFiles, testFrameworkCoverage);
+      }
+    });
   }
 
-  private static void mergeFrameworkCoverages(Map<String, Map<Integer, Integer>> coveragePerFiles, Set<Entry<String, JSONArray>> testFrameworkCoveragePerFiles) {
-    for (Entry<String, JSONArray> coveragePerFile : testFrameworkCoveragePerFiles) {
-      Map<Integer, Integer> fileCoverage = coveragePerFiles.computeIfAbsent(coveragePerFile.getKey(), key -> new HashMap<>());
-      JSONArray hitsPerLine = coveragePerFile.getValue();
-      for (int i = 0; i < hitsPerLine.size(); i++) {
-        Long hits = (Long) hitsPerLine.get(i);
-        if (hits != null) {
-          int line = i + 1;
-          Integer currentHits = fileCoverage.getOrDefault(line, 0);
-          fileCoverage.put(line, currentHits + hits.intValue());
-        }
+  private static void mergeFrameworkCoveragesFromJsonFormatter(Map<String, Map<Integer, Integer>> coveragePerFiles, Map<String, JSONObject> fileCoverageObject) {
+    fileCoverageObject.forEach((key, value) -> {
+      JSONArray hitsPerLine = (JSONArray) value.get("lines");
+      mergeHitPerLines(coveragePerFiles, key, hitsPerLine);
+    });
+  }
+
+  private static void mergeFrameworkCoveragesFromResultSet(Map<String, Map<Integer, Integer>> coveragePerFiles, Map<String, JSONArray> testFrameworkCoveragePerFiles) {
+    testFrameworkCoveragePerFiles.forEach((key, value) -> mergeHitPerLines(coveragePerFiles, key, value));
+  }
+
+  private static void mergeHitPerLines(Map<String, Map<Integer, Integer>> coveragePerFiles, String currentFile, JSONArray hitsPerLine) {
+    Map<Integer, Integer> fileCoverage = coveragePerFiles.computeIfAbsent(currentFile, key -> new HashMap<>());
+    for (int i = 0; i < hitsPerLine.size(); i++) {
+      Object hits = hitsPerLine.get(i);
+      // Hits can be a Long (coverage data available), null or "ignored".
+      if (hits instanceof Long) {
+        int line = i + 1;
+        Integer currentHits = fileCoverage.getOrDefault(line, 0);
+        fileCoverage.put(line, currentHits + ((Long) hits).intValue());
       }
     }
   }

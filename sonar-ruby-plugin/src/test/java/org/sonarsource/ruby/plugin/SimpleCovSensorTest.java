@@ -37,6 +37,7 @@ import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.config.internal.MapSettings;
+import org.sonar.api.utils.log.LoggerLevel;
 import org.sonar.api.utils.log.ThreadLocalLogTester;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -76,6 +77,11 @@ public class SimpleCovSensorTest {
     assertThat(context.lineHits(fileKey, 5)).isNull();
     assertThat(context.lineHits(fileKey, 6)).isEqualTo(1);
     assertThat(context.lineHits(fileKey, 7)).isZero();
+
+    assertThat(logTester.logs())
+      .hasSize(1)
+      .containsExactly(
+        "Importing SimpleCov resultset JSON will not be supported from simplecov 18.0. Consider using the JSON formatter, available from SimpleCov 20.0");
   }
 
   @Test
@@ -86,6 +92,21 @@ public class SimpleCovSensorTest {
     // simulate default value being set
     context.settings().setProperty(RubyPlugin.REPORT_PATHS_KEY, RubyPlugin.REPORT_PATHS_DEFAULT_VALUE);
     context.fileSystem().add(createInputFile("coverage/.resultset.json", fileContent(COVERAGE_DIR, "resultset.json")));
+    sensor.execute(context);
+
+    String fileKey = MODULE_KEY + ":file1.rb";
+    assertThat(context.lineHits(fileKey, 1)).isEqualTo(1);
+    assertThat(context.lineHits(fileKey, 2)).isEqualTo(1);
+    assertThat(context.lineHits(fileKey, 3)).isEqualTo(2);
+    assertThat(context.lineHits(fileKey, 4)).isNull();
+    assertThat(context.lineHits(fileKey, 5)).isNull();
+    assertThat(context.lineHits(fileKey, 6)).isEqualTo(1);
+    assertThat(context.lineHits(fileKey, 7)).isZero();
+  }
+
+  @Test
+  public void test_reportPath_property_JSON_formatter() throws IOException {
+    SensorContextTester context = getSensorContext("json_formatter.json", "file1.rb");
     sensor.execute(context);
 
     String fileKey = MODULE_KEY + ":file1.rb";
@@ -177,8 +198,22 @@ public class SimpleCovSensorTest {
     sensor.execute(context);
 
     String expectedMessage = String.format(
-      "Cannot read coverage report file, expecting standard SimpleCov resultset JSON format: 'invalid_resultset.json'");
+      "Cannot read coverage report file, expecting standard SimpleCov JSON formatter output: 'invalid_resultset.json'");
     assertThat(logTester.logs()).contains(expectedMessage);
+  }
+
+  @Test
+  public void log_when_unsupported_format_version_0_18() throws IOException {
+    SensorContextTester context = getSensorContext("unsupported_resultset_0_18.json", "file1.rb");
+    sensor.execute(context);
+
+    String expectedWarning =
+      "Importing SimpleCov resultset JSON will not be supported from simplecov 18.0. Consider using the JSON formatter, available from SimpleCov 20.0";
+    assertThat(logTester.logs(LoggerLevel.WARN)).contains(expectedWarning);
+
+    String expectedError =
+      "Cannot read coverage report file, expecting standard SimpleCov JSON formatter output: 'unsupported_resultset_0_18.json'";
+    assertThat(logTester.logs(LoggerLevel.ERROR)).contains(expectedError);
   }
 
   @Test
@@ -200,8 +235,10 @@ public class SimpleCovSensorTest {
     sensor.execute(context);
 
     assertThat(logTester.logs())
-      .hasSize(1)
-      .contains("File '/Absolute/Path/To/missing_file.rb' is present in coverage report but cannot be found in filesystem");
+      .hasSize(2)
+      .containsExactly(
+        "Importing SimpleCov resultset JSON will not be supported from simplecov 18.0. Consider using the JSON formatter, available from SimpleCov 20.0",
+        "File '/Absolute/Path/To/missing_file.rb' is present in coverage report but cannot be found in filesystem");
   }
 
   @Test

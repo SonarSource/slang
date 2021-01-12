@@ -39,27 +39,42 @@ public class CoverageTest extends TestBase {
   public TemporaryFolder tmpDir = new TemporaryFolder();
   private Path workDir;
 
-  public void setUpRuby() throws Exception {
+  public void setUpRuby(String coverageReportName) throws Exception {
     workDir = tmpDir.newFolder("ruby").toPath().toAbsolutePath();
     Path src = BASE_DIRECTORY.resolve("ruby/file.rb");
     Path srcCopy = workDir.resolve(src.getFileName()).toAbsolutePath();
     Files.copy(src, srcCopy);
     Files.copy(BASE_DIRECTORY.resolve("ruby/file_not_in_report.rb"), workDir.resolve("file_not_in_report.rb"));
-    Path report = BASE_DIRECTORY.resolve("ruby/resultset.json");
+    Path report = BASE_DIRECTORY.resolve("ruby/" + coverageReportName);
     String reportContent = new String(Files.readAllBytes(report), UTF_8);
     reportContent = reportContent.replace(ABSOLUTE_PATH_PLACEHOLDER, srcCopy.toString().replace("\\", "\\\\"));
-    Path reportCopy = workDir.resolve("coverage/.resultset.json");
+    Path reportCopy = workDir.resolve("coverage/." + coverageReportName);
     Files.createDirectories(reportCopy.getParent());
     Files.write(reportCopy, reportContent.getBytes(UTF_8));
   }
 
   @Test
-  public void ruby_coverage() throws Exception {
-    final String projectKey = "rubyCoverage";
-    setUpRuby();
+  public void ruby_coverage_resultset() throws Exception {
+    final String projectKey = "rubyCoverageResultSet";
+    setUpRuby("resultset.json");
     SonarScanner rubyScanner = getSonarScanner(projectKey, workDir.getParent().toString(), "ruby");
     ORCHESTRATOR.executeBuild(rubyScanner);
 
+    assert_ruby_measures(projectKey);
+  }
+
+  @Test
+  public void ruby_coverage_json_formatter() throws Exception {
+    final String projectKey = "rubyCoverageJsonFormatter";
+    setUpRuby("coverage.json");
+    SonarScanner rubyScanner = getSonarScanner(projectKey, workDir.getParent().toString(), "ruby");
+    rubyScanner.setProperty("sonar.ruby.coverage.reportPaths", "coverage/.coverage.json");
+    ORCHESTRATOR.executeBuild(rubyScanner);
+
+    assert_ruby_measures(projectKey);
+  }
+
+  private void assert_ruby_measures(String projectKey) {
     String componentKey = projectKey + ":file.rb";
     assertThat(getMeasureAsInt(componentKey, "lines_to_cover")).isEqualTo(7);
     assertThat(getMeasureAsInt(componentKey, "uncovered_lines")).isEqualTo(1);
