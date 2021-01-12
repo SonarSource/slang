@@ -27,11 +27,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.xml.stream.XMLStreamException;
+import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Metric;
-import org.sonar.api.scanner.ScannerSide;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.kotlin.plugin.surefire.data.UnitTestClassReport;
@@ -121,7 +121,8 @@ public class KotlinSurefireParser {
         if (inputFile.isPresent()) {
           save(report, inputFile.get(), context);
         } else {
-          LOGGER.warn("Resource not found: {}", entry.getKey());
+          LOGGER.warn("Resource not found: {} under the directory {} while reading test reports. Please, make sure your \"sonar.junit.reportPaths\" property is configured properly",
+            entry.getKey(), context.fileSystem().baseDir().getPath());
         }
       }
     }

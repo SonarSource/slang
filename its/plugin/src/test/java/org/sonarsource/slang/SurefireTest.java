@@ -77,4 +77,22 @@ public class SurefireTest extends TestBase {
     assertThat(parseDouble(measures.get("test_success_density").getValue())).isEqualTo(100.0);
   }
 
+  @Test
+  public void tests_with_submodule() {
+    MavenBuild build = MavenBuild.create()
+      .setPom(new File(BASE_DIRECTORY.toFile(), "tests-with-submodule/pom.xml"))
+      .setGoals("clean test-compile surefire:test -Dsurefire.reportNameSuffix=Run1", "test-compile surefire:test -Dsurefire.reportNameSuffix=Run2", "sonar:sonar");
+    ORCHESTRATOR.executeBuild(build);
+
+    Map<String, Measures.Measure> measures = getMeasures("org.sonarsource.it.projects:tests-with-submodule",
+      "tests", "test_errors", "test_failures", "skipped_tests", "test_execution_time", "test_success_density");
+
+    assertThat(parseInt(measures.get("tests").getValue())).isEqualTo(2);
+    assertThat(parseInt(measures.get("test_errors").getValue())).isZero();
+    assertThat(parseInt(measures.get("test_failures").getValue())).isZero();
+    assertThat(parseInt(measures.get("skipped_tests").getValue())).isEqualTo(2);
+    assertThat(parseInt(measures.get("test_execution_time").getValue())).isPositive();
+    assertThat(parseDouble(measures.get("test_success_density").getValue())).isEqualTo(100.0);
+  }
+
 }

@@ -35,6 +35,7 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.utils.log.LogTester;
+import org.sonar.api.utils.log.LoggerLevel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -47,6 +48,8 @@ import static org.mockito.Mockito.when;
 
 public class KotlinSurefireParserTest {
 
+  private static final String PREFIX = "Resource not found:";
+  private static final String WARNING = "while reading test reports. Please, make sure your \"sonar.junit.reportPaths\" property is configured properly";
   private KotlinSurefireParser parser;
 
   @Rule
@@ -84,8 +87,12 @@ public class KotlinSurefireParserTest {
     when(kotlinResourcesLocator.findResourceByClassName(anyString())).thenReturn(Optional.empty());
 
     SensorContext context = mock(SensorContext.class);
+    when(context.fileSystem()).thenReturn(new DefaultFileSystem(Paths.get("/test")));
     parser.collect(context, getDirs("multipleReports"), false);
     verify(context, never()).newMeasure();
+    assertThat(logTester.logs(LoggerLevel.WARN)).isNotEmpty();
+    assertThat(logTester.logs(LoggerLevel.WARN)).allMatch(message -> message.startsWith(PREFIX));
+    assertThat(logTester.logs(LoggerLevel.WARN)).allMatch(message -> message.endsWith(WARNING));
   }
 
   @Test
