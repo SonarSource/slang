@@ -1,18 +1,15 @@
 plugins {
     id "scala"
-    id "org.scoverage" version "2.5.0"
-    id 'com.github.johnrengelman.shadow' version '4.0.2'
+    id "org.scoverage" version "5.0.0"
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 ext {
-    scoveragePluginVersion = '1.4.1'
+    scoveragePluginVersion = '1.4.2'
     scalaVersion = '2.12.9'
     scalaBinaryVersion = '2.12'
 }
 
-// compile scala before java
-tasks.compileScala.dependsOn.remove("compileJava")
-tasks.compileJava.dependsOn compileScala
 tasks.check.dependsOn reportScoverage
 
 sourceSets {
@@ -24,10 +21,13 @@ sourceSets {
         java {
             outputDir = file("$buildDir/classes/java/main")
         }
-        // java code depends on scala code
-        compileClasspath += files("$sourceSets.main.scala.outputDir")
     }
 }
+
+// java code depends on scala code
+tasks.compileScala.classpath = sourceSets.main.compileClasspath
+tasks.compileJava.classpath += files(sourceSets.main.scala.classesDirectory)
+tasks.compileScoverageJava.enabled(false)
 
 sonarqube {
     properties {
