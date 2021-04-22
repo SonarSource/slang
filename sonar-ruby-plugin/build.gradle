@@ -39,7 +39,7 @@ task copyGemsJarsFromDirectoryToShadowBugWorkaroundJar(type: Jar) {
     from "${buildDir}/dependency_gems/gems"
     includes = ['**/*.jar']
     destinationDir = file("${buildDir}/tmp")
-    archiveName = "shadowBugWorkaround.jar"
+    archiveFileName = "shadowBugWorkaround.jar"
 }
 copyGemsJarsFromDirectoryToShadowBugWorkaroundJar.dependsOn unpackDependencyGems
 processResources.dependsOn copyGemsJarsFromDirectoryToShadowBugWorkaroundJar
@@ -126,7 +126,7 @@ shadowJar {
     exclude "racc-${rubygemsAstVersion}-java/web/**"
 
     doLast {
-        enforceJarSizeAndCheckContent(new File(libsDir, shadowJar.archiveName), 13_000_000L, 13_500_000L)
+        enforceJarSizeAndCheckContent(shadowJar.archiveFile.get().asFile, 13_000_000L, 13_500_000L)
     }
 }
 
