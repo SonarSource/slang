@@ -2,11 +2,11 @@ apply plugin: 'antlr'
 
 dependencies {
     antlr "org.antlr:antlr4:4.7.1"
-    compile project(':slang-api')
-    compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
-    testCompile project(':slang-testing')
-    testCompile 'junit:junit'
-    testCompile 'org.assertj:assertj-core'
+    implementation project(':slang-api')
+    implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
+    testImplementation project(':slang-testing')
+    testImplementation 'junit:junit'
+    testImplementation 'org.assertj:assertj-core'
 }
 
 generateGrammarSource {

@@ -7,22 +7,22 @@ shadowJar.dependsOn ':sonar-go-to-slang:build'
 test.dependsOn ':sonar-go-to-slang:build'
 
 dependencies {
-    compile project(':slang-api')
-    compile project(':slang-checks')
-    compile project(':slang-plugin')
-    compile project(':checkstyle-import')
+    implementation project(':slang-api')
+    implementation project(':slang-checks')
+    implementation project(':slang-plugin')
+    implementation project(':checkstyle-import')
     // dependency on sonar-go-to-slang binaries
-    runtime files(project(':sonar-go-to-slang').buildDir)
+    runtimeOnly files(project(':sonar-go-to-slang').buildDir)
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
-    compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
-    compile 'com.eclipsesource.minimal-json:minimal-json'
-    testCompile 'junit:junit'
-    testCompile 'org.assertj:assertj-core'
-    testCompile 'org.mockito:mockito-core'
-    testCompile 'io.github.classgraph:classgraph'
-    testCompile project(':slang-antlr')
-    testCompile project(':slang-testing')
-    testCompile 'org.awaitility:awaitility:3.1.0'
+    implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
+    implementation 'com.eclipsesource.minimal-json:minimal-json'
+    testImplementation 'junit:junit'
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'io.github.classgraph:classgraph'
+    testImplementation project(':slang-antlr')
+    testImplementation project(':slang-testing')
+    testImplementation 'org.awaitility:awaitility:3.1.0'
 }
 
 tasks.withType(JavaCompile) {

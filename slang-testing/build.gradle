@@ -1,7 +1,7 @@
 dependencies {
-    compile project(':slang-api')
-    compile 'com.google.code.findbugs:jsr305'
-    compile 'org.sonarsource.analyzer-commons:sonar-analyzer-test-commons'
+    implementation project(':slang-api')
+    implementation 'com.google.code.findbugs:jsr305'
+    implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-test-commons'
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
     compileOnly 'junit:junit'
     compileOnly 'io.github.classgraph:classgraph'

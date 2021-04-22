@@ -15,20 +15,20 @@ processResources.from("src/main/resources", "${buildDir}/dependency_gems/gems")
 
 dependencies {
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
-    compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
-    compile project(':slang-plugin')
-    compile project(':slang-checks')
-    compile project(':slang-api')
+    implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
+    implementation project(':slang-plugin')
+    implementation project(':slang-checks')
+    implementation project(':slang-api')
     implementation project(path: ':jruby-repackaged', configuration: 'shadow')
     gems "rubygems:racc:${rubygemsRaccVersion}"
     gems "rubygems:ast:${rubygemsAstVersion}"
     gems "rubygems:parser:${rubygemsParserVersion}"
-    testCompile project(':slang-testing')
-    testCompile project(':slang-antlr')
-    testCompile 'junit:junit'
-    testCompile 'org.assertj:assertj-core'
-    testCompile 'org.mockito:mockito-core'
-    testCompile 'io.github.classgraph:classgraph'
+    testImplementation project(':slang-testing')
+    testImplementation project(':slang-antlr')
+    testImplementation 'junit:junit'
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'io.github.classgraph:classgraph'
 }
 
 task unpackDependencyGems(type: JRubyPrepare) {

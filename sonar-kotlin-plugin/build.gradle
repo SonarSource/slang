@@ -7,22 +7,22 @@ ext {
 }
 
 dependencies {
-    compile project(':slang-api')
-    compile project(':slang-checks')
-    compile project(':slang-plugin')
-    compile project(':checkstyle-import')
+    implementation project(':slang-api')
+    implementation project(':slang-checks')
+    implementation project(':slang-plugin')
+    implementation project(':checkstyle-import')
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
-    compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
-    compile 'org.sonarsource.analyzer-commons:sonar-xml-parsing'
-    compile "org.jetbrains.kotlin:kotlin-compiler-embeddable:${kotlinVersion}"
-    compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
-    compile 'com.fasterxml.staxmate:staxmate:2.3.1'
-    testCompile 'junit:junit'
-    testCompile 'org.assertj:assertj-core'
-    testCompile 'org.mockito:mockito-core'
-    testCompile 'io.github.classgraph:classgraph'
-    testCompile project(':slang-antlr')
-    testCompile project(':slang-testing')
+    implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
+    implementation 'org.sonarsource.analyzer-commons:sonar-xml-parsing'
+    implementation "org.jetbrains.kotlin:kotlin-compiler-embeddable:${kotlinVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+    implementation 'com.fasterxml.staxmate:staxmate:2.3.1'
+    testImplementation 'junit:junit'
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'io.github.classgraph:classgraph'
+    testImplementation project(':slang-antlr')
+    testImplementation project(':slang-testing')
 }
 
 tasks.withType(JavaCompile) {

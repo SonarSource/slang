@@ -38,21 +38,21 @@ sonarqube {
 
 dependencies {
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
-    compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
-    compile 'org.sonarsource.analyzer-commons:sonar-xml-parsing'
-    compile project(':slang-api')
-    compile project(':slang-checks')
-    compile project(':slang-plugin')
-    compile('org.scalameta:scalameta_2.12:4.3.24') {
+    implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
+    implementation 'org.sonarsource.analyzer-commons:sonar-xml-parsing'
+    implementation project(':slang-api')
+    implementation project(':slang-checks')
+    implementation project(':slang-plugin')
+    implementation('org.scalameta:scalameta_2.12:4.3.24') {
         exclude group: 'org.scalameta', module: 'semanticdb_2.12'
         exclude group: 'com.lihaoyi', module: 'fansi_2.12'
     }
-    testCompile project(':slang-testing')
-    testCompile project(':slang-antlr')
-    testCompile 'junit:junit'
-    testCompile 'org.assertj:assertj-core'
-    testCompile 'org.mockito:mockito-core'
-    testCompile 'io.github.classgraph:classgraph'
+    testImplementation project(':slang-testing')
+    testImplementation project(':slang-antlr')
+    testImplementation 'junit:junit'
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'io.github.classgraph:classgraph'
 
     scoverage "org.scoverage:scalac-scoverage-plugin_2.12:$scoveragePluginVersion", "org.scoverage:scalac-scoverage-runtime_2.12:$scoveragePluginVersion"
 }

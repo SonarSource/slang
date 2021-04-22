@@ -1,11 +1,11 @@
 dependencies {
-    compile project(':slang-api')
+    implementation project(':slang-api')
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
-    compile 'com.google.code.findbugs:jsr305'
-    compile 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
-    testCompile project(':slang-antlr')
-    testCompile project(':slang-testing')
-    testCompile 'junit:junit'
-    testCompile 'org.assertj:assertj-core'
-    testCompile 'org.sonarsource.analyzer-commons:sonar-analyzer-test-commons'
+    implementation 'com.google.code.findbugs:jsr305'
+    implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
+    testImplementation project(':slang-antlr')
+    testImplementation project(':slang-testing')
+    testImplementation 'junit:junit'
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.sonarsource.analyzer-commons:sonar-analyzer-test-commons'
 }
