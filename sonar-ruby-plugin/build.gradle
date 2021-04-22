@@ -38,7 +38,7 @@ task unpackDependencyGems(type: JRubyPrepare) {
 task copyGemsJarsFromDirectoryToShadowBugWorkaroundJar(type: Jar) {
     from "${buildDir}/dependency_gems/gems"
     includes = ['**/*.jar']
-    destinationDir = file("${buildDir}/tmp")
+    destinationDirectory = file("${buildDir}/tmp")
     archiveFileName = "shadowBugWorkaround.jar"
 }
 copyGemsJarsFromDirectoryToShadowBugWorkaroundJar.dependsOn unpackDependencyGems
