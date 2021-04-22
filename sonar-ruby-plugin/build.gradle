@@ -46,7 +46,7 @@ processResources.dependsOn copyGemsJarsFromDirectoryToShadowBugWorkaroundJar
 
 jar {
     manifest {
-        def displayVersion = (project.buildNumber == null ? version : version.substring(0, version.lastIndexOf('.')) + " (build ${project.buildNumber})")
+        def displayVersion = (project.buildNumber == null ? project.version : project.version.substring(0, project.version.lastIndexOf('.')) + " (build ${project.buildNumber})")
         def buildDate = new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         attributes(
                 'Build-Time': buildDate,
@@ -65,10 +65,10 @@ jar {
                 'Plugin-Organization': 'SonarSource',
                 'Plugin-OrganizationUrl': 'http://www.sonarsource.com',
                 'Plugin-SourcesUrl': 'https://github.com/SonarSource/slang',
-                'Plugin-Version': version,
+                'Plugin-Version': project.version,
                 'Sonar-Version': '6.7',
                 'SonarLint-Supported': 'true',
-                'Version': "${version}",
+                'Version': "${project.version}",
         )
     }
 }
