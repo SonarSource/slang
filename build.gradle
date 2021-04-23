@@ -208,7 +208,7 @@ sonarqube {
 
 artifactory {
     clientConfig.setIncludeEnvVars(true)
-    clientConfig.setEnvVarsExcludePatterns('*password*,*PASSWORD*,*secret*,*MAVEN_CMD_LINE_ARGS*,sun.java.command,*token*,*TOKEN*,*LOGIN*,*login*')
+    clientConfig.setEnvVarsExcludePatterns('*password*,*PASSWORD*,*secret*,*MAVEN_CMD_LINE_ARGS*,sun.java.command,*token*,*TOKEN*,*LOGIN*,*login*,*key*,*KEY*,*PASSPHRASE*,*signing*')
     contextUrl = System.getenv('ARTIFACTORY_URL')
     publish {
         repository {
