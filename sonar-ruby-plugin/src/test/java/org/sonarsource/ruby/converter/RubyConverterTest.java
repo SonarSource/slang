@@ -120,9 +120,8 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
 
   @Test
   public void empty() {
-    thrown.expect(ParseException.class);
-    thrown.expectMessage("No AST node found");
-    converter.parse("");
+    assertThatThrownBy(() -> converter.parse(""))
+      .hasMessage("No AST node found");
   }
 
   @Test

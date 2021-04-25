@@ -5,9 +5,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.IntegerLiteralTree;
 import org.sonarsource.slang.api.LoopTree;
@@ -17,16 +15,13 @@ import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.sonar.go.converter.GoConverter.DefaultCommand.getExecutableForCurrentOS;
 
 public class GoConverterTest {
 
-  @Rule
-  public ExpectedException exceptionRule = ExpectedException.none();
-  
   @Test
   public void test_parse_return() {
     GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
@@ -75,22 +70,20 @@ public class GoConverterTest {
 
   @Test
   public void parse_error() {
-    exceptionRule.expect(ParseException.class);
-    exceptionRule.expectMessage("Go parser external process returned non-zero exit value: 2");
-
     GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
-    converter.parse("$!#@");
+    ParseException e = assertThrows(ParseException.class,
+      () -> converter.parse("$!#@"));
+    assertThat(e).hasMessage("Go parser external process returned non-zero exit value: 2");
   }
 
   @Test
   public void invalid_command() {
-    exceptionRule.expect(ParseException.class);
-    exceptionRule.expectMessage(containsString("Cannot run program \"invalid-command\""));
-
     GoConverter.Command command = mock(GoConverter.Command.class);
     when(command.getCommand()).thenReturn(Collections.singletonList("invalid-command"));
     GoConverter converter = new GoConverter(command);
-    converter.parse("package main\nfunc foo() {}");
+    ParseException e = assertThrows(ParseException.class,
+      () -> converter.parse("package main\nfunc foo() {}"));
+    assertThat(e).hasMessageContaining("Cannot run program \"invalid-command\"");
   }
 
   @Test
@@ -106,23 +99,21 @@ public class GoConverterTest {
 
   @Test
   public void parse_rejected_big_file() {
-    exceptionRule.expect(ParseException.class);
-    exceptionRule.expectMessage("The file size is too big and should be excluded, its size is 1500028 (maximum allowed is 1500000 bytes)");
-
     GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
     String code = "package main\n" +
       "func foo() {\n" +
       "}\n";
     String bigCode = code + new String(new char[1_500_000]).replace("\0", "\n");
-    converter.parse(bigCode);
+    ParseException e = assertThrows(ParseException.class,
+      () -> converter.parse(bigCode));
+    assertThat(e).hasMessage("The file size is too big and should be excluded, its size is 1500028 (maximum allowed is 1500000 bytes)");
   }
 
   @Test
   public void load_invalid_executable_path() throws IOException {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("invalid-exe-path binary not found on class path");
-
-    GoConverter.DefaultCommand.getBytesFromResource("invalid-exe-path");
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> GoConverter.DefaultCommand.getBytesFromResource("invalid-exe-path"));
+    assertThat(e).hasMessage("invalid-exe-path binary not found on class path");
   }
 
   @Test

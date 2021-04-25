@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.JumpTree;
 import org.sonarsource.slang.api.NativeKind;
@@ -46,6 +44,7 @@ import org.sonarsource.slang.persistence.JsonTree;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.sonarsource.slang.persistence.conversion.JsonTreeConverter.COMMENT_FROM_JSON;
 import static org.sonarsource.slang.persistence.conversion.JsonTreeConverter.COMMENT_TO_JSON;
 import static org.sonarsource.slang.persistence.conversion.JsonTreeConverter.CONTENT_RANGE;
@@ -58,9 +57,6 @@ import static org.sonarsource.slang.persistence.conversion.JsonTreeConverter.TRE
 import static org.sonarsource.slang.persistence.conversion.JsonTreeConverter.TYPE;
 
 public class JsonTreeConverterTest extends JsonTestHelper {
-
-  @Rule
-  public ExpectedException exceptionRule = ExpectedException.none();
 
   private SerializationContext writeContext = new SerializationContext(JsonTreeConverter.POLYMORPHIC_CONVERTER);
   private DeserializationContext readContext = new DeserializationContext(JsonTreeConverter.POLYMORPHIC_CONVERTER);
@@ -168,46 +164,46 @@ public class JsonTreeConverterTest extends JsonTestHelper {
 
   @Test
   public void error_missing_type() throws IOException {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("Missing non-null value for field '@type' at 'tree/Return/body'" +
-      " member: {\"invalid_type\":\"Literal\",\"metaData\":\"1:7:1:11\",\"value\":\"true\"}");
     String invalidJson = indentedJsonFromFile("error_missing_type.json");
-    JsonTree.fromJson(invalidJson);
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> JsonTree.fromJson(invalidJson));
+    assertThat(e).hasMessage("Missing non-null value for field '@type' at 'tree/Return/body'" +
+      " member: {\"invalid_type\":\"Literal\",\"metaData\":\"1:7:1:11\",\"value\":\"true\"}");
   }
 
   @Test
   public void error_invalid_json_tree() throws IOException {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("Unexpected value for Tree at 'tree/Return/body' member: 1234");
     String invalidJson = indentedJsonFromFile("error_invalid_json_tree.json");
-    JsonTree.fromJson(invalidJson);
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> JsonTree.fromJson(invalidJson));
+    assertThat(e).hasMessage("Unexpected value for Tree at 'tree/Return/body' member: 1234");
   }
 
   @Test
   public void error_invalid_tree_type() throws IOException {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("Invalid '@type' value at 'tree/Return/body/UnsupportedType' member: UnsupportedType");
     String invalidJson = indentedJsonFromFile("error_invalid_tree_type.json");
-    JsonTree.fromJson(invalidJson);
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> JsonTree.fromJson(invalidJson));
+    assertThat(e).hasMessage("Invalid '@type' value at 'tree/Return/body/UnsupportedType' member: UnsupportedType");
   }
 
   @Test
   public void error_unsupported_tree_class() throws IOException {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("Unsupported tree class: org.sonarsource.slang.persistence.conversion.JsonTreeConverterTest$UnsupportedTree");
     Token token = otherToken(1, 0, "x");
     UnsupportedTree tree = new UnsupportedTree(metaData(token));
-    JsonTree.toJson(tree);
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> JsonTree.toJson(tree));
+    assertThat(e).hasMessage("Unsupported tree class: org.sonarsource.slang.persistence.conversion.JsonTreeConverterTest$UnsupportedTree");
   }
 
   @Test
   public void error_unsupported_implementation_class() throws IOException {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("Unsupported implementation class: org.sonarsource.slang.persistence.conversion.JsonTreeConverterTest$UnsupportedTree");
     Token token = otherToken(1, 0, "x");
     UnsupportedTree tree = new UnsupportedTree(metaData(token));
     SerializationContext ctx = new SerializationContext(JsonTreeConverter.POLYMORPHIC_CONVERTER);
-    ctx.newTypedObject(tree);
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> ctx.newTypedObject(tree));
+    assertThat(e).hasMessage("Unsupported implementation class: org.sonarsource.slang.persistence.conversion.JsonTreeConverterTest$UnsupportedTree");
   }
 
   class UnsupportedTree extends BaseTreeImpl {
@@ -223,30 +219,30 @@ public class JsonTreeConverterTest extends JsonTestHelper {
 
   @Test
   public void error_unexpected_match_child_class() throws IOException {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("Unexpected 'org.sonarsource.slang.impl.IntegerLiteralTreeImpl'" +
+    String invalidJson = indentedJsonFromFile("error_unexpected_match_child_class.json");
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> JsonTree.fromJson(invalidJson));
+    assertThat(e).hasMessage("Unexpected 'org.sonarsource.slang.impl.IntegerLiteralTreeImpl'" +
       " type for member 'cases[]' instead of" +
       " 'org.sonarsource.slang.api.MatchCaseTree'" +
       " at 'tree/Match/cases[]/IntegerLiteral'" +
       " member: {\"@type\":\"IntegerLiteral\",\"metaData\":\"1:17:1:19\",\"value\":\"42\"}");
-    String invalidJson = indentedJsonFromFile("error_unexpected_match_child_class.json");
-    JsonTree.fromJson(invalidJson);
   }
 
   @Test
   public void error_unary_expression_without_child() throws IOException {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("Unexpected null value for field 'operand' at 'tree/UnaryExpression' member: null");
     String invalidJson = indentedJsonFromFile("error_unary_expression_without_child.json");
-    JsonTree.fromJson(invalidJson);
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> JsonTree.fromJson(invalidJson));
+    assertThat(e).hasMessage("Unexpected null value for field 'operand' at 'tree/UnaryExpression' member: null");
   }
 
   @Test
   public void error_unary_expression_with_null_child() throws IOException {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("Unexpected null value for field 'operand' at 'tree/UnaryExpression' member: null");
     String invalidJson = indentedJsonFromFile("error_unary_expression_with_null_child.json");
-    JsonTree.fromJson(invalidJson);
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> JsonTree.fromJson(invalidJson));
+    assertThat(e).hasMessage("Unexpected null value for field 'operand' at 'tree/UnaryExpression' member: null");
   }
 
   @Test

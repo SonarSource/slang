@@ -29,9 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.assertj.core.api.ListAssert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.sonar.api.config.Configuration;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.Annotation;
@@ -56,14 +54,12 @@ import org.sonarsource.slang.impl.TopLevelTreeImpl;
 import org.sonarsource.slang.plugin.converter.ASTConverterValidation.ValidationMode;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 
 public class ASTConverterValidationTest {
 
   private static final NativeKind NATIVE_KIND = new NativeKind() {
   };
-
-  @Rule
-  public ExpectedException expected = ExpectedException.none();
 
   @Test
   public void delegate_calls() {
@@ -102,12 +98,11 @@ public class ASTConverterValidationTest {
 
   @Test
   public void wrap_error() {
-    expected.expect(IllegalStateException.class);
-    expected.expectMessage("Unsupported mode: BOOM");
-
     SimpleConverter wrappedConverter = new SimpleConverter(null);
     String configKey = "sonar.slang.converter.validation";
-    ASTConverterValidation.wrap(wrappedConverter, new SimpleConfig(configKey, "BOOM"));
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> ASTConverterValidation.wrap(wrappedConverter, new SimpleConfig(configKey, "BOOM")));
+    assertThat(e).hasMessage("Unsupported mode: BOOM");
   }
 
   @Test
@@ -142,11 +137,10 @@ public class ASTConverterValidationTest {
 
   @Test
   public void missing_token() {
-    expected.expect(IllegalStateException.class);
-    expected.expectMessage("IdentifierTreeImpl has no token");
-
     TextRange range = new TextRangeImpl(1, 0, 1, 1);
-    assertValidationErrors("", new IdentifierTreeImpl(metaData(range), "a"), ValidationMode.THROW_EXCEPTION);
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> assertValidationErrors("", new IdentifierTreeImpl(metaData(range), "a"), ValidationMode.THROW_EXCEPTION));
+    assertThat(e).hasMessageContaining("IdentifierTreeImpl has no token");
   }
 
   @Test

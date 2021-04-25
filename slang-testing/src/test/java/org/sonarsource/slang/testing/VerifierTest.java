@@ -5,9 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.junit.ComparisonFailure;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.TopLevelTree;
@@ -17,7 +15,8 @@ import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.persistence.JsonTree;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public class VerifierTest {
@@ -43,9 +42,6 @@ public class VerifierTest {
   private static final SlangCheck ISSUE_ON_FILE = init ->
     init.register(TopLevelTree.class, (ctx, identifier) -> ctx.reportFileIssue(ctx.filename() + " length " + ctx.fileContent().length()));
 
-  @Rule
-  public ExpectedException exceptionRule = ExpectedException.none();
-
   @Test
   public void verify_with_issue() throws IOException {
     Path path = BASE_DIR.resolve("primary.code");
@@ -53,20 +49,20 @@ public class VerifierTest {
     Verifier.verify(converter, path, ISSUE_ON_IDENTIFIERS_CHECK);
     Verifier.verify(converter, path, ISSUE_ON_IDENTIFIER_TEXT_RANGE_CHECK);
 
-    exceptionRule.expect(ComparisonFailure.class);
-    exceptionRule.expectMessage("ERROR: 'assertNoIssues()' is called but there's some 'Noncompliant' comments. In file (primary.code:1)");
-    Verifier.verifyNoIssue(converter, path, ISSUE_ON_IDENTIFIERS_CHECK);
+    ComparisonFailure e = assertThrows(ComparisonFailure.class,
+      () -> Verifier.verifyNoIssue(converter, path, ISSUE_ON_IDENTIFIERS_CHECK));
+    assertThat(e).hasMessageStartingWith("ERROR: 'assertNoIssues()' is called but there's some 'Noncompliant' comments. In file (primary.code:1)");
   }
 
   @Test
   public void verify_with_wrong_message() throws IOException {
     Path path = BASE_DIR.resolve("wrong-message.code");
     ASTConverter converter = createConverter(path);
-    exceptionRule.expect(ComparisonFailure.class);
-    exceptionRule.expectMessage(containsString("" +
+    ComparisonFailure e = assertThrows(ComparisonFailure.class,
+      () -> Verifier.verify(converter, path, ISSUE_ON_IDENTIFIERS_CHECK));
+    assertThat(e).hasMessageContaining("" +
       "- 001: Noncompliant {{wrong message}}\n" +
-      "+ 001: Noncompliant {{primary}}"));
-    Verifier.verify(converter, path, ISSUE_ON_IDENTIFIERS_CHECK);
+      "+ 001: Noncompliant {{primary}}");
   }
 
   @Test
@@ -75,9 +71,9 @@ public class VerifierTest {
     ASTConverter converter = createConverter(path);
     Verifier.verify(converter, path, ISSUE_WITH_SECONDARY_LOCATION_CHECK);
 
-    exceptionRule.expect(ComparisonFailure.class);
-    exceptionRule.expectMessage("ERROR: 'assertNoIssues()' is called but there's some 'Noncompliant' comments. In file (primary-and-secondary.code:1)");
-    Verifier.verifyNoIssue(converter, path, ISSUE_WITH_SECONDARY_LOCATION_CHECK);
+    ComparisonFailure e = assertThrows(ComparisonFailure.class,
+      () -> Verifier.verifyNoIssue(converter, path, ISSUE_WITH_SECONDARY_LOCATION_CHECK));
+    assertThat(e).hasMessageStartingWith("ERROR: 'assertNoIssues()' is called but there's some 'Noncompliant' comments. In file (primary-and-secondary.code:1)");
   }
 
   @Test
@@ -86,9 +82,9 @@ public class VerifierTest {
     ASTConverter converter = createConverter(path);
     Verifier.verify(converter, path, ISSUE_ON_FILE);
 
-    exceptionRule.expect(ComparisonFailure.class);
-    exceptionRule.expectMessage("ERROR: 'assertNoIssues()' is called but there's some 'Noncompliant' comments. In file (file-issue.code:0)");
-    Verifier.verifyNoIssue(converter, path, ISSUE_ON_FILE);
+    ComparisonFailure e = assertThrows(ComparisonFailure.class,
+      () -> Verifier.verifyNoIssue(converter, path, ISSUE_ON_FILE));
+    assertThat(e).hasMessageStartingWith("ERROR: 'assertNoIssues()' is called but there's some 'Noncompliant' comments. In file (file-issue.code:0)");
   }
 
   @Test
@@ -97,17 +93,17 @@ public class VerifierTest {
     ASTConverter converter = createConverter(path);
     Verifier.verifyNoIssue(converter, path, NO_ISSUE_CHECK);
 
-    exceptionRule.expect(ComparisonFailure.class);
-    exceptionRule.expectMessage("ERROR: 'assertOneOrMoreIssues()' is called but there's no 'Noncompliant' comments. In file (no-issue.code:1)");
-    Verifier.verify(converter, path, NO_ISSUE_CHECK);
+    ComparisonFailure e = assertThrows(ComparisonFailure.class,
+      () -> Verifier.verify(converter, path, NO_ISSUE_CHECK));
+    assertThat(e).hasMessageStartingWith("ERROR: 'assertOneOrMoreIssues()' is called but there's no 'Noncompliant' comments. In file (no-issue.code:1)");
   }
 
   @Test
   public void invalid_path() throws IOException {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage(containsString("Cannot read"));
     Path path = BASE_DIR.resolve("invalid-path.code");
-    Verifier.verify(mock(ASTConverter.class), path, ISSUE_ON_IDENTIFIERS_CHECK);
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> Verifier.verify(mock(ASTConverter.class), path, ISSUE_ON_IDENTIFIERS_CHECK));
+    assertThat(e).hasMessageContaining("Cannot read");
   }
 
   private static ASTConverter createConverter(Path path) throws IOException {

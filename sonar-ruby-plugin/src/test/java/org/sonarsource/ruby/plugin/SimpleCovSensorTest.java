@@ -29,7 +29,6 @@ import java.nio.file.Paths;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
@@ -50,9 +49,6 @@ public class SimpleCovSensorTest {
 
   private static final Path COVERAGE_DIR = Paths.get("src", "test", "resources", "coverage");
   private static final String MODULE_KEY = "/Absolute/Path/To/";
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
 
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();

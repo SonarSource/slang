@@ -22,9 +22,7 @@ package org.sonarsource.slang.antlr;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.sonarsource.slang.api.Annotation;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
@@ -61,6 +59,7 @@ import org.sonarsource.slang.impl.ModifierTreeImpl;
 import org.sonarsource.slang.parser.SLangConverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.sonarsource.slang.api.BinaryExpressionTree.Operator.GREATER_THAN;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.FOR;
@@ -76,8 +75,6 @@ import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
 public class SLangConverterTest {
 
-  @Rule
-  public ExpectedException expected = ExpectedException.none();
   private SLangConverter converter = new SLangConverter();
 
   @Test
@@ -841,16 +838,16 @@ public class SLangConverterTest {
 
   @Test
   public void parse_failure_1() {
-    expected.expect(ParseException.class);
-    expected.expectMessage("missing ';' before '<EOF>' at position 1:5");
-    converter.parse("x + 1");
+    ParseException e = assertThrows(ParseException.class,
+      () -> converter.parse("x + 1"));
+    assertThat(e).hasMessage("missing ';' before '<EOF>' at position 1:5");
   }
 
   @Test
   public void parse_failure_2() {
-    expected.expect(ParseException.class);
-    expected.expectMessage("Unexpected parsing error occurred. Last found valid token: 'private' at position 1:0");
-    converter.parse("private fun fun foo() {}");
+    ParseException e = assertThrows(ParseException.class,
+      () -> converter.parse("private fun fun foo() {}"));
+    assertThat(e).hasMessage("Unexpected parsing error occurred. Last found valid token: 'private' at position 1:0");
   }
 
   private BinaryExpressionTree parseBinary(String code) {

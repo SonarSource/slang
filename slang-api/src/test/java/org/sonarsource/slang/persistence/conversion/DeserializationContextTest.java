@@ -25,19 +25,15 @@ import com.eclipsesource.json.JsonObject;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.persistence.JsonTestHelper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 
 public class DeserializationContextTest extends JsonTestHelper {
-
-  @Rule
-  public ExpectedException exceptionRule = ExpectedException.none();
 
   private DeserializationContext context = new DeserializationContext(JsonTreeConverter.POLYMORPHIC_CONVERTER)
     .withMetaDataProvider(metaDataProvider);
@@ -55,14 +51,13 @@ public class DeserializationContextTest extends JsonTestHelper {
 
   @Test
   public void resolve_token_not_found() {
-    exceptionRule.expect(NoSuchElementException.class);
-    exceptionRule.expectMessage("Token not found: 7:13:7:20");
-
     otherToken(1, 0, "foo");
     JsonObject json = Json.object()
       .add("tokenReference", "7:13:7:20");
 
-    context.fieldToToken(json, "tokenReference");
+    NoSuchElementException e = assertThrows(NoSuchElementException.class,
+      () -> context.fieldToToken(json, "tokenReference"));
+    assertThat(e).hasMessage("Token not found: 7:13:7:20");
   }
 
   @Test
@@ -77,13 +72,12 @@ public class DeserializationContextTest extends JsonTestHelper {
 
   @Test
   public void resolve_metadata_not_found() {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("Missing non-null value for field 'metaData' at '' member: {\"field1\":\"42\"}");
-
     JsonObject json = Json.object()
       .add("field1", "42");
 
-    context.metaData(json);
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> context.metaData(json));
+    assertThat(e).hasMessage("Missing non-null value for field 'metaData' at '' member: {\"field1\":\"42\"}");
   }
 
   @Test
@@ -101,10 +95,10 @@ public class DeserializationContextTest extends JsonTestHelper {
 
   @Test
   public void invalid_object_list() {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("Expect Array instead of JsonNumber at 'root' member: 42");
     context.pushPath("root");
-    context.objectList(Json.value(42), (ctx, object) -> object);
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> context.objectList(Json.value(42), (ctx, object) -> object));
+    assertThat(e).hasMessage("Expect Array instead of JsonNumber at 'root' member: 42");
   }
 
   @Test
@@ -117,12 +111,12 @@ public class DeserializationContextTest extends JsonTestHelper {
 
   @Test
   public void field_to_nullable_invalid_string() {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("Expect String instead of 'JsonNumber' for field 'field1' at 'root' member: {\"field1\":42}");
     JsonObject json = Json.object()
       .add("field1", 42);
     context.pushPath("root");
-    context.fieldToNullableString(json, "field1");
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> context.fieldToNullableString(json, "field1"));
+    assertThat(e).hasMessage("Expect String instead of 'JsonNumber' for field 'field1' at 'root' member: {\"field1\":42}");
   }
 
   @Test
@@ -134,24 +128,24 @@ public class DeserializationContextTest extends JsonTestHelper {
 
   @Test
   public void field_to_missing_string() {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("Missing non-null value for field 'field2' at 'TopLevel/AssignmentExpression' member: {\"field1\":\"abc\"}");
     JsonObject json = Json.object()
       .add("field1", "abc");
     context.pushPath("TopLevel");
     context.pushPath("AssignmentExpression");
-    context.fieldToString(json, "field2");
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> context.fieldToString(json, "field2"));
+    assertThat(e).hasMessage("Missing non-null value for field 'field2' at 'TopLevel/AssignmentExpression' member: {\"field1\":\"abc\"}");
   }
 
   @Test
   public void field_to_null_string() {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("Missing non-null value for field 'field1' at 'TopLevel/AssignmentExpression' member: {\"field1\":null}");
     JsonObject json = Json.object()
       .add("field1", Json.NULL);
     context.pushPath("TopLevel");
     context.pushPath("AssignmentExpression");
-    context.fieldToString(json, "field1");
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> context.fieldToString(json, "field1"));
+    assertThat(e).hasMessage("Missing non-null value for field 'field1' at 'TopLevel/AssignmentExpression' member: {\"field1\":null}");
   }
 
   @Test
@@ -167,12 +161,12 @@ public class DeserializationContextTest extends JsonTestHelper {
 
   @Test
   public void field_to_range_missing() {
-    exceptionRule.expect(IllegalStateException.class);
-    exceptionRule.expectMessage("Missing non-null value for field 'field2' at 'root' member: {\"field1\":\"1:2:3:4\"}");
     JsonObject json = Json.object()
       .add("field1", "1:2:3:4");
     context.pushPath("root");
-    context.fieldToRange(json, "field2");
+    IllegalStateException e = assertThrows(IllegalStateException.class,
+      () -> context.fieldToRange(json, "field2"));
+    assertThat(e).hasMessage("Missing non-null value for field 'field2' at 'root' member: {\"field1\":\"1:2:3:4\"}");
   }
 
 }

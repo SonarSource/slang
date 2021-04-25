@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.BeforeClass;
 import org.junit.Rule;
-import org.junit.rules.ExpectedException;
 import org.sonar.api.utils.log.ThreadLocalLogTester;
 import org.sonarsource.slang.api.IntegerLiteralTree;
 import org.sonarsource.slang.api.NativeKind;
@@ -52,9 +51,6 @@ import static org.mockito.Mockito.when;
 public abstract class AbstractRubyConverterTest {
 
   static RubyConverter converter;
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
 
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();

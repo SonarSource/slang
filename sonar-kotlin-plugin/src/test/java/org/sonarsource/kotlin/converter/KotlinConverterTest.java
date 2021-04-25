@@ -22,9 +22,7 @@ package org.sonarsource.kotlin.converter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.sonarsource.slang.api.Annotation;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
@@ -59,6 +57,7 @@ import org.sonarsource.slang.impl.ModifierTreeImpl;
 import org.sonarsource.slang.parser.SLangConverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.sonarsource.slang.api.BinaryExpressionTree.Operator.LESS_THAN;
 import static org.sonarsource.slang.api.IntegerLiteralTree.Base.BINARY;
 import static org.sonarsource.slang.api.IntegerLiteralTree.Base.DECIMAL;
@@ -80,14 +79,11 @@ public class KotlinConverterTest {
 
   private KotlinConverter converter = new KotlinConverter();
 
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
-
   @Test
   public void testParseException() {
-    thrown.expect(ParseException.class);
-    thrown.expectMessage("Cannot convert file due to syntactic errors");
-    converter.parse("enum class A {\n<!REDECLARATION!>FOO<!>,<!REDECLARATION!>FOO<!>}");
+    ParseException e = assertThrows(ParseException.class,
+      () -> converter.parse("enum class A {\n<!REDECLARATION!>FOO<!>,<!REDECLARATION!>FOO<!>}"));
+    assertThat(e.getMessage()).isEqualTo("Cannot convert file due to syntactic errors");
   }
 
   @Test
@@ -99,19 +95,18 @@ public class KotlinConverterTest {
     assertThat(tree.children()).hasSize(1);
   }
 
-
   @Test
   public void testParsedExceptionWithPartialParsing() {
-    thrown.expect(ParseException.class);
-    thrown.expectMessage("Cannot convert file due to syntactic errors");
-    converter.parse("fun foo() { a b c ...}");
+    ParseException e = assertThrows(ParseException.class,
+      () -> converter.parse("fun foo() { a b c ...}"));
+    assertThat(e.getMessage()).isEqualTo("Cannot convert file due to syntactic errors");
   }
 
   @Test
   public void testParseWithoutNullPointer() {
-    thrown.expect(ParseException.class);
-    thrown.expectMessage("Cannot convert file due to syntactic errors");
-    converter.parse("package ${package}");
+    ParseException e = assertThrows(ParseException.class,
+      () -> converter.parse("package ${package}"));
+    assertThat(e.getMessage()).isEqualTo("Cannot convert file due to syntactic errors");
   }
 
   @Test

@@ -20,9 +20,7 @@
 package org.sonarsource.slang.persistence.conversion;
 
 import java.util.NoSuchElementException;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
@@ -32,11 +30,9 @@ import org.sonarsource.slang.impl.TextRangeImpl;
 import org.sonarsource.slang.persistence.JsonTestHelper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 
 public class RangeConverterTest extends JsonTestHelper {
-
-  @Rule
-  public ExpectedException exceptionRule = ExpectedException.none();
 
   @Test
   public void format() {
@@ -63,9 +59,9 @@ public class RangeConverterTest extends JsonTestHelper {
 
   @Test
   public void parse_invalid_string() {
-    exceptionRule.expect(IllegalArgumentException.class);
-    exceptionRule.expectMessage("Invalid TextRange '12345'");
-    RangeConverter.parse("12345");
+    IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+      () -> RangeConverter.parse("12345"));
+    assertThat(e).hasMessage("Invalid TextRange '12345'");
   }
 
   @Test
@@ -85,10 +81,10 @@ public class RangeConverterTest extends JsonTestHelper {
 
   @Test
   public void resolve_invalid_token() {
-    exceptionRule.expect(NoSuchElementException.class);
-    exceptionRule.expectMessage("Token not found: 2:0:2:3");
     otherToken(1, 0, "foo");
-    RangeConverter.resolveToken(metaDataProvider, "2:0:2:3");
+    NoSuchElementException e = assertThrows(NoSuchElementException.class,
+      () -> RangeConverter.resolveToken(metaDataProvider, "2:0:2:3"));
+    assertThat(e).hasMessage("Token not found: 2:0:2:3");
   }
 
   @Test
