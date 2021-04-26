@@ -149,7 +149,7 @@ func marshalIndentSlang(dst *bytes.Buffer, node *Node, prefix, indent string) {
 	dst.WriteString("}")
 }
 
-func marshalNodeArray(dst *bytes.Buffer, nodes []*Node, prefix, indent string){
+func marshalNodeArray(dst *bytes.Buffer, nodes []*Node, prefix, indent string) {
 	size := len(nodes)
 	if size == 0 {
 		dst.WriteString("[]")
