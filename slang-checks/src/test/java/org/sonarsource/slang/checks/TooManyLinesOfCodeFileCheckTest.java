@@ -19,20 +19,20 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TooManyLinesOfCodeFileCheckTest {
+class TooManyLinesOfCodeFileCheckTest {
 
   TooManyLinesOfCodeFileCheck check = new TooManyLinesOfCodeFileCheck();
 
   @Test
-  public void max_4() {
+  void max_4() {
     check.max = 4;
     Verifier.verify("TooManyLinesOfCodeFile.max_4.slang", check);
   }
 
   @Test
-  public void max_5() {
+  void max_5() {
     check.max = 5;
     Verifier.verifyNoIssue("TooManyLinesOfCodeFile.max_5.slang", check);
   }

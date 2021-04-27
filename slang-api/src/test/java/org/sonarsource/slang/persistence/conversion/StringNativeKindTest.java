@@ -19,21 +19,21 @@
  */
 package org.sonarsource.slang.persistence.conversion;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StringNativeKindTest {
+class StringNativeKindTest {
 
   @Test
-  public void constructor() {
+  void constructor() {
     assertThat(new StringNativeKind("ast.Element")).isNotNull();
     assertThat(StringNativeKind.of("ast.Element")).isNotNull();
     assertThat(StringNativeKind.of(null)).isNull();
   }
 
   @Test
-  public void to_string() {
+  void to_string() {
     assertThat(new StringNativeKind("ast.Element")).hasToString("ast.Element");
     assertThat(StringNativeKind.of("ast.Element")).hasToString("ast.Element");
     assertThat(StringNativeKind.toString(null)).isNull();
@@ -41,7 +41,7 @@ public class StringNativeKindTest {
   }
 
   @Test
-  public void test_equals() {
+  void test_equals() {
     assertThat(new StringNativeKind("ast.Element")).isEqualTo(new StringNativeKind("ast.Element"));
     assertThat(new StringNativeKind("ast.Element").hashCode()).isEqualTo(new StringNativeKind("ast.Element").hashCode());
   }

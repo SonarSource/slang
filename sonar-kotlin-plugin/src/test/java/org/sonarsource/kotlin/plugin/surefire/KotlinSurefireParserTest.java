@@ -25,9 +25,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
@@ -46,7 +47,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class KotlinSurefireParserTest {
+@EnableRuleMigrationSupport
+class KotlinSurefireParserTest {
 
   private static final String PREFIX = "Resource not found:";
   private static final String WARNING = "while reading test reports. Please, make sure your \"sonar.junit.reportPaths\" property is configured properly";
@@ -56,8 +58,8 @@ public class KotlinSurefireParserTest {
   public LogTester logTester = new LogTester();
   private KotlinResourcesLocator kotlinResourcesLocator;
 
-  @Before
-  public void before() {
+  @BeforeEach
+  void before() {
     FileSystem fs = new DefaultFileSystem(Paths.get("."));
     kotlinResourcesLocator = spy(new KotlinResourcesLocator(fs));
     parser = spy(new KotlinSurefireParser(kotlinResourcesLocator));
@@ -70,7 +72,7 @@ public class KotlinSurefireParserTest {
   }
 
   @Test
-  public void should_store_zero_tests_when_directory_is_null_or_non_existing_or_a_file() {
+  void should_store_zero_tests_when_directory_is_null_or_non_existing_or_a_file() {
 
     SensorContext context = mock(SensorContext.class);
     parser.collect(context, getDirs("nonExistingReportsDirectory"), false);
@@ -82,7 +84,7 @@ public class KotlinSurefireParserTest {
   }
 
   @Test
-  public void should_store_zero_tests_when_source_file_is_not_found() {
+  void should_store_zero_tests_when_source_file_is_not_found() {
 
     when(kotlinResourcesLocator.findResourceByClassName(anyString())).thenReturn(Optional.empty());
 
@@ -96,7 +98,7 @@ public class KotlinSurefireParserTest {
   }
 
   @Test
-  public void shouldAggregateReports() {
+  void shouldAggregateReports() {
     SensorContextTester context = mockContext();
     parser.collect(context, getDirs("multipleReports"), true);
 
@@ -111,7 +113,7 @@ public class KotlinSurefireParserTest {
   }
 
   @Test
-  public void shouldAggregateReportsFromMultipleDirectories() {
+  void shouldAggregateReportsFromMultipleDirectories() {
     SensorContextTester context = mockContext();
     parser.collect(context, getDirs("multipleDirectories/dir1", "multipleDirectories/dir2"), true);
     assertThat(context.measures(":ch.hortis.sonar.mvn.mc.MetricsCollectorRegistryTest")).hasSize(5);
@@ -124,7 +126,7 @@ public class KotlinSurefireParserTest {
 
   // SONAR-2841: if there's only a test suite report, then it should be read.
   @Test
-  public void shouldUseTestSuiteReportIfAlone() {
+  void shouldUseTestSuiteReportIfAlone() {
     SensorContextTester context = mockContext();
 
     parser.collect(context, getDirs("onlyTestSuiteReport"), true);
@@ -136,21 +138,21 @@ public class KotlinSurefireParserTest {
    * See http://jira.codehaus.org/browse/SONAR-2371
    */
   @Test
-  public void shouldInsertZeroWhenNoReports() {
+  void shouldInsertZeroWhenNoReports() {
     SensorContext context = mock(SensorContext.class);
     parser.collect(context, getDirs("noReports"), true);
     verify(context, never()).newMeasure();
   }
 
   @Test
-  public void shouldNotInsertZeroOnFiles() {
+  void shouldNotInsertZeroOnFiles() {
     SensorContext context = mock(SensorContext.class);
     parser.collect(context, getDirs("noTests"), true);
     verify(context, never()).newMeasure();
   }
 
   @Test
-  public void shouldMergeInnerClasses() {
+  void shouldMergeInnerClasses() {
     SensorContextTester context = mockContext();
     parser.collect(context, getDirs("innerClasses"), true);
     assertThat(context.measure(":org.apache.commons.collections.bidimap.AbstractTestBidiMap", CoreMetrics.TESTS).value()).isEqualTo(7);
@@ -159,21 +161,21 @@ public class KotlinSurefireParserTest {
   }
 
   @Test
-  public void shouldMergeNestedInnerClasses() {
+  void shouldMergeNestedInnerClasses() {
     SensorContextTester context = mockContext();
     parser.collect(context, getDirs("nestedInnerClasses"), true);
     assertThat(context.measure(":org.sonar.plugins.surefire.NestedInnerTest", CoreMetrics.TESTS).value()).isEqualTo(3);
   }
 
   @Test
-  public void shouldMergeInnerClassReportInExtraFile() {
+  void shouldMergeInnerClassReportInExtraFile() {
     SensorContextTester context = mockContext();
     parser.collect(context, getDirs("innerClassExtraFile"), true);
     assertThat(context.measure(":com.example.project.CalculatorTests", CoreMetrics.TESTS).value()).isEqualTo(6);
   }
 
   @Test
-  public void shouldNotCountNegativeTests() {
+  void shouldNotCountNegativeTests() {
     SensorContextTester context = mockContext();
 
     parser.collect(context, getDirs("negativeTestTime"), true);

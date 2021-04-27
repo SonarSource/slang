@@ -20,14 +20,14 @@
 package org.sonarsource.slang.testing;
 
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-public class PackageScannerTest {
+class PackageScannerTest {
 
   @Test
-  public void finds_classes_that_implement_slangcheck() {
+  void finds_classes_that_implement_slangcheck() {
     List<String> result = PackageScanner.findSlangChecksInPackage("org.sonarsource.test");
     assertThat(result).containsExactly("org.sonarsource.test.TestCheck");
   }

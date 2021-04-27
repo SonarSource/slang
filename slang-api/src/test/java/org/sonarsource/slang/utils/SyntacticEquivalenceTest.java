@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import org.sonarsource.slang.api.LoopTree;
@@ -49,7 +49,7 @@ import static org.sonarsource.slang.utils.TreeCreationUtils.simpleNative;
 import static org.sonarsource.slang.utils.TreeCreationUtils.value;
 import static org.sonarsource.slang.utils.TreeCreationUtils.variable;
 
-public class SyntacticEquivalenceTest {
+class SyntacticEquivalenceTest {
   private static NativeKind KIND = new NativeKind() {
     @Override
     public boolean equals(Object obj) {
@@ -58,7 +58,7 @@ public class SyntacticEquivalenceTest {
   };
 
   @Test
-  public void test_equivalence() {
+  void test_equivalence() {
     Tree literal1 = integerLiteral("1");
     Tree literal2 = integerLiteral("2");
     assertThat(areEquivalent((Tree) null, null)).isTrue();
@@ -125,7 +125,7 @@ public class SyntacticEquivalenceTest {
   }
 
   @Test
-  public void test_equivalence_list() {
+  void test_equivalence_list() {
     List<Tree> list1 = Arrays.asList(identifier("a"), integerLiteral("2"));
     List<Tree> list2 = Arrays.asList(identifier("a"), integerLiteral("2"));
     List<Tree> list3 = Arrays.asList(identifier("a"), integerLiteral("3"));
@@ -141,7 +141,7 @@ public class SyntacticEquivalenceTest {
   }
 
   @Test
-  public void duplicateGroups() {
+  void duplicateGroups() {
     Tree a1 = identifier("a");
     Tree a2 = identifier("a");
     Tree a3 = a1;
@@ -151,7 +151,7 @@ public class SyntacticEquivalenceTest {
   }
 
   @Test
-  public void loops() {
+  void loops() {
     Tree condition1 = literal("true");
     Tree condition2 = literal("false");
     Tree body1 = integerLiteral("1");
@@ -168,7 +168,7 @@ public class SyntacticEquivalenceTest {
   }
 
   @Test
-  public void test_unique_identifier_equivalence() {
+  void test_unique_identifier_equivalence() {
     IdentifierTreeImpl id = new CustomIdentifierTreeImpl(null, "abc");
     assertThat(areEquivalent(id, new IdentifierTreeImpl(null, "abc"))).isFalse();
     assertThat(areEquivalent(id, id)).isTrue();

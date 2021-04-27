@@ -20,7 +20,7 @@
 package org.sonarsource.scala.converter;
 
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.ExceptionHandlingTree;
 import org.sonarsource.slang.api.ImportDeclarationTree;
@@ -41,10 +41,10 @@ import static org.sonarsource.slang.api.Token.Type.OTHER;
 import static org.sonarsource.slang.api.Token.Type.STRING_LITERAL;
 import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 
-public class ScalaConverterTest extends AbstractScalaConverterTest {
+class ScalaConverterTest extends AbstractScalaConverterTest {
 
   @Test
-  public void parser_return_error() {
+  void parser_return_error() {
     assertThatThrownBy(() -> parse("object Main {..."))
       .isInstanceOf(ParseException.class)
       .hasMessage("Unable to parse file content.")
@@ -55,7 +55,7 @@ public class ScalaConverterTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void parser_throw_error() {
+  void parser_throw_error() {
     assertThatThrownBy(() -> parse("trait HasSelf { (this: Forbidden) => }"))
       .isInstanceOf(ParseException.class)
       .hasMessage("Unable to parse file content.")
@@ -66,19 +66,19 @@ public class ScalaConverterTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void top_level_tree() {
+  void top_level_tree() {
     Tree tree = parse("object Main { print(\"Hello!\") }");
     assertThat(tree).isInstanceOf(TopLevelTree.class);
   }
 
   @Test
-  public void empty_top_level_tree() {
+  void empty_top_level_tree() {
     assertThat(parse("")).isInstanceOf(TopLevelTree.class);
     assertThat(parse("  \n")).isInstanceOf(TopLevelTree.class);
   }
 
   @Test
-  public void package_and_import_declarations() {
+  void package_and_import_declarations() {
     Tree tree = parse("package abc\nimport x.y\nobject MyObj{}");
     Tree pkg = tree.children().get(0);
     assertThat(pkg).isInstanceOf(PackageDeclarationTree.class);
@@ -87,7 +87,7 @@ public class ScalaConverterTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void tokens() {
+  void tokens() {
     Tree tree = parse("object Main /* comment */ {\n" +
       "  print(\"hello world!\")\n" +
       "\tprint(s\"$hello $world!\")\r\n" +
@@ -107,7 +107,7 @@ public class ScalaConverterTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void comments() {
+  void comments() {
     Tree tree = parse("object Main /* multi\n line */ {\nprint(\"Hello!\") //inline\n }");
     List<Comment> comments = tree.metaData().commentsInside();
     assertThat(comments).extracting(Comment::text).containsExactly("/* multi\n line */", "//inline");
@@ -119,7 +119,7 @@ public class ScalaConverterTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void matchTreeCase_textRange_correction() {
+  void matchTreeCase_textRange_correction() {
     Tree tree = parse("class MyClass {\n" +
       "  def myMethod(cond: Any) = {\n" +
       "    cond match {\n" +
@@ -143,13 +143,13 @@ public class ScalaConverterTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void empty_scalameta_literal_node_in_if_without_else() {
+  void empty_scalameta_literal_node_in_if_without_else() {
     Tree tree = scalaStatement("if (x) { y }");
     assertThat(tree.descendants().filter(t -> t instanceof LiteralTree)).isEmpty();
   }
 
   @Test
-  public void first_cpd_token() {
+  void first_cpd_token() {
     TopLevelTree topLevel = (TopLevelTree) parse("" +
       "package com.example\n" +
       "import com.example.MyClass\n" +

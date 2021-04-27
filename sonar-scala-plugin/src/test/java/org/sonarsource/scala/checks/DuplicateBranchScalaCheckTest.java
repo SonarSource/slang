@@ -19,12 +19,12 @@
  */
 package org.sonarsource.scala.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DuplicateBranchScalaCheckTest {
+class DuplicateBranchScalaCheckTest {
 
   @Test
-  public void test() {
+  void test() {
     ScalaVerifier.verify("DuplicateBranchScala.scala", new DuplicateBranchScalaCheck());
   }
 

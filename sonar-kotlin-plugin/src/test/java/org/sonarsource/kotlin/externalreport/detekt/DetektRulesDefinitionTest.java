@@ -19,16 +19,16 @@
  */
 package org.sonarsource.kotlin.externalreport.detekt;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DetektRulesDefinitionTest {
+class DetektRulesDefinitionTest {
 
   @Test
-  public void detekt_external_repository() {
+  void detekt_external_repository() {
     RulesDefinition.Context context = new RulesDefinition.Context();
     DetektRulesDefinition rulesDefinition = new DetektRulesDefinition();
     rulesDefinition.define(context);

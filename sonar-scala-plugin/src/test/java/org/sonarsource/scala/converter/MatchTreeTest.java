@@ -19,7 +19,7 @@
  */
 package org.sonarsource.scala.converter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.MatchCaseTree;
@@ -35,29 +35,29 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class MatchTreeTest extends AbstractScalaConverterTest {
+class MatchTreeTest extends AbstractScalaConverterTest {
 
   @Test
-  public void simple_match() {
+  void simple_match() {
     MatchTree tree = (MatchTree) scalaStatement("x match { case 1=> a case 2=> b }");
     assertTree(tree).isEquivalentTo(slangStatement("match (x) { 1 -> a; 2 -> b; };"));
     assertThat(tree.keyword().text()).isEqualTo("match");
   }
 
   @Test
-  public void default_case() {
+  void default_case() {
     MatchTree tree = (MatchTree) scalaStatement("x match { case 1=> a case _=> b }");
     assertThat(tree.cases().get(1).expression()).isNull();
   }
 
   @Test
-  public void case_without_body() {
+  void case_without_body() {
     MatchTree tree = (MatchTree) scalaStatement("x match { case 1=> a case 2=> /* do nothing */}");
     assertThat(tree.cases().get(1).body()).isNull();
   }
 
   @Test
-  public void case_with_condition() {
+  void case_with_condition() {
     Tree tree = scalaStatement(
       "x match { \n"
         + "  case 1 if guard => a\n"

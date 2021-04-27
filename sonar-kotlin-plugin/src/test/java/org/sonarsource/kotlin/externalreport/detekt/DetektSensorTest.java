@@ -27,9 +27,10 @@ import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nullable;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
@@ -43,7 +44,8 @@ import static org.sonarsource.kotlin.externalreport.ExternalReportTestUtils.asse
 import static org.sonarsource.kotlin.externalreport.ExternalReportTestUtils.createContext;
 import static org.sonarsource.kotlin.externalreport.ExternalReportTestUtils.onlyOneLogElement;
 
-public class DetektSensorTest {
+@EnableRuleMigrationSupport
+class DetektSensorTest {
 
   private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport", "detekt");
 
@@ -52,13 +54,13 @@ public class DetektSensorTest {
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     analysisWarnings.clear();
   }
 
   @Test
-  public void test_descriptor() {
+  void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     DetektSensor detektSensor = new DetektSensor(analysisWarnings::add);
     detektSensor.describe(sensorDescriptor);
@@ -68,7 +70,7 @@ public class DetektSensorTest {
   }
 
   @Test
-  public void issues_with_sonarqube() throws IOException {
+  void issues_with_sonarqube() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("detekt-checkstyle.xml");
     assertThat(externalIssues).hasSize(3);
 
@@ -101,14 +103,14 @@ public class DetektSensorTest {
   }
 
   @Test
-  public void no_issues_without_report_paths_property() throws IOException {
+  void no_issues_without_report_paths_property() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting(null);
     assertThat(externalIssues).isEmpty();
     assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
-  public void invalid_report_path_triggers_warnings_in_SQ_UI_and_error_log() throws IOException {
+  void invalid_report_path_triggers_warnings_in_SQ_UI_and_error_log() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting( "invalid-path.txt");
     assertThat(externalIssues).isEmpty();
     List<String> warnings = logTester.logs(LoggerLevel.WARN);
@@ -125,7 +127,7 @@ public class DetektSensorTest {
   }
 
   @Test
-  public void multiple_missing_files_are_reported_in_SQ_UI() throws Exception {
+  void multiple_missing_files_are_reported_in_SQ_UI() throws Exception {
     SensorContextTester context = createContext(PROJECT_DIR);
     String validFile = PROJECT_DIR.resolve("detekt-checkstyle.xml").toAbsolutePath().toString();
     context.settings().setProperty("sonar.kotlin.detekt.reportPaths", "invalid1.xml," + validFile + ",invalid2.txt");
@@ -153,7 +155,7 @@ public class DetektSensorTest {
   }
 
   @Test
-  public void no_issues_with_invalid_checkstyle_file() throws IOException {
+  void no_issues_with_invalid_checkstyle_file() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("not-checkstyle-file.xml");
     assertThat(externalIssues).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
@@ -162,7 +164,7 @@ public class DetektSensorTest {
   }
 
   @Test
-  public void no_issues_with_invalid_xml_report() throws IOException {
+  void no_issues_with_invalid_xml_report() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("invalid-file.xml");
     assertThat(externalIssues).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
@@ -171,7 +173,7 @@ public class DetektSensorTest {
   }
 
   @Test
-  public void issues_when_xml_file_has_errors() throws IOException {
+  void issues_when_xml_file_has_errors() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("detekt-checkstyle-with-errors.xml");
     assertThat(externalIssues).hasSize(1);
 

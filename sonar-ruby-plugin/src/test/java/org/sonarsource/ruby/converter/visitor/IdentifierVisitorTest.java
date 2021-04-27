@@ -20,7 +20,7 @@
 package org.sonarsource.ruby.converter.visitor;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.NativeTree;
@@ -28,10 +28,10 @@ import org.sonarsource.slang.api.VariableDeclarationTree;
 
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class IdentifierVisitorTest extends AbstractRubyConverterTest {
+class IdentifierVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void test() throws Exception {
+  void test() throws Exception {
     assertTree(((AssignmentExpressionTree) rubyStatement("$a = 1")).leftHandSide()).isIdentifier("$a");
     assertTree(((AssignmentExpressionTree) rubyStatement("@a = 1")).leftHandSide()).isIdentifier("@a");
     assertTree(((AssignmentExpressionTree) rubyStatement("@@a = 1")).leftHandSide()).isIdentifier("@@a");

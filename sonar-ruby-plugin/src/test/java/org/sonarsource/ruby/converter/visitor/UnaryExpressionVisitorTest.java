@@ -20,17 +20,17 @@
 package org.sonarsource.ruby.converter.visitor;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.UnaryExpressionTree;
 import org.sonarsource.slang.api.UnaryExpressionTree.Operator;
 
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class UnaryExpressionVisitorTest extends AbstractRubyConverterTest {
+class UnaryExpressionVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void test() {
+  void test() {
     UnaryExpressionTree negation = (UnaryExpressionTree) rubyStatement("!a");
     assertTree(negation).isUnaryExpression(Operator.NEGATE);
     assertTree(negation).isEquivalentTo(rubyStatement("not a"));

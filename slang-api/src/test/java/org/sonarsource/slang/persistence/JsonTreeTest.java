@@ -24,7 +24,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.BlockTree;
@@ -137,10 +137,10 @@ import static org.sonarsource.slang.persistence.conversion.JsonTreeConverter.TRY
 import static org.sonarsource.slang.persistence.conversion.JsonTreeConverter.TYPE;
 import static org.sonarsource.slang.persistence.conversion.JsonTreeConverter.VALUE;
 
-public class JsonTreeTest extends JsonTestHelper {
+class JsonTreeTest extends JsonTestHelper {
 
   @Test
-  public void assignment_expression() throws IOException {
+  void assignment_expression() throws IOException {
     Token tokenIdentifier = otherToken(1, 0, "x");
     otherToken(1, 2, "=");
     Token tokenLiteral = otherToken(1, 4, "2");
@@ -161,7 +161,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void binary_expression() throws IOException {
+  void binary_expression() throws IOException {
     Token tokenX = otherToken(1, 0, "x");
     Token tokenLess = otherToken(1, 2, "<");
     Token tokenY = otherToken(1, 4, "y");
@@ -181,7 +181,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void block() throws IOException {
+  void block() throws IOException {
     Token tokenOpen = otherToken(1, 0, "{");
     Token tokenX = otherToken(1, 2, "x");
     Token tokenClose = otherToken(1, 4, "}");
@@ -198,7 +198,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void catch_tree() throws IOException {
+  void catch_tree() throws IOException {
     Token tokenCatch = keywordToken(1, 0, "catch");
     Token tokenX = otherToken(1, 8, "x");
     Token tokenY = otherToken(1, 10, "y");
@@ -216,7 +216,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void catch_tree_without_parameter() throws IOException {
+  void catch_tree_without_parameter() throws IOException {
     Token tokenCatch = keywordToken(1, 0, "catch");
     Token tokenY = otherToken(1, 10, "y");
     Tree identifierY = new IdentifierTreeImpl(metaData(tokenY), tokenY.text());
@@ -229,7 +229,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void class_declaration() throws IOException {
+  void class_declaration() throws IOException {
     Token tokenClass = keywordToken(1, 0, "class");
     Token tokenA = otherToken(1, 6, "A");
     otherToken(1, 8, "{");
@@ -247,7 +247,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void class_declaration_anonymous() throws IOException {
+  void class_declaration_anonymous() throws IOException {
     Token tokenClass = keywordToken(1, 0, "class");
     Token tokenOpen = otherToken(1, 8, "{");
     Token tokenClose = otherToken(1, 10, "}");
@@ -260,7 +260,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void exception_handling() throws IOException {
+  void exception_handling() throws IOException {
     Token tokenTry = keywordToken(1, 0, "try");
     Token tokenX = otherToken(1, 10, "x");
     Tree identifierX = new IdentifierTreeImpl(metaData(tokenX), tokenX.text());
@@ -292,7 +292,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void exception_handling_without_catch() throws IOException {
+  void exception_handling_without_catch() throws IOException {
     Token tokenTry = keywordToken(1, 0, "try");
     Token tokenX = otherToken(1, 10, "x");
     Tree identifierX = new IdentifierTreeImpl(metaData(tokenX), tokenX.text());
@@ -307,7 +307,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void function_declaration() throws IOException {
+  void function_declaration() throws IOException {
     Token tokenPublic = keywordToken(1, 0, "public");
     NativeTree modifier = new NativeTreeImpl(metaData(tokenPublic), StringNativeKind.of("modifier"), emptyList());
     List<Tree> modifiers = singletonList(modifier);
@@ -344,7 +344,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void identifier() throws IOException {
+  void identifier() throws IOException {
     Token token = otherToken(1, 0, "foo");
     IdentifierTree initialIdentifier = new IdentifierTreeImpl(metaData(token), token.text());
     IdentifierTree identifier = checkJsonSerializationDeserialization(initialIdentifier, "identifier.json");
@@ -357,7 +357,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void if_tree() throws IOException {
+  void if_tree() throws IOException {
     Token tokenIf = keywordToken(1, 0, "if");
     Token tokenTrue = otherToken(1, 3, "true");
     Tree condition = new LiteralTreeImpl(metaData(tokenTrue), tokenTrue.text());
@@ -381,7 +381,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void if_tree_without_else() throws IOException {
+  void if_tree_without_else() throws IOException {
     Token tokenIf = keywordToken(1, 0, "if");
     Token tokenTrue = otherToken(1, 3, "true");
     Tree condition = new LiteralTreeImpl(metaData(tokenTrue), tokenTrue.text());
@@ -400,7 +400,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void import_declaration() throws IOException {
+  void import_declaration() throws IOException {
     Token tokenImport = keywordToken(1, 0, "import");
     Token tokenLib = otherToken(1, 7, "lib");
     Tree lib = new IdentifierTreeImpl(metaData(tokenLib), tokenLib.text());
@@ -415,7 +415,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void integer_literal() throws IOException {
+  void integer_literal() throws IOException {
     Token token = otherToken(1, 0, "0xFF");
     IntegerLiteralTree initialLiteral = new IntegerLiteralTreeImpl(metaData(token), token.text());
     IntegerLiteralTree literal = checkJsonSerializationDeserialization(initialLiteral, "integer_literal.json");
@@ -429,7 +429,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void jump() throws IOException {
+  void jump() throws IOException {
     Token tokenKeyword = keywordToken(1, 0, "break");
     Token tokenLabel = otherToken(1, 6, "hard");
     IdentifierTree label = new IdentifierTreeImpl(metaData(tokenLabel), tokenLabel.text());
@@ -446,7 +446,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void literal() throws IOException {
+  void literal() throws IOException {
     Token token = otherToken(1, 0, "true");
     LiteralTree initialLiteral = new LiteralTreeImpl(metaData(token), token.text());
     LiteralTree literal = checkJsonSerializationDeserialization(initialLiteral, "literal.json");
@@ -466,7 +466,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void loop() throws IOException {
+  void loop() throws IOException {
     Token tokenSwitch = keywordToken(1, 0, "while");
     Token tokenTrue = otherToken(1, 6, "true");
     Token tokenX = keywordToken(1, 11, "x");
@@ -486,7 +486,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void match() throws IOException {
+  void match() throws IOException {
     Token tokenSwitch = keywordToken(1, 0, "switch");
     Token tokenX = otherToken(1, 7, "x");
     Token tokenDefault = keywordToken(1, 9, "default");
@@ -508,7 +508,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void match_case() throws IOException {
+  void match_case() throws IOException {
     Token tokenCase = keywordToken(1, 0, "case");
     Token tokenSeven = otherToken(1, 5, "7");
     otherToken(1, 7, ":");
@@ -527,7 +527,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void modifier() throws IOException {
+  void modifier() throws IOException {
     Token tokenPublic = keywordToken(1, 0, "public");
     ModifierTree initialTree = new ModifierTreeImpl(metaData(tokenPublic), ModifierTree.Kind.PUBLIC);
     ModifierTree tree = checkJsonSerializationDeserialization(initialTree, "modifier.json");
@@ -539,7 +539,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void native_tree() throws IOException {
+  void native_tree() throws IOException {
     Token token10 = otherToken(10, 0, "token10");
     Token token21 = otherToken(21, 0, "token21");
     Token token22 = otherToken(22, 0, "token22");
@@ -559,7 +559,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void package_declaration() throws IOException {
+  void package_declaration() throws IOException {
     Token tokenPackage = keywordToken(1, 0, "package");
     Token tokenName = otherToken(1, 8, "hello");
     IdentifierTree name = new IdentifierTreeImpl(metaData(tokenName), tokenName.text());
@@ -575,7 +575,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void parameter() throws IOException {
+  void parameter() throws IOException {
     Token tokenMod = otherToken(1, 0, "@Nullable");
     Token tokenX = otherToken(2, 0, "x");
     Token tokenInt = otherToken(2, 2, "int");
@@ -601,7 +601,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void parenthesized_expression() throws IOException {
+  void parenthesized_expression() throws IOException {
     Token leftParenthesis = otherToken(1, 0, "(");
     Token tokenX = otherToken(1, 1, "x");
     Token rightParenthesis = otherToken(1, 2, ")");
@@ -619,7 +619,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void place_holder() throws IOException {
+  void place_holder() throws IOException {
     Token token = keywordToken(1, 0, "_");
     PlaceHolderTree initialTree = new PlaceHolderTreeImpl(metaData(token), token);
     PlaceHolderTree tree = checkJsonSerializationDeserialization(initialTree, "place_holder.json");
@@ -632,7 +632,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void return_true() throws IOException {
+  void return_true() throws IOException {
     Token returnToken = keywordToken(1, 0, "return");
     Token trueToken = otherToken(1, 7, "true");
     Token semicolonToken = otherToken(1, 11, ";");
@@ -652,7 +652,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void string_literal() throws IOException {
+  void string_literal() throws IOException {
     Token token = stringToken(1, 0, "\"a\"");
     StringLiteralTree initialLiteral = new StringLiteralTreeImpl(metaData(token), token.text());
     StringLiteralTree literal = checkJsonSerializationDeserialization(initialLiteral, "string_literal.json");
@@ -673,7 +673,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void throw_tree() throws IOException {
+  void throw_tree() throws IOException {
     Token tokenThrow = keywordToken(1, 0, "throw");
     Token tokenEx = otherToken(1, 6, "ex");
     Tree body = new IdentifierTreeImpl(metaData(tokenEx), tokenEx.text());
@@ -687,7 +687,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void throw_nothing() throws IOException {
+  void throw_nothing() throws IOException {
     Token tokenThrow = keywordToken(1, 0, "throw");
     ThrowTree initialTree = new ThrowTreeImpl(metaData(tokenThrow), tokenThrow, null);
     ThrowTree tree = checkJsonSerializationDeserialization(initialTree, "throw_nothing.json");
@@ -696,7 +696,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void top_level() throws IOException {
+  void top_level() throws IOException {
     Comment comment = comment(1, 0, "// hello", 2, 0);
     Token token = otherToken(2, 0, "true");
     Tree trueLiteral = new LiteralTreeImpl(metaData(token), token.text());
@@ -714,7 +714,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void unary_expression() throws IOException {
+  void unary_expression() throws IOException {
     Token tokenMinus = otherToken(1, 0, "-");
     Token tokenX = otherToken(1, 1, "x");
     UnaryExpressionTree.Operator operator = UnaryExpressionTree.Operator.MINUS;
@@ -729,7 +729,7 @@ public class JsonTreeTest extends JsonTestHelper {
   }
 
   @Test
-  public void variable_declaration() throws IOException {
+  void variable_declaration() throws IOException {
     Token tokenInt = otherToken(1, 0, "int");
     Token tokenX = otherToken(1, 4, "x");
     Token tokenValue = otherToken(1, 6, "42");

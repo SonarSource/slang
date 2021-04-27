@@ -19,14 +19,14 @@
  */
 package org.sonarsource.slang.checks.api;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.impl.TextRangeImpl;
 import org.sonarsource.slang.persistence.JsonTree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SecondaryLocationTest {
+class SecondaryLocationTest {
 
   private static final Tree IDENTIFIER = JsonTree.fromJson("" +
     "{\n" +
@@ -35,21 +35,21 @@ public class SecondaryLocationTest {
     "}");
 
   @Test
-  public void constructor_with_tree() {
+  void constructor_with_tree() {
     SecondaryLocation location = new SecondaryLocation(IDENTIFIER);
     assertThat(location.textRange).isEqualTo(new TextRangeImpl(1, 0, 1, 3));
     assertThat(location.message).isNull();
   }
 
   @Test
-  public void constructor_with_tree_and_message() {
+  void constructor_with_tree_and_message() {
     SecondaryLocation location = new SecondaryLocation(IDENTIFIER, "because");
     assertThat(location.textRange).isEqualTo(new TextRangeImpl(1, 0, 1, 3));
     assertThat(location.message).isEqualTo("because");
   }
 
   @Test
-  public void constructor_with_text_range_and_message() {
+  void constructor_with_text_range_and_message() {
     SecondaryLocation location = new SecondaryLocation(IDENTIFIER.textRange(), "because");
     assertThat(location.textRange).isEqualTo(new TextRangeImpl(1, 0, 1, 3));
     assertThat(location.message).isEqualTo("because");

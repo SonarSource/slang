@@ -19,16 +19,16 @@
  */
 package org.sonarsource.slang.impl.literal;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class StringLiteralTreeImplTest {
+class StringLiteralTreeImplTest {
 
   @Test
-  public void test() {
+  void test() {
     StringLiteralTreeImpl stringLiteral = new StringLiteralTreeImpl(null, "\"abc\"");
     assertThat(stringLiteral.value()).isEqualTo("\"abc\"");
     assertThat(stringLiteral.content()).isEqualTo("abc");
@@ -36,13 +36,13 @@ public class StringLiteralTreeImplTest {
   }
 
   @Test
-  public void test_failure() {
+  void test_failure() {
     assertThrows(IllegalArgumentException.class,
       () -> new StringLiteralTreeImpl(null, "abc"));
   }
 
   @Test
-  public void test_explicit_content() {
+  void test_explicit_content() {
     StringLiteralTreeImpl stringLiteral = new StringLiteralTreeImpl(null, "abc", "abc");
     assertThat(stringLiteral.value()).isEqualTo("abc");
     assertThat(stringLiteral.content()).isEqualTo("abc");

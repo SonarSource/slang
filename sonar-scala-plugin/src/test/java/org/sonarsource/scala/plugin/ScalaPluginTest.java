@@ -19,7 +19,7 @@
  */
 package org.sonarsource.scala.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.Plugin;
 import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
@@ -30,12 +30,12 @@ import org.sonar.api.utils.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ScalaPluginTest {
+class ScalaPluginTest {
 
   private ScalaPlugin scalaPlugin = new ScalaPlugin();
 
   @Test
-  public void sonarqube_extensions() {
+  void sonarqube_extensions() {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 9), SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
     Plugin.Context context = new Plugin.Context(runtime);
     scalaPlugin.define(context);
@@ -43,7 +43,7 @@ public class ScalaPluginTest {
   }
 
   @Test
-  public void test_sonarlint() {
+  void test_sonarlint() {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarLint(Version.create(3, 9));
     Plugin.Context context = new PluginContextImpl.Builder().setSonarRuntime(runtime).build();
     scalaPlugin.define(context);

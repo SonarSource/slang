@@ -23,7 +23,7 @@ import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.ParenthesizedExpressionTree;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.sonarsource.slang.impl.TextRanges.range;
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
@@ -33,10 +33,10 @@ import static org.sonarsource.slang.utils.TreeCreationUtils.integerLiteral;
 import static org.sonarsource.slang.utils.TreeCreationUtils.literal;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParenthesizedExpressionTreeImplTest {
+class ParenthesizedExpressionTreeImplTest {
 
   @Test
-  public void test() {
+  void test() {
     Tree identifier = identifier("value");
     Tree literalInt2 = integerLiteral("2");
     Tree literalTrue = literal("true");

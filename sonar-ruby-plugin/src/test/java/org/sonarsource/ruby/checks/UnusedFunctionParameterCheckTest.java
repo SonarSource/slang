@@ -19,23 +19,23 @@
  */
 package org.sonarsource.ruby.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.checks.UnusedFunctionParameterCheck;
 
-public class UnusedFunctionParameterCheckTest {
+class UnusedFunctionParameterCheckTest {
 
   @Test
-  public void test(){
+  void test(){
     RubyVerifier.verify("UnusedFunctionParameter.rb", new UnusedFunctionParameterRubyCheck());
   }
 
   @Test
-  public void test_single_function(){
+  void test_single_function(){
     RubyVerifier.verify("UnusedFunctionParameter.SingleFunction.rb", new UnusedFunctionParameterRubyCheck());
   }
 
   @Test
-  public void test_single_class(){
+  void test_single_class(){
     // SONARSLANG-520 access modifiers are not supported (we cannot see a method is private)
     RubyVerifier.verifyNoIssue("UnusedFunctionParameter.SingleClass.rb", new UnusedFunctionParameterRubyCheck());
   }

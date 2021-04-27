@@ -20,14 +20,14 @@
 package org.sonarsource.slang.checks.utils;
 
 import java.util.regex.Pattern;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LanguageTest {
+class LanguageTest {
 
   @Test
-  public void default_scala_function_name() {
+  void default_scala_function_name() {
     Pattern pattern = Pattern.compile(Language.SCALA_FUNCTION_OR_OPERATOR_NAMING_DEFAULT);
     assertThat(pattern.matcher("print").matches()).isTrue();
     assertThat(pattern.matcher("printLn").matches()).isTrue();

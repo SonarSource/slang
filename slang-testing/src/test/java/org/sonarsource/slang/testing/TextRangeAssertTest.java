@@ -19,22 +19,22 @@
  */
 package org.sonarsource.slang.testing;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.batch.fs.TextPointer;
 import org.sonar.api.batch.fs.TextRange;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.sonarsource.slang.testing.TextRangeAssert.assertTextRange;
 
-public class TextRangeAssertTest {
+class TextRangeAssertTest {
 
   private TextRange range;
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     TextPointer start = mock(TextPointer.class);
     when(start.line()).thenReturn(1);
     when(start.lineOffset()).thenReturn(2);
@@ -49,12 +49,12 @@ public class TextRangeAssertTest {
   }
 
   @Test
-  public void range_ok() {
+  void range_ok() {
     assertTextRange(range).hasRange(1, 2, 3, 4);
   }
 
   @Test
-  public void range_failure() {
+  void range_failure() {
     assertThrows(AssertionError.class,
       () -> assertTextRange(range).hasRange(1, 2, 3, 5));
   }

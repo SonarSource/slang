@@ -30,8 +30,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.ActiveRules;
@@ -60,7 +61,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-public class GoSensorTest {
+@EnableRuleMigrationSupport
+class GoSensorTest {
 
   private Path workDir;
   private Path projectDir;
@@ -71,8 +73,8 @@ public class GoSensorTest {
   @org.junit.Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
-  @Before
-  public void setUp() throws IOException {
+  @BeforeEach
+  void setUp() throws IOException {
     workDir = Files.createTempDirectory("gotest");
     workDir.toFile().deleteOnExit();
     projectDir = Files.createTempDirectory("gotestProject");
@@ -85,7 +87,7 @@ public class GoSensorTest {
   }
 
   @Test
-  public void test_description() {
+  void test_description() {
     DefaultSensorDescriptor descriptor = new DefaultSensorDescriptor();
 
     getSensor("S2068").describe(descriptor);
@@ -94,7 +96,7 @@ public class GoSensorTest {
   }
 
   @Test
-  public void test_issue() throws IOException {
+  void test_issue() throws IOException {
     InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
       "package main \n" +
         "\n" +
@@ -108,7 +110,7 @@ public class GoSensorTest {
   }
 
   @Test
-  public void test_file_issue() throws IOException {
+  void test_file_issue() throws IOException {
     InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
       "// TODO implement the logic \n package main \n");
     sensorContext.fileSystem().add(inputFile);
@@ -118,7 +120,7 @@ public class GoSensorTest {
   }
 
   @Test
-  public void test_line_issue() throws IOException {
+  void test_line_issue() throws IOException {
     InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
       "package                                                                                                                                                                                                                               main\n");
     sensorContext.fileSystem().add(inputFile);
@@ -128,7 +130,7 @@ public class GoSensorTest {
   }
 
   @Test
-  public void test_failure() throws Exception {
+  void test_failure() throws Exception {
     InputFile failingFile = createInputFile("lets.go", InputFile.Type.MAIN,
       "package main \n" +
         "\n" +
@@ -145,7 +147,7 @@ public class GoSensorTest {
   }
 
   @Test
-  public void test_empty_file() throws Exception {
+  void test_empty_file() throws Exception {
     InputFile failingFile = createInputFile("lets.go", InputFile.Type.MAIN, "");
     sensorContext.fileSystem().add(failingFile);
     GoSensor goSensor = getSensor("S1135");
@@ -154,7 +156,7 @@ public class GoSensorTest {
   }
 
   @Test
-  public void metrics() {
+  void metrics() {
     InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
       /* 01 */"// This is not a line of code\n" +
       /* 02 */"package main\n" +
@@ -202,7 +204,7 @@ public class GoSensorTest {
   }
 
   @Test
-  public void metrics_for_test_file() {
+  void metrics_for_test_file() {
     InputFile inputFile = createInputFile("lets.go", InputFile.Type.TEST,
       "// This is not a line of code\n" +
         "package main\n" +
@@ -226,7 +228,7 @@ public class GoSensorTest {
   }
 
   @Test
-  public void cognitive_complexity_metric() {
+  void cognitive_complexity_metric() {
     InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
         "package main\n" +
         "import \"fmt\"\n" +
@@ -256,7 +258,7 @@ public class GoSensorTest {
   }
 
   @Test
-  public void highlighting() throws Exception {
+  void highlighting() throws Exception {
     InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
       "//abc\n" +
         "/*x*/\n" +
@@ -299,7 +301,7 @@ public class GoSensorTest {
   }
 
   @Test
-  public void repository_key() {
+  void repository_key() {
     assertThat(getSensor().repositoryKey()).isEqualTo("go");
   }
 

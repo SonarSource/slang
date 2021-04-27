@@ -19,8 +19,9 @@
  */
 package org.sonarsource.slang.testing;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.ActiveRule;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
@@ -33,7 +34,8 @@ import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AbstractSensorTestTest {
+@EnableRuleMigrationSupport
+class AbstractSensorTestTest {
 
   @org.junit.Rule
   public JUnitTempFolder temp = new JUnitTempFolder();
@@ -56,15 +58,15 @@ public class AbstractSensorTestTest {
     }
   };
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     File baseDir = temp.newDir();
     SENSOR.context = SensorContextTester.create(baseDir);
     SENSOR.baseDir = baseDir;
   }
 
   @Test
-  public void checkFactory_should_contain_rules() {
+  void checkFactory_should_contain_rules() {
     SENSOR.checkFactory("S1", "S2", "S3");
     Collection<ActiveRule> rules = SENSOR.context.activeRules().findAll();
     assertThat(rules)
@@ -74,14 +76,14 @@ public class AbstractSensorTestTest {
   }
 
   @Test
-  public void checkFactory_can_be_empty() {
+  void checkFactory_can_be_empty() {
     SENSOR.checkFactory();
     Collection<ActiveRule> rules = SENSOR.context.activeRules().findAll();
     assertThat(rules).isEmpty();
   }
 
   @Test
-  public void createImputFile_returns_input_file_with_same_content() throws Exception {
+  void createImputFile_returns_input_file_with_same_content() throws Exception {
     String content = "class A { }";
     String filename = "yolo.dummy";
 

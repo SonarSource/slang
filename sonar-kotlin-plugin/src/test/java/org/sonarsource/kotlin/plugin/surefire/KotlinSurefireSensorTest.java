@@ -23,8 +23,8 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
@@ -41,15 +41,15 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class KotlinSurefireSensorTest {
+class KotlinSurefireSensorTest {
 
   private KotlinResourcesLocator kotlinResourcesLocator;
   private KotlinSurefireSensor surefireSensor;
   private SensorContextTester context;
   private final PathResolver pathResolver = new PathResolver();
 
-  @Before
-  public void before() {
+  @BeforeEach
+  void before() {
     DefaultFileSystem fs = new DefaultFileSystem(new File("src/test/resources"));
     DefaultInputFile kotlinFile = new TestInputFileBuilder("", "src/org/foo/kotlin").setLanguage("kotlin").build();
     fs.add(kotlinFile);
@@ -67,7 +67,7 @@ public class KotlinSurefireSensorTest {
   }
 
   @Test
-  public void should_execute_if_filesystem_contains_kotlin_files() {
+  void should_execute_if_filesystem_contains_kotlin_files() {
     surefireSensor = new KotlinSurefireSensor(new KotlinSurefireParser(kotlinResourcesLocator), new MapSettings().asConfig(), pathResolver);
     DefaultSensorDescriptor defaultSensorDescriptor = new DefaultSensorDescriptor();
     surefireSensor.describe(defaultSensorDescriptor);
@@ -75,7 +75,7 @@ public class KotlinSurefireSensorTest {
   }
 
   @Test
-  public void shouldNotFailIfReportsNotFound() {
+  void shouldNotFailIfReportsNotFound() {
     MapSettings settings = new MapSettings();
     settings.setProperty(SurefireUtils.SUREFIRE_REPORT_PATHS_PROPERTY, "unknown");
 
@@ -84,7 +84,7 @@ public class KotlinSurefireSensorTest {
   }
 
   @Test
-  public void shouldHandleTestSuiteDetails() throws URISyntaxException {
+  void shouldHandleTestSuiteDetails() throws URISyntaxException {
     SensorContextTester context = SensorContextTester.create(new File(""));
     context.fileSystem()
       .add(resource("org.sonar.core.ExtensionsFinderTest"))
@@ -118,7 +118,7 @@ public class KotlinSurefireSensorTest {
   }
 
   @Test
-  public void shouldSaveErrorsAndFailuresInXML() throws URISyntaxException {
+  void shouldSaveErrorsAndFailuresInXML() throws URISyntaxException {
     SensorContextTester context = SensorContextTester.create(new File(""));
     context.fileSystem()
       .add(resource("org.sonar.core.ExtensionsFinderTest"))
@@ -134,14 +134,14 @@ public class KotlinSurefireSensorTest {
   }
 
   @Test
-  public void shouldSupportLongAttributeValues() throws URISyntaxException {
+  void shouldSupportLongAttributeValues() throws URISyntaxException {
     SensorContextTester context = SensorContextTester.create(new File(""));
     collect(context, "/org/sonarsource/kotlin/plugin/surefire/KotlinSurefireSensorTest/should_support_long_attribute_values/");
     assertThat(context.allAnalysisErrors()).isEmpty();
   }
 
   @Test
-  public void shouldManageClassesWithDefaultPackage() throws URISyntaxException {
+  void shouldManageClassesWithDefaultPackage() throws URISyntaxException {
     SensorContextTester context = SensorContextTester.create(new File(""));
     context.fileSystem()
       .add(resource("NoPackagesTest"));
@@ -152,7 +152,7 @@ public class KotlinSurefireSensorTest {
   }
 
   @Test
-  public void successRatioIsZeroWhenAllTestsFail() throws URISyntaxException {
+  void successRatioIsZeroWhenAllTestsFail() throws URISyntaxException {
     SensorContextTester context = SensorContextTester.create(new File(""));
     context.fileSystem()
       .add(resource("org.sonar.Foo"));
@@ -165,7 +165,7 @@ public class KotlinSurefireSensorTest {
   }
 
   @Test
-  public void measuresShouldNotIncludeSkippedTests() throws URISyntaxException {
+  void measuresShouldNotIncludeSkippedTests() throws URISyntaxException {
     SensorContextTester context = SensorContextTester.create(new File(""));
     context.fileSystem()
       .add(resource("org.sonar.Foo"));
@@ -179,7 +179,7 @@ public class KotlinSurefireSensorTest {
   }
 
   @Test
-  public void noSuccessRatioIfNoTests() throws URISyntaxException {
+  void noSuccessRatioIfNoTests() throws URISyntaxException {
     SensorContextTester context = SensorContextTester.create(new File(""));
     context.fileSystem()
       .add(resource("org.sonar.Foo"));
@@ -193,7 +193,7 @@ public class KotlinSurefireSensorTest {
   }
 
   @Test
-  public void should_support_reportNameSuffix() throws URISyntaxException {
+  void should_support_reportNameSuffix() throws URISyntaxException {
     SensorContextTester context = SensorContextTester.create(new File(""));
     context.fileSystem()
       .add(resource("org.sonar.Foo"));
@@ -207,7 +207,7 @@ public class KotlinSurefireSensorTest {
   }
   
   @Test
-  public void testToStringMethod() {
+  void testToStringMethod() {
     assertThat(surefireSensor).hasToString("KotlinSurefireSensor");
   }
 

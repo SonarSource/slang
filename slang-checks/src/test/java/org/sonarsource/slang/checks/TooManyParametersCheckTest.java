@@ -19,17 +19,17 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TooManyParametersCheckTest {
+class TooManyParametersCheckTest {
 
   @Test
-  public void default_threshold() {
+  void default_threshold() {
     Verifier.verify("TooManyParameters.slang", new TooManyParametersCheck());
   }
 
   @Test
-  public void threshold_3() {
+  void threshold_3() {
     TooManyParametersCheck check = new TooManyParametersCheck();
     check.max = 3;
     Verifier.verify("TooManyParameters.threshold.3.slang", check);

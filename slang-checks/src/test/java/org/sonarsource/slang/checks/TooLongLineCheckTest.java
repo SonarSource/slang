@@ -19,20 +19,20 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TooLongLineCheckTest {
+class TooLongLineCheckTest {
 
   private TooLongLineCheck check = new TooLongLineCheck();
 
   @Test
-  public void max_120() {
+  void max_120() {
     check.maximumLineLength = 120;
     Verifier.verify("TooLongLine_120.slang", check);
   }
 
   @Test
-  public void max_40() {
+  void max_40() {
     check.maximumLineLength = 40;
     Verifier.verify("TooLongLine_40.slang", check);
   }

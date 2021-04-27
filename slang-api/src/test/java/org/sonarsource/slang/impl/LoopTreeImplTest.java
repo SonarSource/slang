@@ -22,7 +22,7 @@ package org.sonarsource.slang.impl;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.FOR;
@@ -30,10 +30,10 @@ import static org.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LoopTreeImplTest {
+class LoopTreeImplTest {
 
   @Test
-  public void test() {
+  void test() {
     TreeMetaData meta = null;
     Tree condition = new LiteralTreeImpl(meta, "1");
     Tree body = new IdentifierTreeImpl(meta, "x");

@@ -19,33 +19,33 @@
  */
 package org.sonarsource.kotlin.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.config.internal.MapSettings;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class KotlinLanguageTest {
+class KotlinLanguageTest {
 
   @Test
-  public void test_suffixes_default() throws Exception {
+  void test_suffixes_default() throws Exception {
     KotlinLanguage kotlinLanguage = new KotlinLanguage(new MapSettings().asConfig());
     assertThat(kotlinLanguage.getFileSuffixes()).containsExactly(".kt");
   }
 
   @Test
-  public void test_suffixes_empty() throws Exception {
+  void test_suffixes_empty() throws Exception {
     KotlinLanguage kotlinLanguage = new KotlinLanguage(new MapSettings().setProperty(KotlinPlugin.KOTLIN_FILE_SUFFIXES_KEY, "").asConfig());
     assertThat(kotlinLanguage.getFileSuffixes()).containsExactly(".kt");
   }
 
   @Test
-  public void test_suffixes_custom() throws Exception {
+  void test_suffixes_custom() throws Exception {
     KotlinLanguage kotlinLanguage = new KotlinLanguage(new MapSettings().setProperty(KotlinPlugin.KOTLIN_FILE_SUFFIXES_KEY, ".foo, .bar").asConfig());
     assertThat(kotlinLanguage.getFileSuffixes()).containsExactly(".foo", ".bar");
   }
 
   @Test
-  public void test_key_and_name() throws Exception {
+  void test_key_and_name() throws Exception {
     KotlinLanguage kotlinLanguage = new KotlinLanguage(new MapSettings().asConfig());
     assertThat(kotlinLanguage.getKey()).isEqualTo("kotlin");
     assertThat(kotlinLanguage.getName()).isEqualTo("Kotlin");

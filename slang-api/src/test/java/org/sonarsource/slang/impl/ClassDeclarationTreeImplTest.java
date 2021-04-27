@@ -25,17 +25,17 @@ import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
 import java.util.Collections;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ClassDeclarationTreeImplTest {
+class ClassDeclarationTreeImplTest {
 
   private class ClassNativeKind implements NativeKind {}
 
   @Test
-  public void test() {
+  void test() {
     TreeMetaData meta = null;
     IdentifierTree className = new IdentifierTreeImpl(meta, "MyClass");
     Tree classDecl = new NativeTreeImpl(meta, new ClassNativeKind(), Collections.singletonList(className));

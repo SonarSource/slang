@@ -19,26 +19,26 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class FileHeaderCheckTest {
+class FileHeaderCheckTest {
   private FileHeaderCheck check = new FileHeaderCheck();
   @Test
-  public void test() {
+  void test() {
     check.headerFormat = "// copyright 2018";
     Verifier.verify("fileheader/Noncompliant.slang", check);
     Verifier.verifyNoIssue("fileheader/Compliant.slang", check);
   }
 
   @Test
-  public void test_regex() {
+  void test_regex() {
     check.headerFormat = "// copyright 20\\d\\d";
     check.isRegularExpression = true;
     Verifier.verify("fileheader/Noncompliant.slang", check);
     Verifier.verifyNoIssue("fileheader/Compliant.slang", check);
   }
   @Test
-  public void test_multiline() {
+  void test_multiline() {
     check.headerFormat = "/*\n" +
       " * SonarSource SLang\n" +
       " * Copyright (C) 1999-2001 SonarSource SA\n" +
@@ -48,7 +48,7 @@ public class FileHeaderCheckTest {
   }
 
   @Test
-  public void test_no_first_line() {
+  void test_no_first_line() {
     check.headerFormat = "// copyright 20\\d\\d";
     check.isRegularExpression = true;
     Verifier.verify("fileheader/NoFirstLine.slang", check);

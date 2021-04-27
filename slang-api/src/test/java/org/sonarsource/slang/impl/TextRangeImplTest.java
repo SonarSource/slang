@@ -20,17 +20,17 @@
 package org.sonarsource.slang.impl;
 
 import org.sonarsource.slang.api.TextPointer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TextRangeImplTest {
+class TextRangeImplTest {
 
   private TextPointer p1 = new TextPointerImpl(1, 2);
   private TextPointer p2 = new TextPointerImpl(3, 4);
 
   @Test
-  public void test_equals() {
+  void test_equals() {
     TextRangeImpl range1 = new TextRangeImpl(p1, p2);
     assertThat(range1)
       .isEqualTo(range1)
@@ -42,13 +42,13 @@ public class TextRangeImplTest {
   }
 
   @Test
-  public void test_hashCode() {
+  void test_hashCode() {
     assertThat(new TextRangeImpl(p1, p2).hashCode()).isEqualTo(new TextRangeImpl(p1, p2).hashCode());
     assertThat(new TextRangeImpl(p1, p2).hashCode()).isNotEqualTo(new TextRangeImpl(p1, p1).hashCode());
   }
 
   @Test
-  public void test_toString() {
+  void test_toString() {
     assertThat(new TextRangeImpl(p1, p2)).hasToString("TextRange[1, 2, 3, 4]");
   }
 }

@@ -19,17 +19,17 @@
  */
 package org.sonarsource.scala.converter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.LoopTree.LoopKind;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class LoopTreeTest extends AbstractScalaConverterTest {
+class LoopTreeTest extends AbstractScalaConverterTest {
 
   @Test
-  public void while_loop() {
+  void while_loop() {
     LoopTree tree = (LoopTree) scalaStatement("while(x) { 42 }");
     assertTree(tree).isEquivalentTo(slangStatement("while(x) { 42; };"));
     assertThat(tree.kind()).isEqualTo(LoopKind.WHILE);
@@ -37,7 +37,7 @@ public class LoopTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void do_while() {
+  void do_while() {
     LoopTree tree = (LoopTree) scalaStatement("do { 42 } while (condition)");
     assertTree(tree).isEquivalentTo(slangStatement("do { 42 } while (condition);"));
     assertThat(tree.kind()).isEqualTo(LoopKind.DOWHILE);
@@ -45,7 +45,7 @@ public class LoopTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void for_loop() {
+  void for_loop() {
     LoopTree tree = (LoopTree) scalaStatement("for(a <- b) { c }");
     assertThat(tree.kind()).isEqualTo(LoopKind.FOR);
     assertThat(tree.keyword().text()).isEqualTo("for");
@@ -54,7 +54,7 @@ public class LoopTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void for_loop_with_braces() {
+  void for_loop_with_braces() {
     LoopTree tree = (LoopTree) scalaStatement("for{ i <- myList if condition} doSomething");
     assertThat(tree.kind()).isEqualTo(LoopKind.FOR);
     assertThat(identifierDescendants(tree.condition())).containsExactly("i", "myList", "condition");

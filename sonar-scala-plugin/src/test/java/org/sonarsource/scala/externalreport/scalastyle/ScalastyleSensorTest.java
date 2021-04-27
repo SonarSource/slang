@@ -28,9 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
 
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
@@ -47,6 +48,7 @@ import org.sonar.api.utils.log.ThreadLocalLogTester;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@EnableRuleMigrationSupport
 public class ScalastyleSensorTest {
 
   private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport", "scalastyle");
@@ -55,8 +57,8 @@ public class ScalastyleSensorTest {
 
   private final List<String> analysisWarnings = new ArrayList<>();
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     analysisWarnings.clear();
   }
 
@@ -64,7 +66,7 @@ public class ScalastyleSensorTest {
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
-  public void test_descriptor() {
+  void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     ScalastyleSensor sensor = new ScalastyleSensor(analysisWarnings::add);
     sensor.describe(sensorDescriptor);
@@ -74,7 +76,7 @@ public class ScalastyleSensorTest {
   }
 
   @Test
-  public void scalastyle_issues_with_sonarqube() throws IOException {
+  void scalastyle_issues_with_sonarqube() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("scalastyle-output.xml");
     assertThat(externalIssues).hasSize(2);
 
@@ -98,14 +100,14 @@ public class ScalastyleSensorTest {
   }
 
   @Test
-  public void no_issues_without_report_paths_property() throws IOException {
+  void no_issues_without_report_paths_property() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting(null);
     assertThat(externalIssues).isEmpty();
     assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
-  public void no_issues_with_invalid_report_path() throws IOException {
+  void no_issues_with_invalid_report_path() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("invalid-path.txt");
     assertThat(externalIssues).isEmpty();
     String realPath = PROJECT_DIR.toRealPath().resolve("invalid-path.txt").toString();
@@ -123,7 +125,7 @@ public class ScalastyleSensorTest {
   }
 
   @Test
-  public void no_issues_with_invalid_scalastyle_file() throws IOException {
+  void no_issues_with_invalid_scalastyle_file() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("invalid-scalastyle.txt");
     assertThat(externalIssues).isEmpty();
     String realPath = PROJECT_DIR.toRealPath().resolve("invalid-scalastyle.txt").toString();
@@ -134,7 +136,7 @@ public class ScalastyleSensorTest {
   }
 
   @Test
-  public void no_issues_with_invalid_xml_report() throws IOException {
+  void no_issues_with_invalid_xml_report() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("invalid.xml");
     assertThat(externalIssues).isEmpty();
     String realPath = PROJECT_DIR.toRealPath().resolve("invalid.xml").toString();
@@ -144,7 +146,7 @@ public class ScalastyleSensorTest {
   }
 
   @Test
-  public void issues_when_xml_file_has_errors() throws IOException {
+  void issues_when_xml_file_has_errors() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("scalastyle-with-errors.xml");
     assertThat(externalIssues).hasSize(2);
 
@@ -174,7 +176,7 @@ public class ScalastyleSensorTest {
   }
 
   @Test
-  public void invalid_line_number() throws IOException {
+  void invalid_line_number() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("scalastyle-invalid-line.xml");
     assertThat(externalIssues).isEmpty();
     String realPath = PROJECT_DIR.toRealPath().resolve("scalastyle-invalid-line.xml").toString();
@@ -184,7 +186,7 @@ public class ScalastyleSensorTest {
   }
 
   @Test
-  public void issues_when_xml_file_has_a_lot_of_errors() throws IOException {
+  void issues_when_xml_file_has_a_lot_of_errors() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("scalastyle-with-a-lot-of-errors.xml");
     assertThat(externalIssues).isEmpty();
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();

@@ -19,14 +19,14 @@
  */
 package org.sonarsource.kotlin.converter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class KotlinCodeVerifierTest {
+class KotlinCodeVerifierTest {
   private KotlinCodeVerifier kotlinCodeVerifier = new KotlinCodeVerifier();
   @Test
-  public void testContainsCode() {
+  void testContainsCode() {
 
     assertThat(kotlinCodeVerifier.containsCode("This is a normal sentence: definitely not code")).isFalse();
     assertThat(kotlinCodeVerifier.containsCode("this is a normal comment")).isFalse();

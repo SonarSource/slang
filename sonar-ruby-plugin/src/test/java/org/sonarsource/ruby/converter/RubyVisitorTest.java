@@ -20,29 +20,29 @@
 package org.sonarsource.ruby.converter;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class RubyVisitorTest extends AbstractRubyConverterTest {
+class RubyVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void top_level_tree() {
+  void top_level_tree() {
     assertTree(converter.parse(("true\nfalse"))).isInstanceOf(TopLevelTree.class);
     assertTree(converter.parse(("true\r\nfalse"))).isInstanceOf(TopLevelTree.class);
   }
 
   @Test
-  public void parse_with_missing_node() {
+  void parse_with_missing_node() {
     Tree tree = converter.parse("def is_root?\nend"); // method has null argument list
     assertThat(tree).isNotNull();
   }
 
   @Test
-  public void singletons() {
+  void singletons() {
     assertTree(rubyStatement("nil")).isEquivalentTo(nativeTree("nil", "nil"));
   }
 

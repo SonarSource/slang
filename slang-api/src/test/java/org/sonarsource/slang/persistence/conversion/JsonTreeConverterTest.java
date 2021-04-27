@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.JumpTree;
 import org.sonarsource.slang.api.NativeKind;
@@ -44,7 +44,7 @@ import org.sonarsource.slang.persistence.JsonTree;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.sonarsource.slang.persistence.conversion.JsonTreeConverter.COMMENT_FROM_JSON;
 import static org.sonarsource.slang.persistence.conversion.JsonTreeConverter.COMMENT_TO_JSON;
 import static org.sonarsource.slang.persistence.conversion.JsonTreeConverter.CONTENT_RANGE;
@@ -62,7 +62,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   private DeserializationContext readContext = new DeserializationContext(JsonTreeConverter.POLYMORPHIC_CONVERTER);
 
   @Test
-  public void tree_metadata_provider() throws IOException {
+  void tree_metadata_provider() throws IOException {
     Comment initialComment = comment(1, 0, "// hello", 2, 0);
 
     TextRange tokenRange = new TextRangeImpl(2, 0, 2, 3);
@@ -95,7 +95,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void comment() throws IOException {
+  void comment() throws IOException {
     Comment initialComment = comment(3, 7, "// hello", 2, 0);
     String actual = indentedJson(COMMENT_TO_JSON.apply(writeContext, initialComment).toString());
     assertThat(actual).isEqualTo(indentedJsonFromFile("comment.json"));
@@ -110,7 +110,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void token_other() throws IOException {
+  void token_other() throws IOException {
     Token initialToken = otherToken(3, 7, "foo");
     String actual = indentedJson(TOKEN_TO_JSON.apply(writeContext, initialToken).toString());
     assertThat(actual).isEqualTo(indentedJsonFromFile("token_other.json"));
@@ -124,7 +124,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void token_keyword() throws IOException{
+  void token_keyword() throws IOException{
     Token initialToken = keywordToken(1, 2, "key");
     String actual = indentedJson(TOKEN_TO_JSON.apply(writeContext, initialToken).toString());
     assertThat(actual).isEqualTo(indentedJsonFromFile("token_keyword.json"));
@@ -135,7 +135,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void nativeTree_emptyKind() throws IOException {
+  void nativeTree_emptyKind() throws IOException {
     TreeMetaData metaData = metaData(otherToken(1, 0, "x"));
     IdentifierTreeImpl className = new IdentifierTreeImpl(metaData, "MyClass");
     Tree classDecl = new NativeTreeImpl(metaData, new NativeKind() {
@@ -149,7 +149,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void nativeTree_withKind() throws IOException {
+  void nativeTree_withKind() throws IOException {
     TreeMetaData metaData = metaData(otherToken(1, 0, "x"));
     IdentifierTreeImpl className = new IdentifierTreeImpl(metaData, "MyClass");
     Tree classDecl = new NativeTreeImpl(metaData, new NativeKind() {
@@ -163,7 +163,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void error_missing_type() throws IOException {
+  void error_missing_type() throws IOException {
     String invalidJson = indentedJsonFromFile("error_missing_type.json");
     IllegalStateException e = assertThrows(IllegalStateException.class,
       () -> JsonTree.fromJson(invalidJson));
@@ -172,7 +172,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void error_invalid_json_tree() throws IOException {
+  void error_invalid_json_tree() throws IOException {
     String invalidJson = indentedJsonFromFile("error_invalid_json_tree.json");
     IllegalStateException e = assertThrows(IllegalStateException.class,
       () -> JsonTree.fromJson(invalidJson));
@@ -180,7 +180,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void error_invalid_tree_type() throws IOException {
+  void error_invalid_tree_type() throws IOException {
     String invalidJson = indentedJsonFromFile("error_invalid_tree_type.json");
     IllegalStateException e = assertThrows(IllegalStateException.class,
       () -> JsonTree.fromJson(invalidJson));
@@ -188,7 +188,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void error_unsupported_tree_class() throws IOException {
+  void error_unsupported_tree_class() throws IOException {
     Token token = otherToken(1, 0, "x");
     UnsupportedTree tree = new UnsupportedTree(metaData(token));
     IllegalStateException e = assertThrows(IllegalStateException.class,
@@ -197,7 +197,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void error_unsupported_implementation_class() throws IOException {
+  void error_unsupported_implementation_class() throws IOException {
     Token token = otherToken(1, 0, "x");
     UnsupportedTree tree = new UnsupportedTree(metaData(token));
     SerializationContext ctx = new SerializationContext(JsonTreeConverter.POLYMORPHIC_CONVERTER);
@@ -218,7 +218,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void error_unexpected_match_child_class() throws IOException {
+  void error_unexpected_match_child_class() throws IOException {
     String invalidJson = indentedJsonFromFile("error_unexpected_match_child_class.json");
     IllegalStateException e = assertThrows(IllegalStateException.class,
       () -> JsonTree.fromJson(invalidJson));
@@ -230,7 +230,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void error_unary_expression_without_child() throws IOException {
+  void error_unary_expression_without_child() throws IOException {
     String invalidJson = indentedJsonFromFile("error_unary_expression_without_child.json");
     IllegalStateException e = assertThrows(IllegalStateException.class,
       () -> JsonTree.fromJson(invalidJson));
@@ -238,7 +238,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void error_unary_expression_with_null_child() throws IOException {
+  void error_unary_expression_with_null_child() throws IOException {
     String invalidJson = indentedJsonFromFile("error_unary_expression_with_null_child.json");
     IllegalStateException e = assertThrows(IllegalStateException.class,
       () -> JsonTree.fromJson(invalidJson));
@@ -246,7 +246,7 @@ public class JsonTreeConverterTest extends JsonTestHelper {
   }
 
   @Test
-  public void nullable_child_can_be_omitted() throws IOException {
+  void nullable_child_can_be_omitted() throws IOException {
     JumpTree jump = (JumpTree) JsonTree.fromJson(indentedJsonFromFile("nullable_child_can_be_omitted.json"));
     assertThat(jump.label()).isNull();
   }

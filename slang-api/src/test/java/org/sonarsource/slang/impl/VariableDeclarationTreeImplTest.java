@@ -23,17 +23,17 @@ import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class VariableDeclarationTreeImplTest {
+class VariableDeclarationTreeImplTest {
 
   private class TypeNativeKind implements NativeKind {}
 
   @Test
-  public void test() {
+  void test() {
     TreeMetaData meta = null;
     Tree variableType = new NativeTreeImpl(meta, new TypeNativeKind(), null);
     IdentifierTree identifierTreeX = new IdentifierTreeImpl(meta, "x");

@@ -27,11 +27,11 @@ import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.parser.SLangConverter;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CyclomaticComplexityVisitorTest {
+class CyclomaticComplexityVisitorTest {
 
   private static List<HasTextRange> getComplexityTrees(String content) {
     Tree root = new SLangConverter().parse(content);
@@ -39,7 +39,7 @@ public class CyclomaticComplexityVisitorTest {
   }
 
   @Test
-  public void test_matchCases() throws Exception {
+  void test_matchCases() throws Exception {
     String content = "match (a) {" +
       "      0 -> return \"none\";" +
       "      1 -> return \"one\";" +
@@ -53,7 +53,7 @@ public class CyclomaticComplexityVisitorTest {
   }
 
   @Test
-  public void test_functions_with_conditional() throws Exception {
+  void test_functions_with_conditional() throws Exception {
     String content = "void fun foo (a) {" +
       "      if (a == 2) {" +
       "        print(a + 1);" +
@@ -68,7 +68,7 @@ public class CyclomaticComplexityVisitorTest {
   }
 
   @Test
-  public void test_loops() throws Exception {
+  void test_loops() throws Exception {
     String content =
       "for (var x = list) { " +
       "  while (x > y) { " +

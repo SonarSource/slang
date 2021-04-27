@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.junit.ComparisonFailure;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.TopLevelTree;
@@ -16,10 +16,10 @@ import org.sonarsource.slang.persistence.JsonTree;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
-public class VerifierTest {
+class VerifierTest {
 
   private static final Path BASE_DIR = Paths.get("src", "test", "resources");
 
@@ -43,7 +43,7 @@ public class VerifierTest {
     init.register(TopLevelTree.class, (ctx, identifier) -> ctx.reportFileIssue(ctx.filename() + " length " + ctx.fileContent().length()));
 
   @Test
-  public void verify_with_issue() throws IOException {
+  void verify_with_issue() throws IOException {
     Path path = BASE_DIR.resolve("primary.code");
     ASTConverter converter = createConverter(path);
     Verifier.verify(converter, path, ISSUE_ON_IDENTIFIERS_CHECK);
@@ -55,7 +55,7 @@ public class VerifierTest {
   }
 
   @Test
-  public void verify_with_wrong_message() throws IOException {
+  void verify_with_wrong_message() throws IOException {
     Path path = BASE_DIR.resolve("wrong-message.code");
     ASTConverter converter = createConverter(path);
     ComparisonFailure e = assertThrows(ComparisonFailure.class,
@@ -66,7 +66,7 @@ public class VerifierTest {
   }
 
   @Test
-  public void verify_with_primary_and_secondary() throws IOException {
+  void verify_with_primary_and_secondary() throws IOException {
     Path path = BASE_DIR.resolve("primary-and-secondary.code");
     ASTConverter converter = createConverter(path);
     Verifier.verify(converter, path, ISSUE_WITH_SECONDARY_LOCATION_CHECK);
@@ -77,7 +77,7 @@ public class VerifierTest {
   }
 
   @Test
-  public void verify_issue_on_file() throws IOException {
+  void verify_issue_on_file() throws IOException {
     Path path = BASE_DIR.resolve("file-issue.code");
     ASTConverter converter = createConverter(path);
     Verifier.verify(converter, path, ISSUE_ON_FILE);
@@ -88,7 +88,7 @@ public class VerifierTest {
   }
 
   @Test
-  public void verify_without_issue() throws IOException {
+  void verify_without_issue() throws IOException {
     Path path = BASE_DIR.resolve("no-issue.code");
     ASTConverter converter = createConverter(path);
     Verifier.verifyNoIssue(converter, path, NO_ISSUE_CHECK);
@@ -99,7 +99,7 @@ public class VerifierTest {
   }
 
   @Test
-  public void invalid_path() throws IOException {
+  void invalid_path() throws IOException {
     Path path = BASE_DIR.resolve("invalid-path.code");
     IllegalStateException e = assertThrows(IllegalStateException.class,
       () -> Verifier.verify(mock(ASTConverter.class), path, ISSUE_ON_IDENTIFIERS_CHECK));

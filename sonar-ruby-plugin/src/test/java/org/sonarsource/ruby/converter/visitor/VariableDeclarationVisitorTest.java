@@ -20,7 +20,7 @@
 package org.sonarsource.ruby.converter.visitor;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BlockTree;
@@ -31,10 +31,10 @@ import org.sonarsource.slang.api.VariableDeclarationTree;
 
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class VariableDeclarationVisitorTest extends AbstractRubyConverterTest {
+class VariableDeclarationVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void declaration() {
+  void declaration() {
     Tree tree = rubyStatement("def foo; a = 1; end; def self.bar; a = 1; end");
     assertTree(tree).isInstanceOf(BlockTree.class);
     FunctionDeclarationTree fooFunction = ((FunctionDeclarationTree) tree.children().get(0));
@@ -44,7 +44,7 @@ public class VariableDeclarationVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void class_scope() {
+  void class_scope() {
     ClassDeclarationTree tree = (ClassDeclarationTree) rubyStatement("class Test\n" +
       "    fooVar = 10\n" +  // variable declaration
       "    barVar = 10\n" +  // variable declaration

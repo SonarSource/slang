@@ -22,7 +22,7 @@ package org.sonarsource.slang.checks.utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.FunctionInvocationTree;
@@ -40,7 +40,7 @@ import static org.sonarsource.slang.checks.utils.FunctionUtils.hasFunctionCallFu
 import static org.sonarsource.slang.checks.utils.FunctionUtils.hasFunctionCallNameIgnoreCase;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FunctionUtilsTest {
+class FunctionUtilsTest {
   private class TypeNativeKind implements NativeKind {}
 
   private static TreeMetaData meta = null;
@@ -50,7 +50,7 @@ public class FunctionUtilsTest {
   private static final ASTConverter CONVERTER = new SLangConverter();
 
   @Test
-  public void test_has_function_name_identifier() {
+  void test_has_function_name_identifier() {
     FunctionInvocationTree tree = new FunctionInvocationTreeImpl(meta, identifierTree, args);
     assertThat(hasFunctionCallNameIgnoreCase(tree, "function")).isTrue();
     assertThat(hasFunctionCallNameIgnoreCase(tree, "FuNcTiOn")).isTrue();
@@ -58,7 +58,7 @@ public class FunctionUtilsTest {
   }
 
   @Test
-  public void test_has_function_name_method_select() {
+  void test_has_function_name_method_select() {
     Tree member = new IdentifierTreeImpl(meta, "A");
     Tree methodSelect = new MemberSelectTreeImpl(meta, member, identifierTree);
     FunctionInvocationTree tree = new FunctionInvocationTreeImpl(meta, methodSelect, args);
@@ -67,14 +67,14 @@ public class FunctionUtilsTest {
   }
 
   @Test
-  public void test_has_function_name_unknown() {
+  void test_has_function_name_unknown() {
     Tree nativeNode = new NativeTreeImpl(meta, new TypeNativeKind(), null);
     FunctionInvocationTree tree = new FunctionInvocationTreeImpl(meta, nativeNode, args);
     assertThat(hasFunctionCallNameIgnoreCase(tree, "function")).isFalse();
   }
 
   @Test
-  public void test_has_function_full_name_identifier() {
+  void test_has_function_full_name_identifier() {
     FunctionInvocationTree tree = new FunctionInvocationTreeImpl(meta, identifierTree, args);
     assertThat(hasFunctionCallFullNameIgnoreCase(tree, "function")).isTrue();
     assertThat(hasFunctionCallFullNameIgnoreCase(tree, "FuNcTioN")).isTrue();
@@ -83,7 +83,7 @@ public class FunctionUtilsTest {
   }
 
   @Test
-  public void test_has_function_full_name_method_select() {
+  void test_has_function_full_name_method_select() {
     IdentifierTree memberA = new IdentifierTreeImpl(meta, "A");
     IdentifierTree memberB = new IdentifierTreeImpl(meta, "B");
     Tree methodSelectAB = new MemberSelectTreeImpl(meta, memberA, memberB);
@@ -102,14 +102,14 @@ public class FunctionUtilsTest {
   }
 
   @Test
-  public void test_has_function_full_name_unknown() {
+  void test_has_function_full_name_unknown() {
     Tree nativeNode = new NativeTreeImpl(meta, new TypeNativeKind(), null);
     FunctionInvocationTree tree = new FunctionInvocationTreeImpl(meta, nativeNode, args);
     assertThat(hasFunctionCallFullNameIgnoreCase(tree, "function")).isFalse();
   }
 
   @Test
-  public void test_get_strings_tokens_returns_tokens() {
+  void test_get_strings_tokens_returns_tokens() {
     String code = "void fun fooBar() {\n" +
       "    val a = \"one,two,three\"; \n"+
       "    foo(\"one,two$four\"); \n"+

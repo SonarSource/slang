@@ -22,7 +22,8 @@ package org.sonarsource.slang.plugin;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
@@ -59,10 +60,10 @@ import static org.mockito.Mockito.when;
 import static org.sonarsource.slang.plugin.SlangSensorTest.SlangLanguage.SLANG;
 import static org.sonarsource.slang.testing.TextRangeAssert.assertTextRange;
 
-public class SlangSensorTest extends AbstractSensorTest {
+class SlangSensorTest extends AbstractSensorTest {
 
   @Test
-  public void test_one_rule() {
+  void test_one_rule() {
     InputFile inputFile = createInputFile("file1.slang", "" +
       "fun main() {\nprint (1 == 1);}");
     context.fileSystem().add(inputFile);
@@ -79,7 +80,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_rule_with_gap() {
+  void test_rule_with_gap() {
     InputFile inputFile = createInputFile("file1.slang", "" +
       "fun f() { print(\"string literal\"); print(\"string literal\"); print(\"string literal\"); }");
     context.fileSystem().add(inputFile);
@@ -97,7 +98,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_commented_code() {
+  void test_commented_code() {
     InputFile inputFile = createInputFile("file1.slang", "" +
       "fun main() {\n" +
       "// fun foo() { if (true) {print(\"string literal\");}}\n" +
@@ -123,7 +124,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void simple_file() {
+  void simple_file() {
     InputFile inputFile = createInputFile("file1.slang", "" +
       "fun main(int x) {\nprint (1 == 1); print(\"abc\"); }\nclass A {}");
     context.fileSystem().add(inputFile);
@@ -142,7 +143,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void suppress_issues_in_class() {
+  void suppress_issues_in_class() {
     InputFile inputFile = createInputFile("file1.slang", "" +
       "@Suppress(\"slang:S1764\")\n" +
       "class { fun main() {\nprint (1 == 1);} }");
@@ -154,7 +155,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void suppress_issues_in_method() {
+  void suppress_issues_in_method() {
     InputFile inputFile = createInputFile("file1.slang", "" +
       "class { " +
       "@Suppress(\"slang:S1764\")\n" +
@@ -172,7 +173,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void suppress_issues_in_var() {
+  void suppress_issues_in_var() {
     InputFile inputFile = createInputFile("file1.slang", "class A {void fun bar() {\n" +
       "@Suppress(\"slang:S1764\")\n" +
       "int val b = (1 == 1);\n" +
@@ -189,7 +190,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void suppress_issues_in_parameter() {
+  void suppress_issues_in_parameter() {
     InputFile inputFile = createInputFile("file1.slang",
       "class A {void fun bar(@Suppress(\"slang:S1764\") int a = (1 == 1), int b = (1 == 1)) {} }");
     context.fileSystem().add(inputFile);
@@ -203,7 +204,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void suppress_multiples_issues() {
+  void suppress_multiples_issues() {
     InputFile inputFile = createInputFile("file1.slang", "" +
       "@Suppress(\"slang:S1764\", value=\"slang:S1192\")\n" +
       "fun suppressed() {\nprint (1 == 1);print(\"string literal\"); print(\"string literal\"); print(\"string literal\"); } " +
@@ -222,7 +223,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void do_not_suppress_bad_key() {
+  void do_not_suppress_bad_key() {
     InputFile inputFile = createInputFile("file1.slang", "" +
       "@Suppress(\"slang:S1234\")\n" +
       "fun notSuppressed() {\nprint (1 == 1);} " +
@@ -242,7 +243,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_fail_input() throws IOException {
+  void test_fail_input() throws IOException {
     InputFile inputFile = createInputFile("fakeFile.slang", "");
     InputFile spyInputFile = spy(inputFile);
     when(spyInputFile.contents()).thenThrow(IOException.class);
@@ -260,7 +261,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_fail_parsing() {
+  void test_fail_parsing() {
     InputFile inputFile = createInputFile("file1.slang", "" +
       "\n class A {\n" +
       " fun x() {}\n" +
@@ -292,7 +293,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_fail_parsing_without_parsing_error_rule_activated() {
+  void test_fail_parsing_without_parsing_error_rule_activated() {
     InputFile inputFile = createInputFile("file1.slang", "{");
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("S1764");
@@ -302,7 +303,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_empty_file() {
+  void test_empty_file() {
     InputFile inputFile = createInputFile("empty.slang", "\t\t  \r\n  \n ");
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("S1764");
@@ -314,7 +315,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_failure_in_check() {
+  void test_failure_in_check() {
     InputFile inputFile = createInputFile("file1.slang", "fun f() {}");
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = mock(CheckFactory.class);
@@ -336,7 +337,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_descriptor() {
+  void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     SlangSensor sensor = sensor(mock(CheckFactory.class));
     sensor.describe(sensorDescriptor);
@@ -346,7 +347,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_cancellation() {
+  void test_cancellation() {
     InputFile inputFile = createInputFile("file1.slang", "" +
       "fun main() {\nprint (1 == 1);}");
     context.fileSystem().add(inputFile);
@@ -358,7 +359,7 @@ public class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_sonarlint_context() {
+  void test_sonarlint_context() {
     SonarRuntime sonarLintRuntime = SonarRuntimeImpl.forSonarLint(Version.create(3, 9));
     SensorContextTester context = SensorContextTester.create(baseDir);
     InputFile inputFile = createInputFile("file1.slang", "" +

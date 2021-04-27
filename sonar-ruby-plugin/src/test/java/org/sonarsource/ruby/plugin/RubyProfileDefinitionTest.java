@@ -19,16 +19,16 @@
  */
 package org.sonarsource.ruby.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.BuiltInActiveRule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RubyProfileDefinitionTest {
+class RubyProfileDefinitionTest {
 
   @Test
-  public void profile() {
+  void profile() {
     BuiltInQualityProfilesDefinition.Context context = new BuiltInQualityProfilesDefinition.Context();
     new RubyProfileDefinition().define(context);
     BuiltInQualityProfilesDefinition.BuiltInQualityProfile profile = context.profile("ruby", "Sonar way");

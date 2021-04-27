@@ -19,13 +19,13 @@
  */
 package org.sonarsource.slang.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.parser.SLangConverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StatementsVisitorTest {
+class StatementsVisitorTest {
 
   private static int statements(String content) {
     Tree root = new SLangConverter().parse(content);
@@ -33,7 +33,7 @@ public class StatementsVisitorTest {
   }
 
   @Test
-  public void should_count_top_level_without_natives_and_blocks() throws Exception {
+  void should_count_top_level_without_natives_and_blocks() throws Exception {
     String content = "" +
       "package abc;" +
       "import xyz;" +
@@ -47,7 +47,7 @@ public class StatementsVisitorTest {
   }
 
   @Test
-  public void should_count_statements_inside_blocks() throws Exception {
+  void should_count_statements_inside_blocks() throws Exception {
     String content = "fun foo() {" +
       "native[] { };" + // +1
       "foo;" + // +1

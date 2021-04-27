@@ -20,14 +20,14 @@
 package org.sonarsource.slang.api;
 
 import org.sonarsource.slang.impl.TextRangeImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TextRangeTest {
+class TextRangeTest {
 
   @Test
-  public void isInside() {
+  void isInside() {
     assertThat(new TextRangeImpl(1, 1, 1, 9).isInside(new TextRangeImpl(1, 1, 1, 5))).isFalse();
     assertThat(new TextRangeImpl(1, 1, 1, 9).isInside(new TextRangeImpl(1, 1, 1, 9))).isTrue();
     assertThat(new TextRangeImpl(1, 5, 1, 9).isInside(new TextRangeImpl(1, 1, 1, 9))).isTrue();

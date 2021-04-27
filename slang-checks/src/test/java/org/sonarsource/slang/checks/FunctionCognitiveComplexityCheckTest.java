@@ -19,12 +19,12 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class FunctionCognitiveComplexityCheckTest {
+class FunctionCognitiveComplexityCheckTest {
 
   @Test
-  public void test() {
+  void test() {
     FunctionCognitiveComplexityCheck check = new FunctionCognitiveComplexityCheck();
     check.threshold = 4;
     Verifier.verify("FunctionCognitiveComplexity.slang", check);

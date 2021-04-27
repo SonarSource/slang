@@ -19,16 +19,16 @@
  */
 package org.sonarsource.scala.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.BuiltInActiveRule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ScalaProfileDefinitionTest {
+class ScalaProfileDefinitionTest {
 
   @Test
-  public void profile() {
+  void profile() {
     BuiltInQualityProfilesDefinition.Context context = new BuiltInQualityProfilesDefinition.Context();
     new ScalaProfileDefinition().define(context);
     BuiltInQualityProfilesDefinition.BuiltInQualityProfile profile = context.profile("scala", "Sonar way");

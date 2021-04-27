@@ -21,7 +21,7 @@ package org.sonarsource.slang.visitors;
 
 import java.util.Arrays;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.ModifierTree;
@@ -36,16 +36,16 @@ import org.sonarsource.slang.impl.TextRangeImpl;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.sonarsource.slang.utils.TreeCreationUtils.assignment;
 import static org.sonarsource.slang.utils.TreeCreationUtils.binary;
 import static org.sonarsource.slang.utils.TreeCreationUtils.identifier;
 import static org.sonarsource.slang.utils.TreeCreationUtils.integerLiteral;
 
-public class TreePrinterTest {
+class TreePrinterTest {
 
   @Test
-  public void test() {
+  void test() {
     Tree x1 = new IdentifierTreeImpl(null, "x1");
     Tree var1 = new IdentifierTreeImpl(null, "var1");
     Tree literal1 = new LiteralTreeImpl(null, "42");
@@ -65,7 +65,7 @@ public class TreePrinterTest {
   }
 
   @Test
-  public void table_test() {
+  void table_test() {
     // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx = x-1;
     Tree add = binary(BinaryExpressionTree.Operator.PLUS,
         identifier("x", new TextRangeImpl(1,42,1,43),"x"),

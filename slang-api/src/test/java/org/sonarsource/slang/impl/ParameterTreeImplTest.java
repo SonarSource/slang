@@ -25,17 +25,17 @@ import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ParameterTreeImplTest {
+class ParameterTreeImplTest {
 
   private class TypeNativeKind implements NativeKind {}
 
   @Test
-  public void test() {
+  void test() {
     TreeMetaData meta = null;
     Tree parameterType = new NativeTreeImpl(meta, new TypeNativeKind(), null);
     IdentifierTree identifierTreeX = new IdentifierTreeImpl(meta, "x");
@@ -56,7 +56,7 @@ public class ParameterTreeImplTest {
   }
 
   @Test
-  public void test_default_value() {
+  void test_default_value() {
     TreeMetaData meta = null;
     IdentifierTree identifierTreeX = new IdentifierTreeImpl(meta, "x");
     IdentifierTree identifierTreeY = new IdentifierTreeImpl(meta, "y");
@@ -82,7 +82,7 @@ public class ParameterTreeImplTest {
   }
 
   @Test
-  public void test_modifiers() {
+  void test_modifiers() {
     TreeMetaData meta = null;
     IdentifierTree identifierTreeX = new IdentifierTreeImpl(meta, "x");
     IdentifierTree identifierTreeY = new IdentifierTreeImpl(meta, "y");

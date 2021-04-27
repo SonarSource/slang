@@ -19,14 +19,14 @@
  */
 package org.sonarsource.ruby.converter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RubyNativeKindTest {
+class RubyNativeKindTest {
 
   @Test
-  public void kinds() {
+  void kinds() {
     RubyNativeKind nativeKind = new RubyNativeKind("test");
 
     assertThat(nativeKind)

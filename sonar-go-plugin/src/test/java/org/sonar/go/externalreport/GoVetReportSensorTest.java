@@ -24,9 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
@@ -39,12 +40,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonar.go.externalreport.AbstractReportSensor.GENERIC_ISSUE_KEY;
 import static org.sonar.go.externalreport.ExternalLinterSensorHelper.REPORT_BASE_PATH;
 
-public class GoVetReportSensorTest {
+@EnableRuleMigrationSupport
+class GoVetReportSensorTest {
 
   private final List<String> analysisWarnings = new ArrayList<>();
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     analysisWarnings.clear();
   }
 
@@ -52,7 +54,7 @@ public class GoVetReportSensorTest {
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
-  public void test_descriptor() {
+  void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     goVetReportSensor().describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of go vet issues");
@@ -60,7 +62,7 @@ public class GoVetReportSensorTest {
   }
 
   @Test
-  public void issues_with_sonarqube() throws IOException {
+  void issues_with_sonarqube() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.govet.reportPaths", REPORT_BASE_PATH.resolve("govet-report.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goVetReportSensor(), context);
@@ -88,7 +90,7 @@ public class GoVetReportSensorTest {
   }
 
   @Test
-  public void no_issues_without_govet_property() throws IOException {
+  void no_issues_without_govet_property() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goVetReportSensor(), context);
     assertThat(externalIssues).isEmpty();
@@ -96,7 +98,7 @@ public class GoVetReportSensorTest {
   }
 
   @Test
-  public void no_issues_with_invalid_report_path() throws IOException {
+  void no_issues_with_invalid_report_path() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.govet.reportPaths", REPORT_BASE_PATH.resolve("invalid-path.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goVetReportSensor(), context);
@@ -115,7 +117,7 @@ public class GoVetReportSensorTest {
   }
 
   @Test
-  public void no_issues_with_invalid_report_line() throws IOException {
+  void no_issues_with_invalid_report_line() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.govet.reportPaths", REPORT_BASE_PATH.resolve("govet-report-with-error.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goVetReportSensor(), context);
@@ -126,7 +128,7 @@ public class GoVetReportSensorTest {
   }
 
   @Test
-  public void should_parse_govet_report_line() {
+  void should_parse_govet_report_line() {
     String line = "./vendor/github.com/foo/go-bar/hello_world.go:550: redundant or: n == 2 || n == 2";
     org.sonar.go.externalreport.ExternalIssue issue = goVetReportSensor().parse(line);
     assertThat(issue).isNotNull();
@@ -139,7 +141,7 @@ public class GoVetReportSensorTest {
   }
 
   @Test
-  public void should_match_govet_all_keys() throws IOException {
+  void should_match_govet_all_keys() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.govet.reportPaths", REPORT_BASE_PATH.resolve("all-govet-report.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goVetReportSensor(), context);
@@ -152,7 +154,7 @@ public class GoVetReportSensorTest {
   }
 
   @Test
-  public void should_match_govet_asm_keys() throws IOException {
+  void should_match_govet_asm_keys() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.govet.reportPaths", REPORT_BASE_PATH.resolve("asm-govet-report.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goVetReportSensor(), context);
@@ -162,7 +164,7 @@ public class GoVetReportSensorTest {
   }
 
   @Test
-  public void should_match_to_generic_issue_if_match_not_found() throws IOException {
+  void should_match_to_generic_issue_if_match_not_found() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.govet.reportPaths", REPORT_BASE_PATH.resolve("govet-with-unknown-message.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goVetReportSensor(), context);

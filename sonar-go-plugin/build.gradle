@@ -16,7 +16,9 @@ dependencies {
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
     implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
     implementation 'com.eclipsesource.minimal-json:minimal-json'
-    testImplementation 'junit:junit'
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    testImplementation "org.junit.jupiter:junit-jupiter-migrationsupport"
     testImplementation 'org.assertj:assertj-core'
     testImplementation 'org.mockito:mockito-core'
     testImplementation 'io.github.classgraph:classgraph'

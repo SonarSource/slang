@@ -21,23 +21,23 @@ package org.sonarsource.slang.impl;
 
 import org.sonarsource.slang.api.TextRange;
 import java.util.Arrays;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.sonarsource.slang.impl.TextRanges.range;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TextRangesTest {
+class TextRangesTest {
 
   @Test
-  public void merge_not_empty_list() {
+  void merge_not_empty_list() {
     assertThat(merge(range(1, 2, 3, 4))).isEqualTo(range(1, 2, 3, 4));
     assertThat(merge(range(1, 2, 3, 4), range(5, 1, 5, 7))).isEqualTo(range(1, 2, 5, 7));
     assertThat(merge(range(1, 2, 3, 4), range(1, 3, 1, 5))).isEqualTo(range(1, 2, 3, 4));
   }
 
   @Test
-  public void merge_empty_list() {
+  void merge_empty_list() {
     assertThrows(IllegalArgumentException.class,
       TextRangesTest::merge);
   }

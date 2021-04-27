@@ -19,20 +19,20 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TooLongFunctionCheckTest {
+class TooLongFunctionCheckTest {
 
   TooLongFunctionCheck check = new TooLongFunctionCheck();
 
   @Test
-  public void max_3() {
+  void max_3() {
     check.max = 3;
     Verifier.verify("TooLongFunction_3.slang", check);
   }
 
   @Test
-  public void max_4() {
+  void max_4() {
     check.max = 4;
     Verifier.verify("TooLongFunction_4.slang", check);
   }

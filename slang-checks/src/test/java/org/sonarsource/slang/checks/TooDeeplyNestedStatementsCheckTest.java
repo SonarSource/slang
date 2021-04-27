@@ -19,17 +19,17 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TooDeeplyNestedStatementsCheckTest {
+class TooDeeplyNestedStatementsCheckTest {
 
   @Test
-  public void test() {
+  void test() {
     Verifier.verify("TooDeeplyNestedStatements.slang", new TooDeeplyNestedStatementsCheck());
   }
 
   @Test
-  public void test_max_2() {
+  void test_max_2() {
     TooDeeplyNestedStatementsCheck check = new TooDeeplyNestedStatementsCheck();
     check.max = 2;
     Verifier.verify("TooDeeplyNestedStatements.max_2.slang", check);

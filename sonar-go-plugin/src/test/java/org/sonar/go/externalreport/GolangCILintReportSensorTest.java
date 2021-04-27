@@ -23,9 +23,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
@@ -37,12 +38,13 @@ import org.sonar.api.utils.log.ThreadLocalLogTester;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonar.go.externalreport.ExternalLinterSensorHelper.REPORT_BASE_PATH;
 
-public class GolangCILintReportSensorTest {
+@EnableRuleMigrationSupport
+class GolangCILintReportSensorTest {
 
   private final List<String> analysisWarnings = new ArrayList<>();
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     analysisWarnings.clear();
   }
 
@@ -50,7 +52,7 @@ public class GolangCILintReportSensorTest {
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
-  public void test_descriptor() {
+  void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     golangCILintReportSensor().describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of GolangCI-Lint issues");
@@ -62,7 +64,7 @@ public class GolangCILintReportSensorTest {
   }
 
   @Test
-  public void issues_with_sonarqube() throws IOException {
+  void issues_with_sonarqube() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golangci-lint.reportPaths", REPORT_BASE_PATH.resolve("golandci-lint-report.xml").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(golangCILintReportSensor(), context);

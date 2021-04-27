@@ -19,7 +19,7 @@
  */
 package org.sonarsource.ruby.converter.visitor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.LiteralTree;
@@ -30,10 +30,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class BlockVisitorTest extends AbstractRubyConverterTest {
+class BlockVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void explicit_begin_block() {
+  void explicit_begin_block() {
     BlockTree tree = (BlockTree) rubyStatement("" +
       "begin\n" +
       "  1\n" +
@@ -53,7 +53,7 @@ public class BlockVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void implicit_begin_block() {
+  void implicit_begin_block() {
     Tree beginAsStatementList = rubyStatement("1; b;");
     assertTree(beginAsStatementList).isBlock(LiteralTree.class, NativeTree.class);
     assertTree(beginAsStatementList.children().get(0)).isLiteral("1");

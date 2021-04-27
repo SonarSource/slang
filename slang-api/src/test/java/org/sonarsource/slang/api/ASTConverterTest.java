@@ -19,12 +19,12 @@
  */
 package org.sonarsource.slang.api;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.impl.IdentifierTreeImpl;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class ASTConverterTest {
+class ASTConverterTest {
 
   private static final ASTConverter DUMMY_CONVERTER = new ASTConverter() {
     private final Tree SIMPLE_TREE = new IdentifierTreeImpl(null, "name");
@@ -35,7 +35,7 @@ public class ASTConverterTest {
   };
 
   @Test
-  public void parse_with_file_has_no_effect_by_default() {
+  void parse_with_file_has_no_effect_by_default() {
     assertSame(DUMMY_CONVERTER.parse(""), DUMMY_CONVERTER.parse("", "file name"));
   }
 

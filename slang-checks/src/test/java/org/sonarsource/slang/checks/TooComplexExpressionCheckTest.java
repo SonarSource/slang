@@ -19,17 +19,17 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TooComplexExpressionCheckTest {
+class TooComplexExpressionCheckTest {
 
   @Test
-  public void test_max_3() {
+  void test_max_3() {
     Verifier.verify("TooComplexExpression_3.slang", new TooComplexExpressionCheck());
   }
 
   @Test
-  public void test_max_2() {
+  void test_max_2() {
     TooComplexExpressionCheck check = new TooComplexExpressionCheck();
     check.max = 2;
     Verifier.verify("TooComplexExpression_2.slang", check);

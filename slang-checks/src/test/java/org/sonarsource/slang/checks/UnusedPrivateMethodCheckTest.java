@@ -19,12 +19,12 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class UnusedPrivateMethodCheckTest {
+class UnusedPrivateMethodCheckTest {
 
   @Test
-  public void test() {
+  void test() {
     Verifier.verify("UnusedPrivateMethod.slang", new UnusedPrivateMethodCheck());
   }
 

@@ -21,7 +21,8 @@ package org.sonarsource.slang.testing;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.CheckFactory;
@@ -39,6 +40,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@EnableRuleMigrationSupport
 public abstract class AbstractSensorTest {
 
   @org.junit.Rule
@@ -51,7 +53,7 @@ public abstract class AbstractSensorTest {
   @org.junit.Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
-  @Before
+  @BeforeEach
   public void setup() {
     baseDir = temp.newDir();
     context = SensorContextTester.create(baseDir);

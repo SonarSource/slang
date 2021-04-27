@@ -20,7 +20,7 @@
 package org.sonarsource.ruby.converter.visitor;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.ParameterTree;
@@ -29,17 +29,17 @@ import org.sonarsource.slang.api.Tree;
 import static java.util.Arrays.asList;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class ArgVisitorTest extends AbstractRubyConverterTest {
+class ArgVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void test_args() {
+  void test_args() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo(x) end");
     ParameterTree firstParameter = (ParameterTree) tree.formalParameters().get(0);
     assertTree(firstParameter).isEquivalentTo(parameter("x"));
   }
 
   @Test
-  public void test_optional_arg() {
+  void test_optional_arg() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo(x = 1) end");
     Tree firstParameter = tree.formalParameters().get(0);
     assertTree(firstParameter).isEquivalentTo(
@@ -47,14 +47,14 @@ public class ArgVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void test_rest_arg() {
+  void test_rest_arg() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo(*x) end");
     Tree firstParameter = tree.formalParameters().get(0);
     assertTree(firstParameter).isEquivalentTo(parameter("x"));
   }
 
   @Test
-  public void test_unnamed_rest_arg() {
+  void test_unnamed_rest_arg() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo(*, arg) end");
     Tree firstParameter = tree.formalParameters().get(0);
     assertTree(firstParameter).isEquivalentTo(nativeTree("restarg", "*"));
@@ -62,7 +62,7 @@ public class ArgVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void test_kwarg() {
+  void test_kwarg() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo(arg:, bar: 'default', **splat) end");
     Tree param1 = tree.formalParameters().get(0);
     assertTree(param1).isEquivalentTo(parameter("arg"));
@@ -73,27 +73,27 @@ public class ArgVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void test_unnamed_kw_rest_arg() {
+  void test_unnamed_kw_rest_arg() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo(**) end");
     Tree firstParameter = tree.formalParameters().get(0);
     assertTree(firstParameter).isEquivalentTo(nativeTree("kwrestarg", "**"));
   }
 
   @Test
-  public void block_arg() {
+  void block_arg() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo(&block) end");
     assertTree(tree.formalParameters().get(0)).isEquivalentTo(parameter("block"));
   }
 
   @Test
-  public void procarg() {
+  void procarg() {
     Tree tree = rubyStatement("[].each do |number| number.odd? end");
     Tree blockArg = tree.children().get(1).children().get(0);
     assertTree(blockArg).isEquivalentTo(parameter("number"));
   }
 
   @Test
-  public void block_local_var() {
+  void block_local_var() {
     Tree tree = rubyStatement("[].each do |number;x,y| number.odd? end");
     Tree args = tree.children().get(1);
     assertTree(args).isEquivalentTo(nativeTree(nativeKind("args"), asList(
@@ -101,7 +101,7 @@ public class ArgVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void deocmposition() {
+  void deocmposition() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def f(a, (foo, *bar)); end");
     assertTree(tree.formalParameters().get(0)).isEquivalentTo(parameter("a"));
     assertTree(tree.formalParameters().get(1)).isEquivalentTo(
@@ -109,7 +109,7 @@ public class ArgVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void block_decomposition() {
+  void block_decomposition() {
     // this code is from ruling its/sources/ruby/discourse/app/models/permalink.rb:47
     Tree tree = rubyStatement("[].each do |(regex, sub)| url = url.sub(regex, sub) end");
     Tree args = tree.children().get(1);

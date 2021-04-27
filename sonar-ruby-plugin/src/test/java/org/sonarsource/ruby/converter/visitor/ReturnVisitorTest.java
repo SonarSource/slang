@@ -19,7 +19,7 @@
  */
 package org.sonarsource.ruby.converter.visitor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.LiteralTree;
@@ -29,17 +29,17 @@ import org.sonarsource.slang.api.Tree;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class ReturnVisitorTest extends AbstractRubyConverterTest {
+class ReturnVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void return_without_expression() {
+  void return_without_expression() {
     Tree statement = rubyStatement("return");
     assertTree(statement).isEquivalentTo(slangStatement("return;"));
     assertThat(((ReturnTree) statement).keyword().text()).isEqualTo("return");
   }
 
   @Test
-  public void return_with_expression() {
+  void return_with_expression() {
     assertTree(rubyStatement("return 42")).isEquivalentTo(slangStatement("return 42;"));
     assertTree(rubyStatement("return 42,43")).isInstanceOf(ReturnTree.class);
     assertThat(rubyStatement("return 42,43").descendants()
@@ -50,7 +50,7 @@ public class ReturnVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void return_if() {
+  void return_if() {
     Tree returnIf = rubyStatement("return if x");
     assertTree(returnIf).isInstanceOf(IfTree.class);
     assertTree(((IfTree) returnIf).thenBranch()).isInstanceOf(ReturnTree.class);

@@ -19,7 +19,7 @@
  */
 package org.sonar.go.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.Plugin;
 import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
@@ -29,10 +29,10 @@ import org.sonar.api.utils.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GoPluginTest {
+class GoPluginTest {
 
   @Test
-  public void count_extension_points_7_9() {
+  void count_extension_points_7_9() {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 9), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
     Plugin.Context context = new Plugin.Context(runtime);
     Plugin underTest = new GoPlugin();

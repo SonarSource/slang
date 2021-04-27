@@ -19,11 +19,11 @@
  */
 package org.sonar.go.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class OneStatementPerLineGoCheckTest {
+class OneStatementPerLineGoCheckTest {
     @Test
-    public void test() {
+    void test() {
         GoVerifier.verify("OneStatementPerLineGoCheck.go", new OneStatementPerLineGoCheck());
     }
 }

@@ -24,11 +24,11 @@ import org.sonarsource.slang.parser.SLangParser;
 import java.io.IOException;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SLangParserTest {
+class SLangParserTest {
 
   private void testFile(String file) throws IOException {
     SLangLexer lexer = new SLangLexer(CharStreams.fromFileName(file));
@@ -40,22 +40,22 @@ public class SLangParserTest {
   }
 
   @Test
-  public void testBinaryExpressionFile() throws IOException {
+  void testBinaryExpressionFile() throws IOException {
     testFile("src/test/resources/binary.slang");
   }
 
   @Test
-  public void testConditionalFile() throws IOException {
+  void testConditionalFile() throws IOException {
     testFile("src/test/resources/conditional.slang");
   }
 
   @Test
-  public void testAnnotationsFile() throws IOException {
+  void testAnnotationsFile() throws IOException {
     testFile("src/test/resources/annotations.slang");
   }
 
   @Test
-  public void testBinaryExpression() {
+  void testBinaryExpression() {
     SLangLexer lexer = new SLangLexer(CharStreams.fromString("x = 1;\n//comment\ny = 2 + \"1\";"));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     SLangParser parser = new SLangParser(tokens);

@@ -19,12 +19,12 @@
  */
 package org.sonarsource.kotlin.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TooManyParametersKotlinCheckTest {
+class TooManyParametersKotlinCheckTest {
 
   @Test
-  public void test() {
+  void test() {
     KotlinVerifier.verify("TooManyParametersKotlinCheck.kt", new TooManyParametersKotlinCheck());
   }
 

@@ -24,15 +24,15 @@ import org.sonarsource.slang.api.JumpTree;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TreeMetaData;
 import javax.annotation.Nullable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JumpTreeImplTest {
+class JumpTreeImplTest {
 
   @Test
-  public void test_break() {
+  void test_break() {
     JumpTree breakWithLabel = getJumpTree(JumpTree.JumpKind.BREAK, "foo");
     assertThat(breakWithLabel.children()).hasSize(1);
     assertThat(breakWithLabel.label().name()).isEqualTo("foo");
@@ -45,7 +45,7 @@ public class JumpTreeImplTest {
   }
 
   @Test
-  public void test_continue() {
+  void test_continue() {
     JumpTree continueWithLabel = getJumpTree(JumpTree.JumpKind.CONTINUE, "foo");
     assertThat(continueWithLabel.children()).hasSize(1);
     assertThat(continueWithLabel.label().name()).isEqualTo("foo");
@@ -58,7 +58,7 @@ public class JumpTreeImplTest {
   }
 
   @Test
-  public void test_syntactic_equivalence() {
+  void test_syntactic_equivalence() {
     JumpTree jumpTreeBreak = getJumpTree(JumpTree.JumpKind.BREAK, "foo");
     JumpTree jumpTreeContinue = getJumpTree(JumpTree.JumpKind.CONTINUE, "foo");
     assertThat(areEquivalent(jumpTreeBreak, getJumpTree(JumpTree.JumpKind.BREAK, "foo"))).isTrue();

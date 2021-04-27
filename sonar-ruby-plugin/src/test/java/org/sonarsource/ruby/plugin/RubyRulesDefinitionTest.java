@@ -19,7 +19,7 @@
  */
 package org.sonarsource.ruby.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.internal.SonarRuntimeImpl;
@@ -31,10 +31,10 @@ import org.sonar.api.utils.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RubyRulesDefinitionTest {
+class RubyRulesDefinitionTest {
 
   @Test
-  public void rules() {
+  void rules() {
     RulesDefinition rulesDefinition = new RubyRulesDefinition();
     RulesDefinition.Context context = new RulesDefinition.Context();
     rulesDefinition.define(context);

@@ -19,11 +19,11 @@
  */
 package org.sonar.go.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CodeAfterJumpGoCheckTest {
+class CodeAfterJumpGoCheckTest {
     @Test
-    public void test() {
+    void test() {
         GoVerifier.verify("CodeAfterJumpGoCheck.go", new CodeAfterJumpGoCheck());
     }
 }

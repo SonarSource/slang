@@ -20,7 +20,7 @@
 package org.sonarsource.ruby.converter.visitor;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.MatchCaseTree;
@@ -31,10 +31,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class CaseVisitorTest extends AbstractRubyConverterTest {
+class CaseVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void case_when() {
+  void case_when() {
     MatchTree tree = (MatchTree) rubyStatement("case x\n " +
       "when 42\n " +
       "when 0..4 then doSomething()\n " +
@@ -65,7 +65,7 @@ public class CaseVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void case_when_with_empty_else() {
+  void case_when_with_empty_else() {
     MatchTree tree = (MatchTree) rubyStatement("case x\n " +
       "when a\n" +
       "else\n" +
@@ -82,7 +82,7 @@ public class CaseVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void case_when_without_expression_and_else() {
+  void case_when_without_expression_and_else() {
     MatchTree tree = (MatchTree) rubyStatement("case\n when x > 4 then doSomething()\n when x == 3 then doSomething(); doSomethingElse()\nend");
 
     assertThat(tree.keyword().text()).isEqualTo("case");

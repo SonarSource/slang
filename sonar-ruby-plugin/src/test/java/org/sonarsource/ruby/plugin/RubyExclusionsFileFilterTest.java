@@ -19,8 +19,8 @@
  */
 package org.sonarsource.ruby.plugin;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.InputFileFilter;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
@@ -28,16 +28,16 @@ import org.sonar.api.config.internal.MapSettings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RubyExclusionsFileFilterTest {
+class RubyExclusionsFileFilterTest {
   private final MapSettings settings = new MapSettings();
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     settings.clear();
   }
 
   @Test
-  public void should_exclude_vendor_dir(){
+  void should_exclude_vendor_dir(){
     settings.setProperty(RubyPlugin.EXCLUSIONS_KEY, RubyPlugin.EXCLUSIONS_DEFAULT_VALUE);
     RubyExclusionsFileFilter filter = new RubyExclusionsFileFilter(settings.asConfig());
     assertThat(accept(filter, "file.rb")).isTrue();
@@ -47,7 +47,7 @@ public class RubyExclusionsFileFilterTest {
   }
 
   @Test
-  public void should_exclude_only_ruby(){
+  void should_exclude_only_ruby(){
     settings.setProperty(RubyPlugin.EXCLUSIONS_KEY, RubyPlugin.EXCLUSIONS_DEFAULT_VALUE);
     RubyExclusionsFileFilter filter = new RubyExclusionsFileFilter(settings.asConfig());
     assertThat(accept(filter, "vendor/file.rb")).isFalse();
@@ -55,7 +55,7 @@ public class RubyExclusionsFileFilterTest {
   }
 
   @Test
-  public void should_include_vendor_when_property_is_overridden(){
+  void should_include_vendor_when_property_is_overridden(){
     settings.setProperty(RubyPlugin.EXCLUSIONS_KEY, "");
     RubyExclusionsFileFilter filter = new RubyExclusionsFileFilter(settings.asConfig());
 
@@ -66,7 +66,7 @@ public class RubyExclusionsFileFilterTest {
   }
 
   @Test
-  public void should_exclude_using_custom_path_regex(){
+  void should_exclude_using_custom_path_regex(){
     settings.setProperty(RubyPlugin.EXCLUSIONS_KEY, "**/lib/**");
     RubyExclusionsFileFilter filter = new RubyExclusionsFileFilter(settings.asConfig());
 
@@ -77,7 +77,7 @@ public class RubyExclusionsFileFilterTest {
   }
 
   @Test
-  public void should_handle_multiple_path_regex(){
+  void should_handle_multiple_path_regex(){
     settings.setProperty(RubyPlugin.EXCLUSIONS_KEY, "," + RubyPlugin.EXCLUSIONS_DEFAULT_VALUE + ",**/lib/**,");
     RubyExclusionsFileFilter filter = new RubyExclusionsFileFilter(settings.asConfig());
 

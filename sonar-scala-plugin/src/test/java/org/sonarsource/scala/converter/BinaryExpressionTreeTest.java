@@ -19,16 +19,16 @@
  */
 package org.sonarsource.scala.converter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.BinaryExpressionTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.Tree;
 
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class BinaryExpressionTreeTest extends AbstractScalaConverterTest {
+class BinaryExpressionTreeTest extends AbstractScalaConverterTest {
   @Test
-  public void comparison_operators() {
+  void comparison_operators() {
     Tree binaryExpressionTree = scalaStatement("a == 2");
     assertTree(binaryExpressionTree).isBinaryExpression(BinaryExpressionTree.Operator.EQUAL_TO);
 
@@ -49,7 +49,7 @@ public class BinaryExpressionTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void arithmetic_operators() {
+  void arithmetic_operators() {
     Tree binaryExpressionTree = scalaStatement("a + 2");
     assertTree(binaryExpressionTree).isBinaryExpression(BinaryExpressionTree.Operator.PLUS);
 
@@ -64,7 +64,7 @@ public class BinaryExpressionTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void logical_operators() {
+  void logical_operators() {
     Tree binaryExpressionTree = scalaStatement("a && 2");
     assertTree(binaryExpressionTree).isBinaryExpression(BinaryExpressionTree.Operator.CONDITIONAL_AND);
 
@@ -73,7 +73,7 @@ public class BinaryExpressionTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void mapped_to_native() {
+  void mapped_to_native() {
     Tree tree = scalaStatement("foo * (bar, baz)");
     assertTree(tree).isInstanceOf(NativeTree.class);
 
@@ -81,7 +81,7 @@ public class BinaryExpressionTreeTest extends AbstractScalaConverterTest {
     assertTree(tree).isInstanceOf(NativeTree.class);
   }
   @Test
-  public void placeholder() {
+  void placeholder() {
     Tree tree = scalaStatement("_ * _");
     assertTree(tree).isInstanceOf(BinaryExpressionTree.class);
 

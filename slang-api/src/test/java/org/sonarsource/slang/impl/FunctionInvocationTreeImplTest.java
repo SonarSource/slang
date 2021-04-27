@@ -21,7 +21,7 @@ package org.sonarsource.slang.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.FunctionInvocationTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.Tree;
@@ -29,10 +29,10 @@ import org.sonarsource.slang.api.TreeMetaData;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FunctionInvocationTreeImplTest {
+class FunctionInvocationTreeImplTest {
 
   @Test
-  public void simple_function_invocation() {
+  void simple_function_invocation() {
     TreeMetaData meta = null;
     Tree identifierTree = new IdentifierTreeImpl(meta, "x");
     List<Tree> args = new ArrayList<>();
@@ -45,7 +45,7 @@ public class FunctionInvocationTreeImplTest {
   }
 
   @Test
-  public void function_invocation_with_arguments() {
+  void function_invocation_with_arguments() {
     TreeMetaData meta = null;
     Tree identifierTree = new IdentifierTreeImpl(meta, "x");
     Tree arg1 = new IdentifierTreeImpl(meta, "x");
@@ -64,7 +64,7 @@ public class FunctionInvocationTreeImplTest {
   }
 
   @Test
-  public void function_invocation_with_member_select() {
+  void function_invocation_with_member_select() {
     TreeMetaData meta = null;
     IdentifierTree identifierTree = new IdentifierTreeImpl(meta, "y");
     Tree member = new IdentifierTreeImpl(meta, "x");

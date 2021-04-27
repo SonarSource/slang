@@ -19,11 +19,11 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class NestedMatchCheckTest {
+class NestedMatchCheckTest {
   @Test
-  public void test() {
+  void test() {
     Verifier.verify("NestedMatch.slang", new NestedMatchCheck());
   }
 }

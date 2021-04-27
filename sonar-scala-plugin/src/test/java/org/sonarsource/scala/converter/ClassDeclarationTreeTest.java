@@ -21,7 +21,7 @@ package org.sonarsource.scala.converter;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.Annotation;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.Tree;
@@ -29,9 +29,9 @@ import org.sonarsource.slang.api.Tree;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class ClassDeclarationTreeTest extends AbstractScalaConverterTest {
+class ClassDeclarationTreeTest extends AbstractScalaConverterTest {
   @Test
-  public void empty_class() {
+  void empty_class() {
     Tree tree = scalaStatement("class Foo {}");
     assertTree(tree).isEquivalentTo(scalaStatement("class Foo {}"));
     assertTree(tree).isNotEquivalentTo(scalaStatement("class FooBar {}"));
@@ -41,7 +41,7 @@ public class ClassDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void class_with_method() {
+  void class_with_method() {
     Tree tree = scalaStatement("class Foo { def bar() {} }");
     assertTree(tree).isEquivalentTo(scalaStatement("class Foo { def bar() {} }"));
     assertTree(tree).isNotEquivalentTo(scalaStatement("class Foo { def foo() {} }"));
@@ -50,7 +50,7 @@ public class ClassDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void class_with_annotation() {
+  void class_with_annotation() {
     Tree tree = scalaStatement("@my.test.MyAnnotation(\"something\")\n" +
       "@MyAnnotation2\n" +
       "class A {}");
@@ -66,7 +66,7 @@ public class ClassDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void testClassWithComplexAnnotation() {
+  void testClassWithComplexAnnotation() {
     Tree tree = scalaStatement("@my.test.MyAnnotation(value = \"something\", \"somethingElse\", otherValue = Array(\"a\", \"b\"))\n" +
       "class A {}");
 
@@ -78,7 +78,7 @@ public class ClassDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void testClassWithAnnotatedMember() {
+  void testClassWithAnnotatedMember() {
     Tree tree = scalaStatement("class A {\n" +
       "@MyAnnotation\n" +
       "def f(@MyAnnotation i: Int) = { }" +

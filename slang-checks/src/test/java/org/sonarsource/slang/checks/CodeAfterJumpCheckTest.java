@@ -19,12 +19,12 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CodeAfterJumpCheckTest {
+class CodeAfterJumpCheckTest {
 
   @Test
-  public void test() {
+  void test() {
     Verifier.verify("CodeAfterJump.slang", new CodeAfterJumpCheck());
   }
 

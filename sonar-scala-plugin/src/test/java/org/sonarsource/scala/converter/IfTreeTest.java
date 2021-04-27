@@ -19,17 +19,17 @@
  */
 package org.sonarsource.scala.converter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.Tree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class IfTreeTest extends AbstractScalaConverterTest {
+class IfTreeTest extends AbstractScalaConverterTest {
 
   @Test
-  public void if_without_else() {
+  void if_without_else() {
     Tree tree = scalaStatement("if (x) { 42 }");
     assertTree(tree).isEquivalentTo(slangStatement("if (x) { 42; };"));
     IfTree ifTree = (IfTree) tree;
@@ -39,7 +39,7 @@ public class IfTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void if_with_else() {
+  void if_with_else() {
     Tree tree = scalaStatement("if (x) { 42 } else { 43 }");
     assertTree(tree).isEquivalentTo(slangStatement("if (x) { 42; } else { 43 };"));
     IfTree ifTree = (IfTree) tree;

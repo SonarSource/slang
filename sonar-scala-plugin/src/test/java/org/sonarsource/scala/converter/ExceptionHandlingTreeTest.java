@@ -19,17 +19,17 @@
  */
 package org.sonarsource.scala.converter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.ExceptionHandlingTree;
 import org.sonarsource.slang.api.IdentifierTree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class ExceptionHandlingTreeTest extends AbstractScalaConverterTest {
+class ExceptionHandlingTreeTest extends AbstractScalaConverterTest {
 
   @Test
-  public void trivial_try() {
+  void trivial_try() {
     ExceptionHandlingTree tryCatch = (ExceptionHandlingTree) scalaStatement("try { a }");
     assertThat(tryCatch.tryKeyword().text()).isEqualTo("try");
     assertTree(tryCatch.tryBlock()).isBlock(IdentifierTree.class);
@@ -38,7 +38,7 @@ public class ExceptionHandlingTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void try_catch() {
+  void try_catch() {
     ExceptionHandlingTree tryCatch = (ExceptionHandlingTree) scalaStatement("try { a } catch { b }");
     assertThat(tryCatch.tryKeyword().text()).isEqualTo("try");
     assertTree(tryCatch.tryBlock()).isBlock(IdentifierTree.class);
@@ -48,7 +48,7 @@ public class ExceptionHandlingTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void try_catch_case() {
+  void try_catch_case() {
     ExceptionHandlingTree tryCatch = (ExceptionHandlingTree) scalaStatement("try { a } catch { case e => b }");
     assertTree(tryCatch).isEquivalentTo(scalaStatement("try { a } catch { case e => b }"));
     assertThat(tryCatch.catchBlocks()).hasSize(1);
@@ -57,7 +57,7 @@ public class ExceptionHandlingTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void try_finally() {
+  void try_finally() {
     ExceptionHandlingTree tryCatch = (ExceptionHandlingTree) scalaStatement("try { a } finally { b }");
     assertThat(tryCatch.tryKeyword().text()).isEqualTo("try");
     assertTree(tryCatch.tryBlock()).isBlock(IdentifierTree.class);

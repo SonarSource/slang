@@ -19,11 +19,11 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class EmptyBlockCheckTest {
+class EmptyBlockCheckTest {
 
   @Test
-  public void test() { Verifier.verify("EmptyBlock.slang", new EmptyBlockCheck()); }
+  void test() { Verifier.verify("EmptyBlock.slang", new EmptyBlockCheck()); }
 
 }

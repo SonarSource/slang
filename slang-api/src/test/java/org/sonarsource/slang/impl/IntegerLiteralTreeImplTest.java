@@ -19,7 +19,7 @@
  */
 package org.sonarsource.slang.impl;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.api.IntegerLiteralTree.Base.BINARY;
@@ -28,10 +28,10 @@ import static org.sonarsource.slang.api.IntegerLiteralTree.Base.HEXADECIMAL;
 import static org.sonarsource.slang.api.IntegerLiteralTree.Base.OCTAL;
 import static org.sonarsource.slang.utils.TreeCreationUtils.integerLiteral;
 
-public class IntegerLiteralTreeImplTest {
+class IntegerLiteralTreeImplTest {
 
   @Test
-  public void bases() {
+  void bases() {
     assertThat(integerLiteral("0123").getBase()).isEqualTo(OCTAL);
     assertThat(integerLiteral("0o123").getBase()).isEqualTo(OCTAL);
     assertThat(integerLiteral("0O123").getBase()).isEqualTo(OCTAL);
@@ -48,7 +48,7 @@ public class IntegerLiteralTreeImplTest {
   }
 
   @Test
-  public void integerValues() {
+  void integerValues() {
     assertThat(integerLiteral("0123").getIntegerValue().intValue()).isEqualTo(83);
     assertThat(integerLiteral("0o123").getIntegerValue().intValue()).isEqualTo(83);
     assertThat(integerLiteral("0O123").getIntegerValue().intValue()).isEqualTo(83);
@@ -66,7 +66,7 @@ public class IntegerLiteralTreeImplTest {
   }
 
   @Test
-  public void numericPart() {
+  void numericPart() {
     assertThat(integerLiteral("0123").getNumericPart()).isEqualTo("123");
     assertThat(integerLiteral("0o123").getNumericPart()).isEqualTo("123");
     assertThat(integerLiteral("0O123").getNumericPart()).isEqualTo("123");

@@ -19,9 +19,9 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CollapsibleIfStatementsCheckTest {
+class CollapsibleIfStatementsCheckTest {
   @Test
-  public void test() { Verifier.verify("CollapsibleIfStatements.slang", new CollapsibleIfStatementsCheck()); }
+  void test() { Verifier.verify("CollapsibleIfStatements.slang", new CollapsibleIfStatementsCheck()); }
 }

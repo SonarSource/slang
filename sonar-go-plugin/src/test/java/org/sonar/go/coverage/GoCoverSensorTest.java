@@ -30,7 +30,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
@@ -47,7 +48,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class GoCoverSensorTest {
+@EnableRuleMigrationSupport
+class GoCoverSensorTest {
 
   static final Path COVERAGE_DIR = Paths.get("src", "test", "resources", "coverage");
 
@@ -56,7 +58,7 @@ public class GoCoverSensorTest {
 
 
   @Test
-  public void test_descriptor() {
+  void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     GoCoverSensor coverSensor = new GoCoverSensor();
     coverSensor.describe(sensorDescriptor);
@@ -64,7 +66,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void test_failure() {
+  void test_failure() {
     SensorContextTester context = SensorContextTester.create(COVERAGE_DIR);
     context.settings().setProperty("sonar.go.coverage.reportPaths", "invalid-coverage-path.out");
     GoCoverSensor coverSensor = new GoCoverSensor();
@@ -74,7 +76,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void mode_line() {
+  void mode_line() {
     Predicate<String> regexp = (line) -> GoCoverSensor.MODE_LINE_REGEXP.matcher(line).matches();
     assertThat(regexp.test("mode: set")).isTrue();
     assertThat(regexp.test("mode: count")).isTrue();
@@ -83,7 +85,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void line_regexp() {
+  void line_regexp() {
     Predicate<String> regexp = (line) -> GoCoverSensor.COVERAGE_LINE_REGEXP.matcher(line).matches();
     assertThat(regexp.test("my-app/my-app.go:3.2,3.10 1 1")).isTrue();
     assertThat(regexp.test("_/my-app/my-app.go:3.2,3.10 1 21")).isTrue();
@@ -93,7 +95,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void coverage_stat() {
+  void coverage_stat() {
     CoverageStat coverage = new CoverageStat(2, "_/my-app/my-app.go:3.10,4.5 2 234");
     assertThat(coverage.filePath).isEqualTo("_/my-app/my-app.go");
     assertThat(coverage.startLine).isEqualTo(3);
@@ -109,7 +111,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void line_coverage() {
+  void line_coverage() {
     LineCoverage line = new LineCoverage();
     assertThat(line.hits).isZero();
 
@@ -127,7 +129,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void file_coverage() throws Exception {
+  void file_coverage() throws Exception {
     List<CoverageStat> coverageStats = Arrays.asList(
       new CoverageStat(2, "cover.go:4.11,6.3 1 3"),
       new CoverageStat(3, "cover.go:6.3,8.3 1 0"));
@@ -142,7 +144,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void file_coverage_empty_lines() throws Exception {
+  void file_coverage_empty_lines() throws Exception {
     final String fileName = "cover_empty_lines.go";
     List<CoverageStat> coverageStats = Collections.singletonList(new CoverageStat(2, fileName + ":3.28,9.2 2 1"));
     FileCoverage file = new FileCoverage(coverageStats, Files.readAllLines(COVERAGE_DIR.resolve(fileName)));
@@ -151,7 +153,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void coverage() {
+  void coverage() {
     GoPathContext linuxContext = new GoPathContext('/', ":", "/home/paul/go");
     Coverage coverage = new Coverage(linuxContext);
     coverage.add(new CoverageStat(2, "main.go:2.2,2.5 1 1"));
@@ -165,7 +167,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void parse_coverage_linux_relative() {
+  void parse_coverage_linux_relative() {
     Path coverageFile = COVERAGE_DIR.resolve("coverage.linux.relative.out");
     GoPathContext linuxContext = new GoPathContext('/', ":", "/home/paul/go");
     String coverPath = "/home/paul/go/src/github.com/SonarSource/slang/sonar-go-plugin/src/test/resources/coverage/cover.go";
@@ -173,7 +175,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void parse_coverage_linux_absolute() {
+  void parse_coverage_linux_absolute() {
     Path coverageFile = COVERAGE_DIR.resolve("coverage.linux.absolute.out");
     GoPathContext linuxContext = new GoPathContext('/', ":", "/home/paul/go");
     String coverPath = "/home/paul/dev/github/SonarSource/slang/sonar-go-plugin/src/test/resources/coverage/cover.go";
@@ -181,7 +183,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void parse_coverage_windows_relative() {
+  void parse_coverage_windows_relative() {
     Path coverageFile = COVERAGE_DIR.resolve("coverage.win.relative.out");
     GoPathContext windowsContext = new GoPathContext('\\', ";", "C:\\Users\\paul\\go");
     String coverPath = "C:\\Users\\paul\\go\\src\\github.com\\SonarSource\\slang\\sonar-go-plugin\\src\\test\\resources\\coverage\\cover.go";
@@ -189,7 +191,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void parse_coverage_windows_absolute() {
+  void parse_coverage_windows_absolute() {
     Path coverageFile = COVERAGE_DIR.resolve("coverage.win.absolute.out");
     GoPathContext windowsContext = new GoPathContext('\\', ";", "C:\\Users\\paul\\go");
     String coverPath = "C:\\Users\\paul\\dev\\github\\SonarSource\\slang\\sonar-go-plugin\\src\\test\\resources\\coverage\\cover.go";
@@ -197,7 +199,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void get_report_paths() {
+  void get_report_paths() {
     SensorContextTester context = SensorContextTester.create(COVERAGE_DIR);
     context.setSettings(new MapSettings());
     Path coverageFile1 = COVERAGE_DIR.resolve("coverage.linux.relative.out").toAbsolutePath();
@@ -210,7 +212,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void get_report_paths_with_wildcards() {
+  void get_report_paths_with_wildcards() {
     SensorContextTester context = SensorContextTester.create(COVERAGE_DIR);
     context.setSettings(new MapSettings());
     context.settings().setProperty("sonar.go.coverage.reportPaths",
@@ -231,7 +233,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void should_continue_if_parsing_fails() {
+  void should_continue_if_parsing_fails() {
     SensorContextTester context = SensorContextTester.create(COVERAGE_DIR);
     context.setSettings(new MapSettings());
     context.settings().setProperty("sonar.go.coverage.reportPaths",
@@ -245,7 +247,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void upload_reports() throws IOException {
+  void upload_reports() throws IOException {
     Path baseDir = COVERAGE_DIR.toAbsolutePath();
     SensorContextTester context = SensorContextTester.create(baseDir);
     context.setSettings(new MapSettings());
@@ -273,7 +275,7 @@ public class GoCoverSensorTest {
   }
 
   @Test
-  public void coverage_fuzzy_inputfile() throws Exception {
+  void coverage_fuzzy_inputfile() throws Exception {
     Path baseDir = COVERAGE_DIR.toAbsolutePath();
     SensorContextTester context = SensorContextTester.create(baseDir);
     context.setSettings(new MapSettings());

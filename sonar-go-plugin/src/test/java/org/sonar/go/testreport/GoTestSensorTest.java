@@ -25,7 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.InputFile.Type;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
@@ -42,7 +43,8 @@ import org.sonar.go.testreport.GoTestSensor.TestInfo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GoTestSensorTest {
+@EnableRuleMigrationSupport
+class GoTestSensorTest {
 
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
@@ -51,7 +53,7 @@ public class GoTestSensorTest {
   private final Path packagePath = Paths.get("github.com", "myOrg", "myProject");
 
   @Test
-  public void absolute_package_path_in_report() throws IOException {
+  void absolute_package_path_in_report() throws IOException {
     Path packageAbsPath = goPath.resolve("src").resolve(packagePath);
 
     GoTestSensor goTestSensor = new GoTestSensor();
@@ -73,7 +75,7 @@ public class GoTestSensorTest {
   }
 
   @Test
-  public void relative_package_path_in_report() throws IOException {
+  void relative_package_path_in_report() throws IOException {
     GoTestSensor goTestSensor = new GoTestSensor();
     goTestSensor.goPathContext = new GoPathContext(File.separatorChar, File.pathSeparator, goPath.toString());
 
@@ -89,7 +91,7 @@ public class GoTestSensorTest {
   }
 
   @Test
-  public void invalid_package_path_in_report() throws IOException {
+  void invalid_package_path_in_report() throws IOException {
     Path nestedPackagePath = packagePath.resolve("packageFoo");
 
     GoTestSensor goTestSensor = new GoTestSensor();
@@ -115,7 +117,7 @@ public class GoTestSensorTest {
   }
 
   @Test
-  public void test_describe() {
+  void test_describe() {
     GoTestSensor goTestSensor = new GoTestSensor();
     DefaultSensorDescriptor descriptor = new DefaultSensorDescriptor();
     goTestSensor.describe(descriptor);
@@ -125,7 +127,7 @@ public class GoTestSensorTest {
   }
 
   @Test
-  public void import_report() {
+  void import_report() {
     GoTestSensor goTestSensor = new GoTestSensor();
     goTestSensor.goPathContext = new GoPathContext(File.separatorChar, File.pathSeparator, goPath.toString());
 
@@ -173,7 +175,7 @@ public class GoTestSensorTest {
 
 
   @Test
-  public void subtests() throws Exception {
+  void subtests() throws Exception {
     GoTestSensor goTestSensor = new GoTestSensor();
     goTestSensor.goPathContext = new GoPathContext(File.separatorChar, File.pathSeparator, goPath.toString());
 
@@ -194,7 +196,7 @@ public class GoTestSensorTest {
   }
 
   @Test
-  public void go_module_report_test() throws Exception {
+  void go_module_report_test() throws Exception {
     GoTestSensor goTestSensor = new GoTestSensor();
     goTestSensor.goPathContext = new GoPathContext(File.separatorChar, File.pathSeparator, goPath.toString());
 

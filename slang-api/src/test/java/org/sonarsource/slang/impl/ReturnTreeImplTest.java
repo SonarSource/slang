@@ -22,14 +22,14 @@ package org.sonarsource.slang.impl;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TreeMetaData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ReturnTreeImplTest {
+class ReturnTreeImplTest {
   @Test
-  public void test() {
+  void test() {
     TreeMetaData meta = null;
     TokenImpl returnKeyword = new TokenImpl(new TextRangeImpl(1, 0, 1, 6), "return", Token.Type.KEYWORD);
     ReturnTreeImpl returnWithoutValue = new ReturnTreeImpl(meta, returnKeyword, null);

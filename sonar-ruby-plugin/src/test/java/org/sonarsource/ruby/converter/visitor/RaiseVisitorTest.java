@@ -19,7 +19,7 @@
  */
 package org.sonarsource.ruby.converter.visitor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.ThrowTree;
@@ -29,10 +29,10 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class RaiseVisitorTest extends AbstractRubyConverterTest {
+class RaiseVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void test_raise() {
+  void test_raise() {
     FunctionDeclarationTree tree = ((FunctionDeclarationTree) rubyStatement("" +
       "def foo\n" +
       "  raise 42\n" +
@@ -45,7 +45,7 @@ public class RaiseVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void test_raise_multi_value() {
+  void test_raise_multi_value() {
     FunctionDeclarationTree tree = ((FunctionDeclarationTree) rubyStatement("" +
       "def foo\n" +
       "  raise 42, 43\n" +
@@ -60,7 +60,7 @@ public class RaiseVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void test_raise_null() {
+  void test_raise_null() {
       ThrowTree tree = (ThrowTree) rubyStatement("raise");
       assertThat(tree.body()).isNull();
   }

@@ -20,15 +20,15 @@
 package org.sonarsource.scala.converter;
 
 import org.assertj.core.api.AbstractAssert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.CodeVerifier;
 
-public class ScalaCodeVerifierTest {
+class ScalaCodeVerifierTest {
 
   private final CodeVerifier verifier = new ScalaCodeVerifier();
 
   @Test
-  public void testContainsCode() {
+  void testContainsCode() {
 
     CodeVerifierAssert.assertThat(verifier)
       .hasCode("val hello = 1")

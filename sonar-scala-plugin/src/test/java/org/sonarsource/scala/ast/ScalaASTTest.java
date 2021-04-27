@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.scala.converter.ScalaConverter;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.Tree;
@@ -35,11 +35,11 @@ import org.sonarsource.slang.visitors.TreePrinter;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ScalaASTTest {
+class ScalaASTTest {
   private static ScalaConverter converter = new ScalaConverter();
 
   @Test
-  public void all_scala_files() throws IOException {
+  void all_scala_files() throws IOException {
     for (Path scalaPath : getScalaSources()) {
       Path astPath = Paths.get(scalaPath.toString().replaceFirst("\\.scala$", ".txt"));
       String actualAst = TreePrinter.table(parse(scalaPath));

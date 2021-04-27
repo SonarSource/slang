@@ -23,7 +23,8 @@ import java.io.File;
 import java.util.List;
 import org.junit.Ignore;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.scan.filesystem.PathResolver;
@@ -32,14 +33,15 @@ import org.sonar.api.utils.log.LoggerLevel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SurefireUtilsTest {
+@EnableRuleMigrationSupport
+class SurefireUtilsTest {
 
   public static final String API_PATH = "src/test/resources/org/sonarsource/kotlin/plugin/surefire/api/";
   @Rule
   public LogTester logTester = new LogTester();
 
   @Test
-  public void should_get_report_paths_from_property() {
+  void should_get_report_paths_from_property() {
     MapSettings settings = new MapSettings();
     settings.setProperty("sonar.junit.reportPaths", "target/surefire,submodule/target/surefire");
 
@@ -63,7 +65,7 @@ public class SurefireUtilsTest {
   }
 
   @Test
-  public void return_default_value_if_property_unset() throws Exception {
+  void return_default_value_if_property_unset() throws Exception {
     MapSettings settings = new MapSettings();
     DefaultFileSystem fs = new DefaultFileSystem(new File(API_PATH + "SurefireUtilsTest"));
     PathResolver pathResolver = new PathResolver();

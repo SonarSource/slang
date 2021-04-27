@@ -19,17 +19,17 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class StringLiteralDuplicatedCheckTest {
+class StringLiteralDuplicatedCheckTest {
 
   @Test
-  public void test() {
+  void test() {
     Verifier.verify("StringLiteralDuplicated.slang", new StringLiteralDuplicatedCheck());
   }
 
   @Test
-  public void test_threshold_4() {
+  void test_threshold_4() {
     StringLiteralDuplicatedCheck check = new StringLiteralDuplicatedCheck();
     check.threshold = 4;
     Verifier.verify("StringLiteralDuplicated.threshold_4.slang", check);

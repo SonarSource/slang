@@ -49,7 +49,9 @@ dependencies {
     }
     testImplementation project(':slang-testing')
     testImplementation project(':slang-antlr')
-    testImplementation 'junit:junit'
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    testImplementation "org.junit.jupiter:junit-jupiter-migrationsupport"
     testImplementation 'org.assertj:assertj-core'
     testImplementation 'org.mockito:mockito-core'
     testImplementation 'io.github.classgraph:classgraph'

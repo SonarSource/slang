@@ -28,14 +28,14 @@ import org.sonarsource.slang.api.TreeMetaData;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ExceptionHandlingTreeImplTest {
+class ExceptionHandlingTreeImplTest {
 
   @Test
-  public void test() {
+  void test() {
     TreeMetaData meta = null;
     ParameterTree parameter = new ParameterTreeImpl(meta, new IdentifierTreeImpl(meta, "e"), null);
     Tree lhs = new IdentifierTreeImpl(meta, "x");

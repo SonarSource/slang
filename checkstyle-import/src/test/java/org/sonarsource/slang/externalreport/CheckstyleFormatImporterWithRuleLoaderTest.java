@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
@@ -37,7 +38,8 @@ import static org.sonarsource.slang.externalreport.CheckstyleFormatImporterTest.
 import static org.sonarsource.slang.externalreport.CheckstyleFormatImporterTest.PROJECT_DIR;
 import static org.sonarsource.slang.externalreport.CheckstyleFormatImporterTest.createContext;
 
-public class CheckstyleFormatImporterWithRuleLoaderTest {
+@EnableRuleMigrationSupport
+class CheckstyleFormatImporterWithRuleLoaderTest {
 
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
@@ -49,7 +51,7 @@ public class CheckstyleFormatImporterWithRuleLoaderTest {
     "kt");
 
   @Test
-  public void import_detekt_issues_with_rule_loader() throws IOException {
+  void import_detekt_issues_with_rule_loader() throws IOException {
     List<ExternalIssue> externalIssues = importIssues("detekt-checkstyle.xml");
     assertThat(externalIssues).hasSize(3);
 

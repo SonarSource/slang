@@ -19,7 +19,7 @@
  */
 package org.sonarsource.ruby.converter.visitor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.IfTree;
@@ -32,10 +32,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class IfVisitorTest extends AbstractRubyConverterTest {
+class IfVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void if_statements_without_else() {
+  void if_statements_without_else() {
     IfTree emptyIfTree = (IfTree) rubyStatement("if 1\n# comment\nend");
     assertTree(emptyIfTree.condition()).isLiteral("1");
     assertTree(emptyIfTree.thenBranch()).isBlock();
@@ -68,7 +68,7 @@ public class IfVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void chained_if_statements() {
+  void chained_if_statements() {
     IfTree ifElseTree = (IfTree) rubyStatement("if 1\nelse\n# comment in else\nend");
     assertTree(ifElseTree.condition()).isLiteral("1");
     assertTree(ifElseTree.thenBranch()).isBlock();
@@ -97,7 +97,7 @@ public class IfVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void mixed_statements() {
+  void mixed_statements() {
     IfTree mixedIfTree1 = (IfTree) rubyStatement("if 1; 2; else; 3 if 4; end");
     assertThat(mixedIfTree1.elseKeyword().text()).isEqualTo("else");
     assertTree(mixedIfTree1.elseBranch()).isBlock(IfTree.class);
@@ -113,7 +113,7 @@ public class IfVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void unless_statements() {
+  void unless_statements() {
     Tree tree = rubyStatement("unless 1\nend");
     assertThat(tree).isInstanceOf(IfTree.class);
     IfTree ifTree = (IfTree) tree;
@@ -126,7 +126,7 @@ public class IfVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void unless_statements_with_else() {
+  void unless_statements_with_else() {
     Tree tree = rubyStatement("unless 1; 2; else 3; end");
     assertThat(tree).isInstanceOf(IfTree.class);
     IfTree ifTree = (IfTree) tree;
@@ -138,7 +138,7 @@ public class IfVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void unless_statements_as_expression() {
+  void unless_statements_as_expression() {
     Tree tree = rubyStatement("x = 1 unless false");
     assertThat(tree).isInstanceOf(IfTree.class);
     IfTree ifTree = (IfTree) tree;
@@ -151,7 +151,7 @@ public class IfVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void ternary_statements_are_mapped_as_if_expressions() {
+  void ternary_statements_are_mapped_as_if_expressions() {
     Tree ternaryStatement = rubyStatement("1 ? 2 : 3");
     assertThat(ternaryStatement).isInstanceOf(IfTree.class);
 
@@ -165,7 +165,7 @@ public class IfVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void ternary_statements_are_mapped_as_if_expressions_without_space() {
+  void ternary_statements_are_mapped_as_if_expressions_without_space() {
     Tree ternaryStatement = rubyStatement("1?2:3");
     assertThat(ternaryStatement).isInstanceOf(IfTree.class);
 
@@ -179,7 +179,7 @@ public class IfVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void nested_ternary_statements() {
+  void nested_ternary_statements() {
     Tree ternaryStatement = rubyStatement("(a == b ? !a : c) ? (1 ? 2 : (bar() ? 3 : 4)) : (foo() ? 5 : 6)");
     assertThat(ternaryStatement).isInstanceOf(IfTree.class);
 

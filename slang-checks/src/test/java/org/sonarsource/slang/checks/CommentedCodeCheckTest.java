@@ -19,13 +19,13 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.parser.SlangCodeVerifier;
 
-public class CommentedCodeCheckTest {
+class CommentedCodeCheckTest {
 
   @Test
-  public void test() {
+  void test() {
     Verifier.verify("CommentedCode.slang", new CommentedCodeCheck(new SlangCodeVerifier()));
   }
 

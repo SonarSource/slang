@@ -23,19 +23,19 @@ import org.sonarsource.slang.api.NativeKind;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
 import org.sonarsource.slang.api.UnaryExpressionTree;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UnaryExpressionTreeImplTest  {
+class UnaryExpressionTreeImplTest  {
 
   private class TypeNativeKind implements NativeKind {}
 
   @Test
-  public void test() {
+  void test() {
     TreeMetaData meta = null;
     Tree condition = new IdentifierTreeImpl(meta, "x");
     Tree negCondition = new UnaryExpressionTreeImpl(meta, UnaryExpressionTree.Operator.NEGATE, condition);

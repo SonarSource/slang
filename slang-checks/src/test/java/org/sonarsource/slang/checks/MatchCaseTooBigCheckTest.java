@@ -19,20 +19,20 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MatchCaseTooBigCheckTest {
+class MatchCaseTooBigCheckTest {
 
   private MatchCaseTooBigCheck check = new MatchCaseTooBigCheck();
 
   @Test
-  public void max_5() {
+  void max_5() {
     check.max = 5;
     Verifier.verify("MatchCaseTooBig_5.slang", check);
   }
 
   @Test
-  public void max_3() {
+  void max_3() {
     check.max = 3;
     Verifier.verify("MatchCaseTooBig_3.slang", check);
   }

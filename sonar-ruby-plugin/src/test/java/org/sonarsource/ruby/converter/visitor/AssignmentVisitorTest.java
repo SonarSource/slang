@@ -20,7 +20,7 @@
 package org.sonarsource.ruby.converter.visitor;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.AssignmentExpressionTree.Operator;
@@ -31,10 +31,10 @@ import org.sonarsource.slang.api.VariableDeclarationTree;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class AssignmentVisitorTest extends AbstractRubyConverterTest {
+class AssignmentVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void test() throws Exception {
+  void test() throws Exception {
     assertTree(rubyStatement("a = 1")).isInstanceOf(VariableDeclarationTree.class);
     assertTree(rubyStatement("a = b")).isInstanceOf(VariableDeclarationTree.class);
 
@@ -55,7 +55,7 @@ public class AssignmentVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void self_assignment() throws Exception {
+  void self_assignment() throws Exception {
     VariableDeclarationTree var = (VariableDeclarationTree) rubyStatement("a = a");
     assertTree(var.identifier()).isEquivalentTo(var.initializer());
 
@@ -79,14 +79,14 @@ public class AssignmentVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void lhs_location() throws Exception {
+  void lhs_location() throws Exception {
     assertTree(rubyStatement("a = 1")).isInstanceOf(VariableDeclarationTree.class);
     assertTree(rubyStatement("a = 0;a = 1").children().get(1)).isInstanceOf(AssignmentExpressionTree.class);
     assertTree(rubyStatement("a[1, 2] = 1")).isInstanceOf(AssignmentExpressionTree.class);
   }
 
   @Test
-  public void test_operator() throws Exception {
+  void test_operator() throws Exception {
     Tree block = rubyStatement("a = 0\na = 1");
     Tree tree = block.children().get(1);
     assertTree(tree).isInstanceOf(AssignmentExpressionTree.class);
@@ -104,7 +104,7 @@ public class AssignmentVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void nestedAssignment() throws Exception {
+  void nestedAssignment() throws Exception {
     Tree nestedAssignment = rubyStatement("x = y = 1");
 
     assertTree(nestedAssignment).isInstanceOf(VariableDeclarationTree.class);
@@ -112,7 +112,7 @@ public class AssignmentVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void multiple_declaration_or_assignment() throws Exception {
+  void multiple_declaration_or_assignment() throws Exception {
     Tree tree = rubyStatement("a, b = 0, 1\na, b = 0, 1");
     assertThat(tree.children()).hasSize(2);
     assertTree(tree.children().get(0)).isInstanceOf(NativeTree.class);
@@ -147,7 +147,7 @@ public class AssignmentVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void compound_are_natives() throws Exception {
+  void compound_are_natives() throws Exception {
     assertThat(((NativeTree) rubyStatement("a -= 1")).nativeKind()).isEqualTo(nativeKind("op_asgn"));
     assertThat(((NativeTree) rubyStatement("a *= 1")).nativeKind()).isEqualTo(nativeKind("op_asgn"));
     assertThat(((NativeTree) rubyStatement("a /= 1")).nativeKind()).isEqualTo(nativeKind("op_asgn"));

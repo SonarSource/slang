@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.visitors.TreePrinter;
@@ -34,11 +34,11 @@ import org.sonarsource.slang.visitors.TreePrinter;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class KotlinASTTest {
+class KotlinASTTest {
   private static KotlinConverter converter = new KotlinConverter();
 
   @Test
-  public void all_kotlin_files() throws IOException {
+  void all_kotlin_files() throws IOException {
     for (Path kotlinPath : getKotlinSources()) {
       Path astPath = Paths.get(kotlinPath.toString().replaceFirst("\\.kts?$", ".txt"));
       String actualAst = TreePrinter.table(parse(kotlinPath));

@@ -20,7 +20,7 @@
 package org.sonarsource.slang.plugin;
 
 import java.util.Collections;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinitionAnnotationLoader;
 import org.sonar.check.Rule;
@@ -31,14 +31,14 @@ import org.sonarsource.slang.checks.utils.PropertyDefaultValue;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class RulesDefinitionUtilsTest {
+class RulesDefinitionUtilsTest {
 
   private static final String REPOSITORY = "test";
   private RulesDefinition.NewRepository repository;
   private RulesDefinition.Context context;
 
   @Test
-  public void test_setDefaultValuesForParameters_kotlin() {
+  void test_setDefaultValuesForParameters_kotlin() {
     initRepository();
 
     RulesDefinitionUtils.setDefaultValuesForParameters(repository, Collections.singletonList(Check.class), Language.KOTLIN);
@@ -51,7 +51,7 @@ public class RulesDefinitionUtilsTest {
   }
 
   @Test
-  public void test_setDefaultValuesForParameters_ruby() {
+  void test_setDefaultValuesForParameters_ruby() {
     initRepository();
 
     RulesDefinitionUtils.setDefaultValuesForParameters(repository, Collections.singletonList(Check.class), Language.RUBY);
@@ -64,7 +64,7 @@ public class RulesDefinitionUtilsTest {
   }
 
   @Test
-  public void test_setDefaultValuesForParameters_scala() {
+  void test_setDefaultValuesForParameters_scala() {
     initRepository();
 
     RulesDefinitionUtils.setDefaultValuesForParameters(repository, Collections.singletonList(Check.class), Language.SCALA);
@@ -77,7 +77,7 @@ public class RulesDefinitionUtilsTest {
   }
 
   @Test
-  public void wrong_annotation() {
+  void wrong_annotation() {
     context = new RulesDefinition.Context();
     repository = context.createRepository(REPOSITORY, Language.KOTLIN.toString());
     new RulesDefinitionAnnotationLoader().load(repository, WrongAnnotationUsage.class);

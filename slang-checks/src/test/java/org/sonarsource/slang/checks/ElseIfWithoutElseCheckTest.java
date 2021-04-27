@@ -19,9 +19,9 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ElseIfWithoutElseCheckTest {
+class ElseIfWithoutElseCheckTest {
   @Test
-  public void test() { Verifier.verify("ElseIfWithoutElse.slang", new ElseIfWithoutElseCheck()); }
+  void test() { Verifier.verify("ElseIfWithoutElse.slang", new ElseIfWithoutElseCheck()); }
 }

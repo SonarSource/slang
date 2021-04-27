@@ -21,16 +21,16 @@ package org.sonarsource.slang.impl;
 
 import java.util.Collections;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.ImportDeclarationTree;
 import org.sonarsource.slang.api.Tree;
 
 import static org.sonarsource.slang.utils.TreeCreationUtils.identifier;
 
-public class ImportDeclarationTreeImplTest {
+class ImportDeclarationTreeImplTest {
 
   @Test
-  public void test() {
+  void test() {
     Tree identifier = identifier("x");
     ImportDeclarationTree tree = new ImportDeclarationTreeImpl(null, Collections.singletonList(identifier));
     Assertions.assertThat(tree.children()).containsExactly(identifier);

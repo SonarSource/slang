@@ -19,11 +19,11 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class EmptyFunctionCheckTest {
+class EmptyFunctionCheckTest {
 
   @Test
-  public void test() { Verifier.verify("EmptyFunction.slang", new EmptyFunctionCheck()); }
+  void test() { Verifier.verify("EmptyFunction.slang", new EmptyFunctionCheck()); }
 
 }

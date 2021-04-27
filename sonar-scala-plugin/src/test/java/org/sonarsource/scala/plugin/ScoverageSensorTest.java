@@ -28,9 +28,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
@@ -44,14 +45,15 @@ import org.sonar.api.utils.log.ThreadLocalLogTester;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ScoverageSensorTest {
+@EnableRuleMigrationSupport
+class ScoverageSensorTest {
 
   private static final Path COVERAGE_DIR = Paths.get("src", "test", "resources", "coverage");
   private static final String MODULE_KEY = "/Absolute/Path/To/";
   private static final List<String> ANALYSIS_WARNINGS = new ArrayList<>();
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     ANALYSIS_WARNINGS.clear();
   }
 
@@ -59,14 +61,14 @@ public class ScoverageSensorTest {
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
-  public void test_descriptor() {
+  void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     newSCoverageSensor().describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Scoverage sensor for Scala coverage");
   }
 
   @Test
-  public void test_missing_file() throws IOException {
+  void test_missing_file() throws IOException {
     Path baseDir = COVERAGE_DIR.toAbsolutePath();
     Path reportPath = baseDir.resolve("missing-file.xml");
 
@@ -88,7 +90,7 @@ public class ScoverageSensorTest {
   }
 
   @Test
-  public void testFilesCoverage() throws IOException {
+  void testFilesCoverage() throws IOException {
     Path baseDir = COVERAGE_DIR.toAbsolutePath();
     Path reportPath = baseDir.resolve("scoverage.xml");
 
@@ -115,7 +117,7 @@ public class ScoverageSensorTest {
   }
 
   @Test
-  public void testLogWhenInvalidAttribute() throws IOException {
+  void testLogWhenInvalidAttribute() throws IOException {
     Path baseDir = COVERAGE_DIR.toAbsolutePath();
     Path reportPath = baseDir.resolve("badscoverage.xml");
 
@@ -128,7 +130,7 @@ public class ScoverageSensorTest {
   }
 
   @Test
-  public void testLogWhenUnresolvedInputFiles() throws IOException {
+  void testLogWhenUnresolvedInputFiles() throws IOException {
     Path baseDir = COVERAGE_DIR.toAbsolutePath();
     Path reportPath = baseDir.resolve("scoverage.xml");
 
@@ -142,7 +144,7 @@ public class ScoverageSensorTest {
   }
 
   @Test
-  public void testLogInvalidXMLFile() throws IOException {
+  void testLogInvalidXMLFile() throws IOException {
     Path baseDir = COVERAGE_DIR.toAbsolutePath();
     Path reportPath = baseDir.resolve("invalidscoverage.xml");
 
@@ -157,7 +159,7 @@ public class ScoverageSensorTest {
   }
 
   @Test
-  public void testStringInLineNumber() throws IOException {
+  void testStringInLineNumber() throws IOException {
     Path baseDir = COVERAGE_DIR.toAbsolutePath();
     Path reportPath = baseDir.resolve("stringInLine.xml");
 

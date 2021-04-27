@@ -19,7 +19,7 @@
  */
 package org.sonarsource.slang.impl;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.TreeMetaData;
@@ -27,9 +27,9 @@ import org.sonarsource.slang.api.TreeMetaData;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.utils.SyntacticEquivalence.areEquivalent;
 
-public class ThrowTreeImplTest {
+class ThrowTreeImplTest {
   @Test
-  public void test() {
+  void test() {
     TreeMetaData meta = null;
     TokenImpl throwKeyword = new TokenImpl(new TextRangeImpl(1, 0, 1, 6), "throw", Token.Type.KEYWORD);
     ThrowTreeImpl throwWithoutValue = new ThrowTreeImpl(meta, throwKeyword, null);

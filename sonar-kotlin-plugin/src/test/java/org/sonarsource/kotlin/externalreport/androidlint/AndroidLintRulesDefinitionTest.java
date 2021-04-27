@@ -19,17 +19,17 @@
  */
 package org.sonarsource.kotlin.externalreport.androidlint;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.kotlin.externalreport.androidlint.AndroidLintRulesDefinition.isTextFile;
 
-public class AndroidLintRulesDefinitionTest {
+class AndroidLintRulesDefinitionTest {
 
   @Test
-  public void android_lint_external_repository() {
+  void android_lint_external_repository() {
     RulesDefinition.Context context = new RulesDefinition.Context();
     AndroidLintRulesDefinition rulesDefinition = new AndroidLintRulesDefinition();
     rulesDefinition.define(context);
@@ -61,7 +61,7 @@ public class AndroidLintRulesDefinitionTest {
   }
 
   @Test
-  public void text_files() {
+  void text_files() {
     assertThat(isTextFile("AndroidManifest.xml")).isTrue();
     assertThat(isTextFile("Main.java")).isTrue();
     assertThat(isTextFile("App.kt")).isTrue();
@@ -72,7 +72,7 @@ public class AndroidLintRulesDefinitionTest {
   }
 
   @Test
-  public void binary_files() {
+  void binary_files() {
     assertThat(isTextFile("App.class")).isFalse();
     assertThat(isTextFile("button.png")).isFalse();
 

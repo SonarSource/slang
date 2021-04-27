@@ -19,17 +19,17 @@
  */
 package org.sonarsource.scala.converter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.ReturnTree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class ReturnTreeTest extends AbstractScalaConverterTest {
+class ReturnTreeTest extends AbstractScalaConverterTest {
 
   @Test
-  public void simple_return() {
+  void simple_return() {
     ReturnTree tree = (ReturnTree) scalaStatement("return \"foo\"");
     assertThat(tree.keyword().text()).isEqualTo("return");
     assertTree(tree.body()).isStringLiteral("foo");
@@ -40,7 +40,7 @@ public class ReturnTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void empty_return_body() {
+  void empty_return_body() {
     ReturnTree tree = (ReturnTree) scalaStatement("return;");
     assertThat(tree.keyword().text()).isEqualTo("return");
     assertThat(tree.body()).isNull();

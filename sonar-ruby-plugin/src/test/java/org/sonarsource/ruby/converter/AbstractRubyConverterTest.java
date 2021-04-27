@@ -23,8 +23,10 @@ package org.sonarsource.ruby.converter;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.BeforeClass;
 import org.junit.Rule;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.utils.log.ThreadLocalLogTester;
 import org.sonarsource.slang.api.IntegerLiteralTree;
 import org.sonarsource.slang.api.NativeKind;
@@ -48,6 +50,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@EnableRuleMigrationSupport
 public abstract class AbstractRubyConverterTest {
 
   static RubyConverter converter;
@@ -55,13 +58,13 @@ public abstract class AbstractRubyConverterTest {
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
-  @BeforeClass
-  public static void setUp() {
+  @BeforeAll
+  static void setUp() {
     converter = new RubyConverter();
   }
 
-  @BeforeClass
-  public static void tearDown() {
+  @AfterAll
+  static void tearDown() {
     converter.terminate();
   }
 

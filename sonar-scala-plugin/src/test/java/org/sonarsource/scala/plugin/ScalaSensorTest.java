@@ -20,7 +20,8 @@
 package org.sonarsource.scala.plugin;
 
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
 import org.sonar.api.batch.rule.CheckFactory;
@@ -34,10 +35,10 @@ import org.sonarsource.slang.testing.AbstractSensorTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TextRangeAssert.assertTextRange;
 
-public class ScalaSensorTest extends AbstractSensorTest {
+class ScalaSensorTest extends AbstractSensorTest {
 
   @Test
-  public void test_fail_parsing() {
+  void test_fail_parsing() {
     InputFile inputFile = createInputFile("file1.scala", "#define invalid scala source code");
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("ParsingError");
@@ -56,7 +57,7 @@ public class ScalaSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_one_rule() {
+  void test_one_rule() {
     InputFile inputFile = createInputFile("file1.scala",
       "class A { def main() = {\nprint (1 == 1);} }");
     context.fileSystem().add(inputFile);
@@ -73,7 +74,7 @@ public class ScalaSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_issue_suppression() {
+  void test_issue_suppression() {
     InputFile inputFile = createInputFile("file1.scala",
       "class A { " +
         "@SuppressWarnings(\"scala:S1764\")\n" +
@@ -89,7 +90,7 @@ public class ScalaSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_issue_not_suppressed() {
+  void test_issue_not_suppressed() {
     InputFile inputFile = createInputFile("file1.scala",
       "class A { " +
         "@SuppressWarnings(\"kotlin:S1764\")\n" +

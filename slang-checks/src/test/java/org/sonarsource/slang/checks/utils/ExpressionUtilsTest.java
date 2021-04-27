@@ -25,7 +25,7 @@ import org.sonarsource.slang.impl.BinaryExpressionTreeImpl;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
 import org.sonarsource.slang.impl.UnaryExpressionTreeImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.sonarsource.slang.api.BinaryExpressionTree.Operator.CONDITIONAL_AND;
 import static org.sonarsource.slang.api.BinaryExpressionTree.Operator.CONDITIONAL_OR;
@@ -39,7 +39,7 @@ import static org.sonarsource.slang.checks.utils.ExpressionUtils.isTrueValueLite
 import static org.sonarsource.slang.checks.utils.ExpressionUtils.skipParentheses;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ExpressionUtilsTest {
+class ExpressionUtilsTest {
   private static Tree TRUE_LITERAL = new LiteralTreeImpl(null, "true");
   private static Tree FALSE_LITERAL = new LiteralTreeImpl(null, "false");
   private static Tree NUMBER_LITERAL = new LiteralTreeImpl(null, "34");
@@ -47,7 +47,7 @@ public class ExpressionUtilsTest {
   private static Tree FALSE_NEGATED = new UnaryExpressionTreeImpl(null, UnaryExpressionTree.Operator.NEGATE, FALSE_LITERAL);
 
   @Test
-  public void test_boolean_literal() {
+  void test_boolean_literal() {
     assertThat(isBooleanLiteral(TRUE_LITERAL)).isTrue();
     assertThat(isBooleanLiteral(FALSE_LITERAL)).isTrue();
     assertThat(isBooleanLiteral(NUMBER_LITERAL)).isFalse();
@@ -55,7 +55,7 @@ public class ExpressionUtilsTest {
   }
 
   @Test
-  public void test_false_literal_value() {
+  void test_false_literal_value() {
     assertThat(isFalseValueLiteral(TRUE_LITERAL)).isFalse();
     assertThat(isFalseValueLiteral(FALSE_LITERAL)).isTrue();
     assertThat(isFalseValueLiteral(NUMBER_LITERAL)).isFalse();
@@ -64,7 +64,7 @@ public class ExpressionUtilsTest {
   }
 
   @Test
-  public void test_true_literal_value() {
+  void test_true_literal_value() {
     assertThat(isTrueValueLiteral(TRUE_LITERAL)).isTrue();
     assertThat(isTrueValueLiteral(FALSE_LITERAL)).isFalse();
     assertThat(isTrueValueLiteral(NUMBER_LITERAL)).isFalse();
@@ -73,14 +73,14 @@ public class ExpressionUtilsTest {
   }
 
   @Test
-  public void test_negation() {
+  void test_negation() {
     assertThat(isNegation(FALSE_LITERAL)).isFalse();
     assertThat(isNegation(NUMBER_LITERAL)).isFalse();
     assertThat(isNegation(TRUE_NEGATED)).isTrue();
   }
 
   @Test
-  public void test_binary_operation() {
+  void test_binary_operation() {
     Tree binaryAnd = new BinaryExpressionTreeImpl(null, CONDITIONAL_AND, null, TRUE_LITERAL, FALSE_LITERAL);
 
     assertThat(isBinaryOperation(binaryAnd, CONDITIONAL_AND)).isTrue();
@@ -88,7 +88,7 @@ public class ExpressionUtilsTest {
   }
 
   @Test
-  public void test_logical_binary_operation() {
+  void test_logical_binary_operation() {
     Tree binaryAnd = new BinaryExpressionTreeImpl(null, CONDITIONAL_AND, null, TRUE_LITERAL, FALSE_LITERAL);
     Tree binaryOr = new BinaryExpressionTreeImpl(null, CONDITIONAL_OR, null, TRUE_LITERAL, FALSE_LITERAL);
     Tree binaryEqual = new BinaryExpressionTreeImpl(null, EQUAL_TO, null, TRUE_LITERAL, FALSE_LITERAL);
@@ -100,7 +100,7 @@ public class ExpressionUtilsTest {
   }
 
   @Test
-  public void test_skip_parentheses() {
+  void test_skip_parentheses() {
     Tree parenthesizedExpression1 = new ParenthesizedExpressionTreeImpl(null, TRUE_LITERAL, null, null);
     Tree parenthesizedExpression2 = new ParenthesizedExpressionTreeImpl(null, parenthesizedExpression1, null, null);
 

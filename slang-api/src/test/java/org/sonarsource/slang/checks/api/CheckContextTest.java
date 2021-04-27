@@ -21,7 +21,7 @@ package org.sonarsource.slang.checks.api;
 
 import java.util.List;
 import javax.annotation.Nullable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.HasTextRange;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Tree;
@@ -30,10 +30,10 @@ import org.sonarsource.slang.visitors.TreeContext;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class CheckContextTest {
+class CheckContextTest {
 
   @Test
-  public void parent_default_method() {
+  void parent_default_method() {
     Tree a = mock(Tree.class);
     Tree b = mock(Tree.class);
     Tree c = mock(Tree.class);

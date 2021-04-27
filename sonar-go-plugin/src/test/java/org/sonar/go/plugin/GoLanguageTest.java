@@ -19,22 +19,22 @@
  */
 package org.sonar.go.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.config.internal.MapSettings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GoLanguageTest {
+class GoLanguageTest {
 
   @Test
-  public void should_have_correct_file_extensions() {
+  void should_have_correct_file_extensions() {
     MapSettings mapSettings = new MapSettings();
     GoLanguage typeScriptLanguage = new GoLanguage(mapSettings.asConfig());
     assertThat(typeScriptLanguage.getFileSuffixes()).containsExactly(".go");
   }
 
   @Test
-  public void can_override_file_extensions() {
+  void can_override_file_extensions() {
     MapSettings mapSettings = new MapSettings();
     mapSettings.setProperty("sonar.go.file.suffixes", ".go1,.go2");
     GoLanguage typeScriptLanguage = new GoLanguage(mapSettings.asConfig());

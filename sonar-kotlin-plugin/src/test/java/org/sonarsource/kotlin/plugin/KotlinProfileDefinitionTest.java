@@ -19,17 +19,17 @@
  */
 package org.sonarsource.kotlin.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.BuiltInActiveRule;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.BuiltInQualityProfile;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.Context;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class KotlinProfileDefinitionTest {
+class KotlinProfileDefinitionTest {
 
   @Test
-  public void profile() {
+  void profile() {
     Context context = new Context();
     new KotlinProfileDefinition().define(context);
     BuiltInQualityProfile profile = context.profile("kotlin", "Sonar way");

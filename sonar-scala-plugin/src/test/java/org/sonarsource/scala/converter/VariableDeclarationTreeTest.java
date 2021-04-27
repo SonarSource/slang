@@ -19,37 +19,37 @@
  */
 package org.sonarsource.scala.converter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.VariableDeclarationTree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class VariableDeclarationTreeTest extends AbstractScalaConverterTest {
+class VariableDeclarationTreeTest extends AbstractScalaConverterTest {
 
   @Test
-  public void var_declaration() {
+  void var_declaration() {
     assertTree(scalaStatement("var x = 42")).isEquivalentTo(slangStatement("var x = 42;"));
   }
 
   @Test
-  public void val_declaration() {
+  void val_declaration() {
     assertTree(scalaStatement("val x = 42")).isEquivalentTo(slangStatement("val x = 42;"));
   }
 
   @Test
-  public void pattern() {
+  void pattern() {
     assertTree(scalaStatement("val x :: y = my_list")).isInstanceOf(NativeTree.class);
   }
 
   @Test
-  public void modifiers() {
+  void modifiers() {
     assertThat(parse("object Obj { final val x = 42 }").descendants().filter(VariableDeclarationTree.class::isInstance)).isEmpty();
   }
 
   @Test
-  public void fields() {
+  void fields() {
     assertThat(scalaStatement("new { val x = 42 }").descendants().filter(VariableDeclarationTree.class::isInstance)).isEmpty();
     assertThat(scalaStatement("new { var x = 42 }").descendants().filter(VariableDeclarationTree.class::isInstance)).isEmpty();
   }

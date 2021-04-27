@@ -36,11 +36,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.sonarsource.slang.impl.NativeTreeImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TreeVisitorTest {
+class TreeVisitorTest {
 
   private class DummyNativeKind implements NativeKind {}
 
@@ -55,7 +55,7 @@ public class TreeVisitorTest {
   private TreeVisitor<TreeContext> visitor = new TreeVisitor<>();
 
   @Test
-  public void visitSimpleTree() {
+  void visitSimpleTree() {
     List<Tree> visited = new ArrayList<>();
     visitor.register(Tree.class, (ctx, tree) -> visited.add(tree));
     visitor.scan(new TreeContext(), binary);
@@ -63,7 +63,7 @@ public class TreeVisitorTest {
   }
 
   @Test
-  public void visitNativeTree() {
+  void visitNativeTree() {
     List<Tree> visited = new ArrayList<>();
     visitor.register(Tree.class, (ctx, tree) -> visited.add(tree));
     visitor.scan(new TreeContext(), nativeNode);
@@ -71,7 +71,7 @@ public class TreeVisitorTest {
   }
 
   @Test
-  public void ancestors() {
+  void ancestors() {
     Map<Tree, List<Tree>> ancestors = new HashMap<>();
     visitor.register(Tree.class, (ctx, tree) -> ancestors.put(tree, new ArrayList<Tree>(ctx.ancestors())));
     visitor.scan(new TreeContext(), binary);

@@ -19,16 +19,16 @@
  */
 package org.sonarsource.ruby.externalreport.rubocop;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RuboCopRulesDefinitionTest {
+class RuboCopRulesDefinitionTest {
 
   @Test
-  public void rubocop_lint_external_repository() {
+  void rubocop_lint_external_repository() {
     RulesDefinition.Context context = new RulesDefinition.Context();
     RuboCopRulesDefinition rulesDefinition = new RuboCopRulesDefinition();
     rulesDefinition.define(context);

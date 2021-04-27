@@ -20,11 +20,13 @@
 package org.sonar.api.utils.log;
 
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ThreadLocalLogTesterTest {
+@EnableRuleMigrationSupport
+class ThreadLocalLogTesterTest {
 
   private static final Logger LOG = Loggers.get(ThreadLocalLogTesterTest.class);
 
@@ -32,7 +34,7 @@ public class ThreadLocalLogTesterTest {
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
-  public void log_error() {
+  void log_error() {
     LOG.error("BOOM in a test.");
     LOG.error("BOOM in a {}.", "test");
     LOG.error("BOOM in {} {}.", "a", "test");

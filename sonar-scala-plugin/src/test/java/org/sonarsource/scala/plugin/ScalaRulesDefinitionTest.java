@@ -19,7 +19,7 @@
  */
 package org.sonarsource.scala.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.internal.SonarRuntimeImpl;
@@ -29,10 +29,10 @@ import org.sonar.api.utils.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ScalaRulesDefinitionTest {
+class ScalaRulesDefinitionTest {
 
   @Test
-  public void rules() {
+  void rules() {
     RulesDefinition rulesDefinition = new ScalaRulesDefinition();
     RulesDefinition.Context context = new RulesDefinition.Context();
     rulesDefinition.define(context);

@@ -19,22 +19,22 @@
  */
 package org.sonarsource.scala.converter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.Tree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class LiteralTreeTest extends AbstractScalaConverterTest {
+class LiteralTreeTest extends AbstractScalaConverterTest {
 
   @Test
-  public void string_literal() {
+  void string_literal() {
     assertTree(scalaStatement("\"Hello\"")).isEquivalentTo(slangStatement("\"Hello\";"));
   }
 
   @Test
-  public void string_with_interpolation() {
+  void string_with_interpolation() {
     Tree tree = scalaStatement("raw\"abc\"");
     assertTree(tree).isNotInstanceOf(LiteralTree.class);
     assertThat(tree.descendants()
@@ -48,19 +48,19 @@ public class LiteralTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void int_literal() {
+  void int_literal() {
     assertTree(scalaStatement("42")).isEquivalentTo(slangStatement("42;"));
   }
 
   @Test
-  public void non_int_numeric_literals() {
+  void non_int_numeric_literals() {
     assertTree(scalaStatement("42.1")).isLiteral("42.1");
     assertTree(scalaStatement("42.1f")).isLiteral("42.1f");
     assertTree(scalaStatement("42.1d")).isLiteral("42.1d");
   }
 
   @Test
-  public void boolean_literals() {
+  void boolean_literals() {
     assertTree(scalaStatement("true")).isLiteral("true");
     assertTree(scalaStatement("false")).isLiteral("false");
   }

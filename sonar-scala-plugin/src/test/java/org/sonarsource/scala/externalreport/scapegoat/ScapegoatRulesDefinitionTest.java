@@ -19,16 +19,16 @@
  */
 package org.sonarsource.scala.externalreport.scapegoat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ScapegoatRulesDefinitionTest {
+class ScapegoatRulesDefinitionTest {
 
   @Test
-  public void external_repository() {
+  void external_repository() {
     RulesDefinition.Context context = new RulesDefinition.Context();
     ScapegoatRulesDefinition rulesDefinition = new ScapegoatRulesDefinition();
     rulesDefinition.define(context);

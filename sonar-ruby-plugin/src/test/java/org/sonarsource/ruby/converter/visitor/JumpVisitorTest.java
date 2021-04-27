@@ -19,22 +19,22 @@
  */
 package org.sonarsource.ruby.converter.visitor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.NativeTree;
 
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class JumpVisitorTest extends AbstractRubyConverterTest {
+class JumpVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void without_expression() {
+  void without_expression() {
     assertTree(rubyStatement("break")).isEquivalentTo(slangStatement("break;"));
     assertTree(rubyStatement("next")).isEquivalentTo(slangStatement("continue;"));
   }
 
   @Test
-  public void with_expression() {
+  void with_expression() {
     assertTree(rubyStatement("break x")).isInstanceOf(NativeTree.class);
     assertTree(rubyStatement("next x")).isInstanceOf(NativeTree.class);
     assertTree(rubyStatement("next x")).isEquivalentTo(rubyStatement("next x"));

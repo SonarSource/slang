@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.Annotation;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.BinaryExpressionTree;
@@ -48,10 +48,10 @@ import org.sonarsource.slang.impl.TokenImpl;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class TreeAssertTest {
+class TreeAssertTest {
 
   private static final IdentifierTreeImpl IDENTIFIER_ABC = new IdentifierTreeImpl(null, "abc");
   private static final StringLiteralTreeImpl STRING_LITERAL_STR = new StringLiteralTreeImpl(null, "\"str\"");
@@ -64,12 +64,12 @@ public class TreeAssertTest {
     singletonList(PARAMETER_ABC), null, emptyList());
 
   @Test
-  public void identifier_ok() {
+  void identifier_ok() {
     assertTree(IDENTIFIER_ABC).isIdentifier("abc");
   }
 
   @Test
-  public void has_tokens() {
+  void has_tokens() {
     Token token1 = new TokenImpl(new TextRangeImpl(1,0,1,1), "a", Token.Type.OTHER);
     Token token2 = new TokenImpl(new TextRangeImpl(1,2,1,3), "b", Token.Type.OTHER);
     TextRangeImpl textRange = new TextRangeImpl(token1.textRange().start(), token2.textRange().end());
@@ -78,192 +78,192 @@ public class TreeAssertTest {
   }
 
   @Test
-  public void identifier_with_wrong_name() {
+  void identifier_with_wrong_name() {
     assertThrows(AssertionError.class,
       () -> assertTree(IDENTIFIER_ABC).isIdentifier("xxx"));
   }
 
   @Test
-  public void not_an_identifier() {
+  void not_an_identifier() {
     assertThrows(AssertionError.class,
       () -> assertTree(LITERAL_42).isIdentifier("abc"));
   }
 
   @Test
-  public void parameter_has_identifier() {
+  void parameter_has_identifier() {
     assertTree(PARAMETER_ABC).hasParameterName("abc");
   }
 
   @Test
-  public void parameter_does_not_have_identifier() {
+  void parameter_does_not_have_identifier() {
     assertThrows(AssertionError.class,
       () -> assertTree(PARAMETER_ABC).hasParameterName("xxx"));
   }
 
   @Test
-  public void function_has_parameters() {
+  void function_has_parameters() {
     assertTree(FUNCTION_ABC).hasParameterNames("abc");
   }
 
   @Test
-  public void function_does_not_have_two_parameters() {
+  void function_does_not_have_two_parameters() {
     assertThrows(AssertionError.class,
       () -> assertTree(FUNCTION_ABC).hasParameterNames("abc", "xxx"));
   }
 
   @Test
-  public void function_does_not_have_parameters() {
+  void function_does_not_have_parameters() {
     assertThrows(AssertionError.class,
       () -> assertTree(FUNCTION_ABC).hasParameterNames("xxx"));
   }
 
   @Test
-  public void literal_ok() {
+  void literal_ok() {
     assertTree(LITERAL_42).isLiteral("42");
   }
 
   @Test
-  public void literal_with_wrong_value() {
+  void literal_with_wrong_value() {
     assertThrows(AssertionError.class,
       () -> assertTree(LITERAL_42).isLiteral("123"));
   }
 
   @Test
-  public void not_a_literal() {
+  void not_a_literal() {
     assertThrows(AssertionError.class,
       () -> assertTree(new LiteralTreeImpl(null, "42")).isLiteral("123"));
   }
 
   @Test
-  public void string_literal_ok() {
+  void string_literal_ok() {
     assertTree(STRING_LITERAL_STR).isStringLiteral("str");
   }
 
   @Test
-  public void string_literal_failure() {
+  void string_literal_failure() {
     assertThrows(AssertionError.class,
       () -> assertTree(STRING_LITERAL_STR).isStringLiteral("abc"));
   }
 
   @Test
-  public void not_a_string_literal() {
+  void not_a_string_literal() {
     assertThrows(AssertionError.class,
       () -> assertTree(IDENTIFIER_ABC).isStringLiteral("abc"));
   }
 
   @Test
-  public void binary_ok() {
+  void binary_ok() {
     assertTree(ABC_PLUS_42).isBinaryExpression(BinaryExpressionTree.Operator.PLUS);
   }
 
   @Test
-  public void binary_with_wrong_operator() {
+  void binary_with_wrong_operator() {
     assertThrows(AssertionError.class,
       () -> assertTree(ABC_PLUS_42).isBinaryExpression(BinaryExpressionTree.Operator.MINUS));
   }
 
   @Test
-  public void not_a_binary() {
+  void not_a_binary() {
     assertThrows(AssertionError.class,
       () -> assertTree(LITERAL_42).isBinaryExpression(BinaryExpressionTree.Operator.PLUS));
   }
 
   @Test
-  public void assignment_ok() {
+  void assignment_ok() {
     assertTree(ASSIGN_42_TO_ABC).isAssignmentExpression(AssignmentExpressionTree.Operator.EQUAL);
   }
 
   @Test
-  public void assignment_with_wrong_operator() {
+  void assignment_with_wrong_operator() {
     assertThrows(AssertionError.class,
       () -> assertTree(ASSIGN_42_TO_ABC).isAssignmentExpression(AssignmentExpressionTree.Operator.PLUS_EQUAL));
   }
 
   @Test
-  public void not_an_assignment() {
+  void not_an_assignment() {
     assertThrows(AssertionError.class,
       () -> assertTree(LITERAL_42).isAssignmentExpression(AssignmentExpressionTree.Operator.EQUAL));
   }
 
   @Test
-  public void empty_block() {
+  void empty_block() {
     assertTree(new BlockTreeImpl(null, Collections.emptyList())).isBlock();
   }
 
   @Test
-  public void non_empty_block() {
+  void non_empty_block() {
     assertTree(new BlockTreeImpl(null, singletonList(LITERAL_42))).isBlock(LiteralTree.class);
   }
 
   @Test
-  public void block_with_wrong_child_class() {
+  void block_with_wrong_child_class() {
     assertThrows(AssertionError.class,
       () -> assertTree(new BlockTreeImpl(null, singletonList(LITERAL_42))).isBlock(IdentifierTree.class));
   }
 
   @Test
-  public void block_with_too_many_children() {
+  void block_with_too_many_children() {
     assertThrows(AssertionError.class,
       () -> assertTree(new BlockTreeImpl(null, singletonList(LITERAL_42))).isBlock());
   }
 
   @Test
-  public void not_a_block() {
+  void not_a_block() {
     assertThrows(AssertionError.class,
       () -> assertTree(LITERAL_42).isBlock(LiteralTree.class));
   }
 
   @Test
-  public void text_range() {
+  void text_range() {
     assertTree(new IdentifierTreeImpl(meta(new TextRangeImpl(1, 2, 3, 4)), "a")).hasTextRange(1, 2, 3, 4);
   }
 
   @Test
-  public void wrong_text_range() {
+  void wrong_text_range() {
     assertThrows(AssertionError.class,
       () -> assertTree(new IdentifierTreeImpl(meta(new TextRangeImpl(1, 2, 3, 4)), "a")).hasTextRange(1, 2, 3, 42));
   }
 
   @Test
-  public void equivalent_ok() {
+  void equivalent_ok() {
     assertTree(LITERAL_42).isEquivalentTo(new LiteralTreeImpl(null, "42"));
   }
 
   @Test
-  public void equivalent_failure() {
+  void equivalent_failure() {
     assertThrows(AssertionError.class,
       () -> assertTree(LITERAL_42).isEquivalentTo(new LiteralTreeImpl(null, "43")));
   }
 
   @Test
-  public void notequivalent_ok() {
+  void notequivalent_ok() {
     assertTree(LITERAL_42).isNotEquivalentTo(new LiteralTreeImpl(null, "43"));
   }
 
   @Test
-  public void notequivalent_failure() {
+  void notequivalent_failure() {
     assertThrows(AssertionError.class,
       () -> assertTree(LITERAL_42).isNotEquivalentTo(new LiteralTreeImpl(null, "42")));
   }
 
   @Test
-  public void hasdescendant_ok() {
+  void hasdescendant_ok() {
     assertTree(ABC_PLUS_ABC_PLUS_42).hasDescendant(new LiteralTreeImpl(null, "42"));
   }
 
   @Test
-  public void hasdescendant_failure() {
+  void hasdescendant_failure() {
     assertThrows(AssertionError.class,
       () -> assertTree(ABC_PLUS_ABC_PLUS_42).hasDescendant(new LiteralTreeImpl(null, "43")));
   }
 
   @Test
-  public void hasnotdescendant_ok() {
+  void hasnotdescendant_ok() {
     assertTree(ABC_PLUS_ABC_PLUS_42).hasNotDescendant(new LiteralTreeImpl(null, "43"));
   }
 
   @Test
-  public void hasnotdescendant_failure() {
+  void hasnotdescendant_failure() {
     assertThrows(AssertionError.class,
       () -> assertTree(ABC_PLUS_ABC_PLUS_42).hasNotDescendant(new LiteralTreeImpl(null, "42")));
   }

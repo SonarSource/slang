@@ -20,7 +20,7 @@
 package org.sonarsource.scala.converter;
 
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
@@ -34,10 +34,10 @@ import org.sonarsource.slang.impl.NativeTreeImpl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
+class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
 
   @Test
-  public void function() {
+  void function() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
       "def foo(p1: String, p2: Int): Unit = { println(param) }");
     assertTree(func.name()).isIdentifier("foo");
@@ -47,14 +47,14 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void function_without_return_type() {
+  void function_without_return_type() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
       "def foo(p1: String, p2: Int) = { println(param) }");
     assertThat(func.returnType()).isNull();
   }
 
   @Test
-  public void function_with_simple_body() {
+  void function_with_simple_body() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
       "def foo(p1: String, p2: Int) = param");
     assertThat(func.body().statementOrExpressions()).hasSize(1);
@@ -62,14 +62,14 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void function_without_parameter_list() {
+  void function_without_parameter_list() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
       "def foo = { println(param) }");
     assertThat(func.formalParameters()).isEmpty();
   }
 
   @Test
-  public void function_with_multiple_parameter_lists() {
+  void function_with_multiple_parameter_lists() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement("def foo(p1: String)(p2: Int) = { println(param) }");
     assertThat(func.formalParameters()).hasSize(2);
     assertTree(func.formalParameters().get(0)).hasTokens("p1", ":", "String");
@@ -77,7 +77,7 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void function_parameters_test() {
+  void function_parameters_test() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
         "def foo(p1: String) = param");
     assertTree(func).hasParameterNames("p1");
@@ -85,14 +85,14 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void function_multiples_parameters_test() {
+  void function_multiples_parameters_test() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
         "def foo(p1: String, p2: String, p3: String) = {p1}");
     assertTree(func).hasParameterNames("p1", "p2", "p3");
   }
 
   @Test
-  public void function_default_parameter() {
+  void function_default_parameter() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
         "def foo(p1: String = \"def\") = {p1}");
     assertThat(func.formalParameters()).hasSize(1);
@@ -103,7 +103,7 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void function_multiple_parameters_with_default() {
+  void function_multiple_parameters_with_default() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
         "def foo(p1: String = \"def\", p2: String, p3: String = \"def2\") = {p1}");
     assertThat(func.formalParameters()).hasSize(3);
@@ -117,7 +117,7 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void function_implicit_parameter() {
+  void function_implicit_parameter() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
         "def foo(implicit p1: String) = {p1}");
     assertThat(func.formalParameters()).hasSize(1);
@@ -127,7 +127,7 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void function_annotated_parameter() {
+  void function_annotated_parameter() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
       "def foo(@transient p1: String) = {p1}");
     assertThat(func.formalParameters()).hasSize(1);
@@ -137,7 +137,7 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void function_with_annotated_and_implicit_parameter() {
+  void function_with_annotated_and_implicit_parameter() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
         "def foo(implicit @transient p1: String) = {p1}");
     assertThat(func.formalParameters()).hasSize(1);
@@ -150,7 +150,7 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void function_with_annotated_and_implicit_parameters() {
+  void function_with_annotated_and_implicit_parameters() {
     FunctionDeclarationTree func = (FunctionDeclarationTree) scalaStatement(
         "def foo(p1 : Int)(implicit @transient p2 : Char, @transient p3: String) = {p1}");
     assertThat(func.formalParameters()).hasSize(3);
@@ -171,7 +171,7 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void secondary_constructor() {
+  void secondary_constructor() {
     TopLevelTree topLevel = (TopLevelTree) parse("class Main(p1: Int, p2: String) { def this(p3: Int) { this(42, \"\") } }");
     ClassDeclarationTree classDecl = (ClassDeclarationTree) topLevel.children().get(0);
     List<Tree> members = (classDecl.children().get(0)).children();
@@ -196,7 +196,7 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void secondary_constructor_expression() {
+  void secondary_constructor_expression() {
     TopLevelTree topLevel = (TopLevelTree) parse("class Main(p1: Int) { def this() = this(0) }");
     ClassDeclarationTree classDecl = (ClassDeclarationTree) topLevel.children().get(0);
     List<Tree> members = (classDecl.children().get(0)).children();
@@ -222,7 +222,7 @@ public class FunctionDeclarationTreeTest extends AbstractScalaConverterTest {
   }
 
   @Test
-  public void modifiers() {
+  void modifiers() {
     FunctionDeclarationTree privateFunc = scalaMethod(
       "private def foo(p1: String) = {p1}");
     assertThat(privateFunc.modifiers()).hasSize(1);

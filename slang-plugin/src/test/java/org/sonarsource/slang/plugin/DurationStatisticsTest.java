@@ -21,14 +21,16 @@ package org.sonarsource.slang.plugin;
 
 import java.nio.file.Paths;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.utils.log.LoggerLevel;
 import org.sonar.api.utils.log.ThreadLocalLogTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DurationStatisticsTest {
+@EnableRuleMigrationSupport
+class DurationStatisticsTest {
 
   private SensorContextTester sensorContext = SensorContextTester.create(Paths.get("."));
 
@@ -36,7 +38,7 @@ public class DurationStatisticsTest {
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
-  public void statistics_disabled() {
+  void statistics_disabled() {
     DurationStatistics statistics = new DurationStatistics(sensorContext.config());
     fillStatistics(statistics);
     statistics.log();
@@ -44,7 +46,7 @@ public class DurationStatisticsTest {
   }
 
   @Test
-  public void statistics_activated() {
+  void statistics_activated() {
     sensorContext.settings().setProperty("sonar.slang.duration.statistics", "true");
     DurationStatistics statistics = new DurationStatistics(sensorContext.config());
     fillStatistics(statistics);
@@ -54,7 +56,7 @@ public class DurationStatisticsTest {
   }
 
   @Test
-  public void statistics_format() {
+  void statistics_format() {
     sensorContext.settings().setProperty("sonar.slang.duration.statistics", "true");
     DurationStatistics statistics = new DurationStatistics(sensorContext.config());
     statistics.record("A", 12_000_000L);

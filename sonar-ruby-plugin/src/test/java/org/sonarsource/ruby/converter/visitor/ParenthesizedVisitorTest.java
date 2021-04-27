@@ -19,7 +19,7 @@
  */
 package org.sonarsource.ruby.converter.visitor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import org.sonarsource.slang.api.NativeTree;
@@ -29,10 +29,10 @@ import org.sonarsource.slang.api.Tree;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class ParenthesizedVisitorTest extends AbstractRubyConverterTest {
+class ParenthesizedVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void test() {
+  void test() {
     ParenthesizedExpressionTree parenthesizedTree = (ParenthesizedExpressionTree) rubyStatement("(a + b)");
     assertTree(parenthesizedTree.expression()).isBinaryExpression(Operator.PLUS);
     assertThat(parenthesizedTree.leftParenthesis().text()).isEqualTo("(");
@@ -45,7 +45,7 @@ public class ParenthesizedVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void not_expression_if_multiple_elements() {
+  void not_expression_if_multiple_elements() {
     Tree beginAsStatementList = rubyStatement("(a; b;)");
     assertTree(beginAsStatementList).isBlock(NativeTree.class, NativeTree.class);
   }

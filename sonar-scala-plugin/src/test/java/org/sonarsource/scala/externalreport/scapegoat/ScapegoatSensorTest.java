@@ -25,7 +25,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
 import org.sonar.api.rules.RuleType;
@@ -34,13 +35,14 @@ import org.sonarsource.scala.externalreport.scalastyle.ScalastyleSensorTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ScapegoatSensorTest {
+@EnableRuleMigrationSupport
+class ScapegoatSensorTest {
 
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
-  public void scapegoat_issues_with_sonarqube() throws IOException {
+  void scapegoat_issues_with_sonarqube() throws IOException {
     ScapegoatSensor sensor = new ScapegoatSensor(new ArrayList<String>()::add);
     List<ExternalIssue> externalIssues = ScalastyleSensorTest.executeSensorImporting(sensor, "scapegoat-scalastyle.xml");
     assertThat(externalIssues).hasSize(3);

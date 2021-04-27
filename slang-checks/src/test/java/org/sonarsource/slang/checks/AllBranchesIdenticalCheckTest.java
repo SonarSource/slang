@@ -19,11 +19,11 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class AllBranchesIdenticalCheckTest {
+class AllBranchesIdenticalCheckTest {
 
   @Test
-  public void test() { Verifier.verify("AllBranchesIdentical.slang", new AllBranchesIdenticalCheck()); }
+  void test() { Verifier.verify("AllBranchesIdentical.slang", new AllBranchesIdenticalCheck()); }
 
 }

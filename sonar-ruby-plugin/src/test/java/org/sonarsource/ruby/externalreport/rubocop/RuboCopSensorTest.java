@@ -27,9 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
 
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
@@ -45,15 +46,16 @@ import org.sonarsource.ruby.plugin.RubyPlugin;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RuboCopSensorTest {
+@EnableRuleMigrationSupport
+class RuboCopSensorTest {
 
   private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport", "rubocop");
 
   private RuboCopSensor ruboCopSensor;
   private final List<String> analysisWarnings = new ArrayList<>();
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     analysisWarnings.clear();
     ruboCopSensor = new RuboCopSensor(analysisWarnings::add);
   }
@@ -62,7 +64,7 @@ public class RuboCopSensorTest {
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
-  public void test_descriptor() {
+  void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     ruboCopSensor.describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of RuboCop issues");
@@ -71,7 +73,7 @@ public class RuboCopSensorTest {
   }
 
   @Test
-  public void issues_with_sonarqube() throws IOException {
+  void issues_with_sonarqube() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("rubocop-report.json");
     assertThat(externalIssues).hasSize(4);
 
@@ -111,14 +113,14 @@ public class RuboCopSensorTest {
   }
 
   @Test
-  public void no_issues_without_report_paths_property() throws IOException {
+  void no_issues_without_report_paths_property() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting(null);
     assertThat(externalIssues).isEmpty();
     assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
-  public void no_issues_with_invalid_report_path() throws IOException {
+  void no_issues_with_invalid_report_path() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("invalid-path.txt");
     assertThat(externalIssues).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.WARN)))
@@ -132,7 +134,7 @@ public class RuboCopSensorTest {
   }
 
   @Test
-  public void no_issues_with_invalid_rubocop_file() throws IOException {
+  void no_issues_with_invalid_rubocop_file() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("not-rubocop-file.json");
     assertThat(externalIssues).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
@@ -141,14 +143,14 @@ public class RuboCopSensorTest {
   }
 
   @Test
-  public void no_issues_with_empty_rubocop_file() throws IOException {
+  void no_issues_with_empty_rubocop_file() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("rubocop-report-empty.json");
     assertThat(externalIssues).isEmpty();
     assertNoErrorWarnDebugLogs(logTester);
   }
 
   @Test
-  public void issues_when_rubocop_file_has_errors() throws IOException {
+  void issues_when_rubocop_file_has_errors() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("rubocop-report-with-errors.json");
     assertThat(externalIssues).hasSize(7);
 
@@ -174,7 +176,7 @@ public class RuboCopSensorTest {
   }
 
   @Test
-  public void issues_when_rubocop_file_and_line_errors() throws IOException {
+  void issues_when_rubocop_file_and_line_errors() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("rubocop-report-with-file-and-line-errors.json");
     assertThat(externalIssues).hasSize(4);
 

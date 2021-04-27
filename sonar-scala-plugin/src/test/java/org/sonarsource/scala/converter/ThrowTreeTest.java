@@ -20,16 +20,16 @@
 
 package org.sonarsource.scala.converter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.ThrowTree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class ThrowTreeTest extends AbstractScalaConverterTest {
+class ThrowTreeTest extends AbstractScalaConverterTest {
     @Test
-    public void throw_new_exception() {
+    void throw_new_exception() {
         ThrowTree throwTree = (ThrowTree) scalaStatement("throw new Exception()");
         assertThat(throwTree.keyword().text()).isEqualTo("throw");
         assertTree(throwTree.body()).isInstanceOf(NativeTree.class);

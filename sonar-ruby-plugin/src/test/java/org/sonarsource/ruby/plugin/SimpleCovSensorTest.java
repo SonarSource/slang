@@ -26,9 +26,10 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
@@ -45,7 +46,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-public class SimpleCovSensorTest {
+@EnableRuleMigrationSupport
+class SimpleCovSensorTest {
 
   private static final Path COVERAGE_DIR = Paths.get("src", "test", "resources", "coverage");
   private static final String MODULE_KEY = "/Absolute/Path/To/";
@@ -55,13 +57,13 @@ public class SimpleCovSensorTest {
 
   private SimpleCovSensor sensor;
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     sensor = new SimpleCovSensor(new RubyExclusionsFileFilter(new MapSettings().asConfig()));
   }
 
   @Test
-  public void test_relative_report_path() throws IOException {
+  void test_relative_report_path() throws IOException {
     SensorContextTester context = getSensorContext("resultset.json", "file1.rb");
     sensor.execute(context);
 
@@ -81,7 +83,7 @@ public class SimpleCovSensorTest {
   }
 
   @Test
-  public void test_reportPath_property_default() throws IOException {
+  void test_reportPath_property_default() throws IOException {
     SensorContextTester context = getSensorContext("resultset.json", "file1.rb");
     // unset reportPaths value
     context.setSettings(new MapSettings());
@@ -101,7 +103,7 @@ public class SimpleCovSensorTest {
   }
 
   @Test
-  public void test_reportPath_property_JSON_formatter() throws IOException {
+  void test_reportPath_property_JSON_formatter() throws IOException {
     SensorContextTester context = getSensorContext("json_formatter.json", "file1.rb");
     sensor.execute(context);
 
@@ -116,7 +118,7 @@ public class SimpleCovSensorTest {
   }
 
   @Test
-  public void test_absolute_report_path() throws IOException {
+  void test_absolute_report_path() throws IOException {
     Path baseDir = COVERAGE_DIR.toAbsolutePath();
     Path reportPath = baseDir.resolve("resultset.json");
     SensorContextTester context = getSensorContext(reportPath.toString(), "file1.rb");
@@ -130,7 +132,7 @@ public class SimpleCovSensorTest {
   }
 
   @Test
-  public void test_merged_resultset() throws IOException {
+  void test_merged_resultset() throws IOException {
     SensorContextTester context = getSensorContext("merged_resultset.json", "file1.rb", "file2.rb");
     sensor.execute(context);
 
@@ -150,7 +152,7 @@ public class SimpleCovSensorTest {
   }
 
   @Test
-  public void test_multi_resultsets() throws IOException {
+  void test_multi_resultsets() throws IOException {
     SensorContextTester context = getSensorContext("resultset_1.json, resultset_2.json", "file1.rb", "file2.rb");
     sensor.execute(context);
 
@@ -170,7 +172,7 @@ public class SimpleCovSensorTest {
   }
 
   @Test
-  public void no_measure_on_files_not_in_context() throws IOException {
+  void no_measure_on_files_not_in_context() throws IOException {
     SensorContextTester context = spy(getSensorContext("additional_file_resultset.json", "file2.rb"));
     sensor.execute(context);
 
@@ -180,7 +182,7 @@ public class SimpleCovSensorTest {
   }
 
   @Test
-  public void log_when_wrong_line_numbers() throws IOException {
+  void log_when_wrong_line_numbers() throws IOException {
     SensorContextTester context = getSensorContext("wrong_lines_resultset.json", "file2.rb");
     sensor.execute(context);
 
@@ -189,7 +191,7 @@ public class SimpleCovSensorTest {
   }
 
   @Test
-  public void log_when_invalid_format() throws IOException {
+  void log_when_invalid_format() throws IOException {
     SensorContextTester context = getSensorContext("invalid_resultset.json", "file1.rb");
     sensor.execute(context);
 
@@ -199,7 +201,7 @@ public class SimpleCovSensorTest {
   }
 
   @Test
-  public void log_when_unsupported_format_version_0_18() throws IOException {
+  void log_when_unsupported_format_version_0_18() throws IOException {
     SensorContextTester context = getSensorContext("unsupported_resultset_0_18.json", "file1.rb");
     sensor.execute(context);
 
@@ -213,7 +215,7 @@ public class SimpleCovSensorTest {
   }
 
   @Test
-  public void log_when_invalid_report_path() throws IOException {
+  void log_when_invalid_report_path() throws IOException {
     SensorContextTester context = getSensorContext("noFile.json", "file1.rb");
     sensor.execute(context);
 
@@ -221,7 +223,7 @@ public class SimpleCovSensorTest {
   }
 
   @Test
-  public void log_when_can_not_find_file_path() throws IOException {
+  void log_when_can_not_find_file_path() throws IOException {
     Configuration config = new MapSettings()
       .setProperty(RubyPlugin.EXCLUSIONS_KEY, RubyPlugin.EXCLUSIONS_DEFAULT_VALUE)
       .asConfig();
@@ -238,7 +240,7 @@ public class SimpleCovSensorTest {
   }
 
   @Test
-  public void success_for_report_present() throws IOException {
+  void success_for_report_present() throws IOException {
     SensorContextTester context = getSensorContext("noFile2.json,resultset_2.json", "file1.rb", "file2.rb");
     sensor.execute(context);
 

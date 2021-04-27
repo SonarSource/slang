@@ -19,14 +19,14 @@
  */
 package org.sonarsource.slang.impl;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TextPointerImplTest {
+class TextPointerImplTest {
 
   @Test
-  public void test_equals() {
+  void test_equals() {
     TextPointerImpl p1 = new TextPointerImpl(1, 2);
     assertThat(p1)
       .isEqualTo(p1)
@@ -38,13 +38,13 @@ public class TextPointerImplTest {
   }
 
   @Test
-  public void test_hashCode() {
+  void test_hashCode() {
     assertThat(new TextPointerImpl(1, 2).hashCode()).isEqualTo(new TextPointerImpl(1, 2).hashCode());
     assertThat(new TextPointerImpl(1, 2).hashCode()).isNotEqualTo(new TextPointerImpl(1, 3).hashCode());
   }
 
   @Test
-  public void test_compareTo() {
+  void test_compareTo() {
     assertThat(new TextPointerImpl(1, 2)).isEqualByComparingTo(new TextPointerImpl(1, 2));
     assertThat(new TextPointerImpl(1, 2).compareTo(new TextPointerImpl(1, 4))).isEqualTo(-1);
     assertThat(new TextPointerImpl(1, 2).compareTo(new TextPointerImpl(2, 1))).isEqualTo(-1);

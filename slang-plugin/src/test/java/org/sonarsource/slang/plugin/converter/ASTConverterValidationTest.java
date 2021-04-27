@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.assertj.core.api.ListAssert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.config.Configuration;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.Annotation;
@@ -54,15 +54,15 @@ import org.sonarsource.slang.impl.TopLevelTreeImpl;
 import org.sonarsource.slang.plugin.converter.ASTConverterValidation.ValidationMode;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ASTConverterValidationTest {
+class ASTConverterValidationTest {
 
   private static final NativeKind NATIVE_KIND = new NativeKind() {
   };
 
   @Test
-  public void delegate_calls() {
+  void delegate_calls() {
     Tree tree = identifier(1, 0, "code");
     SimpleConverter wrappedConverter = new SimpleConverter(tree);
     ASTConverterValidation validationConverter = new ASTConverterValidation(wrappedConverter, ValidationMode.LOG_ERROR);
@@ -82,7 +82,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void wrap() {
+  void wrap() {
     SimpleConverter wrappedConverter = new SimpleConverter(null);
     String configKey = "sonar.slang.converter.validation";
     assertThat(ASTConverterValidation.wrap(wrappedConverter, new SimpleConfig(configKey, null))).isSameAs(wrappedConverter);
@@ -97,7 +97,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void wrap_error() {
+  void wrap_error() {
     SimpleConverter wrappedConverter = new SimpleConverter(null);
     String configKey = "sonar.slang.converter.validation";
     IllegalStateException e = assertThrows(IllegalStateException.class,
@@ -106,7 +106,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void text_range() {
+  void text_range() {
     assertValidationErrors("    a", identifier(1, 4, 2, 0, "a"))
       .isEmpty();
 
@@ -136,7 +136,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void missing_token() {
+  void missing_token() {
     TextRange range = new TextRangeImpl(1, 0, 1, 1);
     IllegalStateException e = assertThrows(IllegalStateException.class,
       () -> assertValidationErrors("", new IdentifierTreeImpl(metaData(range), "a"), ValidationMode.THROW_EXCEPTION));
@@ -144,7 +144,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void top_level_tree_can_have_zero_token() {
+  void top_level_tree_can_have_zero_token() {
     TopLevelTree topLevelTree = new TopLevelTreeImpl(
       metaData(new TextRangeImpl(1, 0, 1, 0)),
       Collections.emptyList(),
@@ -153,7 +153,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void tokens_and_comments_match_source_code() {
+  void tokens_and_comments_match_source_code() {
     Token token1 = keyword(1, 0, "package");
     Token token2 = token(2, 2, "abc");
     Comment comment1 = comment(1, 8, "/* comment1 */");
@@ -167,7 +167,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void missing_token_compare_to_source_code() {
+  void missing_token_compare_to_source_code() {
     Token token = keyword(1, 0, "package");
     Tree tree = new NativeTreeImpl(
       metaData(Collections.singletonList(token), Collections.emptyList()),
@@ -182,7 +182,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void source_code_has_unexpected_lines() {
+  void source_code_has_unexpected_lines() {
     Token token1 = keyword(1, 0, "package");
     Tree tree = new NativeTreeImpl(metaData(Collections.singletonList(token1), Collections.emptyList()), NATIVE_KIND, Collections.emptyList());
     String code = "package\n/* comment */";
@@ -191,7 +191,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void extra_token_not_in_source_code() {
+  void extra_token_not_in_source_code() {
     Token token1 = keyword(1, 0, "package");
     Token token2 = token(2, 2, "abc");
     Tree tree = new NativeTreeImpl(
@@ -204,7 +204,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void native_tree_and_literal_accept_any_tokens() {
+  void native_tree_and_literal_accept_any_tokens() {
     TreeMetaData metaData = metaData(
       keyword(1, 0, "if"),
       token(1, 3, "value"),
@@ -219,7 +219,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void identifier_tree_does_not_accept_keyword_and_string_literal_tokens() {
+  void identifier_tree_does_not_accept_keyword_and_string_literal_tokens() {
     TreeMetaData metaData = metaData(
       keyword(1, 0, "if"),
       token(1, 3, "value"),
@@ -230,7 +230,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void non_identifier_tree_does_not_accept_identifier_tokens() {
+  void non_identifier_tree_does_not_accept_identifier_tokens() {
     TreeMetaData metaData = metaData(
       keyword(1, 0, "if"),
       token(1, 3, "value"),
@@ -241,7 +241,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void child_range_or_token_inside_parent_range() {
+  void child_range_or_token_inside_parent_range() {
     Token identifierToken = token(1, 0, "value");
     IdentifierTreeImpl identifier = new IdentifierTreeImpl(metaData(identifierToken), "value");
     BlockTreeImpl block = new BlockTreeImpl(metaData(identifierToken), Collections.singletonList(identifier));
@@ -250,7 +250,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void allowed_misplaced_token() {
+  void allowed_misplaced_token() {
     Token misplacedToken = token(1, 0, "implicit");
     Tree misplacedTree = new NativeTreeImpl(metaData(misplacedToken), NATIVE_KIND, Collections.emptyList());
 
@@ -264,7 +264,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void child_range_or_token_outside_parent_range() {
+  void child_range_or_token_outside_parent_range() {
     Token ifToken = keyword(1, 0, "if");
     Token identifierToken = token(1, 3, "value");
     IdentifierTreeImpl identifier = new IdentifierTreeImpl(metaData(identifierToken), "value");
@@ -276,7 +276,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void several_children_outside_parent_range() {
+  void several_children_outside_parent_range() {
     Token ifToken = keyword(1, 0, "if");
     Token annotationToken = token(1, 3, "@transient");
     Token identifierToken = token(1, 14, "value");
@@ -289,7 +289,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void same_token_in_two_children() {
+  void same_token_in_two_children() {
     Token identifierToken = token(1, 0, "value");
     IdentifierTreeImpl identifier1 = new IdentifierTreeImpl(metaData(identifierToken), "value");
     IdentifierTreeImpl identifier2 = new IdentifierTreeImpl(metaData(identifierToken), "value");
@@ -300,7 +300,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void report_null_child_and_null_metaData() {
+  void report_null_child_and_null_metaData() {
     Token token = keyword(1, 0, "if");
     IdentifierTreeImpl identifier = new IdentifierTreeImpl(null, "if");
     BlockTreeImpl block = new BlockTreeImpl(metaData(token), Arrays.asList(identifier, null));
@@ -312,7 +312,7 @@ public class ASTConverterValidationTest {
   }
 
   @Test
-  public void source_file_name_in_logs_when_set() {
+  void source_file_name_in_logs_when_set() {
     String fileName = "my/file/name.java";
     String code = "a";
     Tree tree = identifier(0, 0, 1, 0, "a");

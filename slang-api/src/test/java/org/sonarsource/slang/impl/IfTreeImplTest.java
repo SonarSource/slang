@@ -22,14 +22,14 @@ package org.sonarsource.slang.impl;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class IfTreeImplTest {
+class IfTreeImplTest {
 
   @Test
-  public void test() {
+  void test() {
     TreeMetaData meta = null;
     Tree condition = new LiteralTreeImpl(meta, "42");
     Tree thenBranch = new IdentifierTreeImpl(meta, "x");

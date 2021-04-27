@@ -19,17 +19,17 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TabsCheckTest {
+class TabsCheckTest {
 
   @Test
-  public void test_without_tabs() {
+  void test_without_tabs() {
     Verifier.verifyNoIssue("Tabs_compliant.slang", new TabsCheck());
   }
 
   @Test
-  public void test_with_tabs() {
+  void test_with_tabs() {
     Verifier.verify("Tabs_noncompliant.slang", new TabsCheck());
   }
 

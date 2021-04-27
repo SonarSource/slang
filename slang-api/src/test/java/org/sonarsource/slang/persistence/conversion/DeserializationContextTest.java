@@ -25,21 +25,21 @@ import com.eclipsesource.json.JsonObject;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.persistence.JsonTestHelper;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DeserializationContextTest extends JsonTestHelper {
+class DeserializationContextTest extends JsonTestHelper {
 
   private DeserializationContext context = new DeserializationContext(JsonTreeConverter.POLYMORPHIC_CONVERTER)
     .withMetaDataProvider(metaDataProvider);
 
   @Test
-  public void resolve_token() {
+  void resolve_token() {
     Token token = otherToken(1, 0, "foo");
     JsonObject json = Json.object()
       .add("tokenReference", "1:0:1:3");
@@ -50,7 +50,7 @@ public class DeserializationContextTest extends JsonTestHelper {
   }
 
   @Test
-  public void resolve_token_not_found() {
+  void resolve_token_not_found() {
     otherToken(1, 0, "foo");
     JsonObject json = Json.object()
       .add("tokenReference", "7:13:7:20");
@@ -61,7 +61,7 @@ public class DeserializationContextTest extends JsonTestHelper {
   }
 
   @Test
-  public void resolve_metadata() {
+  void resolve_metadata() {
     Token token = otherToken(1, 0, "foo");
     JsonObject json = Json.object()
       .add("metaData", "1:0:1:3");
@@ -71,7 +71,7 @@ public class DeserializationContextTest extends JsonTestHelper {
   }
 
   @Test
-  public void resolve_metadata_not_found() {
+  void resolve_metadata_not_found() {
     JsonObject json = Json.object()
       .add("field1", "42");
 
@@ -81,7 +81,7 @@ public class DeserializationContextTest extends JsonTestHelper {
   }
 
   @Test
-  public void object_list() {
+  void object_list() {
     List<String> nodes = Arrays.asList("A", "B", "C");
     JsonArray array = Json.array();
     nodes.stream().map(value -> Json.object().add("value", value)).forEach(array::add);
@@ -94,7 +94,7 @@ public class DeserializationContextTest extends JsonTestHelper {
   }
 
   @Test
-  public void invalid_object_list() {
+  void invalid_object_list() {
     context.pushPath("root");
     IllegalStateException e = assertThrows(IllegalStateException.class,
       () -> context.objectList(Json.value(42), (ctx, object) -> object));
@@ -102,7 +102,7 @@ public class DeserializationContextTest extends JsonTestHelper {
   }
 
   @Test
-  public void field_to_nullable_string() {
+  void field_to_nullable_string() {
     JsonObject json = Json.object()
       .add("field1", "abc");
     assertThat(context.fieldToNullableString(json, "field1")).isEqualTo("abc");
@@ -110,7 +110,7 @@ public class DeserializationContextTest extends JsonTestHelper {
   }
 
   @Test
-  public void field_to_nullable_invalid_string() {
+  void field_to_nullable_invalid_string() {
     JsonObject json = Json.object()
       .add("field1", 42);
     context.pushPath("root");
@@ -120,14 +120,14 @@ public class DeserializationContextTest extends JsonTestHelper {
   }
 
   @Test
-  public void field_to_string() {
+  void field_to_string() {
     JsonObject json = Json.object()
       .add("field1", "abc");
     assertThat(context.fieldToString(json, "field1")).isEqualTo("abc");
   }
 
   @Test
-  public void field_to_missing_string() {
+  void field_to_missing_string() {
     JsonObject json = Json.object()
       .add("field1", "abc");
     context.pushPath("TopLevel");
@@ -138,7 +138,7 @@ public class DeserializationContextTest extends JsonTestHelper {
   }
 
   @Test
-  public void field_to_null_string() {
+  void field_to_null_string() {
     JsonObject json = Json.object()
       .add("field1", Json.NULL);
     context.pushPath("TopLevel");
@@ -149,7 +149,7 @@ public class DeserializationContextTest extends JsonTestHelper {
   }
 
   @Test
-  public void field_to_range() {
+  void field_to_range() {
     JsonObject json = Json.object()
       .add("field1", "1:2:3:4");
     TextRange range = context.fieldToRange(json, "field1");
@@ -160,7 +160,7 @@ public class DeserializationContextTest extends JsonTestHelper {
   }
 
   @Test
-  public void field_to_range_missing() {
+  void field_to_range_missing() {
     JsonObject json = Json.object()
       .add("field1", "1:2:3:4");
     context.pushPath("root");

@@ -20,7 +20,7 @@
 package org.sonarsource.ruby.converter.visitor;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.IntegerLiteralTree;
 
@@ -32,16 +32,16 @@ import static org.sonarsource.slang.api.IntegerLiteralTree.Base.OCTAL;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 import static org.sonarsource.slang.testing.TreesAssert.assertTrees;
 
-public class LiteralVisitorTest extends AbstractRubyConverterTest {
+class LiteralVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void boolean_literal() {
+  void boolean_literal() {
     assertTree(rubyStatement("true")).isLiteral("true");
     assertTree(rubyStatement("false")).isLiteral("false");
   }
 
   @Test
-  public void int_literals() {
+  void int_literals() {
     assertTrees(rubyStatements("2; 512; 4\n2431323"))
       .isEquivalentTo(slangStatements("2; 512; 4; 2431323;"));
     assertTree(rubyStatement("2")).isLiteral("2");
@@ -51,7 +51,7 @@ public class LiteralVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void octal_int_literals() {
+  void octal_int_literals() {
     IntegerLiteralTree literal0 = (IntegerLiteralTree) rubyStatement("0252");
     assertTree(literal0).isLiteral("0252");
     assertThat(literal0.getBase()).isEqualTo(OCTAL);
@@ -69,7 +69,7 @@ public class LiteralVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void other_int_literals() {
+  void other_int_literals() {
     IntegerLiteralTree literal0 = (IntegerLiteralTree) rubyStatement("0xaa");
     assertTree(literal0).isLiteral("0xaa");
     assertThat(literal0.getBase()).isEqualTo(HEXADECIMAL);

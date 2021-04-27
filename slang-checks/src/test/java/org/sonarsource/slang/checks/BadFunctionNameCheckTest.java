@@ -19,17 +19,17 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class BadFunctionNameCheckTest {
+class BadFunctionNameCheckTest {
 
   @Test
-  public void test() {
+  void test() {
     Verifier.verify("BadFunctionName.slang", new BadFunctionNameCheck());
   }
 
   @Test
-  public void test_upper_case() {
+  void test_upper_case() {
     BadFunctionNameCheck check = new BadFunctionNameCheck();
     check.format = "^[A-Z]*$";
     Verifier.verify("BadFunctionName.uppercase.slang", check);

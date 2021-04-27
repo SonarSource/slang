@@ -24,15 +24,15 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.checks.CheckList.ALL_CHECKS_WITH_LANGUAGE_CONFIG;
 
-public class CheckListTest {
+class CheckListTest {
 
   @Test
-  public void all_checks_should_be_present() {
+  void all_checks_should_be_present() {
     File directory = new File("src/main/java/org/sonarsource/slang/checks");
     File[] checkFiles = directory.listFiles((dir, name) ->
         name.endsWith("Check.java") && !name.startsWith("Abstract"));
@@ -40,7 +40,7 @@ public class CheckListTest {
   }
 
   @Test
-  public void exclude_checks() {
+  void exclude_checks() {
     List<Class<?>> allChecks = CheckList.allChecks();
     assertThat(allChecks.size()).isGreaterThanOrEqualTo(40);
 
@@ -49,7 +49,7 @@ public class CheckListTest {
   }
 
   @Test
-  public void configured_checks() {
+  void configured_checks() {
     List<Class<?>> checksWithConfig = Arrays.asList(ALL_CHECKS_WITH_LANGUAGE_CONFIG);
     assertThat(checksWithConfig).hasSize(1);
 

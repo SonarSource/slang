@@ -20,23 +20,23 @@
 package org.sonarsource.scala.converter;
 
 import java.util.stream.Stream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.Tree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class AssignmentExpressionTreeTest extends AbstractScalaConverterTest {
+class AssignmentExpressionTreeTest extends AbstractScalaConverterTest {
 
   @Test
-  public void assignment() {
+  void assignment() {
     assertTree(scalaStatement("x = 42")).isEquivalentTo(slangStatement("x = 42;"));
     assertTree(scalaStatement("x += 42")).isNotEquivalentTo(slangStatement("x = 42;"));
   }
 
   @Test
-  public void named_argument() {
+  void named_argument() {
     assertThat(assignmentDescendants(scalaStatement("foo(param = 42)"))).isEmpty();
     assertThat(assignmentDescendants(scalaStatement("new MyClass(param = 42)"))).isEmpty();
     assertThat(assignmentDescendants(parse("class A { def this() = this(param = 42) }"))).isEmpty();

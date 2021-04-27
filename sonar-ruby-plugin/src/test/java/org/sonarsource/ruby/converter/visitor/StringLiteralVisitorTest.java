@@ -19,7 +19,7 @@
  */
 package org.sonarsource.ruby.converter.visitor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.NativeTree;
@@ -29,10 +29,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class StringLiteralVisitorTest extends AbstractRubyConverterTest {
+class StringLiteralVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void plain_string_literal() {
+  void plain_string_literal() {
     StringLiteralTree singleQuoteString = (StringLiteralTree) rubyStatement("'foo'");
     assertTree(singleQuoteString).isStringLiteral("foo");
     assertThat(singleQuoteString.value()).isEqualTo("'foo'");
@@ -43,7 +43,7 @@ public class StringLiteralVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void empty_string_literals() {
+  void empty_string_literals() {
     StringLiteralTree empty1 = (StringLiteralTree) rubyStatement("''");
     assertTree(empty1).isStringLiteral("");
     assertThat(empty1.value()).isEqualTo("''");
@@ -56,13 +56,13 @@ public class StringLiteralVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void file_macro() {
+  void file_macro() {
     NativeTree tree = (NativeTree) rubyStatement("__FILE__");
     assertThat(((NativeTree) tree.children().get(0)).nativeKind()).isEqualTo(nativeKind("(Analysis of Ruby)"));
   }
 
   @Test
-  public void heredoc_literal() {
+  void heredoc_literal() {
     NativeTree tree = (NativeTree) rubyStatement("<<-CODE\n" +
       "      get '/#{asset}' do\n" +
       "        redirect asset_path('#{asset}', protocol: 'http')\n" +
@@ -80,7 +80,7 @@ public class StringLiteralVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void interpolated_string() {
+  void interpolated_string() {
     NativeTree tree = (NativeTree) rubyStatement("\"foo#{bar}baz\"");
     assertTree(tree).hasChildren(3);
     assertTree(tree).hasChildren(NativeTree.class, BlockTree.class, NativeTree.class);

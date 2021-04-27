@@ -26,7 +26,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.Severity;
@@ -39,7 +40,8 @@ import org.sonar.api.utils.log.ThreadLocalLogTester;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CheckstyleFormatImporterTest {
+@EnableRuleMigrationSupport
+class CheckstyleFormatImporterTest {
 
   static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport");
 
@@ -49,7 +51,7 @@ public class CheckstyleFormatImporterTest {
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
-  public void import_detekt_issues() throws IOException {
+  void import_detekt_issues() throws IOException {
     List<ExternalIssue> externalIssues = importIssues("detekt-checkstyle.xml");
     assertThat(externalIssues).hasSize(3);
 
@@ -82,7 +84,7 @@ public class CheckstyleFormatImporterTest {
   }
 
   @Test
-  public void import_golandci_lint_issues() throws IOException {
+  void import_golandci_lint_issues() throws IOException {
     List<ExternalIssue> externalIssues = importIssues("golandci-lint-report.xml");
     assertThat(externalIssues).hasSize(1);
 
@@ -98,7 +100,7 @@ public class CheckstyleFormatImporterTest {
   }
 
   @Test
-  public void no_issues_with_invalid_report_path() throws IOException {
+  void no_issues_with_invalid_report_path() throws IOException {
     List<ExternalIssue> externalIssues = importIssues("invalid-path.txt");
     assertThat(externalIssues).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
@@ -107,7 +109,7 @@ public class CheckstyleFormatImporterTest {
   }
 
   @Test
-  public void no_issues_with_invalid_checkstyle_file() throws IOException {
+  void no_issues_with_invalid_checkstyle_file() throws IOException {
     List<ExternalIssue> externalIssues = importIssues("not-checkstyle-file.xml");
     assertThat(externalIssues).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
@@ -116,7 +118,7 @@ public class CheckstyleFormatImporterTest {
   }
 
   @Test
-  public void no_issues_with_invalid_xml_report() throws IOException {
+  void no_issues_with_invalid_xml_report() throws IOException {
     List<ExternalIssue> externalIssues = importIssues("invalid-file.xml");
     assertThat(externalIssues).isEmpty();
     assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
@@ -125,7 +127,7 @@ public class CheckstyleFormatImporterTest {
   }
 
   @Test
-  public void issues_when_xml_file_has_errors() throws IOException {
+  void issues_when_xml_file_has_errors() throws IOException {
     List<ExternalIssue> externalIssues = importIssues("detekt-checkstyle-with-errors.xml");
     assertThat(externalIssues).hasSize(2);
 

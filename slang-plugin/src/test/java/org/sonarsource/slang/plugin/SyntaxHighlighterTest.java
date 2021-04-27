@@ -23,9 +23,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import javax.annotation.Nullable;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.junit.rules.TemporaryFolder;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
@@ -39,7 +40,8 @@ import static org.sonar.api.batch.sensor.highlighting.TypeOfText.CONSTANT;
 import static org.sonar.api.batch.sensor.highlighting.TypeOfText.KEYWORD;
 import static org.sonar.api.batch.sensor.highlighting.TypeOfText.STRING;
 
-public class SyntaxHighlighterTest {
+@EnableRuleMigrationSupport
+class SyntaxHighlighterTest {
 
   private SyntaxHighlighter highlightingVisitor = new SyntaxHighlighter();
 
@@ -52,8 +54,8 @@ public class SyntaxHighlighterTest {
   @Rule
   public TemporaryFolder tempFolder = new TemporaryFolder();
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     sensorContext = SensorContextTester.create(tempFolder.getRoot());
   }
 
@@ -81,20 +83,20 @@ public class SyntaxHighlighterTest {
   }
 
   @Test
-  public void empty_input() throws Exception {
+  void empty_input() throws Exception {
     highlight("");
     assertHighlighting(1, 0, 0, null);
   }
 
   @Test
-  public void single_line_comment() throws Exception {
+  void single_line_comment() throws Exception {
     highlight("  // Comment ");
     assertHighlighting(0, 1, null);
     assertHighlighting(2, 12, COMMENT);
   }
 
   @Test
-  public void comment() throws Exception {
+  void comment() throws Exception {
     highlight("  /*Comment*/ ");
     assertHighlighting(0, 1, null);
     assertHighlighting(2, 12, COMMENT);
@@ -102,7 +104,7 @@ public class SyntaxHighlighterTest {
   }
 
   @Test
-  public void multiline_comment() throws Exception {
+  void multiline_comment() throws Exception {
     highlight("/*\nComment\n*/ ");
     assertHighlighting(1, 0, 1, COMMENT);
     assertHighlighting(2, 0, 6, COMMENT);
@@ -111,7 +113,7 @@ public class SyntaxHighlighterTest {
   }
 
   @Test
-  public void keyword() throws Exception {
+  void keyword() throws Exception {
     highlight("fun foo() { if(x) y; }");
     assertHighlighting(0, 2, KEYWORD);
     assertHighlighting(3, 11, null);
@@ -120,7 +122,7 @@ public class SyntaxHighlighterTest {
   }
 
   @Test
-  public void string_literal() throws Exception {
+  void string_literal() throws Exception {
     highlight("x + \"abc\" + y;");
     assertHighlighting(1, 3, null);
     assertHighlighting(4, 8, STRING);
@@ -128,7 +130,7 @@ public class SyntaxHighlighterTest {
   }
 
   @Test
-  public void numeric_literal() throws Exception {
+  void numeric_literal() throws Exception {
     highlight("x + 123 + y;");
     assertHighlighting(1, 3, null);
     assertHighlighting(4, 6, CONSTANT);

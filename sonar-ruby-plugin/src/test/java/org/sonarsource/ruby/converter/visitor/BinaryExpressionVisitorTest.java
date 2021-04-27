@@ -20,16 +20,16 @@
 package org.sonarsource.ruby.converter.visitor;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
 
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class BinaryExpressionVisitorTest extends AbstractRubyConverterTest {
+class BinaryExpressionVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void comparison() {
+  void comparison() {
     assertTree(rubyStatement("a == b")).isBinaryExpression(Operator.EQUAL_TO);
     assertTree(rubyStatement("a != b")).isBinaryExpression(Operator.NOT_EQUAL_TO);
     assertTree(rubyStatement("a < b")).isBinaryExpression(Operator.LESS_THAN);
@@ -39,7 +39,7 @@ public class BinaryExpressionVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void arithmetic() {
+  void arithmetic() {
     assertTree(rubyStatement("a + b")).isBinaryExpression(Operator.PLUS);
     assertTree(rubyStatement("a - b")).isBinaryExpression(Operator.MINUS);
     assertTree(rubyStatement("a * b")).isBinaryExpression(Operator.TIMES);
@@ -47,7 +47,7 @@ public class BinaryExpressionVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void logical() {
+  void logical() {
     assertTree(rubyStatement("a && b")).isBinaryExpression(Operator.CONDITIONAL_AND);
     assertTree(rubyStatement("a || b")).isBinaryExpression(Operator.CONDITIONAL_OR);
     // NOTE: pairs &&/and and ||/or don't have the same priority, still the same tree is created
@@ -56,7 +56,7 @@ public class BinaryExpressionVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void equivalent_to_slang() {
+  void equivalent_to_slang() {
     assertTree(rubyStatement("1 < 2")).isEquivalentTo(slangStatements("1 < 2;").get(0));
   }
 

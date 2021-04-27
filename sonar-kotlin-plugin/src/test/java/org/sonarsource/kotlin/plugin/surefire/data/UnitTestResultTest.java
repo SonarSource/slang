@@ -20,15 +20,15 @@
 package org.sonarsource.kotlin.plugin.surefire.data;
 
 import org.assertj.core.api.AbstractAssert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.fail;
 import static org.sonarsource.kotlin.plugin.surefire.data.UnitTestResultTest.UnitTestResultAssert.assertThat;
 
-public class UnitTestResultTest {
+class UnitTestResultTest {
 
   @Test
-  public void shouldBeError() {
+  void shouldBeError() {
     UnitTestResult result = new UnitTestResult().setStatus(UnitTestResult.STATUS_ERROR);
     assertThat(result)
       .hasStatus(UnitTestResult.STATUS_ERROR)
@@ -37,7 +37,7 @@ public class UnitTestResultTest {
   }
 
   @Test
-  public void shouldBeFailure() {
+  void shouldBeFailure() {
     UnitTestResult result = new UnitTestResult().setStatus(UnitTestResult.STATUS_FAILURE);
     
     assertThat(result)
@@ -47,7 +47,7 @@ public class UnitTestResultTest {
   }
 
   @Test
-  public void shouldBeSuccess() {
+  void shouldBeSuccess() {
     UnitTestResult result = new UnitTestResult().setStatus(UnitTestResult.STATUS_OK);
 
     assertThat(result)
@@ -57,7 +57,7 @@ public class UnitTestResultTest {
   }
 
   @Test
-  public void shouldGetClassName() {
+  void shouldGetClassName() {
     UnitTestResult result = new UnitTestResult()
       .setTestSuiteClassName("MyClass");
 

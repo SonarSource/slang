@@ -19,7 +19,7 @@
  */
 package org.sonarsource.ruby.converter.visitor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.LiteralTree;
@@ -30,10 +30,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class LoopVisitorTest extends AbstractRubyConverterTest {
+class LoopVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void while_loops() {
+  void while_loops() {
     LoopTree whileLoop = (LoopTree) rubyStatement("while 1 do\n2 end");
     assertRange(whileLoop.textRange()).hasRange(1, 0, 2, 5);
     assertTree(whileLoop.condition()).isLiteral("1");
@@ -72,7 +72,7 @@ public class LoopVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void until_loops() {
+  void until_loops() {
     LoopTree untilLoop = (LoopTree) rubyStatement("until 1 do\n2 end");
     assertRange(untilLoop.textRange()).hasRange(1, 0, 2, 5);
     assertTree(untilLoop.condition()).isLiteral("1");
@@ -111,7 +111,7 @@ public class LoopVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void for_loops() {
+  void for_loops() {
     LoopTree forLoop1 = (LoopTree) rubyStatement("for x in [1] do\n 1 end");
     assertRange(forLoop1.textRange()).hasRange(1, 0, 2, 6);
     assertTree(forLoop1.condition()).isInstanceOf(NativeTree.class);
@@ -125,7 +125,7 @@ public class LoopVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void until_while_are_not_equivalent() {
+  void until_while_are_not_equivalent() {
     LoopTree untilLoop = (LoopTree) rubyStatement("2 until 1");
 
     assertTree(untilLoop).isEquivalentTo(rubyStatement("2 until 1"));

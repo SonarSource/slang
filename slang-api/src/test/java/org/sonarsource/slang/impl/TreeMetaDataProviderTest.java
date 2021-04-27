@@ -25,7 +25,7 @@ import org.sonarsource.slang.api.Annotation;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.Token;
 import java.util.Arrays;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.TreeMetaData;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -34,10 +34,10 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TreeMetaDataProviderTest {
+class TreeMetaDataProviderTest {
 
   @Test
-  public void commentsInside() {
+  void commentsInside() {
     Comment comment = new CommentImpl("// comment1", "comment1", range(2, 5, 2, 12), range(2, 7, 2, 12));
     TreeMetaDataProvider provider = new TreeMetaDataProvider(singletonList(comment), emptyList());
     assertThat(provider.allComments()).hasSize(1);
@@ -47,7 +47,7 @@ public class TreeMetaDataProviderTest {
   }
 
   @Test
-  public void single_annotation() {
+  void single_annotation() {
     Annotation annotation = new AnnotationImpl("MyAnnotation", emptyList(), range(2, 5, 2, 13));
     Token token1 = new TokenImpl(new TextRangeImpl(2, 5, 2, 6), "@", Token.Type.OTHER);
     Token token2 = new TokenImpl(new TextRangeImpl(2, 6, 2, 13), "MyAnnotation", Token.Type.OTHER);
@@ -61,7 +61,7 @@ public class TreeMetaDataProviderTest {
   }
 
   @Test
-  public void multiple_annotations() {
+  void multiple_annotations() {
     Annotation annotation1 = new AnnotationImpl("MyAnnotation", emptyList(), range(2, 5, 2, 13));
     Token token1 = new TokenImpl(new TextRangeImpl(2, 5, 2, 6), "@", Token.Type.OTHER);
     Token token2 = new TokenImpl(new TextRangeImpl(2, 6, 2, 13), "MyAnnotation", Token.Type.OTHER);
@@ -100,7 +100,7 @@ public class TreeMetaDataProviderTest {
   }
 
   @Test
-  public void annotations_are_cached() {
+  void annotations_are_cached() {
     Annotation annotation = new AnnotationImpl("MyAnnotation", emptyList(), range(2, 5, 2, 13));
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), emptyList(), singletonList(annotation));
     TreeMetaData metaData = provider.metaData(new TextRangeImpl(2, 5, 2, 13));
@@ -110,7 +110,7 @@ public class TreeMetaDataProviderTest {
   }
 
   @Test
-  public void tokens() {
+  void tokens() {
     Token token1 = new TokenImpl(new TextRangeImpl(1, 3, 1, 6), "abc", Token.Type.OTHER);
     Token token2 = new TokenImpl(new TextRangeImpl(1, 9, 1, 12), "abc", Token.Type.OTHER);
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2));
@@ -121,7 +121,7 @@ public class TreeMetaDataProviderTest {
   }
 
   @Test
-  public void lines_of_code() {
+  void lines_of_code() {
     Token token1 = new TokenImpl(new TextRangeImpl(1, 3, 1, 6), "abc", Token.Type.OTHER);
     Token token2 = new TokenImpl(new TextRangeImpl(1, 9, 1, 12), "def", Token.Type.OTHER);
     Token token3 = new TokenImpl(new TextRangeImpl(2, 1, 2, 4), "abc", Token.Type.OTHER);
@@ -137,7 +137,7 @@ public class TreeMetaDataProviderTest {
   }
 
   @Test
-  public void keyword() {
+  void keyword() {
     Token token1 = new TokenImpl(range(1, 1, 1, 3), "ab", Token.Type.KEYWORD);
     Token token2 = new TokenImpl(range(1, 4, 1, 6), "cd", Token.Type.KEYWORD);
     Token token3 = new TokenImpl(range(1, 6, 1, 7), "{",  Token.Type.OTHER);
@@ -154,7 +154,7 @@ public class TreeMetaDataProviderTest {
   }
 
   @Test
-  public void all_tokens() {
+  void all_tokens() {
     Token token1 = new TokenImpl(range(1, 1, 1, 3), "ab", Token.Type.KEYWORD);
     Token token2 = new TokenImpl(range(1, 4, 1, 6), "cd", Token.Type.KEYWORD);
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2));
@@ -165,7 +165,7 @@ public class TreeMetaDataProviderTest {
   }
 
   @Test
-  public void index_of_first_token() {
+  void index_of_first_token() {
     Token token1 = new TokenImpl(range(1, 1, 1, 3), "ab", Token.Type.KEYWORD);
     Token token2 = new TokenImpl(range(1, 4, 1, 6), "cd", Token.Type.KEYWORD);
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2));
@@ -183,7 +183,7 @@ public class TreeMetaDataProviderTest {
   }
 
   @Test
-  public void first_token() {
+  void first_token() {
     Token token1 = new TokenImpl(range(1, 1, 1, 3), "ab", Token.Type.KEYWORD);
     Token token2 = new TokenImpl(range(1, 4, 1, 6), "cd", Token.Type.KEYWORD);
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2));
@@ -194,7 +194,7 @@ public class TreeMetaDataProviderTest {
   }
 
   @Test
-  public void previous_token() {
+  void previous_token() {
     Token token1 = new TokenImpl(range(1, 1, 1, 3), "ab", Token.Type.KEYWORD);
     Token token2 = new TokenImpl(range(1, 4, 1, 6), "cd", Token.Type.KEYWORD);
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2));
@@ -206,7 +206,7 @@ public class TreeMetaDataProviderTest {
   }
 
   @Test
-  public void previous_token_with_expected_value() {
+  void previous_token_with_expected_value() {
     Token token1 = new TokenImpl(range(1, 1, 1, 3), "ab", Token.Type.KEYWORD);
     Token token2 = new TokenImpl(range(1, 4, 1, 6), "cd", Token.Type.KEYWORD);
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2));
@@ -220,7 +220,7 @@ public class TreeMetaDataProviderTest {
   }
 
   @Test
-  public void update_token_type() {
+  void update_token_type() {
     Token token1 = new TokenImpl(range(1, 1, 1, 3), "ab", Token.Type.OTHER);
     Token token2 = new TokenImpl(range(1, 4, 1, 6), "cd", Token.Type.OTHER);
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2));
@@ -234,7 +234,7 @@ public class TreeMetaDataProviderTest {
   }
 
   @Test
-  public void error_when_updating_token_type() {
+  void error_when_updating_token_type() {
     Token token1 = new TokenImpl(range(1, 1, 1, 3), "ab", Token.Type.OTHER);
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1));
 

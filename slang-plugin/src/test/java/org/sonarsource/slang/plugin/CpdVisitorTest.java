@@ -22,7 +22,8 @@ package org.sonarsource.slang.plugin;
 import java.io.File;
 import java.util.List;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.junit.rules.TemporaryFolder;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
@@ -33,13 +34,14 @@ import org.sonarsource.slang.parser.SLangConverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CpdVisitorTest {
+@EnableRuleMigrationSupport
+class CpdVisitorTest {
 
   @Rule
   public TemporaryFolder tempFolder = new TemporaryFolder();
 
   @Test
-  public void test() throws Exception {
+  void test() throws Exception {
     File file = tempFolder.newFile();
     String content = "import util; foo(x\n * 42 \n+ \"abc\");";
     SensorContextTester sensorContext = SensorContextTester.create(tempFolder.getRoot());

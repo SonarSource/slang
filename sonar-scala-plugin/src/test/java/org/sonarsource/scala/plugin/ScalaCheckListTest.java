@@ -22,22 +22,22 @@ package org.sonarsource.scala.plugin;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.testing.PackageScanner;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-public class ScalaCheckListTest {
+class ScalaCheckListTest {
 
   private static final String SCALA_CHECKS_PACKAGE = "org.sonarsource.scala.checks";
 
   @Test
-  public void scala_checks_size() {
+  void scala_checks_size() {
     Assertions.assertThat(ScalaCheckList.checks().size()).isGreaterThanOrEqualTo(40);
   }
 
   @Test
-  public void scala_specific_checks_are_added_to_check_list() {
+  void scala_specific_checks_are_added_to_check_list() {
     List<String> languageImplementation = PackageScanner.findSlangChecksInPackage(SCALA_CHECKS_PACKAGE);
 
     List<String> checkListNames = ScalaCheckList.checks().stream().map(Class::getName).collect(Collectors.toList());
@@ -51,7 +51,7 @@ public class ScalaCheckListTest {
   }
 
   @Test
-  public void scala_excluded_not_present() {
+  void scala_excluded_not_present() {
     List<Class<?>> checks = ScalaCheckList.checks();
     for (Class excluded : ScalaCheckList.SCALA_CHECK_BLACK_LIST) {
       assertThat(checks).doesNotContain(excluded);
@@ -59,7 +59,7 @@ public class ScalaCheckListTest {
   }
 
   @Test
-  public void scala_included_are_present() {
+  void scala_included_are_present() {
     List<Class<?>> checks = ScalaCheckList.checks();
     for (Class specificCheck : ScalaCheckList.SCALA_LANGUAGE_SPECIFIC_CHECKS) {
       assertThat(checks).contains(specificCheck);

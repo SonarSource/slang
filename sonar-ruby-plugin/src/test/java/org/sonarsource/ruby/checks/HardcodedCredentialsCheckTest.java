@@ -19,13 +19,13 @@
  */
 package org.sonarsource.ruby.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.checks.HardcodedCredentialsCheck;
 
-public class HardcodedCredentialsCheckTest {
+class HardcodedCredentialsCheckTest {
 
   @Test
-  public void test(){
+  void test(){
     RubyVerifier.verify("HardcodedCredentials.rb", new HardcodedCredentialsCheck());
   }
 

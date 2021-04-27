@@ -25,14 +25,14 @@ import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
 import java.util.Collections;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MatchTreeImplTest {
+class MatchTreeImplTest {
 
   @Test
-  public void test() {
+  void test() {
     TreeMetaData meta = null;
     Tree expression = new IdentifierTreeImpl(null, "x");
     MatchCaseTree case1 = new MatchCaseTreeImpl(null, null, new LiteralTreeImpl(meta, "42"));
@@ -45,7 +45,7 @@ public class MatchTreeImplTest {
   }
 
   @Test
-  public void without_expression() {
+  void without_expression() {
     TreeMetaData meta = null;
     MatchCaseTree case1 = new MatchCaseTreeImpl(null, null, new LiteralTreeImpl(meta, "42"));
     Token keywordToken = new TokenImpl(new TextRangeImpl(1,0,1,20), "match", Token.Type.KEYWORD);

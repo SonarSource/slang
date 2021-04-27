@@ -21,7 +21,7 @@ package org.sonarsource.ruby.converter.visitor;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.CatchTree;
 import org.sonarsource.slang.api.Comment;
@@ -34,10 +34,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class ExceptionHandlingVisitorTest extends AbstractRubyConverterTest {
+class ExceptionHandlingVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void begin_rescue_else_ensure() {
+  void begin_rescue_else_ensure() {
     ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) rubyStatement("" +
       "begin\n" +
       "  1\n" +
@@ -81,7 +81,7 @@ public class ExceptionHandlingVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void implicit_rescue_not_mapped() {
+  void implicit_rescue_not_mapped() {
     Tree tree = rubyStatement("" +
       "def foo\n" +
       "  1\n" +
@@ -116,14 +116,14 @@ public class ExceptionHandlingVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void inline_rescue_not_mapped() {
+  void inline_rescue_not_mapped() {
     Tree tree = rubyStatement("begin; i = raise rescue nil; end;");
     assertThat(tree.descendants().anyMatch(ExceptionHandlingTree.class::isInstance)).isFalse();
     assertThat(tree.descendants().anyMatch(CatchTree.class::isInstance)).isFalse();
   }
 
   @Test
-  public void empty_blocks_with_comments() {
+  void empty_blocks_with_comments() {
     ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) rubyStatement("" +
       "begin\n" +
       "  # comment 0\n" +
@@ -165,7 +165,7 @@ public class ExceptionHandlingVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void only_ensure_block() {
+  void only_ensure_block() {
     ExceptionHandlingTree exceptionHandlingTree = (ExceptionHandlingTree) rubyStatement("" +
       "begin\n" +
       "  ensure\n" +

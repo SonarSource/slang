@@ -19,12 +19,12 @@
  */
 package org.sonarsource.ruby.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class UnusedLocalVariableRubyCheckTest {
+class UnusedLocalVariableRubyCheckTest {
 
   @Test
-  public void test(){
+  void test(){
     RubyVerifier.verify("UnusedLocalVariable.rb", new UnusedLocalVariableRubyCheck());
   }
 

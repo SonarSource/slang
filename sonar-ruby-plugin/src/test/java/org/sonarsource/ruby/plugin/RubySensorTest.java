@@ -20,7 +20,8 @@
 package org.sonarsource.ruby.plugin;
 
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
 import org.sonar.api.batch.rule.CheckFactory;
@@ -32,10 +33,10 @@ import org.sonarsource.slang.testing.AbstractSensorTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RubySensorTest extends AbstractSensorTest {
+class RubySensorTest extends AbstractSensorTest {
 
   @Test
-  public void simple_file() {
+  void simple_file() {
     InputFile inputFile = createInputFile("file1.rb", "" +
       "class C\nend\nputs '1 == 1'; puts 'abc'\n");
     context.fileSystem().add(inputFile);
@@ -48,7 +49,7 @@ public class RubySensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_fail_parsing() {
+  void test_fail_parsing() {
     InputFile inputFile = createInputFile("file1.rb", "{ <!REDECLARATION!>FOO<!>,<!REDECLARATION!>FOO<!> }");
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("S1764");

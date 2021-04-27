@@ -19,7 +19,7 @@
  */
 package org.sonarsource.ruby.converter.impl;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.CatchTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.impl.CatchTreeImpl;
@@ -31,10 +31,10 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class RubyPartialExceptionHandlingTreeTest {
+class RubyPartialExceptionHandlingTreeTest {
 
   @Test
-  public void test() {
+  void test() {
     Tree tryBlock = new LiteralTreeImpl(null, "1");
     Tree catchBlock = new LiteralTreeImpl(null, "2");
     CatchTree catchTree = new CatchTreeImpl(null, null, catchBlock, null);

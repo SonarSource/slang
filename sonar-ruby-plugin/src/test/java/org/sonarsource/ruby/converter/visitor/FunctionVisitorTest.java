@@ -20,7 +20,7 @@
 package org.sonarsource.ruby.converter.visitor;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.NativeTree;
@@ -29,10 +29,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class FunctionVisitorTest extends AbstractRubyConverterTest {
+class FunctionVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void simple_function() {
+  void simple_function() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo(p)\n puts 'hello'\nend");
     assertTree(tree.name()).isIdentifier("foo");
     assertThat(tree.isConstructor()).isFalse();
@@ -47,14 +47,14 @@ public class FunctionVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void constructor() {
+  void constructor() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def initialize(p)\n puts p\nend");
     assertTree(tree.name()).isIdentifier("initialize");
     assertThat(tree.isConstructor()).isTrue();
   }
 
   @Test
-  public void function_without_arguments() {
+  void function_without_arguments() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def foo; end");
     assertTree(tree.name()).isIdentifier("foo");
     assertThat(tree.modifiers()).isEmpty();
@@ -67,7 +67,7 @@ public class FunctionVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void singleton_method() {
+  void singleton_method() {
     FunctionDeclarationTree tree = (FunctionDeclarationTree) rubyStatement("def a.foo\n puts 'hello'\n puts 'hello'\nend");
     assertTree(tree.name()).isIdentifier("foo");
     assertThat(tree.modifiers()).isEmpty();

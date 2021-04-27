@@ -20,7 +20,8 @@
 package org.sonarsource.kotlin.plugin;
 
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
 import org.sonar.api.batch.rule.CheckFactory;
@@ -36,10 +37,10 @@ import org.sonarsource.slang.testing.AbstractSensorTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TextRangeAssert.assertTextRange;
 
-public class KotlinSensorTest extends AbstractSensorTest {
+class KotlinSensorTest extends AbstractSensorTest {
 
   @Test
-  public void test_one_rule() {
+  void test_one_rule() {
     InputFile inputFile = createInputFile("file1.kt", "" +
       "fun main(args: Array<String>) {\nprint (1 == 1);}");
     context.fileSystem().add(inputFile);
@@ -56,7 +57,7 @@ public class KotlinSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_commented_code() {
+  void test_commented_code() {
     InputFile inputFile = createInputFile("file1.kt", "" +
       "fun main(args: Array<String>) {\n" +
       "//fun foo () { if (true) {print(\"string literal\");}}\n" +
@@ -82,7 +83,7 @@ public class KotlinSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void simple_file() {
+  void simple_file() {
     InputFile inputFile = createInputFile("file1.kt", "" +
       "fun main(args: Array<String>) {\nprint (1 == 1); print(\"abc\"); }\ndata class A(val a: Int)");
     context.fileSystem().add(inputFile);
@@ -101,7 +102,7 @@ public class KotlinSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_issue_suppression() {
+  void test_issue_suppression() {
     InputFile inputFile = createInputFile("file1.kt", "" +
       "@SuppressWarnings(\"kotlin:S1764\")\n" +
       "fun main() {\nprint (1 == 1);}\n" +
@@ -115,7 +116,7 @@ public class KotlinSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_issue_not_suppressed() {
+  void test_issue_not_suppressed() {
     InputFile inputFile = createInputFile("file1.kt", "" +
       "@SuppressWarnings(\"S1764\")\n" +
       "fun main() {\nprint (1 == 1);}\n" +
@@ -129,7 +130,7 @@ public class KotlinSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  public void test_fail_parsing() {
+  void test_fail_parsing() {
     InputFile inputFile = createInputFile("file1.kt", "" +
       "enum class A { <!REDECLARATION!>FOO<!>,<!REDECLARATION!>FOO<!> }");
     context.fileSystem().add(inputFile);

@@ -19,14 +19,14 @@
  */
 package org.sonarsource.scala.converter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class IdentifierTreeTest extends AbstractScalaConverterTest {
+class IdentifierTreeTest extends AbstractScalaConverterTest {
 
   @Test
-  public void identifier() {
+  void identifier() {
     assertTree(scalaStatement("var1")).isIdentifier("var1");
   }
 

@@ -19,9 +19,9 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class BooleanLiteralCheckTest {
+class BooleanLiteralCheckTest {
   @Test
-  public void test() { Verifier.verify("BooleanLiteral.slang", new BooleanLiteralCheck()); }
+  void test() { Verifier.verify("BooleanLiteral.slang", new BooleanLiteralCheck()); }
 }

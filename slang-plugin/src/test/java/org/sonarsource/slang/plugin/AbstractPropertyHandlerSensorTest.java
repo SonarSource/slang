@@ -28,9 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -43,7 +44,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class AbstractPropertyHandlerSensorTest {
+@EnableRuleMigrationSupport
+class AbstractPropertyHandlerSensorTest {
 
   private static final List<String> ANALYSIS_WARNINGS = new ArrayList<>();
   private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "propertyHandler");
@@ -51,13 +53,13 @@ public class AbstractPropertyHandlerSensorTest {
   @Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     ANALYSIS_WARNINGS.clear();
   }
 
   @Test
-  public void test_descriptor() throws Exception {
+  void test_descriptor() throws Exception {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     PropertyHandlerSensorTester sensor = new PropertyHandlerSensorTester();
     sensor.describe(sensorDescriptor);
@@ -67,7 +69,7 @@ public class AbstractPropertyHandlerSensorTest {
   }
 
   @Test
-  public void test_configuration() throws Exception {
+  void test_configuration() throws Exception {
     PropertyHandlerSensorTester sensor = new PropertyHandlerSensorTester();
     assertThat(sensor.propertyKey()).isEqualTo("propertyKey");
     assertThat(sensor.propertyName()).isEqualTo("propertyName");
@@ -75,7 +77,7 @@ public class AbstractPropertyHandlerSensorTest {
   }
 
   @Test
-  public void do_nothing_if_property_not_configured() throws Exception {
+  void do_nothing_if_property_not_configured() throws Exception {
     SensorContextTester context = createContext(PROJECT_DIR);
     PropertyHandlerSensorTester sensor = new PropertyHandlerSensorTester();
     sensor.execute(context);
@@ -85,7 +87,7 @@ public class AbstractPropertyHandlerSensorTest {
   }
 
   @Test
-  public void report_issue_if_file_missing() throws Exception {
+  void report_issue_if_file_missing() throws Exception {
     SensorContextTester context = createContext(PROJECT_DIR);
     PropertyHandlerSensorTester sensor = new PropertyHandlerSensorTester();
     context.settings().setProperty("sonar.configuration.key", "missing-file1.txt,missing-file2.txt,dummyReport.txt,missing-file3.txt");

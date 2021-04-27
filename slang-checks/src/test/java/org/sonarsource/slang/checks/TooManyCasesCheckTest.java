@@ -19,20 +19,20 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TooManyCasesCheckTest {
+class TooManyCasesCheckTest {
 
   private TooManyCasesCheck check = new TooManyCasesCheck();
 
   @Test
-  public void test_3() {
+  void test_3() {
     check.maximum = 3;
     Verifier.verify("TooManyCases_3.slang", check);
   }
 
   @Test
-  public void test_4() {
+  void test_4() {
     check.maximum = 4;
     Verifier.verify("TooManyCases_4.slang", check);
   }

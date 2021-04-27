@@ -20,7 +20,7 @@
 package org.sonarsource.ruby.converter.visitor;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.ruby.converter.AbstractRubyConverterTest;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.NativeTree;
@@ -29,10 +29,10 @@ import org.sonarsource.slang.api.Tree;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class ClassVisitorTest extends AbstractRubyConverterTest {
+class ClassVisitorTest extends AbstractRubyConverterTest {
 
   @Test
-  public void simple_class() {
+  void simple_class() {
     ClassDeclarationTree tree = (ClassDeclarationTree) rubyStatement("class A\ndef foo()\nend\nend");
     assertTree(tree.identifier()).isIdentifier("A");
     NativeTree nativeClassTree = (NativeTree) tree.children().get(0);
@@ -42,7 +42,7 @@ public class ClassVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void complex_class() {
+  void complex_class() {
     ClassDeclarationTree tree = (ClassDeclarationTree) rubyStatement("class A < B::C\ndef foo()\nend\nend");
     assertTree(tree.identifier()).isIdentifier("A");
     NativeTree nativeClassTree = (NativeTree) tree.children().get(0);
@@ -52,7 +52,7 @@ public class ClassVisitorTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void namespaced_name() {
+  void namespaced_name() {
     ClassDeclarationTree tree = (ClassDeclarationTree) rubyStatement("class A::B\nend");
     assertTree(tree.identifier()).isIdentifier("B");
     Tree nativeClassTree = tree.children().get(0);

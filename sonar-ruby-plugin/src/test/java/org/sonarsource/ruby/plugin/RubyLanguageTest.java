@@ -19,21 +19,21 @@
  */
 package org.sonarsource.ruby.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.config.internal.MapSettings;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class RubyLanguageTest {
+class RubyLanguageTest {
 
   @Test
-  public void test_suffixes_default() {
+  void test_suffixes_default() {
     RubyLanguage rubyLanguage = new RubyLanguage(new MapSettings().asConfig());
     assertThat(rubyLanguage.getFileSuffixes()).containsExactly(".rb");
   }
 
   @Test
-  public void test_suffixes_empty() {
+  void test_suffixes_empty() {
     RubyLanguage rubyLanguage = new RubyLanguage(new MapSettings().setProperty(RubyPlugin.RUBY_FILE_SUFFIXES_KEY, "").asConfig());
     assertThat(rubyLanguage.getFileSuffixes()).containsExactly(".rb");
   }

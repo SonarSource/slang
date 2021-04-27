@@ -26,7 +26,7 @@ import org.assertj.core.api.Condition;
 import org.jruby.Ruby;
 import org.jruby.RubyRuntimeAdapter;
 import org.jruby.exceptions.StandardError;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.IdentifierTree;
@@ -58,10 +58,10 @@ import static org.sonarsource.slang.testing.RangeAssert.assertRange;
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 import static org.sonarsource.slang.testing.TreesAssert.assertTrees;
 
-public class RubyConverterTest extends AbstractRubyConverterTest {
+class RubyConverterTest extends AbstractRubyConverterTest {
 
   @Test
-  public void syntax_exception() {
+  void syntax_exception() {
     Condition<ParseException> hasCorrectPosition = new Condition<>(e ->
       e.getPosition() != null && e.getPosition().line() == 2 && e.getPosition().lineOffset() == 0, "");
     assertThatThrownBy(() -> converter.parse("true\nend"))
@@ -71,7 +71,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void parser_error() {
+  void parser_error() {
     RubyConverter rubyConverter = spy(new RubyConverter());
     doReturn(null).when(rubyConverter).invokeMethod(any(), any(), any());
     assertThatThrownBy(() -> rubyConverter.parse("true;"))
@@ -81,7 +81,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void parser_runtime_exception() {
+  void parser_runtime_exception() {
     RubyConverter rubyConverter = spy(new RubyConverter());
     doThrow(new RuntimeException("Runtime exception message")).when(rubyConverter).parseContent(any());
     assertThatThrownBy(() -> rubyConverter.parse(""))
@@ -91,14 +91,14 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void error_location_method_exception() {
+  void error_location_method_exception() {
     TextPointer errorLocation1 = converter.getErrorLocation(mock(StandardError.class));
     assertThat(errorLocation1).isNull();
     assertThat(logTester.logs()).contains("No location information available for parse error");
   }
 
   @Test
-  public void error_location_null_result() {
+  void error_location_null_result() {
     RubyConverter rubyConverter = spy(new RubyConverter());
     doReturn(null).when(rubyConverter).invokeMethod(any(), any(), any());
     TextPointer errorLocation2 = rubyConverter.getErrorLocation(mock(StandardError.class));
@@ -108,7 +108,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void initialization_error() {
+  void initialization_error() {
     RubyRuntimeAdapter mockedAdapter = mock(RubyRuntimeAdapter.class);
     when(mockedAdapter.eval(any(Ruby.class), any(String.class))).thenAnswer(invocationOnMock -> {
       throw new IOException();
@@ -119,18 +119,18 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void empty() {
+  void empty() {
     assertThatThrownBy(() -> converter.parse(""))
       .hasMessage("No AST node found");
   }
 
   @Test
-  public void invalid_escape_sequence() {
+  void invalid_escape_sequence() {
     assertThat(converter.parse("\"\\xff\"")).isNotNull();
   }
 
   @Test
-  public void ranges() {
+  void ranges() {
     Tree topLevelTree = converter.parse("2; abc; 4\n2431323");
     assertTree(topLevelTree).hasTextRange(1, 0, 2, 7);
     Tree nativeAllInstructionsTree = topLevelTree.children().get(0);
@@ -153,7 +153,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void comments() {
+  void comments() {
     TopLevelTree tree = (TopLevelTree) converter.parse("#start comment\n" +
       "require 'stuff'\n" +
       "a = 2 && 1\n" +
@@ -185,7 +185,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void multiline_comments() throws Exception {
+  void multiline_comments() throws Exception {
     assertComment("=begin\ncomment content\n=end\n", "=begin\ncomment content\n=end", "comment content",
       TextRanges.range(1, 0, 3, 4),
       TextRanges.range(2, 0, 2, 15));
@@ -208,7 +208,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void ast() {
+  void ast() {
     List<Tree> tree = rubyStatements("require 'stuff'\n" +
       "a = 2 && 1.0");
     Tree stringLiteral = stringLiteral("'stuff'", "stuff");
@@ -223,7 +223,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void tokens() {
+  void tokens() {
     Tree tree = converter.parse("# line comment\n" +
       "if a == 1\n" +
       "  a = \"ABC\"\n" +
@@ -238,7 +238,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   
   // Since 2.6 version
   @Test
-  public void yieldSelf() {
+  void yieldSelf() {
     Tree tree = converter.parse("class MyClass\n" +
       "  def some_method\n" +
       "    @path.yield_self(&File.method(:read)).yield_self(&Parser.method(:new)) ...\n" +
@@ -252,7 +252,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
 
   // Since 2.6 version
   @Test
-  public void endless() {
+  void endless() {
     Tree tree = converter.parse("(1..).each {|index| }");
 
     List<Token> tokens = tree.metaData().tokens();
@@ -263,7 +263,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
 
   // Since 2.6 version
   @Test
-  public void composition() {
+  void composition() {
     Tree tree = converter.parse("f = proc{|x| x + 2}\n" +
       "g = proc{|x| x * 3}\n" +
       "(f << g).call(3)\n" +
@@ -276,7 +276,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
 
   // Since 2.7 version
   @Test
-  public void beginless() {
+  void beginless() {
     Tree tree = converter.parse("ary[..3]\n" +
       "rel.where(sales: ..100)\n");
 
@@ -298,7 +298,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   // Since 3.0 version
   
   @Test
-  public void inReturnsFalse() {
+  void inReturnsFalse() {
     Tree tree = converter.parse("0 in 1");
 
     List<Token> tokens = tree.metaData().tokens();
@@ -308,7 +308,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void endlessMethodDef() {
+  void endlessMethodDef() {
     Tree tree = converter.parse("def square(x) = x * x");
 
     List<Token> tokens = tree.metaData().tokens();
@@ -318,7 +318,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
   
   @Test
-  public void ractor() {
+  void ractor() {
     Tree tree = converter.parse("def tarai(x, y, z) =\n" +
       "  x <= y ? y : tarai(tarai(x-1, y, z),\n" +
       "                     tarai(y-1, z, x),\n" +
@@ -342,7 +342,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
   
   @Test
-  public void fiberScheduler() {
+  void fiberScheduler() {
     Tree tree = converter.parse("require 'async'\n" +
       "require 'net/http'\n" +
       "require 'uri'\n" +
@@ -361,7 +361,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
   
   @Test
-  public void onelinePatternMatching() {
+  void onelinePatternMatching() {
     Tree tree = converter.parse("0 => a\n" +
       "p a #=> 0\n" +
       "\n" +
@@ -374,7 +374,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
   
   @Test
-  public void findPattern() {
+  void findPattern() {
     Tree tree = converter.parse("case [\"a\", 1, \"b\", \"c\", 2, \"d\", \"e\", \"f\", 3]\n" +
       "in [*pre, String => x, String => y, *post]\n" +
       "  p pre  #=> [\"a\", 1]\n" +
@@ -389,7 +389,7 @@ public class RubyConverterTest extends AbstractRubyConverterTest {
   }
 
   @Test
-  public void hashExcept() {
+  void hashExcept() {
     Tree tree = converter.parse("h = { a: 1, b: 2, c: 3 }\n" +
       "p h.except(:a) #=> {:b=>2, :c=>3}");
 

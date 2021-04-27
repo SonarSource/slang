@@ -19,27 +19,27 @@
  */
 package org.sonarsource.scala.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.config.internal.MapSettings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ScalaLanguageTest {
+class ScalaLanguageTest {
 
   @Test
-  public void test_suffixes_default() {
+  void test_suffixes_default() {
     ScalaLanguage scalaLanguage = new ScalaLanguage(new MapSettings().asConfig());
     assertThat(scalaLanguage.getFileSuffixes()).containsExactly(".scala");
   }
 
   @Test
-  public void test_suffixes_empty() {
+  void test_suffixes_empty() {
     ScalaLanguage scalaLanguage = new ScalaLanguage(new MapSettings().setProperty(ScalaPlugin.SCALA_FILE_SUFFIXES_KEY, "").asConfig());
     assertThat(scalaLanguage.getFileSuffixes()).containsExactly(".scala");
   }
 
   @Test
-  public void test_suffixes_custom() {
+  void test_suffixes_custom() {
     ScalaLanguage scalaLanguage = new ScalaLanguage(new MapSettings().setProperty(ScalaPlugin.SCALA_FILE_SUFFIXES_KEY, ".custom").asConfig());
     assertThat(scalaLanguage.getFileSuffixes()).containsExactly(".custom");
   }

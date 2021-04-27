@@ -19,27 +19,27 @@
  */
 package org.sonarsource.scala.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class UnusedPrivateMethodScalaCheckTest {
+class UnusedPrivateMethodScalaCheckTest {
 
   @Test
-  public void test_with_companion_object() {
+  void test_with_companion_object() {
     ScalaVerifier.verify("UnusedPrivateMethodScala.scala", new UnusedPrivateMethodScalaCheck());
   }
 
   @Test
-  public void test() {
+  void test() {
     ScalaVerifier.verify("UnusedPrivateMethodScala.NoCompanion.scala", new UnusedPrivateMethodScalaCheck());
   }
 
   @Test
-  public void test_inner_class() {
+  void test_inner_class() {
     ScalaVerifier.verify("UnusedPrivateMethodScala.InnerClass.scala", new UnusedPrivateMethodScalaCheck());
   }
 
   @Test
-  public void test_class_in_package() {
+  void test_class_in_package() {
     ScalaVerifier.verify("UnusedPrivateMethodScala.Package.scala", new UnusedPrivateMethodScalaCheck());
   }
 }

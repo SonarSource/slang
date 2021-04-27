@@ -19,18 +19,18 @@
  */
 package org.sonar.go.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.config.internal.MapSettings;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GoExclusionsFileFilterTest {
+class GoExclusionsFileFilterTest {
 
   @Test
-  public void should_exclude_vendor_dir() throws Exception {
+  void should_exclude_vendor_dir() throws Exception {
     MapSettings settings = new MapSettings();
     settings.setProperty(GoPlugin.EXCLUSIONS_KEY, GoPlugin.EXCLUSIONS_DEFAULT_VALUE);
     GoExclusionsFileFilter filter = new GoExclusionsFileFilter(settings.asConfig());
@@ -41,7 +41,7 @@ public class GoExclusionsFileFilterTest {
   }
 
   @Test
-  public void should_exclude_only_go() throws Exception {
+  void should_exclude_only_go() throws Exception {
     MapSettings settings = new MapSettings();
     settings.setProperty(GoPlugin.EXCLUSIONS_KEY, GoPlugin.EXCLUSIONS_DEFAULT_VALUE);
     GoExclusionsFileFilter filter = new GoExclusionsFileFilter(settings.asConfig());
@@ -50,7 +50,7 @@ public class GoExclusionsFileFilterTest {
   }
 
   @Test
-  public void should_include_vendor_when_property_is_overridden() throws Exception {
+  void should_include_vendor_when_property_is_overridden() throws Exception {
     MapSettings settings = new MapSettings();
 
     settings.setProperty(GoPlugin.EXCLUSIONS_KEY, "");
@@ -63,7 +63,7 @@ public class GoExclusionsFileFilterTest {
   }
 
   @Test
-  public void should_exclude_using_custom_path_regex() throws Exception {
+  void should_exclude_using_custom_path_regex() throws Exception {
     MapSettings settings = new MapSettings();
 
     settings.setProperty(GoPlugin.EXCLUSIONS_KEY, "**/lib/**");
@@ -76,7 +76,7 @@ public class GoExclusionsFileFilterTest {
   }
 
   @Test
-  public void should_ignore_empty_path_regex() throws Exception {
+  void should_ignore_empty_path_regex() throws Exception {
     MapSettings settings = new MapSettings();
     settings.setProperty(GoPlugin.EXCLUSIONS_KEY, "," + GoPlugin.EXCLUSIONS_DEFAULT_VALUE + ",");
     GoExclusionsFileFilter filter = new GoExclusionsFileFilter(settings.asConfig());

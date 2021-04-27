@@ -19,12 +19,12 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class IdenticalBinaryOperandCheckTest {
+class IdenticalBinaryOperandCheckTest {
 
   @Test
-  public void test() {
+  void test() {
     Verifier.verify("IdenticalBinaryOperand.slang", new IdenticalBinaryOperandCheck());
   }
 

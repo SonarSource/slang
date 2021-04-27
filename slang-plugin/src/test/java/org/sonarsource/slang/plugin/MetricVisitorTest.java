@@ -23,9 +23,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.junit.rules.TemporaryFolder;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
@@ -42,7 +43,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class MetricVisitorTest {
+@EnableRuleMigrationSupport
+class MetricVisitorTest {
 
   private NoSonarFilter mockNoSonarFilter;
   private SLangConverter parser = new SLangConverter();
@@ -53,8 +55,8 @@ public class MetricVisitorTest {
   @Rule
   public TemporaryFolder tempFolder = new TemporaryFolder();
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     sensorContext = SensorContextTester.create(tempFolder.getRoot());
     FileLinesContext mockFileLinesContext = mock(FileLinesContext.class);
     FileLinesContextFactory mockFileLinesContextFactory = mock(FileLinesContextFactory.class);
@@ -64,7 +66,7 @@ public class MetricVisitorTest {
   }
 
   @Test
-  public void emptySource() throws Exception {
+  void emptySource() throws Exception {
     scan("");
     assertThat(visitor.linesOfCode()).isEmpty();
     assertThat(visitor.commentLines()).isEmpty();
@@ -73,7 +75,7 @@ public class MetricVisitorTest {
   }
 
   @Test
-  public void linesOfCode() throws Exception {
+  void linesOfCode() throws Exception {
     scan("" +
       "x + 1;\n" +
       "// comment\n" +
@@ -83,7 +85,7 @@ public class MetricVisitorTest {
   }
 
   @Test
-  public void commentLines() throws Exception {
+  void commentLines() throws Exception {
     scan("" +
       "x + 1;\n" +
       "// comment\n" +
@@ -93,7 +95,7 @@ public class MetricVisitorTest {
   }
 
   @Test
-  public void multiLineComment() throws Exception {
+  void multiLineComment() throws Exception {
     scan("" +
       "/*start\n" +
       "x + 1\n" +
@@ -103,7 +105,7 @@ public class MetricVisitorTest {
   }
 
   @Test
-  public void nosonarLines() throws Exception {
+  void nosonarLines() throws Exception {
     scan("" +
       "x + 1;\n" +
       "// NOSONAR comment\n" +
@@ -116,7 +118,7 @@ public class MetricVisitorTest {
   }
 
   @Test
-  public void functions() throws Exception {
+  void functions() throws Exception {
     scan("" +
       "x + 1;\n" +
       "x = true || false;");
@@ -131,7 +133,7 @@ public class MetricVisitorTest {
   }
 
   @Test
-  public void classes() throws Exception {
+  void classes() throws Exception {
     scan("" +
             "x + 1;\n" +
             "x = true || false;");
@@ -147,7 +149,7 @@ public class MetricVisitorTest {
   }
 
   @Test
-  public void cognitiveComplexity() throws Exception {
+  void cognitiveComplexity() throws Exception {
     scan("" +
       "class A { fun foo() { if(1 != 1) 1; } }" + // +1 for 'if'
       "fun function() {" +
@@ -170,7 +172,7 @@ public class MetricVisitorTest {
   }
 
   @Test
-  public void executable_lines() throws Exception {
+  void executable_lines() throws Exception {
     scan("" +
       "package abc;\n" +
       "import x;\n" +

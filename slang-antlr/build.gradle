@@ -5,7 +5,9 @@ dependencies {
     implementation project(':slang-api')
     implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
     testImplementation project(':slang-testing')
-    testImplementation 'junit:junit'
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    testImplementation "org.junit.jupiter:junit-jupiter-migrationsupport"
     testImplementation 'org.assertj:assertj-core'
 }
 

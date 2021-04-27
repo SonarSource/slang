@@ -19,12 +19,12 @@
  */
 package org.sonarsource.kotlin.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class UnusedPrivateMethodKotlinCheckTest {
+class UnusedPrivateMethodKotlinCheckTest {
 
   @Test
-  public void test() {
+  void test() {
     KotlinVerifier.verify("UnusedPrivateMethodKotlin.kt", new UnusedPrivateMethodKotlinCheck());
   }
 

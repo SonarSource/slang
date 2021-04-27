@@ -19,16 +19,16 @@
  */
 package org.sonarsource.scala.externalreport.scalastyle;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ScalastyleRulesDefinitionTest {
+class ScalastyleRulesDefinitionTest {
 
   @Test
-  public void scalastyle_external_repository() {
+  void scalastyle_external_repository() {
     RulesDefinition.Context context = new RulesDefinition.Context();
     ScalastyleRulesDefinition rulesDefinition = new ScalastyleRulesDefinition();
     rulesDefinition.define(context);

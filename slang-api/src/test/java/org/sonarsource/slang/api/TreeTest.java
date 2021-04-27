@@ -21,7 +21,7 @@ package org.sonarsource.slang.api;
 
 import java.util.Arrays;
 import java.util.Collections;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.sonarsource.slang.api.BinaryExpressionTree.Operator.EQUAL_TO;
 import static org.sonarsource.slang.utils.TreeCreationUtils.assignment;
@@ -34,13 +34,13 @@ import static org.sonarsource.slang.utils.TreeCreationUtils.simpleNative;
 import static org.sonarsource.slang.utils.TreeCreationUtils.topLevel;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TreeTest {
+class TreeTest {
 
   private static final NativeKind SIMPLE_KIND = new NativeKind() {
   };
 
   @Test
-  public void test() {
+  void test() {
     Tree x = identifier("x");
     Tree y = identifier("y");
     Tree z = identifier("z");

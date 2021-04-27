@@ -24,15 +24,15 @@ import org.sonarsource.slang.api.ParameterTree;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.sonarsource.slang.impl.TextRanges.range;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CatchTreeImplTest {
+class CatchTreeImplTest {
 
   @Test
-  public void test() {
+  void test() {
     TreeMetaData meta = null;
     Token keyword = new TokenImpl(range(1, 2, 3, 4), "catch", Token.Type.KEYWORD);
     ParameterTree parameter = new ParameterTreeImpl(meta, new IdentifierTreeImpl(meta,"e"), null);

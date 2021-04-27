@@ -24,9 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
@@ -39,12 +40,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonar.go.externalreport.AbstractReportSensor.GENERIC_ISSUE_KEY;
 import static org.sonar.go.externalreport.ExternalLinterSensorHelper.REPORT_BASE_PATH;
 
-public class GoLintReportSensorTest {
+@EnableRuleMigrationSupport
+class GoLintReportSensorTest {
 
   private final List<String> analysisWarnings = new ArrayList<>();
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     analysisWarnings.clear();
   }
 
@@ -52,7 +54,7 @@ public class GoLintReportSensorTest {
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
-  public void test_descriptor() {
+  void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     goLintReportSensor().describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of Golint issues");
@@ -60,7 +62,7 @@ public class GoLintReportSensorTest {
   }
 
   @Test
-  public void issues_with_sonarqube() throws IOException {
+  void issues_with_sonarqube() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("golint-report.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goLintReportSensor(), context);
@@ -86,7 +88,7 @@ public class GoLintReportSensorTest {
   }
 
   @Test
-  public void no_issues_without_golint_property() throws IOException {
+  void no_issues_without_golint_property() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goLintReportSensor(), context);
     assertThat(externalIssues).isEmpty();
@@ -94,7 +96,7 @@ public class GoLintReportSensorTest {
   }
 
   @Test
-  public void no_issues_with_invalid_report_path() throws IOException {
+  void no_issues_with_invalid_report_path() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("invalid-path.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goLintReportSensor(), context);
@@ -113,7 +115,7 @@ public class GoLintReportSensorTest {
   }
 
   @Test
-  public void no_issues_with_invalid_report_line() throws IOException {
+  void no_issues_with_invalid_report_line() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("golint-report-with-error.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goLintReportSensor(), context);
@@ -124,7 +126,7 @@ public class GoLintReportSensorTest {
   }
 
   @Test
-  public void no_issues_with_invalid_report_file() throws IOException {
+  void no_issues_with_invalid_report_file() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("golint-report-with-wrong-file.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goLintReportSensor(), context);
@@ -135,7 +137,7 @@ public class GoLintReportSensorTest {
   }
 
   @Test
-  public void should_parse_golint_report_line() {
+  void should_parse_golint_report_line() {
     String line = "./vendor/github.com/foo/go-bar/hello_world.go:550:12: redundant or: n == 2 || n == 2";
     org.sonar.go.externalreport.ExternalIssue issue = goLintReportSensor().parse(line);
     assertThat(issue).isNotNull();
@@ -148,7 +150,7 @@ public class GoLintReportSensorTest {
   }
 
   @Test
-  public void should_match_golint_all_keys() throws IOException {
+  void should_match_golint_all_keys() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("all-golint-report.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goLintReportSensor(), context);
@@ -161,7 +163,7 @@ public class GoLintReportSensorTest {
   }
 
   @Test
-  public void should_match_to_generic_issue_if_match_not_found() throws IOException {
+  void should_match_to_generic_issue_if_match_not_found() throws IOException {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("golint-with-unknown-message.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goLintReportSensor(), context);

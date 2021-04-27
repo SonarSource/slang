@@ -19,7 +19,7 @@
  */
 package org.sonarsource.ruby.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.Plugin;
 import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
@@ -30,10 +30,10 @@ import org.sonar.api.utils.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RubyPluginTest {
+class RubyPluginTest {
 
   @Test
-  public void sonarqube_7_9_extensions() {
+  void sonarqube_7_9_extensions() {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 9), SonarQubeSide.SERVER, SonarEdition.COMMUNITY);
     Plugin.Context context = new Plugin.Context(runtime);
     new RubyPlugin().define(context);
@@ -41,7 +41,7 @@ public class RubyPluginTest {
   }
 
   @Test
-  public void test_sonarlint() {
+  void test_sonarlint() {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarLint(Version.create(3, 9));
     Plugin.Context context = new PluginContextImpl.Builder().setSonarRuntime(runtime).build();
     new RubyPlugin().define(context);

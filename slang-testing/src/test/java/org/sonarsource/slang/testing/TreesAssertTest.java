@@ -20,34 +20,34 @@
 package org.sonarsource.slang.testing;
 
 import org.sonarsource.slang.impl.LiteralTreeImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.sonarsource.slang.testing.TreesAssert.assertTrees;
 import static java.util.Collections.singletonList;
 
-public class TreesAssertTest {
+class TreesAssertTest {
 
   private static final LiteralTreeImpl LITERAL_42 = new LiteralTreeImpl(null, "42");
 
   @Test
-  public void equivalent_ok() {
+  void equivalent_ok() {
     assertTrees(singletonList(LITERAL_42)).isEquivalentTo(singletonList(new LiteralTreeImpl(null, "42")));
   }
 
   @Test
-  public void equivalent_failure() {
+  void equivalent_failure() {
     assertThrows(AssertionError.class,
       () -> assertTrees(singletonList(LITERAL_42)).isEquivalentTo(singletonList(new LiteralTreeImpl(null, "43"))));
   }
 
   @Test
-  public void notequivalent_ok() {
+  void notequivalent_ok() {
     assertTrees(singletonList(LITERAL_42)).isNotEquivalentTo(singletonList(new LiteralTreeImpl(null, "43")));
   }
 
   @Test
-  public void notequivalent_failure() {
+  void notequivalent_failure() {
     assertThrows(AssertionError.class,
       () -> assertTrees(singletonList(LITERAL_42)).isNotEquivalentTo(singletonList(new LiteralTreeImpl(null, "42"))));
   }

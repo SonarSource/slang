@@ -19,16 +19,16 @@
  */
 package org.sonarsource.scala.converter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.UnaryExpressionTree;
 
 import static org.sonarsource.slang.testing.TreeAssert.assertTree;
 
-public class UnaryExpressionTreeTest extends AbstractScalaConverterTest {
+class UnaryExpressionTreeTest extends AbstractScalaConverterTest {
   @Test
-  public void operators() {
+  void operators() {
     Tree unaryExpressionTree = scalaStatement("!(a == 2)");
     assertTree(unaryExpressionTree).isUnaryExpression(UnaryExpressionTree.Operator.NEGATE);
 

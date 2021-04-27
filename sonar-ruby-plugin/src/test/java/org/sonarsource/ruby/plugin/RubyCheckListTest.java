@@ -22,22 +22,22 @@ package org.sonarsource.ruby.plugin;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.testing.PackageScanner;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-public class RubyCheckListTest {
+class RubyCheckListTest {
 
   private static final String RUBY_CHECKS_PACKAGE = "org.sonarsource.ruby.checks";
 
   @Test
-  public void ruby_checks_size() {
+  void ruby_checks_size() {
     Assertions.assertThat(RubyCheckList.checks().size()).isGreaterThanOrEqualTo(40);
   }
 
   @Test
-  public void ruby_specific_checks_are_added_to_check_list() {
+  void ruby_specific_checks_are_added_to_check_list() {
     List<String> languageImplementation = PackageScanner.findSlangChecksInPackage(RUBY_CHECKS_PACKAGE);
 
     List<String> checkListNames = RubyCheckList.checks().stream().map(Class::getName).collect(Collectors.toList());
@@ -51,7 +51,7 @@ public class RubyCheckListTest {
   }
 
   @Test
-  public void ruby_excluded_not_present() {
+  void ruby_excluded_not_present() {
     List<Class<?>> checks = RubyCheckList.checks();
     for (Class excluded : RubyCheckList.RUBY_CHECK_BLACK_LIST) {
       assertThat(checks).doesNotContain(excluded);

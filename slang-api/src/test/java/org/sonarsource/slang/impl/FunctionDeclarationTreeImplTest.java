@@ -21,7 +21,7 @@ package org.sonarsource.slang.impl;
 
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.NativeKind;
@@ -39,12 +39,12 @@ import static org.sonarsource.slang.impl.TextRanges.range;
 import static org.sonarsource.slang.utils.TreeCreationUtils.identifier;
 import static org.sonarsource.slang.utils.TreeCreationUtils.simpleNative;
 
-public class FunctionDeclarationTreeImplTest {
+class FunctionDeclarationTreeImplTest {
   private static final NativeKind SIMPLE_KIND = new NativeKind() {
   };
 
   @Test
-  public void test() {
+  void test() {
     TreeMetaData meta = null;
     List<Tree> modifiers = Arrays.asList(new ModifierTreeImpl(meta, PUBLIC));
     Tree returnType = new IdentifierTreeImpl(meta, "int");
@@ -76,7 +76,7 @@ public class FunctionDeclarationTreeImplTest {
   }
 
   @Test
-  public void rangeToHighlight_with_name() {
+  void rangeToHighlight_with_name() {
     TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(emptyList(), emptyList());
     TreeMetaData nameMetaData = metaDataProvider.metaData(range(1, 2, 3, 4));
     TreeMetaData bodyMetaData = metaDataProvider.metaData(range(5, 1, 5, 7));
@@ -87,7 +87,7 @@ public class FunctionDeclarationTreeImplTest {
   }
 
   @Test
-  public void rangeToHighlight_with_body_only() {
+  void rangeToHighlight_with_body_only() {
     TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(emptyList(), Arrays.asList(
       new TokenImpl(range(5, 1, 17, 18), "{", Token.Type.OTHER),
       new TokenImpl(range(5, 1, 19, 20), "}", Token.Type.OTHER)));
@@ -98,7 +98,7 @@ public class FunctionDeclarationTreeImplTest {
   }
 
   @Test
-  public void rangeToHighlight_with_no_name_but_some_signature() {
+  void rangeToHighlight_with_no_name_but_some_signature() {
     TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(emptyList(), Arrays.asList(
       new TokenImpl(range(5, 1, 5, 10), "fun", Token.Type.KEYWORD),
       new TokenImpl(range(5, 11, 5, 15), "foo", Token.Type.OTHER),
@@ -112,7 +112,7 @@ public class FunctionDeclarationTreeImplTest {
   }
 
   @Test
-  public void rangeToHighlight_with_no_name_no_body_but_some_signature() {
+  void rangeToHighlight_with_no_name_no_body_but_some_signature() {
     TreeMetaDataProvider metaDataProvider = new TreeMetaDataProvider(emptyList(), Arrays.asList(
       new TokenImpl(range(5, 1, 5, 10), "fun", Token.Type.KEYWORD),
       new TokenImpl(range(5, 11, 5, 12), "(", Token.Type.OTHER),

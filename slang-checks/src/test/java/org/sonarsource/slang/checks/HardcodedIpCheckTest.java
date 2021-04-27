@@ -19,11 +19,11 @@
  */
 package org.sonarsource.slang.checks;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class HardcodedIpCheckTest {
+class HardcodedIpCheckTest {
   @Test
-  public void test() {
+  void test() {
     Verifier.verify("HardcodedIp.slang", new HardcodedIpCheck());
   }
 

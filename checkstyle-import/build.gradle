@@ -4,6 +4,8 @@ dependencies {
     implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
     implementation 'org.sonarsource.analyzer-commons:sonar-xml-parsing'
     testImplementation project(':slang-testing')
-    testImplementation 'junit:junit'
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    testImplementation "org.junit.jupiter:junit-jupiter-migrationsupport"
     testImplementation 'org.assertj:assertj-core'
 }
