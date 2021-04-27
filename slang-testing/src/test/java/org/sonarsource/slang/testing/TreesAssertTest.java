@@ -22,6 +22,7 @@ package org.sonarsource.slang.testing;
 import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.junit.Test;
 
+import static org.junit.Assert.assertThrows;
 import static org.sonarsource.slang.testing.TreesAssert.assertTrees;
 import static java.util.Collections.singletonList;
 
@@ -34,9 +35,10 @@ public class TreesAssertTest {
     assertTrees(singletonList(LITERAL_42)).isEquivalentTo(singletonList(new LiteralTreeImpl(null, "42")));
   }
 
-  @Test(expected = AssertionError.class)
+  @Test
   public void equivalent_failure() {
-    assertTrees(singletonList(LITERAL_42)).isEquivalentTo(singletonList(new LiteralTreeImpl(null, "43")));
+    assertThrows(AssertionError.class,
+      () -> assertTrees(singletonList(LITERAL_42)).isEquivalentTo(singletonList(new LiteralTreeImpl(null, "43"))));
   }
 
   @Test
@@ -44,9 +46,10 @@ public class TreesAssertTest {
     assertTrees(singletonList(LITERAL_42)).isNotEquivalentTo(singletonList(new LiteralTreeImpl(null, "43")));
   }
 
-  @Test(expected = AssertionError.class)
+  @Test
   public void notequivalent_failure() {
-    assertTrees(singletonList(LITERAL_42)).isNotEquivalentTo(singletonList(new LiteralTreeImpl(null, "42")));
+    assertThrows(AssertionError.class,
+      () -> assertTrees(singletonList(LITERAL_42)).isNotEquivalentTo(singletonList(new LiteralTreeImpl(null, "42"))));
   }
 
 }

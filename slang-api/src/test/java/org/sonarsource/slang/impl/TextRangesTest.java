@@ -23,6 +23,7 @@ import org.sonarsource.slang.api.TextRange;
 import java.util.Arrays;
 import org.junit.Test;
 
+import static org.junit.Assert.assertThrows;
 import static org.sonarsource.slang.impl.TextRanges.range;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,9 +36,10 @@ public class TextRangesTest {
     assertThat(merge(range(1, 2, 3, 4), range(1, 3, 1, 5))).isEqualTo(range(1, 2, 3, 4));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void merge_empty_list() {
-    merge();
+    assertThrows(IllegalArgumentException.class,
+      TextRangesTest::merge);
   }
 
   private static TextRange merge(TextRange... ranges) {

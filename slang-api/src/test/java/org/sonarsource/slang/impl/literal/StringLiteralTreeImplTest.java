@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.sonarsource.slang.impl.StringLiteralTreeImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 
 public class StringLiteralTreeImplTest {
 
@@ -34,9 +35,10 @@ public class StringLiteralTreeImplTest {
     assertThat(stringLiteral.children()).isEmpty();
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void test_failure() {
-    new StringLiteralTreeImpl(null, "abc");
+    assertThrows(IllegalArgumentException.class,
+      () -> new StringLiteralTreeImpl(null, "abc"));
   }
 
   @Test

@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.sonar.api.batch.fs.TextPointer;
 import org.sonar.api.batch.fs.TextRange;
 
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.sonarsource.slang.testing.TextRangeAssert.assertTextRange;
@@ -52,9 +53,10 @@ public class TextRangeAssertTest {
     assertTextRange(range).hasRange(1, 2, 3, 4);
   }
 
-  @Test(expected = AssertionError.class)
+  @Test
   public void range_failure() {
-    assertTextRange(range).hasRange(1, 2, 3, 5);
+    assertThrows(AssertionError.class,
+      () -> assertTextRange(range).hasRange(1, 2, 3, 5));
   }
 
 }
