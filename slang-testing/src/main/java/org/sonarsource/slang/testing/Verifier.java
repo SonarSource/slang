@@ -19,7 +19,7 @@
  */
 package org.sonarsource.slang.testing;
 
-import com.sonarsource.checks.verifier.SingleFileVerifier;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import javax.annotation.Nullable;
+
+import org.sonarsource.analyzer.commons.checks.verifier.SingleFileVerifier;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.HasTextRange;
 import org.sonarsource.slang.api.TextPointer;
