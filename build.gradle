@@ -4,7 +4,7 @@ plugins {
     id 'java'
     id 'jacoco'
     id 'com.github.hierynomus.license' version "0.15.0"
-    id 'com.jfrog.artifactory' version '4.18.3'
+    id 'com.jfrog.artifactory' version '4.21.0'
     id 'io.spring.dependency-management' version '1.0.6.RELEASE' apply false
     id 'org.sonarqube' version '2.7.1'
     id 'de.thetaphi.forbiddenapis' version '3.0' apply false
@@ -16,6 +16,7 @@ allprojects {
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'com.jfrog.artifactory'
     apply plugin: 'maven-publish'
+    apply plugin: 'signing'
 
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
@@ -220,6 +221,28 @@ subprojects {
                     }
                 }
             }
+        }
+    }
+
+    signing {
+        def signingKeyId = findProperty("signingKeyId")
+        def signingKey = findProperty("signingKey")
+        def signingPassword = findProperty("signingPassword")
+        useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+        required {
+            def branch = System.getenv()["CIRRUS_BRANCH"]
+            return (branch == 'master' || branch ==~ 'branch-[\\d.]+') &&
+                    gradle.taskGraph.hasTask(":artifactoryPublish")
+        }
+        sign publishing.publications
+    }
+
+    tasks.withType(Sign) {
+        onlyIf {
+            def branch = System.getenv()["CIRRUS_BRANCH"]
+            return !artifactoryPublish.skip &&
+                    (branch == 'master' || branch ==~ 'branch-[\\d.]+') &&
+                    gradle.taskGraph.hasTask(":artifactoryPublish")
         }
     }
 }
