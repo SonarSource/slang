@@ -56,7 +56,7 @@ linux_6_cpu_12G_template: &LINUX_6_CPU_12G
   gke_container:
     <<: *LINUX_IMAGE
     cpu: 6
-    memory: 12G
+    memory: 24G
 
 windows_4_cpu_15G_template: &WINDOWS_4_CPU_15G
   gce_instance:
