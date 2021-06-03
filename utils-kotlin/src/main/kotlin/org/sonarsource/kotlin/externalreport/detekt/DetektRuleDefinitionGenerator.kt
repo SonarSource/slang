@@ -24,26 +24,31 @@ import io.gitlab.arturbosch.detekt.api.MultiRule
 import io.gitlab.arturbosch.detekt.api.Rule
 import io.gitlab.arturbosch.detekt.api.RuleSetProvider
 import io.gitlab.arturbosch.detekt.api.Severity
-import io.gitlab.arturbosch.detekt.api.internal.BaseRule
 import io.gitlab.arturbosch.detekt.cli.ClasspathResourceConverter
 import io.gitlab.arturbosch.detekt.core.config.YamlConfig.Companion.loadResource
+import org.apache.commons.text.StringEscapeUtils
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.EnumMap
 import java.util.ServiceLoader
-import org.apache.commons.text.StringEscapeUtils
+import kotlin.io.path.exists
 
-private val RULES_FILE = Paths.get("sonar-kotlin-plugin", "src", "main", "resources",
+internal val DEFAULT_RULES_FILE = Paths.get("sonar-kotlin-plugin", "src", "main", "resources",
     "org", "sonar", "l10n", "kotlin", "rules", "detekt", "rules.json")
 
-fun main() {
+fun main(vararg args: String) {
+    val rulesFile =
+        if (args.isNotEmpty() && !args[0].isNullOrBlank()) Path.of(args[0])
+        else DEFAULT_RULES_FILE
+
     val rules = DetektRuleDefinitionGenerator.generateRuleDefinitionJson()
     var projectPath = Paths.get(".").toRealPath()
-    while (!projectPath.resolve(RULES_FILE).toFile().exists()) {
+    while (!projectPath.resolve(rulesFile).exists()) {
         projectPath = projectPath.parent
     }
-    Files.write(projectPath.resolve(RULES_FILE), rules.toByteArray(StandardCharsets.UTF_8))
+    Files.write(projectPath.resolve(rulesFile), rules.toByteArray(StandardCharsets.UTF_8))
 }
 
 internal object DetektRuleDefinitionGenerator {
