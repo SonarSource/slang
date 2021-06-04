@@ -29,7 +29,6 @@ env:
   # Use bash (instead of sh on linux or cmd.exe on windows)
   CIRRUS_SHELL: bash
 
-  CIRRUS_CLONE_DEPTH: 1
   GIT_SUB_MODULE: ""
   GRADLE_USER_HOME: ${CIRRUS_WORKING_DIR}/.gradle
 
@@ -133,7 +132,6 @@ build_task:
   <<: *LINUX_3_5_CPU_7G
   <<: *SETUP_GRADLE_CACHE
   env:
-    CIRRUS_CLONE_DEPTH: 50
     # analysis on next
     SONAR_TOKEN: ENCRYPTED[!b6fd814826c51e64ee61b0b6f3ae621551f6413383f7170f73580e2e141ac78c4b134b506f6288c74faa0dd564c05a29!]
     SONAR_HOST_URL: https://next.sonarqube.com/sonarqube
