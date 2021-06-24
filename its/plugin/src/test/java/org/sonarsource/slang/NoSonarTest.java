@@ -30,11 +30,6 @@ public class NoSonarTest extends TestBase {
   private static final String RULE_KEY = "S1145";
 
   @Test
-  public void test_kotlin_nosonar() {
-    checkForLanguage("kotlinNoSonar", "kotlin");
-  }
-
-  @Test
   public void test_go_nosonar() {
     checkForLanguage("goNoSonar", "go");
   }

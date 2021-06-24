@@ -32,11 +32,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -54,7 +52,7 @@ public class SlangRulingTest {
   private static Orchestrator orchestrator;
   private static boolean keepSonarqubeRunning = "true".equals(System.getProperty("keepSonarqubeRunning"));
 
-  private static final Set<String> LANGUAGES = new HashSet<>(Arrays.asList("kotlin", "ruby", "scala", "go"));
+  private static final Set<String> LANGUAGES = new HashSet<>(Arrays.asList("ruby", "scala", "go"));
 
   @BeforeClass
   public static void setUp() {
@@ -66,10 +64,6 @@ public class SlangRulingTest {
 
     orchestrator = builder.build();
     orchestrator.start();
-
-    ProfileGenerator.RulesConfiguration kotlinRulesConfiguration = new ProfileGenerator.RulesConfiguration();
-    kotlinRulesConfiguration.add("S1451", "headerFormat", "/\\*\n \\* Copyright \\d{4}-\\d{4} JetBrains s\\.r\\.o\\.");
-    kotlinRulesConfiguration.add("S1451", "isRegularExpression", "true");
 
     ProfileGenerator.RulesConfiguration rubyRulesConfiguration = new ProfileGenerator.RulesConfiguration();
     rubyRulesConfiguration.add("S1451", "headerFormat", "# Copyright 201\\d Twitch Interactive, Inc.  All Rights Reserved.");
@@ -84,12 +78,10 @@ public class SlangRulingTest {
     goRulesConfiguration.add("S1451", "headerFormat", "^(?i).*copyright");
     goRulesConfiguration.add("S1451", "isRegularExpression", "true");
 
-    File kotlinProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "kotlin", "kotlin", kotlinRulesConfiguration, Collections.emptySet());
     File rubyProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "ruby", "ruby", rubyRulesConfiguration, Collections.emptySet());
     File scalaProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "scala", "scala", scalaRulesConfiguration, Collections.emptySet());
     File goProfile = ProfileGenerator.generateProfile(SlangRulingTest.orchestrator.getServer().getUrl(), "go", "go", goRulesConfiguration, Collections.emptySet());
 
-    orchestrator.getServer().restoreProfile(FileLocation.of(kotlinProfile));
     orchestrator.getServer().restoreProfile(FileLocation.of(rubyProfile));
     orchestrator.getServer().restoreProfile(FileLocation.of(scalaProfile));
     orchestrator.getServer().restoreProfile(FileLocation.of(goProfile));
@@ -116,19 +108,6 @@ public class SlangRulingTest {
   @Test
   // @Ignore because it should only be run manually
   @Ignore
-  public void kotlin_manual_keep_sonarqube_server_up() throws IOException {
-    keepSonarqubeRunning = true;
-    test_kotlin_ktor();
-    test_kotlin_android();
-    test_kotlin_corda();
-    test_kotlin_compiler();
-    test_kotlin_okio();
-    test_kotlin_intellij_rust();
-  }
-
-  @Test
-  // @Ignore because it should only be run manually
-  @Ignore
   public void ruby_manual_keep_sonarqube_server_up() throws IOException {
     keepSonarqubeRunning = true;
     test_ruby();
@@ -148,110 +127,6 @@ public class SlangRulingTest {
   public void go_manual_keep_sonarqube_server_up() throws IOException {
     keepSonarqubeRunning = true;
     test_go();
-  }
-
-  @Test
-  public void test_kotlin_ktor() throws IOException {
-    Map<String, String> properties = new HashMap<>();
-    properties.put("sonar.inclusions", "sources/kotlin/ktor/**/*.kt");
-    properties.put("sonar.exclusions", "**/testData/**/*");
-
-    List<String> ktorDirs = Arrays.asList(
-      "ktor-client/ktor-client-apache/",
-      "ktor-client/ktor-client-cio/",
-      "ktor-client/ktor-client-core/",
-      "ktor-client/ktor-client-jetty/",
-      "ktor-client/ktor-client-tests/",
-      "ktor-features/ktor-auth/",
-      "ktor-features/ktor-auth-jwt/",
-      "ktor-features/ktor-auth-ldap/",
-      "ktor-features/ktor-freemarker/",
-      "ktor-features/ktor-gson/",
-      "ktor-features/ktor-html-builder/",
-      "ktor-features/ktor-jackson/",
-      "ktor-features/ktor-locations/",
-      "ktor-features/ktor-metrics/",
-      "ktor-features/ktor-server-sessios/",
-      "ktor-features/ktor-velocity/",
-      "ktor-features/ktor-websockets/",
-      "ktor-http/",
-      "ktor-http-cio/",
-      "ktor-network/",
-      "ktor-network-tls/",
-      "ktor-server/ktor-server-cio/",
-      "ktor-server/ktor-server-core/",
-      "ktor-server/ktor-server-host-common/",
-      "ktor-server/ktor-server-jetty/",
-      "ktor-server/ktor-server-netty/",
-      "ktor-server/ktor-server-servlet/",
-      "ktor-server/ktor-server-test-host/",
-      "ktor-server/ktor-server-tomcat/");
-    
-    String binaries = ktorDirs.stream().map(dir -> FileLocation.of("../sources/kotlin/ktor/" + dir + "build/classes"))
-      .map(SlangRulingTest::getFileLocationAbsolutePath)
-      .collect(Collectors.joining(","));
-    properties.put("sonar.java.binaries", binaries);
-    
-    run_ruling_test("kotlin/ktor", properties);
-  }
-
-  @Test
-  public void test_kotlin_compiler() throws IOException {
-    Map<String, String> properties = new HashMap<>();
-    properties.put("sonar.inclusions", "sources/kotlin/kotlin/**/*.kt, ruling/src/test/resources/sources/kotlin/**/*.kt");
-    properties.put("sonar.exclusions", String.join(",",
-            "**/testData/**/*"
-            , "sources/kotlin/kotlin/compiler/daemon/src/org/jetbrains/kotlin/daemon/CompileServiceImpl.kt"
-            , "sources/kotlin/kotlin/compiler/psi/src/org/jetbrains/kotlin/psi/psiUtil/ktPsiUtil.kt"
-            , "sources/kotlin/kotlin/compiler/psi/src/org/jetbrains/kotlin/psi/psiUtil/psiUtils.kt"
-            , "sources/kotlin/kotlin/j2k/src/org/jetbrains/kotlin/j2k/ast/Statements.kt"
-    ));
-
-    run_ruling_test("kotlin/kotlin", properties);
-  }
-
-  @Test
-  public void test_kotlin_android() throws IOException {
-    Map<String, String> properties = new HashMap<>();
-    properties.put("sonar.inclusions", "sources/kotlin/android-architecture-components/**/*.kt");
-    properties.put("sonar.exclusions", "**/testData/**/*");
-
-    run_ruling_test("kotlin/android-architecture-components", properties);
-  }
-
-  @Test
-  public void test_kotlin_corda() throws IOException {
-    Map<String, String> properties = new HashMap<>();
-    properties.put("sonar.inclusions", "sources/kotlin/corda/**/*.kt");
-    properties.put("sonar.exclusions", "**/testData/**/*");
-
-    run_ruling_test("kotlin/corda", properties);
-  }
-
-  @Test
-  public void test_kotlin_intellij_rust() throws IOException {
-    Map<String, String> properties = new HashMap<>();
-    properties.put("sonar.inclusions", "sources/kotlin/intellij-rust/**/*.kt");
-    properties.put("sonar.exclusions", "**/testData/**/*");
-
-    run_ruling_test("kotlin/intellij-rust", properties);
-  }
-
-  @Test
-  public void test_kotlin_okio() throws IOException {
-    Map<String, String> properties = new HashMap<>();
-    properties.put("sonar.inclusions", "sources/kotlin/okio/**/*.kt");
-    properties.put("sonar.exclusions", "**/testData/**/*");
-
-    run_ruling_test("kotlin/okio", properties);
-  }
-
-  private static String getFileLocationAbsolutePath(FileLocation location) {
-    try {
-      return location.getFile().getCanonicalFile().getAbsolutePath();
-    } catch (IOException e) {
-      return "";
-    }
   }
 
   @Test

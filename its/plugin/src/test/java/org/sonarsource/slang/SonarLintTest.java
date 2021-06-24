@@ -119,27 +119,6 @@ public class SonarLintTest {
   }
 
   @Test
-  public void test_kotlin() throws Exception {
-    ClientInputFile inputFile = prepareInputFile("foo.kt",
-      "fun foo_bar() {\n" +
-        "    if (true) { \n" +
-        "        val password = \"blabla\"\n" +
-        "    } \n" +
-        "}",
-      false, "kotlin");
-
-    List<Issue> issues = new ArrayList<>();
-    sonarlintEngine.analyze(
-      new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Collections.singletonList(inputFile), new HashMap<>()),
-      issues::add, null, null);
-
-    assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
-      tuple("kotlin:S100", 1, inputFile.getPath(), "MINOR"),
-      tuple("kotlin:S1145", 2, inputFile.getPath(), "MAJOR"),
-      tuple("kotlin:S1481", 3, inputFile.getPath(), "MINOR"));
-  }
-
-  @Test
   public void test_scala() throws Exception {
     ClientInputFile inputFile = prepareInputFile("foo.scala",
       "object Code {\n" +

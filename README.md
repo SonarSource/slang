@@ -5,18 +5,13 @@
 
 This is a developer documentation. If you want to analyze source code in SonarQube read one of the following documentations:
 
-* Kotlin language: [analysis of Kotlin documentation](https://docs.sonarqube.org/latest/analysis/languages/kotlin/)
 * Ruby language: [analysis of Ruby documentation](https://docs.sonarqube.org/latest/analysis/languages/ruby/)
 * Scala language: [analysis of Scala documentation](https://docs.sonarqube.org/latest/analysis/languages/scala/)
 * Go language: [analysis of Go documentation](https://docs.sonarqube.org/latest/analysis/languages/go/)
 
 SLang (SonarSource Language) is a framework to quickly develop code analyzers for SonarQube. SLang defines language agnostic AST. Using this AST
-we can develop simple syntax based rules. Then we use parser for real language to create this AST. Currently Kotlin, Ruby and Scala 
+we can develop simple syntax based rules. Then we use parser for real language to create this AST. Currently Ruby and Scala 
 analyzers use this approach.
-
-## Kotlin
-
-We use [embeddable library](https://search.maven.org/artifact/org.jetbrains.kotlin/kotlin-compiler-embeddable/1.4.10/jar) of Kotlin compiler to create AST and [visitor](sonar-kotlin-plugin/src/main/java/org/sonarsource/kotlin/converter/KotlinTreeVisitor.java) to create SLang AST.
 
 ## Ruby
 
@@ -74,9 +69,9 @@ You can also build and run only Ruling Tests using the `ruling` property:
 
     ./gradlew build -Pruling --info --no-daemon -Dsonar.runtimeVersion=7.9
 
-If you want to run ruling tests for specific language, you can use `ruling-{lang}` property (`ruling-kotlin`, `ruling-scala`, `ruling-ruby`, `ruling-go`). For example:
+If you want to run ruling tests for specific language, you can use `ruling-{lang}` property (`ruling-scala`, `ruling-ruby`, `ruling-go`). For example:
 
-    ./gradlew build -Pruling-kotlin --info --no-daemon -Dsonar.runtimeVersion=7.9
+    ./gradlew build -Pruling-scala --info --no-daemon -Dsonar.runtimeVersion=7.9
 
 ## License headers
 

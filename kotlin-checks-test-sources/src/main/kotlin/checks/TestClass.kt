@@ -1,4 +1,0 @@
-package checks
-
-class TestClass {
-}

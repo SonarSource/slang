@@ -102,24 +102,6 @@ gradle_its_template: &GRADLE_ITS_TEMPLATE
       -Pqa --info --console plain --no-daemon --build-cache
   <<: *CLEANUP_GRADLE_CACHE_SCRIPT
 
-kotlin_its_template: &KOTLIN_ITS_TEMPLATE
-  <<: *SETUP_GRADLE_CACHE
-  run_its_script:
-    - |
-      if [ -n "${GIT_SUB_MODULE}" ]; then
-        init_git_submodules "${GIT_SUB_MODULE}"
-      fi
-    - source cirrus-env QA
-    - bash ./ktor-java8.sh
-    - ./gradlew "${GRADLE_TASK}" "-P${ITS_PROJECT}"
-      "-Dsonar.runtimeVersion=${SQ_VERSION}"
-      "-Dorchestrator.artifactory.apiKey=${ARTIFACTORY_API_KEY}"
-      "-Dorchestrator.configUrl=https://repox.jfrog.io/repox/orchestrator.properties/orch-h2.properties"
-      "-Dorchestrator.artifactory.apiKey=${ARTIFACTORY_API_KEY}"
-      "-DbuildNumber=$BUILD_NUMBER"
-      -Pqa --info --console plain --no-daemon --build-cache
-  <<: *CLEANUP_GRADLE_CACHE_SCRIPT
-  
 only_if_sonarsource_qa_template: &ONLY_IF_SONARSOURCE_QA
   only_if: $CIRRUS_USER_COLLABORATOR == 'true' && ($CIRRUS_PR != "" || $CIRRUS_BRANCH == "master" || $CIRRUS_BRANCH =~ "branch-.*" || $CIRRUS_BRANCH =~ "dogfood-on-.*")
 
@@ -192,16 +174,6 @@ qa_plug_pri_win_task:
   <<: *WINDOWS_4_CPU_15G
   <<: *GRADLE_ITS_TEMPLATE
 
-qa_ruling_kotlin_task:
-  <<: *QA_TASK_FILTER
-  env:
-    SQ_VERSION: "LATEST_RELEASE"
-    GRADLE_TASK: ":its:ruling:test"
-    ITS_PROJECT: "ruling-kotlin"
-    GIT_SUB_MODULE: "its/sources"
-  <<: *LINUX_6_CPU_12G
-  <<: *KOTLIN_ITS_TEMPLATE
-
 qa_ruling_ruby_task:
   <<: *QA_TASK_FILTER
   env:
@@ -257,7 +229,6 @@ promote_task:
     - qa_plug_pri_lin
     - qa_plug_pub_win
     - qa_plug_pri_win
-    - qa_ruling_kotlin
     - qa_ruling_ruby
     - qa_ruling_scala
     - qa_ruling_go
@@ -271,7 +242,6 @@ promote_task:
     PROMOTE_URL: ENCRYPTED[!e22ed2e34a8f7a1aea5cff653585429bbd3d5151e7201022140218f9c5d620069ec2388f14f83971e3fd726215bc0f5e!]
     #artifacts that will have downloadable links in burgr
     ARTIFACTS: "\
-      org.sonarsource.slang:sonar-kotlin-plugin:jar,\
       org.sonarsource.slang:sonar-ruby-plugin:jar,\
       org.sonarsource.slang:sonar-scala-plugin:jar,\
       org.sonarsource.slang:sonar-go-plugin:jar,\

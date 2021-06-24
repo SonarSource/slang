@@ -41,14 +41,13 @@ import org.junit.runners.Suite;
   ExternalReportTest.class,
   MeasuresTest.class,
   NoSonarTest.class,
-  SurefireTest.class
 })
 public class Tests {
 
   static final String SQ_VERSION_PROPERTY = "sonar.runtimeVersion";
   static final String DEFAULT_SQ_VERSION = "LATEST_RELEASE";
 
-  private static final Set<String> LANGUAGES = new HashSet<>(Arrays.asList("kotlin", "ruby", "scala", "go"));
+  private static final Set<String> LANGUAGES = new HashSet<>(Arrays.asList("ruby", "scala", "go"));
 
   @ClassRule
   public static final Orchestrator ORCHESTRATOR;
@@ -58,7 +57,6 @@ public class Tests {
     addLanguagePlugins(orchestratorBuilder);
     ORCHESTRATOR = orchestratorBuilder
       .setSonarVersion(System.getProperty(SQ_VERSION_PROPERTY, DEFAULT_SQ_VERSION))
-      .restoreProfileAtStartup(FileLocation.of("src/test/resources/nosonar-kotlin.xml"))
       .restoreProfileAtStartup(FileLocation.of("src/test/resources/nosonar-ruby.xml"))
       .restoreProfileAtStartup(FileLocation.of("src/test/resources/nosonar-scala.xml"))
       .restoreProfileAtStartup(FileLocation.of("src/test/resources/nosonar-go.xml"))

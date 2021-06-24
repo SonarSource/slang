@@ -30,43 +30,6 @@ public class MeasuresTest extends TestBase {
   private static final String BASE_DIRECTORY = "projects/measures/";
 
   @Test
-  public void kotlin_measures() {
-    final String projectKey = "kotlinMeasures";
-    ORCHESTRATOR.executeBuild(getSonarScanner(projectKey, BASE_DIRECTORY, "kotlin"));
-
-    assertThat(getMeasureAsInt(projectKey, "files")).isEqualTo(3);
-
-    final String emptyFile = projectKey + ":empty_file.kt";
-    final String file1 = projectKey + ":file1.kt";
-    final String file2 = projectKey + ":file2.kt";
-
-    assertThat(getMeasure(emptyFile, "ncloc")).isNull();
-    assertThat(getMeasureAsInt(file1, "ncloc")).isEqualTo(7);
-    assertThat(getMeasureAsInt(file2, "ncloc")).isEqualTo(8);
-
-    assertThat(getMeasure(emptyFile, "comment_lines")).isNull();
-    assertThat(getMeasureAsInt(file1, "comment_lines")).isEqualTo(8);
-    assertThat(getMeasureAsInt(file2, "comment_lines")).isEqualTo(3);
-
-    assertThat(getMeasure(emptyFile, "statements")).isNull();
-    assertThat(getMeasureAsInt(file1, "statements")).isEqualTo(3);
-    assertThat(getMeasureAsInt(file2, "statements")).isEqualTo(2);
-
-    assertThat(getMeasureAsInt(file1, "cognitive_complexity")).isEqualTo(0);
-    assertThat(getMeasureAsInt(file2, "cognitive_complexity")).isEqualTo(2);
-
-    assertThat(getMeasure(emptyFile, "ncloc_data")).isNull();
-    assertThat(getMeasure(file1, "ncloc_data").getValue()).isEqualTo("1=1;3=1;4=1;7=1;8=1;13=1;14=1");
-    assertThat(getMeasure(file2, "ncloc_data").getValue()).isEqualTo("1=1;2=1;3=1;4=1;5=1;7=1;10=1;11=1");
-
-    assertThat(getMeasure(file1, "executable_lines_data").getValue()).isEqualTo("4=1;8=1;13=1");
-
-    List<Issues.Issue> issuesForRule = getIssuesForRule(projectKey, "kotlin:S100");
-    assertThat(issuesForRule).extracting(Issues.Issue::getLine).containsExactly(2, 7);
-    assertThat(issuesForRule).extracting(Issues.Issue::getComponent).containsExactly(file2, file2);
-  }
-
-  @Test
   public void ruby_measures() {
     final String projectKey = "rubyMeasures";
     ORCHESTRATOR.executeBuild(getSonarScanner(projectKey, BASE_DIRECTORY, "ruby"));

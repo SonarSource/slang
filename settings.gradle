@@ -18,7 +18,6 @@ include 'slang-testing'
 include 'slang-antlr'
 include 'slang-checks'
 include 'slang-plugin'
-include 'sonar-kotlin-plugin'
 include 'sonar-ruby-plugin'
 include 'sonar-scala-plugin'
 include 'sonar-go-to-slang'
@@ -27,8 +26,6 @@ include 'checkstyle-import'
 include 'its:plugin'
 include 'its:ruling'
 include 'jruby-repackaged'
-include 'kotlin-checks-test-sources'
-include 'utils-kotlin'
 
 // "extraSettings.gradle" should not be renamed "settings.gradle" to not create a wrong project rootDir
 File extraSettings = new File(rootDir, 'private/extraSettings.gradle')
