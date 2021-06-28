@@ -41,7 +41,6 @@ public class MatchCaseTooBigCheck implements SlangCheck {
     key = "max",
     description = "Maximum number of lines"
     )
-  @PropertyDefaultValue(language = Language.KOTLIN, defaultValue = DEFAULT_MAX_VALUE)
   @PropertyDefaultValue(language = Language.RUBY, defaultValue = DEFAULT_MAX_VALUE)
   @PropertyDefaultValue(language = Language.SCALA, defaultValue = DEFAULT_MAX_VALUE)
   @PropertyDefaultValue(language = Language.GO, defaultValue = "" + Language.GO_MATCH_CASES_DEFAULT_MAX)

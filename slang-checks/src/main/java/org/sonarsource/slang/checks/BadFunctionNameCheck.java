@@ -38,7 +38,6 @@ public class BadFunctionNameCheck implements SlangCheck {
     key = "format",
     description = "Regular expression used to check the function names against."
   )
-  @PropertyDefaultValue(language = Language.KOTLIN, defaultValue = Language.KOTLIN_FUNCTION_NAMING)
   @PropertyDefaultValue(language = Language.RUBY, defaultValue = Language.RUBY_NAMING_DEFAULT)
   @PropertyDefaultValue(language = Language.SCALA, defaultValue = Language.SCALA_FUNCTION_OR_OPERATOR_NAMING_DEFAULT)
   @PropertyDefaultValue(language = Language.GO, defaultValue = Language.GO_NAMING_DEFAULT)

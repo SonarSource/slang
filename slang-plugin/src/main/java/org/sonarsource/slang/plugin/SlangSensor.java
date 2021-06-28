@@ -176,28 +176,19 @@ public abstract class SlangSensor implements Sensor {
   }
 
   private List<TreeVisitor<InputFileContext>> visitors(SensorContext sensorContext, DurationStatistics statistics) {
-    List<TreeVisitor<InputFileContext>> treeVisitors;
     if (sensorContext.runtime().getProduct() == SonarProduct.SONARLINT) {
-      treeVisitors = Arrays.asList(
+      return Arrays.asList(
         new IssueSuppressionVisitor(),
         new ChecksVisitor(checks(), statistics)
       );
     } else {
-      treeVisitors = Arrays.asList(
+      return Arrays.asList(
         new IssueSuppressionVisitor(),
         new MetricVisitor(fileLinesContextFactory, noSonarFilter),
         new ChecksVisitor(checks(), statistics),
         new CpdVisitor(),
         new SyntaxHighlighter());
     }
-
-    // TODO: remove this workaround once the Kotlin plugin is extracted
-    List<TreeVisitor<InputFileContext>> languageSpecificTreeVisitors = languageSpecificVisitors(treeVisitors);
-
-    return languageSpecificTreeVisitors;
   }
 
-  protected List<TreeVisitor<InputFileContext>> languageSpecificVisitors(List<TreeVisitor<InputFileContext>> defaultVisitors) {
-    return defaultVisitors;
-  }
 }

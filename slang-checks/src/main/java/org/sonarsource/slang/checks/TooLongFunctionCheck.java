@@ -38,7 +38,6 @@ public class TooLongFunctionCheck implements SlangCheck {
     key = "max",
     description = "Maximum authorized lines of code in a function"
   )
-  @PropertyDefaultValue(language = Language.KOTLIN, defaultValue = DEFAULT_MAX_VALUE)
   @PropertyDefaultValue(language = Language.RUBY, defaultValue = DEFAULT_MAX_VALUE)
   @PropertyDefaultValue(language = Language.SCALA, defaultValue = DEFAULT_MAX_VALUE)
   @PropertyDefaultValue(language = Language.GO, defaultValue = "" + Language.GO_DEFAULT_MAXIMUM_FUNCTION_LENGTH)

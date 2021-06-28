@@ -38,19 +38,6 @@ class RulesDefinitionUtilsTest {
   private RulesDefinition.Context context;
 
   @Test
-  void test_setDefaultValuesForParameters_kotlin() {
-    initRepository();
-
-    RulesDefinitionUtils.setDefaultValuesForParameters(repository, Collections.singletonList(Check.class), Language.KOTLIN);
-    repository.done();
-
-    RulesDefinition.Repository repository = context.repository(REPOSITORY);
-    RulesDefinition.Rule check = repository.rule("check");
-    RulesDefinition.Param param = check.param("param");
-    assertThat(param.defaultValue()).isEqualTo("kotlin");
-  }
-
-  @Test
   void test_setDefaultValuesForParameters_ruby() {
     initRepository();
 
@@ -79,21 +66,21 @@ class RulesDefinitionUtilsTest {
   @Test
   void wrong_annotation() {
     context = new RulesDefinition.Context();
-    repository = context.createRepository(REPOSITORY, Language.KOTLIN.toString());
+    repository = context.createRepository(REPOSITORY, Language.SCALA.toString());
     new RulesDefinitionAnnotationLoader().load(repository, WrongAnnotationUsage.class);
 
     assertThatThrownBy( () -> RulesDefinitionUtils.setDefaultValuesForParameters(repository, Collections.singletonList(WrongAnnotationUsage.class), Language.RUBY))
       .isInstanceOf(IllegalStateException.class)
       .hasMessage("Invalid @PropertyDefaultValue on WrongAnnotationUsage for language RUBY");
 
-    assertThatThrownBy( () -> RulesDefinitionUtils.setDefaultValuesForParameters(repository, Collections.singletonList(WrongAnnotationUsage.class), Language.KOTLIN))
+    assertThatThrownBy( () -> RulesDefinitionUtils.setDefaultValuesForParameters(repository, Collections.singletonList(WrongAnnotationUsage.class), Language.SCALA))
       .isInstanceOf(IllegalStateException.class)
-      .hasMessage("Invalid @PropertyDefaultValue on WrongAnnotationUsage for language KOTLIN");
+      .hasMessage("Invalid @PropertyDefaultValue on WrongAnnotationUsage for language SCALA");
   }
 
   private void initRepository() {
     context = new RulesDefinition.Context();
-    repository = context.createRepository(REPOSITORY, Language.KOTLIN.toString());
+    repository = context.createRepository(REPOSITORY, Language.SCALA.toString());
     new RulesDefinitionAnnotationLoader().load(repository, Check.class);
   }
 
@@ -101,7 +88,6 @@ class RulesDefinitionUtilsTest {
   static class Check {
 
     @RuleProperty(key = "param")
-    @PropertyDefaultValue(language = Language.KOTLIN, defaultValue = "kotlin")
     @PropertyDefaultValue(language = Language.RUBY, defaultValue = "ruby")
     @PropertyDefaultValue(language = Language.SCALA, defaultValue = "scala")
     String param;
@@ -116,8 +102,8 @@ class RulesDefinitionUtilsTest {
   static class WrongAnnotationUsage {
 
     @RuleProperty(key = "param")
-    @PropertyDefaultValue(language = Language.KOTLIN, defaultValue = "kotlin")
-    @PropertyDefaultValue(language = Language.KOTLIN, defaultValue = "ruby")
+    @PropertyDefaultValue(language = Language.SCALA, defaultValue = "scala")
+    @PropertyDefaultValue(language = Language.SCALA, defaultValue = "ruby")
     String param;
   }
 }

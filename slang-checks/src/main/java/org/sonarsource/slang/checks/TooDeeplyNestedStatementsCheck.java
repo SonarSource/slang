@@ -50,7 +50,6 @@ public class TooDeeplyNestedStatementsCheck implements SlangCheck {
     key = "max",
     description = "Maximum allowed control flow statement nesting depth"
   )
-  @PropertyDefaultValue(language = Language.KOTLIN, defaultValue = DEFAULT_MAX_DEPTH_VALUE)
   @PropertyDefaultValue(language = Language.RUBY, defaultValue = DEFAULT_MAX_DEPTH_VALUE)
   @PropertyDefaultValue(language = Language.SCALA, defaultValue = DEFAULT_MAX_DEPTH_VALUE)
   @PropertyDefaultValue(language = Language.GO, defaultValue = "" + Language.GO_NESTED_STATEMENT_MAX_DEPTH)

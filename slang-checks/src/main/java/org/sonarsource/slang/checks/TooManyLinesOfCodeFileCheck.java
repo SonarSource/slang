@@ -38,7 +38,6 @@ public class TooManyLinesOfCodeFileCheck implements SlangCheck {
     key = "Max",
     description = "Maximum authorized lines of code in a file."
   )
-  @PropertyDefaultValue(language = Language.KOTLIN, defaultValue = DEFAULT_MAX_VALUE)
   @PropertyDefaultValue(language = Language.RUBY, defaultValue = DEFAULT_MAX_VALUE)
   @PropertyDefaultValue(language = Language.SCALA, defaultValue = DEFAULT_MAX_VALUE)
   @PropertyDefaultValue(language = Language.GO, defaultValue = "" + Language.GO_DEFAULT_FILE_LINE_MAX)

@@ -41,7 +41,6 @@ public class TooLongLineCheck implements SlangCheck {
     key = "maximumLineLength",
     description = "The maximum authorized line length."
   )
-  @PropertyDefaultValue(language = Language.KOTLIN, defaultValue = DEFAULT_MAXIMUM_LINE_LENGTH_VALUE)
   @PropertyDefaultValue(language = Language.RUBY, defaultValue = DEFAULT_MAXIMUM_LINE_LENGTH_VALUE)
   @PropertyDefaultValue(language = Language.SCALA, defaultValue = DEFAULT_MAXIMUM_LINE_LENGTH_VALUE)
   @PropertyDefaultValue(language = Language.GO, defaultValue = "" + Language.GO_DEFAULT_MAXIMUM_LINE_LENGTH)
