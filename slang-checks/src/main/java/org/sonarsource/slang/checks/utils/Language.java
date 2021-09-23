@@ -22,7 +22,7 @@ package org.sonarsource.slang.checks.utils;
 /**
  * This enum is used only to distinguish default values for rule parameters. This should be the sole exception in otherwise
  * language agnostic module
- */
+ */       
 public enum Language {
   RUBY, SCALA, GO;
 

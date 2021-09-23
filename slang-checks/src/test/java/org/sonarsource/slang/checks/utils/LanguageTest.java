@@ -19,8 +19,13 @@
  */
 package org.sonarsource.slang.checks.utils;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
+import org.sonar.api.utils.AnnotationUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,4 +45,28 @@ class LanguageTest {
     assertThat(pattern.matcher("_print").matches()).isFalse();
     assertThat(pattern.matcher("+print").matches()).isFalse();
   }
+  
+  @Test
+  void propertyDefaultValueTest() throws Exception {
+
+    Field someString = LanguageTest.class.getDeclaredField("someString");
+    Annotation[] annotations = someString.getAnnotations();
+    
+    assertThat(annotations).hasSize(1);
+
+    PropertyDefaultValues defaultValues = someString.getAnnotation(PropertyDefaultValues.class);
+    assertThat(defaultValues.value()).hasSize(3);
+
+    assertThat(Arrays.stream(defaultValues.value()).map(PropertyDefaultValue::language).collect(Collectors.toList()))
+      .containsExactlyInAnyOrder(Language.GO, Language.RUBY, Language.SCALA);
+    
+    assertThat(Arrays.stream(defaultValues.value()).map(PropertyDefaultValue::defaultValue).collect(Collectors.toList()))
+      .containsExactlyInAnyOrder("go", "ruby", "scala");
+    
+  }
+  
+  @PropertyDefaultValue(language = Language.GO, defaultValue = "go")
+  @PropertyDefaultValue(language = Language.SCALA, defaultValue = "scala")
+  @PropertyDefaultValue(language = Language.RUBY, defaultValue = "ruby")
+  private String someString = "";
 }
