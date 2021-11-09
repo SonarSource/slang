@@ -124,6 +124,18 @@ build_task:
     - regular_gradle_build_deploy_analyze
   <<: *CLEANUP_GRADLE_CACHE_SCRIPT
 
+#ws_scan_task:
+#  <<: *LINUX_3_5_CPU_7G
+#  <<: *SETUP_GRADLE_CACHE
+#  depends_on:
+#    - build
+#  env:
+#    WS_APIKEY: ENCRYPTED[cda363e6bcac3edd4c259dc05b3570e00152ad50f9ad3ec3cab72d57cda318a0d5472e37c656c3566c2cb8c752d2f5a0]
+#    WS_EXCLUDES: "**/*sources.jar **/*javadoc.jar **/its/sources/**"
+#  build_script:
+#    - ./gradlew build
+#    - ./ws_scan.sh
+
 # --- WARNING --- WARNING --- WARNING --- WARNING --- WARNING --- WARNING ---
 # The following task names should all be included in promote_task/depends_on
 # Burgr does not support task name length > 16, see:
