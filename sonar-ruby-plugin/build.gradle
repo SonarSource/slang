@@ -128,7 +128,7 @@ shadowJar {
     exclude "racc-${rubygemsAstVersion}-java/web/**"
 
     doLast {
-        enforceJarSizeAndCheckContent(shadowJar.archiveFile.get().asFile, 14_250_000L, 14_750_000L)
+        enforceJarSizeAndCheckContent(shadowJar.archiveFile.get().asFile, 14_000_000L, 15_000_000L)
     }
 }
 
