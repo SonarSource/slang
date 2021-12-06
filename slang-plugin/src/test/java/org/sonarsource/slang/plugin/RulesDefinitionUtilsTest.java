@@ -20,6 +20,7 @@
 package org.sonarsource.slang.plugin;
 
 import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinitionAnnotationLoader;
@@ -69,11 +70,12 @@ class RulesDefinitionUtilsTest {
     repository = context.createRepository(REPOSITORY, Language.SCALA.toString());
     new RulesDefinitionAnnotationLoader().load(repository, WrongAnnotationUsage.class);
 
-    assertThatThrownBy( () -> RulesDefinitionUtils.setDefaultValuesForParameters(repository, Collections.singletonList(WrongAnnotationUsage.class), Language.RUBY))
+    List<Class<?>> wrongAnnotationCheck = Collections.singletonList(WrongAnnotationUsage.class);
+    assertThatThrownBy( () -> RulesDefinitionUtils.setDefaultValuesForParameters(repository, wrongAnnotationCheck, Language.RUBY))
       .isInstanceOf(IllegalStateException.class)
       .hasMessage("Invalid @PropertyDefaultValue on WrongAnnotationUsage for language RUBY");
 
-    assertThatThrownBy( () -> RulesDefinitionUtils.setDefaultValuesForParameters(repository, Collections.singletonList(WrongAnnotationUsage.class), Language.SCALA))
+    assertThatThrownBy( () -> RulesDefinitionUtils.setDefaultValuesForParameters(repository, wrongAnnotationCheck, Language.SCALA))
       .isInstanceOf(IllegalStateException.class)
       .hasMessage("Invalid @PropertyDefaultValue on WrongAnnotationUsage for language SCALA");
   }

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import org.sonarsource.slang.api.Annotation;
 import org.sonarsource.slang.api.Comment;
+import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
@@ -140,15 +141,17 @@ class TreeMetaDataProviderTest {
   void keyword() {
     Token token1 = new TokenImpl(range(1, 1, 1, 3), "ab", Token.Type.KEYWORD);
     Token token2 = new TokenImpl(range(1, 4, 1, 6), "cd", Token.Type.KEYWORD);
-    Token token3 = new TokenImpl(range(1, 6, 1, 7), "{",  Token.Type.OTHER);
+    Token token3 = new TokenImpl(range(1, 6, 1, 7), "{", Token.Type.OTHER);
     Token token4 = new TokenImpl(range(1, 7, 1, 8), "ef", Token.Type.OTHER);
     TreeMetaDataProvider provider = new TreeMetaDataProvider(emptyList(), Arrays.asList(token1, token2, token3, token4));
     assertThat(provider.keyword(range(1, 3, 1, 7))).isEqualTo(token2);
     assertThat(provider.keyword(range(1, 3, 1, 8))).isEqualTo(token2);
-    assertThatThrownBy(() -> provider.keyword(range(1, 3, 1, 4)))
+    TextRange range3to4 = range(1, 3, 1, 4);
+    assertThatThrownBy(() -> provider.keyword(range3to4))
       .isInstanceOf(IllegalArgumentException.class)
       .hasMessage("Cannot find single keyword in TextRange[1, 3, 1, 4]");
-    assertThatThrownBy(() -> provider.keyword(range(1, 1, 1, 7)))
+    TextRange range1to7 = range(1, 1, 1, 7);
+    assertThatThrownBy(() -> provider.keyword(range1to7))
       .isInstanceOf(IllegalArgumentException.class)
       .hasMessage("Cannot find single keyword in TextRange[1, 1, 1, 7]");
   }

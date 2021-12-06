@@ -56,7 +56,7 @@ import static org.sonarsource.slang.persistence.conversion.JsonTreeConverter.TRE
 import static org.sonarsource.slang.persistence.conversion.JsonTreeConverter.TREE_METADATA_PROVIDER_TO_JSON;
 import static org.sonarsource.slang.persistence.conversion.JsonTreeConverter.TYPE;
 
-public class JsonTreeConverterTest extends JsonTestHelper {
+class JsonTreeConverterTest extends JsonTestHelper {
 
   private SerializationContext writeContext = new SerializationContext(JsonTreeConverter.POLYMORPHIC_CONVERTER);
   private DeserializationContext readContext = new DeserializationContext(JsonTreeConverter.POLYMORPHIC_CONVERTER);

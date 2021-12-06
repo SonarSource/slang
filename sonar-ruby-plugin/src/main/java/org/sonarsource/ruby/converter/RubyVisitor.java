@@ -342,7 +342,7 @@ public class RubyVisitor {
 
     List<CatchTree> catchTrees = children.stream()
       .skip(1)
-      .filter(tree -> tree instanceof CatchTree)
+      .filter(CatchTree.class::isInstance)
       .map(CatchTree.class::cast)
       .collect(Collectors.toList());
 
@@ -471,7 +471,7 @@ public class RubyVisitor {
   private Tree createFromMasgn(AstNode node, List<?> children) {
     List<IdentifierTree> lhsChild = getChildIfArray((Tree) children.get(0))
         .stream()
-        .filter(child -> child instanceof IdentifierTree)
+        .filter(IdentifierTree.class::isInstance)
         .map(IdentifierTree.class::cast)
         .collect(Collectors.toList());
 
@@ -519,8 +519,8 @@ public class RubyVisitor {
       // we will assume that all children are trees on LHS, this should always be the case
       // if not, we might miss some part of the tree, but it should not matter much
       List<Tree> lhsChildren = children.subList(0, children.size() - 1).stream()
-        .filter(child -> child instanceof Tree)
-        .map(child -> (Tree) child)
+        .filter(Tree.class::isInstance)
+        .map(Tree.class::cast)
         .collect(Collectors.toList());
 
       // such ruby native kind is required to have tree equivalence
@@ -563,8 +563,8 @@ public class RubyVisitor {
     Token caseKeywordToken = getTokenByAttribute(node, KEYWORD_ATTRIBUTE);
 
     List<MatchCaseTree> whens = children.stream()
-      .filter(tree -> tree instanceof MatchCaseTree)
-      .map(tree -> (MatchCaseTree) tree)
+      .filter(MatchCaseTree.class::isInstance)
+      .map(MatchCaseTree.class::cast)
       .collect(Collectors.toList());
 
     TreeMetaData treeMetaData = metaData(node);

@@ -32,7 +32,7 @@ public class NestedMatchCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(MatchTree.class, (ctx, matchTree) -> ctx.ancestors().stream()
-      .filter(node -> node instanceof MatchTree)
+      .filter(MatchTree.class::isInstance)
       .findFirst()
       .ifPresent(parentMatch ->
         ctx.reportIssue(matchTree.keyword(), MessageFormat.format(MESSAGE, matchTree.keyword().text()))

@@ -86,7 +86,7 @@ public class ExpressionUtils {
   }
 
   public static boolean containsPlaceHolder(Tree tree) {
-    return tree.descendants().anyMatch(t -> t instanceof PlaceHolderTree);
+    return tree.descendants().anyMatch(PlaceHolderTree.class::isInstance);
   }
 
   public static boolean isTernaryOperator(Deque<Tree> ancestors, Tree tree) {

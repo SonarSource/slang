@@ -36,7 +36,7 @@ public class UnusedLocalVariableRubyCheck extends UnusedLocalVariableCheck {
   public void initialize(InitContext init) {
     init.register(FunctionDeclarationTree.class, (ctx, functionDeclarationTree) -> {
 
-      if (ctx.ancestors().stream().anyMatch(tree -> tree instanceof FunctionDeclarationTree)) {
+      if (ctx.ancestors().stream().anyMatch(FunctionDeclarationTree.class::isInstance)) {
         return;
       }
 
@@ -44,7 +44,7 @@ public class UnusedLocalVariableRubyCheck extends UnusedLocalVariableCheck {
       Set<Tree> identifierTrees = getIdentifierTrees(functionDeclarationTree, variableIdentifiers);
 
       List<IdentifierTree> unusedVariables = variableIdentifiers.stream()
-        .filter(var -> identifierTrees.stream().noneMatch(identifier -> SyntacticEquivalence.areEquivalent(var, identifier)))
+        .filter(variable -> identifierTrees.stream().noneMatch(identifier -> SyntacticEquivalence.areEquivalent(variable, identifier)))
         .collect(Collectors.toList());
 
       if (unusedVariables.isEmpty()) {
@@ -54,7 +54,7 @@ public class UnusedLocalVariableRubyCheck extends UnusedLocalVariableCheck {
       // the unused variables may actually be used inside interpolated strings, eval or prepared statements
       Set<String> stringLiteralTokens = FunctionUtils.getStringsTokens(functionDeclarationTree, Constants.SPECIAL_STRING_DELIMITERS);
       unusedVariables.stream()
-        .filter(var -> !stringLiteralTokens.contains(var.name()))
+        .filter(variable -> !stringLiteralTokens.contains(variable.name()))
         .forEach(identifier -> ctx.reportIssue(identifier, "Remove this unused \"" + identifier.name() + "\" local variable."));
     });
   }

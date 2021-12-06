@@ -69,8 +69,8 @@ public class UnusedPrivateMethodScalaCheck extends UnusedPrivateMethodCheck {
     if (ancestors.size() == 1 ||  isInsidePackage(ancestors)) {
       // search for the companion object and collect what's inside
       ancestors.getFirst().descendants()
-        .filter(d -> d instanceof NativeTreeImpl)
-        .map(n -> (NativeTreeImpl) n)
+        .filter(NativeTreeImpl.class::isInstance)
+        .map(NativeTreeImpl.class::cast)
         .filter(n -> isObjectCompanionForClass(className, n))
         .forEach(n -> {
           MethodAndIdentifierCollector collector = new MethodAndIdentifierCollector(n.descendants());
