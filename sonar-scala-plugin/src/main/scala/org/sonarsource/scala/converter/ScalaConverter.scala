@@ -432,7 +432,7 @@ class ScalaConverter extends ASTConverter {
     if (token.is[scala.meta.tokens.Token.Constant.String]) {
       return Token.Type.STRING_LITERAL
     }
-    if (keywords.contains(token.text)) {
+    if (keywords(dialects.Scala3).contains(token.text)) {
       return Token.Type.KEYWORD
     }
     Token.Type.OTHER

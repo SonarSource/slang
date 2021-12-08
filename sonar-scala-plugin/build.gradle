@@ -1,13 +1,16 @@
 plugins {
     id "scala"
-    id "org.scoverage" version "5.0.0"
+    id "org.scoverage" version "7.0.0"
     id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 ext {
-    scoveragePluginVersion = '1.4.2'
     scalaVersion = '2.12.9'
     scalaBinaryVersion = '2.12'
+}
+
+scoverage {
+    scoverageVersion='1.4.10'
 }
 
 tasks.check.dependsOn reportScoverage
@@ -43,7 +46,7 @@ dependencies {
     implementation project(':slang-api')
     implementation project(':slang-checks')
     implementation project(':slang-plugin')
-    implementation('org.scalameta:scalameta_2.12:4.3.24') {
+    implementation('org.scalameta:scalameta_2.12:4.4.30') {
         exclude group: 'org.scalameta', module: 'semanticdb_2.12'
         exclude group: 'com.lihaoyi', module: 'fansi_2.12'
     }
@@ -55,8 +58,6 @@ dependencies {
     testImplementation 'org.assertj:assertj-core'
     testImplementation 'org.mockito:mockito-core'
     testImplementation 'io.github.classgraph:classgraph'
-
-    scoverage "org.scoverage:scalac-scoverage-plugin_2.12:$scoveragePluginVersion", "org.scoverage:scalac-scoverage-runtime_2.12:$scoveragePluginVersion"
 }
 
 jar {
