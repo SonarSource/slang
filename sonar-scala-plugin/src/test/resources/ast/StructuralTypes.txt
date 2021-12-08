@@ -19,7 +19,7 @@ TopLevelTree {                                                                  
               }                                                                          |                     |              
             }                                                                            |                     |              
           }                                                                              |                     |              
-          ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {                    | Selectable … _2     | 7:52 … 8:75  
+          ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {                    | extends … _2        | 7:44 … 8:75  
             ?ScalaNativeKind(class scala.meta.Init$InitImpl)? {                          | Selectable          | 7:52 … 7:62  
               IdentifierTree                                                             | Selectable          | 7:52 … 7:62  
             }                                                                            |                     |              
@@ -55,7 +55,7 @@ TopLevelTree {                                                                  
           }                                                                              |                     |              
         }                                                                                |                     |              
       }                                                                                  |                     |              
-      ?ScalaNativeKind(class scala.meta.Defn$Type$DefnTypeImpl)? {                       | type … }            | 11:3 … 14:4  
+      ?ScalaNativeKind(class scala.meta.Defn$Type$DefnTypeImpl)? {                       | type … =            | 11:3 … 11:17 
         IdentifierTree                                                                   | Person              | 11:8 … 11:14 
         ?ScalaNativeKind(class scala.meta.Type$Refine$TypeRefineImpl)? {                 | Record … Int        | 11:17 … 13:17
           IdentifierTree                                                                 | Record              | 11:17 … 11:23

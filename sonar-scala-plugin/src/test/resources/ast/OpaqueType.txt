@@ -1,0 +1,14 @@
+AST node class                                                       | first…last tokens | line:col   
+---------------------------------------------------------------------|-------------------|------------
+TopLevelTree {                                                       | package … }       | 1:1 … 3:2  
+  ?ScalaNativeKind(class scala.meta.Pkg$Object$PkgObjectImpl)? {     | package … }       | 1:1 … 3:2  
+    IdentifierTree                                                   | Opaquetypes       | 1:16 … 1:27
+    ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {      | { … Double        | 1:28 … 2:33
+      ?ScalaNativeKind(class scala.meta.Defn$Type$DefnTypeImpl)? {   | opaque … Double   | 2:3 … 2:33 
+        ?ScalaNativeKind(class scala.meta.Mod$Opaque$ModOpaqueImpl)? | opaque            | 2:3 … 2:9  
+        IdentifierTree                                               | Logarithm         | 2:15 … 2:24
+        IdentifierTree                                               | Double            | 2:27 … 2:33
+      }                                                              |                   |            
+    }                                                                |                   |            
+  }                                                                  |                   |            
+}                                                                    |                   |            

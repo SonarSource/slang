@@ -63,7 +63,7 @@ TopLevelTree {                                                                  
               IdentifierTree                                                           | Double            | 19:40 … 19:46
             }                                                                          |                   |              
           }                                                                            |                   |              
-          ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {                  | X … ???           | 19:56 … 20:34
+          ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {                  | extends … ???     | 19:48 … 20:34
             ?ScalaNativeKind(class scala.meta.Init$InitImpl)? {                        | X                 | 19:56 … 19:57
               IdentifierTree                                                           | X                 | 19:56 … 19:57
             }                                                                          |                   |              
