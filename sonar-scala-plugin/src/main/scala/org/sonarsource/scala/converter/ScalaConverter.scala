@@ -67,10 +67,16 @@ class ScalaConverter extends ASTConverter {
       val metaTree: scala.meta.Tree = code.parse[Source] match {
         case Success(tree) => tree
         case Error(pos, _, _) =>
-          dialects.Sbt1(code).parse[Source] match {
+          // Parsing of Scala 3
+          dialects.Scala3(code).parse[Source] match {
             case Success(t) => t
             case Error(_, _, _) =>
-              throw new slang.api.ParseException("Unable to parse file content.", textRange(pos).start())
+              // Parsing of Scala "scripts"
+              dialects.Sbt1(code).parse[Source] match {
+                case Success(t) => t
+                case Error(_, _, _) =>
+                  throw new slang.api.ParseException("Unable to parse file content.", textRange(pos).start())
+              }
           }
       }
       val allTokens = metaTree.tokens
