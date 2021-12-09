@@ -310,7 +310,6 @@ public class GoCoverSensor implements Sensor {
     final int startCol;
     final int endLine;
     final int endCol;
-    final int numStmt;
     final int count;
 
     CoverageStat(int lineNumber, String line) {
@@ -323,7 +322,7 @@ public class GoCoverSensor implements Sensor {
       startCol = Integer.parseInt(matcher.group(3));
       endLine = Integer.parseInt(matcher.group(4));
       endCol = Integer.parseInt(matcher.group(5));
-      numStmt = Integer.parseInt(matcher.group(6));
+      // No need to parse numStmt as it is never used.
       count = Integer.parseInt(matcher.group(7));
     }
 

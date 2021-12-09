@@ -102,7 +102,7 @@ class GoCoverSensorTest {
     assertThat(coverage.startCol).isEqualTo(10);
     assertThat(coverage.endLine).isEqualTo(4);
     assertThat(coverage.endCol).isEqualTo(5);
-    assertThat(coverage.numStmt).isEqualTo(2);
+    // numStmt is not parsed because not required.
     assertThat(coverage.count).isEqualTo(234);
 
     assertThatThrownBy(() -> new CoverageStat(42, "invalid") )
@@ -126,6 +126,13 @@ class GoCoverSensorTest {
 
     line.add(new CoverageStat(2, "main.go:2.8,2.10 1 0"));
     assertThat(line.hits).isEqualTo(5);
+  }
+
+  @Test
+  void line_coverage_do_not_parse_num_statement() {
+    LineCoverage line = new LineCoverage();
+    line.add(new CoverageStat(2, "main.go:2.2,2.5 2650701153 0"));
+    assertThat(line.hits).isZero();
   }
 
   @Test
