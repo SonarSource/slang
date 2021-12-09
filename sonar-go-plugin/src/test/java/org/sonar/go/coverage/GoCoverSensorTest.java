@@ -199,6 +199,17 @@ class GoCoverSensorTest {
   }
 
   @Test
+  void parse_coverage_one_broken_line() {
+    Path coverageFile = COVERAGE_DIR.resolve("coverage.one.broken.line.out");
+    GoPathContext linuxContext = new GoPathContext('/', ":", "/home/paul/go");
+    String coverPath = "/home/paul/go/src/github.com/SonarSource/slang/sonar-go-plugin/src/test/resources/coverage/cover.go";
+    assertCoverGo(coverageFile, linuxContext, coverPath);
+
+    assertThat(logTester.logs(LoggerLevel.DEBUG))
+      .containsExactly("Ignoring line in coverage report: Invalid go coverage at line 7.");
+  }
+
+  @Test
   void get_report_paths() {
     SensorContextTester context = SensorContextTester.create(COVERAGE_DIR);
     context.setSettings(new MapSettings());

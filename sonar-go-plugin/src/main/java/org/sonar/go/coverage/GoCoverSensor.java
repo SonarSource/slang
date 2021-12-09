@@ -199,12 +199,20 @@ public class GoCoverSensor implements Sensor {
       while (scanner.hasNextLine()) {
         String line = scanner.nextLine();
         if (!line.isEmpty()) {
-          coverage.add(new CoverageStat(lineNumber, line));
+          addIfValidLine(line, lineNumber, coverage);
         }
         lineNumber++;
       }
     } catch (IOException e) {
       LOG.error("Error parsing coverage info for file {}: {}", reportPath, e.getMessage());
+    }
+  }
+
+  private static void addIfValidLine(String line, int lineNumber, Coverage coverage) {
+    try {
+      coverage.add(new CoverageStat(lineNumber, line));
+    } catch (IllegalArgumentException e) {
+      LOG.debug("Ignoring line in coverage report: {}.", e.getMessage(), e);
     }
   }
 
