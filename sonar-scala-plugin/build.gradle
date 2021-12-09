@@ -39,6 +39,17 @@ sonarqube {
     }
 }
 
+jacocoTestReport {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                // scala code is covered by scoverage
+                "org/sonarsource/scala/converter/*"
+            ])
+        }))
+    }
+}
+
 dependencies {
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
     implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
