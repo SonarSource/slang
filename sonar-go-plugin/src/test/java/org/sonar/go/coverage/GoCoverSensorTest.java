@@ -129,6 +129,20 @@ class GoCoverSensorTest {
   }
 
   @Test
+  void line_coverage_over_flow() {
+    LineCoverage line = new LineCoverage();
+    // hits is greater than Integer.MAX_VALUE
+    line.add(new CoverageStat(2, "main.go:2.2,2.5 1 " + + (((long)Integer.MAX_VALUE) + 1)));
+    assertThat(line.hits).isEqualTo(Integer.MAX_VALUE);
+
+    LineCoverage lineWithTwoStats = new LineCoverage();
+    // hits is greater than Integer.MAX_VALUE
+    lineWithTwoStats.add(new CoverageStat(2, "main.go:2.2,2.5 1 " + (Integer.MAX_VALUE - 1)));
+    lineWithTwoStats.add(new CoverageStat(2, "main.go:2.2,2.5 1 2"));
+    assertThat(line.hits).isEqualTo(Integer.MAX_VALUE);
+  }
+
+  @Test
   void line_coverage_do_not_parse_num_statement() {
     LineCoverage line = new LineCoverage();
     line.add(new CoverageStat(2, "main.go:2.2,2.5 2650701153 0"));

@@ -299,7 +299,12 @@ public class GoCoverSensor implements Sensor {
     int hits = 0;
 
     void add(CoverageStat coverage) {
-      hits += coverage.count;
+      long sum = ((long) hits) + coverage.count;
+      if (sum > Integer.MAX_VALUE) {
+        hits = Integer.MAX_VALUE;
+      } else {
+        hits  = (int) sum;
+      }
     }
   }
 
@@ -323,7 +328,18 @@ public class GoCoverSensor implements Sensor {
       endLine = Integer.parseInt(matcher.group(4));
       endCol = Integer.parseInt(matcher.group(5));
       // No need to parse numStmt as it is never used.
-      count = Integer.parseInt(matcher.group(7));
+      count = parseIntWithOverflow(matcher.group(7));
+    }
+
+    private static int parseIntWithOverflow(String s) {
+      int result = 0;
+      try {
+        result = Integer.parseInt(s);
+      } catch (NumberFormatException e) {
+        // Thanks to the regex, we know that the input can only contain digits, the only possible Exception is therefore coming from overflow.
+        return Integer.MAX_VALUE;
+      }
+      return result;
     }
 
   }
