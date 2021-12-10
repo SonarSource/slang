@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.sonar.api.batch.measure.Metric;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
@@ -32,8 +33,6 @@ import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.ClassDeclarationTree;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
-import org.sonarsource.slang.api.ImportDeclarationTree;
-import org.sonarsource.slang.api.PackageDeclarationTree;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
@@ -45,6 +44,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
   public static final String NOSONAR_PREFIX = "NOSONAR";
   private final FileLinesContextFactory fileLinesContextFactory;
   private final NoSonarFilter noSonarFilter;
+  private final Predicate<Tree> executableLineOfCodePredicate;
 
   private Set<Integer> linesOfCode;
   private Set<Integer> commentLines;
@@ -56,9 +56,10 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
   private int statements;
   private int cognitiveComplexity;
 
-  public MetricVisitor(FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter) {
+  public MetricVisitor(FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter, Predicate<Tree> executableLineOfCodePredicate) {
     this.fileLinesContextFactory = fileLinesContextFactory;
     this.noSonarFilter = noSonarFilter;
+    this.executableLineOfCodePredicate = executableLineOfCodePredicate;
 
     register(TopLevelTree.class, (ctx, tree) -> {
       tree.allComments().forEach(
@@ -83,11 +84,7 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
 
   private void addExecutableLines(List<Tree> trees) {
     trees.stream()
-      .filter(t -> !(t instanceof PackageDeclarationTree))
-      .filter(t -> !(t instanceof ImportDeclarationTree))
-      .filter(t -> !(t instanceof ClassDeclarationTree))
-      .filter(t -> !(t instanceof FunctionDeclarationTree))
-      .filter(t -> !(t instanceof BlockTree))
+      .filter(executableLineOfCodePredicate)
       .forEach(t -> executableLines.add(t.metaData().textRange().start().line()));
   }
 

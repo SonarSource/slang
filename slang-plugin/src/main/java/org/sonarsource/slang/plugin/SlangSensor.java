@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -36,6 +37,7 @@ import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
+import org.sonar.api.internal.google.common.annotations.VisibleForTesting;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.resources.Language;
@@ -44,6 +46,11 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ProgressReport;
 import org.sonarsource.slang.api.ASTConverter;
+import org.sonarsource.slang.api.BlockTree;
+import org.sonarsource.slang.api.ClassDeclarationTree;
+import org.sonarsource.slang.api.FunctionDeclarationTree;
+import org.sonarsource.slang.api.ImportDeclarationTree;
+import org.sonarsource.slang.api.PackageDeclarationTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.Tree;
@@ -52,6 +59,14 @@ import org.sonarsource.slang.plugin.converter.ASTConverterValidation;
 import org.sonarsource.slang.visitors.TreeVisitor;
 
 public abstract class SlangSensor implements Sensor {
+  @VisibleForTesting
+  static final Predicate<Tree> EXECUTABLE_LINE_PREDICATE = t ->
+    !(t instanceof PackageDeclarationTree)
+    && !(t instanceof ImportDeclarationTree)
+    && !(t instanceof ClassDeclarationTree)
+    && !(t instanceof FunctionDeclarationTree)
+    && !(t instanceof BlockTree);
+
   private static final Logger LOG = Loggers.get(SlangSensor.class);
   private static final Pattern EMPTY_FILE_CONTENT_PATTERN = Pattern.compile("\\s*+");
 
@@ -93,6 +108,10 @@ public abstract class SlangSensor implements Sensor {
   protected abstract Checks<SlangCheck> checks();
 
   protected abstract String repositoryKey();
+
+  protected Predicate<Tree> executableLineOfCodePredicate() {
+    return EXECUTABLE_LINE_PREDICATE;
+  }
 
   private boolean analyseFiles(ASTConverter converter,
     SensorContext sensorContext,
@@ -203,7 +222,7 @@ public abstract class SlangSensor implements Sensor {
     } else {
       return Arrays.asList(
         new IssueSuppressionVisitor(),
-        new MetricVisitor(fileLinesContextFactory, noSonarFilter),
+        new MetricVisitor(fileLinesContextFactory, noSonarFilter, executableLineOfCodePredicate()),
         new ChecksVisitor(checks(), statistics),
         new CpdVisitor(),
         new SyntaxHighlighter());

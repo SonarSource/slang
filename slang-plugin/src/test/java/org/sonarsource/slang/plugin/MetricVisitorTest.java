@@ -62,7 +62,7 @@ class MetricVisitorTest {
     FileLinesContextFactory mockFileLinesContextFactory = mock(FileLinesContextFactory.class);
     mockNoSonarFilter = mock(NoSonarFilter.class);
     when(mockFileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(mockFileLinesContext);
-    visitor = new MetricVisitor(mockFileLinesContextFactory, mockNoSonarFilter);
+    visitor = new MetricVisitor(mockFileLinesContextFactory, mockNoSonarFilter, SlangSensor.EXECUTABLE_LINE_PREDICATE);
   }
 
   @Test

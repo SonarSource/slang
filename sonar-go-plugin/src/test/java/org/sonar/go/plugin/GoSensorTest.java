@@ -205,6 +205,32 @@ class GoSensorTest {
   }
 
   @Test
+  void test_not_executable_lines() {
+    InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
+      "package awesomeProject\n" +
+        "const a = \"a\"\n" +
+        "var myVar int = 12\n" +
+        "var i, j int = 1, 2\n" +
+        "var c, c1, c2, c3, c4 int\n" +
+        "const (\n" +
+        "\tUpdate = \"update\"\n" +
+        "\tDelete = \"delete\"\n" +
+        ")\n" +
+        "type Message struct {\n" +
+        "}\n" +
+        "type (\n" +
+        "\tRrsType string\n" +
+        ")\n"
+    );
+    sensorContext.fileSystem().add(inputFile);
+    GoSensor goSensor = getSensor();
+    goSensor.execute(sensorContext);
+
+    assertThat(sensorContext.measure(inputFile.key(), CoreMetrics.NCLOC).value()).isEqualTo(14);
+    assertThat(fileLinesContext.metrics.get(CoreMetrics.EXECUTABLE_LINES_DATA_KEY)).isNull();
+  }
+
+  @Test
   void metrics_for_test_file() {
     InputFile inputFile = createInputFile("lets.go", InputFile.Type.TEST,
       "// This is not a line of code\n" +

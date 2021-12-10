@@ -19,6 +19,7 @@
  */
 package org.sonar.go.plugin;
 
+import java.util.function.Predicate;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
@@ -28,6 +29,9 @@ import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.go.converter.GoConverter;
 import org.sonarsource.slang.api.ASTConverter;
+import org.sonarsource.slang.api.NativeTree;
+import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.api.VariableDeclarationTree;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.plugin.SlangSensor;
 
@@ -61,5 +65,18 @@ public class GoSensor extends SlangSensor {
   @Override
   protected String repositoryKey() {
     return GoRulesDefinition.REPOSITORY_KEY;
+  }
+
+  @Override
+  protected Predicate<Tree> executableLineOfCodePredicate() {
+    return super.executableLineOfCodePredicate().and(t ->
+      !(t instanceof VariableDeclarationTree)
+        && !isGenericDeclaration(t)
+    );
+  }
+
+  private static boolean isGenericDeclaration(Tree tree) {
+    return tree instanceof NativeTree &&
+      ((NativeTree) tree).nativeKind().toString().contains("GenDecl");
   }
 }
