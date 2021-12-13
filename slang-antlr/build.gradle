@@ -1,7 +1,9 @@
 apply plugin: 'antlr'
 
 dependencies {
-    antlr "org.antlr:antlr4:4.7.1"
+    antlr ("org.antlr:antlr4:4.7.1") {
+        exclude group: 'org.glassfish', module: 'javax.json'
+    }
     implementation project(':slang-api')
     implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
     testImplementation project(':slang-testing')
