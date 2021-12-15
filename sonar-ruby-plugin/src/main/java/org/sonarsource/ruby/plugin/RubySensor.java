@@ -19,6 +19,7 @@
  */
 package org.sonarsource.ruby.plugin;
 
+import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -33,8 +34,8 @@ public class RubySensor extends SlangSensor {
 
   private final Checks<SlangCheck> checks;
 
-  public RubySensor(CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter, RubyLanguage language) {
-    super(noSonarFilter, fileLinesContextFactory, language);
+  public RubySensor(SonarRuntime sonarRuntime, CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter, RubyLanguage language) {
+    super(sonarRuntime, noSonarFilter, fileLinesContextFactory, language);
     checks = checkFactory.create(RubyPlugin.RUBY_REPOSITORY_KEY);
     checks.addAnnotatedChecks((Iterable<?>) RubyCheckList.checks());
   }

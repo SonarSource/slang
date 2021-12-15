@@ -20,6 +20,7 @@
 package org.sonarsource.slang.plugin;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +28,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.sonar.api.SonarProduct;
+import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
@@ -37,6 +39,7 @@ import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.resources.Language;
+import org.sonar.api.utils.Version;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ProgressReport;
@@ -52,11 +55,13 @@ public abstract class SlangSensor implements Sensor {
   private static final Logger LOG = Loggers.get(SlangSensor.class);
   private static final Pattern EMPTY_FILE_CONTENT_PATTERN = Pattern.compile("\\s*+");
 
+  protected final SonarRuntime sonarRuntime;
   private final NoSonarFilter noSonarFilter;
   private final Language language;
   private FileLinesContextFactory fileLinesContextFactory;
 
-  protected SlangSensor(NoSonarFilter noSonarFilter, FileLinesContextFactory fileLinesContextFactory, Language language) {
+  protected SlangSensor(SonarRuntime sonarRuntime, NoSonarFilter noSonarFilter, FileLinesContextFactory fileLinesContextFactory, Language language) {
+    this.sonarRuntime = sonarRuntime;
     this.noSonarFilter = noSonarFilter;
     this.fileLinesContextFactory = fileLinesContextFactory;
     this.language = language;
@@ -67,6 +72,20 @@ public abstract class SlangSensor implements Sensor {
     descriptor
       .onlyOnLanguage(language.getKey())
       .name(language.getName() + " Sensor");
+    processesFilesIndependently(descriptor);
+  }
+
+  protected void processesFilesIndependently(SensorDescriptor descriptor) {
+    if ((sonarRuntime.getProduct() == SonarProduct.SONARLINT)
+      || !sonarRuntime.getApiVersion().isGreaterThanOrEqual(Version.create(9, 3))) {
+      return;
+    }
+    try {
+      Method method = descriptor.getClass().getMethod("processesFilesIndependently");
+      method.invoke(descriptor);
+    } catch (ReflectiveOperationException e) {
+      LOG.warn("Could not call SensorDescriptor.processesFilesIndependently() method", e);
+    }
   }
 
   protected abstract ASTConverter astConverter(SensorContext sensorContext);

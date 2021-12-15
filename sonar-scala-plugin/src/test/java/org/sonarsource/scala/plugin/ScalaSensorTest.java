@@ -21,7 +21,6 @@ package org.sonarsource.scala.plugin;
 
 import java.util.Collection;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
 import org.sonar.api.batch.rule.CheckFactory;
@@ -116,7 +115,7 @@ class ScalaSensorTest extends AbstractSensorTest {
   }
 
   private ScalaSensor sensor(CheckFactory checkFactory) {
-    return new ScalaSensor(checkFactory, fileLinesContextFactory, new NoSonarFilter(), language());
+    return new ScalaSensor(SQ_LTS_RUNTIME, checkFactory, fileLinesContextFactory, new NoSonarFilter(), language());
   }
 
 }

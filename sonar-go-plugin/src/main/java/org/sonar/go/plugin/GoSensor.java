@@ -19,6 +19,7 @@
  */
 package org.sonar.go.plugin;
 
+import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -34,8 +35,8 @@ public class GoSensor extends SlangSensor {
 
   private final Checks<SlangCheck> checks;
 
-  public GoSensor(CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter, GoLanguage language) {
-    super(noSonarFilter, fileLinesContextFactory, language);
+  public GoSensor(SonarRuntime sonarRuntime, CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter, GoLanguage language) {
+    super(sonarRuntime, noSonarFilter, fileLinesContextFactory, language);
     checks = checkFactory.create(GoRulesDefinition.REPOSITORY_KEY);
     checks.addAnnotatedChecks((Iterable<?>) GoCheckList.checks());
   }
@@ -44,6 +45,7 @@ public class GoSensor extends SlangSensor {
   public void describe(SensorDescriptor descriptor) {
     descriptor.onlyOnLanguage(GoLanguage.KEY)
       .name("Code Quality and Security for Go");
+    processesFilesIndependently(descriptor);
   }
 
   @Override

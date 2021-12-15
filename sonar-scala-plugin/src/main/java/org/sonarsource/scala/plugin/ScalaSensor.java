@@ -19,6 +19,7 @@
  */
 package org.sonarsource.scala.plugin;
 
+import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -31,12 +32,12 @@ import org.sonarsource.slang.checks.CommentedCodeCheck;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.plugin.SlangSensor;
 
-public class ScalaSensor  extends SlangSensor {
+public class ScalaSensor extends SlangSensor {
 
   private final Checks<SlangCheck> checks;
 
-  public ScalaSensor(CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter, ScalaLanguage language) {
-    super(noSonarFilter, fileLinesContextFactory, language);
+  public ScalaSensor(SonarRuntime sonarRuntime, CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter, ScalaLanguage language) {
+    super(sonarRuntime, noSonarFilter, fileLinesContextFactory, language);
     checks = checkFactory.create(ScalaPlugin.SCALA_REPOSITORY_KEY);
     checks.addAnnotatedChecks((Iterable<?>) ScalaCheckList.checks());
     checks.addAnnotatedChecks(new CommentedCodeCheck(new ScalaCodeVerifier()));

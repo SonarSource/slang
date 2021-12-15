@@ -23,13 +23,15 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.sonar.api.SonarEdition;
+import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.SensorContext;
+import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.error.AnalysisError;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
@@ -54,6 +56,7 @@ import org.sonarsource.slang.parser.SlangCodeVerifier;
 import org.sonarsource.slang.testing.AbstractSensorTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -348,6 +351,16 @@ class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
+  void test_sonarlint_descriptor() {
+    DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
+    SlangSensor sensor = sensor(SonarRuntimeImpl.forSonarLint(Version.create(6, 5)), mock(CheckFactory.class));
+    sensor.describe(sensorDescriptor);
+    assertThat(sensorDescriptor.languages()).hasSize(1);
+    assertThat(sensorDescriptor.languages()).containsExactly("slang");
+    assertThat(sensorDescriptor.name()).isEqualTo("SLang Sensor");
+  }
+
+  @Test
   void test_cancellation() {
     InputFile inputFile = createInputFile("file1.slang", "" +
       "fun main() {\nprint (1 == 1);}");
@@ -380,6 +393,34 @@ class SlangSensorTest extends AbstractSensorTest {
     //assertThat(logTester.logs()).contains("1 source files to be analyzed");
   }
 
+  @Test
+  void test_sensor_descriptor_processes_files_independently() {
+    final SlangSensor sensor = sensor(
+      SonarRuntimeImpl.forSonarQube(Version.create(9, 3), SonarQubeSide.SCANNER, SonarEdition.DEVELOPER),
+      checkFactory()
+    );
+    final boolean[] called = {false};
+    SensorDescriptor descriptor = new DefaultSensorDescriptor() {
+      public SensorDescriptor processesFilesIndependently() {
+        called[0] = true;
+        return this;
+      }
+    };
+    sensor.describe(descriptor);
+
+    assertTrue(called[0]);
+  }
+
+  @Test
+  void test_sensor_descriptor_processes_files_independently_reflection_failure() {
+    final SlangSensor sensor = sensor(
+      SonarRuntimeImpl.forSonarQube(Version.create(9, 3), SonarQubeSide.SCANNER, SonarEdition.DEVELOPER),
+      checkFactory()
+    );
+    sensor.describe(new DefaultSensorDescriptor());
+    assertThat(logTester.logs()).contains("Could not call SensorDescriptor.processesFilesIndependently() method");
+  }
+
   @Override
   protected String repositoryKey() {
     return "slang";
@@ -391,7 +432,11 @@ class SlangSensorTest extends AbstractSensorTest {
   }
 
   private SlangSensor sensor(CheckFactory checkFactory) {
-    return new SlangSensor(new NoSonarFilter(), fileLinesContextFactory, SLANG) {
+    return sensor(SQ_LTS_RUNTIME, checkFactory);
+  }
+
+  private SlangSensor sensor(SonarRuntime sonarRuntime, CheckFactory checkFactory) {
+    return new SlangSensor(sonarRuntime, new NoSonarFilter(), fileLinesContextFactory, SLANG) {
       @Override
       protected ASTConverter astConverter(SensorContext sensorContext) {
         return new SLangConverter();

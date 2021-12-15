@@ -23,16 +23,21 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.sonar.api.SonarEdition;
+import org.sonar.api.SonarQubeSide;
+import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.rule.internal.NewActiveRule;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
+import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.resources.Language;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.utils.Version;
 import org.sonar.api.utils.internal.JUnitTempFolder;
 import org.sonar.api.utils.log.ThreadLocalLogTester;
 
@@ -49,6 +54,7 @@ public abstract class AbstractSensorTest {
   protected File baseDir;
   protected SensorContextTester context;
   protected FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
+  public static final SonarRuntime SQ_LTS_RUNTIME = SonarRuntimeImpl.forSonarQube(Version.create(8, 9), SonarQubeSide.SCANNER, SonarEdition.DEVELOPER);
 
   @org.junit.Rule
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
