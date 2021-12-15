@@ -1,6 +1,6 @@
 <p>Having two <code>when</code> clauses in a <code>case</code> statement or two branches in an <code>if</code> chain with the same implementation is
 at best duplicate code, and at worst a coding error. If the same logic is truly needed for both instances, then in an <code>if</code> chain they
-should be combined, or for a <code>case</code>, duplicates should be refactored. </p>
+should be combined, or for a <code>case</code>, duplicates should be refactored.</p>
 <h2>Noncompliant Code Example</h2>
 <pre>
 case i
@@ -42,7 +42,7 @@ end
 </pre>
 <p>But this exception does not apply to <code>if</code> chains without <code>else</code>-s, or to <code>case</code>-es without <code>else</code>
 clauses when all branches have the same single line of code. In case of <code>if</code> chains with <code>else</code>-s, or of <code>case</code>-es
-with <code>else</code> clauses, rule {rule:ruby:S3923} raises a bug. </p>
+with <code>else</code> clauses, rule {rule:ruby:S3923} raises a bug.</p>
 <pre>
 if a == 1
   doSomething()  # Noncompliant, this might have been done on purpose but probably not

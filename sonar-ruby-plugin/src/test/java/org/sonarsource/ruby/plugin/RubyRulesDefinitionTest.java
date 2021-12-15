@@ -24,6 +24,7 @@ import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.rules.RuleType;
+import org.sonar.api.server.debt.DebtRemediationFunction;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinition.Param;
 import org.sonar.api.server.rule.RulesDefinition.Rule;
@@ -46,7 +47,10 @@ class RubyRulesDefinitionTest {
     Rule rule = repository.rule("S1135");
     assertThat(rule).isNotNull();
     assertThat(rule.name()).isEqualTo("Track uses of \"TODO\" tags");
-    assertThat(rule.debtRemediationFunction()).isNull();
+    DebtRemediationFunction remediationFunction = rule.debtRemediationFunction();
+    assertThat(remediationFunction).isNotNull();
+    assertThat(remediationFunction.type()).isEqualTo(DebtRemediationFunction.Type.CONSTANT_ISSUE);
+    assertThat(remediationFunction.baseEffort()).isEqualTo("0min");
     assertThat(rule.type()).isEqualTo(RuleType.CODE_SMELL);
 
     Rule ruleWithConfig = repository.rule("S100");
