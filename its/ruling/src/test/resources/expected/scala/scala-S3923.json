@@ -5,10 +5,4 @@
 'scala-project:sources/scala/http4s/client/src/test/scala/org/http4s/client/middleware/FollowRedirectSpec.scala':[
 62,
 ],
-'scala-project:sources/scala/incubator-openwhisk/tools/admin/src/main/scala/whisk/core/cli/Main.scala':[
-196,
-],
-'scala-project:sources/scala/prisma/server/servers/api/src/main/scala/com/prisma/subscriptions/schema/MyVisitor.scala':[
-23,
-],
 }

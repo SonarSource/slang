@@ -90,9 +90,10 @@ public abstract class AbstractBranchDuplicationCheck implements SlangCheck {
     }
 
     private boolean allBranchesAreIdentical() {
-      return branches.stream()
-        .skip(1)
-        .allMatch(branch -> areEquivalent(branches.get(0), branch));
+      return branches.size() > 1 &&
+        branches.stream()
+          .skip(1)
+          .allMatch(branch -> areEquivalent(branches.get(0), branch));
     }
   }
 

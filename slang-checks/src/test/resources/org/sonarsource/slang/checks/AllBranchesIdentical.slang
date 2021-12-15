@@ -21,3 +21,4 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   match (x) { 1 -> a; 2 -> a; else -> b; };
   match (x) { 1 -> a; 2 -> a; else -> a; }; // Noncompliant
+  match (x) { else -> b; }; // Compliant: only default case

@@ -25,6 +25,10 @@ class MyClass {
       case _ => value
     }
 
+    value match { // Compliant
+      case _ => value
+    }
+
     if (value == 1) { // Noncompliant
       value
     } else if (value == 2) {

@@ -2,8 +2,4 @@
 'go-project:ruling/src/test/resources/sources/go/S3923.go':[
 4,
 ],
-'go-project:sources/go/kubernetes/staging/src/k8s.io/apimachinery/pkg/conversion/unstructured/converter.go':[
-518,
-576,
-],
 }
