@@ -287,8 +287,13 @@ public class GoCoverSensor implements Sensor {
     }
 
     boolean shouldIgnore(int line, int column) {
-      if (lines != null && line > 0 && line <= lines.size() && column > 0 && column <= lines.get(line - 1).length()) {
-        int ch = lines.get(line - 1).charAt(column - 1);
+      if (lines != null && line > 0 && line <= lines.size() && column > 0) {
+        String currentLine = lines.get(line - 1);
+        if (column > currentLine.length()) {
+          // Ignore end of line
+          return true;
+        }
+        int ch = currentLine.charAt(column - 1);
         return ch < ' ' || ch == '{' || ch == '}';
       }
       return false;

@@ -280,22 +280,9 @@ class GoCoverSensorTest {
 
   @Test
   void upload_reports() throws IOException {
-    Path baseDir = COVERAGE_DIR.toAbsolutePath();
-    SensorContextTester context = SensorContextTester.create(baseDir);
-    context.setSettings(new MapSettings());
-    context.settings().setProperty("sonar.go.coverage.reportPaths", "coverage.relative.out");
-    Path goFilePath = baseDir.resolve("cover.go");
-    String content = new String(Files.readAllBytes(goFilePath), UTF_8);
-    context.fileSystem().add(TestInputFileBuilder.create("moduleKey", baseDir.toFile(), goFilePath.toFile())
-      .setLanguage("go")
-      .setType(InputFile.Type.MAIN)
-      .initMetadata(content)
-      .setContents(content)
-      .build());
-    GoPathContext goContext = new GoPathContext(File.separatorChar, File.pathSeparator, baseDir.toString());
-    GoCoverSensor sensor = new GoCoverSensor();
-    sensor.execute(context, goContext);
-    String fileKey = "moduleKey:cover.go";
+    String fileName = "cover.go";
+    SensorContextTester context = setUpContext(fileName, "coverage.relative.out");
+    String fileKey = "moduleKey:" + fileName;
     assertThat(context.lineHits(fileKey, 3)).isNull();
     assertThat(context.lineHits(fileKey, 4)).isEqualTo(1);
     assertThat(context.lineHits(fileKey, 5)).isEqualTo(2);
@@ -308,22 +295,9 @@ class GoCoverSensorTest {
 
   @Test
   void coverage_fuzzy_inputfile() throws Exception {
-    Path baseDir = COVERAGE_DIR.toAbsolutePath();
-    SensorContextTester context = SensorContextTester.create(baseDir);
-    context.setSettings(new MapSettings());
-    context.settings().setProperty("sonar.go.coverage.reportPaths", "coverage.fuzzy.out");
-    Path goFilePath = baseDir.resolve("cover.go");
-    String content = new String(Files.readAllBytes(goFilePath), UTF_8);
-    context.fileSystem().add(TestInputFileBuilder.create("moduleKey", baseDir.toFile(), goFilePath.toFile())
-      .setLanguage("go")
-      .setType(InputFile.Type.MAIN)
-      .initMetadata(content)
-      .setContents(content)
-      .build());
-    GoPathContext goContext = new GoPathContext(File.separatorChar, File.pathSeparator, "");
-    GoCoverSensor sensor = new GoCoverSensor();
-    sensor.execute(context, goContext);
-    String fileKey = "moduleKey:cover.go";
+    String fileName = "cover.go";
+    SensorContextTester context = setUpContext(fileName, "coverage.fuzzy.out");
+    String fileKey = "moduleKey:" + fileName;
     assertThat(context.lineHits(fileKey, 3)).isNull();
     assertThat(context.lineHits(fileKey, 4)).isEqualTo(1);
     assertThat(context.lineHits(fileKey, 5)).isEqualTo(2);
@@ -335,6 +309,46 @@ class GoCoverSensorTest {
 
     String ignoredFileLog = "File 'doesntexists.go' is not included in the project, ignoring coverage";
     assertThat(logTester.logs(LoggerLevel.WARN)).contains(ignoredFileLog);
+  }
+
+  @Test
+  void coverage_switch_case() throws Exception {
+    String fileName = "coverage.switch.go";
+    SensorContextTester context = setUpContext(fileName, "coverage.switch.out");
+    String fileKey = "moduleKey:" + fileName;
+    // Opening brace of function should not be included into the switch
+    assertThat(context.lineHits(fileKey, 3)).isNull();
+    assertThat(context.lineHits(fileKey, 4)).isEqualTo(1);
+    // Switch case should not be counted
+    assertThat(context.lineHits(fileKey, 5)).isNull();
+    assertThat(context.lineHits(fileKey, 6)).isEqualTo(1);
+    assertThat(context.lineHits(fileKey, 7)).isNull();
+    assertThat(context.lineHits(fileKey, 8)).isZero();
+    assertThat(context.lineHits(fileKey, 9)).isNull();
+    assertThat(context.lineHits(fileKey, 10)).isZero();
+    assertThat(context.lineHits(fileKey, 11)).isNull();
+    assertThat(context.lineHits(fileKey, 12)).isZero();
+    assertThat(context.lineHits(fileKey, 13)).isNull();
+    assertThat(context.lineHits(fileKey, 14)).isZero();
+  }
+
+  private SensorContextTester setUpContext(String fileName, String coverageFile) throws IOException {
+    Path baseDir = COVERAGE_DIR.toAbsolutePath();
+    SensorContextTester context = SensorContextTester.create(baseDir);
+    context.setSettings(new MapSettings());
+    context.settings().setProperty("sonar.go.coverage.reportPaths", coverageFile);
+    Path goFilePath = baseDir.resolve(fileName);
+    String content = new String(Files.readAllBytes(goFilePath), UTF_8);
+    context.fileSystem().add(TestInputFileBuilder.create("moduleKey", baseDir.toFile(), goFilePath.toFile())
+      .setLanguage("go")
+      .setType(InputFile.Type.MAIN)
+      .initMetadata(content)
+      .setContents(content)
+      .build());
+    GoPathContext goContext = new GoPathContext(File.separatorChar, File.pathSeparator, "");
+    GoCoverSensor sensor = new GoCoverSensor();
+    sensor.execute(context, goContext);
+    return context;
   }
 
   private void assertCoverGo(Path coverageFile, GoPathContext goContext, String absolutePath) {
