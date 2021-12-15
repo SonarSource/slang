@@ -17,6 +17,7 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 // The following directive is necessary to make the package coherent:
+//go:build ignore
 // +build ignore
 
 // This program generates 'goparser_generated.go'. It can be invoked by running "go generate"
