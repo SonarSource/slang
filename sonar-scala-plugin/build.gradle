@@ -60,6 +60,7 @@ dependencies {
     implementation('org.scalameta:scalameta_2.12:4.4.30') {
         exclude group: 'org.scalameta', module: 'semanticdb_2.12'
         exclude group: 'com.lihaoyi', module: 'fansi_2.12'
+        exclude group: 'com.google.protobuf', module: 'protobuf-java'
     }
     testImplementation project(':slang-testing')
     testImplementation project(':slang-antlr')
@@ -76,6 +77,9 @@ dependencies {
         }
         zinc('org.apache.logging.log4j:log4j-core:2.17.0') {
             because 'Address CVE-2021-44228 (log4shell) vulnerability'
+        }
+        zinc('com.google.protobuf:protobuf-java:3.19.3') {
+            because 'Address CVE-2021-22569'
         }
     }
 }
@@ -121,8 +125,15 @@ shadowJar {
     exclude 'scala/concurrent/**'
     exclude 'scala/io/*'
     exclude 'scala/util/matching/*'
+    //
+    exclude 'com/google/protobuf/**'
+    // scala-build related files, useless for our use
+    exclude '**/*.js'
+    exclude '**/*.properties'
+    exclude '**/*.proto'
+    exclude '**/*.txt'
     doLast {
-        enforceJarSizeAndCheckContent(shadowJar.archiveFile.get().asFile, 14_500_000L, 15_500_000L)
+        enforceJarSizeAndCheckContent(shadowJar.archiveFile.get().asFile, 12_500_000L, 13_500_000L)
     }
 }
 
