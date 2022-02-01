@@ -156,7 +156,7 @@ qa_plug_pub_lin_task:
     ITS_PROJECT: "plugin"
     GRADLE_TASK: ":its:plugin:test"
     matrix:
-      - SQ_VERSION: "DOGFOOD"
+      - SQ_VERSION: "DEV"
       - SQ_VERSION: "LATEST_RELEASE"
   <<: *LINUX_6_CPU_12G
   <<: *GRADLE_ITS_TEMPLATE
@@ -169,7 +169,7 @@ qa_plug_pri_lin_task:
     GIT_SUB_MODULE: "private/its/sources"
     matrix:
       - SQ_VERSION: "LATEST_RELEASE"
-      - SQ_VERSION: "DOGFOOD"
+      - SQ_VERSION: "DEV"
   <<: *LINUX_6_CPU_12G
   <<: *GRADLE_ITS_TEMPLATE
 
