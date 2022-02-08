@@ -20,6 +20,8 @@
 package org.sonar.go.plugin;
 
 import java.util.List;
+
+import org.sonar.api.SonarRuntime;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.go.externalreport.AbstractReportSensor;
 import org.sonar.go.externalreport.GoLintReportSensor;
@@ -32,11 +34,17 @@ public class GoRulesDefinition implements RulesDefinition {
 
   public static final String REPOSITORY_KEY = "go";
 
+  private final SonarRuntime runtime;
+
+  public GoRulesDefinition(SonarRuntime runtime) {
+    this.runtime = runtime;
+  }
+
   @Override
   public void define(Context context) {
     NewRepository repository = context.createRepository(REPOSITORY_KEY, GoLanguage.KEY)
       .setName("SonarAnalyzer");
-    RuleMetadataLoader metadataLoader = new RuleMetadataLoader(GoPlugin.RESOURCE_FOLDER);
+    RuleMetadataLoader metadataLoader = new RuleMetadataLoader(GoPlugin.RESOURCE_FOLDER, runtime);
 
     List<Class<?>> checks = GoCheckList.checks();
     metadataLoader.addRulesByAnnotatedClass(repository, checks);

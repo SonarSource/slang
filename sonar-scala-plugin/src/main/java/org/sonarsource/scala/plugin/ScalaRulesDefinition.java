@@ -21,6 +21,8 @@ package org.sonarsource.scala.plugin;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.sonar.api.SonarRuntime;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
 import org.sonarsource.slang.checks.CommentedCodeCheck;
@@ -31,12 +33,18 @@ public class ScalaRulesDefinition implements RulesDefinition {
 
   private static final String RESOURCE_FOLDER = "org/sonar/l10n/scala/rules/scala";
 
+  private final SonarRuntime runtime;
+
+  public ScalaRulesDefinition(SonarRuntime runtime) {
+    this.runtime = runtime;
+  }
+
   @Override
   public void define(RulesDefinition.Context context) {
     NewRepository repository = context
       .createRepository(ScalaPlugin.SCALA_REPOSITORY_KEY, ScalaPlugin.SCALA_LANGUAGE_KEY)
       .setName(ScalaPlugin.REPOSITORY_NAME);
-    RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER, ScalaProfileDefinition.PATH_TO_JSON);
+    RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER, ScalaProfileDefinition.PATH_TO_JSON, runtime);
 
     List<Class<?>> checks = new ArrayList<>(ScalaCheckList.checks());
     checks.add(CommentedCodeCheck.class);
