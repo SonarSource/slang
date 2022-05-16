@@ -25,7 +25,6 @@ import com.sonar.orchestrator.locator.Locators;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -43,11 +42,12 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.sonarsource.sonarlint.core.StandaloneSonarLintEngineImpl;
-import org.sonarsource.sonarlint.core.client.api.common.analysis.ClientInputFile;
+import org.sonarsource.sonarlint.core.analysis.api.ClientInputFile;
 import org.sonarsource.sonarlint.core.client.api.common.analysis.Issue;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneAnalysisConfiguration;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneGlobalConfiguration;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneSonarLintEngine;
+import org.sonarsource.sonarlint.core.commons.Language;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -74,20 +74,18 @@ public class SonarLintTest {
     StandaloneGlobalConfiguration.Builder sonarLintConfigBuilder = StandaloneGlobalConfiguration.builder();
     orchestrator.getDistribution().getPluginLocations().stream()
       .filter(location -> !location.toString().contains("sonar-reset-data-plugin"))
-      .map(plugin -> {
-        try {
-          return locators.locate(plugin).toURI().toURL();
-        } catch (MalformedURLException e) {
-          throw new RuntimeException(e);
-        }
-      }).forEach(sonarLintConfigBuilder::addPlugin);
+      .map(plugin -> locators.locate(plugin).toPath())
+      .forEach(sonarLintConfigBuilder::addPlugin);
 
     sonarLintConfigBuilder
       .setSonarLintUserHome(temp.newFolder().toPath())
       .setLogOutput((formattedMessage, level) -> {
         /* Don't pollute logs */
       });
-    StandaloneGlobalConfiguration configuration = sonarLintConfigBuilder.build();
+    StandaloneGlobalConfiguration configuration = sonarLintConfigBuilder
+      .addEnabledLanguage(Language.RUBY)
+      .addEnabledLanguage(Language.SCALA)
+      .build();
     sonarlintEngine = new StandaloneSonarLintEngineImpl(configuration);
     baseDir = temp.newFolder();
   }
@@ -108,14 +106,18 @@ public class SonarLintTest {
       false, "ruby");
 
     List<Issue> issues = new ArrayList<>();
-    sonarlintEngine.analyze(
-      new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Collections.singletonList(inputFile), new HashMap<>()),
-      issues::add, null, null);
+    StandaloneAnalysisConfiguration analysisConfiguration = StandaloneAnalysisConfiguration.builder()
+      .setBaseDir(baseDir.toPath())
+      .addInputFiles(Collections.singletonList(inputFile))
+      .build();
+    sonarlintEngine.analyze(analysisConfiguration, issues::add, null, null);
 
-    assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
-      tuple("ruby:S100", 1, inputFile.getPath(), "MINOR"),
-      tuple("ruby:S1145", 2, inputFile.getPath(), "MAJOR"),
-      tuple("ruby:S1481", 3, inputFile.getPath(), "MINOR"));
+    assertThat(issues).extracting(Issue::getRuleKey, Issue::getStartLine, issue -> issue.getInputFile().getPath(), Issue::getSeverity)
+      .containsExactlyInAnyOrder(
+        tuple("ruby:S100", 1, inputFile.getPath(), "MINOR"),
+        tuple("ruby:S1145", 2, inputFile.getPath(), "MAJOR"),
+        tuple("ruby:S1481", 3, inputFile.getPath(), "MINOR")
+      );
   }
 
   @Test
@@ -131,14 +133,18 @@ public class SonarLintTest {
       false, "scala");
 
     List<Issue> issues = new ArrayList<>();
-    sonarlintEngine.analyze(
-      new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Collections.singletonList(inputFile), new HashMap<>()),
-      issues::add, null, null);
+    StandaloneAnalysisConfiguration analysisConfiguration = StandaloneAnalysisConfiguration.builder()
+      .setBaseDir(baseDir.toPath())
+      .addInputFiles(Collections.singletonList(inputFile))
+      .build();
+    sonarlintEngine.analyze(analysisConfiguration, issues::add, null, null);
 
-    assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
-      tuple("scala:S100", 2, inputFile.getPath(), "MINOR"),
-      tuple("scala:S1145", 3, inputFile.getPath(), "MAJOR"),
-      tuple("scala:S1481", 4, inputFile.getPath(), "MINOR"));
+    assertThat(issues).extracting(Issue::getRuleKey, Issue::getStartLine, issue -> issue.getInputFile().getPath(), Issue::getSeverity)
+      .containsExactlyInAnyOrder(
+        tuple("scala:S100", 2, inputFile.getPath(), "MINOR"),
+        tuple("scala:S1145", 3, inputFile.getPath(), "MAJOR"),
+        tuple("scala:S1481", 4, inputFile.getPath(), "MINOR")
+      );
   }
 
   private ClientInputFile prepareInputFile(String relativePath, String content, final boolean isTest, String language) throws IOException {
@@ -193,8 +199,8 @@ public class SonarLintTest {
 
       @CheckForNull
       @Override
-      public String language() {
-        return language;
+      public Language language() {
+        return Language.forKey(language).orElse(Language.APEX);
       }
     };
   }
