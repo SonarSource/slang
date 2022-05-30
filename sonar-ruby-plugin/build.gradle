@@ -6,7 +6,7 @@ plugins {
 import com.github.jrubygradle.JRubyPrepare
 
 ext {
-    rubygemsRaccVersion = '1.5.2'
+    rubygemsRaccVersion = '1.5.2-java'
     rubygemsAstVersion = '2.4.2'
     rubygemsParserVersion = '3.0.3.1'
 }
@@ -20,9 +20,16 @@ dependencies {
     implementation project(':slang-checks')
     implementation project(':slang-api')
     implementation project(path: ':jruby-repackaged', configuration: 'shadow')
-    gems "rubygems:racc:${rubygemsRaccVersion}"
-    gems "rubygems:ast:${rubygemsAstVersion}"
-    gems "rubygems:parser:${rubygemsParserVersion}"
+    // The plugin "com.github.jruby-gradle.jar" is broken and not anymore maintained.
+    // For example, given the following definition:
+    //   gems "rubygems:racc:1.5.2-java"
+    // The plugin will try to download the dependency from:
+    //   http://rubygems-proxy.torquebox.org/releases/rubygems/racc/1.5.2/racc-1.5.2-java.pom
+    // But "rubygems-proxy.torquebox.org" server does not exist anymore.
+    // The bellow function "downloadFromRubygems" is a workaround to this problem
+    gems files("${buildDir}/rubygems_downloads/racc-${rubygemsRaccVersion}.gem")
+    gems files("${buildDir}/rubygems_downloads/ast-${rubygemsAstVersion}.gem")
+    gems files("${buildDir}/rubygems_downloads/parser-${rubygemsParserVersion}.gem")
     testImplementation project(':slang-testing')
     testImplementation project(':slang-antlr')
     testImplementation "org.junit.jupiter:junit-jupiter-api"
@@ -33,6 +40,15 @@ dependencies {
     testImplementation 'io.github.classgraph:classgraph'
 }
 
+task downloadFromRubygems(type: Task) {
+    configurations.gems
+            .findAll { !it.exists() }
+            .forEach { file ->
+                file.getParentFile().mkdirs()
+                new URL("https://rubygems.org/downloads/${file.getName()}")
+                        .withInputStream { input -> file.withOutputStream { output -> output << input } }
+            }
+}
 task unpackDependencyGems(type: JRubyPrepare) {
     outputDir "${buildDir}/dependency_gems"
     dependencies configurations.gems
@@ -43,6 +59,8 @@ task copyGemsJarsFromDirectoryToShadowBugWorkaroundJar(type: Jar) {
     destinationDirectory = file("${buildDir}/tmp")
     archiveFileName = "shadowBugWorkaround.jar"
 }
+
+unpackDependencyGems.dependsOn downloadFromRubygems
 copyGemsJarsFromDirectoryToShadowBugWorkaroundJar.dependsOn unpackDependencyGems
 processResources.dependsOn copyGemsJarsFromDirectoryToShadowBugWorkaroundJar
 
