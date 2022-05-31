@@ -137,7 +137,8 @@ ws_scan_task:
     folder: ${CIRRUS_WORKING_DIR}/.m2/repository
   whitesource_script:
     - source cirrus-env QA
-    - ./gradlew clean build -x test
+    - ./gradlew --no-daemon --console plain clean
+    - ./gradlew --no-daemon --console plain build -x test
     - source ./export_ws_variables_from_gradle
     - source ws_scan.sh
   allow_failures: "true"
