@@ -74,7 +74,7 @@ class GolangCILintReportSensorTest {
     assertThat(first.type()).isEqualTo(RuleType.BUG);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.ruleKey().repository()).isEqualTo("external_golangci-lint");
-    assertThat(first.ruleKey().rule()).isEqualTo("deadcode");
+    assertThat(first.ruleKey().rule()).isEqualTo("deadcode.bug.major");
     assertThat(first.primaryLocation().message()).isEqualTo("`three` is unused");
     assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(3);
 
@@ -88,6 +88,23 @@ class GolangCILintReportSensorTest {
     assertThat(second.primaryLocation().textRange().start().line()).isEqualTo(4);
 
     assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+  }
+
+
+  @Test
+  void import_check_style_report_same_source_different_key() throws IOException {
+    // Check that rules have different key based on the severity
+    SensorContextTester context = ExternalLinterSensorHelper.createContext();
+    context.settings().setProperty("sonar.go.golangci-lint.reportPaths", REPORT_BASE_PATH.resolve("checkstyle-different-severity.xml").toString());
+    List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(golangCILintReportSensor(), context);
+    assertThat(externalIssues).hasSize(6);
+
+    assertThat(externalIssues.get(0).ruleKey().rule()).isEqualTo("source1.bug.major");
+    assertThat(externalIssues.get(1).ruleKey().rule()).isEqualTo("source1.code_smell.minor");
+    assertThat(externalIssues.get(2).ruleKey().rule()).isEqualTo("source1.code_smell.major");
+    assertThat(externalIssues.get(3).ruleKey().rule()).isEqualTo("source1.code_smell.major");
+    assertThat(externalIssues.get(4).ruleKey().rule()).isEqualTo("source2.bug.major");
+    assertThat(externalIssues.get(5).ruleKey().rule()).isEqualTo("source2.code_smell.major");
   }
 
 }

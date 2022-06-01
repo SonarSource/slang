@@ -176,10 +176,10 @@ public class ExternalReportTest extends TestBase {
     List<Issue> issues = getExternalIssues(projectKey);
     assertThat(issues).hasSize(4);
     assertThat(formatIssues(issues)).isEqualTo(
-      "SelfAssignement.go|external_golangci-lint:govet|MAJOR|5min|line:7|assign: self-assignment of name to name\n" +
-        "SelfAssignement.go|external_golangci-lint:govet|MAJOR|5min|line:9|assign: self-assignment of user.name to user.name\n" +
-        "SelfAssignement.go|external_golangci-lint:unused|MAJOR|5min|line:4|U1000: field `name` is unused\n" +
-        "SelfAssignement.go|external_golangci-lint:unused|MAJOR|5min|line:6|U1000: func `(*User).rename` is unused");
+      "SelfAssignement.go|external_golangci-lint:govet.bug.major|MAJOR|5min|line:7|assign: self-assignment of name to name\n" +
+        "SelfAssignement.go|external_golangci-lint:govet.bug.major|MAJOR|5min|line:9|assign: self-assignment of user.name to user.name\n" +
+        "SelfAssignement.go|external_golangci-lint:unused.bug.major|MAJOR|5min|line:4|U1000: field `name` is unused\n" +
+        "SelfAssignement.go|external_golangci-lint:unused.bug.major|MAJOR|5min|line:6|U1000: func `(*User).rename` is unused");
   }
 
   private List<Issue> getExternalIssues(String componentKey) {

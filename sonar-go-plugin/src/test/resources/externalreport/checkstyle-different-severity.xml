@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="5.0">
+  <file name="main.go">
+    <error column="1" line="4" message="rule 1 - bug major" severity="error" source="source1"></error>
+    <!-- Minor bug is not possible -->
+    <error column="2" line="4" message="rule 2 - code smell minor" severity="info" source="source1"></error>
+    <error column="3" line="4" message="rule 3 - code smell major" severity="other" source="source1"></error>
+    <!-- Two issue from the same source will have the same key, but keep the good severity. -->
+    <error column="4" line="4" message="rule 4 - same key as rule 3, with code smell major" severity="other" source="source1"></error>
+
+    <error column="5" line="4" message="rule 5 - bug major" severity="error" source="source2"></error>
+
+    <error column="6" line="4" message="rule 6 - code smell major" severity="other" source="source2"></error>
+  </file>
+</checkstyle>

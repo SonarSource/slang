@@ -62,7 +62,7 @@ public class CheckstyleFormatImporter {
 
   private final SensorContext context;
 
-  private final String linterKey;
+  protected final String linterKey;
 
   private int level = 0;
 
@@ -135,18 +135,19 @@ public class CheckstyleFormatImporter {
       LOG.debug("Unexpected error without any message for rule: '{}'", source);
       return;
     }
-    RuleKey ruleKey = createRuleKey(source);
-    if (ruleKey != null) {
-      saveIssue(ruleKey, line, severity, source, message);
-    }
+    saveIssue(line, severity, source, message);
   }
 
-  private void saveIssue(RuleKey ruleRepoAndKey, String line, String severity, String source, String message) {
-    String ruleKey = ruleRepoAndKey.rule();
+  private void saveIssue(String line, String severity, String source, String message) {
+    RuleType ruleType = ruleType(severity, source);
+    Severity ruleSeverity = severity(severity);
+
+    RuleKey ruleKey = createRuleKey(source, ruleType, ruleSeverity);
+
     NewExternalIssue newExternalIssue = context.newExternalIssue()
-      .type(ruleType(ruleKey, severity, source))
-      .severity(severity(ruleKey, severity))
-      .remediationEffortMinutes(effort(ruleKey));
+      .type(ruleType)
+      .severity(ruleSeverity)
+      .remediationEffortMinutes(effort(ruleKey.rule()));
 
     NewIssueLocation primaryLocation = newExternalIssue.newLocation()
       .message(message)
@@ -158,36 +159,36 @@ public class CheckstyleFormatImporter {
 
     newExternalIssue
       .at(primaryLocation)
-      .engineId(ruleRepoAndKey.repository())
-      .ruleId(ruleRepoAndKey.rule())
+      .engineId(ruleKey.repository())
+      .ruleId(ruleKey.rule())
       .save();
   }
 
-  @Nullable
-  protected RuleKey createRuleKey(String source) {
+  /**
+   * Return a RuleKey based on the source, RuleType and Severity of an issue.
+   */
+  protected RuleKey createRuleKey(String source, RuleType ruleType, Severity ruleSeverity) {
     return RuleKey.of(linterKey, source);
   }
 
   /**
    * Return a RuleType equivalent based on the different parameters.
    *
-   * @param ruleKey rule key of the current issue.
    * @param severity "severity" attribute's value of the report. Ex: "info", "error".
    * @param source "source" attribute's value of the report. Ex: "gosec", "detekt.MagicNumber".
    * @return the RuleType defined by the given parameters.
    */
-  protected RuleType ruleType(String ruleKey, @Nullable String severity, String source) {
+  protected RuleType ruleType(@Nullable String severity, String source) {
     return "error".equals(severity) ? RuleType.BUG : RuleType.CODE_SMELL;
   }
 
   /**
    * Return a Severity equivalent based on the different parameters.
    *
-   * @param ruleKey rule key of the current issue.
    * @param severity "severity" attribute's value of the report. Ex: "info", "error".
    * @return the Severity defined by the given parameters.
    */
-  protected Severity severity(String ruleKey, @Nullable String severity) {
+  protected Severity severity(@Nullable String severity) {
     return "info".equals(severity) ? Severity.MINOR : Severity.MAJOR;
   }
 
