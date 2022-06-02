@@ -10,7 +10,7 @@ ext {
 }
 
 scoverage {
-    scoverageVersion='1.4.10'
+    scoverageVersion='1.4.11'
 }
 
 tasks.check.dependsOn reportScoverage
