@@ -35,15 +35,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class RubyRulesDefinitionTest {
 
-  private static final SonarRuntime RUNTIME = SonarRuntimeImpl.forSonarQube(Version.create(8, 9), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
-
   @Test
   void rules() {
-    RulesDefinition rulesDefinition = new RubyRulesDefinition(RUNTIME);
-    RulesDefinition.Context context = new RulesDefinition.Context();
-    rulesDefinition.define(context);
+    RulesDefinition.Repository repository = getRepositoryForVersion(Version.create(9, 3));
 
-    RulesDefinition.Repository repository = context.repository("ruby");
     assertThat(repository.name()).isEqualTo("SonarQube");
     assertThat(repository.language()).isEqualTo("ruby");
 
@@ -59,6 +54,33 @@ class RubyRulesDefinitionTest {
     Rule ruleWithConfig = repository.rule("S100");
     Param param = ruleWithConfig.param("format");
     assertThat(param.defaultValue()).isEqualTo("^(@{0,2}[\\da-z_]+[!?=]?)|([*+-/%=!><~]+)|(\\[]=?)$");
+  }
+
+  @Test
+  void owasp_security_standard_includes_2021() {
+    RulesDefinition.Repository repository = getRepositoryForVersion(Version.create(9, 3));
+
+    RulesDefinition.Rule rule = repository.rule("S1313");
+    assertThat(rule).isNotNull();
+    assertThat(rule.securityStandards()).containsExactlyInAnyOrder("owaspTop10:a3", "owaspTop10-2021:a1");
+  }
+
+  @Test
+  void owasp_security_standard() {
+    RulesDefinition.Repository repository = getRepositoryForVersion(Version.create(8, 9));
+
+    RulesDefinition.Rule rule = repository.rule("S1313");
+    assertThat(rule).isNotNull();
+    assertThat(rule.securityStandards()).containsExactly("owaspTop10:a3");
+  }
+
+  private RulesDefinition.Repository getRepositoryForVersion(Version version) {
+    RulesDefinition rulesDefinition = new RubyRulesDefinition(
+      SonarRuntimeImpl.forSonarQube(version, SonarQubeSide.SCANNER, SonarEdition.COMMUNITY));
+    RulesDefinition.Context context = new RulesDefinition.Context();
+    rulesDefinition.define(context);
+
+    return context.repository("ruby");
   }
 
 }

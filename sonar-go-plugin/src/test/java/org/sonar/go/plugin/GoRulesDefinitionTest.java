@@ -97,4 +97,31 @@ class GoRulesDefinitionTest {
     assertThat(golintKeysWithoutDefinition).isEmpty();
   }
 
+  @Test
+  void owasp_security_standard_includes_2021() {
+    RulesDefinition.Repository repository = getRepositoryForVersion(Version.create(9, 3));
+
+    RulesDefinition.Rule rule = repository.rule("S1313");
+    assertThat(rule).isNotNull();
+    assertThat(rule.securityStandards()).containsExactlyInAnyOrder("owaspTop10:a3", "owaspTop10-2021:a1");
+  }
+
+  @Test
+  void owasp_security_standard() {
+    RulesDefinition.Repository repository = getRepositoryForVersion(Version.create(8, 9));
+
+    RulesDefinition.Rule rule = repository.rule("S1313");
+    assertThat(rule).isNotNull();
+    assertThat(rule.securityStandards()).containsExactly("owaspTop10:a3");
+  }
+
+  private RulesDefinition.Repository getRepositoryForVersion(Version version) {
+    GoRulesDefinition rulesDefinition = new GoRulesDefinition(
+      SonarRuntimeImpl.forSonarQube(version, SonarQubeSide.SCANNER, SonarEdition.COMMUNITY));
+    RulesDefinition.Context context = new RulesDefinition.Context();
+    rulesDefinition.define(context);
+
+    return context.repository("go");
+  }
+
 }

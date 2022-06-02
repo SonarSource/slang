@@ -22,7 +22,6 @@ package org.sonarsource.scala.plugin;
 import org.junit.jupiter.api.Test;
 import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
-import org.sonar.api.SonarRuntime;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
@@ -32,15 +31,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ScalaRulesDefinitionTest {
 
-  private static final SonarRuntime RUNTIME = SonarRuntimeImpl.forSonarQube(Version.create(8, 9), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
-
   @Test
   void rules() {
-    RulesDefinition rulesDefinition = new ScalaRulesDefinition(RUNTIME);
-    RulesDefinition.Context context = new RulesDefinition.Context();
-    rulesDefinition.define(context);
+    RulesDefinition.Repository repository = getRepositoryForVersion(Version.create(9, 3));
 
-    RulesDefinition.Repository repository = context.repository("scala");
     assertThat(repository.name()).isEqualTo("SonarQube");
     assertThat(repository.language()).isEqualTo("scala");
 
@@ -48,6 +42,33 @@ class ScalaRulesDefinitionTest {
     assertThat(rule).isNotNull();
     assertThat(rule.name()).isEqualTo("Scala parser failure");
     assertThat(rule.type()).isEqualTo(RuleType.CODE_SMELL);
+  }
+
+  @Test
+  void owasp_security_standard_includes_2021() {
+    RulesDefinition.Repository repository = getRepositoryForVersion(Version.create(9, 3));
+
+    RulesDefinition.Rule rule = repository.rule("S1313");
+    assertThat(rule).isNotNull();
+    assertThat(rule.securityStandards()).containsExactlyInAnyOrder("owaspTop10:a3", "owaspTop10-2021:a1");
+  }
+
+  @Test
+  void owasp_security_standard() {
+    RulesDefinition.Repository repository = getRepositoryForVersion(Version.create(8, 9));
+
+    RulesDefinition.Rule rule = repository.rule("S1313");
+    assertThat(rule).isNotNull();
+    assertThat(rule.securityStandards()).containsExactly("owaspTop10:a3");
+  }
+
+  private RulesDefinition.Repository getRepositoryForVersion(Version version) {
+    RulesDefinition rulesDefinition = new ScalaRulesDefinition(
+      SonarRuntimeImpl.forSonarQube(version, SonarQubeSide.SCANNER, SonarEdition.COMMUNITY));
+    RulesDefinition.Context context = new RulesDefinition.Context();
+    rulesDefinition.define(context);
+
+    return context.repository("scala");
   }
 
 }
