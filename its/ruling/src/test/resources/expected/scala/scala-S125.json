@@ -50,6 +50,9 @@
 'scala-project:sources/scala/finagle/finagle-core/src/main/scala/com/twitter/finagle/liveness/ThresholdFailureDetector.scala':[
 165,
 ],
+'scala-project:sources/scala/finagle/finagle-core/src/test/scala/com/twitter/finagle/liveness/FailureAccrualPolicyTest.scala':[
+124,
+],
 'scala-project:sources/scala/finagle/finagle-memcached/src/test/scala/com/twitter/finagle/memcached/stress/InterpreterServiceTest.scala':[
 55,
 ],

@@ -57,7 +57,7 @@ dependencies {
     implementation project(':slang-api')
     implementation project(':slang-checks')
     implementation project(':slang-plugin')
-    implementation('org.scalameta:scalameta_2.12:4.4.30') {
+    implementation('org.scalameta:scalameta_2.12:4.5.7') {
         exclude group: 'org.scalameta', module: 'semanticdb_2.12'
         exclude group: 'com.lihaoyi', module: 'fansi_2.12'
         exclude group: 'com.google.protobuf', module: 'protobuf-java'

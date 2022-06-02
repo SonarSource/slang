@@ -1,111 +1,114 @@
-AST node class                                                                     | first…last tokens | line:col     
------------------------------------------------------------------------------------|-------------------|--------------
-TopLevelTree {                                                                     | object … }        | 1:1 … 21:2   
-  ?ScalaNativeKind(class scala.meta.Defn$Object$DefnObjectImpl)? {                 | object … }        | 4:1 … 21:2   
-    IdentifierTree                                                                 | TraitParams       | 4:8 … 4:19   
-    ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {                    | { … }             | 4:20 … 20:4  
-      ?ScalaNativeKind(class scala.meta.Defn$Trait$DefnTraitImpl)? {               | trait … )         | 6:3 … 6:30   
-        IdentifierTree                                                             | Base              | 6:9 … 6:13   
-        FunctionDeclarationTree {                                                  | ( … )             | 6:13 … 6:30  
-          ParameterTree {                                                          | val … String      | 6:14 … 6:29  
-            ?ScalaNativeKind(class scala.meta.Mod$ValParam$ModValParamImpl)?       | val               | 6:14 … 6:17  
-            IdentifierTree                                                         | msg               | 6:18 … 6:21  
-            IdentifierTree                                                         | String            | 6:23 … 6:29  
-          }                                                                        |                   |              
-        }                                                                          |                   |              
-      }                                                                            |                   |              
-      ClassDeclarationTree {                                                       | class … )         | 7:3 … 7:32   
-        ?ScalaNativeKind(class scala.meta.Defn$Class$DefnClassImpl)? {             | class … )         | 7:3 … 7:32   
-          IdentifierTree                                                           | A                 | 7:9 … 7:10   
-          ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {              | extends … )       | 7:11 … 7:32  
-            ?ScalaNativeKind(class scala.meta.Init$InitImpl)? {                    | Base … )          | 7:19 … 7:32  
-              IdentifierTree                                                       | Base              | 7:19 … 7:23  
-              StringLiteralTree                                                    | "Hello"           | 7:24 … 7:31  
-            }                                                                      |                   |              
-          }                                                                        |                   |              
-        }                                                                          |                   |              
-      }                                                                            |                   |              
-      ClassDeclarationTree {                                                       | class … )         | 8:3 … 8:33   
-        ?ScalaNativeKind(class scala.meta.Defn$Class$DefnClassImpl)? {             | class … )         | 8:3 … 8:33   
-          IdentifierTree                                                           | B                 | 8:9 … 8:10   
-          ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {              | extends … )       | 8:11 … 10:112
-            ?ScalaNativeKind(class scala.meta.Init$InitImpl)? {                    | Base … )          | 8:19 … 8:33  
-              IdentifierTree                                                       | Base              | 8:19 … 8:23  
-              StringLiteralTree                                                    | "Dotty!"          | 8:24 … 8:32  
-            }                                                                      |                   |              
-          }                                                                        |                   |              
-        }                                                                          |                   |              
-      }                                                                            |                   |              
-      FunctionDeclarationTree {                                                    | private … )       | 11:3 … 11:85 
-        ModifierTree                                                               | private           | 11:3 … 11:10 
-        IdentifierTree                                                             | printMessages     | 11:15 … 11:28
-        ParameterTree {                                                            | msgs … *          | 11:29 … 11:43
-          IdentifierTree                                                           | msgs              | 11:29 … 11:33
-          ?ScalaNativeKind(class scala.meta.Type$Repeated$TypeRepeatedImpl)? {     | ( … *             | 11:35 … 11:43
-            ?ScalaNativeKind(class scala.meta.Type$Or$TypeOrImpl)? {               | ( … )             | 11:35 … 11:42
-              IdentifierTree                                                       | A                 | 11:36 … 11:37
-              IdentifierTree                                                       | B                 | 11:40 … 11:41
-            }                                                                      |                   |              
-          }                                                                        |                   |              
-        }                                                                          |                   |              
-        BlockTree {                                                                | println … )       | 11:47 … 11:85
-          ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {           | println … )       | 11:47 … 11:85
-            IdentifierTree                                                         | println           | 11:47 … 11:54
-            ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {         | msgs … )          | 11:55 … 11:84
-              ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {     | msgs … mkString   | 11:55 … 11:79
-                ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {     | msgs … )          | 11:55 … 11:70
-                  ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? { | msgs … map        | 11:55 … 11:63
-                    IdentifierTree                                                 | msgs              | 11:55 … 11:59
-                    IdentifierTree                                                 | map               | 11:60 … 11:63
-                  }                                                                |                   |              
-                  ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? { | _ … msg           | 11:64 … 11:69
-                    PlaceHolderTree                                                | _                 | 11:64 … 11:65
-                    IdentifierTree                                                 | msg               | 11:66 … 11:69
-                  }                                                                |                   |              
-                }                                                                  |                   |              
-                IdentifierTree                                                     | mkString          | 11:71 … 11:79
-              }                                                                    |                   |              
-              StringLiteralTree                                                    | " "               | 11:80 … 11:83
-            }                                                                      |                   |              
-          }                                                                        |                   |              
-        }                                                                          |                   |              
-      }                                                                            |                   |              
-      FunctionDeclarationTree {                                                    | def … }           | 13:3 … 20:4  
-        IdentifierTree                                                             | Unit              | 13:13 … 13:17
-        IdentifierTree                                                             | test              | 13:7 … 13:11 
-        BlockTree {                                                                | { … )             | 13:20 … 19:9 
-          ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {           | printMessa … )    | 15:5 … 15:32 
-            IdentifierTree                                                         | printMessages     | 15:5 … 15:18 
-            ?ScalaNativeKind(class scala.meta.Term$New$TermNewImpl)? {             | new … A           | 15:19 … 15:24
-              ?ScalaNativeKind(class scala.meta.Init$InitImpl)? {                  | A                 | 15:23 … 15:24
-                IdentifierTree                                                     | A                 | 15:23 … 15:24
-              }                                                                    |                   |              
-            }                                                                      |                   |              
-            ?ScalaNativeKind(class scala.meta.Term$New$TermNewImpl)? {             | new … B           | 15:26 … 15:31
-              ?ScalaNativeKind(class scala.meta.Init$InitImpl)? {                  | B                 | 15:30 … 15:31
-                IdentifierTree                                                     | B                 | 15:30 … 15:31
-              }                                                                    |                   |              
-            }                                                                      |                   |              
-          }                                                                        |                   |              
-          VariableDeclarationTree {                                                | val … z           | 18:5 … 18:31 
-            IdentifierTree                                                         | x                 | 18:9 … 18:10 
-            ?ScalaNativeKind(class scala.meta.Type$Function$TypeFunctionImpl)? {   | Int … Int         | 18:12 … 18:22
-              IdentifierTree                                                       | Int               | 18:12 … 18:15
-              IdentifierTree                                                       | Int               | 18:19 … 18:22
-            }                                                                      |                   |              
-            ?ScalaNativeKind(class scala.meta.Term$Function$TermFunctionImpl)? {   | z … z             | 18:25 … 18:31
-              ?ScalaNativeKind(class scala.meta.Term$Param$TermParamImpl)? {       | z                 | 18:25 … 18:26
-                IdentifierTree                                                     | z                 | 18:25 … 18:26
-              }                                                                    |                   |              
-              IdentifierTree                                                       | z                 | 18:30 … 18:31
-            }                                                                      |                   |              
-          }                                                                        |                   |              
-          ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {           | x … )             | 19:5 … 19:9  
-            IdentifierTree                                                         | x                 | 19:5 … 19:6  
-            IntegerLiteralTree                                                     | 1                 | 19:7 … 19:8  
-          }                                                                        |                   |              
-        }                                                                          |                   |              
-      }                                                                            |                   |              
-    }                                                                              |                   |              
-  }                                                                                |                   |              
-}                                                                                  |                   |              
+AST node class                                                                                           | first…last tokens | line:col     
+---------------------------------------------------------------------------------------------------------|-------------------|--------------
+TopLevelTree {                                                                                           | object … }        | 1:1 … 21:2   
+  ?ScalaNativeKind(class scala.meta.Defn$Object$DefnObjectImpl)? {                                       | object … }        | 4:1 … 21:2   
+    IdentifierTree                                                                                       | TraitParams       | 4:8 … 4:19   
+    ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {                                          | { … }             | 4:20 … 20:4  
+      ?ScalaNativeKind(class scala.meta.Defn$Trait$DefnTraitImpl)? {                                     | trait … )         | 6:3 … 6:30   
+        IdentifierTree                                                                                   | Base              | 6:9 … 6:13   
+        FunctionDeclarationTree {                                                                        | ( … )             | 6:13 … 6:30  
+          ParameterTree {                                                                                | val … String      | 6:14 … 6:29  
+            ?ScalaNativeKind(class scala.meta.Mod$ValParam$ModValParamImpl)?                             | val               | 6:14 … 6:17  
+            IdentifierTree                                                                               | msg               | 6:18 … 6:21  
+            IdentifierTree                                                                               | String            | 6:23 … 6:29  
+          }                                                                                              |                   |              
+        }                                                                                                |                   |              
+      }                                                                                                  |                   |              
+      ClassDeclarationTree {                                                                             | class … )         | 7:3 … 7:32   
+        ?ScalaNativeKind(class scala.meta.Defn$Class$DefnClassImpl)? {                                   | class … )         | 7:3 … 7:32   
+          IdentifierTree                                                                                 | A                 | 7:9 … 7:10   
+          ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {                                    | extends … )       | 7:11 … 7:32  
+            ?ScalaNativeKind(class scala.meta.Init$InitImpl)? {                                          | Base … )          | 7:19 … 7:32  
+              IdentifierTree                                                                             | Base              | 7:19 … 7:23  
+              StringLiteralTree                                                                          | "Hello"           | 7:24 … 7:31  
+            }                                                                                            |                   |              
+          }                                                                                              |                   |              
+        }                                                                                                |                   |              
+      }                                                                                                  |                   |              
+      ClassDeclarationTree {                                                                             | class … )         | 8:3 … 8:33   
+        ?ScalaNativeKind(class scala.meta.Defn$Class$DefnClassImpl)? {                                   | class … )         | 8:3 … 8:33   
+          IdentifierTree                                                                                 | B                 | 8:9 … 8:10   
+          ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {                                    | extends … )       | 8:11 … 10:112
+            ?ScalaNativeKind(class scala.meta.Init$InitImpl)? {                                          | Base … )          | 8:19 … 8:33  
+              IdentifierTree                                                                             | Base              | 8:19 … 8:23  
+              StringLiteralTree                                                                          | "Dotty!"          | 8:24 … 8:32  
+            }                                                                                            |                   |              
+          }                                                                                              |                   |              
+        }                                                                                                |                   |              
+      }                                                                                                  |                   |              
+      FunctionDeclarationTree {                                                                          | private … )       | 11:3 … 11:85 
+        ModifierTree                                                                                     | private           | 11:3 … 11:10 
+        IdentifierTree                                                                                   | printMessages     | 11:15 … 11:28
+        ParameterTree {                                                                                  | msgs … *          | 11:29 … 11:43
+          IdentifierTree                                                                                 | msgs              | 11:29 … 11:33
+          ?ScalaNativeKind(class scala.meta.Type$Repeated$TypeRepeatedImpl)? {                           | ( … *             | 11:35 … 11:43
+            ?ScalaNativeKind(class scala.meta.Type$ApplyInfix$TypeApplyInfixImpl)? {                     | ( … )             | 11:35 … 11:42
+              IdentifierTree                                                                             | A                 | 11:36 … 11:37
+              IdentifierTree                                                                             | |                 | 11:38 … 11:39
+              IdentifierTree                                                                             | B                 | 11:40 … 11:41
+            }                                                                                            |                   |              
+          }                                                                                              |                   |              
+        }                                                                                                |                   |              
+        BlockTree {                                                                                      | println … )       | 11:47 … 11:85
+          ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                                 | println … )       | 11:47 … 11:85
+            IdentifierTree                                                                               | println           | 11:47 … 11:54
+            ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                               | msgs … )          | 11:55 … 11:84
+              ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                           | msgs … mkString   | 11:55 … 11:79
+                ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                           | msgs … )          | 11:55 … 11:70
+                  ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                       | msgs … map        | 11:55 … 11:63
+                    IdentifierTree                                                                       | msgs              | 11:55 … 11:59
+                    IdentifierTree                                                                       | map               | 11:60 … 11:63
+                  }                                                                                      |                   |              
+                  ?ScalaNativeKind(class scala.meta.Term$AnonymousFunction$TermAnonymousFunctionImpl)? { | _ … msg           | 11:64 … 11:69
+                    ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                     | _ … msg           | 11:64 … 11:69
+                      PlaceHolderTree                                                                    | _                 | 11:64 … 11:65
+                      IdentifierTree                                                                     | msg               | 11:66 … 11:69
+                    }                                                                                    |                   |              
+                  }                                                                                      |                   |              
+                }                                                                                        |                   |              
+                IdentifierTree                                                                           | mkString          | 11:71 … 11:79
+              }                                                                                          |                   |              
+              StringLiteralTree                                                                          | " "               | 11:80 … 11:83
+            }                                                                                            |                   |              
+          }                                                                                              |                   |              
+        }                                                                                                |                   |              
+      }                                                                                                  |                   |              
+      FunctionDeclarationTree {                                                                          | def … }           | 13:3 … 20:4  
+        IdentifierTree                                                                                   | Unit              | 13:13 … 13:17
+        IdentifierTree                                                                                   | test              | 13:7 … 13:11 
+        BlockTree {                                                                                      | { … )             | 13:20 … 19:9 
+          ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                                 | printMessa … )    | 15:5 … 15:32 
+            IdentifierTree                                                                               | printMessages     | 15:5 … 15:18 
+            ?ScalaNativeKind(class scala.meta.Term$New$TermNewImpl)? {                                   | new … A           | 15:19 … 15:24
+              ?ScalaNativeKind(class scala.meta.Init$InitImpl)? {                                        | A                 | 15:23 … 15:24
+                IdentifierTree                                                                           | A                 | 15:23 … 15:24
+              }                                                                                          |                   |              
+            }                                                                                            |                   |              
+            ?ScalaNativeKind(class scala.meta.Term$New$TermNewImpl)? {                                   | new … B           | 15:26 … 15:31
+              ?ScalaNativeKind(class scala.meta.Init$InitImpl)? {                                        | B                 | 15:30 … 15:31
+                IdentifierTree                                                                           | B                 | 15:30 … 15:31
+              }                                                                                          |                   |              
+            }                                                                                            |                   |              
+          }                                                                                              |                   |              
+          VariableDeclarationTree {                                                                      | val … z           | 18:5 … 18:31 
+            IdentifierTree                                                                               | x                 | 18:9 … 18:10 
+            ?ScalaNativeKind(class scala.meta.Type$Function$TypeFunctionImpl)? {                         | Int … Int         | 18:12 … 18:22
+              IdentifierTree                                                                             | Int               | 18:12 … 18:15
+              IdentifierTree                                                                             | Int               | 18:19 … 18:22
+            }                                                                                            |                   |              
+            ?ScalaNativeKind(class scala.meta.Term$Function$TermFunctionImpl)? {                         | z … z             | 18:25 … 18:31
+              ?ScalaNativeKind(class scala.meta.Term$Param$TermParamImpl)? {                             | z                 | 18:25 … 18:26
+                IdentifierTree                                                                           | z                 | 18:25 … 18:26
+              }                                                                                          |                   |              
+              IdentifierTree                                                                             | z                 | 18:30 … 18:31
+            }                                                                                            |                   |              
+          }                                                                                              |                   |              
+          ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                                 | x … )             | 19:5 … 19:9  
+            IdentifierTree                                                                               | x                 | 19:5 … 19:6  
+            IntegerLiteralTree                                                                           | 1                 | 19:7 … 19:8  
+          }                                                                                              |                   |              
+        }                                                                                                |                   |              
+      }                                                                                                  |                   |              
+    }                                                                                                    |                   |              
+  }                                                                                                      |                   |              
+}                                                                                                        |                   |              

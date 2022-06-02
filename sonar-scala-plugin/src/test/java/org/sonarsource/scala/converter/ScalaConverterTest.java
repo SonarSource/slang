@@ -61,7 +61,7 @@ class ScalaConverterTest extends AbstractScalaConverterTest {
       .hasMessage("Unable to parse file content.")
       .matches(e -> {
         TextPointer position = ((ParseException) e).getPosition();
-        return position == null && e.getCause() instanceof org.scalameta.UnreachableError;
+        return position.line() == 1 && e.getCause() == null;
       });
   }
 
