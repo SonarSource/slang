@@ -3,6 +3,7 @@ dependencies {
     implementation 'com.google.code.findbugs:jsr305'
     implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-test-commons'
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
+    compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api-impl'
     implementation "org.junit.jupiter:junit-jupiter-api"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
     implementation "org.junit.jupiter:junit-jupiter-migrationsupport"

@@ -25,8 +25,8 @@ import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.ActiveRule;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
+import org.sonar.api.impl.utils.JUnitTempFolder;
 import org.sonar.api.resources.Language;
-import org.sonar.api.utils.internal.JUnitTempFolder;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;

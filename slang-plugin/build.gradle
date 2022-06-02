@@ -3,6 +3,7 @@ dependencies {
     implementation project(':slang-checks')
     implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
+    testImplementation 'org.sonarsource.sonarqube:sonar-plugin-api-impl'
     implementation 'com.google.code.findbugs:jsr305'
     testImplementation project(':slang-antlr')
     testImplementation project(':slang-testing')

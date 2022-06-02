@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.sonar.api.config.Configuration;
-import org.sonar.api.internal.google.common.annotations.VisibleForTesting;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.slang.api.ASTConverter;
@@ -112,12 +111,12 @@ public class ASTConverterValidation implements ASTConverter {
     wrapped.terminate();
   }
 
-  @VisibleForTesting
+  // VisibleForTesting
   ValidationMode mode() {
     return mode;
   }
 
-  @VisibleForTesting
+  // VisibleForTesting
   List<String> errors() {
     return firstErrorOfEachKind.entrySet().stream()
       .map(entry -> entry.getKey() + entry.getValue())

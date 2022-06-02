@@ -14,6 +14,7 @@ dependencies {
     // dependency on sonar-go-to-slang binaries
     runtimeOnly files(project(':sonar-go-to-slang').buildDir)
     compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
+    testImplementation 'org.sonarsource.sonarqube:sonar-plugin-api-impl'
     implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
     implementation 'com.eclipsesource.minimal-json:minimal-json'
     testImplementation "org.junit.jupiter:junit-jupiter-api"

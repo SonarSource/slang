@@ -44,7 +44,7 @@ class RubyRulesDefinitionTest {
     rulesDefinition.define(context);
 
     RulesDefinition.Repository repository = context.repository("ruby");
-    assertThat(repository.name()).isEqualTo("SonarAnalyzer");
+    assertThat(repository.name()).isEqualTo("SonarQube");
     assertThat(repository.language()).isEqualTo("ruby");
 
     Rule rule = repository.rule("S1135");

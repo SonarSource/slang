@@ -32,13 +32,13 @@ import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.rule.internal.NewActiveRule;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
+import org.sonar.api.impl.utils.JUnitTempFolder;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.resources.Language;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.Version;
-import org.sonar.api.utils.internal.JUnitTempFolder;
 import org.sonar.api.utils.log.ThreadLocalLogTester;
 
 import static org.mockito.ArgumentMatchers.any;

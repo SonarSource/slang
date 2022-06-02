@@ -26,6 +26,7 @@ import org.sonar.api.batch.fs.TextPointer;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.sensor.error.AnalysisError;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
+import org.sonar.api.batch.sensor.issue.internal.DefaultNoSonarFilter;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonarsource.slang.testing.AbstractSensorTest;
@@ -79,7 +80,7 @@ class RubySensorTest extends AbstractSensorTest {
   }
 
   private RubySensor sensor(CheckFactory checkFactory) {
-    return new RubySensor(SQ_LTS_RUNTIME, checkFactory, fileLinesContextFactory, new NoSonarFilter(), language());
+    return new RubySensor(SQ_LTS_RUNTIME, checkFactory, fileLinesContextFactory, new DefaultNoSonarFilter(), language());
   }
 
 }

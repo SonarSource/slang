@@ -19,16 +19,12 @@
  */
 package org.sonar.api.utils.log;
 
-import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 import org.junit.rules.ExternalResource;
-import org.sonar.api.internal.google.common.collect.ArrayListMultimap;
-import org.sonar.api.internal.google.common.collect.ListMultimap;
 
 public class ThreadLocalLogTester extends ExternalResource {
 
-  private static final Interceptor INTERCEPTOR = new Interceptor();
+  private static final ListInterceptor INTERCEPTOR = new ListInterceptor();
 
   @Override
   protected void before() {
@@ -76,59 +72,4 @@ public class ThreadLocalLogTester extends ExternalResource {
     return this;
   }
 
-  private static final class Interceptor implements LogInterceptor {
-
-    private static final ThreadLocal<List<String>> LOGS = ThreadLocal.withInitial(ArrayList::new);
-    private static final ThreadLocal<ListMultimap<LoggerLevel, String>> LOGS_BY_LEVEL = ThreadLocal.withInitial(ArrayListMultimap::create);
-
-    private Interceptor() {
-      // only one instance
-    }
-
-    @Override
-    public void log(LoggerLevel level, String msg) {
-      LOGS.get().add(msg);
-      LOGS_BY_LEVEL.get().put(level, msg);
-    }
-
-    @Override
-    public void log(LoggerLevel level, String msg, @Nullable Object arg) {
-      String s = ConsoleFormatter.format(msg, arg);
-      LOGS.get().add(s);
-      LOGS_BY_LEVEL.get().put(level, s);
-    }
-
-    @Override
-    public void log(LoggerLevel level, String msg, @Nullable Object arg1, @Nullable Object arg2) {
-      String s = ConsoleFormatter.format(msg, arg1, arg2);
-      LOGS.get().add(s);
-      LOGS_BY_LEVEL.get().put(level, s);
-    }
-
-    @Override
-    public void log(LoggerLevel level, String msg, Object... args) {
-      String s = ConsoleFormatter.format(msg, args);
-      LOGS.get().add(s);
-      LOGS_BY_LEVEL.get().put(level, s);
-    }
-
-    @Override
-    public void log(LoggerLevel level, String msg, Throwable thrown) {
-      LOGS.get().add(msg);
-      LOGS_BY_LEVEL.get().put(level, msg);
-    }
-
-    public List<String> logs() {
-      return LOGS.get();
-    }
-
-    public List<String> logs(LoggerLevel level) {
-      return LOGS_BY_LEVEL.get().get(level);
-    }
-
-    public void clear() {
-      LOGS.get().clear();
-      LOGS_BY_LEVEL.get().clear();
-    }
-  }
 }

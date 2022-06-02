@@ -38,6 +38,7 @@ import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.batch.sensor.issue.IssueLocation;
+import org.sonar.api.batch.sensor.issue.internal.DefaultNoSonarFilter;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
@@ -412,13 +413,14 @@ class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  void test_sensor_descriptor_processes_files_independently_reflection_failure() {
+  void test_sensor_descriptor_processes_files_independently_no_reflection_failure() {
     final SlangSensor sensor = sensor(
       SonarRuntimeImpl.forSonarQube(Version.create(9, 3), SonarQubeSide.SCANNER, SonarEdition.DEVELOPER),
       checkFactory()
     );
     sensor.describe(new DefaultSensorDescriptor());
-    assertThat(logTester.logs()).contains("Could not call SensorDescriptor.processesFilesIndependently() method");
+    assertThat(logTester.logs())
+      .doesNotContain("Could not call SensorDescriptor.processesFilesIndependently() method");
   }
 
   @Override
@@ -436,7 +438,7 @@ class SlangSensorTest extends AbstractSensorTest {
   }
 
   private SlangSensor sensor(SonarRuntime sonarRuntime, CheckFactory checkFactory) {
-    return new SlangSensor(sonarRuntime, new NoSonarFilter(), fileLinesContextFactory, SLANG) {
+    return new SlangSensor(sonarRuntime, new DefaultNoSonarFilter(), fileLinesContextFactory, SLANG) {
       @Override
       protected ASTConverter astConverter(SensorContext sensorContext) {
         return new SLangConverter();

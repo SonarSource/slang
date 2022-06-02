@@ -43,6 +43,7 @@ import org.sonar.api.batch.rule.internal.NewActiveRule;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
+import org.sonar.api.batch.sensor.issue.internal.DefaultNoSonarFilter;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
@@ -362,7 +363,7 @@ class GoSensorTest {
     CheckFactory checkFactory = new CheckFactory(activeRules);
     Checks<SlangCheck> checks = checkFactory.create(GoRulesDefinition.REPOSITORY_KEY);
     checks.addAnnotatedChecks((Iterable) ruleClasses);
-    return new GoSensor(AbstractSensorTest.SQ_LTS_RUNTIME, checkFactory, fileLinesContextFactory, new NoSonarFilter(), new GoLanguage(new MapSettings().asConfig()));
+    return new GoSensor(AbstractSensorTest.SQ_LTS_RUNTIME, checkFactory, fileLinesContextFactory, new DefaultNoSonarFilter(), new GoLanguage(new MapSettings().asConfig()));
   }
 
   private InputFile createInputFile(String filename, InputFile.Type type, String content) {

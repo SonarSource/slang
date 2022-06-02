@@ -32,7 +32,7 @@ allprojects {
     ext {
         buildNumber = System.getProperty("buildNumber")
         analyzerCommonsVersion = '1.23.0.957'
-        sonarqubeVersion = '7.9'
+        sonarqubeVersion = '9.3.0.51899'
         orchestratorVersion = '3.38.0.115'
         sonarlintVersion = '8.5.0.46449'
         sonarLinksCi = 'https://travis-ci.org/SonarSource/slang'
@@ -70,6 +70,7 @@ subprojects {
     dependencyManagement {
         dependencies {
             dependency "org.sonarsource.sonarqube:sonar-plugin-api:${sonarqubeVersion}"
+            dependency "org.sonarsource.sonarqube:sonar-plugin-api-impl:${sonarqubeVersion}"
             dependency "org.sonarsource.sonarqube:sonar-ws:${sonarqubeVersion}"
             dependency 'com.google.code.findbugs:jsr305:1.3.9'
             dependency 'com.eclipsesource.minimal-json:minimal-json:0.9.5'

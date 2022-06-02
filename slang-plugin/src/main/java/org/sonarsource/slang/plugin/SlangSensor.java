@@ -37,7 +37,6 @@ import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
-import org.sonar.api.internal.google.common.annotations.VisibleForTesting;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.resources.Language;
@@ -59,7 +58,7 @@ import org.sonarsource.slang.plugin.converter.ASTConverterValidation;
 import org.sonarsource.slang.visitors.TreeVisitor;
 
 public abstract class SlangSensor implements Sensor {
-  @VisibleForTesting
+  // VisibleForTesting
   static final Predicate<Tree> EXECUTABLE_LINE_PREDICATE = t ->
     !(t instanceof PackageDeclarationTree)
     && !(t instanceof ImportDeclarationTree)
