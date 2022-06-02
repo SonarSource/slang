@@ -62,7 +62,7 @@ public class RubyConverter implements ASTConverter {
   private static final String SETUP_SCRIPT_PATH = "whitequark_parser_init.rb";
   private static final String RACC_RUBYGEM_PATH = "racc-1.5.2-java/lib";
   private static final String AST_RUBYGEM_PATH = "ast-2.4.2/lib";
-  private static final String PARSER_RUBYGEM_PATH = "parser-3.0.3.1/lib";
+  private static final String PARSER_RUBYGEM_PATH = "parser-3.1.2.0/lib";
   private static final String COMMENT_TOKEN_TYPE = "tCOMMENT";
   static final String FILENAME = "(Analysis of Ruby)";
 

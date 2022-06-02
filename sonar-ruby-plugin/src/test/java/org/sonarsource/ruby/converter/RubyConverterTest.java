@@ -398,4 +398,37 @@ class RubyConverterTest extends AbstractRubyConverterTest {
     assertThat(tokens).hasSize(19);
   }
 
+  // Since version 3.1
+
+  @Test
+  void newHashSyntax() {
+    Tree tree = converter.parse("a = 1\n" +
+      "b = 2\n" +
+      "h = {a:, b:}");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(13);
+  }
+
+  @Test
+  void anonymousBlockArgument() {
+    Tree tree = converter.parse("def logged_open(filename, &)\n" +
+      "puts \"Opening #{filename}...\"\n" +
+      "File.open(filename, &)" +
+      "end");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(24);
+  }
+
+  @Test
+  void pinOperator() {
+    Tree tree = converter.parse("{timestamp: Time.now} in {timestamp: ^(Time.new(2021)..Time.new(2022))}");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(26);
+  }
 }

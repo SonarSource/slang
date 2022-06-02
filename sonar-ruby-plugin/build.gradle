@@ -8,7 +8,7 @@ import com.github.jrubygradle.JRubyPrepare
 ext {
     rubygemsRaccVersion = '1.5.2-java'
     rubygemsAstVersion = '2.4.2'
-    rubygemsParserVersion = '3.0.3.1'
+    rubygemsParserVersion = '3.1.2.0'
 }
 
 processResources.from("src/main/resources", "${buildDir}/dependency_gems/gems")
