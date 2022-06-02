@@ -127,6 +127,11 @@ func (t *SlangMapper) mapFuncDeclImpl(decl *ast.FuncDecl, fieldName string) *Nod
 	children = t.appendNode(children, funcName)
 	slangField["name"] = funcName
 
+	// Add type parameters to native children of the function declaration
+	typeParams := t.mapFieldListTypeParams(decl.Type.TypeParams, "TypeParams")
+	children = t.appendNode(children, typeParams)
+	nativeChildren = t.appendNode(nativeChildren, typeParams)
+
 	parameters := t.mapFieldListParams(decl.Type.Params, "Params")
 	children = t.appendNode(children, parameters)
 	formalParameters := t.getFormalParameter(parameters)
@@ -230,6 +235,7 @@ func (t *SlangMapper) mapGenDeclType(decl *ast.GenDecl, fieldName string) *Node 
 	children = t.appendNode(children, specName)
 	slangField[identifierField] = specName.TextRange
 
+	children = t.appendNode(children, t.mapFieldListTypeParams(spec.TypeParams, "TypeParams"))
 	children = t.appendNode(children, t.createTokenFromPosAstToken(spec.Assign, token.ASSIGN, "Assign"))
 	children = t.appendNode(children, t.mapExpr(spec.Type, "Type"))
 
@@ -325,6 +331,10 @@ func (t *SlangMapper) mapFieldListBraceImpl(list *ast.FieldList, fieldName strin
 }
 
 func (t *SlangMapper) mapFuncTypeImpl(funcType *ast.FuncType, fieldName string) *Node {
+	return nil
+}
+
+func (t *SlangMapper) mapFieldListTypeParamsImpl(list *ast.FieldList, fieldName string) *Node {
 	return nil
 }
 
@@ -858,6 +868,10 @@ func (t *SlangMapper) mapEllipsisImpl(ellipsis *ast.Ellipsis, fieldName string) 
 }
 
 func (t *SlangMapper) mapIndexExprImpl(expr *ast.IndexExpr, fieldName string) *Node {
+	return nil
+}
+
+func (t *SlangMapper) mapIndexListExprImpl(astNode *ast.IndexListExpr, fieldName string) *Node {
 	return nil
 }
 

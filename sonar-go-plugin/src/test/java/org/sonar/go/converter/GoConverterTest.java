@@ -6,13 +6,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
+import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.ClassDeclarationTree;
+import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IntegerLiteralTree;
 import org.sonarsource.slang.api.LoopTree;
+import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.ReturnTree;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
+import org.sonarsource.slang.api.VariableDeclarationTree;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -66,6 +70,24 @@ class GoConverterTest {
     Tree tree = converter.parse("package main\nfunc foo() {for {}}");
     List<Tree> returnList = tree.descendants().filter(t -> t instanceof LoopTree).collect(Collectors.toList());
     assertThat(returnList).hasSize(1);
+  }
+
+  @Test
+  void test_parse_generics() {
+    GoConverter converter = new GoConverter(Paths.get("build", "tmp").toFile());
+    Tree tree = converter.parse("package main\nfunc f1[T any]() {}\nfunc f2() {\nf:=f1[string]}");
+    List<Tree> functions = tree.descendants().filter(t -> t instanceof FunctionDeclarationTree).collect(Collectors.toList());
+    assertThat(functions).hasSize(2);
+
+    List<Tree> f1Children = functions.get(0).children();
+    assertThat(f1Children).hasSize(3);
+    Tree typeParams = f1Children.get(2);
+    assertThat(typeParams).isInstanceOf(NativeTree.class);
+    assertThat(((NativeTree) typeParams).nativeKind()).hasToString("TypeParams(FieldList)");
+
+    List<Tree> f2Children = functions.get(1).children();
+    Tree f = ((BlockTree) f2Children.get(1)).statementOrExpressions().get(0);
+    assertThat(f).isInstanceOf(VariableDeclarationTree.class);
   }
 
   @Test
