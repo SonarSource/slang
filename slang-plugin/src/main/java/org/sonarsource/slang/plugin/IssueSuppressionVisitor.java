@@ -22,11 +22,9 @@ package org.sonarsource.slang.plugin;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -47,15 +45,6 @@ public class IssueSuppressionVisitor extends TreeVisitor<InputFileContext> {
   private static final List<String> SUPPRESS_ANNOTATION_NAMES = Arrays.asList("Suppress", "SuppressWarnings");
 
   private static final Pattern LITERAL_PATTERN = Pattern.compile("\"(.*?)\"");
-
-  // Common Suppress annotation parameter used by kotlin compiler.
-  private static final Map<String, Collection<String>> COMPILER_KEY_TO_SONAR_KEYS = new HashMap<>();
-  static {
-    COMPILER_KEY_TO_SONAR_KEYS.put("UNUSED_PARAMETER", Collections.singletonList("kotlin:S1172"));
-    COMPILER_KEY_TO_SONAR_KEYS.put("UNUSED_VARIABLE", Collections.singletonList("kotlin:S1481"));
-    COMPILER_KEY_TO_SONAR_KEYS.put("UNUSED", Arrays.asList("kotlin:S1172", "kotlin:S1481"));
-    COMPILER_KEY_TO_SONAR_KEYS.put("TOO_MANY_ARGUMENTS", Collections.singletonList("kotlin:S107"));
-  }
 
   public IssueSuppressionVisitor() {
     register(FunctionDeclarationTree.class, (ctx, tree) -> checkSuppressAnnotations(tree));
@@ -80,14 +69,7 @@ public class IssueSuppressionVisitor extends TreeVisitor<InputFileContext> {
   private static Collection<String> getSuppressedKeys(List<String> argumentsText) {
     List<String> keys = new ArrayList<>();
     for (String s : argumentsText) {
-      getArgumentsValues(s).forEach(value -> {
-        String keyUpperCase = value.toUpperCase(Locale.ENGLISH);
-        if (COMPILER_KEY_TO_SONAR_KEYS.containsKey(keyUpperCase)) {
-          keys.addAll(COMPILER_KEY_TO_SONAR_KEYS.get(keyUpperCase));
-        } else {
-          keys.add(value);
-        }
-      });
+      keys.addAll(getArgumentsValues(s));
     }
     return keys;
   }

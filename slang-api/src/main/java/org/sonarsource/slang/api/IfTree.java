@@ -38,7 +38,6 @@ import javax.annotation.CheckForNull;
  * 
  * Known mapping from languages conditional expressions to IfTree:
  * - Apex:   if, ternary (a?b:c)
- * - Kotlin: if
  * - Ruby:   if, ternary (a?b:c), unless (equivalent to 'if not')
  * - Scala:  if
  */

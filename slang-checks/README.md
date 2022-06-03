@@ -11,5 +11,5 @@ an equivalent Slang node exists.
 
 | Node | Language(s) |
 | ------ | ----------- |
-| MemberSelect   | Kotlin, Scala, Ruby, Go |
-| FunctionInvocation   | Kotlin, Scala, Ruby, Go |
+| MemberSelect   | Scala, Ruby, Go |
+| FunctionInvocation   | Scala, Ruby, Go |
