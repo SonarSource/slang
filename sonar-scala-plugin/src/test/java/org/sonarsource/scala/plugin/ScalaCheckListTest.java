@@ -33,7 +33,7 @@ class ScalaCheckListTest {
 
   @Test
   void scala_checks_size() {
-    Assertions.assertThat(ScalaCheckList.checks().size()).isGreaterThanOrEqualTo(40);
+    Assertions.assertThat(ScalaCheckList.checks()).hasSizeGreaterThanOrEqualTo(40);
   }
 
   @Test

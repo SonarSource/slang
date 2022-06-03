@@ -33,9 +33,9 @@ class RubyNativeKindTest {
       .isEqualTo(new RubyNativeKind("test"))
       .isNotEqualTo(new RubyNativeKind("test_other"))
       .isNotNull()
-      .isNotEqualTo(new Object());
+      .isNotEqualTo(new Object())
+      .hasSameHashCodeAs(new RubyNativeKind("test"));
 
-    assertThat(nativeKind.hashCode()).isEqualTo(nativeKind.hashCode());
     assertThat(nativeKind.hashCode()).isNotEqualTo(new RubyNativeKind("test_other").hashCode());
 
     assertThat(nativeKind).hasToString("test");

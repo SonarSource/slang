@@ -34,7 +34,7 @@ class RubyProfileDefinitionTest {
     BuiltInQualityProfilesDefinition.BuiltInQualityProfile profile = context.profile("ruby", "Sonar way");
 
     assertThat(profile.rules()).extracting("repoKey").containsOnly("ruby");
-    assertThat(profile.rules().size()).isGreaterThan(1);
+    assertThat(profile.rules()).hasSizeGreaterThan(1);
     assertThat(profile.rules()).extracting(BuiltInActiveRule::ruleKey).contains("S1135");
   }
 

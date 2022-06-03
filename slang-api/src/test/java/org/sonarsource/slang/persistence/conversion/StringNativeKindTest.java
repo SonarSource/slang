@@ -43,7 +43,7 @@ class StringNativeKindTest {
   @Test
   void test_equals() {
     assertThat(new StringNativeKind("ast.Element")).isEqualTo(new StringNativeKind("ast.Element"));
-    assertThat(new StringNativeKind("ast.Element").hashCode()).isEqualTo(new StringNativeKind("ast.Element").hashCode());
+    assertThat(new StringNativeKind("ast.Element")).hasSameHashCodeAs(new StringNativeKind("ast.Element"));
   }
   
 }

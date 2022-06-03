@@ -43,7 +43,7 @@ class TextRangeImplTest {
 
   @Test
   void test_hashCode() {
-    assertThat(new TextRangeImpl(p1, p2).hashCode()).isEqualTo(new TextRangeImpl(p1, p2).hashCode());
+    assertThat(new TextRangeImpl(p1, p2)).hasSameHashCodeAs(new TextRangeImpl(p1, p2));
     assertThat(new TextRangeImpl(p1, p2).hashCode()).isNotEqualTo(new TextRangeImpl(p1, p1).hashCode());
   }
 

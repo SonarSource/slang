@@ -38,7 +38,7 @@ class ScapegoatRulesDefinitionTest {
     assertThat(repository.name()).isEqualTo("Scapegoat");
     assertThat(repository.language()).isEqualTo("scala");
     assertThat(repository.isExternal()).isTrue();
-    assertThat(repository.rules().size()).isEqualTo(117);
+    assertThat(repository.rules()).hasSize(117);
 
     RulesDefinition.Rule rule = repository.rule("com.sksamuel.scapegoat.inspections.AvoidToMinusOne");
     assertThat(rule).isNotNull();

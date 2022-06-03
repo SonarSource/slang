@@ -126,7 +126,7 @@ class ScoverageSensorTest {
     newSCoverageSensor().execute(context);
 
     String expectedMessage = "File '" + reportPath.toString() + "' can't be read. java.lang.NumberFormatException: null";
-    assertThat(logTester.logs().contains(expectedMessage)).isTrue();
+    assertThat(logTester.logs()).contains(expectedMessage);
   }
 
   @Test
@@ -140,7 +140,7 @@ class ScoverageSensorTest {
 
     String expectedMessage = "Fail to resolve 2 file(s). No coverage data will be imported on the following file(s): /Absolute/Path/To/file1.scala;/Absolute/Path/To/file2.scala";
 
-    assertThat(logTester.logs().contains(expectedMessage)).isTrue();
+    assertThat(logTester.logs()).contains(expectedMessage);
   }
 
   @Test
@@ -152,8 +152,8 @@ class ScoverageSensorTest {
 
     newSCoverageSensor().execute(context);
 
-    String expectedMessage = String.format("File '" + reportPath.toString() +
-        "' can't be read. com.ctc.wstx.exc.WstxUnexpectedCharException: Unexpected character 's' (code 115) in prolog; expected '<'");
+    String expectedMessage = "File '" + reportPath.toString() +
+      "' can't be read. com.ctc.wstx.exc.WstxUnexpectedCharException: Unexpected character 's' (code 115) in prolog; expected '<'";
     assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
     assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).startsWith(expectedMessage);
   }

@@ -33,7 +33,7 @@ class GoCheckListTest {
 
   @Test
   void go_checks_size() {
-    Assertions.assertThat(GoCheckList.checks().size()).isEqualTo(38);
+    Assertions.assertThat(GoCheckList.checks()).hasSize(38);
   }
 
   @Test

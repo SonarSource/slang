@@ -78,11 +78,11 @@ class GoRulesDefinitionTest {
     assertThat(golintRepository.isExternal()).isTrue();
     assertThat(govetRepository.isExternal()).isTrue();
 
-    assertThat(golintRepository.rules().size()).isEqualTo(18);
-    assertThat(ExternalKeyUtils.GO_LINT_KEYS.size()).isEqualTo(18);
+    assertThat(golintRepository.rules()).hasSize(18);
+    assertThat(ExternalKeyUtils.GO_LINT_KEYS).hasSize(18);
 
-    assertThat(govetRepository.rules().size()).isEqualTo(21);
-    assertThat(ExternalKeyUtils.GO_VET_KEYS.size()).isEqualTo(21);
+    assertThat(govetRepository.rules()).hasSize(21);
+    assertThat(ExternalKeyUtils.GO_VET_KEYS).hasSize(21);
 
     List<String> govetKeysWithoutDefinition = ExternalKeyUtils.GO_VET_KEYS.stream()
       .map(x -> x.key)

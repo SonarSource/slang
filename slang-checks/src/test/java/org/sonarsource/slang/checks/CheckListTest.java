@@ -42,10 +42,10 @@ class CheckListTest {
   @Test
   void exclude_checks() {
     List<Class<?>> allChecks = CheckList.allChecks();
-    assertThat(allChecks.size()).isGreaterThanOrEqualTo(40);
+    assertThat(allChecks).hasSizeGreaterThanOrEqualTo(40);
 
     List<Class<?>> includedChecks = CheckList.excludeChecks(new Class[] {AllBranchesIdenticalCheck.class});
-    assertThat(includedChecks.size()).isEqualTo(allChecks.size() - 1);
+    assertThat(includedChecks).hasSize(allChecks.size() - 1);
   }
 
   @Test

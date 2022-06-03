@@ -38,7 +38,7 @@ class ScalastyleRulesDefinitionTest {
     assertThat(scalastyleRepository.name()).isEqualTo("Scalastyle");
     assertThat(scalastyleRepository.language()).isEqualTo("scala");
     assertThat(scalastyleRepository.isExternal()).isTrue();
-    assertThat(scalastyleRepository.rules().size()).isEqualTo(72);
+    assertThat(scalastyleRepository.rules()).hasSize(72);
 
     RulesDefinition.Rule rule = scalastyleRepository.rule("org.scalastyle.file.FileLengthChecker");
     assertThat(rule).isNotNull();

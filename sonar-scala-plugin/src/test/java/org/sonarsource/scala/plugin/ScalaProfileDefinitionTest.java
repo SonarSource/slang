@@ -34,7 +34,7 @@ class ScalaProfileDefinitionTest {
     BuiltInQualityProfilesDefinition.BuiltInQualityProfile profile = context.profile("scala", "Sonar way");
 
     assertThat(profile.rules()).extracting("repoKey").containsOnly("scala");
-    assertThat(profile.rules().size()).isPositive();
+    assertThat(profile.rules()).isNotEmpty();
     assertThat(profile.rules()).extracting(BuiltInActiveRule::ruleKey).contains("ParsingError");
   }
 

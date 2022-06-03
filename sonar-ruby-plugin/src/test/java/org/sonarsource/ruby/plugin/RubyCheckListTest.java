@@ -33,7 +33,7 @@ class RubyCheckListTest {
 
   @Test
   void ruby_checks_size() {
-    Assertions.assertThat(RubyCheckList.checks().size()).isGreaterThanOrEqualTo(40);
+    Assertions.assertThat(RubyCheckList.checks()).hasSizeGreaterThanOrEqualTo(40);
   }
 
   @Test

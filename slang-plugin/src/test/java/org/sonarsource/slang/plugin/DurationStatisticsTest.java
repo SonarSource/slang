@@ -75,7 +75,7 @@ class DurationStatisticsTest {
     statistics
       .time("C", (t, u) -> txt.append(t).append(u))
       .accept("4", "5");
-    assertThat(txt.toString()).isEqualTo("12345");
+    assertThat(txt).hasToString("12345");
   }
 
 }
