@@ -29,6 +29,9 @@ import org.sonarsource.slang.impl.TextRanges;
 
 public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
 
+  private static final String MULTILINE_COMMENT_START = "=begin";
+  private static final String MULTILINE_COMMENT_END = "=end";
+
   public CommentAdapter(Ruby runtime, IRubyObject underlyingRubyObject) {
     super(runtime, underlyingRubyObject);
   }
@@ -45,30 +48,38 @@ public class CommentAdapter extends JRubyObjectAdapter<IRubyObject> {
 
     } else {
       // multi-line comment
-      text = text.trim();
       TokenLocation textLocation = new TokenLocation(initialTextRange.start().line(), 0, text);
       TextRange trimmedTextRange = TextRanges.range(textLocation.startLine(), textLocation.startLineOffset(), textLocation.endLine(), textLocation.endLineOffset());
-
       String contentText = getContentText(text);
       TextRange contentRange = getContentTextRange(text, textLocation, contentText);
       return new CommentImpl(text, contentText, trimmedTextRange, contentRange);
     }
   }
 
-  private static TextRange getContentTextRange(String text, TokenLocation textLocation, String contentText) {
+  // VisibleForTesting
+  static String getContentText(String text) {
+    int contentStart = 0;
+    if (text.startsWith(MULTILINE_COMMENT_START)) {
+      contentStart = MULTILINE_COMMENT_START.length();
+    }
+    int contentEnd = text.length();
+    while (contentEnd > 0 && text.charAt(contentEnd - 1) <= ' ') {
+      contentEnd--;
+    }
+    int expectedEnd = contentEnd - MULTILINE_COMMENT_END.length();
+    if (text.indexOf(MULTILINE_COMMENT_END, expectedEnd) == expectedEnd) {
+      contentEnd = expectedEnd;
+    }
+    return text.substring(contentStart, contentEnd);
+  }
+
+  // VisibleForTesting
+  static TextRange getContentTextRange(String text, TokenLocation textLocation, String contentText) {
     int contentStartIndex = text.indexOf(contentText);
     String whitespacesContentPrefix = text.substring(0, contentStartIndex);
     TokenLocation prefixLocation = new TokenLocation(textLocation.startLine(), textLocation.startLineOffset(), whitespacesContentPrefix);
-
     TokenLocation contentLocation = new TokenLocation(prefixLocation.endLine(), prefixLocation.endLineOffset(), contentText);
     return TextRanges.range(contentLocation.startLine(), contentLocation.startLineOffset(), contentLocation.endLine(), contentLocation.endLineOffset());
-  }
-
-  private static String getContentText(String text) {
-    String contentText = text.substring(6).trim();
-    int endIndex = contentText.lastIndexOf("=end");
-    contentText = contentText.substring(0, endIndex).trim();
-    return contentText;
   }
 
   private TextRange getTextRange() {

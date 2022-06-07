@@ -41,6 +41,13 @@ import org.sonarsource.slang.visitors.TreeVisitor;
 
 public class MetricVisitor extends TreeVisitor<InputFileContext> {
 
+  private static final boolean[] IS_NON_BLANK_CHAR_IN_COMMENTS = new boolean[127];
+  static {
+    for (int c = 0; c < IS_NON_BLANK_CHAR_IN_COMMENTS.length; c++) {
+      IS_NON_BLANK_CHAR_IN_COMMENTS[c] = c > ' ' && "*#-=|".indexOf(c) == -1;
+    }
+  }
+
   public static final String NOSONAR_PREFIX = "NOSONAR";
   private final FileLinesContextFactory fileLinesContextFactory;
   private final NoSonarFilter noSonarFilter;
@@ -62,9 +69,11 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
     this.executableLineOfCodePredicate = executableLineOfCodePredicate;
 
     register(TopLevelTree.class, (ctx, tree) -> {
+      List<Tree> declarations = tree.declarations();
+      int firstTokenLine = declarations.isEmpty() ? tree.textRange().end().line() : declarations.get(0).textRange().start().line();
       tree.allComments().forEach(
-        comment -> addCommentMetrics(comment, commentLines, nosonarLines));
-      addExecutableLines(tree.declarations());
+        comment -> addCommentMetrics(comment, commentLines, nosonarLines, firstTokenLine));
+      addExecutableLines(declarations);
       linesOfCode.addAll(tree.metaData().linesOfCode());
       complexity = new CyclomaticComplexityVisitor().complexityTrees(tree).size();
       statements = new StatementsVisitor().statements(tree);
@@ -125,17 +134,37 @@ public class MetricVisitor extends TreeVisitor<InputFileContext> {
       .save();
   }
 
-  private static void addCommentMetrics(Comment comment, Set<Integer> commentLines, Set<Integer> nosonarLines) {
-    add(comment.textRange(), commentLines);
-    if (isNosonarComment(comment)) {
-      add(comment.textRange(), nosonarLines);
+  private static void addCommentMetrics(Comment comment, Set<Integer> commentLines, Set<Integer> nosonarLines, int firstTokenLine) {
+    boolean isFileHeader = comment.textRange().end().line() < firstTokenLine;
+    if (!isFileHeader) {
+      addCommentNonEmptyLines(comment.contentRange(), comment.contentText(), isNosonarComment(comment) ? nosonarLines : commentLines);
     }
   }
 
-  private static void add(TextRange range, Set<Integer> lineNumbers) {
-    for (int i = range.start().line(); i <= range.end().line(); i++) {
-      lineNumbers.add(i);
+  private static void addCommentNonEmptyLines(TextRange range, String content, Set<Integer> lineNumbers) {
+    int startLine = range.start().line();
+    if (startLine == range.end().line()) {
+      if (isNotBlank(content)) {
+        lineNumbers.add(startLine);
+      }
+    } else {
+      String[] lines = content.split("\r\n|\n|\r", -1);
+      for (int i = 0; i < lines.length; i++) {
+        if (isNotBlank(lines[i])) {
+          lineNumbers.add(startLine + i);
+        }
+      }
     }
+  }
+
+  private static boolean isNotBlank(String line) {
+    for (int i = 0; i < line.length(); i++) {
+      char ch = line.charAt(i);
+      if (ch >= IS_NON_BLANK_CHAR_IN_COMMENTS.length || IS_NON_BLANK_CHAR_IN_COMMENTS[ch]) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public static boolean isNosonarComment(Comment comment) {

@@ -164,47 +164,52 @@ class RubyConverterTest extends AbstractRubyConverterTest {
       "=begin\n" +
       "First line\n" +
       "End multiline comment\n" +
-      "=end\n");
+      "=end\n" +
+      "#");
 
     assertThat(tree.allComments()).extracting(Comment::text).containsExactly(
       "#start comment",
       "# line comment",
-      "=begin\nFirst line\nEnd multiline comment\n=end");
+      "=begin\nFirst line\nEnd multiline comment\n=end\n",
+      "#");
     assertThat(tree.allComments()).extracting(Comment::contentText).containsExactly(
       "start comment",
       " line comment",
-      "First line\nEnd multiline comment");
+      "\nFirst line\nEnd multiline comment\n",
+      "");
     assertRange(tree.allComments().get(0).textRange()).hasRange(1, 0, 1, 14);
     assertRange(tree.allComments().get(1).textRange()).hasRange(5, 9, 5, 23);
-    assertRange(tree.allComments().get(2).textRange()).hasRange(8, 0, 11, 4);
+    assertRange(tree.allComments().get(2).textRange()).hasRange(8, 0, 12, 0);
+    assertRange(tree.allComments().get(3).textRange()).hasRange(12, 0, 12, 1);
     assertRange(tree.allComments().get(0).contentRange()).hasRange(1, 1, 1, 14);
     assertRange(tree.allComments().get(1).contentRange()).hasRange(5, 10, 5, 23);
-    assertRange(tree.allComments().get(2).contentRange()).hasRange(9, 0, 10, 21);
+    assertRange(tree.allComments().get(2).contentRange()).hasRange(8, 6, 11, 0);
+    assertRange(tree.allComments().get(3).contentRange()).hasRange(12, 1, 12, 1);
     assertThat(tree.children().get(0).children().get(0).metaData().commentsInside()).isEmpty(); // require call has no comment child
     assertThat(tree.children().get(0).children().get(2).metaData().commentsInside()).hasSize(1); // method has 1 comment child
   }
 
   @Test
   void multiline_comments() throws Exception {
-    assertComment("=begin\ncomment content\n=end\n", "=begin\ncomment content\n=end", "comment content",
-      TextRanges.range(1, 0, 3, 4),
-      TextRanges.range(2, 0, 2, 15));
+    assertComment("=begin\ncomment content\n=end\n", "=begin\ncomment content\n=end\n", "\ncomment content\n",
+      TextRanges.range(1, 0, 4, 0),
+      TextRanges.range(1, 6, 3, 0));
 
     assertComment("=begin prefix \ncomment content\n=end",
       "=begin prefix \ncomment content\n=end",
-      "prefix \ncomment content",
+      " prefix \ncomment content\n",
       TextRanges.range(1, 0, 3, 4),
-      TextRanges.range(1, 7, 2, 15));
+      TextRanges.range(1, 6, 3, 0));
 
     assertComment("=begin \r\n comment \r\ncontent\r\n=end\r\n",
       "=begin \n" +
         " comment \n" +
         "content\n" +
-        "=end",
-      "comment \n" +
-        "content",
-      TextRanges.range(1, 0, 4, 4),
-      TextRanges.range(2, 1, 3, 7));
+        "=end\n",
+      " \n comment \n" +
+        "content\n",
+      TextRanges.range(1, 0, 5, 0),
+      TextRanges.range(1, 6, 4, 0));
   }
 
   @Test

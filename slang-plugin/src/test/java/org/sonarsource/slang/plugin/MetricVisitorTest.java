@@ -95,6 +95,72 @@ class MetricVisitorTest {
   }
 
   @Test
+  void commentBeforeTheFirstTokenCorrespondToTheIgnoredHeader() throws Exception {
+    scan("" +
+      "// first line of the header\n" +
+      "// second line of the header\n" +
+      "/*\n" +
+      "  this is also part of the header\n" +
+      "*/\n" +
+      "package abc; // comment 1\n" +
+      "import x;\n" +
+      "\n" +
+      "fun function1() { // comment 2\n" +
+      "  //\n" +
+      "  /**/\n" +
+      "}\n");
+    assertThat(visitor.commentLines()).containsExactly(6, 9);
+  }
+
+  @Test
+  void commentsWithoutDeclarationsAreIgnored() throws Exception {
+    scan("" +
+      "// header 1\n" +
+      "/**\n" +
+      " * header 2\n" +
+      " */\n");
+    assertThat(visitor.commentLines()).isEmpty();
+  }
+
+  @Test
+  void noSonarCommentsDoNotAccountForTheCommentMetrics() throws Exception {
+    scan("" +
+      "fun function1() {\n" +
+      "  // comment1\n" +
+      "  // NOSONAR comment2\n" +
+      "  // comment3\n" +
+      "}\n");
+    assertThat(visitor.commentLines()).containsExactly(2, 4);
+  }
+
+  @Test
+  void emptyLinesDoNotAccountForTheCommentMetrics() throws Exception {
+    scan("" +
+      "package abc; // comment 1\n" +
+      "/*\n" +
+      "\n" +
+      "  comment 2\n" +
+      "  \n" +
+      "  comment 3\n" +
+      "\n" +
+      "*/\n" +
+      "\n" +
+      "fun function1() { // comment 4\n" +
+      "  /**\n" +
+      "   *\n"+
+      "   #\n"+
+      "   =\n"+
+      "   -\n"+
+      "   |\n"+
+      "   | comment 5\n"+
+      "   | どのように\n"+
+      "   |\n"+
+      "   */\n"+
+      "}\n");
+    assertThat(visitor.commentLines()).containsExactlyInAnyOrder(1, 4, 6, 10, 17, 18);
+  }
+
+  @Test
   void multiLineComment() throws Exception {
     scan("" +
       "/*start\n" +

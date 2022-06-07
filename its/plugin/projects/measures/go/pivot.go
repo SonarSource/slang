@@ -6,7 +6,7 @@ import (
 	"strings"
 	"bytes"
 )
-
+// comment 1
 var ascii_uppercase = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 var ascii_lowercase = []byte("abcdefghijklmnopqrstuvwxyz")
 var ascii_uppercase_len = len(ascii_uppercase)
@@ -40,6 +40,9 @@ func (r *rot13Reader) Read(b []byte) (n int, err error) {
 	return
 }
 
+/**
+ * comment 2
+ */
 func main() {
 	s := strings.NewReader("Lbh penpxrq gur pbqr!")
 	r := rot13Reader{s}

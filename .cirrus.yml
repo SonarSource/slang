@@ -99,7 +99,7 @@ gradle_its_template: &GRADLE_ITS_TEMPLATE
       "-Dorchestrator.configUrl=https://repox.jfrog.io/repox/orchestrator.properties/orch-h2.properties"
       "-Dorchestrator.artifactory.apiKey=${ARTIFACTORY_API_KEY}"
       "-DbuildNumber=$BUILD_NUMBER"
-      -Pqa --info --console plain --no-daemon --build-cache
+      -Pqa --info --stacktrace --console plain --no-daemon --build-cache
   <<: *CLEANUP_GRADLE_CACHE_SCRIPT
 
 only_if_sonarsource_qa_template: &ONLY_IF_SONARSOURCE_QA
@@ -138,7 +138,7 @@ ws_scan_task:
   whitesource_script:
     - source cirrus-env QA
     - ./gradlew --no-daemon --console plain clean
-    - ./gradlew --no-daemon --console plain build -x test
+    - ./gradlew --no-daemon --info --stacktrace --console plain --no-daemon build -x test
     - source ./export_ws_variables_from_gradle
     - source ws_scan.sh
   allow_failures: "true"
