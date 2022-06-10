@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Rule;
@@ -49,13 +50,27 @@ public class ExternalReportTest extends TestBase {
     sonarScanner.setProperty("sonar.ruby.rubocop.reportPaths", "rubocop-report.json");
     ORCHESTRATOR.executeBuild(sonarScanner);
     List<Issue> issues = getExternalIssues(projectKey);
-    assertThat(issues).hasSize(1);
-    Issue first = issues.get(0);
-    assertThat(first.getRule()).isEqualTo("external_rubocop:Security/YAMLLoad");
-    assertThat(first.getLine()).isEqualTo(2);
-    assertThat(first.getMessage()).isEqualTo("Security/YAMLLoad: Prefer using `YAML.safe_load` over `YAML.load`.");
-    assertThat(first.getSeverity().name()).isEqualTo("MAJOR");
-    assertThat(first.getDebt()).isEqualTo("5min");
+    issues.sort(Comparator.comparing(Issue::getLine).thenComparing(Issue::getRule));
+
+    assertThat(issues).hasSize(3);
+
+    assertThat(issues.get(0).getRule()).isEqualTo("external_rubocop:Naming/FileName");
+    assertThat(issues.get(0).getLine()).isEqualTo(1);
+    assertThat(issues.get(0).getMessage()).isEqualTo("The name of this source file (`yaml-issue.rb`) should use snake_case.");
+    assertThat(issues.get(0).getSeverity().name()).isEqualTo("INFO");
+    assertThat(issues.get(0).getDebt()).isEqualTo("5min");
+
+    assertThat(issues.get(1).getRule()).isEqualTo("external_rubocop:Style/FrozenStringLiteralComment");
+    assertThat(issues.get(1).getLine()).isEqualTo(1);
+    assertThat(issues.get(1).getMessage()).isEqualTo("Missing frozen string literal comment.");
+    assertThat(issues.get(1).getSeverity().name()).isEqualTo("MINOR");
+    assertThat(issues.get(1).getDebt()).isEqualTo("5min");
+
+    assertThat(issues.get(2).getRule()).isEqualTo("external_rubocop:Security/YAMLLoad");
+    assertThat(issues.get(2).getLine()).isEqualTo(2);
+    assertThat(issues.get(2).getMessage()).isEqualTo("Prefer using `YAML.safe_load` over `YAML.load`.");
+    assertThat(issues.get(2).getSeverity().name()).isEqualTo("MAJOR");
+    assertThat(issues.get(2).getDebt()).isEqualTo("5min");
   }
 
   @Test

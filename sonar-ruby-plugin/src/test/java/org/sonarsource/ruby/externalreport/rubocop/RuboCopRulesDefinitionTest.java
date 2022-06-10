@@ -38,15 +38,15 @@ class RuboCopRulesDefinitionTest {
     assertThat(repository.name()).isEqualTo("RuboCop");
     assertThat(repository.language()).isEqualTo("ruby");
     assertThat(repository.isExternal()).isTrue();
-    assertThat(repository.rules()).hasSize(425);
+    assertThat(repository.rules()).hasSize(500);
 
-    RulesDefinition.Rule rule = repository.rule("Lint/MultipleCompare");
+    RulesDefinition.Rule rule = repository.rule("Lint/MultipleComparison");
     assertThat(rule).isNotNull();
-    assertThat(rule.name()).isEqualTo("Multiple Compare (Lint)");
+    assertThat(rule.name()).isEqualTo("Multiple Comparison (Lint)");
     assertThat(rule.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(rule.severity()).isEqualTo("MAJOR");
-    assertThat(rule.htmlDescription()).isEqualTo("<p>Use `&amp;&amp;` operator to compare multiple value.</p> " +
-      "<p>See more at the <a href=\"https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/MultipleCompare\">RuboCop website</a>.</p>");
+    assertThat(rule.htmlDescription()).isEqualTo("<p>Use `&amp;&amp;` operator to compare multiple values.</p> " +
+      "<p>See more at the <a href=\"https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/Lint/MultipleComparison\">RuboCop website</a>.</p>");
     assertThat(rule.tags()).isEmpty();
     assertThat(rule.debtRemediationFunction().baseEffort()).isEqualTo("5min");
   }

@@ -45,8 +45,12 @@ public class RuboCopRuleDefinition {
     "src", "main", "resources", "rubocop.yml");
 
   public static void main(String[] args) throws IOException {
-    String rules = RuboCopRuleDefinitionGenerator.generateRuleDefinitionJson(resolve(RUBOCOP_RULES_YAML_FILE));
-    Files.write(resolve(RULES_FILE), rules.getBytes(UTF_8));
+    Path rulesSourceYaml = resolve(RUBOCOP_RULES_YAML_FILE);
+    Path rulesDestinationJson = resolve(RULES_FILE);
+    System.out.println("Convert : " + rulesSourceYaml);
+    System.out.println("Into    : " + rulesDestinationJson);
+    String rules = RuboCopRuleDefinitionGenerator.generateRuleDefinitionJson(rulesSourceYaml);
+    Files.write(rulesDestinationJson, rules.getBytes(UTF_8));
   }
 
   private static Path resolve(Path path) throws IOException {
@@ -103,6 +107,7 @@ public class RuboCopRuleDefinition {
       switch (category) {
         case "Naming":
         case "Layout":
+        case "Migration":
           rule.type = "CODE_SMELL";
           rule.severity = "INFO";
           break;
