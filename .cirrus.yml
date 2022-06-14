@@ -234,13 +234,20 @@ qa_ruling_apex_task:
   <<: *LINUX_6_CPU_12G
   <<: *GRADLE_ITS_TEMPLATE
 
-build_win_task:
-  <<: *QA_TASK_FILTER
-  <<: *WINDOWS_4_CPU_15G
-  <<: *SETUP_GRADLE_CACHE
-  build_script:
-    - ./gradlew build -Pqa --info --console plain --no-daemon --build-cache
-  <<: *CLEANUP_GRADLE_CACHE_SCRIPT
+# The build on Windows that was working using openjdk-11.0.8_10 does not work with openjdk-11.0.15_10.
+# The task :sonar-ruby-plugin:unpackDependencyGems fails and the underlying command:
+#   java.exe -cp jruby-complete-9.1.14.0.jar org.jruby.Main -S gem install racc-1.5.2-java.gem
+# Produces:
+#    ERROR:  While executing gem ... (Errno::ENOENT)
+#            No such file or directory - NUL
+#
+# build_win_task:
+#  <<: *QA_TASK_FILTER
+#  <<: *WINDOWS_4_CPU_15G
+#  <<: *SETUP_GRADLE_CACHE
+#  build_script:
+#    - ./gradlew build -Pqa --info --console plain --no-daemon --build-cache
+#  <<: *CLEANUP_GRADLE_CACHE_SCRIPT
 
 promote_task:
   depends_on:
@@ -253,7 +260,7 @@ promote_task:
     - qa_ruling_scala
     - qa_ruling_go
     - qa_ruling_apex
-    - build_win
+    #- build_win : disabled, see comment above
   <<: *ONLY_IF_SONARSOURCE_QA
   <<: *LINUX_1_CPU_1G
   env:
