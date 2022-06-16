@@ -26,9 +26,16 @@ class Foo
       puts "Hello, #{a}"
     end
 
-    def is_not_used(a) # FN
+    def is_not_used(a) # Noncompliant
       puts "Hello, World!"
     end
+end
+
+class Bar < Foo
+
+  private def is_not_used(a) # compliant
+    super # will call the override with the same parameters
+  end
 end
 
 def nested_inside(not_used) # Noncompliant

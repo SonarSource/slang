@@ -55,6 +55,7 @@ import org.sonarsource.slang.api.JumpTree.JumpKind;
 import org.sonarsource.slang.api.LiteralTree;
 import org.sonarsource.slang.api.LoopTree;
 import org.sonarsource.slang.api.MatchCaseTree;
+import org.sonarsource.slang.api.ModifierTree;
 import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.TextRange;
@@ -77,6 +78,7 @@ import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.LoopTreeImpl;
 import org.sonarsource.slang.impl.MatchCaseTreeImpl;
 import org.sonarsource.slang.impl.MatchTreeImpl;
+import org.sonarsource.slang.impl.ModifierTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.ParameterTreeImpl;
 import org.sonarsource.slang.impl.ParenthesizedExpressionTreeImpl;
@@ -99,6 +101,7 @@ public class RubyVisitor {
   private static final List<String> EXCEPTION_BLOCK_TYPES = asList("resbody", "rescue", "ensure");
   private static final Map<String, Operator> BINARY_OPERATOR_MAP;
   private static final Map<String, UnaryExpressionTree.Operator> UNARY_OPERATOR_MAP;
+  private static final Map<String, ModifierTree.Kind> MODIFIER_MAP;
 
   static {
     BINARY_OPERATOR_MAP = new HashMap<>();
@@ -120,6 +123,11 @@ public class RubyVisitor {
     UNARY_OPERATOR_MAP.put("+@", UnaryExpressionTree.Operator.PLUS);
     UNARY_OPERATOR_MAP.put("-@", UnaryExpressionTree.Operator.MINUS);
     // Note: Ruby has no decrement/increment operator
+
+    MODIFIER_MAP = new HashMap<>();
+    MODIFIER_MAP.put("public", ModifierTree.Kind.PUBLIC);
+    MODIFIER_MAP.put("private", ModifierTree.Kind.PRIVATE);
+    MODIFIER_MAP.put("protected", ModifierTree.Kind.PROTECTED);
   }
 
   private static final Set<String> LOCAL_SCOPE_TYPES = Collections.unmodifiableSet(
@@ -666,7 +674,19 @@ public class RubyVisitor {
     }
 
     List<Tree> nonNullChildren = convertChildren(node, children);
+    setModifiers(nonNullChildren);
     return new BlockTreeImpl(metaData(node), nonNullChildren);
+  }
+
+  private static void setModifiers(List<Tree> children) {
+    ModifierTree currentModifierTree = null;
+    for (Tree child: children) {
+      if (child instanceof ModifierTree) {
+        currentModifierTree = (ModifierTree)child;
+      } else if (currentModifierTree != null && child instanceof FunctionDeclarationTree) {
+        ((FunctionDeclarationTreeImpl) child).setModifiers(Arrays.asList(currentModifierTree));
+      }
+    }
   }
 
   private Tree createFromSendNode(AstNode node, List<?> children) {
@@ -681,12 +701,30 @@ public class RubyVisitor {
         Tree right = (Tree) children.get(2);
         Token operatorToken = getTokenByAttribute(node, "selector");
         return new BinaryExpressionTreeImpl(metaData(node), BINARY_OPERATOR_MAP.get(calleeSymbol), operatorToken, left, right);
+      } else if (MODIFIER_MAP.containsKey(calleeSymbol)) {
+        return createModifierTree(MODIFIER_MAP.get(calleeSymbol), node, children);
       } else if ("raise".equals(calleeSymbol)) {
         return createThrowTree(node, children);
       }
     }
 
     return createNativeTree(node, children);
+  }
+
+  private Tree createModifierTree(ModifierTree.Kind modifier, AstNode node, List<?> children) {
+    if (children.size() <= 2) {
+      // self-contained isolated modifier
+      return new ModifierTreeImpl(metaData(node), modifier);
+    }
+    // "private def ..." on the same line as another tree
+    TreeMetaData metadata = metaData(node);
+    TreeMetaData modifierMetadata = metaDataProvider.metaData(metadata.tokens().get(0).textRange());
+    ModifierTree modifierTree = new ModifierTreeImpl(modifierMetadata , modifier);
+    List<Tree> newChildren = new ArrayList<>();
+    newChildren.add(modifierTree);
+    newChildren.addAll(convertChildren(node, children.subList(2, children.size())));
+    setModifiers(newChildren);
+    return new NativeTreeImpl(metadata, new RubyNativeKind("modifier"), newChildren);
   }
 
   private Tree createThrowTree(AstNode node, List<?> children) {

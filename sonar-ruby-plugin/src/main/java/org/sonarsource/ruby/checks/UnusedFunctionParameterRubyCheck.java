@@ -21,7 +21,9 @@ package org.sonarsource.ruby.checks;
 
 import java.util.List;
 import java.util.Set;
+import org.sonarsource.ruby.converter.RubyNativeKind;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
+import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.ParameterTree;
 import org.sonarsource.slang.checks.UnusedFunctionParameterCheck;
 import org.sonarsource.slang.checks.api.CheckContext;
@@ -32,10 +34,15 @@ import org.sonarsource.slang.impl.TopLevelTreeImpl;
 
 public class UnusedFunctionParameterRubyCheck extends UnusedFunctionParameterCheck {
 
+  // native tree for call to 'super' method
+  private static final RubyNativeKind SUPER_NATIVE_KIND = new RubyNativeKind("zsuper");
+
   @Override
   public void initialize(InitContext init) {
     init.register(FunctionDeclarationTree.class, (ctx, functionDeclarationTree) -> {
-      if (functionDeclarationTree.isConstructor() || shouldBeIgnored(ctx, functionDeclarationTree)) {
+      if (functionDeclarationTree.isConstructor()
+        || shouldBeIgnored(ctx, functionDeclarationTree)
+        || hasCallToSuper(functionDeclarationTree)) {
         return;
       }
 
@@ -51,6 +58,14 @@ public class UnusedFunctionParameterRubyCheck extends UnusedFunctionParameterChe
         .filter(param -> !stringLiteralTokens.contains(param.identifier().name()))
         .forEach(identifier -> reportUnusedParameters(ctx, unusedParameters));
     });
+  }
+
+  private static boolean hasCallToSuper(FunctionDeclarationTree functionDeclarationTree) {
+    return functionDeclarationTree.descendants()
+            .filter(NativeTree.class::isInstance)
+            .map(NativeTree.class::cast)
+            .map(NativeTree::nativeKind)
+            .anyMatch(SUPER_NATIVE_KIND::equals);
   }
 
   @Override

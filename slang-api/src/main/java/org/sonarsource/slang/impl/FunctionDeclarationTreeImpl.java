@@ -19,6 +19,7 @@
  */
 package org.sonarsource.slang.impl;
 
+import java.util.Collections;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
@@ -34,7 +35,7 @@ import javax.annotation.Nullable;
 
 public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements FunctionDeclarationTree {
 
-  private final List<Tree> modifiers;
+  private List<Tree> modifiers;
   private final boolean isConstructor;
   private final Tree returnType;
   private final IdentifierTree name;
@@ -78,7 +79,11 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
 
   @Override
   public List<Tree> modifiers() {
-    return modifiers;
+    return Collections.unmodifiableList(modifiers);
+  }
+
+  public void setModifiers(List<Tree> modifiers) {
+    this.modifiers = modifiers;
   }
 
   @Override

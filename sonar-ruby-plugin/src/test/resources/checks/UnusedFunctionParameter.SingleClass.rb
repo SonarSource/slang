@@ -6,7 +6,7 @@ class Foo
 
     private
 
-    def is_not_used(a) # FN, we don't see this method is private
+    def is_not_used(a) # Noncompliant
       puts "Hello!"
     end
 end

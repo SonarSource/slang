@@ -24,7 +24,8 @@ public interface ModifierTree extends Tree {
   enum Kind {
     PUBLIC,
     PRIVATE,
-    OVERRIDE
+    OVERRIDE,
+    PROTECTED
   }
 
   Kind kind();
