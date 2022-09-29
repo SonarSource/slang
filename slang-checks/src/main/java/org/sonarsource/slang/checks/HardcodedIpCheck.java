@@ -102,13 +102,18 @@ public class HardcodedIpCheck implements SlangCheck {
 
   private static boolean isIPV4Exception(String ip) {
     return ip.startsWith("127.")
+      || ip.startsWith("2.5.")
+      || ip.startsWith("192.0.2.")
+      || ip.startsWith("198.51.100.")
+      || ip.startsWith("203.0.113.")
       || "255.255.255.255".equals(ip)
-      || "0.0.0.0".equals(ip)
-      || ip.startsWith("2.5.");
+      || "0.0.0.0".equals(ip);
   }
 
   private static boolean isIPV6Exception(String ip) {
-    return IPV6_LOOPBACK.matcher(ip).matches() || IPV6_NON_ROUTABLE.matcher(ip).matches();
+    return ip.startsWith("2001:db8:")
+      || IPV6_LOOPBACK.matcher(ip).matches()
+      || IPV6_NON_ROUTABLE.matcher(ip).matches();
   }
 
   private static int getCompressionSeparatorCount(String str) {
