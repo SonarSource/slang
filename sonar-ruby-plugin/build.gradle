@@ -1,6 +1,6 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
-    id 'com.github.jruby-gradle.jar' version '1.6.0'
+    id 'com.github.jruby-gradle.jar' version '2.0.2'
 }
 
 import com.github.jrubygradle.JRubyPrepare
