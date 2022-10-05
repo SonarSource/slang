@@ -24,10 +24,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.sonar.go.checks.DuplicateBranchGoCheck;
 import org.sonarsource.slang.checks.BadClassNameCheck;
 import org.sonarsource.slang.checks.CheckList;
 import org.sonarsource.slang.checks.CodeAfterJumpCheck;
 import org.sonarsource.slang.checks.CollapsibleIfStatementsCheck;
+import org.sonarsource.slang.checks.DuplicateBranchCheck;
 import org.sonarsource.slang.checks.OneStatementPerLineCheck;
 import org.sonarsource.slang.checks.TabsCheck;
 import org.sonarsource.slang.checks.UnusedFunctionParameterCheck;
@@ -54,11 +56,13 @@ public class GoCheckList {
     UnusedPrivateMethodCheck.class,
     // Replaced by language specific test
     CodeAfterJumpCheck.class,
+    DuplicateBranchCheck.class,
     OneStatementPerLineCheck.class
   };
 
   private static final Collection<Class<?>> GO_LANGUAGE_SPECIFIC_CHECKS = Arrays.asList(
     CodeAfterJumpGoCheck.class,
+    DuplicateBranchGoCheck.class,
     OneStatementPerLineGoCheck.class
   );
 

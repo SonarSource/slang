@@ -50,7 +50,7 @@ public abstract class AbstractBranchDuplicationCheck implements SlangCheck {
     );
   }
 
-  private void checkConditionalStructure(CheckContext ctx, Tree tree, ConditionalStructure conditional) {
+  protected void checkConditionalStructure(CheckContext ctx, Tree tree, ConditionalStructure conditional) {
     if (conditional.allBranchesArePresent && conditional.allBranchesAreIdentical()) {
       onAllIdenticalBranches(ctx, tree);
     } else {
@@ -58,7 +58,7 @@ public abstract class AbstractBranchDuplicationCheck implements SlangCheck {
     }
   }
 
-  private static class ConditionalStructure {
+  public static class ConditionalStructure {
 
     private boolean allBranchesArePresent = false;
 
