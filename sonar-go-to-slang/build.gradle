@@ -17,7 +17,7 @@ sonarqube {
 
 golang {
   packagePath = 'github.com/SonarSource/slang/sonar-go-to-slang'
-  goVersion = '1.18.2'
+  goVersion = '1.19.1'
 }
 
 task generateSource(type: com.github.blindpirate.gogradle.Go) {

@@ -48,8 +48,8 @@ func astFromString(source string) (fileSet *token.FileSet, astFile *ast.File) {
 	return
 }
 
-//Update all .txt files in resources/ast from all .go.source files
-//Add "Test_" before to run in IDE
+// Update all .txt files in resources/ast from all .go.source files
+// Add "Test_" before to run in IDE
 func fix_all_go_files_test_automatically(t *testing.T) {
 	for _, file := range getAllGoFiles("resources/ast") {
 		source, err := ioutil.ReadFile(file)
