@@ -20,6 +20,7 @@
 package org.sonarsource.slang.checks;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.sonar.check.Rule;
@@ -70,13 +71,19 @@ public class UnusedFunctionParameterCheck implements SlangCheck {
 
   protected void reportUnusedParameters(CheckContext ctx, List<ParameterTree> unusedParameters) {
     List<SecondaryLocation> secondaryLocations = unusedParameters.stream()
-      .map(unusedParameter ->
-        new SecondaryLocation(unusedParameter.identifier(), "Remove this unused method parameter " + unusedParameter.identifier().name() + "\"."))
+      .map(unusedParameter -> {
+        // Identifier can be null only in case of Scala. In that case modifiers like 'using' should be used.
+        // If modifiers are present, such parameters won't be checked by this rule.
+        IdentifierTree identifier = unusedParameter.identifier();
+        Objects.requireNonNull(identifier, "Identifier for an unused parameter is null");
+        return new SecondaryLocation(identifier, "Remove this unused method parameter " + identifier.name() + "\".");
+      })
       .collect(Collectors.toList());
 
     IdentifierTree firstUnused = unusedParameters.get(0).identifier();
-    String msg;
+    Objects.requireNonNull(firstUnused, "Identifier for an unused parameter is null");
 
+    String msg;
     if (unusedParameters.size() > 1) {
       msg = "Remove these unused function parameters.";
     } else {
