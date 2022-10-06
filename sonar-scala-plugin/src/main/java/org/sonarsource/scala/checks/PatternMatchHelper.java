@@ -19,34 +19,43 @@
  */
 package org.sonarsource.scala.checks;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
+import org.sonarsource.slang.api.IdentifierTree;
 import org.sonarsource.slang.api.MatchCaseTree;
+import org.sonarsource.slang.api.NativeTree;
 import org.sonarsource.slang.api.Tree;
-import org.sonarsource.slang.impl.NativeTreeImpl;
 
 class PatternMatchHelper {
-  // e.g. "case Some(value)"
-  private static final String PATTERN_EXTRACT_TYPE = "scala.meta.Pat$Extract$PatExtractImpl";
-  // e.g. "case d: JavaBigDecimal"
-  private static final String PATTERN_INSTANCEOF_TYPE = "scala.meta.Pat$Typed$PatTypedImpl";
+
+  private static final String PATTERN_VARIABLE = "ScalaNativeKind(class scala.meta.Pat$Var$PatVarImpl)";
 
   private PatternMatchHelper() {
     // only for static usage
   }
 
   static boolean hasPatternMatchedVariable(MatchCaseTree caseTree) {
-    Tree expression = caseTree.expression();
-    if (isNativeKind(expression, PATTERN_EXTRACT_TYPE) || isNativeKind(expression, PATTERN_INSTANCEOF_TYPE)) {
-      return expression.descendants().anyMatch(c -> isNativeKind(c, "scala.meta.Pat$Var$PatVarImpl"));
-    }
-    return false;
+    Tree caseCondition = caseTree.expression();
+    Tree caseBody = caseTree.body();
+    return caseCondition != null && caseBody != null && caseConditionContainsVariableDeclarationUsedInTheBody(caseCondition, caseBody);
   }
 
-  private static boolean isNativeKind(@Nullable Tree tree, String nativeType) {
-    if (tree instanceof NativeTreeImpl) {
-      NativeTreeImpl nativeTree = (NativeTreeImpl)tree;
-      return nativeTree.nativeKind().toString().contains(nativeType);
+  static boolean caseConditionContainsVariableDeclarationUsedInTheBody(Tree caseCondition, Tree caseBody) {
+    if (caseCondition instanceof NativeTree &&
+      PATTERN_VARIABLE.equals(((NativeTree) caseCondition).nativeKind().toString())) {
+      Optional<IdentifierTree> variableDeclaration = caseCondition.descendants()
+        .filter(IdentifierTree.class::isInstance)
+        .map(IdentifierTree.class::cast)
+        .findFirst();
+      return variableDeclaration.filter(variable -> variableIsUsedIn(variable, caseBody)).isPresent();
     }
-    return false;
+    return caseCondition.children().stream()
+        .anyMatch(caseConditionChild -> caseConditionContainsVariableDeclarationUsedInTheBody(caseConditionChild, caseBody));
+  }
+
+  private static boolean variableIsUsedIn(IdentifierTree variableDeclaration, Tree caseBody) {
+    if (caseBody instanceof IdentifierTree) {
+      return ((IdentifierTree) caseBody).name().equals(variableDeclaration.name());
+    }
+    return caseBody.children().stream().anyMatch(caseBodyChild -> variableIsUsedIn(variableDeclaration, caseBodyChild));
   }
 }

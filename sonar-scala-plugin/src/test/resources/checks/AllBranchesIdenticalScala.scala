@@ -36,5 +36,41 @@ class MyClass {
     } else {
       value
     }
+
+    cond match { // Noncompliant
+        case 4 =>
+          val a: String = "" + x + 1
+          a
+        case _ =>
+          val a: String = "" + x + 1
+          a
+    }
+
+    cond match {
+        case (Some(x: Int), y) => // Compliant, shadowing the 'x' variable
+          val a: String = "" + x + 1
+          a
+        case _ =>
+          val a: String = "" + x + 1
+          a
+    }
+
+    cond match {
+        case (1 | 2) :: x :: tail => // Compliant, shadowing the 'x' variable
+          val a: String = "" + x + 1
+          a
+        case _ =>
+          val a: String = "" + x + 1
+          a
+    }
+
+    cond match {
+        case x: Long if x == 0 => // Compliant, shadowing the 'x' variable
+          val a: String = "" + x + 1
+          a
+        case _ =>
+          val a: String = "" + x + 1
+          a
+    }
   }
 }
