@@ -26,6 +26,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.sonarsource.scala.converter.ScalaConverter;
 import org.sonarsource.slang.api.ParseException;
@@ -39,6 +41,20 @@ class ScalaASTTest {
   private static ScalaConverter converter = new ScalaConverter();
 
   @Test
+  @Disabled("Used to quickly test one file")
+  void test_one_file() throws IOException {
+    // Replace it with the name of the file you want to test from src/test/resources/ast
+    String filename = "EnumTypes.scala";
+    Path scalaPath = Paths.get("src", "test", "resources", "ast", filename);
+    Path astPath = Paths.get(scalaPath.toString().replaceFirst("\\.scala$", ".txt"));
+    String actualAst = TreePrinter.table(parse(scalaPath));
+    String expectingAst = astPath.toFile().exists() ? new String(Files.readAllBytes(astPath), UTF_8) : "";
+    assertThat(actualAst)
+            .describedAs("In the file: " + astPath + " (run ScalaASTTest.main manually)")
+            .isEqualToIgnoringWhitespace(expectingAst);
+  }
+
+  @Test
   void all_scala_files() throws IOException {
     for (Path scalaPath : getScalaSources()) {
       Path astPath = Paths.get(scalaPath.toString().replaceFirst("\\.scala$", ".txt"));
@@ -46,7 +62,7 @@ class ScalaASTTest {
       String expectingAst = astPath.toFile().exists() ? new String(Files.readAllBytes(astPath), UTF_8) : "";
       assertThat(actualAst)
         .describedAs("In the file: " + astPath + " (run ScalaASTTest.main manually)")
-        .isEqualTo(expectingAst);
+        .isEqualToIgnoringWhitespace(expectingAst);
     }
   }
 

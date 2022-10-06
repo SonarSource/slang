@@ -113,4 +113,15 @@ class ParameterTreeImplTest {
     assertThat(areEquivalent(parameterTreeXPublic, parameterTreeNoMod)).isFalse();
   }
 
+  @Test
+  void test_null_identifier() {
+    TreeMetaData meta = null;
+    Tree publicModifier = new ModifierTreeImpl(meta, ModifierTree.Kind.PUBLIC);
+    ParameterTreeImpl parameterTreePublic = new ParameterTreeImpl(meta, null, null, null,
+            Collections.singletonList(publicModifier));
+
+    assertThat(parameterTreePublic.children()).hasSize(1);
+    assertThat(parameterTreePublic.identifier()).isNull();
+  }
+
 }

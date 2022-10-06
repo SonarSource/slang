@@ -55,6 +55,7 @@ public class UnusedFunctionParameterRubyCheck extends UnusedFunctionParameterChe
       // the unused parameters may actually be used inside interpolated strings, eval or prepared statements
       Set<String> stringLiteralTokens = FunctionUtils.getStringsTokens(functionDeclarationTree, Constants.SPECIAL_STRING_DELIMITERS);
       unusedParameters.stream()
+         // In Ruby, an identifier is always present, so no need to check for null here
         .filter(param -> !stringLiteralTokens.contains(param.identifier().name()))
         .forEach(identifier -> reportUnusedParameters(ctx, unusedParameters));
     });
