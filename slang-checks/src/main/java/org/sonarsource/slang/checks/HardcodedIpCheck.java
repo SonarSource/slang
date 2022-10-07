@@ -48,6 +48,8 @@ public class HardcodedIpCheck implements SlangCheck {
   private static final Pattern IPV6_NON_ROUTABLE = Pattern.compile("[0:]++");
   private static final Pattern INVALID_IPV4_PART_PATTERN = Pattern.compile("^0\\d{1,2}");
 
+  private static final List<String> IPV6_PREFIX_EXCEPTIONS = Arrays.asList("2001:db8:", "::ffff:0:127.", "::ffff:127.");
+
   private static final String MESSAGE = "Make sure using this hardcoded IP address is safe here.";
 
   @Override
@@ -111,7 +113,7 @@ public class HardcodedIpCheck implements SlangCheck {
   }
 
   private static boolean isIPV6Exception(String ip) {
-    return ip.startsWith("2001:db8:")
+    return IPV6_PREFIX_EXCEPTIONS.stream().anyMatch(ip::startsWith)
       || IPV6_LOOPBACK.matcher(ip).matches()
       || IPV6_NON_ROUTABLE.matcher(ip).matches();
   }
