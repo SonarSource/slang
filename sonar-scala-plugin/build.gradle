@@ -75,8 +75,8 @@ dependencies {
         zinc('org.apache.logging.log4j:log4j-core:2.17.2') {
             because 'Address CVE-2021-44832 vulnerability'
         }
-        zinc('com.google.protobuf:protobuf-java:3.19.3') {
-            because 'Address CVE-2021-22569'
+        zinc('com.google.protobuf:protobuf-java:3.19.6') {
+            because 'Address CVE-2022-3171 vulnerability'
         }
     }
 }
