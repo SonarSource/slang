@@ -3,8 +3,9 @@
   "languages": [
     "GO"
   ],
-  "latest-update": "2022-06-17T08:40:22.981151Z",
+  "latest-update": "2022-10-07T14:27:55.988829Z",
   "options": {
-    "no-language-in-filenames": true
+    "no-language-in-filenames": true,
+    "preserve-filenames": true
   }
 }

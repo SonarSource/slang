@@ -1,5 +1,5 @@
 {
-  "title": "Track parsing failures",
+  "title": "Go parser failure",
   "type": "CODE_SMELL",
   "status": "ready",
   "remediation": {
@@ -12,5 +12,6 @@
   "defaultSeverity": "Major",
   "ruleSpecification": "RSPEC-2260",
   "sqKey": "S2260",
-  "scope": "All"
+  "scope": "All",
+  "quickfix": "unknown"
 }
