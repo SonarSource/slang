@@ -28,7 +28,6 @@ import org.sonar.api.batch.sensor.error.AnalysisError;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.issue.internal.DefaultNoSonarFilter;
 import org.sonar.api.config.internal.MapSettings;
-import org.sonar.api.issue.NoSonarFilter;
 import org.sonarsource.slang.testing.AbstractSensorTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,6 +46,50 @@ class RubySensorTest extends AbstractSensorTest {
 
     // FIXME
     //assertThat(logTester.logs()).contains("1 source files to be analyzed");
+  }
+
+  @Test
+  void test_access_modifiers_are_highlighted() {
+    String source ="" +
+      "class Foo\n" +
+      "  def is_public_by_default()\n" +
+      "    public = \"private\"\n" + // Variables with ambiguous names are also wrongly hightlighted
+      "    variable = public\n" +
+      "    puts \"Hello\"\n" +
+      "  end\n" +
+      "\n" +
+      "  private\n" +
+      "\n" +
+      "  def is_private()\n" +
+      "    puts \"Hello !\"\n" +
+      "  end\n" +
+      "\n" +
+      "  protected\n" +
+      "\n" +
+      "  def is_protected()\n" +
+      "    puts \"Hello !\"\n" +
+      "  end\n" +
+      "\n" +
+      "  public\n" +
+      "\n" +
+      "  def is_public_again()\n" +
+      "    @protected = \"protected\"\n" + // Attributes with ambiguous names are not hightlighted
+      "  end\n" +
+      "end\n";
+    InputFile inputFile = createInputFile("file_with_modifiers.rb", source);
+    context.fileSystem().add(inputFile);
+    sensor(checkFactory()).execute(context);
+
+    // Access modifiers are hightlighted
+    assertThat(context.highlightingTypeAt(inputFile.key(), 8, 2)).containsExactly(TypeOfText.KEYWORD);
+    assertThat(context.highlightingTypeAt(inputFile.key(), 14, 2)).containsExactly(TypeOfText.KEYWORD);
+    assertThat(context.highlightingTypeAt(inputFile.key(), 20, 2)).containsExactly(TypeOfText.KEYWORD);
+
+    // Variables named public, private and protected are also hightlighted
+    assertThat(context.highlightingTypeAt(inputFile.key(), 3, 4)).containsExactly(TypeOfText.KEYWORD);
+    assertThat(context.highlightingTypeAt(inputFile.key(), 4, 15)).containsExactly(TypeOfText.KEYWORD);
+    // Attributes named public, private and protected are not hightlighted
+    assertThat(context.highlightingTypeAt(inputFile.key(), 23, 4)).isEmpty();
   }
 
   @Test

@@ -19,6 +19,9 @@
  */
 package org.sonarsource.ruby.converter.adapter;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,6 +35,7 @@ import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.impl.TokenImpl;
 
 public class TokenAdapter extends JRubyObjectAdapter<RubyArrayTwoObject> {
+  private static final Set<String> ACCESS_MODIFIERS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("private", "protected", "public")));
 
   private static final Set<String> RUBY_STRING_TOKENS = Stream.of("tSTRING", "tSTRING_BEG", "tSTRING_CONTENT", "tSTRING_END")
     .collect(Collectors.toSet());
@@ -62,7 +66,7 @@ public class TokenAdapter extends JRubyObjectAdapter<RubyArrayTwoObject> {
     Token.Type type = Token.Type.OTHER;
     RubySymbol tokenType = getTokenType();
     String tokenString = tokenType.asJavaString();
-    if (tokenString != null && tokenString.startsWith("k")) {
+    if (tokenString != null && (tokenString.startsWith("k") || isAccessModifier(tokenString))) {
       type = Token.Type.KEYWORD;
     } else if (RUBY_STRING_TOKENS.contains(tokenString)) {
       type = Token.Type.STRING_LITERAL;
@@ -75,6 +79,11 @@ public class TokenAdapter extends JRubyObjectAdapter<RubyArrayTwoObject> {
       return null;
     }
     return new TokenImpl(getRange().toTextRange(), getText(), type);
+  }
+
+  private boolean isAccessModifier(String tokenString) {
+    // Because the name of access modifiers can be used for all identifiers, we sometimes wrongly interpret variable identifiers as access modifiers.
+    return tokenString.equals("tIDENTIFIER") && ACCESS_MODIFIERS.contains(this.getText());
   }
 
 }
