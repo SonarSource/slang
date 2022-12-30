@@ -48,9 +48,10 @@ linux_3_5_cpu_7G_template: &LINUX_3_5_CPU_7G
     cpu: 3.5
     memory: 7G
 
-linux_6_cpu_12G_template: &LINUX_6_CPU_12G
+linux_6_cpu_12G_java_17_template: &LINUX_6_CPU_12G_JAVA_17
   eks_container:
     <<: *LINUX_IMAGE
+    image: ${CIRRUS_AWS_ACCOUNT}.dkr.ecr.eu-central-1.amazonaws.com/base:j17-latest
     cpu: 6
     memory: 24G
 
@@ -152,7 +153,7 @@ qa_plug_pub_lin_task:
     matrix:
       - SQ_VERSION: "DEV"
       - SQ_VERSION: "LATEST_RELEASE"
-  <<: *LINUX_6_CPU_12G
+  <<: *LINUX_6_CPU_12G_JAVA_17
   <<: *GRADLE_ITS_TEMPLATE
 
 qa_plug_pri_lin_task:
@@ -164,7 +165,7 @@ qa_plug_pri_lin_task:
     matrix:
       - SQ_VERSION: "LATEST_RELEASE"
       - SQ_VERSION: "DEV"
-  <<: *LINUX_6_CPU_12G
+  <<: *LINUX_6_CPU_12G_JAVA_17
   <<: *GRADLE_ITS_TEMPLATE
 
 
@@ -194,7 +195,7 @@ qa_ruling_ruby_task:
     GRADLE_TASK: ":its:ruling:test"
     ITS_PROJECT: "ruling-ruby"
     GIT_SUB_MODULE: "its/sources"
-  <<: *LINUX_6_CPU_12G
+  <<: *LINUX_6_CPU_12G_JAVA_17
   <<: *GRADLE_ITS_TEMPLATE
 
 qa_ruling_scala_task:
@@ -204,7 +205,7 @@ qa_ruling_scala_task:
     GRADLE_TASK: ":its:ruling:test"
     ITS_PROJECT: "ruling-scala"
     GIT_SUB_MODULE: "its/sources"
-  <<: *LINUX_6_CPU_12G
+  <<: *LINUX_6_CPU_12G_JAVA_17
   <<: *GRADLE_ITS_TEMPLATE
 
 qa_ruling_go_task:
@@ -214,7 +215,7 @@ qa_ruling_go_task:
     GRADLE_TASK: ":its:ruling:test"
     ITS_PROJECT: "ruling-go"
     GIT_SUB_MODULE: "its/sources"
-  <<: *LINUX_6_CPU_12G
+  <<: *LINUX_6_CPU_12G_JAVA_17
   <<: *GRADLE_ITS_TEMPLATE
 
 qa_ruling_apex_task:
@@ -224,7 +225,7 @@ qa_ruling_apex_task:
     GRADLE_TASK: ":private:its:ruling:test"
     ITS_PROJECT: "ruling-apex"
     GIT_SUB_MODULE: "private/its/sources"
-  <<: *LINUX_6_CPU_12G
+  <<: *LINUX_6_CPU_12G_JAVA_17
   <<: *GRADLE_ITS_TEMPLATE
 
 # The build on Windows that was working using openjdk-11.0.8_10 does not work with openjdk-11.0.15_10.
