@@ -1,7 +1,3 @@
-plugins {
-  id 'com.github.blindpirate.gogradle' version '0.11.4'
-}
-
 sonarqube {
   properties {
     property 'sonar.sources', '.'
@@ -15,29 +11,21 @@ sonarqube {
   }
 }
 
-golang {
-  packagePath = 'github.com/SonarSource/slang/sonar-go-to-slang'
-  goVersion = '1.19.1'
+task generateParserAndBuild(type: Exec) {
+    commandLine "./make.sh"
+    args "build"
 }
 
-task generateSource(type: com.github.blindpirate.gogradle.Go) {
-    go 'run generate_source.go'
+task generateTestReport(type: Exec) {
+    commandLine "./make.sh"
+    args "generate-test-report"
 }
 
-task generateTestReport(type: com.github.blindpirate.gogradle.Go) {
-  go ('test -json') {
-    stdout writeTo('.gogradle/reports/test-report.out')
-  }
+task cleanTask(type: Exec) {
+    commandLine "./make.sh"
+    args "clean"
 }
 
-installDependencies.dependsOn generateSource
-clean.dependsOn goClean
-test.dependsOn goCheck
-build.dependsOn goBuild
-goBuild.dependsOn generateTestReport
-generateTestReport.dependsOn goTest
-
-goBuild {
-  targetPlatform = ['linux-amd64', 'windows-amd64', 'darwin-amd64']
-  outputLocation = './build/sonar-go-to-slang-${GOOS}-${GOARCH}${GOEXE}'
-}
+clean.dependsOn cleanTask
+generateTestReport.dependsOn generateParserAndBuild
+build.dependsOn generateTestReport

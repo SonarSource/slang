@@ -105,14 +105,17 @@ qa_task_filter_template: &QA_TASK_FILTER
   <<: *ONLY_IF_SONARSOURCE_QA
 
 build_task:
-  <<: *LINUX_3_5_CPU_7G
+  <<: *LINUX_6_CPU_12G_JAVA_17
   <<: *SETUP_GRADLE_CACHE
+  go_cache:
+    folder: ${HOME}/go
   env:
     # analysis on next
     SONAR_TOKEN: VAULT[development/kv/data/next data.token]
     SONAR_HOST_URL: https://next.sonarqube.com/sonarqube
     #allow deployment of pull request artifacts to repox
     DEPLOY_PULL_REQUEST: true
+    GOPATH: ${HOME}/go
   build_script:
     - source cirrus-env BUILD-PRIVATE
     - regular_gradle_build_deploy_analyze

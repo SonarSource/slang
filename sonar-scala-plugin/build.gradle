@@ -10,6 +10,7 @@ scoverage {
 }
 
 tasks.check.dependsOn reportScoverage
+tasks.test.dependsOn processScoverageResources
 
 sourceSets {
     main {

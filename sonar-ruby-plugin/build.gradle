@@ -11,6 +11,8 @@ ext {
     rubygemsParserVersion = '3.1.2.0'
 }
 
+
+processResources.duplicatesStrategy = DuplicatesStrategy.INCLUDE
 processResources.from("src/main/resources", "${buildDir}/dependency_gems/gems")
 
 dependencies {

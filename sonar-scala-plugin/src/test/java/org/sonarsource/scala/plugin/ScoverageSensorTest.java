@@ -125,7 +125,7 @@ class ScoverageSensorTest {
 
     newSCoverageSensor().execute(context);
 
-    String expectedMessage = "File '" + reportPath.toString() + "' can't be read. java.lang.NumberFormatException: null";
+    String expectedMessage = "File '" + reportPath.toString() + "' can't be read. java.lang.NumberFormatException: Cannot parse null string";
     assertThat(logTester.logs()).contains(expectedMessage);
   }
 

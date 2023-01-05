@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-import org.sonar.api.utils.AnnotationUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
