@@ -2,7 +2,7 @@
 set -euox pipefail
 
 readonly GO_VERSION="1.19.1"
-readonly DEFAULT_GO_BINARY_DIRECTORY="${GOPATH}/bin"
+readonly DEFAULT_GO_BINARY_DIRECTORY="${GOPATH:=${HOME}/go}/bin"
 readonly DEFAULT_GO_BINARY="${DEFAULT_GO_BINARY_DIRECTORY}/go"
 
 is_go_binary_the_expected_version() {
