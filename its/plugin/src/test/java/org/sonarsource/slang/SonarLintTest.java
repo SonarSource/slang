@@ -47,6 +47,7 @@ import org.sonarsource.sonarlint.core.client.api.common.analysis.Issue;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneAnalysisConfiguration;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneGlobalConfiguration;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneSonarLintEngine;
+import org.sonarsource.sonarlint.core.commons.IssueSeverity;
 import org.sonarsource.sonarlint.core.commons.Language;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -115,9 +116,9 @@ public class SonarLintTest {
 
     assertThat(issues).extracting(Issue::getRuleKey, Issue::getStartLine, issue -> issue.getInputFile().getPath(), Issue::getSeverity)
       .containsExactlyInAnyOrder(
-        tuple("ruby:S100", 1, inputFile.getPath(), "MINOR"),
-        tuple("ruby:S1145", 2, inputFile.getPath(), "MAJOR"),
-        tuple("ruby:S1481", 3, inputFile.getPath(), "MINOR")
+        tuple("ruby:S100", 1, inputFile.getPath(), IssueSeverity.MINOR),
+        tuple("ruby:S1145", 2, inputFile.getPath(), IssueSeverity.MAJOR),
+        tuple("ruby:S1481", 3, inputFile.getPath(), IssueSeverity.MINOR)
       );
   }
 
@@ -142,9 +143,9 @@ public class SonarLintTest {
 
     assertThat(issues).extracting(Issue::getRuleKey, Issue::getStartLine, issue -> issue.getInputFile().getPath(), Issue::getSeverity)
       .containsExactlyInAnyOrder(
-        tuple("scala:S100", 2, inputFile.getPath(), "MINOR"),
-        tuple("scala:S1145", 3, inputFile.getPath(), "MAJOR"),
-        tuple("scala:S1481", 4, inputFile.getPath(), "MINOR")
+        tuple("scala:S100", 2, inputFile.getPath(), IssueSeverity.MINOR),
+        tuple("scala:S1145", 3, inputFile.getPath(), IssueSeverity.MAJOR),
+        tuple("scala:S1481", 4, inputFile.getPath(), IssueSeverity.MINOR)
       );
   }
 
