@@ -1,0 +1,60 @@
+name: public-sync
+# This workflow is triggered on schedule
+on:
+  schedule:
+    - cron: 0 0 * * *
+  workflow_dispatch:
+
+jobs:
+  sync_master:
+    # prevent job to run on public repository SonarSource/slang
+    if: github.repository == 'SonarSource/slang-enterprise'
+    runs-on: ubuntu-latest
+    name: Sync master branch of SonarSource/slang-enterprise with SonarSource/slang
+    permissions:
+      id-token: write
+    steps:
+      - name: get secrets
+        id: secrets
+        uses: SonarSource/vault-action-wrapper@7461acdbede91679c5c890485f565c80ef74583e # tag=2.4.3-1
+        with:
+          secrets: |
+            development/kv/data/slack token | SLACK_BOT_TOKEN;
+            development/github/token/SonarSource-slang-enterprise-public-sync token | GH_TOKEN;
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # tag=v3.3.0
+        with:
+          repository: SonarSource/public-git-sync
+          token: ${{ fromJSON(steps.secrets.outputs.vault).GH_TOKEN }}
+          path: public-git-sync
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # tag=v3.3.0
+        with:
+          token: ${{ fromJSON(steps.secrets.outputs.vault).GH_TOKEN }}
+          ref: master
+          path: public-git-sync/slang-enterprise
+      - name: git config
+        working-directory: public-git-sync/slang-enterprise
+        run: |
+          git config user.name sonartech
+          git config user.email sonartech@sonarsource.com
+      - name: Sync master branch
+        working-directory: public-git-sync/slang-enterprise
+        run: |
+          echo "Starting sync"
+          ../sync_public_branch.sh slang https://github.com/SonarSource/slang.git master
+          echo "Starting push"
+          ../commit_sync_public_branch.sh slang master
+      - name: Notify success on Slack
+        uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # tag=v1.23.0
+        env:
+          SLACK_BOT_TOKEN: ${{ fromJSON(steps.secrets.outputs.vault).SLACK_BOT_TOKEN }}
+        with:
+          channel-id: team-lang-slang
+          slack-message: "Nightly public sync successful, synchronized master branch of SonarSource/slang-enterprise with SonarSource/slang"
+      - name: Notify failures on Slack
+        if: failure()
+        uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # tag=v1.23.0
+        env:
+          SLACK_BOT_TOKEN: ${{ fromJSON(steps.secrets.outputs.vault).SLACK_BOT_TOKEN }}
+        with:
+          channel-id: team-lang-slang
+          slack-message: "Nightly public sync failed, see the logs at https://github.com/SonarSource/slang-enterprise/actions/runs/${{ github.run_id }}"

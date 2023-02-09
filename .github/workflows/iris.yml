@@ -1,0 +1,17 @@
+name: iris
+# This workflow is triggered on schedule
+on:
+  schedule:
+  - cron: 0 0 * * *
+
+jobs:
+  nightly_build:
+    runs-on: ubuntu-latest
+    name: Run a nightly sync between next and sonarcloud
+    steps:
+    - name: starts a build
+      env:
+        CIRRUS_TOKEN: ${{ secrets.CIRRUS_TOKEN }}
+      uses: SonarSource/gh-action_nightly_build@master
+      with:
+        branch: 'iris'
