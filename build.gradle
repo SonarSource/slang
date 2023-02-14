@@ -3,12 +3,12 @@ import java.util.jar.JarInputStream
 plugins {
     id 'java'
     id 'jacoco'
-    id 'com.github.hierynomus.license' version "0.16.1"
     id 'com.jfrog.artifactory' version '4.28.2'
     id 'io.spring.dependency-management' version '1.0.6.RELEASE' apply false
     id 'org.sonarqube' version '2.7.1'
     id 'de.thetaphi.forbiddenapis' version '3.0' apply false
     id 'org.jetbrains.kotlin.jvm' apply false
+    id 'com.diffplug.spotless' version '6.15.0'
 }
 
 allprojects {
@@ -65,8 +65,8 @@ subprojects {
     // do not publish to Artifactory by default
     artifactoryPublish.skip = true
 
-    apply plugin: 'com.github.hierynomus.license'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'com.diffplug.spotless'
     dependencyManagement {
         dependencies {
             dependency "org.sonarsource.sonarqube:sonar-plugin-api:${sonarqubeVersion}"
@@ -165,29 +165,17 @@ subprojects {
         from javadoc.destinationDir
     }
 
-    license {
-        header = rootProject.file('LICENSE_HEADER')
-        ext.name = 'SonarSource SLang'
-        ext.inceptionYear = '2009' // TODO replace by 2018
-        ext.year = Calendar.getInstance().get(Calendar.YEAR)
-        strictCheck true
-        mapping {
-            java = 'SLASHSTAR_STYLE'
-            js = 'SLASHSTAR_STYLE'
-            ts = 'SLASHSTAR_STYLE'
-            tsx = 'SLASHSTAR_STYLE'
-            css = 'SLASHSTAR_STYLE'
-            less = 'SLASHSTAR_STYLE'
+    // license updater
+    spotless {
+        java {
+            targetExclude "**/src/test/resources/**", "**/build/**", "its/sources/**", "its/plugin/projects/**", "private/its/sources/**", "private/its/plugin/projects/**"
+
+            if (getPath().startsWith(':private')) {
+                licenseHeaderFile(rootProject.file("private/LICENSE")).updateYearWithLatest(true)
+            } else {
+                licenseHeaderFile(rootProject.file("LICENSE_HEADER")).updateYearWithLatest(true)
+            }
         }
-        includes(['**/src/**/*.java', '**/*.js', '**/*.ts', '**/*.tsx', '**/*.css'])
-        excludes([
-                "**/src/test/resources/**",
-                "**/build/**",
-                "its/sources/**",
-                "its/plugin/projects/**",
-                "private/its/sources/**",
-                "private/its/plugin/projects/**"
-        ])
     }
 
     publishing {

@@ -75,8 +75,7 @@ If you want to run ruling tests for specific language, you can use `ruling-{lang
 
 ## License headers
 
-Note: The license check is not working correctly, see [SONARSLANG-367](https://jira.sonarsource.com/browse/SONARSLANG-367).
+License headers are automatically updated by the spotless plugin but only for Java files. 
+Furthermore there are files such as `package-info.java`and `module-info.java`that spotless ignores. Also Scala and Go source files are not handled. For those files use a manual script like below to update the license. E.g., for Go files (on mac):
 
-When adding a new source file, you will need to add license headers. Instead of copy-pasting blocks, the following command line can be used:
-
-    ./gradlew licenseFormat
+    `find . -type f -name "*.go" -exec sed -i '' 's/2018-2022/2018-2023/' "{}" \;`
