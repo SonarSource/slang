@@ -31,6 +31,7 @@ jobs:
           token: ${{ fromJSON(steps.secrets.outputs.vault).GH_TOKEN }}
           ref: master
           path: public-git-sync/slang-enterprise
+          fetch-depth: 0
       - name: git config
         working-directory: public-git-sync/slang-enterprise
         run: |
