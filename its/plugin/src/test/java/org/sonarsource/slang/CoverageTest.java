@@ -40,9 +40,9 @@ public class CoverageTest extends TestBase {
   private Path workDir;
 
   public void setUpRuby(String coverageReportName) throws Exception {
-    workDir = tmpDir.newFolder("ruby").toPath().toAbsolutePath();
+    workDir = tmpDir.newFolder("ruby").toPath().toRealPath();
     Path src = BASE_DIRECTORY.resolve("ruby/file.rb");
-    Path srcCopy = workDir.resolve(src.getFileName()).toAbsolutePath();
+    Path srcCopy = workDir.resolve(src.getFileName());
     Files.copy(src, srcCopy);
     Files.copy(BASE_DIRECTORY.resolve("ruby/file_not_in_report.rb"), workDir.resolve("file_not_in_report.rb"));
     Path report = BASE_DIRECTORY.resolve("ruby/" + coverageReportName);
@@ -89,9 +89,9 @@ public class CoverageTest extends TestBase {
   }
 
   public void setUpScala() throws Exception {
-    workDir = tmpDir.newFolder("scala").toPath().toAbsolutePath();
+    workDir = tmpDir.newFolder("scala").toPath().toRealPath();
     Path src = BASE_DIRECTORY.resolve("scala/file2.scala");
-    Path srcCopy = workDir.resolve(src.getFileName()).toAbsolutePath();
+    Path srcCopy = workDir.resolve(src.getFileName());
     Files.copy(src, srcCopy);
     Path report = BASE_DIRECTORY.resolve("scala/scoverage.xml");
     String reportContent = new String(Files.readAllBytes(report), UTF_8);
