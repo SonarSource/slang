@@ -24,6 +24,7 @@ import org.sonar.api.Plugin;
 import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
+import org.sonar.api.internal.PluginContextImpl;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.utils.Version;
 
@@ -38,5 +39,15 @@ class GoPluginTest {
     Plugin underTest = new GoPlugin();
     underTest.define(context);
     assertThat(context.getExtensions()).hasSize(19);
+  }
+
+  @Test
+  void test_sonarlint() {
+    SonarRuntime runtime = SonarRuntimeImpl.forSonarLint(Version.create(3, 9));
+    Plugin.Context context = new PluginContextImpl.Builder().setSonarRuntime(runtime).build();
+
+    Plugin underTest = new GoPlugin();
+    underTest.define(context);
+    assertThat(context.getExtensions()).hasSize(7);
   }
 }

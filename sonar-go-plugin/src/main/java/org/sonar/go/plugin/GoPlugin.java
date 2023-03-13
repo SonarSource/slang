@@ -20,6 +20,7 @@
 package org.sonar.go.plugin;
 
 import org.sonar.api.Plugin;
+import org.sonar.api.SonarProduct;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
 import org.sonar.go.coverage.GoCoverSensor;
@@ -43,18 +44,13 @@ public class GoPlugin implements Plugin {
 
   @Override
   public void define(Context context) {
+
     context.addExtensions(
       GoLanguage.class,
       GoSensor.class,
-      GoTestSensor.class,
-      GoCoverSensor.class,
       GoExclusionsFileFilter.class,
       GoRulesDefinition.class,
       GoProfileDefinition.class,
-      GoVetReportSensor.class,
-      GoLintReportSensor.class,
-      GoMetaLinterReportSensor.class,
-      GolangCILintReportSensor.class,
 
       PropertyDefinition.builder(GoLanguage.FILE_SUFFIXES_KEY)
         .index(10)
@@ -76,8 +72,22 @@ public class GoPlugin implements Plugin {
         .subCategory(GENERAL_SUBCATEGORY)
         .onQualifiers(Qualifiers.PROJECT)
         .multiValues(true)
-        .build(),
+        .build()
+     );
 
+    if (context.getRuntime().getProduct() != SonarProduct.SONARLINT) {
+      addReportExtensions(context);
+    }
+  }
+
+  private void addReportExtensions(Context context) {
+    context.addExtensions(
+      GoTestSensor.class,
+      GoCoverSensor.class,
+      GoVetReportSensor.class,
+      GoLintReportSensor.class,
+      GoMetaLinterReportSensor.class,
+      GolangCILintReportSensor.class,
       PropertyDefinition.builder(GoTestSensor.REPORT_PATH_KEY)
         .index(19)
         .name("Path to test execution report(s)")
@@ -140,6 +150,7 @@ public class GoPlugin implements Plugin {
         .onQualifiers(Qualifiers.PROJECT)
         .defaultValue("")
         .multiValues(true)
-        .build());
+        .build()
+    );
   }
 }
