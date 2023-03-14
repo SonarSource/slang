@@ -32,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import javax.annotation.CheckForNull;
 import org.apache.commons.io.FileUtils;
@@ -87,6 +86,7 @@ public class SonarLintTest {
     StandaloneGlobalConfiguration configuration = sonarLintConfigBuilder
       .addEnabledLanguage(Language.RUBY)
       .addEnabledLanguage(Language.SCALA)
+      .addEnabledLanguage(Language.GO)
       .build();
     sonarlintEngine = new StandaloneSonarLintEngineImpl(configuration);
     baseDir = temp.newFolder();
@@ -146,6 +146,27 @@ public class SonarLintTest {
         tuple("scala:S100", 2, inputFile.getPath(), IssueSeverity.MINOR),
         tuple("scala:S1145", 3, inputFile.getPath(), IssueSeverity.MAJOR),
         tuple("scala:S1481", 4, inputFile.getPath(), IssueSeverity.MINOR)
+      );
+  }
+
+  @Test
+  public void test_go() throws Exception {
+    ClientInputFile inputFile = prepareInputFile("foo.go",
+      "package main\n" +
+        "func empty() {\n" +  // go:S1186 (empty function)
+        "}\n",
+      false, "go");
+
+    List<Issue> issues = new ArrayList<>();
+    StandaloneAnalysisConfiguration analysisConfiguration = StandaloneAnalysisConfiguration.builder()
+      .setBaseDir(baseDir.toPath())
+      .addInputFiles(Collections.singletonList(inputFile))
+      .build();
+    sonarlintEngine.analyze(analysisConfiguration, issues::add, null, null);
+
+    assertThat(issues).extracting(Issue::getRuleKey, Issue::getStartLine, issue -> issue.getInputFile().getPath(), Issue::getSeverity)
+      .containsExactlyInAnyOrder(
+        tuple("go:S1186", 2, inputFile.getPath(), IssueSeverity.CRITICAL)
       );
   }
 

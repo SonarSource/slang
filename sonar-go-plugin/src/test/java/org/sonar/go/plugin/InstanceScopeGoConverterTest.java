@@ -19,18 +19,25 @@
  */
 package org.sonar.go.plugin;
 
-import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition;
-import org.sonarsource.analyzer.commons.BuiltInQualityProfileJsonLoader;
+import java.io.File;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.sonar.api.utils.TempFolder;
+import org.sonarsource.slang.api.TopLevelTree;
+import org.sonarsource.slang.api.Tree;
 
-public class GoProfileDefinition implements BuiltInQualityProfilesDefinition {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-  static final String PATH_TO_JSON = "org/sonar/l10n/go/rules/go/Sonar_way_profile.json";
+class InstanceScopeGoConverterTest {
+  @Test
+  void constructor(@TempDir File tempDir) {
+    TempFolder tempFolder = mock(TempFolder.class);
+    when(tempFolder.newDir()).thenReturn(tempDir);
+    InstanceScopeGoConverter converter = new InstanceScopeGoConverter(tempFolder);
 
-  @Override
-  public void define(Context context) {
-    NewBuiltInQualityProfile profile = context.createBuiltInQualityProfile("Sonar way", GoLanguage.KEY);
-    BuiltInQualityProfileJsonLoader.load(profile, GoRulesDefinition.REPOSITORY_KEY, PATH_TO_JSON);
-    profile.setDefault(true);
-    profile.done();
+    Tree tree = converter.parse("package main\nfunc foo() {}");
+    assertThat(tree).isInstanceOf(TopLevelTree.class);
   }
 }

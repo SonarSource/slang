@@ -57,6 +57,7 @@ class GoRulesDefinitionTest {
     assertThat(rule.name()).isEqualTo("Multi-line comments should not be empty");
     assertThat(rule.debtRemediationFunction().type()).isEqualTo(DebtRemediationFunction.Type.CONSTANT_ISSUE);
     assertThat(rule.type()).isEqualTo(RuleType.CODE_SMELL);
+    assertThat(rule.activatedByDefault()).isTrue();
   }
 
   @Test

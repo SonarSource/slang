@@ -44,7 +44,7 @@ public class GoRulesDefinition implements RulesDefinition {
   public void define(Context context) {
     NewRepository repository = context.createRepository(REPOSITORY_KEY, GoLanguage.KEY)
       .setName("SonarAnalyzer");
-    RuleMetadataLoader metadataLoader = new RuleMetadataLoader(GoPlugin.RESOURCE_FOLDER, runtime);
+    RuleMetadataLoader metadataLoader = new RuleMetadataLoader(GoPlugin.RESOURCE_FOLDER, GoProfileDefinition.PATH_TO_JSON, runtime);
 
     List<Class<?>> checks = GoCheckList.checks();
     metadataLoader.addRulesByAnnotatedClass(repository, checks);

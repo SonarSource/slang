@@ -19,18 +19,17 @@
  */
 package org.sonar.go.plugin;
 
-import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition;
-import org.sonarsource.analyzer.commons.BuiltInQualityProfileJsonLoader;
+import org.sonar.api.scanner.ScannerSide;
+import org.sonar.api.utils.TempFolder;
+import org.sonar.go.converter.GoConverter;
+import org.sonarsource.api.sonarlint.SonarLintSide;
 
-public class GoProfileDefinition implements BuiltInQualityProfilesDefinition {
+@ScannerSide
+@SonarLintSide(lifespan = SonarLintSide.INSTANCE)
+public class InstanceScopeGoConverter extends GoConverter {
 
-  static final String PATH_TO_JSON = "org/sonar/l10n/go/rules/go/Sonar_way_profile.json";
-
-  @Override
-  public void define(Context context) {
-    NewBuiltInQualityProfile profile = context.createBuiltInQualityProfile("Sonar way", GoLanguage.KEY);
-    BuiltInQualityProfileJsonLoader.load(profile, GoRulesDefinition.REPOSITORY_KEY, PATH_TO_JSON);
-    profile.setDefault(true);
-    profile.done();
+  public InstanceScopeGoConverter(TempFolder tempFolder) {
+    super(tempFolder.newDir());
   }
+
 }

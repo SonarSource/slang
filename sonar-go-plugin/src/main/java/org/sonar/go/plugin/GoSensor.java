@@ -39,10 +39,14 @@ public class GoSensor extends SlangSensor {
 
   private final Checks<SlangCheck> checks;
 
-  public GoSensor(SonarRuntime sonarRuntime, CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory, NoSonarFilter noSonarFilter, GoLanguage language) {
+  private ASTConverter goConverter = null;
+
+  public GoSensor(SonarRuntime sonarRuntime, CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory,
+    NoSonarFilter noSonarFilter, GoLanguage language, GoConverter goConverter) {
     super(sonarRuntime, noSonarFilter, fileLinesContextFactory, language);
     checks = checkFactory.create(GoRulesDefinition.REPOSITORY_KEY);
     checks.addAnnotatedChecks((Iterable<?>) GoCheckList.checks());
+    this.goConverter = goConverter;
   }
 
   @Override
@@ -54,7 +58,7 @@ public class GoSensor extends SlangSensor {
 
   @Override
   protected ASTConverter astConverter(SensorContext sensorContext) {
-    return new GoConverter(sensorContext.fileSystem().workDir());
+    return goConverter;
   }
 
   @Override

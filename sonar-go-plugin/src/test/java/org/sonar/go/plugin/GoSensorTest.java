@@ -45,13 +45,13 @@ import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.internal.DefaultNoSonarFilter;
 import org.sonar.api.config.internal.MapSettings;
-import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.LoggerLevel;
 import org.sonar.api.utils.log.ThreadLocalLogTester;
+import org.sonar.go.converter.GoConverter;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.testing.AbstractSensorTest;
 
@@ -67,6 +67,7 @@ import static org.mockito.Mockito.when;
 class GoSensorTest {
 
   private Path workDir;
+  private GoConverter singleInstanceGoConverter;
   private Path projectDir;
   private SensorContextTester sensorContext;
   private FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
@@ -79,6 +80,7 @@ class GoSensorTest {
   void setUp() throws IOException {
     workDir = Files.createTempDirectory("gotest");
     workDir.toFile().deleteOnExit();
+    singleInstanceGoConverter = new GoConverter(workDir.toFile());
     projectDir = Files.createTempDirectory("gotestProject");
     projectDir.toFile().deleteOnExit();
     sensorContext = SensorContextTester.create(workDir);
@@ -286,6 +288,13 @@ class GoSensorTest {
   }
 
   @Test
+  void always_use_the_same_ast_converter() {
+    GoSensor goSensor = getSensor();
+    assertThat(goSensor.astConverter(sensorContext)).isSameAs(singleInstanceGoConverter);
+    assertThat(goSensor.astConverter(sensorContext)).isSameAs(singleInstanceGoConverter);
+  }
+
+  @Test
   void highlighting() throws Exception {
     InputFile inputFile = createInputFile("lets.go", InputFile.Type.MAIN,
       "//abc\n" +
@@ -363,7 +372,8 @@ class GoSensorTest {
     CheckFactory checkFactory = new CheckFactory(activeRules);
     Checks<SlangCheck> checks = checkFactory.create(GoRulesDefinition.REPOSITORY_KEY);
     checks.addAnnotatedChecks((Iterable) ruleClasses);
-    return new GoSensor(AbstractSensorTest.SQ_LTS_RUNTIME, checkFactory, fileLinesContextFactory, new DefaultNoSonarFilter(), new GoLanguage(new MapSettings().asConfig()));
+    return new GoSensor(AbstractSensorTest.SQ_LTS_RUNTIME, checkFactory, fileLinesContextFactory, new DefaultNoSonarFilter(),
+      new GoLanguage(new MapSettings().asConfig()), singleInstanceGoConverter);
   }
 
   private InputFile createInputFile(String filename, InputFile.Type type, String content) {
