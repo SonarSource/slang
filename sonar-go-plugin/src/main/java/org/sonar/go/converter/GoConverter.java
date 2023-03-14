@@ -129,7 +129,7 @@ public class GoConverter implements ASTConverter {
     }
 
     private static String extract(File workDir) throws IOException {
-      String executable = getExecutableForCurrentOS(System.getProperty("os.name"));
+      String executable = getExecutableForCurrentOS(System.getProperty("os.name"), System.getProperty("os.arch"));
       byte[] executableData = getBytesFromResource(executable);
       File dest = new File(workDir, executable);
       if (!fileMatch(dest, executableData)) {
@@ -158,12 +158,16 @@ public class GoConverter implements ASTConverter {
       return out.toByteArray();
     }
 
-    static String getExecutableForCurrentOS(String osName) {
+    static String getExecutableForCurrentOS(String osName, String arch) {
       String os = osName.toLowerCase(Locale.ROOT);
       if (os.contains("win")) {
         return "sonar-go-to-slang-windows-amd64.exe";
       } else if (os.contains("mac")) {
-        return "sonar-go-to-slang-darwin-amd64";
+        if (arch.equals("aarch64")) {
+          return "sonar-go-to-slang-darwin-arm64";
+        } else {
+          return "sonar-go-to-slang-darwin-amd64";
+        }
       } else {
         return "sonar-go-to-slang-linux-amd64";
       }

@@ -159,9 +159,10 @@ class GoConverterTest {
 
   @Test
   void executable_for_current_os() {
-    assertThat(getExecutableForCurrentOS("Linux")).isEqualTo("sonar-go-to-slang-linux-amd64");
-    assertThat(getExecutableForCurrentOS("Windows 10")).isEqualTo("sonar-go-to-slang-windows-amd64.exe");
-    assertThat(getExecutableForCurrentOS("Mac OS X")).isEqualTo("sonar-go-to-slang-darwin-amd64");
+    assertThat(getExecutableForCurrentOS("Linux", "x86_64")).isEqualTo("sonar-go-to-slang-linux-amd64");
+    assertThat(getExecutableForCurrentOS("Windows 10", "x86_64")).isEqualTo("sonar-go-to-slang-windows-amd64.exe");
+    assertThat(getExecutableForCurrentOS("Mac OS X", "x86_64")).isEqualTo("sonar-go-to-slang-darwin-amd64");
+    assertThat(getExecutableForCurrentOS("Mac OS X", "aarch64")).isEqualTo("sonar-go-to-slang-darwin-arm64");
   }
 
   private List<ReturnTree> getReturnsList(Tree tree) {
