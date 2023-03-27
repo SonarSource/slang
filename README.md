@@ -63,15 +63,15 @@ If you want to run them, you need first to retrieve the related projects which a
 
 Then build and run the Integration Tests using the `its` property:
 
-    ./gradlew build -Pits --info --no-daemon -Dsonar.runtimeVersion=7.9
+    ./gradlew build -Pits --info --no-daemon
 
 You can also build and run only Ruling Tests using the `ruling` property:
 
-    ./gradlew build -Pruling --info --no-daemon -Dsonar.runtimeVersion=7.9
+    ./gradlew build -Pruling --info --no-daemon
 
 If you want to run ruling tests for specific language, you can use `ruling-{lang}` property (`ruling-scala`, `ruling-ruby`, `ruling-go`). For example:
 
-    ./gradlew build -Pruling-scala --info --no-daemon -Dsonar.runtimeVersion=7.9
+    ./gradlew build -Pruling-scala --info --no-daemon
 
 ## License headers
 
