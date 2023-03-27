@@ -13,7 +13,7 @@ dependencies {
     implementation project(':checkstyle-import')
     // dependency on sonar-go-to-slang binaries
     runtimeOnly files(project(':sonar-go-to-slang').buildDir)
-    compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
+    compileOnly 'org.sonarsource.api.plugin:sonar-plugin-api'
     testImplementation 'org.sonarsource.sonarqube:sonar-plugin-api-impl'
     implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
     implementation 'com.eclipsesource.minimal-json:minimal-json'
@@ -72,7 +72,7 @@ jar {
 shadowJar {
     minimize { }
     dependencies {
-        exclude(dependency('org.sonarsource.sonarqube:sonar-plugin-api'))
+        exclude(dependency('org.sonarsource.api.plugin:sonar-plugin-api'))
         exclude(dependency('org.codehaus.woodstox:.*'))
         exclude(dependency('org.codehaus.staxmate:.*'))
         exclude(dependency('com.google.code.findbugs:jsr305'))

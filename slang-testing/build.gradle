@@ -2,7 +2,7 @@ dependencies {
     implementation project(':slang-api')
     implementation 'com.google.code.findbugs:jsr305'
     implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-test-commons'
-    implementation 'org.sonarsource.sonarqube:sonar-plugin-api'
+    implementation 'org.sonarsource.api.plugin:sonar-plugin-api'
     implementation 'org.sonarsource.sonarqube:sonar-plugin-api-impl'
     implementation "org.junit.jupiter:junit-jupiter-api"
     testImplementation "org.junit.jupiter:junit-jupiter-engine"

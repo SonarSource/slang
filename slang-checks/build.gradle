@@ -1,6 +1,6 @@
 dependencies {
     implementation project(':slang-api')
-    compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
+    compileOnly 'org.sonarsource.api.plugin:sonar-plugin-api'
     implementation 'com.google.code.findbugs:jsr305'
     implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
     testImplementation project(':slang-antlr')

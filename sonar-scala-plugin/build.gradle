@@ -48,7 +48,7 @@ jacocoTestReport {
 }
 
 dependencies {
-    compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api'
+    compileOnly 'org.sonarsource.api.plugin:sonar-plugin-api'
     testImplementation 'org.sonarsource.sonarqube:sonar-plugin-api-impl'
     implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
     implementation 'org.sonarsource.analyzer-commons:sonar-xml-parsing'
