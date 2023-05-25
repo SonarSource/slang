@@ -1,6 +1,7 @@
+<h2>Why is this an issue?</h2>
 <p>Duplicated string literals make the process of refactoring error-prone, since you must be sure to update all occurrences.</p>
 <p>On the other hand, constants can be referenced from many places, but only need to be updated in a single place.</p>
-<h2>Noncompliant Code Example</h2>
+<h3>Noncompliant code example</h3>
 <p>With the default threshold of 3:</p>
 <pre>
 public def run() {
@@ -9,7 +10,7 @@ public def run() {
   release("action random1")
 }
 </pre>
-<h2>Compliant Solution</h2>
+<h3>Compliant solution</h3>
 <pre>
 public def run() {
   val action = "action random1"
@@ -18,7 +19,7 @@ public def run() {
   release(action)
 }
 </pre>
-<h2>Exceptions</h2>
+<h3>Exceptions</h3>
 <p>To prevent generating some false-positives, literals having 5 or less characters are excluded as well as literals containing only letters, digits
 and '_'.</p>
 

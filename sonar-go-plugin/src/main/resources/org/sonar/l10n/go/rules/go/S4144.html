@@ -1,6 +1,7 @@
+<h2>Why is this an issue?</h2>
 <p>When two functions have the same implementation, either it was a mistake - something else was intended - or the duplication was intentional, but
 may be confusing to maintainers. In the latter case, one implementation should invoke the other.</p>
-<h2>Noncompliant Code Example</h2>
+<h3>Noncompliant code example</h3>
 <pre>
 func fun1() (x, y int) {
   a, b := 1, 2
@@ -14,7 +15,7 @@ func fun2() (x, y int) {  // Noncompliant; fun1 and fun2 have identical implemen
   return a, b
 }
 </pre>
-<h2>Compliant Solution</h2>
+<h3>Compliant solution</h3>
 <pre>
 func fun1() (x, y int) {
   a, b := 1, 2
@@ -26,6 +27,6 @@ func fun2() (x, y int) {  // Compliant
   return fun1()
 }
 </pre>
-<h2>Exceptions</h2>
+<h3>Exceptions</h3>
 <p>Functions with fewer than 2 statements are ignored.</p>
 

@@ -1,5 +1,6 @@
+<h2>Why is this an issue?</h2>
 <p>Most of the time a block of code is empty when a piece of code is really missing. So such empty block must be either filled or removed.</p>
-<h2>Noncompliant Code Example</h2>
+<h3>Noncompliant code example</h3>
 <pre>
 func compute(a int, b int) {
 	sum := a + b
@@ -7,7 +8,7 @@ func compute(a int, b int) {
 	fmt.Println("Result:", sum)
 }
 </pre>
-<h2>Compliant Solution</h2>
+<h3>Compliant solution</h3>
 <pre>
 func compute(a int, b int) {
 	sum := a + b
@@ -17,7 +18,7 @@ func compute(a int, b int) {
 	fmt.Println("Result:", sum)
 }
 </pre>
-<h2>Exceptions</h2>
+<h3>Exceptions</h3>
 <p>When a block contains a comment, this block is not considered to be empty. <code>for</code> without <code>init</code> and <code>post</code>
 statements with empty blocks are ignored as well.</p>
 

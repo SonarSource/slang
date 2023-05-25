@@ -1,7 +1,8 @@
+<h2>Why is this an issue?</h2>
 <p>Having two <code>cases</code> in a <code>switch</code> statement or two branches in an <code>if</code> chain with the same implementation is at
 best duplicate code, and at worst a coding error. If the same logic is truly needed for both instances, then in an <code>if</code> chain they should
 be combined, or for a <code>switch</code>, one should fall through to the other.</p>
-<h2>Noncompliant Code Example</h2>
+<h3>Noncompliant code example</h3>
 <pre>
 switch i {
 case 1:
@@ -28,7 +29,7 @@ if a &gt;= 0 &amp;&amp; a &lt; 10 {
 	doTheRest()
 }
 </pre>
-<h2>Exceptions</h2>
+<h3>Exceptions</h3>
 <p>Blocks in an <code>if</code> chain or <code>case</code> blocks that contain a single line of code are ignored.</p>
 <pre>
 if a == 1 {

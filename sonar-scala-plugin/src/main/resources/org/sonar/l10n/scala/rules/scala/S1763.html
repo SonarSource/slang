@@ -1,5 +1,6 @@
+<h2>Why is this an issue?</h2>
 <p>Jump statements (<code>return</code>) move control flow out of the current code block. So any statements that come after a jump are dead code.</p>
-<h2>Noncompliant Code Example</h2>
+<h3>Noncompliant code example</h3>
 <pre>
 def foo(a: Int) {
   val i = 10;
@@ -7,14 +8,14 @@ def foo(a: Int) {
   bar;                // dead code
 }
 </pre>
-<h2>Compliant Solution</h2>
+<h3>Compliant solution</h3>
 <pre>
 def foo(a: Int): Int {
   val i = 10;
   return a + i;
 }
 </pre>
-<h2>See</h2>
+<h2>Resources</h2>
 <ul>
   <li> <a href="https://cwe.mitre.org/data/definitions/561">MITRE, CWE-561</a> - Dead Code </li>
 </ul>

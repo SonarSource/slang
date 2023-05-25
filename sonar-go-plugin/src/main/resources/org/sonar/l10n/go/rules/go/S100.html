@@ -1,12 +1,13 @@
+<h2>Why is this an issue?</h2>
 <p>Shared naming conventions allow teams to collaborate efficiently. This rule checks that all function names match a provided regular expression.</p>
-<h2>Noncompliant Code Example</h2>
+<h3>Noncompliant code example</h3>
 <p>With default provided regular expression: <code>^(_|[a-zA-Z0-9]+)$</code>:</p>
 <pre>
 func execute_all() {
 ...
 }
 </pre>
-<h2>Compliant Solution</h2>
+<h3>Compliant solution</h3>
 <pre>
 func executeAll() {
 ...

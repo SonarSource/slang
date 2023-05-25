@@ -1,5 +1,6 @@
+<h2>Why is this an issue?</h2>
 <p>Most of the time a block of code is empty when a piece of code is really missing. So such empty block must be either filled or removed.</p>
-<h2>Noncompliant Code Example</h2>
+<h3>Noncompliant code example</h3>
 <pre>
 def compute(a, b)
   sum = a + b
@@ -8,7 +9,7 @@ def compute(a, b)
   puts "Result: #{sum}"
 end
 </pre>
-<h2>Compliant Solution</h2>
+<h3>Compliant solution</h3>
 <pre>
 def compute(a, b)
   sum = a + b
@@ -18,7 +19,7 @@ def compute(a, b)
   puts "Result: #{sum}"
 end
 </pre>
-<h2>Exceptions</h2>
+<h3>Exceptions</h3>
 <p>When a block contains a comment, this block is not considered to be empty.</p>
 <p><code>while</code> and <code>unless</code> loops are also exception to the rule.</p>
 <pre>
