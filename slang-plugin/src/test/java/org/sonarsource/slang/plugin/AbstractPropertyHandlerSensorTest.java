@@ -27,30 +27,26 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.event.Level;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
-import org.sonar.api.utils.log.LoggerLevel;
-import org.sonar.api.utils.log.ThreadLocalLogTester;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.sonarsource.slang.testing.ThreadLocalLogTester;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@EnableRuleMigrationSupport
 class AbstractPropertyHandlerSensorTest {
 
   private static final List<String> ANALYSIS_WARNINGS = new ArrayList<>();
   private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "propertyHandler");
 
-  @Rule
+  @RegisterExtension
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @BeforeEach
@@ -93,13 +89,13 @@ class AbstractPropertyHandlerSensorTest {
     context.settings().setProperty("sonar.configuration.key", "missing-file1.txt,missing-file2.txt,dummyReport.txt,missing-file3.txt");
 
     sensor.execute(context);
-    List<String> infos = logTester.logs(LoggerLevel.INFO);
+    List<String> infos = logTester.logs(Level.INFO);
     assertThat(infos).hasSize(1);
     assertThat(infos.get(0))
       .startsWith("Importing")
       .endsWith("dummyReport.txt");
 
-    List<String> warnings = logTester.logs(LoggerLevel.WARN);
+    List<String> warnings = logTester.logs(Level.WARN);
     assertThat(warnings)
       .hasSize(1)
       .hasSameSizeAs(ANALYSIS_WARNINGS);

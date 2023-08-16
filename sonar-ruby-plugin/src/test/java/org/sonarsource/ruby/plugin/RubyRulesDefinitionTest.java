@@ -22,7 +22,6 @@ package org.sonarsource.ruby.plugin;
 import org.junit.jupiter.api.Test;
 import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
-import org.sonar.api.SonarRuntime;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.debt.DebtRemediationFunction;
@@ -39,7 +38,7 @@ class RubyRulesDefinitionTest {
   void rules() {
     RulesDefinition.Repository repository = getRepositoryForVersion(Version.create(9, 3));
 
-    assertThat(repository.name()).isEqualTo("SonarQube");
+    assertThat(repository.name()).isEqualTo("Sonar");
     assertThat(repository.language()).isEqualTo("ruby");
 
     Rule rule = repository.rule("S1135");

@@ -31,6 +31,8 @@ import java.nio.file.Files;
 import java.util.function.Consumer;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.Severity;
@@ -42,8 +44,6 @@ import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition.Context;
 import org.sonar.api.server.rule.RulesDefinition.NewRepository;
 import org.sonar.api.server.rule.RulesDefinition.NewRule;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 import org.sonar.go.plugin.GoLanguage;
 import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
 
@@ -51,7 +51,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public abstract class AbstractReportSensor extends AbstractPropertyHandlerSensor {
 
-  private static final Logger LOG = Loggers.get(AbstractReportSensor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractReportSensor.class);
 
   static final long DEFAULT_REMEDIATION_COST = 5L;
   static final Severity DEFAULT_SEVERITY = Severity.MAJOR;

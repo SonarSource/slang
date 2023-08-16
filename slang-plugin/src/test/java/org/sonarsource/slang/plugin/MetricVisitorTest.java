@@ -19,15 +19,14 @@
  */
 package org.sonarsource.slang.plugin;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
@@ -43,21 +42,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@EnableRuleMigrationSupport
 class MetricVisitorTest {
 
+  private File tempFolder;
   private NoSonarFilter mockNoSonarFilter;
   private SLangConverter parser = new SLangConverter();
   private MetricVisitor visitor;
   private SensorContextTester sensorContext;
   private DefaultInputFile inputFile;
 
-  @Rule
-  public TemporaryFolder tempFolder = new TemporaryFolder();
-
   @BeforeEach
-  void setUp() {
-    sensorContext = SensorContextTester.create(tempFolder.getRoot());
+  void setUp(@TempDir File tempFolder) {
+    this.tempFolder = tempFolder;
+    sensorContext = SensorContextTester.create(tempFolder);
     FileLinesContext mockFileLinesContext = mock(FileLinesContext.class);
     FileLinesContextFactory mockFileLinesContextFactory = mock(FileLinesContextFactory.class);
     mockNoSonarFilter = mock(NoSonarFilter.class);
@@ -255,7 +252,8 @@ class MetricVisitorTest {
   }
 
   private void scan(String code) throws IOException {
-    inputFile = new TestInputFileBuilder("moduleKey", tempFolder.newFile().getName())
+    File tmpFile = File.createTempFile("file", ".tmp", tempFolder);
+    inputFile = new TestInputFileBuilder("moduleKey", tmpFile.getName())
       .setCharset(StandardCharsets.UTF_8)
       .initMetadata(code).build();
     InputFileContext ctx = new InputFileContext(sensorContext, inputFile);

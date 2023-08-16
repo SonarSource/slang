@@ -30,8 +30,9 @@ allprojects {
 
     ext {
         buildNumber = System.getProperty("buildNumber")
-        analyzerCommonsVersion = '2.5.0.1358'
-        pluginApiVersion = '9.14.0.375'
+        analyzerCommonsVersion = '2.7.0.1482'
+        pluginApiVersion = '10.1.0.809'
+        slf4jApiVersion = '1.7.30'
         sonarqubeVersion = '9.9.0.65466'
         orchestratorVersion = '3.42.0.312'
         sonarlintVersion = '8.15.0.65216'
@@ -70,13 +71,14 @@ subprojects {
     dependencyManagement {
         dependencies {
             dependency "org.sonarsource.api.plugin:sonar-plugin-api:${pluginApiVersion}"
+            dependency "org.sonarsource.api.plugin:sonar-plugin-api-test-fixtures:${pluginApiVersion}"
             dependency "org.sonarsource.sonarqube:sonar-plugin-api-impl:${sonarqubeVersion}"
+            dependency "org.slf4j:slf4j-api:${slf4jApiVersion}"
             dependency "org.sonarsource.sonarqube:sonar-ws:${sonarqubeVersion}"
             dependency 'com.google.code.findbugs:jsr305:1.3.9'
             dependency 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
             dependency "org.junit.jupiter:junit-jupiter-api:5.7.1"
             dependency "org.junit.jupiter:junit-jupiter-engine:5.7.1"
-            dependency "org.junit.jupiter:junit-jupiter-migrationsupport:5.7.1"
             dependency 'junit:junit:4.13.1'
             dependency 'org.mockito:mockito-core:2.21.0'
             dependency 'org.assertj:assertj-core:3.23.1'
@@ -86,10 +88,12 @@ subprojects {
             dependency "org.sonarsource.analyzer-commons:sonar-xml-parsing:${analyzerCommonsVersion}"
             dependency "org.sonarsource.orchestrator:sonar-orchestrator:${orchestratorVersion}"
             dependency "org.sonarsource.sonarlint.core:sonarlint-core:${sonarlintVersion}"
+            dependency "ch.qos.logback:logback-classic:1.2.9"
+            dependency "javax.annotation:javax.annotation-api:1.3.2"
         }
     }
 
-    java.sourceCompatibility = JavaVersion.VERSION_1_8
+    java.sourceCompatibility = JavaVersion.VERSION_11
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
         options.release = java.sourceCompatibility.majorVersion as int
@@ -120,24 +124,6 @@ subprojects {
     if (!project.path.startsWith(":its") && !project.path.startsWith(":private:its")) {
         test {
             useJUnitPlatform()
-        }
-        // Prevent accidental use of JUnit 4, which is still present in dependencies due to junit-jupiter-migrationsupport
-        apply plugin: "de.thetaphi.forbiddenapis"
-        forbiddenApis {
-            signatures = ['''
-            ''']
-        }
-        forbiddenApisTest {
-            signatures = ['''
-                org.junit.Test @ use JUnit 5 org.junit.jupiter.api.Test instead
-                org.junit.Before @ use JUnit 5 org.junit.jupiter.api.BeforeEach instead
-                org.junit.After @ use JUnit 5 org.junit.jupiter.api.AfterEach instead
-                org.junit.BeforeClass @ use JUnit 5 org.junit.jupiter.api.BeforeAll instead
-                org.junit.AfterClass @ use JUnit 5 org.junit.jupiter.api.AfterAll instead
-                org.junit.Ignore @ use JUnit 5 org.junit.jupiter.api.Disabled instead
-                org.junit.Assert @ use JUnit 5 org.junit.jupiter.api.Assertions or org.assertj.core.api.Assertions instead
-                org.junit.Assume @ use JUnit 5 org.junit.jupiter.api.Assumptions instead
-            ''']
         }
     }
 

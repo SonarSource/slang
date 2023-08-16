@@ -15,11 +15,11 @@ dependencies {
     runtimeOnly files(project(':sonar-go-to-slang').buildDir)
     compileOnly 'org.sonarsource.api.plugin:sonar-plugin-api'
     testImplementation 'org.sonarsource.sonarqube:sonar-plugin-api-impl'
+    testImplementation 'org.sonarsource.api.plugin:sonar-plugin-api-test-fixtures'
     implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
     implementation 'com.eclipsesource.minimal-json:minimal-json'
     testImplementation "org.junit.jupiter:junit-jupiter-api"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
-    testImplementation "org.junit.jupiter:junit-jupiter-migrationsupport"
     testImplementation 'org.assertj:assertj-core'
     testImplementation 'org.mockito:mockito-core'
     testImplementation 'io.github.classgraph:classgraph'

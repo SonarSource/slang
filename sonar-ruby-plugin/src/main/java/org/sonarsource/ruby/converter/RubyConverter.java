@@ -35,8 +35,8 @@ import org.jruby.exceptions.StandardError;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.jruby.specialized.RubyArrayTwoObject;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonarsource.ruby.converter.adapter.CommentAdapter;
 import org.sonarsource.ruby.converter.adapter.RangeAdapter;
 import org.sonarsource.ruby.converter.adapter.TokenAdapter;
@@ -58,7 +58,7 @@ import static java.util.Collections.singletonList;
 
 public class RubyConverter implements ASTConverter {
 
-  private static final Logger LOG = Loggers.get(RubyConverter.class);
+  private static final Logger LOG = LoggerFactory.getLogger(RubyConverter.class);
   private static final String SETUP_SCRIPT_PATH = "whitequark_parser_init.rb";
   private static final String RACC_RUBYGEM_PATH = "racc-1.5.2-java/lib";
   private static final String AST_RUBYGEM_PATH = "ast-2.4.2/lib";

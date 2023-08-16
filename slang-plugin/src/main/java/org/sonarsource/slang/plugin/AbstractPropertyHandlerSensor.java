@@ -23,17 +23,17 @@ import java.io.File;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.notifications.AnalysisWarnings;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ExternalReportProvider;
 
 public abstract class AbstractPropertyHandlerSensor implements Sensor {
 
-  private static final Logger LOG = Loggers.get(AbstractPropertyHandlerSensor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractPropertyHandlerSensor.class);
   private final AnalysisWarnings analysisWarnings;
   private final String propertyKey;
   private final String propertyName;

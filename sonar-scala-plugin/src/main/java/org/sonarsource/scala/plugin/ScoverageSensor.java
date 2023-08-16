@@ -35,14 +35,14 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.coverage.NewCoverage;
 import org.sonar.api.notifications.AnalysisWarnings;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.xml.SafeStaxParserFactory;
 import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
 
@@ -56,7 +56,7 @@ public class ScoverageSensor extends AbstractPropertyHandlerSensor {
   private static final QName LINE_ATTRIBUTE= new QName("line");
   private static final QName SOURCE_ATTRIBUTE = new QName("source");
 
-  private static final Logger LOG = Loggers.get(ScoverageSensor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ScoverageSensor.class);
 
   private static final int MAX_LOGGED_FILE_NAMES = 20;
   private final Set<String> unresolvedInputFile = new HashSet<>();

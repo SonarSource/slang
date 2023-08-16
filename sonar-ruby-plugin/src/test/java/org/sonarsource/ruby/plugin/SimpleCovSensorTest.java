@@ -25,11 +25,10 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.event.Level;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
@@ -37,8 +36,7 @@ import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.config.internal.MapSettings;
-import org.sonar.api.utils.log.LoggerLevel;
-import org.sonar.api.utils.log.ThreadLocalLogTester;
+import org.sonarsource.slang.testing.ThreadLocalLogTester;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,13 +44,12 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-@EnableRuleMigrationSupport
 class SimpleCovSensorTest {
 
   private static final Path COVERAGE_DIR = Paths.get("src", "test", "resources", "coverage");
   private static final String MODULE_KEY = "/Absolute/Path/To/";
 
-  @Rule
+  @RegisterExtension
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   private SimpleCovSensor sensor;
@@ -207,11 +204,11 @@ class SimpleCovSensorTest {
 
     String expectedWarning =
       "Importing SimpleCov resultset JSON will not be supported from simplecov 18.0. Consider using the JSON formatter, available from SimpleCov 20.0";
-    assertThat(logTester.logs(LoggerLevel.WARN)).contains(expectedWarning);
+    assertThat(logTester.logs(Level.WARN)).contains(expectedWarning);
 
     String expectedError =
       "Cannot read coverage report file, expecting standard SimpleCov JSON formatter output: 'unsupported_resultset_0_18.json'";
-    assertThat(logTester.logs(LoggerLevel.ERROR)).contains(expectedError);
+    assertThat(logTester.logs(Level.ERROR)).contains(expectedError);
   }
 
   @Test

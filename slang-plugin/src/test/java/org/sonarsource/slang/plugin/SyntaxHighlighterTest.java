@@ -19,15 +19,14 @@
  */
 package org.sonarsource.slang.plugin;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import javax.annotation.Nullable;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
@@ -40,7 +39,6 @@ import static org.sonar.api.batch.sensor.highlighting.TypeOfText.CONSTANT;
 import static org.sonar.api.batch.sensor.highlighting.TypeOfText.KEYWORD;
 import static org.sonar.api.batch.sensor.highlighting.TypeOfText.STRING;
 
-@EnableRuleMigrationSupport
 class SyntaxHighlighterTest {
 
   private SyntaxHighlighter highlightingVisitor = new SyntaxHighlighter();
@@ -51,16 +49,17 @@ class SyntaxHighlighterTest {
 
   private DefaultInputFile inputFile;
 
-  @Rule
-  public TemporaryFolder tempFolder = new TemporaryFolder();
+  private File tempFolder;
 
   @BeforeEach
-  void setUp() {
-    sensorContext = SensorContextTester.create(tempFolder.getRoot());
+  void setUp(@TempDir File tempFolder) {
+    this.tempFolder = tempFolder;
+    sensorContext = SensorContextTester.create(tempFolder);
   }
 
   private void highlight(String code) throws IOException {
-    inputFile = new TestInputFileBuilder("moduleKey", tempFolder.newFile().getName())
+    File tmpFile = File.createTempFile("file", ".tmp", tempFolder);
+    inputFile = new TestInputFileBuilder("moduleKey", tmpFile.getName())
       .setCharset(StandardCharsets.UTF_8)
       .initMetadata(code).build();
     InputFileContext ctx = new InputFileContext(sensorContext, inputFile);

@@ -30,9 +30,9 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.config.Configuration;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.IdentifierTree;
@@ -49,7 +49,7 @@ import org.sonarsource.slang.impl.TextPointerImpl;
 
 public class ASTConverterValidation implements ASTConverter {
 
-  private static final Logger LOG = Loggers.get(ASTConverterValidation.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ASTConverterValidation.class);
 
   private static final Pattern PUNCTUATOR_PATTERN = Pattern.compile("[^0-9A-Za-z]++");
 

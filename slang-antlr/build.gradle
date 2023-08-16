@@ -9,7 +9,6 @@ dependencies {
     testImplementation project(':slang-testing')
     testImplementation "org.junit.jupiter:junit-jupiter-api"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
-    testImplementation "org.junit.jupiter:junit-jupiter-migrationsupport"
     testImplementation 'org.assertj:assertj-core'
 }
 

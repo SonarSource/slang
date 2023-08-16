@@ -28,6 +28,8 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.SonarProduct;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.fs.FilePredicate;
@@ -41,8 +43,6 @@ import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.resources.Language;
 import org.sonar.api.utils.Version;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ProgressReport;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.BlockTree;
@@ -66,7 +66,7 @@ public abstract class SlangSensor implements Sensor {
     && !(t instanceof FunctionDeclarationTree)
     && !(t instanceof BlockTree);
 
-  private static final Logger LOG = Loggers.get(SlangSensor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(SlangSensor.class);
   private static final Pattern EMPTY_FILE_CONTENT_PATTERN = Pattern.compile("\\s*+");
 
   protected final SonarRuntime sonarRuntime;

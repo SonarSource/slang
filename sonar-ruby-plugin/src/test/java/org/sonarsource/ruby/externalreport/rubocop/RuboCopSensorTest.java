@@ -26,11 +26,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
-
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.event.Level;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
@@ -39,14 +38,12 @@ import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
 import org.sonar.api.rules.RuleType;
-import org.sonar.api.utils.log.LoggerLevel;
-import org.sonar.api.utils.log.ThreadLocalLogTester;
+import org.sonarsource.slang.testing.ThreadLocalLogTester;
 import org.sonarsource.ruby.plugin.RubyPlugin;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@EnableRuleMigrationSupport
 class RuboCopSensorTest {
 
   private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport", "rubocop");
@@ -60,7 +57,7 @@ class RuboCopSensorTest {
     ruboCopSensor = new RuboCopSensor(analysisWarnings::add);
   }
 
-  @Rule
+  @RegisterExtension
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
@@ -123,7 +120,7 @@ class RuboCopSensorTest {
   void no_issues_with_invalid_report_path() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("invalid-path.txt");
     assertThat(externalIssues).isEmpty();
-    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.WARN)))
+    assertThat(onlyOneLogElement(logTester.logs(Level.WARN)))
       .startsWith("Unable to import RuboCop report file(s):")
       .contains("invalid-path.txt")
       .endsWith("The report file(s) can not be found. Check that the property 'sonar.ruby.rubocop.reportPaths' is correctly configured.");
@@ -137,7 +134,7 @@ class RuboCopSensorTest {
   void no_issues_with_invalid_rubocop_file() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("not-rubocop-file.json");
     assertThat(externalIssues).isEmpty();
-    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
+    assertThat(onlyOneLogElement(logTester.logs(Level.ERROR)))
       .startsWith("No issues information will be saved as the report file '")
       .contains("not-rubocop-file.json' can't be read.");
   }
@@ -162,14 +159,14 @@ class RuboCopSensorTest {
     assertThat(first.primaryLocation().message()).isEqualTo("message 1");
     assertThat(location(first)).isEqualTo("from line 3 offset 2 to line 3 offset 7");
 
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
-    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.WARN)))
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
+    assertThat(onlyOneLogElement(logTester.logs(Level.WARN)))
       .isEqualTo("Fail to resolve 26 file(s). No RuboCop issues will be imported on the following file(s): " +
         "invalid-path-a.json;invalid-path-b.json;invalid-path-c.json;invalid-path-d.json;invalid-path-e.json;" +
         "invalid-path-f.json;invalid-path-g.json;invalid-path-h.json;invalid-path-i.json;invalid-path-j.json;" +
         "invalid-path-k.json;invalid-path-l.json;invalid-path-m.json;invalid-path-n.json;invalid-path-o.json;" +
         "invalid-path-p.json;invalid-path-q.json;invalid-path-r.json;invalid-path-s.json;invalid-path-t.json;...");
-    assertThat(logTester.logs(LoggerLevel.DEBUG)).containsExactlyInAnyOrder(
+    assertThat(logTester.logs(Level.DEBUG)).containsExactlyInAnyOrder(
       "Missing information or unsupported file type for ruleKey:'NotEmptyRuleKey', filePath:'useless-assignment.rb', message:'null'",
       "Missing information or unsupported file type for ruleKey:'', filePath:'useless-assignment.rb', message:'Valid message.'",
       "Missing information or unsupported file type for ruleKey:'NotEmptyRuleKey', filePath:'null', message:'Valid message.'");
@@ -185,10 +182,10 @@ class RuboCopSensorTest {
     assertThat(location(externalIssues.get(2))).isEqualTo("from line 3 offset 0 to line 3 offset 15");
     assertThat(location(externalIssues.get(3))).isEqualTo("from line 3 offset 0 to line 3 offset 15");
 
-    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR))).contains("1000 is not a valid line for pointer. File useless-assignment.rb has 132 line(s)");
-    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.WARN)))
+    assertThat(onlyOneLogElement(logTester.logs(Level.ERROR))).contains("1000 is not a valid line for pointer. File useless-assignment.rb has 132 line(s)");
+    assertThat(onlyOneLogElement(logTester.logs(Level.WARN)))
       .isEqualTo("Fail to resolve 1 file(s). No RuboCop issues will be imported on the following file(s): invalid-path.json");
-    assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
+    assertThat(logTester.logs(Level.DEBUG)).isEmpty();
   }
 
   private List<ExternalIssue> executeSensorImporting(@Nullable String fileName) throws IOException {
@@ -210,9 +207,9 @@ class RuboCopSensorTest {
   }
 
   public static void assertNoErrorWarnDebugLogs(ThreadLocalLogTester logTester) {
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
+    assertThat(logTester.logs(Level.WARN)).isEmpty();
+    assertThat(logTester.logs(Level.DEBUG)).isEmpty();
   }
 
   private static void addFileToContext(SensorContextTester context, Path projectDir, Path file) {

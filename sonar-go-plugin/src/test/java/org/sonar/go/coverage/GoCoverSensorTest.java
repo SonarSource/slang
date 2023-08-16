@@ -29,16 +29,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.event.Level;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.config.internal.MapSettings;
-import org.sonar.api.utils.log.LoggerLevel;
-import org.sonar.api.utils.log.ThreadLocalLogTester;
+import org.sonarsource.slang.testing.ThreadLocalLogTester;
 import org.sonar.go.coverage.GoCoverSensor.Coverage;
 import org.sonar.go.coverage.GoCoverSensor.CoverageStat;
 import org.sonar.go.coverage.GoCoverSensor.FileCoverage;
@@ -48,12 +47,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@EnableRuleMigrationSupport
 class GoCoverSensorTest {
 
   static final Path COVERAGE_DIR = Paths.get("src", "test", "resources", "coverage");
 
-  @Rule
+  @RegisterExtension
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
 
@@ -71,7 +69,7 @@ class GoCoverSensorTest {
     context.settings().setProperty("sonar.go.coverage.reportPaths", "invalid-coverage-path.out");
     GoCoverSensor coverSensor = new GoCoverSensor();
     coverSensor.execute(context);
-    assertThat(logTester.logs(LoggerLevel.ERROR))
+    assertThat(logTester.logs(Level.ERROR))
       .containsExactly("Coverage report can't be loaded, report file not found, ignoring this file invalid-coverage-path.out.");
   }
 
@@ -226,7 +224,7 @@ class GoCoverSensorTest {
     String coverPath = "/home/paul/go/src/github.com/SonarSource/slang/sonar-go-plugin/src/test/resources/coverage/cover.go";
     assertCoverGo(coverageFile, linuxContext, coverPath);
 
-    assertThat(logTester.logs(LoggerLevel.DEBUG))
+    assertThat(logTester.logs(Level.DEBUG))
       .containsExactly("Ignoring line in coverage report: Invalid go coverage at line 7.");
   }
 
@@ -274,8 +272,8 @@ class GoCoverSensorTest {
     GoPathContext goContext = new GoPathContext(File.separatorChar, File.pathSeparator, baseDir.toString());
     GoCoverSensor sensor = new GoCoverSensor();
     sensor.execute(context, goContext);
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).endsWith("coverage.out: Invalid go coverage, expect 'mode:' on the first line.");
+    assertThat(logTester.logs(Level.ERROR)).hasSize(1);
+    assertThat(logTester.logs(Level.ERROR).get(0)).endsWith("coverage.out: Invalid go coverage, expect 'mode:' on the first line.");
   }
 
   @Test
@@ -308,7 +306,7 @@ class GoCoverSensorTest {
     assertThat(context.lineHits(fileKey, 8)).isNull();
 
     String ignoredFileLog = "File 'doesntexists.go' is not included in the project, ignoring coverage";
-    assertThat(logTester.logs(LoggerLevel.WARN)).contains(ignoredFileLog);
+    assertThat(logTester.logs(Level.WARN)).contains(ignoredFileLog);
   }
 
   @Test

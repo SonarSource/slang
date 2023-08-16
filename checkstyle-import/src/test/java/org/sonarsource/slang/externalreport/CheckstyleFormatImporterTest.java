@@ -25,29 +25,27 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.event.Level;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
 import org.sonar.api.rules.RuleType;
-import org.sonar.api.utils.log.LoggerLevel;
-import org.sonar.api.utils.log.ThreadLocalLogTester;
+import org.sonarsource.slang.testing.ThreadLocalLogTester;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@EnableRuleMigrationSupport
 class CheckstyleFormatImporterTest {
 
   static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport");
 
   static final String LINTER_KEY = "test-linter";
 
-  @Rule
+  @RegisterExtension
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
@@ -80,7 +78,7 @@ class CheckstyleFormatImporterTest {
     assertThat(third.primaryLocation().message()).isEqualTo("A class should always override hashCode when overriding equals and the other way around.");
     assertThat(third.primaryLocation().textRange().start().line()).isEqualTo(3);
 
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
   }
 
   @Test
@@ -96,14 +94,14 @@ class CheckstyleFormatImporterTest {
     assertThat(first.primaryLocation().message()).isEqualTo("`three` is unused");
     assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(4);
 
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
   }
 
   @Test
   void no_issues_with_invalid_report_path() throws IOException {
     List<ExternalIssue> externalIssues = importIssues("invalid-path.txt");
     assertThat(externalIssues).isEmpty();
-    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
+    assertThat(onlyOneLogElement(logTester.logs(Level.ERROR)))
       .startsWith("No issue information will be saved as the report file '")
       .endsWith("invalid-path.txt' can't be read.");
   }
@@ -112,7 +110,7 @@ class CheckstyleFormatImporterTest {
   void no_issues_with_invalid_checkstyle_file() throws IOException {
     List<ExternalIssue> externalIssues = importIssues("not-checkstyle-file.xml");
     assertThat(externalIssues).isEmpty();
-    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
+    assertThat(onlyOneLogElement(logTester.logs(Level.ERROR)))
       .startsWith("No issue information will be saved as the report file '")
       .endsWith("not-checkstyle-file.xml' can't be read.");
   }
@@ -121,7 +119,7 @@ class CheckstyleFormatImporterTest {
   void no_issues_with_invalid_xml_report() throws IOException {
     List<ExternalIssue> externalIssues = importIssues("invalid-file.xml");
     assertThat(externalIssues).isEmpty();
-    assertThat(onlyOneLogElement(logTester.logs(LoggerLevel.ERROR)))
+    assertThat(onlyOneLogElement(logTester.logs(Level.ERROR)))
       .startsWith("No issue information will be saved as the report file '")
       .endsWith("invalid-file.xml' can't be read.");
   }
@@ -139,10 +137,10 @@ class CheckstyleFormatImporterTest {
     assertThat(first.primaryLocation().message()).isEqualTo("Error at file level with an unknown rule key.");
     assertThat(first.primaryLocation().textRange()).isNull();
 
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.WARN)).containsExactlyInAnyOrder(
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
+    assertThat(logTester.logs(Level.WARN)).containsExactlyInAnyOrder(
       "No input file found for not-existing-file.kt. No test-linter issues will be imported on this file.");
-    assertThat(logTester.logs(LoggerLevel.DEBUG)).containsExactlyInAnyOrder(
+    assertThat(logTester.logs(Level.DEBUG)).containsExactlyInAnyOrder(
       "Unexpected error without any message for rule: 'detekt.EmptyIfBlock'");
   }
 

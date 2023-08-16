@@ -36,6 +36,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
@@ -45,14 +47,12 @@ import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.coverage.NewCoverage;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.WildcardPattern;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class GoCoverSensor implements Sensor {
 
-  private static final Logger LOG = Loggers.get(GoCoverSensor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(GoCoverSensor.class);
 
   public static final String REPORT_PATH_KEY = "sonar.go.coverage.reportPaths";
 

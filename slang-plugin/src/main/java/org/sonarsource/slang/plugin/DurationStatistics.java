@@ -28,13 +28,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.config.Configuration;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 
 class DurationStatistics {
 
-  private static final Logger LOG = Loggers.get(DurationStatistics.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DurationStatistics.class);
 
   private static final String PROPERTY_KEY = "sonar.slang.duration.statistics";
 

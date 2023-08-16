@@ -27,11 +27,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
-
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.event.Level;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
@@ -40,15 +39,12 @@ import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
-import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.api.rules.RuleType;
-import org.sonar.api.utils.log.LoggerLevel;
-import org.sonar.api.utils.log.ThreadLocalLogTester;
+import org.sonarsource.slang.testing.ThreadLocalLogTester;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@EnableRuleMigrationSupport
 public class ScalastyleSensorTest {
 
   private static final Path PROJECT_DIR = Paths.get("src", "test", "resources", "externalreport", "scalastyle");
@@ -62,7 +58,7 @@ public class ScalastyleSensorTest {
     analysisWarnings.clear();
   }
 
-  @Rule
+  @RegisterExtension
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
@@ -111,7 +107,7 @@ public class ScalastyleSensorTest {
     List<ExternalIssue> externalIssues = executeSensorImporting("invalid-path.txt");
     assertThat(externalIssues).isEmpty();
     String realPath = PROJECT_DIR.toRealPath().resolve("invalid-path.txt").toString();
-    List<String> warnings = logTester.logs(LoggerLevel.WARN);
+    List<String> warnings = logTester.logs(Level.WARN);
     assertThat(warnings)
       .hasSize(1)
       .hasSameSizeAs(analysisWarnings);
@@ -129,8 +125,8 @@ public class ScalastyleSensorTest {
     List<ExternalIssue> externalIssues = executeSensorImporting("invalid-scalastyle.txt");
     assertThat(externalIssues).isEmpty();
     String realPath = PROJECT_DIR.toRealPath().resolve("invalid-scalastyle.txt").toString();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).startsWith(
+    assertThat(logTester.logs(Level.ERROR)).hasSize(1);
+    assertThat(logTester.logs(Level.ERROR).get(0)).startsWith(
       "No issues information will be saved as the report file '" + realPath + "' can't be read. WstxUnexpectedCharException: "
           + "Unexpected character 'i' (code 105) in prolog; expected '<'");
   }
@@ -140,7 +136,7 @@ public class ScalastyleSensorTest {
     List<ExternalIssue> externalIssues = executeSensorImporting("invalid.xml");
     assertThat(externalIssues).isEmpty();
     String realPath = PROJECT_DIR.toRealPath().resolve("invalid.xml").toString();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).containsExactlyInAnyOrder(
+    assertThat(logTester.logs(Level.ERROR)).containsExactlyInAnyOrder(
       "No issues information will be saved as the report file '" + realPath + "' can't be read. " +
         "IOException: Unexpected document root 'invalid' instead of 'checkstyle'.");
   }
@@ -166,10 +162,10 @@ public class ScalastyleSensorTest {
     assertThat(second.primaryLocation().message()).isEqualTo("Missing line");
     assertThat(second.primaryLocation().textRange()).isNull();
 
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.WARN)).containsExactlyInAnyOrder(
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
+    assertThat(logTester.logs(Level.WARN)).containsExactlyInAnyOrder(
       "Fail to resolve 1 file path(s) in Scalastyle report. No issues imported related to file(s): /absolute/path/to/InvalidPath.scala");
-    assertThat(logTester.logs(LoggerLevel.DEBUG)).containsExactlyInAnyOrder(
+    assertThat(logTester.logs(Level.DEBUG)).containsExactlyInAnyOrder(
       "Missing information or unsupported file type for source:'', file:'/absolute/path/to/HelloWorld.scala', message:'Missing source'",
       "Missing information or unsupported file type for source:'com.sksamuel.scapegoat.inspections.EmptyCaseClass', file:'/absolute/path/to/HelloWorld.scala', message:''",
       "Missing information or unsupported file type for source:'', file:'/absolute/path/to/HelloWorld.scala', message:''");
@@ -180,8 +176,8 @@ public class ScalastyleSensorTest {
     List<ExternalIssue> externalIssues = executeSensorImporting("scalastyle-invalid-line.xml");
     assertThat(externalIssues).isEmpty();
     String realPath = PROJECT_DIR.toRealPath().resolve("scalastyle-invalid-line.xml").toString();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).startsWith(
+    assertThat(logTester.logs(Level.ERROR)).hasSize(1);
+    assertThat(logTester.logs(Level.ERROR).get(0)).startsWith(
       "No issues information will be saved as the report file '" + realPath + "' can't be read. NumberFormatException: ");
   }
 
@@ -189,8 +185,8 @@ public class ScalastyleSensorTest {
   void issues_when_xml_file_has_a_lot_of_errors() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("scalastyle-with-a-lot-of-errors.xml");
     assertThat(externalIssues).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.WARN)).containsExactlyInAnyOrder("" +
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
+    assertThat(logTester.logs(Level.WARN)).containsExactlyInAnyOrder("" +
       "Fail to resolve 30 file path(s) in Scalastyle report. No issues imported related to file(s): " +
       "/absolute/path/to/InvalidPath00.scala;/absolute/path/to/InvalidPath01.scala;/absolute/path/to/InvalidPath02.scala;" +
       "/absolute/path/to/InvalidPath03.scala;/absolute/path/to/InvalidPath04.scala;/absolute/path/to/InvalidPath05.scala;" +
@@ -199,7 +195,7 @@ public class ScalastyleSensorTest {
       "/absolute/path/to/InvalidPath12.scala;/absolute/path/to/InvalidPath13.scala;/absolute/path/to/InvalidPath14.scala;" +
       "/absolute/path/to/InvalidPath15.scala;/absolute/path/to/InvalidPath16.scala;/absolute/path/to/InvalidPath17.scala;" +
       "/absolute/path/to/InvalidPath18.scala;/absolute/path/to/InvalidPath19.scala;...");
-    assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
+    assertThat(logTester.logs(Level.DEBUG)).isEmpty();
   }
 
   public List<ExternalIssue> executeSensorImporting(@Nullable String fileName) throws IOException {
@@ -229,9 +225,9 @@ public class ScalastyleSensorTest {
   }
 
   public static void assertNoErrorWarnDebugLogs(ThreadLocalLogTester logTester) {
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.WARN)).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.DEBUG)).isEmpty();
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
+    assertThat(logTester.logs(Level.WARN)).isEmpty();
+    assertThat(logTester.logs(Level.DEBUG)).isEmpty();
   }
 
 }

@@ -19,26 +19,19 @@
  */
 package org.sonarsource.slang.testing;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
-import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.batch.rule.ActiveRule;
-import org.sonar.api.batch.sensor.internal.SensorContextTester;
-import org.sonar.api.impl.utils.JUnitTempFolder;
-import org.sonar.api.resources.Language;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.rule.ActiveRule;
+import org.sonar.api.resources.Language;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@EnableRuleMigrationSupport
 class AbstractSensorTestTest {
-
-  @org.junit.Rule
-  public JUnitTempFolder temp = new JUnitTempFolder();
 
   private static final SensorTester SENSOR = new SensorTester();
   private static final Language LANGUAGE = new Language() {
@@ -59,10 +52,9 @@ class AbstractSensorTestTest {
   };
 
   @BeforeEach
-  void setup() {
-    File baseDir = temp.newDir();
-    SENSOR.context = SensorContextTester.create(baseDir);
-    SENSOR.baseDir = baseDir;
+  void setup(@TempDir File tmpBaseDir) throws Exception {
+    SENSOR.logTester.beforeEach(null);
+    SENSOR.setup(tmpBaseDir);
   }
 
   @Test

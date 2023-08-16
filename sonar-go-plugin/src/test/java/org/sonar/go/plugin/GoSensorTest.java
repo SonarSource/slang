@@ -32,7 +32,8 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.event.Level;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.ActiveRules;
@@ -49,8 +50,7 @@ import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.rule.RuleKey;
-import org.sonar.api.utils.log.LoggerLevel;
-import org.sonar.api.utils.log.ThreadLocalLogTester;
+import org.sonarsource.slang.testing.ThreadLocalLogTester;
 import org.sonar.go.converter.GoConverter;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.testing.AbstractSensorTest;
@@ -63,7 +63,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-@EnableRuleMigrationSupport
 class GoSensorTest {
 
   private Path workDir;
@@ -73,7 +72,7 @@ class GoSensorTest {
   private FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
   private FileLinesContextTester fileLinesContext;
 
-  @org.junit.Rule
+  @RegisterExtension
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @BeforeEach
@@ -147,7 +146,7 @@ class GoSensorTest {
     sensorContext.fileSystem().add(failingFile);
     GoSensor goSensor = getSensor("S1135");
     goSensor.execute(sensorContext);
-    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("Cannot read 'lets.go': The file is corrupted");
+    assertThat(logTester.logs(Level.ERROR)).contains("Cannot read 'lets.go': The file is corrupted");
   }
 
   @Test
@@ -156,7 +155,7 @@ class GoSensorTest {
     sensorContext.fileSystem().add(failingFile);
     GoSensor goSensor = getSensor("S1135");
     goSensor.execute(sensorContext);
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
   }
 
   @Test

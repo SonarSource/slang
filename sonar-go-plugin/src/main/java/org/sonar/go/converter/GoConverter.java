@@ -29,8 +29,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.Tree;
@@ -41,7 +41,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class GoConverter implements ASTConverter {
 
   private static final long MAX_SUPPORTED_SOURCE_FILE_SIZE = 1_500_000L;
-  private static final Logger LOG = Loggers.get(GoConverter.class);
+  private static final Logger LOG = LoggerFactory.getLogger(GoConverter.class);
   private static final long PROCESS_TIMEOUT_MS = 5_000;
 
   private final ProcessBuilder processBuilder;

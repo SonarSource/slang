@@ -35,7 +35,7 @@ class ScalaRulesDefinitionTest {
   void rules() {
     RulesDefinition.Repository repository = getRepositoryForVersion(Version.create(9, 3));
 
-    assertThat(repository.name()).isEqualTo("SonarQube");
+    assertThat(repository.name()).isEqualTo("Sonar");
     assertThat(repository.language()).isEqualTo("scala");
 
     RulesDefinition.Rule rule = repository.rule("ParsingError");

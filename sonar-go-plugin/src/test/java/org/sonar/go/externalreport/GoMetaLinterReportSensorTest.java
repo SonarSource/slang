@@ -22,24 +22,21 @@ package org.sonar.go.externalreport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.event.Level;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
 import org.sonar.api.rules.RuleType;
-import org.sonar.api.utils.log.LoggerLevel;
-import org.sonar.api.utils.log.ThreadLocalLogTester;
+import org.sonarsource.slang.testing.ThreadLocalLogTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonar.go.externalreport.AbstractReportSensor.GENERIC_ISSUE_KEY;
 import static org.sonar.go.externalreport.ExternalLinterSensorHelper.REPORT_BASE_PATH;
 
-@EnableRuleMigrationSupport
 class GoMetaLinterReportSensorTest {
 
   private final List<String> analysisWarnings = new ArrayList<>();
@@ -49,7 +46,7 @@ class GoMetaLinterReportSensorTest {
     analysisWarnings.clear();
   }
 
-  @Rule
+  @RegisterExtension
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
@@ -91,7 +88,7 @@ class GoMetaLinterReportSensorTest {
     assertThat(third.primaryLocation().message()).isEqualTo("exported type User should have comment or be unexported");
     assertThat(third.primaryLocation().textRange().start().line()).isEqualTo(3);
 
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
   }
 
   @Test
@@ -100,9 +97,9 @@ class GoMetaLinterReportSensorTest {
     context.settings().setProperty("sonar.go.gometalinter.reportPaths", REPORT_BASE_PATH.resolve("gometalinter-report-with-error.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goMetaLinterReportSensor(), context);
     assertThat(externalIssues).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.DEBUG)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.DEBUG).get(0)).startsWith("GoMetaLinterReportSensor: Unexpected line: invalid-invalid-invalid");
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
+    assertThat(logTester.logs(Level.DEBUG)).hasSize(1);
+    assertThat(logTester.logs(Level.DEBUG).get(0)).startsWith("GoMetaLinterReportSensor: Unexpected line: invalid-invalid-invalid");
   }
 
   @Test

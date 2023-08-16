@@ -22,7 +22,8 @@ package org.sonarsource.slang.testing;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.io.TempDir;
 import org.sonar.api.SonarEdition;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
@@ -32,36 +33,30 @@ import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.rule.internal.NewActiveRule;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
-import org.sonar.api.impl.utils.JUnitTempFolder;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.resources.Language;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.Version;
-import org.sonar.api.utils.log.ThreadLocalLogTester;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@EnableRuleMigrationSupport
 public abstract class AbstractSensorTest {
-
-  @org.junit.Rule
-  public JUnitTempFolder temp = new JUnitTempFolder();
 
   protected File baseDir;
   protected SensorContextTester context;
   protected FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
   public static final SonarRuntime SQ_LTS_RUNTIME = SonarRuntimeImpl.forSonarQube(Version.create(8, 9), SonarQubeSide.SCANNER, SonarEdition.DEVELOPER);
 
-  @org.junit.Rule
+  @RegisterExtension
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @BeforeEach
-  public void setup() {
-    baseDir = temp.newDir();
+  public void setup(@TempDir File tmpBaseDir) {
+    baseDir = tmpBaseDir;
     context = SensorContextTester.create(baseDir);
     FileLinesContext fileLinesContext = mock(FileLinesContext.class);
     when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);

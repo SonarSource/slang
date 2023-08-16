@@ -22,23 +22,20 @@ package org.sonar.go.externalreport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.event.Level;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
 import org.sonar.api.rules.RuleType;
-import org.sonar.api.utils.log.LoggerLevel;
-import org.sonar.api.utils.log.ThreadLocalLogTester;
+import org.sonarsource.slang.testing.ThreadLocalLogTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonar.go.externalreport.ExternalLinterSensorHelper.REPORT_BASE_PATH;
 
-@EnableRuleMigrationSupport
 class GolangCILintReportSensorTest {
 
   private final List<String> analysisWarnings = new ArrayList<>();
@@ -48,7 +45,7 @@ class GolangCILintReportSensorTest {
     analysisWarnings.clear();
   }
 
-  @Rule
+  @RegisterExtension
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
@@ -87,7 +84,7 @@ class GolangCILintReportSensorTest {
     assertThat(second.primaryLocation().inputComponent().key()).isEqualTo("module:main.go");
     assertThat(second.primaryLocation().textRange().start().line()).isEqualTo(4);
 
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
   }
 
 

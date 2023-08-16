@@ -7,7 +7,7 @@ dependencies {
     testImplementation project(':slang-testing')
     testImplementation "org.junit.jupiter:junit-jupiter-api"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
-    testImplementation "org.junit.jupiter:junit-jupiter-migrationsupport"
     testImplementation 'org.assertj:assertj-core'
     testImplementation 'org.sonarsource.analyzer-commons:sonar-analyzer-test-commons'
+    testImplementation 'org.sonarsource.api.plugin:sonar-plugin-api-test-fixtures'
 }

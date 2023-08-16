@@ -26,13 +26,13 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 class ExternalProcessStreamConsumer {
 
-  private static final Logger LOG = Loggers.get(ExternalProcessStreamConsumer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ExternalProcessStreamConsumer.class);
   private ExecutorService executorService;
 
   public ExternalProcessStreamConsumer() {

@@ -21,30 +21,24 @@ package org.sonarsource.slang.plugin;
 
 import java.io.File;
 import java.util.List;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
-import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.cpd.internal.TokensLine;
+import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.parser.SLangConverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@EnableRuleMigrationSupport
 class CpdVisitorTest {
 
-  @Rule
-  public TemporaryFolder tempFolder = new TemporaryFolder();
-
   @Test
-  void test() throws Exception {
-    File file = tempFolder.newFile();
+  void test(@TempDir File tempFolder) throws Exception {
+    File file = File.createTempFile("file", ".tmp", tempFolder);
     String content = "import util; foo(x\n * 42 \n+ \"abc\");";
-    SensorContextTester sensorContext = SensorContextTester.create(tempFolder.getRoot());
+    SensorContextTester sensorContext = SensorContextTester.create(tempFolder);
     DefaultInputFile inputFile = new TestInputFileBuilder("moduleKey", file.getName())
       .setContents(content)
       .build();

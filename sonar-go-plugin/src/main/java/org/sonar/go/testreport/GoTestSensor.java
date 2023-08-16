@@ -36,6 +36,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.FileSystem;
@@ -45,14 +47,12 @@ import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.measures.CoreMetrics;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 import org.sonar.go.coverage.GoPathContext;
 import org.sonar.go.plugin.GoLanguage;
 
 public class GoTestSensor implements Sensor {
 
-  private static final Logger LOG = Loggers.get(GoTestSensor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(GoTestSensor.class);
 
   public static final String REPORT_PATH_KEY = "sonar.go.tests.reportPaths";
 

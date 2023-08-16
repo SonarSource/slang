@@ -30,6 +30,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.Severity;
@@ -38,8 +40,6 @@ import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.RuleType;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.xml.SafeStaxParserFactory;
 
 /**
@@ -47,7 +47,7 @@ import org.sonarsource.analyzer.commons.xml.SafeStaxParserFactory;
  */
 public class CheckstyleFormatImporter {
 
-  private static final Logger LOG = Loggers.get(CheckstyleFormatImporter.class);
+  private static final Logger LOG = LoggerFactory.getLogger(CheckstyleFormatImporter.class);
 
   private static final Long DEFAULT_CONSTANT_DEBT_MINUTES = 5L;
 

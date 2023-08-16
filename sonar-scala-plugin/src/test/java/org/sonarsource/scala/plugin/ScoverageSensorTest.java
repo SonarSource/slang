@@ -27,11 +27,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.event.Level;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
@@ -39,13 +38,11 @@ import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.config.internal.MapSettings;
-import org.sonar.api.utils.log.LoggerLevel;
-import org.sonar.api.utils.log.ThreadLocalLogTester;
+import org.sonarsource.slang.testing.ThreadLocalLogTester;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@EnableRuleMigrationSupport
 class ScoverageSensorTest {
 
   private static final Path COVERAGE_DIR = Paths.get("src", "test", "resources", "coverage");
@@ -57,7 +54,7 @@ class ScoverageSensorTest {
     ANALYSIS_WARNINGS.clear();
   }
 
-  @Rule
+  @RegisterExtension
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
@@ -76,7 +73,7 @@ class ScoverageSensorTest {
 
     newSCoverageSensor().execute(context);
 
-    List<String> warnings = logTester.logs(LoggerLevel.WARN);
+    List<String> warnings = logTester.logs(Level.WARN);
     assertThat(warnings)
       .hasSize(1)
       .hasSameSizeAs(ANALYSIS_WARNINGS);
@@ -154,8 +151,8 @@ class ScoverageSensorTest {
 
     String expectedMessage = "File '" + reportPath.toString() +
       "' can't be read. com.ctc.wstx.exc.WstxUnexpectedCharException: Unexpected character 's' (code 115) in prolog; expected '<'";
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).startsWith(expectedMessage);
+    assertThat(logTester.logs(Level.ERROR)).hasSize(1);
+    assertThat(logTester.logs(Level.ERROR).get(0)).startsWith(expectedMessage);
   }
 
   @Test
@@ -168,8 +165,8 @@ class ScoverageSensorTest {
     newSCoverageSensor().execute(context);
 
     String expectedMessage = "File '" + reportPath.toString() + "' can't be read. java.lang.NumberFormatException";
-    assertThat(logTester.logs(LoggerLevel.ERROR)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR).get(0)).contains(expectedMessage);
+    assertThat(logTester.logs(Level.ERROR)).hasSize(1);
+    assertThat(logTester.logs(Level.ERROR).get(0)).contains(expectedMessage);
   }
 
   private static ScoverageSensor newSCoverageSensor() {

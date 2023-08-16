@@ -28,14 +28,14 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.notifications.AnalysisWarnings;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ExternalRuleLoader;
 import org.sonarsource.analyzer.commons.internal.json.simple.parser.ParseException;
 import org.sonarsource.ruby.plugin.RubyPlugin;
@@ -43,7 +43,7 @@ import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
 
 public class RuboCopSensor extends AbstractPropertyHandlerSensor {
 
-  private static final Logger LOG = Loggers.get(RuboCopSensor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(RuboCopSensor.class);
 
   static final String LINTER_KEY = "rubocop";
 

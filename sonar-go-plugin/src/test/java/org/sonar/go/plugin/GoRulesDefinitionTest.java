@@ -48,7 +48,7 @@ class GoRulesDefinitionTest {
 
     RulesDefinition.Repository goRepository = context.repository("go");
 
-    assertThat(goRepository.name()).isEqualTo("SonarQube");
+    assertThat(goRepository.name()).isEqualTo("Sonar");
     assertThat(goRepository.language()).isEqualTo("go");
     assertThat(goRepository.rules()).hasSize(GoCheckList.checks().size());
 

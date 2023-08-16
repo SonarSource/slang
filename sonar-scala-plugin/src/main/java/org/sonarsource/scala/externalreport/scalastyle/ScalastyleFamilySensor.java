@@ -28,20 +28,20 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.xml.stream.XMLStreamException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.notifications.AnalysisWarnings;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.analyzer.commons.ExternalRuleLoader;
 import org.sonarsource.scala.plugin.ScalaPlugin;
 import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
 
 public abstract class ScalastyleFamilySensor extends AbstractPropertyHandlerSensor {
 
-  private static final Logger LOG = Loggers.get(ScalastyleFamilySensor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ScalastyleFamilySensor.class);
 
   private static final int MAX_LOGGED_FILE_NAMES = 20;
 

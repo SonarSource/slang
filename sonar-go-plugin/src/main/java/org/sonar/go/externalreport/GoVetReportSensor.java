@@ -22,15 +22,14 @@ package org.sonar.go.externalreport;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.api.rules.RuleType;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 
 public class GoVetReportSensor extends AbstractReportSensor {
 
-  private static final Logger LOG = Loggers.get(GoVetReportSensor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(GoVetReportSensor.class);
 
   public static final String PROPERTY_KEY = "sonar.go.govet.reportPaths";
 

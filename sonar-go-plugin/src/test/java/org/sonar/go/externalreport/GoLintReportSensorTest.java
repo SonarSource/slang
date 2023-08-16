@@ -23,24 +23,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.event.Level;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
 import org.sonar.api.rules.RuleType;
-import org.sonar.api.utils.log.LoggerLevel;
-import org.sonar.api.utils.log.ThreadLocalLogTester;
+import org.sonarsource.slang.testing.ThreadLocalLogTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonar.go.externalreport.AbstractReportSensor.GENERIC_ISSUE_KEY;
 import static org.sonar.go.externalreport.ExternalLinterSensorHelper.REPORT_BASE_PATH;
 
-@EnableRuleMigrationSupport
 class GoLintReportSensorTest {
 
   private final List<String> analysisWarnings = new ArrayList<>();
@@ -50,7 +47,7 @@ class GoLintReportSensorTest {
     analysisWarnings.clear();
   }
 
-  @Rule
+  @RegisterExtension
   public ThreadLocalLogTester logTester = new ThreadLocalLogTester();
 
   @Test
@@ -84,7 +81,7 @@ class GoLintReportSensorTest {
     assertThat(second.primaryLocation().message()).isEqualTo("exported type User should have comment or be unexported");
     assertThat(second.primaryLocation().textRange().start().line()).isEqualTo(2);
 
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
   }
 
   @Test
@@ -92,7 +89,7 @@ class GoLintReportSensorTest {
     SensorContextTester context = ExternalLinterSensorHelper.createContext();
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goLintReportSensor(), context);
     assertThat(externalIssues).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
   }
 
   @Test
@@ -101,7 +98,7 @@ class GoLintReportSensorTest {
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("invalid-path.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goLintReportSensor(), context);
     assertThat(externalIssues).isEmpty();
-    List<String> warnings = logTester.logs(LoggerLevel.WARN);
+    List<String> warnings = logTester.logs(Level.WARN);
     assertThat(warnings)
       .hasSize(1)
       .hasSameSizeAs(analysisWarnings);
@@ -120,9 +117,9 @@ class GoLintReportSensorTest {
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("golint-report-with-error.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goLintReportSensor(), context);
     assertThat(externalIssues).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.ERROR)).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.DEBUG)).hasSize(1);
-    assertThat(logTester.logs(LoggerLevel.DEBUG).get(0)).startsWith("GoLintReportSensor: Unexpected line: xyz");
+    assertThat(logTester.logs(Level.ERROR)).isEmpty();
+    assertThat(logTester.logs(Level.DEBUG)).hasSize(1);
+    assertThat(logTester.logs(Level.DEBUG).get(0)).startsWith("GoLintReportSensor: Unexpected line: xyz");
   }
 
   @Test
@@ -131,7 +128,7 @@ class GoLintReportSensorTest {
     context.settings().setProperty("sonar.go.golint.reportPaths", REPORT_BASE_PATH.resolve("golint-report-with-wrong-file.txt").toString());
     List<ExternalIssue> externalIssues = ExternalLinterSensorHelper.executeSensor(goLintReportSensor(), context);
     assertThat(externalIssues).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.WARN))
+    assertThat(logTester.logs(Level.WARN))
       .hasSize(1)
       .contains("GoLintReportSensor: No input file found for foo.go. No Golint issues will be imported on this file.");
   }
