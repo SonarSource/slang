@@ -1,31 +1,39 @@
 <h2>Why is this an issue?</h2>
-<p>When two methods have the same implementation, either it was a mistake - something else was intended - or the duplication was intentional, but may
-be confusing to maintainers. In the latter case, one implementation should invoke the other.</p>
-<h3>Noncompliant code example</h3>
-<pre>
-class Box(length: Int, width: Int, height: Int) {
-  def volume: Int = {
-    val s = length * width
-    s * height
+<p>Two methods having the same implementation are suspicious. It might be that something else was intended. Or the duplication is intentional, which
+becomes a maintenance burden.</p>
+<pre data-diff-id="1" data-diff-type="noncompliant">
+class Circle(var radius: Int) {
+  def width_=(size: Int) {
+    radius = size / 2
+    updateShape()
   }
 
-  def area: Int = {
-    val s = length * width
-    s * height
+  def height_=(size: Int) { // Noncompliant: duplicates width_
+    radius = size / 2
+    updateShape()
   }
+
+  def updateShape() = {...}
 }
 </pre>
-<h3>Compliant solution</h3>
-<pre>
-class Box(length: Int, width: Int, height: Int) {
-  def volume: Int = {
-    val s = length * width
-    s * height
+<p>If the identical logic is intentional, the code should be refactored to avoid duplication. For example, by having both methods call the same method
+or by having one implementation invoke the other.</p>
+<pre data-diff-id="1" data-diff-type="compliant">
+class Circle(var radius: Int) {
+  def width_=(size: Int) {
+    diameter = size
   }
 
-  def area: Int = {
-    length * width
+  def height_=(size: Int) {
+    diameter = size
   }
+
+  def diameter_=(size: Int) { // Implementation is shared
+    radius = size / 2
+    updateShape()
+  }
+
+  def updateShape() = {...}
 }
 </pre>
 <h3>Exceptions</h3>

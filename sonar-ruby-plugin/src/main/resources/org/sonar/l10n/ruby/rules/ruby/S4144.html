@@ -1,37 +1,50 @@
 <h2>Why is this an issue?</h2>
-<p>When two methods have the same implementation, either it was a mistake - something else was intended - or the duplication was intentional, but may
-be confusing to maintainers. In the latter case, one implementation should invoke the other.</p>
-<h3>Noncompliant code example</h3>
-<pre>
-class Box
-  def initialize(length, width, height)
-    @length, @width, @height = length, width, height
+<p>Two methods having the same implementation are suspicious. It might be that something else was intended. Or the duplication is intentional, which
+becomes a maintenance burden.</p>
+<pre data-diff-id="1" data-diff-type="noncompliant">
+class Circle
+  def initialize(radius)
+    @radius = radius
   end
 
-  def getVolume
-    area = @length * @width
-    return area * @height
+  def width=(size)
+    @radius = size / 2
+    update_shape()
   end
 
-  def getArea                  # Noncompliant, implementation is identical to "getVolume"
-    area = @length * @width
-    return area * @height
+  def height=(size) # Noncompliant: duplicates width
+    @radius = size / 2
+    update_shape()
+  end
+
+  def updateShape()
+    ...
   end
 end
 </pre>
-<h3>Compliant solution</h3>
-<pre>
-class Box
-  def initialize(length, width, height)
-    @length, @width, @height = length, width, height
+<p>If the identical logic is intentional, the code should be refactored to avoid duplication. For example, by having both methods call the same method
+or by having one implementation invoke the other.</p>
+<pre data-diff-id="1" data-diff-type="compliant">
+class Circle
+  def initialize(radius)
+    @radius = radius
   end
 
-  def getVolume
-    return getArea * @height
+  def width=(width)
+    self.diameter = width
   end
 
-  def getArea
-    return @length * @width
+  def height=(height)
+    self.diameter = height
+  end
+
+  def diameter=(diameter)  # Implementation is shared
+    @radius = diameter / 2
+    update_shape()
+  end
+
+  def update_shape()
+    # ...
   end
 end
 </pre>

@@ -1,6 +1,6 @@
 <h2>Why is this an issue?</h2>
-<p>Most of the time a block of code is empty when a piece of code is really missing. So such empty block must be either filled or removed.</p>
-<h3>Noncompliant code example</h3>
+<p>An empty code block is confusing. It will require some effort from maintainers to determine if it is intentional or indicates the implementation is
+incomplete.</p>
 <pre>
 func compute(a int, b int) {
 	sum := a + b
@@ -8,17 +8,11 @@ func compute(a int, b int) {
 	fmt.Println("Result:", sum)
 }
 </pre>
-<h3>Compliant solution</h3>
-<pre>
-func compute(a int, b int) {
-	sum := a + b
-	if  sum &gt; 0 {
-		fmt.Println("Positive result")
-	}
-	fmt.Println("Result:", sum)
-}
-</pre>
+<p>Removing or filling the empty code blocks takes away ambiguity and generally results in a more straightforward and less surprising code.</p>
 <h3>Exceptions</h3>
-<p>When a block contains a comment, this block is not considered to be empty. <code>for</code> without <code>init</code> and <code>post</code>
-statements with empty blocks are ignored as well.</p>
+<p>The rule ignores:</p>
+<ul>
+  <li> code blocks that contain comments. </li>
+  <li> <code>for</code> without <code>init</code> and <code>post</code> statements with empty blocks </li>
+</ul>
 

@@ -1,17 +1,38 @@
 <h2>Why is this an issue?</h2>
-<p>A long parameter list can indicate that a new structure should be created to wrap the numerous parameters or that the function is doing too many
-things.</p>
-<h3>Noncompliant code example</h3>
-<p>With a maximum number of 4 parameters:</p>
+<p>Functions with a long parameter list are difficult to use, as maintainers must figure out the role of each parameter and keep track of their
+position.</p>
 <pre>
-func foo(p1 int, p2 int, p3 int, p4 int, p5 int) { // Noncompliant
-  // ...
+func setCoordinates(x1 int, y1 int, z1 int, x2 int, y2 int, z2 int) { // Noncompliant
+    // ...
 }
 </pre>
-<h3>Compliant solution</h3>
+<p>The solution can be to:</p>
+<ul>
+  <li> Split the function into smaller ones </li>
+</ul>
 <pre>
-func foo(p1 int, p2 int, p3 int, p4 int) {
-  // ...
+// Each function does a part of what the original setCoordinates function was doing, so confusion risks are lower
+func setOrigin(x int, y int, z int) {
+   // ...
+}
+
+func setSize(width int, height int, depth int) {
+   // ...
 }
 </pre>
+<ul>
+  <li> Find a better data structure for the parameters that group data in a way that makes sense for the specific application domain </li>
+</ul>
+<pre>
+type point struct { // In geometry, Point is a logical structure to group data
+    x int
+    y int
+    z int
+}
+
+func setCoordinates(p1 point, p2 point) {
+    // ...
+}
+</pre>
+<p>This rule raises an issue when a function has more parameters than the provided threshold.</p>
 

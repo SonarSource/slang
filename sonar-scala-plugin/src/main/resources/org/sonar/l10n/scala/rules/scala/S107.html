@@ -1,4 +1,36 @@
 <h2>Why is this an issue?</h2>
-<p>A long parameter list can indicate that a new structure should be created to wrap the numerous parameters or that the function is doing too many
-things.</p>
+<p>Functions with a long parameter list are difficult to use, as maintainers must figure out the role of each parameter and keep track of their
+position.</p>
+<pre>
+def setCoordinates(x1:Int, y1:Int, z1:Int, x2:Int, y2:Int, z2:Int): Unit = { // Noncompliant
+    // ...
+}
+</pre>
+<p>The solution can be to:</p>
+<ul>
+  <li> Split the function into smaller ones </li>
+</ul>
+<pre>
+// Each function does a part of what the original setCoordinates function was doing, so confusion risks are lower
+def setOrigin(x:Int, y:Int, z:Int): Unit = {
+   // ...
+}
+
+def setSize(width:Int, height:Int, depth:Int): Unit = {
+   // ...
+}
+</pre>
+<ul>
+  <li> Find a better data structure for the parameters that group data in a way that makes sense for the specific application domain </li>
+</ul>
+<pre>
+class Point(var x: Int, var y: Int, var z: Int) { // In geometry, Point is a logical structure to group data
+}
+
+
+def setCoordinates(p1:Point, p2:Point) : Unit = {
+   // ...
+}
+</pre>
+<p>This rule raises an issue when a function has more parameters than the provided threshold.</p>
 

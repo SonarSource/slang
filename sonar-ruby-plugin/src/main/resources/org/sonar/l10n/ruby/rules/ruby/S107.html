@@ -1,4 +1,34 @@
 <h2>Why is this an issue?</h2>
-<p>A long parameter list can indicate that a new structure should be created to wrap the numerous parameters or that the function is doing too many
-things.</p>
+<p>Functions with a long parameter list are difficult to use, as maintainers must figure out the role of each parameter and keep track of their
+position.</p>
+<pre>
+def modify(x1, y1, z1, x2, y2, z2) # Noncompliant
+ # ...
+end
+</pre>
+<p>The solution can be to:</p>
+<ul>
+  <li> Split the function into smaller ones </li>
+</ul>
+<pre>
+# Each function does a part of what the original distance function was doing, so confusion risks are lower
+def move(x, y, z)
+   # ...
+end
+
+def resize(width, height, depth)
+   # ...
+end
+</pre>
+<ul>
+  <li> Find a better data structure for the parameters that group data in a way that makes sense for the specific application domain </li>
+</ul>
+<pre>
+Point = Struct.new(:x, :y, :z) # In geometry, Point is a logical structure to group data
+
+def modify(p1, p2)
+ # ...
+end
+</pre>
+<p>This rule raises an issue when a function has more parameters than the provided threshold.</p>
 
