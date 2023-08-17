@@ -121,7 +121,7 @@ public class CheckstyleFormatImporter {
       predicates.hasAbsolutePath(filePath),
       predicates.hasRelativePath(filePath)));
     if (inputFile == null) {
-      LOG.warn("No input file found for {}. No " + linterKey + " issues will be imported on this file.", filePath);
+      LOG.warn("No input file found for {}. No {} issues will be imported on this file.", filePath, linterKey);
     }
   }
 

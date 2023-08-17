@@ -17,25 +17,26 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.api;
+package org.sonarsource.slang.utils;
 
-import javax.annotation.Nullable;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public interface ASTConverter {
+import static org.assertj.core.api.Assertions.assertThat;
 
-  /**
-   * Use {@link ASTConverter#parse(String, String)} instead.
-   * It provides improved logging when used with ASTConverterValidation.
-   */
-  @Deprecated(since = "1.8")
-  Tree parse(String content);
+class LogArgTest {
 
-  default Tree parse(String content, @Nullable String currentFile) {
-    return parse(content);
+  private static Logger LOG = LoggerFactory.getLogger(LogArgTest.class);
+
+  @Test
+  void to_string() {
+    AtomicInteger counter = new AtomicInteger(42);
+    Object arg = LogArg.lazyArg(() -> "counter: " + counter.incrementAndGet());
+    assertThat(counter.get()).isEqualTo(42);
+    LOG.info("Test {}", arg);
+    assertThat(counter.get()).isEqualTo(43);
+    assertThat(arg).hasToString("counter: 44");
   }
-
-  default void terminate() {
-    // Nothing to do by default
-  }
-
 }

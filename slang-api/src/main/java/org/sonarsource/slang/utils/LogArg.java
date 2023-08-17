@@ -17,25 +17,32 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonarsource.slang.api;
+package org.sonarsource.slang.utils;
 
-import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
-public interface ASTConverter {
+/**
+ * slf4j does not support lambda argument, so this object wrap the lambda into an object
+ * that invoke the lambda when toString is called by the logger.
+ */
+public class LogArg {
 
-  /**
-   * Use {@link ASTConverter#parse(String, String)} instead.
-   * It provides improved logging when used with ASTConverterValidation.
-   */
-  @Deprecated(since = "1.8")
-  Tree parse(String content);
+  private final Supplier<String> supplier;
 
-  default Tree parse(String content, @Nullable String currentFile) {
-    return parse(content);
+  public LogArg(Supplier<String> supplier) {
+    this.supplier = supplier;
   }
 
-  default void terminate() {
-    // Nothing to do by default
+  /**
+   * wrap a lambda that will only be called by the logger when the toString is called.
+   */
+  public static Object lazyArg(Supplier<String> supplier) {
+    return new LogArg(supplier);
+  }
+
+  @Override
+  public String toString() {
+    return supplier.get();
   }
 
 }

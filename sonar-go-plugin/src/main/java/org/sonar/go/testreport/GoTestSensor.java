@@ -110,7 +110,7 @@ public class GoTestSensor implements Sensor {
             .computeIfAbsent(testFile, key -> new ArrayList<>())
             .add(testInfo);
         } else {
-          LOG.warn("Failed to find test file for package " + testInfo.pkg + " and test " + testInfo.test);
+          LOG.warn("Failed to find test file for package {} and test {}", testInfo.pkg, testInfo.test);
         }
       }
     } catch (IOException e) {
@@ -126,7 +126,7 @@ public class GoTestSensor implements Sensor {
         return testInfo;
       }
     } catch (Exception e) {
-      LOG.error("Failed to parse unit test report line (file " + reportPath + "):\n " + line);
+      LOG.error("Failed to parse unit test report line (file {}):\n {}", reportPath, line);
     }
 
     return null;

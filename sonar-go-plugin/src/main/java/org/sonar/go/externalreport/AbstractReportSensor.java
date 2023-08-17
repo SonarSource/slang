@@ -48,6 +48,7 @@ import org.sonar.go.plugin.GoLanguage;
 import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.sonarsource.slang.utils.LogArg.lazyArg;
 
 public abstract class AbstractReportSensor extends AbstractPropertyHandlerSensor {
 
@@ -84,8 +85,8 @@ public abstract class AbstractReportSensor extends AbstractPropertyHandlerSensor
         }
       }
     } catch (IOException e) {
-      LOG.error(logPrefix() + "No issues information will be saved as the report file '{}' can't be read.",
-        report.getPath(), e);
+      LOG.error("{}No issues information will be saved as the report file '{}' can't be read.",
+        lazyArg(this::logPrefix), report.getPath(), e);
     }
   }
 
@@ -106,7 +107,7 @@ public abstract class AbstractReportSensor extends AbstractPropertyHandlerSensor
     FilePredicates predicates = context.fileSystem().predicates();
     InputFile inputFile = context.fileSystem().inputFile(predicates.or(predicates.hasRelativePath(filePath), predicates.hasAbsolutePath(filePath)));
     if (inputFile == null) {
-      LOG.warn(logPrefix() + "No input file found for {}. No {} issues will be imported on this file.", filePath, propertyName());
+      LOG.warn("{}No input file found for {}. No {} issues will be imported on this file.", lazyArg(this::logPrefix), filePath, propertyName());
     }
     return inputFile;
   }

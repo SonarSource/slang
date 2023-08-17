@@ -182,7 +182,7 @@ public abstract class SlangSensor implements Sensor {
     if (position != null) {
       positionMessage = String.format("Parse error at position %s:%s", position.line(), position.lineOffset());
     }
-    LOG.error(String.format("Unable to parse file: %s. %s", inputFile.uri(), positionMessage));
+    LOG.error("Unable to parse file: {}. {}", inputFile.uri(), positionMessage);
     LOG.error(e.getMessage());
   }
 

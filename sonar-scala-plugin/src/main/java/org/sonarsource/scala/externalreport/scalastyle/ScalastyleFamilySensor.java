@@ -39,6 +39,8 @@ import org.sonarsource.analyzer.commons.ExternalRuleLoader;
 import org.sonarsource.scala.plugin.ScalaPlugin;
 import org.sonarsource.slang.plugin.AbstractPropertyHandlerSensor;
 
+import static org.sonarsource.slang.utils.LogArg.lazyArg;
+
 public abstract class ScalastyleFamilySensor extends AbstractPropertyHandlerSensor {
 
   private static final Logger LOG = LoggerFactory.getLogger(ScalastyleFamilySensor.class);
@@ -69,11 +71,14 @@ public abstract class ScalastyleFamilySensor extends AbstractPropertyHandlerSens
     if (unresolvedInputFiles.isEmpty()) {
       return;
     }
-    String fileList = unresolvedInputFiles.stream().sorted().limit(MAX_LOGGED_FILE_NAMES).collect(Collectors.joining(";"));
-    if (unresolvedInputFiles.size() > MAX_LOGGED_FILE_NAMES) {
-      fileList += ";...";
-    }
-    LOG.warn("Fail to resolve {} file path(s) in " + propertyName() + " report. No issues imported related to file(s): {}", unresolvedInputFiles.size(), fileList);
+    LOG.warn("Fail to resolve {} file path(s) in {} report. No issues imported related to file(s): {}", unresolvedInputFiles.size(), propertyName(),
+      lazyArg(() -> {
+        String fileList = unresolvedInputFiles.stream().sorted().limit(MAX_LOGGED_FILE_NAMES).collect(Collectors.joining(";"));
+        if (unresolvedInputFiles.size() > MAX_LOGGED_FILE_NAMES) {
+          fileList += ";...";
+        }
+        return fileList;
+      }));
   }
 
   private void importReport(File reportPath, SensorContext context, Set<String> unresolvedInputFiles) {

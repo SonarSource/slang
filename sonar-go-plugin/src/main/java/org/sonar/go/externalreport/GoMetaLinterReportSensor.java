@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.api.rules.RuleType;
 
+import static org.sonarsource.slang.utils.LogArg.lazyArg;
+
 public class GoMetaLinterReportSensor extends AbstractReportSensor {
 
   private static final Logger LOG = LoggerFactory.getLogger(GoMetaLinterReportSensor.class);
@@ -60,7 +62,7 @@ public class GoMetaLinterReportSensor extends AbstractReportSensor {
       }
       return new ExternalIssue(linter, type, ruleKey, filename, lineNumber, message);
     } else {
-      LOG.debug(logPrefix() + "Unexpected line: " + line);
+      LOG.debug("{}Unexpected line: {}", lazyArg(this::logPrefix), line);
     }
     return null;
   }

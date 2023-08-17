@@ -47,6 +47,8 @@ import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.PlaceHolderTreeImpl;
 import org.sonarsource.slang.impl.TextPointerImpl;
 
+import static org.sonarsource.slang.utils.LogArg.lazyArg;
+
 public class ASTConverterValidation implements ASTConverter {
 
   private static final Logger LOG = LoggerFactory.getLogger(ASTConverterValidation.class);
@@ -105,8 +107,8 @@ public class ASTConverterValidation implements ASTConverter {
   public void terminate() {
     List<String> errors = errors();
     if (!errors.isEmpty()) {
-      LOG.error("AST Converter Validation detected " + errors.size() + " errors:\n  [AST ERROR] "
-        + String.join("\n  [AST ERROR] ", errors));
+      String delimiter = "\n  [AST ERROR] ";
+      LOG.error("AST Converter Validation detected {} errors:{}{}", errors.size(), delimiter, lazyArg(() -> String.join(delimiter, errors)));
     }
     wrapped.terminate();
   }

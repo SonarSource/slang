@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.sonar.api.notifications.AnalysisWarnings;
 import org.sonar.api.rules.RuleType;
 
+import static org.sonarsource.slang.utils.LogArg.lazyArg;
+
 public class GoVetReportSensor extends AbstractReportSensor {
 
   private static final Logger LOG = LoggerFactory.getLogger(GoVetReportSensor.class);
@@ -52,7 +54,7 @@ public class GoVetReportSensor extends AbstractReportSensor {
       String message = matcher.group("message").trim();
       return new ExternalIssue(LINTER_ID, RuleType.BUG, null, filename, lineNumber, message);
     } else if (!line.startsWith("exit status")) {
-      LOG.debug(logPrefix() + "Unexpected line: " + line);
+      LOG.debug("{}Unexpected line: {}", lazyArg(this::logPrefix), line);
     }
     return null;
   }

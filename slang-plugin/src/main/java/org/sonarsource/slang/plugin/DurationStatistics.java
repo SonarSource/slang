@@ -94,7 +94,7 @@ class DurationStatistics {
           .append(" ")
           .append(format.format(e.getValue().get() / 1_000_000L))
           .append(" ms"));
-      LOG.info(out.toString());
+      LOG.info("{}", out);
     }
   }
 
