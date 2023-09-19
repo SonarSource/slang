@@ -62,6 +62,7 @@ jar {
                 'Plugin-OrganizationUrl': 'http://www.sonarsource.com',
                 'Plugin-SourcesUrl': 'https://github.com/SonarSource/slang',
                 'Plugin-Version': project.version,
+                'Plugin-RequiredForLanguages': 'go',
                 'Sonar-Version': '6.7',
                 'SonarLint-Supported': 'true',
                 'Version': "${project.version}",
