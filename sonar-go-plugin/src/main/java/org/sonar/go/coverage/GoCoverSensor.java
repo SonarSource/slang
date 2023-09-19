@@ -53,6 +53,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class GoCoverSensor implements Sensor {
 
   private static final Logger LOG = LoggerFactory.getLogger(GoCoverSensor.class);
+  private static final String GO_LANGUAGE_KEY = "go";
 
   public static final String REPORT_PATH_KEY = "sonar.go.coverage.reportPaths";
 
@@ -64,6 +65,7 @@ public class GoCoverSensor implements Sensor {
   @Override
   public void describe(SensorDescriptor descriptor) {
     descriptor
+      .onlyOnLanguage(GO_LANGUAGE_KEY)
       .onlyWhenConfiguration(conf -> conf.hasKey(REPORT_PATH_KEY))
       .name("Go Cover sensor for Go coverage");
   }
