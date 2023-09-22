@@ -21,11 +21,10 @@ package org.sonarsource.scala.converter
 
 import java.util
 import java.util.Collections.{emptyList, singletonList}
-
 import javax.annotation.Nullable
 import org.sonarsource.slang
 import org.sonarsource.slang.api
-import org.sonarsource.slang.api.{ASTConverter, Annotation, BinaryExpressionTree, CatchTree, IdentifierTree, TextRange, Token, TreeMetaData, UnaryExpressionTree}
+import org.sonarsource.slang.api.{ASTConverter, Annotation, BinaryExpressionTree, CatchTree, IdentifierTree, TextPointer, TextRange, Token, TreeMetaData, UnaryExpressionTree}
 import org.sonarsource.slang.api.LoopTree.LoopKind
 import org.sonarsource.slang.impl._
 
@@ -59,26 +58,42 @@ class ScalaConverter extends ASTConverter {
     "-"  -> UnaryExpressionTree.Operator.MINUS
   )
 
+  private def formatError(parser: String, error: Error): String = {
+    val pos = textRange(error.pos).start()
+    "Unable to parse file with " + parser + ", parser error at position " + pos.line() + ":" + pos.lineOffset() + "."
+  }
+
+  private def loopOnParsers(parsers: List[(String, () => Parsed[Source])]): Either[Tree, (List[String], TextPointer)] = parsers match {
+    case Nil => Right((List(), new TextPointerImpl(0, 0)))
+    case (name, parser) :: rest =>
+      parser() match {
+        case Success(tree) => Left(tree)
+        case error: Error =>
+          val pos = textRange(error.pos).start()
+          loopOnParsers(rest).map { case (msg, _) => (formatError(name, error) :: msg, pos) }
+      }
+  }
+
+
   override def parse(code: String, @Nullable fileName: String): slang.api.Tree = {
 
     scala.meta.internal.tokenizers.PlatformTokenizerCache.megaCache.clear()
 
     try {
-      val metaTree: scala.meta.Tree = code.parse[Source] match {
-        case Success(tree) => tree
-        case Error(pos, _, _) =>
-          // Parsing of Scala 3
-          dialects.Scala3(code).parse[Source] match {
-            case Success(t) => t
-            case Error(_, _, _) =>
-              // Parsing of Scala "scripts"
-              dialects.Sbt1(code).parse[Source] match {
-                case Success(t) => t
-                case Error(_, _, _) =>
-                  throw new slang.api.ParseException("Unable to parse file content.", textRange(pos).start())
-              }
-          }
+
+      //the order in which we evaluate matters, on invalid inputs some parser can crash the programme
+      val parsers = List(
+        ("Scala 2", () => code.parse[Source]),
+        ("Scala 3", () => dialects.Scala3(code).parse[Source]),
+        // Parsing of Scala "scripts"
+        ("Sbt1", () => dialects.Sbt1(code).parse[Source]))
+
+      val metaTree: scala.meta.Tree = loopOnParsers(parsers) match {
+        case Left(tree) => tree
+        case Right((msgs, pos)) =>
+          throw new slang.api.ParseException(msgs.mkString("\n"), pos)
       }
+
       val allTokens = metaTree.tokens
         .filter(t => t.isNot[Comment])
         .filter(t => t.pos.start < t.pos.end && t.isNot[Space] && t.isNot[Tab] && t.isNot[CR] && t.isNot[LF])

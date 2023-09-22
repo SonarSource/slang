@@ -47,7 +47,9 @@ class ScalaConverterTest extends AbstractScalaConverterTest {
   void parser_return_error() {
     assertThatThrownBy(() -> parse("object Main {..."))
       .isInstanceOf(ParseException.class)
-      .hasMessage("Unable to parse file content.")
+      .hasMessage("Unable to parse file with Scala 2, parser error at position 1:13.\n" +
+        "Unable to parse file with Scala 3, parser error at position 1:13.\n" +
+        "Unable to parse file with Sbt1, parser error at position 1:13.")
       .matches(e -> {
         TextPointer position = ((ParseException) e).getPosition();
         return position.line() == 1 && position.lineOffset() == 13;
@@ -58,7 +60,9 @@ class ScalaConverterTest extends AbstractScalaConverterTest {
   void parser_throw_error() {
     assertThatThrownBy(() -> parse("trait HasSelf { (this: Forbidden) => }"))
       .isInstanceOf(ParseException.class)
-      .hasMessage("Unable to parse file content.")
+      .hasMessage("Unable to parse file with Scala 2, parser error at position 1:34.\n" +
+        "Unable to parse file with Scala 3, parser error at position 1:34.\n" +
+        "Unable to parse file with Sbt1, parser error at position 1:34.")
       .matches(e -> {
         TextPointer position = ((ParseException) e).getPosition();
         return position.line() == 1 && e.getCause() == null;
