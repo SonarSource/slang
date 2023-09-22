@@ -1,0 +1,15 @@
+package ast
+
+func minMax() {
+
+    var x, y int
+    m := min(x)                 // m == x
+    m := min(x, y)              // m is the smaller of x and y
+    m := max(x, y, 10)          // m is the larger of x and y but at least 10
+    c := max(1, 2.0, 10)        // c == 10.0 (floating-point kind)
+    f := max(0, float32(x))     // type of f is float32
+    var s []string
+    _ = min(s...)               // invalid: slice arguments are not permitted
+    t := max("", "foo", "bar")  // t == "foo" (string kind)
+
+}

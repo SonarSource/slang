@@ -1,4 +1,4 @@
-GO_VERSION=1.19.7
+GO_VERSION=1.21.1
 GO_BINARY=go$(GO_VERSION)
 
 all: goparser_generated.go

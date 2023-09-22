@@ -97,6 +97,12 @@ import (
 			"BadDecl": true,
 			"BadExpr": true,
 		},
+		FieldToIgnore: map[string]bool{
+		    "File#FileStart": true,
+		    "File#FileEnd" : true,
+		    "File#GoVersion" : true,
+		    "RangeStmt#Range" : true,
+		},
 		TypeToIgnore: map[string]bool{
 			// All fields of ast.* structs with the following types are ignored
 			"*ast.CommentGroup":      true,
