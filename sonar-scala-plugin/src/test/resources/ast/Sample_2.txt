@@ -20,8 +20,10 @@ TopLevelTree {                                                                  
       }                                                                              |                    |            
       IdentifierTree                                                                 | text               | 8:17 … 8:21
     }                                                                                |                    |            
-    StringLiteralTree                                                                | "parameterName"    | 8:22 … 8:37
-    StringLiteralTree                                                                | ""                 | 8:38 … 8:40
-    StringLiteralTree                                                                | "Parameter Name"   | 8:41 … 8:57
+    ?ScalaNativeKind(class scala.meta.Term$ArgClause$TermArgClauseImpl)? {           | ( … )              | 8:21 … 8:58
+      StringLiteralTree                                                              | "parameterName"    | 8:22 … 8:37
+      StringLiteralTree                                                              | ""                 | 8:38 … 8:40
+      StringLiteralTree                                                              | "Parameter Name"   | 8:41 … 8:57
+    }                                                                                |                    |
   }                                                                                  |                    |            
 }                                                                                    |                    |            

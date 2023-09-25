@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ScalaPluginTest {
 
-  private ScalaPlugin scalaPlugin = new ScalaPlugin();
+  private final ScalaPlugin scalaPlugin = new ScalaPlugin();
 
   @Test
   void sonarqube_extensions() {

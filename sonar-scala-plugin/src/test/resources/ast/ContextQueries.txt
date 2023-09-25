@@ -34,227 +34,273 @@ TopLevelTree {                                                                  
         ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {                                | { … )                   | 11:18 … 18:79
           ?ScalaNativeKind(class scala.meta.Defn$Type$DefnTypeImpl)? {                             | type … T                | 13:5 … 13:48 
             IdentifierTree                                                                         | Contextual              | 13:10 … 13:20
-            ?ScalaNativeKind(class scala.meta.Type$Param$TypeParamImpl)? {                         | T                       | 13:21 … 13:22
-              IdentifierTree                                                                       | T                       | 13:21 … 13:22
-            }                                                                                      |                         |              
+            ?ScalaNativeKind(class scala.meta.Type$ParamClause$TypeParamClauseImpl)? {             | [ … ]                   | 13:20 … 13:23
+              ?ScalaNativeKind(class scala.meta.Type$Param$TypeParamImpl)? {                       | T                       | 13:21 … 13:22
+                IdentifierTree                                                                     | T                       | 13:21 … 13:22
+              }                                                                                    |                         |
+            }                                                                                      |                         |
             ?ScalaNativeKind(class scala.meta.Type$ContextFunction$TypeContextFunctionImpl)? {     | ExecutionC … T          | 13:26 … 13:48
-              IdentifierTree                                                                       | ExecutionContext        | 13:26 … 13:42
+              ?ScalaNativeKind(class scala.meta.Type$FuncParamClause$TypeFuncParamClauseImpl)? {   | ExecutionContext        | 13:26 … 13:42
+                IdentifierTree                                                                     | ExecutionContext        | 13:26 … 13:42
+              }                                                                                    |                         |
               IdentifierTree                                                                       | T                       | 13:47 … 13:48
-            }                                                                                      |                         |              
-          }                                                                                        |                         |              
-          FunctionDeclarationTree {                                                                | def … )                 | 16:5 … 16:74 
+            }                                                                                      |                         |
+          }                                                                                        |                         |
+          FunctionDeclarationTree {                                                                | def … )                 | 16:5 … 16:74
             ?ScalaNativeKind(class scala.meta.Type$Apply$TypeApplyImpl)? {                         | Contextual … ]          | 16:35 … 16:58
               IdentifierTree                                                                       | Contextual              | 16:35 … 16:45
-              ?ScalaNativeKind(class scala.meta.Type$Apply$TypeApplyImpl)? {                       | Future … ]              | 16:46 … 16:57
-                IdentifierTree                                                                     | Future                  | 16:46 … 16:52
-                IdentifierTree                                                                     | Int                     | 16:53 … 16:56
-              }                                                                                    |                         |              
-            }                                                                                      |                         |              
-            IdentifierTree                                                                         | asyncSum                | 16:9 … 16:17 
+              ?ScalaNativeKind(class scala.meta.Type$ArgClause$TypeArgClauseImpl)? {               | [ … ]                   | 16:45 … 16:58
+                ?ScalaNativeKind(class scala.meta.Type$Apply$TypeApplyImpl)? {                     | Future … ]              | 16:46 … 16:57
+                  IdentifierTree                                                                   | Future                  | 16:46 … 16:52
+                  ?ScalaNativeKind(class scala.meta.Type$ArgClause$TypeArgClauseImpl)? {           | [ … ]                   | 16:52 … 16:57
+                    IdentifierTree                                                                 | Int                     | 16:53 … 16:56
+                  }                                                                                |                         |
+                }                                                                                  |                         |
+              }                                                                                    |                         |
+            }                                                                                      |                         |
+            IdentifierTree                                                                         | asyncSum                | 16:9 … 16:17
             ParameterTree {                                                                        | x … Int                 | 16:18 … 16:24
               IdentifierTree                                                                       | x                       | 16:18 … 16:19
               IdentifierTree                                                                       | Int                     | 16:21 … 16:24
-            }                                                                                      |                         |              
+            }                                                                                      |                         |
             ParameterTree {                                                                        | y … Int                 | 16:26 … 16:32
               IdentifierTree                                                                       | y                       | 16:26 … 16:27
               IdentifierTree                                                                       | Int                     | 16:29 … 16:32
-            }                                                                                      |                         |              
+            }                                                                                      |                         |
             BlockTree {                                                                            | Future … )              | 16:61 … 16:74
               ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                       | Future … )              | 16:61 … 16:74
                 IdentifierTree                                                                     | Future                  | 16:61 … 16:67
-                BinaryExpressionTree {                                                             | x … y                   | 16:68 … 16:73
-                  IdentifierTree                                                                   | x                       | 16:68 … 16:69
-                  IdentifierTree                                                                   | y                       | 16:72 … 16:73
-                }                                                                                  |                         |              
-              }                                                                                    |                         |              
-            }                                                                                      |                         |              
-          }                                                                                        |                         |              
-          FunctionDeclarationTree {                                                                | def … )                 | 18:5 … 18:79 
-            IdentifierTree                                                                         | asyncMult               | 18:9 … 18:18 
+                ?ScalaNativeKind(class scala.meta.Term$ArgClause$TermArgClauseImpl)? {             | ( … )                   | 16:67 … 16:74
+                  BinaryExpressionTree {                                                           | x … y                   | 16:68 … 16:73
+                    IdentifierTree                                                                 | x                       | 16:68 … 16:69
+                    IdentifierTree                                                                 | y                       | 16:72 … 16:73
+                  }                                                                                |                         |
+                }                                                                                  |                         |
+              }                                                                                    |                         |
+            }                                                                                      |                         |
+          }                                                                                        |                         |
+          FunctionDeclarationTree {                                                                | def … )                 | 18:5 … 18:79
+            IdentifierTree                                                                         | asyncMult               | 18:9 … 18:18
             ParameterTree {                                                                        | x … Int                 | 18:19 … 18:25
               IdentifierTree                                                                       | x                       | 18:19 … 18:20
               IdentifierTree                                                                       | Int                     | 18:22 … 18:25
-            }                                                                                      |                         |              
+            }                                                                                      |                         |
             ParameterTree {                                                                        | y … Int                 | 18:27 … 18:33
               IdentifierTree                                                                       | y                       | 18:27 … 18:28
               IdentifierTree                                                                       | Int                     | 18:30 … 18:33
-            }                                                                                      |                         |              
+            }                                                                                      |                         |
             ParameterTree {                                                                        | ctx … ionContext        | 18:41 … 18:62
               ?ScalaNativeKind(class scala.meta.Mod$Using$ModUsingImpl)?                           | using                   | 18:35 … 18:40
               IdentifierTree                                                                       | ctx                     | 18:41 … 18:44
               IdentifierTree                                                                       | ExecutionContext        | 18:46 … 18:62
-            }                                                                                      |                         |              
+            }                                                                                      |                         |
             BlockTree {                                                                            | Future … )              | 18:66 … 18:79
               ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                       | Future … )              | 18:66 … 18:79
                 IdentifierTree                                                                     | Future                  | 18:66 … 18:72
-                BinaryExpressionTree {                                                             | x … y                   | 18:73 … 18:78
-                  IdentifierTree                                                                   | x                       | 18:73 … 18:74
-                  IdentifierTree                                                                   | y                       | 18:77 … 18:78
-                }                                                                                  |                         |              
-              }                                                                                    |                         |              
-            }                                                                                      |                         |              
-          }                                                                                        |                         |              
-        }                                                                                          |                         |              
-      }                                                                                            |                         |              
-      ?ScalaNativeKind(class scala.meta.Defn$Object$DefnObjectImpl)? {                             | object … }              | 21:3 … 35:4  
+                ?ScalaNativeKind(class scala.meta.Term$ArgClause$TermArgClauseImpl)? {             | ( … )                   | 18:72 … 18:79
+                  BinaryExpressionTree {                                                           | x … y                   | 18:73 … 18:78
+                    IdentifierTree                                                                 | x                       | 18:73 … 18:74
+                    IdentifierTree                                                                 | y                       | 18:77 … 18:78
+                  }                                                                                |                         |
+                }                                                                                  |                         |
+              }                                                                                    |                         |
+            }                                                                                      |                         |
+          }                                                                                        |                         |
+        }                                                                                          |                         |
+      }                                                                                            |                         |
+      ?ScalaNativeKind(class scala.meta.Defn$Object$DefnObjectImpl)? {                             | object … }              | 21:3 … 35:4
         IdentifierTree                                                                             | parse                   | 21:10 … 21:15
-        ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {                                | { … }                   | 21:16 … 34:6 
-          ?ScalaNativeKind(class scala.meta.Defn$Type$DefnTypeImpl)? {                             | type … ]                | 23:5 … 23:68 
+        ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {                                | { … }                   | 21:16 … 34:6
+          ?ScalaNativeKind(class scala.meta.Defn$Type$DefnTypeImpl)? {                             | type … ]                | 23:5 … 23:68
             IdentifierTree                                                                         | Parseable               | 23:10 … 23:19
-            ?ScalaNativeKind(class scala.meta.Type$Param$TypeParamImpl)? {                         | T                       | 23:20 … 23:21
-              IdentifierTree                                                                       | T                       | 23:20 … 23:21
-            }                                                                                      |                         |              
+            ?ScalaNativeKind(class scala.meta.Type$ParamClause$TypeParamClauseImpl)? {             | [ … ]                   | 23:19 … 23:22
+              ?ScalaNativeKind(class scala.meta.Type$Param$TypeParamImpl)? {                       | T                       | 23:20 … 23:21
+                IdentifierTree                                                                     | T                       | 23:20 … 23:21
+              }                                                                                    |                         |
+            }                                                                                      |                         |
             ?ScalaNativeKind(class scala.meta.Type$ContextFunction$TypeContextFunctionImpl)? {     | ImpliedIns … ]          | 23:25 … 23:68
-              ?ScalaNativeKind(class scala.meta.Type$Apply$TypeApplyImpl)? {                       | ImpliedIns … ]          | 23:25 … 23:57
-                ?ScalaNativeKind(class scala.meta.Type$Select$TypeSelectImpl)? {                   | ImpliedIns … ringParser | 23:25 … 23:54
-                  IdentifierTree                                                                   | ImpliedInstances        | 23:25 … 23:41
-                  IdentifierTree                                                                   | StringParser            | 23:42 … 23:54
-                }                                                                                  |                         |              
-                IdentifierTree                                                                     | T                       | 23:55 … 23:56
-              }                                                                                    |                         |              
+              ?ScalaNativeKind(class scala.meta.Type$FuncParamClause$TypeFuncParamClauseImpl)? {   | ImpliedIns … ]          | 23:25 … 23:57
+                ?ScalaNativeKind(class scala.meta.Type$Apply$TypeApplyImpl)? {                     | ImpliedIns … ]          | 23:25 … 23:57
+                  ?ScalaNativeKind(class scala.meta.Type$Select$TypeSelectImpl)? {                 | ImpliedIns … ringParser | 23:25 … 23:54
+                    IdentifierTree                                                                 | ImpliedInstances        | 23:25 … 23:41
+                    IdentifierTree                                                                 | StringParser            | 23:42 … 23:54
+                  }                                                                                |                         |
+                  ?ScalaNativeKind(class scala.meta.Type$ArgClause$TypeArgClauseImpl)? {           | [ … ]                   | 23:54 … 23:57
+                    IdentifierTree                                                                 | T                       | 23:55 … 23:56
+                  }                                                                                |                         |
+                }                                                                                  |                         |
+              }                                                                                    |                         |
               ?ScalaNativeKind(class scala.meta.Type$Apply$TypeApplyImpl)? {                       | Try … ]                 | 23:62 … 23:68
                 IdentifierTree                                                                     | Try                     | 23:62 … 23:65
-                IdentifierTree                                                                     | T                       | 23:66 … 23:67
-              }                                                                                    |                         |              
-            }                                                                                      |                         |              
-          }                                                                                        |                         |              
-          FunctionDeclarationTree {                                                                | def … }                 | 25:5 … 34:6  
+                ?ScalaNativeKind(class scala.meta.Type$ArgClause$TypeArgClauseImpl)? {             | [ … ]                   | 23:65 … 23:68
+                  IdentifierTree                                                                   | T                       | 23:66 … 23:67
+                }                                                                                  |                         |
+              }                                                                                    |                         |
+            }                                                                                      |                         |
+          }                                                                                        |                         |
+          FunctionDeclarationTree {                                                                | def … }                 | 25:5 … 34:6
             ?ScalaNativeKind(class scala.meta.Type$Apply$TypeApplyImpl)? {                         | Parseable … ]           | 25:43 … 25:57
               IdentifierTree                                                                       | Parseable               | 25:43 … 25:52
-              IdentifierTree                                                                       | Int                     | 25:53 … 25:56
-            }                                                                                      |                         |              
-            IdentifierTree                                                                         | sumStrings              | 25:9 … 25:19 
+              ?ScalaNativeKind(class scala.meta.Type$ArgClause$TypeArgClauseImpl)? {               | [ … ]                   | 25:52 … 25:57
+                IdentifierTree                                                                     | Int                     | 25:53 … 25:56
+              }                                                                                    |                         |
+            }                                                                                      |                         |
+            IdentifierTree                                                                         | sumStrings              | 25:9 … 25:19
             ParameterTree {                                                                        | x … String              | 25:20 … 25:29
               IdentifierTree                                                                       | x                       | 25:20 … 25:21
               IdentifierTree                                                                       | String                  | 25:23 … 25:29
-            }                                                                                      |                         |              
+            }                                                                                      |                         |
             ParameterTree {                                                                        | y … String              | 25:31 … 25:40
               IdentifierTree                                                                       | y                       | 25:31 … 25:32
               IdentifierTree                                                                       | String                  | 25:34 … 25:40
-            }                                                                                      |                         |              
+            }                                                                                      |                         |
             BlockTree {                                                                            | { … b                   | 25:60 … 33:20
-              VariableDeclarationTree {                                                            | val … ]                 | 26:7 … 26:66 
+              VariableDeclarationTree {                                                            | val … ]                 | 26:7 … 26:66
                 IdentifierTree                                                                     | parser                  | 26:11 … 26:17
                 ?ScalaNativeKind(class scala.meta.Term$ApplyType$TermApplyTypeImpl)? {             | implicitly … ]          | 26:20 … 26:66
                   IdentifierTree                                                                   | implicitly              | 26:20 … 26:30
-                  ?ScalaNativeKind(class scala.meta.Type$Apply$TypeApplyImpl)? {                   | ImpliedIns … ]          | 26:31 … 26:65
-                    ?ScalaNativeKind(class scala.meta.Type$Select$TypeSelectImpl)? {               | ImpliedIns … ringParser | 26:31 … 26:60
-                      IdentifierTree                                                               | ImpliedInstances        | 26:31 … 26:47
-                      IdentifierTree                                                               | StringParser            | 26:48 … 26:60
-                    }                                                                              |                         |              
-                    IdentifierTree                                                                 | Int                     | 26:61 … 26:64
-                  }                                                                                |                         |              
-                }                                                                                  |                         |              
-              }                                                                                    |                         |              
-              VariableDeclarationTree {                                                            | val … )                 | 27:7 … 27:33 
+                  ?ScalaNativeKind(class scala.meta.Type$ArgClause$TypeArgClauseImpl)? {           | [ … ]                   | 26:30 … 26:66
+                    ?ScalaNativeKind(class scala.meta.Type$Apply$TypeApplyImpl)? {                 | ImpliedIns … ]          | 26:31 … 26:65
+                      ?ScalaNativeKind(class scala.meta.Type$Select$TypeSelectImpl)? {             | ImpliedIns … ringParser | 26:31 … 26:60
+                        IdentifierTree                                                             | ImpliedInstances        | 26:31 … 26:47
+                        IdentifierTree                                                             | StringParser            | 26:48 … 26:60
+                      }                                                                            |                         |
+                      ?ScalaNativeKind(class scala.meta.Type$ArgClause$TypeArgClauseImpl)? {       | [ … ]                   | 26:60 … 26:65
+                        IdentifierTree                                                             | Int                     | 26:61 … 26:64
+                      }                                                                            |                         |
+                    }                                                                              |                         |
+                  }                                                                                |                         |
+                }                                                                                  |                         |
+              }                                                                                    |                         |
+              VariableDeclarationTree {                                                            | val … )                 | 27:7 … 27:33
                 IdentifierTree                                                                     | tryA                    | 27:11 … 27:15
                 ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                     | parser … )              | 27:18 … 27:33
                   ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                 | parser … parse          | 27:18 … 27:30
                     IdentifierTree                                                                 | parser                  | 27:18 … 27:24
                     IdentifierTree                                                                 | parse                   | 27:25 … 27:30
-                  }                                                                                |                         |              
-                  IdentifierTree                                                                   | x                       | 27:31 … 27:32
-                }                                                                                  |                         |              
-              }                                                                                    |                         |              
-              VariableDeclarationTree {                                                            | val … )                 | 28:7 … 28:33 
+                  }                                                                                |                         |
+                  ?ScalaNativeKind(class scala.meta.Term$ArgClause$TermArgClauseImpl)? {           | ( … )                   | 27:30 … 27:33
+                    IdentifierTree                                                                 | x                       | 27:31 … 27:32
+                  }                                                                                |                         |
+                }                                                                                  |                         |
+              }                                                                                    |                         |
+              VariableDeclarationTree {                                                            | val … )                 | 28:7 … 28:33
                 IdentifierTree                                                                     | tryB                    | 28:11 … 28:15
                 ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                     | parser … )              | 28:18 … 28:33
                   ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                 | parser … parse          | 28:18 … 28:30
                     IdentifierTree                                                                 | parser                  | 28:18 … 28:24
                     IdentifierTree                                                                 | parse                   | 28:25 … 28:30
-                  }                                                                                |                         |              
-                  IdentifierTree                                                                   | y                       | 28:31 … 28:32
-                }                                                                                  |                         |              
-              }                                                                                    |                         |              
-              ?ScalaNativeKind(class scala.meta.Term$ForYield$TermForYieldImpl)? {                 | for … b                 | 30:7 … 33:20 
-                ?ScalaNativeKind(class scala.meta.Enumerator$Generator$EnumeratorGeneratorImpl)? { | a … tryA                | 31:9 … 31:18 
-                  ?ScalaNativeKind(class scala.meta.Pat$Var$PatVarImpl)? {                         | a                       | 31:9 … 31:10 
-                    IdentifierTree                                                                 | a                       | 31:9 … 31:10 
-                  }                                                                                |                         |              
+                  }                                                                                |                         |
+                  ?ScalaNativeKind(class scala.meta.Term$ArgClause$TermArgClauseImpl)? {           | ( … )                   | 28:30 … 28:33
+                    IdentifierTree                                                                 | y                       | 28:31 … 28:32
+                  }                                                                                |                         |
+                }                                                                                  |                         |
+              }                                                                                    |                         |
+              ?ScalaNativeKind(class scala.meta.Term$ForYield$TermForYieldImpl)? {                 | for … b                 | 30:7 … 33:20
+                ?ScalaNativeKind(class scala.meta.Enumerator$Generator$EnumeratorGeneratorImpl)? { | a … tryA                | 31:9 … 31:18
+                  ?ScalaNativeKind(class scala.meta.Pat$Var$PatVarImpl)? {                         | a                       | 31:9 … 31:10
+                    IdentifierTree                                                                 | a                       | 31:9 … 31:10
+                  }                                                                                |                         |
                   IdentifierTree                                                                   | tryA                    | 31:14 … 31:18
-                }                                                                                  |                         |              
-                ?ScalaNativeKind(class scala.meta.Enumerator$Generator$EnumeratorGeneratorImpl)? { | b … tryB                | 32:9 … 32:18 
-                  ?ScalaNativeKind(class scala.meta.Pat$Var$PatVarImpl)? {                         | b                       | 32:9 … 32:10 
-                    IdentifierTree                                                                 | b                       | 32:9 … 32:10 
-                  }                                                                                |                         |              
+                }                                                                                  |                         |
+                ?ScalaNativeKind(class scala.meta.Enumerator$Generator$EnumeratorGeneratorImpl)? { | b … tryB                | 32:9 … 32:18
+                  ?ScalaNativeKind(class scala.meta.Pat$Var$PatVarImpl)? {                         | b                       | 32:9 … 32:10
+                    IdentifierTree                                                                 | b                       | 32:9 … 32:10
+                  }                                                                                |                         |
                   IdentifierTree                                                                   | tryB                    | 32:14 … 32:18
-                }                                                                                  |                         |              
+                }                                                                                  |                         |
                 BinaryExpressionTree {                                                             | a … b                   | 33:15 … 33:20
                   IdentifierTree                                                                   | a                       | 33:15 … 33:16
                   IdentifierTree                                                                   | b                       | 33:19 … 33:20
-                }                                                                                  |                         |              
-              }                                                                                    |                         |              
-            }                                                                                      |                         |              
-          }                                                                                        |                         |              
-        }                                                                                          |                         |              
-      }                                                                                            |                         |              
-      FunctionDeclarationTree {                                                                    | def … }                 | 37:3 … 45:4  
+                }                                                                                  |                         |
+              }                                                                                    |                         |
+            }                                                                                      |                         |
+          }                                                                                        |                         |
+        }                                                                                          |                         |
+      }                                                                                            |                         |
+      FunctionDeclarationTree {                                                                    | def … }                 | 37:3 … 45:4
         IdentifierTree                                                                             | Unit                    | 37:13 … 37:17
-        IdentifierTree                                                                             | test                    | 37:7 … 37:11 
+        IdentifierTree                                                                             | test                    | 37:7 … 37:11
         BlockTree {                                                                                | { … )                   | 37:20 … 44:40
-          ImportDeclarationTree {                                                                  | import … global         | 39:5 … 39:45 
+          ImportDeclarationTree {                                                                  | import … global         | 39:5 … 39:45
             ?ScalaNativeKind(class scala.meta.Importer$ImporterImpl)? {                            | ExecutionC … global     | 39:12 … 39:45
               ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                     | ExecutionC … Implicits  | 39:12 … 39:38
                 IdentifierTree                                                                     | ExecutionContext        | 39:12 … 39:28
                 IdentifierTree                                                                     | Implicits               | 39:29 … 39:38
-              }                                                                                    |                         |              
+              }                                                                                    |                         |
               ?ScalaNativeKind(class scala.meta.Importee$Name$ImporteeNameImpl)? {                 | global                  | 39:39 … 39:45
                 ?ScalaNativeKind(class scala.meta.Name$Indeterminate$NameIndeterminateImpl)?       | global                  | 39:39 … 39:45
-              }                                                                                    |                         |              
-            }                                                                                      |                         |              
-          }                                                                                        |                         |              
-          ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                           | context … )             | 40:5 … 40:44 
-            ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                       | context … foreach       | 40:5 … 40:35 
-              ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                       | context … )             | 40:5 … 40:27 
-                ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                   | context … asyncSum      | 40:5 … 40:21 
-                  IdentifierTree                                                                   | context                 | 40:5 … 40:12 
+              }                                                                                    |                         |
+            }                                                                                      |                         |
+          }                                                                                        |                         |
+          ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                           | context … )             | 40:5 … 40:44
+            ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                       | context … foreach       | 40:5 … 40:35
+              ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                       | context … )             | 40:5 … 40:27
+                ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                   | context … asyncSum      | 40:5 … 40:21
+                  IdentifierTree                                                                   | context                 | 40:5 … 40:12
                   IdentifierTree                                                                   | asyncSum                | 40:13 … 40:21
-                }                                                                                  |                         |              
-                IntegerLiteralTree                                                                 | 3                       | 40:22 … 40:23
-                IntegerLiteralTree                                                                 | 4                       | 40:25 … 40:26
-              }                                                                                    |                         |              
+                }                                                                                  |                         |
+                ?ScalaNativeKind(class scala.meta.Term$ArgClause$TermArgClauseImpl)? {             | ( … )                   | 40:21 … 40:27
+                  IntegerLiteralTree                                                               | 3                       | 40:22 … 40:23
+                  IntegerLiteralTree                                                               | 4                       | 40:25 … 40:26
+                }                                                                                  |                         |
+              }                                                                                    |                         |
               IdentifierTree                                                                       | foreach                 | 40:28 … 40:35
-            }                                                                                      |                         |              
-            IdentifierTree                                                                         | println                 | 40:36 … 40:43
-          }                                                                                        |                         |              
-          ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                           | context … )             | 41:5 … 41:45 
-            ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                       | context … foreach       | 41:5 … 41:36 
-              ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                       | context … )             | 41:5 … 41:28 
-                ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                   | context … asyncMult     | 41:5 … 41:22 
-                  IdentifierTree                                                                   | context                 | 41:5 … 41:12 
+            }                                                                                      |                         |
+            ?ScalaNativeKind(class scala.meta.Term$ArgClause$TermArgClauseImpl)? {                 | ( … )                   | 40:35 … 40:44
+              IdentifierTree                                                                       | println                 | 40:36 … 40:43
+            }                                                                                      |                         |
+          }                                                                                        |                         |
+          ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                           | context … )             | 41:5 … 41:45
+            ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                       | context … foreach       | 41:5 … 41:36
+              ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                       | context … )             | 41:5 … 41:28
+                ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                   | context … asyncMult     | 41:5 … 41:22
+                  IdentifierTree                                                                   | context                 | 41:5 … 41:12
                   IdentifierTree                                                                   | asyncMult               | 41:13 … 41:22
-                }                                                                                  |                         |              
-                IntegerLiteralTree                                                                 | 3                       | 41:23 … 41:24
-                IntegerLiteralTree                                                                 | 4                       | 41:26 … 41:27
-              }                                                                                    |                         |              
+                }                                                                                  |                         |
+                ?ScalaNativeKind(class scala.meta.Term$ArgClause$TermArgClauseImpl)? {             | ( … )                   | 41:22 … 41:28
+                  IntegerLiteralTree                                                               | 3                       | 41:23 … 41:24
+                  IntegerLiteralTree                                                               | 4                       | 41:26 … 41:27
+                }                                                                                  |                         |
+              }                                                                                    |                         |
               IdentifierTree                                                                       | foreach                 | 41:29 … 41:36
-            }                                                                                      |                         |              
-            IdentifierTree                                                                         | println                 | 41:37 … 41:44
-          }                                                                                        |                         |              
-          ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                           | println … )             | 43:5 … 43:40 
-            IdentifierTree                                                                         | println                 | 43:5 … 43:12 
-            ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                         | parse … )               | 43:13 … 43:39
-              ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                     | parse … sumStrings      | 43:13 … 43:29
-                IdentifierTree                                                                     | parse                   | 43:13 … 43:18
-                IdentifierTree                                                                     | sumStrings              | 43:19 … 43:29
-              }                                                                                    |                         |              
-              StringLiteralTree                                                                    | "3"                     | 43:30 … 43:33
-              StringLiteralTree                                                                    | "4"                     | 43:35 … 43:38
-            }                                                                                      |                         |              
-          }                                                                                        |                         |              
-          ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                           | println … )             | 44:5 … 44:40 
-            IdentifierTree                                                                         | println                 | 44:5 … 44:12 
-            ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                         | parse … )               | 44:13 … 44:39
-              ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                     | parse … sumStrings      | 44:13 … 44:29
-                IdentifierTree                                                                     | parse                   | 44:13 … 44:18
-                IdentifierTree                                                                     | sumStrings              | 44:19 … 44:29
-              }                                                                                    |                         |              
-              StringLiteralTree                                                                    | "3"                     | 44:30 … 44:33
-              StringLiteralTree                                                                    | "a"                     | 44:35 … 44:38
-            }                                                                                      |                         |              
-          }                                                                                        |                         |              
-        }                                                                                          |                         |              
-      }                                                                                            |                         |              
-    }                                                                                              |                         |              
-  }                                                                                                |                         |              
-}                                                                                                  |                         |              
+            }                                                                                      |                         |
+            ?ScalaNativeKind(class scala.meta.Term$ArgClause$TermArgClauseImpl)? {                 | ( … )                   | 41:36 … 41:45
+              IdentifierTree                                                                       | println                 | 41:37 … 41:44
+            }                                                                                      |                         |
+          }                                                                                        |                         |
+          ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                           | println … )             | 43:5 … 43:40
+            IdentifierTree                                                                         | println                 | 43:5 … 43:12
+            ?ScalaNativeKind(class scala.meta.Term$ArgClause$TermArgClauseImpl)? {                 | ( … )                   | 43:12 … 43:40
+              ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                       | parse … )               | 43:13 … 43:39
+                ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                   | parse … sumStrings      | 43:13 … 43:29
+                  IdentifierTree                                                                   | parse                   | 43:13 … 43:18
+                  IdentifierTree                                                                   | sumStrings              | 43:19 … 43:29
+                }                                                                                  |                         |
+                ?ScalaNativeKind(class scala.meta.Term$ArgClause$TermArgClauseImpl)? {             | ( … )                   | 43:29 … 43:39
+                  StringLiteralTree                                                                | "3"                     | 43:30 … 43:33
+                  StringLiteralTree                                                                | "4"                     | 43:35 … 43:38
+                }                                                                                  |                         |
+              }                                                                                    |                         |
+            }                                                                                      |                         |
+          }                                                                                        |                         |
+          ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                           | println … )             | 44:5 … 44:40
+            IdentifierTree                                                                         | println                 | 44:5 … 44:12
+            ?ScalaNativeKind(class scala.meta.Term$ArgClause$TermArgClauseImpl)? {                 | ( … )                   | 44:12 … 44:40
+              ?ScalaNativeKind(class scala.meta.Term$Apply$TermApplyImpl)? {                       | parse … )               | 44:13 … 44:39
+                ?ScalaNativeKind(class scala.meta.Term$Select$TermSelectImpl)? {                   | parse … sumStrings      | 44:13 … 44:29
+                  IdentifierTree                                                                   | parse                   | 44:13 … 44:18
+                  IdentifierTree                                                                   | sumStrings              | 44:19 … 44:29
+                }                                                                                  |                         |
+                ?ScalaNativeKind(class scala.meta.Term$ArgClause$TermArgClauseImpl)? {             | ( … )                   | 44:29 … 44:39
+                  StringLiteralTree                                                                | "3"                     | 44:30 … 44:33
+                  StringLiteralTree                                                                | "a"                     | 44:35 … 44:38
+                }                                                                                  |                         |
+              }                                                                                    |                         |
+            }                                                                                      |                         |
+          }                                                                                        |                         |
+        }                                                                                          |                         |
+      }                                                                                            |                         |
+    }                                                                                              |                         |
+  }                                                                                                |                         |
+}                                                                                                  |                         |

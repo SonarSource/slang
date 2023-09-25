@@ -56,7 +56,7 @@ dependencies {
     implementation project(':slang-api')
     implementation project(':slang-checks')
     implementation project(':slang-plugin')
-    implementation('org.scalameta:scalameta_2.12:4.6.0') {
+    implementation('org.scalameta:scalameta_2.12:4.8.10') {
         exclude group: 'org.scalameta', module: 'semanticdb_2.12'
         exclude group: 'com.lihaoyi', module: 'fansi_2.12'
         exclude group: 'com.google.protobuf', module: 'protobuf-java'
@@ -133,7 +133,7 @@ shadowJar {
     exclude '**/*.proto'
     exclude '**/*.txt'
     doLast {
-        enforceJarSizeAndCheckContent(shadowJar.archiveFile.get().asFile, 12_500_000L, 13_500_000L)
+        enforceJarSizeAndCheckContent(shadowJar.archiveFile.get().asFile, 12_500_000L, 15_000_000L)
     }
 }
 

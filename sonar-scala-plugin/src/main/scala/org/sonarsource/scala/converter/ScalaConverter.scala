@@ -168,7 +168,7 @@ class ScalaConverter extends ASTConverter {
           createSecondaryConstructorDeclaration(metaData, ctor)
         case Term.Block(stats) =>
           new BlockTreeImpl(metaData, convert(stats))
-        case Term.Assign(lhs, rhs) if metaTree.parent.exists(p => p.isNot[Term.Apply] && p.isNot[Init]) =>
+        case Term.Assign(lhs, rhs) if metaTree.parent.exists(p => p.isNot[Term.Apply] && p.isNot[Init] && p.isNot[Term.ArgClause]) =>
           new AssignmentExpressionTreeImpl(metaData, slang.api.AssignmentExpressionTree.Operator.EQUAL, convert(lhs), convert(rhs));
         case Term.If(cond, thenp, elsep) =>
           createIfTree(metaData, cond, thenp, elsep)

@@ -27,7 +27,7 @@ public class ScalastyleRulesDefinition extends ScalastyleFamilyRulesDefinition {
   private static final String RULES_JSON = "org/sonar/l10n/scala/rules/scalastyle/rules.json";
 
   static final ExternalRuleLoader RULE_LOADER = new ExternalRuleLoader(
-    ScalastyleSensor.LINTER_KEY, ScalastyleSensor.LINTER_NAME, RULES_JSON, ScalaPlugin.SCALA_LANGUAGE_KEY);
+    ScalastyleSensor.LINTER_KEY, ScalastyleSensor.LINTER_NAME, RULES_JSON, ScalaPlugin.SCALA_LANGUAGE_KEY, null);
 
   public ScalastyleRulesDefinition() {
     super(RULE_LOADER);
