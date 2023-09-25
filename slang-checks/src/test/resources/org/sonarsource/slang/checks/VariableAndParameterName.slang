@@ -25,3 +25,8 @@ class A {
 //                   ^^^^^^
   }
 }
+
+fun method(_) { }
+
+// testing corner case where the identifier syntax is not supported
+fun method(__) { }

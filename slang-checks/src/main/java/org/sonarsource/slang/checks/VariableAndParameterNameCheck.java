@@ -20,6 +20,7 @@
 package org.sonarsource.slang.checks;
 
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
@@ -60,12 +61,11 @@ public class VariableAndParameterNameCheck implements SlangCheck {
       tree.formalParameters().stream()
         .filter(ParameterTree.class::isInstance)
         .map(ParameterTree.class::cast)
-        .forEach(
-        param -> check(pattern, ctx, param.identifier(), "parameter")));
+        .forEach(param -> check(pattern, ctx, param.identifier(), "parameter")));
   }
 
-  private void check(Pattern pattern, CheckContext ctx, IdentifierTree identifier, String variableKind) {
-    if (!pattern.matcher(identifier.name()).matches()) {
+  private void check(Pattern pattern, CheckContext ctx, @Nullable IdentifierTree identifier, String variableKind) {
+    if (identifier != null && !pattern.matcher(identifier.name()).matches()) {
       String message = String.format("Rename this %s to match the regular expression \"%s\".", variableKind, this.format);
       ctx.reportIssue(identifier, message);
     }

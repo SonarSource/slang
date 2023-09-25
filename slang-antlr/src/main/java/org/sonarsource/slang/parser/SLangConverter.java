@@ -580,7 +580,10 @@ public class SLangConverter implements ASTConverter {
 
     @Override
     public Tree visitIdentifier(SLangParser.IdentifierContext ctx) {
-      if("_".equals(ctx.getText())) {
+      // corner case where a specific syntax is not supported as identifier
+      if("__".equals(ctx.getText())) {
+        return null;
+      } else if("_".equals(ctx.getText())) {
         return new PlaceHolderTreeImpl(meta(ctx), toSlangToken(ctx.getStart()));
       } else {
         return new IdentifierTreeImpl(meta(ctx), ctx.getText());

@@ -850,6 +850,15 @@ class SLangConverterTest {
     assertThat(e).hasMessage("Unexpected parsing error occurred. Last found valid token: 'private' at position 1:0");
   }
 
+  @Test
+  void unsupportedIdentifier() {
+    Tree topLevelTree = converter.parse("A.__;");
+    assertTree(topLevelTree.children().get(0)).isInstanceOf(MemberSelectTree.class);
+    MemberSelectTree memberSelectTree = (MemberSelectTree) topLevelTree.children().get(0);
+    IdentifierTree identifierTree = memberSelectTree.identifier();
+    assertTree(identifierTree).isNull();
+  }
+
   private BinaryExpressionTree parseBinary(String code) {
     return (BinaryExpressionTree) parseExpressionOrStatement(code);
   }
