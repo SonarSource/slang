@@ -26,6 +26,7 @@ import org.assertj.core.api.Condition;
 import org.jruby.Ruby;
 import org.jruby.RubyRuntimeAdapter;
 import org.jruby.exceptions.StandardError;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.sonarsource.slang.api.BinaryExpressionTree.Operator;
 import org.sonarsource.slang.api.Comment;
@@ -435,5 +436,19 @@ class RubyConverterTest extends AbstractRubyConverterTest {
     List<Token> tokens = tree.metaData().tokens();
 
     assertThat(tokens).hasSize(26);
+  }
+
+  @Test
+  void newAnonymousRestAndKeywordSyntax(){
+    Tree tree = converter.parse("def foo(*)\n" +
+      " bar(*)\n" +
+      "end\n" +
+      "def baz(**)\n" +
+      " quux(**)\n" +
+      "end");
+
+    List<Token> tokens = tree.metaData().tokens();
+
+    assertThat(tokens).hasSize(20);
   }
 }

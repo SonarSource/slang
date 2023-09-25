@@ -8,7 +8,7 @@ import com.github.jrubygradle.JRubyPrepare
 ext {
     rubygemsRaccVersion = '1.5.2-java'
     rubygemsAstVersion = '2.4.2'
-    rubygemsParserVersion = '3.1.2.0'
+    rubygemsParserVersion = '3.2.2.3'
 }
 
 
@@ -151,7 +151,7 @@ shadowJar {
     exclude "racc-${rubygemsAstVersion}-java/web/**"
 
     doLast {
-        enforceJarSizeAndCheckContent(shadowJar.archiveFile.get().asFile, 14_000_000L, 15_000_000L)
+        enforceJarSizeAndCheckContent(shadowJar.archiveFile.get().asFile, 14_000_000L, 15_500_000L)
     }
 }
 
