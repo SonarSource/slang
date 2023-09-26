@@ -1,0 +1,30 @@
+AST node class                                                     | first…last tokens | line:col
+    -------------------------------------------------------------------|-------------------|--------------
+    TopLevelTree {                                                     | class … }         | 1:1 … 17:2
+      ClassDeclarationTree {                                           | class … }         | 4:1 … 17:2
+        ?ScalaNativeKind(class scala.meta.Defn$Class$DefnClassImpl)? { | class … }         | 4:1 … 17:2
+          IdentifierTree                                               | A                 | 4:7 … 4:8
+          ?ScalaNativeKind(class scala.meta.Template$TemplateImpl)? {  | extends … }       | 4:9 … 16:4
+            FunctionDeclarationTree {                                  | def … }           | 7:3 … 9:4
+              LiteralTree                                              | false             | 7:12 … 7:17
+              IdentifierTree                                           | f                 | 7:7 … 7:8
+              BlockTree                                                | { … }             | 7:20 … 9:4
+            }                                                          |                   |
+            FunctionDeclarationTree {                                  | def … }           | 11:3 … 16:4
+              IdentifierTree                                           | Unit              | 11:25 … 11:29
+              IdentifierTree                                           | fun               | 11:7 … 11:10
+              ParameterTree {                                          | c … Boolean       | 11:11 … 11:22
+                IdentifierTree                                         | c                 | 11:11 … 11:12
+                IdentifierTree                                         | Boolean           | 11:15 … 11:22
+              }                                                        |                   |
+              BlockTree {                                              | { … )             | 11:32 … 15:16
+                LoopTree {                                             | do … )            | 13:5 … 15:16
+                  IdentifierTree                                       | c                 | 15:14 … 15:15
+                  BlockTree                                            | { … }             | 13:8 … 15:6
+                }                                                      |                   |
+              }                                                        |                   |
+            }                                                          |                   |
+          }                                                            |                   |
+        }                                                              |                   |
+      }                                                                |                   |
+    }                                                                  |                   |

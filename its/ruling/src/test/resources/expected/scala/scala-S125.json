@@ -246,6 +246,9 @@
 'scala-project:sources/scala/mmlspark/src/tune-hyperparameters/src/test/scala/VerifyTuneHyperparameters.scala':[
 59,
 ],
+'scala-project:sources/scala/playframework/documentation/manual/working/commonGuide/configuration/code/Log4j2LoggerConfigurator.scala':[
+8,
+],
 'scala-project:sources/scala/playframework/documentation/manual/working/scalaGuide/main/config/code/ScalaConfig.scala':[
 44,
 47,

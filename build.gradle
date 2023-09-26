@@ -19,7 +19,7 @@ allprojects {
     apply plugin: 'signing'
 
     gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
+        tasks.withType(JavaCompile).configureEach {
             if (project.hasProperty('warn')) {
                 options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
             } else {

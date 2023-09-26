@@ -1,12 +1,12 @@
 plugins {
     id "scala"
-    id "org.scoverage" version "7.0.1"
+    id "org.scoverage" version "8.0.3"
     id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 scoverage {
-    scoverageVersion='1.4.11'
-    scoverageScalaVersion='2.12.15'
+    scoverageVersion='2.0.11'
+    scoverageScalaVersion='2.13.12'
 }
 
 tasks.check.dependsOn reportScoverage
@@ -56,9 +56,9 @@ dependencies {
     implementation project(':slang-api')
     implementation project(':slang-checks')
     implementation project(':slang-plugin')
-    implementation('org.scalameta:scalameta_2.12:4.8.10') {
-        exclude group: 'org.scalameta', module: 'semanticdb_2.12'
-        exclude group: 'com.lihaoyi', module: 'fansi_2.12'
+    implementation('org.scalameta:scalameta_2.13:4.8.10') {
+        exclude group: 'org.scalameta', module: 'semanticdb_2.13'
+        exclude group: 'com.lihaoyi', module: 'fansi_2.13'
         exclude group: 'com.google.protobuf', module: 'protobuf-java'
     }
     testImplementation project(':slang-testing')
@@ -115,9 +115,9 @@ jar {
 
 shadowJar {
     minimize { }
-    // org.scalameta:common_2.12
+    // org.scalameta:common_2.13
     exclude 'org/scalameta/overload/*'
-    // org.scalameta:io_2.12
+    // org.scalameta:io_2.13
     exclude 'scala/meta/internal/io/*'
     // org.scala-lang:scala-library
     exclude 'scala/annotation/*'
@@ -127,13 +127,15 @@ shadowJar {
     exclude 'scala/util/matching/*'
     //
     exclude 'com/google/protobuf/**'
+    // JNA, which is packaged with the scala parser
+    exclude 'com/sun/jna/**'
     // scala-build related files, useless for our use
     exclude '**/*.js'
     exclude '**/*.properties'
     exclude '**/*.proto'
     exclude '**/*.txt'
     doLast {
-        enforceJarSizeAndCheckContent(shadowJar.archiveFile.get().asFile, 12_500_000L, 15_000_000L)
+        enforceJarSizeAndCheckContent(shadowJar.archiveFile.get().asFile, 15_000_000L, 15_500_000L)
     }
 }
 
