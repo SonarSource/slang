@@ -149,7 +149,7 @@ class RuboCopSensorTest {
   @Test
   void issues_when_rubocop_file_has_errors() throws IOException {
     List<ExternalIssue> externalIssues = executeSensorImporting("rubocop-report-with-errors.json");
-    assertThat(externalIssues).hasSize(7);
+    assertThat(externalIssues).hasSize(8);
 
     ExternalIssue first = externalIssues.get(0);
     assertThat(first.primaryLocation().inputComponent().key()).isEqualTo("rubocop-project:useless-assignment.rb");

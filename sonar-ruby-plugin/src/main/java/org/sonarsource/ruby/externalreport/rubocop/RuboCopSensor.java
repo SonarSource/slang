@@ -113,12 +113,15 @@ public class RuboCopSensor extends AbstractPropertyHandlerSensor {
       .message(issue.message)
       .on(inputFile);
 
-    if (issue.startLine !=null) {
-      boolean rangeIsProvided = issue.startColumn != null && issue.lastLine != null && issue.lastColumn != null;
-      boolean rangeIsValid = rangeIsProvided && (issue.startLine < issue.lastLine || (issue.startLine.equals(issue.lastLine) && issue.startColumn <= issue.lastColumn));
-      if (rangeIsValid) {
-        primaryLocation.at(inputFile.newRange(issue.startLine, issue.startColumn - 1, issue.lastLine, issue.lastColumn));
-      } else {
+    if (issue.startLine != null) {
+      try {
+        boolean rangeIsProvided = issue.startColumn != null && issue.lastLine != null && issue.lastColumn != null;
+        if (rangeIsProvided) {
+          primaryLocation.at(inputFile.newRange(issue.startLine, issue.startColumn - 1, issue.lastLine, issue.lastColumn));
+        } else {
+          primaryLocation.at(inputFile.selectLine(issue.startLine));
+        }
+      } catch (IllegalArgumentException e) {
         primaryLocation.at(inputFile.selectLine(issue.startLine));
       }
     }

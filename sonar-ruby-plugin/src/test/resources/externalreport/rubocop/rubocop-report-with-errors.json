@@ -152,6 +152,27 @@
     {
       "path": "useless-assignment.rb",
       "offenses": null
+    },
+    {
+      "path": "useless-assignment.rb",
+      "offenses": [
+        {
+          "severity": "convention",
+          "message": "Extra empty line detected at method body beginning.",
+          "cop_name": "Layout/EmptyLinesAroundMethodBody",
+          "corrected": false,
+          "correctable": true,
+          "location": {
+            "start_line": 5,
+            "start_column": 1,
+            "last_line": 6,
+            "last_column": 1,
+            "length": 1,
+            "line": 5,
+            "column": 1
+          }
+        }
+      ]
     }
   ]
 }
