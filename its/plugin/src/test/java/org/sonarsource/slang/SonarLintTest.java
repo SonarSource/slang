@@ -35,6 +35,8 @@ import java.util.Collections;
 import java.util.List;
 import javax.annotation.CheckForNull;
 import org.apache.commons.io.FileUtils;
+import org.assertj.core.groups.Tuple;
+import org.jetbrains.annotations.NotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -100,22 +102,14 @@ public class SonarLintTest {
   @Test
   public void test_ruby() throws Exception {
     ClientInputFile inputFile = prepareInputFile("foo.rb",
-      "def fooBar() \n"
-        + "  if true \n"
-        + "    password = 'blabla' \n"
+      "def fooBar() \n"           // ruby:S100
+        + "  if true \n"                  // ruby:S1145
+        + "    password = 'blabla' \n"    // ruby:S1481
         + "  end \n"
         + "end \n",
       false, "ruby");
 
-    List<Issue> issues = new ArrayList<>();
-    StandaloneAnalysisConfiguration analysisConfiguration = StandaloneAnalysisConfiguration.builder()
-      .setBaseDir(baseDir.toPath())
-      .addInputFiles(Collections.singletonList(inputFile))
-      .build();
-    sonarlintEngine.analyze(analysisConfiguration, issues::add, null, null);
-
-    assertThat(issues).extracting(Issue::getRuleKey, Issue::getStartLine, issue -> issue.getInputFile().getPath(), Issue::getSeverity)
-      .containsExactlyInAnyOrder(
+    assertIssues(analyzeWithSonarLint(inputFile),
         tuple("ruby:S100", 1, inputFile.getPath(), IssueSeverity.MINOR),
         tuple("ruby:S1145", 2, inputFile.getPath(), IssueSeverity.MAJOR),
         tuple("ruby:S1481", 3, inputFile.getPath(), IssueSeverity.MINOR)
@@ -125,24 +119,16 @@ public class SonarLintTest {
   @Test
   public void test_scala() throws Exception {
     ClientInputFile inputFile = prepareInputFile("foo.scala",
-      "object Code {\n" +
-        "  def foo_bar() = {\n" + // scala:S100 (Method name)
-        "    if (true) { \n" + // scala:S1145 (Useless if(true))
-        "        val password = \"blabla\"\n" +  // scala:S181 (Unused variable)
-        "    } \n" +
-        "  }\n" +
-        "}",
+      "object Code {\n"
+        + "  def foo_bar() = {\n"                   // scala:S100 (Method name)
+        + "    if (true) { \n"                      // scala:S1145 (Useless if(true))
+        + "        val password = \"blabla\"\n"     // scala:S181 (Unused variable)
+        + "    } \n"
+        + "  }\n"
+        + "}",
       false, "scala");
-
-    List<Issue> issues = new ArrayList<>();
-    StandaloneAnalysisConfiguration analysisConfiguration = StandaloneAnalysisConfiguration.builder()
-      .setBaseDir(baseDir.toPath())
-      .addInputFiles(Collections.singletonList(inputFile))
-      .build();
-    sonarlintEngine.analyze(analysisConfiguration, issues::add, null, null);
-
-    assertThat(issues).extracting(Issue::getRuleKey, Issue::getStartLine, issue -> issue.getInputFile().getPath(), Issue::getSeverity)
-      .containsExactlyInAnyOrder(
+    
+    assertIssues(analyzeWithSonarLint(inputFile),
         tuple("scala:S100", 2, inputFile.getPath(), IssueSeverity.MINOR),
         tuple("scala:S1145", 3, inputFile.getPath(), IssueSeverity.MAJOR),
         tuple("scala:S1481", 4, inputFile.getPath(), IssueSeverity.MINOR)
@@ -152,22 +138,68 @@ public class SonarLintTest {
   @Test
   public void test_go() throws Exception {
     ClientInputFile inputFile = prepareInputFile("foo.go",
-      "package main\n" +
-        "func empty() {\n" +  // go:S1186 (empty function)
-        "}\n",
+      "package main\n"
+        + "func empty() {\n"        // skipped go:S1186 (empty function)
+        + "}\n",
       false, "go");
 
+    assertIssues(analyzeWithSonarLint(inputFile),
+      tuple("go:S1186", 2, inputFile.getPath(), IssueSeverity.CRITICAL));
+  }
+
+  @Test
+  public void test_ruby_nosonar() throws Exception {
+    ClientInputFile rubyInputFile = prepareInputFile("foo.rb",
+      "def fooBar() # NOSONAR\n"            // skipped ruby:S100
+        + "  if true # NOSONAR\n"                  // skipped ruby:S1145
+        + "    password = 'blabla' # NOSONAR\n"    // skipped ruby:S1481
+        + "  end \n"
+        + "end \n",
+      false, "ruby");
+    assertThat(analyzeWithSonarLint(rubyInputFile)).isEmpty();
+  }
+
+  @Test
+  public void test_scala_nosonar() throws Exception {
+    ClientInputFile scalaInputFile = prepareInputFile("foo.scala",
+      "package main"
+        + "object Code {\n"
+        + "  def foo_bar() = { // NOSONAR\n"                  // skipped scala:S100 (Method name)
+        + "    if (true) { // NOSONAR\n"                      // skipped scala:S1145 (Useless if(true))
+        + "        val password = \"blabla\" // NOSONAR\n"    // skipped scala:S181 (Unused variable)
+        + "    } \n"
+        + "  }\n"
+        + "}",
+      false, "scala");
+    assertThat(analyzeWithSonarLint(scalaInputFile)).isEmpty();
+  }
+
+  @Test
+  public void test_go_nosonar() throws Exception {
+    ClientInputFile goInputFile = prepareInputFile("foo.go",
+      "package main\n"
+        + "func empty() { // NOSONAR\n"        //  skipped go:S1186 (empty function)
+        + "}\n",
+      false, "go");
+    assertThat(analyzeWithSonarLint(goInputFile)).isEmpty();
+  }
+
+  private List<Issue> analyzeWithSonarLint(ClientInputFile inputFile) {
     List<Issue> issues = new ArrayList<>();
     StandaloneAnalysisConfiguration analysisConfiguration = StandaloneAnalysisConfiguration.builder()
       .setBaseDir(baseDir.toPath())
       .addInputFiles(Collections.singletonList(inputFile))
       .build();
+
     sonarlintEngine.analyze(analysisConfiguration, issues::add, null, null);
 
-    assertThat(issues).extracting(Issue::getRuleKey, Issue::getStartLine, issue -> issue.getInputFile().getPath(), Issue::getSeverity)
-      .containsExactlyInAnyOrder(
-        tuple("go:S1186", 2, inputFile.getPath(), IssueSeverity.CRITICAL)
-      );
+    return issues;
+  }
+
+  private void assertIssues(List<Issue> issues, Tuple... expectedIssues) {
+    assertThat(issues)
+      .extracting(Issue::getRuleKey, Issue::getStartLine, issue -> issue.getInputFile().getPath(), Issue::getSeverity)
+      .containsExactlyInAnyOrder(expectedIssues);
   }
 
   private ClientInputFile prepareInputFile(String relativePath, String content, final boolean isTest, String language) throws IOException {
@@ -220,7 +252,7 @@ public class SonarLintTest {
         return Files.newInputStream(path);
       }
 
-      @CheckForNull
+      @NotNull
       @Override
       public Language language() {
         return Language.forKey(language).orElse(Language.APEX);

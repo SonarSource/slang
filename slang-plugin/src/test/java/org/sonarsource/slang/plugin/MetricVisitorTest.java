@@ -22,8 +22,6 @@ package org.sonarsource.slang.plugin;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -31,7 +29,6 @@ import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
-import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonarsource.slang.parser.SLangConverter;
@@ -39,13 +36,11 @@ import org.sonarsource.slang.parser.SLangConverter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class MetricVisitorTest {
 
   private File tempFolder;
-  private NoSonarFilter mockNoSonarFilter;
   private SLangConverter parser = new SLangConverter();
   private MetricVisitor visitor;
   private SensorContextTester sensorContext;
@@ -57,9 +52,8 @@ class MetricVisitorTest {
     sensorContext = SensorContextTester.create(tempFolder);
     FileLinesContext mockFileLinesContext = mock(FileLinesContext.class);
     FileLinesContextFactory mockFileLinesContextFactory = mock(FileLinesContextFactory.class);
-    mockNoSonarFilter = mock(NoSonarFilter.class);
     when(mockFileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(mockFileLinesContext);
-    visitor = new MetricVisitor(mockFileLinesContextFactory, mockNoSonarFilter, SlangSensor.EXECUTABLE_LINE_PREDICATE);
+    visitor = new MetricVisitor(mockFileLinesContextFactory, SlangSensor.EXECUTABLE_LINE_PREDICATE);
   }
 
   @Test
@@ -68,7 +62,6 @@ class MetricVisitorTest {
     assertThat(visitor.linesOfCode()).isEmpty();
     assertThat(visitor.commentLines()).isEmpty();
     assertThat(visitor.numberOfFunctions()).isZero();
-    verify(mockNoSonarFilter).noSonarInFile(inputFile, new HashSet<>());
   }
 
   @Test
@@ -165,19 +158,6 @@ class MetricVisitorTest {
       "end*/");
     assertThat(visitor.commentLines()).containsExactly(1, 2, 3);
     assertThat(visitor.linesOfCode()).isEmpty();
-  }
-
-  @Test
-  void nosonarLines() throws Exception {
-    scan("" +
-      "x + 1;\n" +
-      "// NOSONAR comment\n" +
-      "fun function1() { // comment\n" +
-      "x = true || false; }");
-    assertThat(visitor.nosonarLines()).containsExactly(2);
-    Set<Integer> nosonarLines = new HashSet<>();
-    nosonarLines.add(2);
-    verify(mockNoSonarFilter).noSonarInFile(inputFile, nosonarLines);
   }
 
   @Test
