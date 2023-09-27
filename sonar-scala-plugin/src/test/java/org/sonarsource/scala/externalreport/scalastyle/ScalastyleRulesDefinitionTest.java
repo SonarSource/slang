@@ -46,7 +46,7 @@ class ScalastyleRulesDefinitionTest {
     assertThat(rule.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(rule.severity()).isEqualTo("MINOR");
     assertThat(rule.htmlDescription()).isEqualTo("" +
-      "See description of Scalastyle rule <code>org.scalastyle.file.FileLengthChecker</code> at the <a href=\"http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_FileLengthChecker\">Scalastyle website</a>.");
+      "<p>Files which are too long can be hard to read and understand.</p> <p>See more at the <a href=\"http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_FileLengthChecker\">Scalastyle website</a>.</p>");
     assertThat(rule.tags()).isEmpty();
     assertThat(rule.debtRemediationFunction().baseEffort()).isEqualTo("5min");
   }

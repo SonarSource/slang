@@ -2,6 +2,7 @@
   {
     "key": "org.scalastyle.file.FileLengthChecker",
     "name": "File size limit",
+    "description": "Files which are too long can be hard to read and understand.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_FileLengthChecker"
@@ -9,6 +10,7 @@
   {
     "key": "org.scalastyle.file.FileLineLengthChecker",
     "name": "Line size limit",
+    "description": "Lines that are too long can be hard to read and horizontal scrolling is annoying.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_FileLineLengthChecker"
@@ -16,6 +18,7 @@
   {
     "key": "org.scalastyle.file.FileTabChecker",
     "name": "Line contains tab",
+    "description": "Some say that tabs are evil.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_FileTabChecker"
@@ -23,6 +26,7 @@
   {
     "key": "org.scalastyle.file.HeaderMatchesChecker",
     "name": "Header matches",
+    "description": "A lot of projects require a header with a copyright notice, or they require a license in each file. This does a simple text comparison between the header and the first lines of the file. \u003cbr/\u003e\n  You can have multiple lines, but make sure you surround the text with a CDATA section. You can also specify a regular expression, as long as you set the regex parameter to true.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_HeaderMatchesChecker"
@@ -30,6 +34,7 @@
   {
     "key": "org.scalastyle.file.IndentationChecker",
     "name": "Indentation",
+    "description": "Code that is not indented consistently can be hard to read.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_IndentationChecker"
@@ -37,6 +42,7 @@
   {
     "key": "org.scalastyle.file.NewLineAtEofChecker",
     "name": "Newline at eof",
+    "description": "Some version control systems don\u0027t cope well with files which don\u0027t end with a newline character.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_NewLineAtEofChecker"
@@ -44,6 +50,7 @@
   {
     "key": "org.scalastyle.file.NoNewLineAtEofChecker",
     "name": "No newline at eof",
+    "description": "Because Mirco Dotta wanted it.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_NoNewLineAtEofChecker"
@@ -51,6 +58,7 @@
   {
     "key": "org.scalastyle.file.RegexChecker",
     "name": "Regex",
+    "description": "Some checks can be carried out with a regular expression.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_RegexChecker"
@@ -58,6 +66,7 @@
   {
     "key": "org.scalastyle.file.WhitespaceEndOfLineChecker",
     "name": "Whitespace end of line",
+    "description": "Whitespace at the end of a line can cause problems when diffing between files or between versions.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_file_WhitespaceEndOfLineChecker"
@@ -65,6 +74,7 @@
   {
     "key": "org.scalastyle.scalariform.BlockImportChecker",
     "name": "Block import",
+    "description": "Block imports (e.g. `import a.{b, c}`) can lead to annoying merge errors in large code bases that are maintained by lot of developers. This rule allows to ensure that only single imports are used in order to minimize merge errors in import declarations.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_BlockImportChecker"
@@ -72,6 +82,7 @@
   {
     "key": "org.scalastyle.scalariform.CaseBraceChecker",
     "name": "Disallow case brace",
+    "description": "Braces aren\u0027t required in case clauses. They should be omitted according to Scala Style Guide.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_CaseBraceChecker"
@@ -79,6 +90,7 @@
   {
     "key": "org.scalastyle.scalariform.ClassNamesChecker",
     "name": "Class name",
+    "description": "The Scala style guide recommends that class names conform to certain standards.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ClassNamesChecker"
@@ -86,6 +98,7 @@
   {
     "key": "org.scalastyle.scalariform.ClassTypeParameterChecker",
     "name": "Class type parameter name",
+    "description": "Scala generic type names are generally single upper case letters. This check checks for classes and traits. \u003cbr/\u003e\n \u003cbr/\u003e\n Note that this check only checks the innermost type parameter, to allow for List\\[T\\].",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ClassTypeParameterChecker"
@@ -93,6 +106,7 @@
   {
     "key": "org.scalastyle.scalariform.CovariantEqualsChecker",
     "name": "Covariant equals",
+    "description": "Mistakenly defining a covariant equals() method without overriding method equals(java.lang.Object) can produce unexpected runtime behaviour.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_CovariantEqualsChecker"
@@ -100,6 +114,7 @@
   {
     "key": "org.scalastyle.scalariform.CyclomaticComplexityChecker",
     "name": "Cyclomatic complexity",
+    "description": "If the code is too complex, then this can make code hard to read.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_CyclomaticComplexityChecker"
@@ -107,6 +122,7 @@
   {
     "key": "org.scalastyle.scalariform.DeprecatedJavaChecker",
     "name": "Deprecated java",
+    "description": "You should be using the Scala @deprecated instead.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_DeprecatedJavaChecker"
@@ -114,6 +130,7 @@
   {
     "key": "org.scalastyle.scalariform.DisallowSpaceAfterTokenChecker",
     "name": "Disallow space after token",
+    "description": "Correct formatting can help readability.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_DisallowSpaceAfterTokenChecker"
@@ -121,6 +138,7 @@
   {
     "key": "org.scalastyle.scalariform.DisallowSpaceBeforeTokenChecker",
     "name": "Disallow space before token",
+    "description": "Correct formatting can help readability.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_DisallowSpaceBeforeTokenChecker"
@@ -128,6 +146,7 @@
   {
     "key": "org.scalastyle.scalariform.EmptyClassChecker",
     "name": "Empty class",
+    "description": "If a class / trait has no members, then braces are unnecessary, and can be removed.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_EmptyClassChecker"
@@ -135,6 +154,7 @@
   {
     "key": "org.scalastyle.scalariform.EmptyInterpolatedStringChecker",
     "name": "Empty interpolated strings",
+    "description": "Empty interpolated strings are harder to read and not necessary.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_EmptyInterpolatedStringChecker"
@@ -142,6 +162,7 @@
   {
     "key": "org.scalastyle.scalariform.EnsureSingleSpaceAfterTokenChecker",
     "name": "Ensure single space after token",
+    "description": "Correct formatting can help readability.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_EnsureSingleSpaceAfterTokenChecker"
@@ -149,6 +170,7 @@
   {
     "key": "org.scalastyle.scalariform.EnsureSingleSpaceBeforeTokenChecker",
     "name": "Ensure single space before token",
+    "description": "Correct formatting can help readability.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_EnsureSingleSpaceBeforeTokenChecker"
@@ -156,6 +178,7 @@
   {
     "key": "org.scalastyle.scalariform.EqualsHashCodeChecker",
     "name": "Equals hash code",
+    "description": "Defining either equals or hashCode in a class without defining the is a known source of bugs. Usually, when you define one, you should also define the other.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_EqualsHashCodeChecker"
@@ -163,6 +186,7 @@
   {
     "key": "org.scalastyle.scalariform.FieldNamesChecker",
     "name": "Field name",
+    "description": "A consistent naming convention for field names can make code easier to read and understand",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_FieldNamesChecker"
@@ -170,6 +194,7 @@
   {
     "key": "org.scalastyle.scalariform.ForBraceChecker",
     "name": "For brace",
+    "description": "Usage of braces (rather than parentheses) within a for comprehension mean that you don\u0027t have to specify a semi-colon at the end of every line: \u003cbr/\u003e\n \u003cbr/\u003e\n    for {      // braces \u003cbr/\u003e\n      t \u0026lt;- List(1,2,3) \u003cbr/\u003e\n      if (i % 2 \u003d\u003d 0) \u003cbr/\u003e\n    } yield t \u003cbr/\u003e\n \u003cbr/\u003e\n  is preferred to \u003cbr/\u003e\n \u003cbr/\u003e\n    for (      // parentheses \u003cbr/\u003e\n      t \u0026lt;- List(1,2,3); \u003cbr/\u003e\n      if (i % 2 \u003d\u003d 0) \u003cbr/\u003e\n    ) yield t \u003cbr/\u003e\n \u003cbr/\u003e\n  To fix it, replace the () with {}. And then remove the ; at the end of the lines. \u003cbr/\u003e\nThe singleLineAllowed property allows for constructions of the type: \u003cbr/\u003e\n \u003cbr/\u003e\n    for (i \u0026lt;- List(1,2,3)) yield i",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ForBraceChecker"
@@ -177,6 +202,7 @@
   {
     "key": "org.scalastyle.scalariform.ForLoopChecker",
     "name": "For loop",
+    "description": "For-comprehensions which lack a yield clause is actually a loop rather than a functional comprehension and it is usually \u003cbr/\u003e\n   more readable to string the generators together between parentheses rather than using the syntactically-confusing } { construct: \u003cbr/\u003e\n \u003cbr/\u003e\n   for (x \u0026lt;- board.rows; y \u0026lt;- board.files) { \u003cbr/\u003e\n     printf(\u0026quot;(%d, %d)\u0026quot;, x, y) \u003cbr/\u003e\n   } \u003cbr/\u003e\n \u003cbr/\u003e\n   is preferred to \u003cbr/\u003e\n \u003cbr/\u003e\n   for { \u003cbr/\u003e\n     x \u0026lt;- board.rows \u003cbr/\u003e\n     y \u0026lt;- board.files \u003cbr/\u003e\n   } { \u003cbr/\u003e\n     printf(\u0026quot;(%d, %d)\u0026quot;, x, y) \u003cbr/\u003e\n   }",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ForLoopChecker"
@@ -184,6 +210,7 @@
   {
     "key": "org.scalastyle.scalariform.IfBraceChecker",
     "name": "If brace",
+    "description": "Some people find if clauses with braces easier to read. \u003cbr/\u003e\nThe singleLineAllowed property allows if constructions of the type: \u003cbr/\u003e\n \u003cbr/\u003e\n    if (bool_expression) expression1 else expression2 \u003cbr/\u003e\n \u003cbr/\u003e\nThe doubleLineAllowed property allows if constructions of the type: \u003cbr/\u003e\n \u003cbr/\u003e\n    if (bool_expression) expression1 \u003cbr/\u003e\n    else expression2 \u003cbr/\u003e\n \u003cbr/\u003e\nNote: If you intend to enable only if expressions in the format below, disable the IfBraceChecker altogether. \u003cbr/\u003e\n \u003cbr/\u003e\n    if (bool_expression) \u003cbr/\u003e\n      expression1 \u003cbr/\u003e\n    else \u003cbr/\u003e\n      expression2",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_IfBraceChecker"
@@ -191,6 +218,7 @@
   {
     "key": "org.scalastyle.scalariform.IllegalImportsChecker",
     "name": "Illegal imports",
+    "description": "Use of some classes can be discouraged for a project. For instance, use of sun._ is generally discouraged because \u003cbr/\u003e\n they are internal to the JDK and can be changed.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_IllegalImportsChecker"
@@ -198,6 +226,7 @@
   {
     "key": "org.scalastyle.scalariform.ImportGroupingChecker",
     "name": "Import grouping",
+    "description": "If imports are spread throughout the file, knowing what is in scope at any one place can be difficult to work out.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ImportGroupingChecker"
@@ -205,6 +234,7 @@
   {
     "key": "org.scalastyle.scalariform.ImportOrderChecker",
     "name": "Import ordering",
+    "description": "Consistent import ordering improves code readability and reduces unrelated changes in patches.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ImportOrderChecker"
@@ -212,6 +242,7 @@
   {
     "key": "org.scalastyle.scalariform.LowercasePatternMatchChecker",
     "name": "Lowercase pattern match",
+    "description": "A lower case pattern match clause with no other tokens is the same as \\_; this is not true for patterns which start with an upper \u003cbr/\u003e\n  case letter. This can cause confusion, and may not be what was intended: \u003cbr/\u003e\n \u003cbr/\u003e\n    val foo \u003d \u0026quot;foo\u0026quot; \u003cbr/\u003e\n    val Bar \u003d \u0026quot;bar\u0026quot; \u003cbr/\u003e\n    \u0026quot;bar\u0026quot; match { case Bar \u003d\u0026gt; \u0026quot;we got bar\u0026quot; }   // result \u003d \u0026quot;we got bar\u0026quot; \u003cbr/\u003e\n    \u0026quot;bar\u0026quot; match { case foo \u003d\u0026gt; \u0026quot;we got foo\u0026quot; }   // result \u003d \u0026quot;we got foo\u0026quot; \u003cbr/\u003e\n    \u0026quot;bar\u0026quot; match { case `foo` \u003d\u0026gt; \u0026quot;we got foo\u0026quot; } // result \u003d MatchError \u003cbr/\u003e\n \u003cbr/\u003e\n  This checker raises a warning with the second match. To fix it, use an identifier which starts with an upper case letter (best), use case \\_ or, \u003cbr/\u003e\n  if you wish to refer to the value, add a type `: Any` \u003cbr/\u003e\n \u003cbr/\u003e\n    val lc \u003d \u0026quot;lc\u0026quot; \u003cbr/\u003e\n    \u0026quot;something\u0026quot; match { case lc: Any \u003d\u0026gt; \u0026quot;lc\u0026quot; } // result \u003d \u0026quot;lc\u0026quot; \u003cbr/\u003e\n    \u0026quot;something\u0026quot; match { case _ \u003d\u0026gt; \u0026quot;lc\u0026quot; } // result \u003d \u0026quot;lc\u0026quot;",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_LowercasePatternMatchChecker"
@@ -219,6 +250,7 @@
   {
     "key": "org.scalastyle.scalariform.MagicNumberChecker",
     "name": "Magic number",
+    "description": "Replacing a magic number with a named constant can make code easier to read and understand, and can avoid some subtle bugs. \u003cbr/\u003e\nA simple assignment to a val is not considered to be a magic number, for example: \u003cbr/\u003e\n \u003cbr/\u003e\n    val foo \u003d 4 \u003cbr/\u003e\n \u003cbr/\u003e\nis not a magic number, but \u003cbr/\u003e\n \u003cbr/\u003e\n    var foo \u003d 4 \u003cbr/\u003e\n \u003cbr/\u003e\nis considered to be a magic number.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_MagicNumberChecker"
@@ -226,6 +258,7 @@
   {
     "key": "org.scalastyle.scalariform.MethodArgumentNamesChecker",
     "name": "Method argument name",
+    "description": "The Scala style guide recommends that method argument names conform to certain standards.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_MethodArgumentNamesChecker"
@@ -233,6 +266,7 @@
   {
     "key": "org.scalastyle.scalariform.MethodLengthChecker",
     "name": "Method length",
+    "description": "Long methods can be hard to read and understand.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_MethodLengthChecker"
@@ -240,6 +274,7 @@
   {
     "key": "org.scalastyle.scalariform.MethodNamesChecker",
     "name": "Method name",
+    "description": "The Scala style guide recommends that method names conform to certain standards. If the methods are overriding another method, and the overridden method \u003cbr/\u003e\n cannot be changed, then use the ignoreOverride parameter.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_MethodNamesChecker"
@@ -247,6 +282,7 @@
   {
     "key": "org.scalastyle.scalariform.MultipleStringLiteralsChecker",
     "name": "Multiple string literals",
+    "description": "Code duplication makes maintenance more difficult, so it can be better to replace the multiple occurrences with a constant.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_MultipleStringLiteralsChecker"
@@ -254,6 +290,7 @@
   {
     "key": "org.scalastyle.scalariform.NamedArgumentChecker",
     "name": "Named argument",
+    "description": "Nameless literals make code harder to understand (consider `updateEntity(1, true)` and `updateEntity(id \u003d 1, enabled \u003d true)`).",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NamedArgumentChecker"
@@ -261,6 +298,7 @@
   {
     "key": "org.scalastyle.scalariform.NoCloneChecker",
     "name": "No clone",
+    "description": "The clone method is difficult to get right. You can use the copy constructor of case classes rather than implementing clone. \u003cbr/\u003e\n  For more information on clone(), see Effective Java by Joshua Bloch pages.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NoCloneChecker"
@@ -268,6 +306,7 @@
   {
     "key": "org.scalastyle.scalariform.NoFinalizeChecker",
     "name": "No finalize",
+    "description": "finalize() is called when the object is garbage collected, and garbage collection is not guaranteed to happen. \u003cbr/\u003e\n It is therefore unwise to rely on code in finalize() method.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NoFinalizeChecker"
@@ -275,6 +314,7 @@
   {
     "key": "org.scalastyle.scalariform.NoWhitespaceAfterLeftBracketChecker",
     "name": "No whitespace after left bracket",
+    "description": "If there is whitespace after a left bracket, this can be confusing to the reader",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NoWhitespaceAfterLeftBracketChecker"
@@ -282,6 +322,7 @@
   {
     "key": "org.scalastyle.scalariform.NoWhitespaceBeforeLeftBracketChecker",
     "name": "No whitespace before left bracket",
+    "description": "If there is whitespace before a left bracket, this can be confusing to the reader",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NoWhitespaceBeforeLeftBracketChecker"
@@ -289,6 +330,7 @@
   {
     "key": "org.scalastyle.scalariform.NoWhitespaceBeforeRightBracketChecker",
     "name": "No whitespace before right bracket",
+    "description": "If there is whitespace before a right bracket, this can be confusing to the reader",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NoWhitespaceBeforeRightBracketChecker"
@@ -296,6 +338,7 @@
   {
     "key": "org.scalastyle.scalariform.NonASCIICharacterChecker",
     "name": "Non ascii character disallowed",
+    "description": "Scala allows unicode characters as operators and some editors misbehave when they see non-ascii character. \u003cbr/\u003e\n    In a project collaborated by a community of developers. This check can be helpful in such situations. \u003cbr/\u003e\n \u003cbr/\u003e\n \u003cbr/\u003e\n    \u0026quot;value\u0026quot;.match { \u003cbr/\u003e\n    case \u0026quot;value\u0026quot; \u003d\u0026gt; println(\u0026quot;matched\u0026quot;) \u003cbr/\u003e\n    ... \u003cbr/\u003e\n    } \u003cbr/\u003e\n \u003cbr/\u003e\n    is preferred to \u003cbr/\u003e\n \u003cbr/\u003e\n    \u0026quot;value\u0026quot;.match { \u003cbr/\u003e\n    case \u0026quot;value\u0026quot; \u0026rArr; println(\u0026quot;matched\u0026quot;) \u003cbr/\u003e\n    ... \u003cbr/\u003e\n    } \u003cbr/\u003e\n \u003cbr/\u003e\n    To fix it, replace the (unicode operator)\u0026rArr; with \u003d\u0026gt;.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NonASCIICharacterChecker"
@@ -303,6 +346,7 @@
   {
     "key": "org.scalastyle.scalariform.NotImplementedErrorUsage",
     "name": "Not implemented error usage",
+    "description": "The ??? operator denotes that an implementation is missing. This rule helps to avoid potential runtime errors because of not implemented code.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NotImplementedErrorUsage"
@@ -310,6 +354,7 @@
   {
     "key": "org.scalastyle.scalariform.NullChecker",
     "name": "Null",
+    "description": "Scala discourages use of nulls, preferring Option.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NullChecker"
@@ -317,6 +362,7 @@
   {
     "key": "org.scalastyle.scalariform.NumberOfMethodsInTypeChecker",
     "name": "Number of methods",
+    "description": "If a type declares too many methods, this can be an indication of bad design.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NumberOfMethodsInTypeChecker"
@@ -324,6 +370,7 @@
   {
     "key": "org.scalastyle.scalariform.NumberOfTypesChecker",
     "name": "Number of types",
+    "description": "If there are too many classes/objects defined in a single file, this can cause the code to be difficult to understand.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_NumberOfTypesChecker"
@@ -331,6 +378,7 @@
   {
     "key": "org.scalastyle.scalariform.ObjectNamesChecker",
     "name": "Object name",
+    "description": "The Scala style guide recommends that object names conform to certain standards.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ObjectNamesChecker"
@@ -338,6 +386,7 @@
   {
     "key": "org.scalastyle.scalariform.OverrideJavaChecker",
     "name": "Override java",
+    "description": "You should be using the Scala override keyword instead.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_OverrideJavaChecker"
@@ -345,6 +394,7 @@
   {
     "key": "org.scalastyle.scalariform.PackageNamesChecker",
     "name": "Package name",
+    "description": "The Scala style guide recommends that package names conform to certain standards.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_PackageNamesChecker"
@@ -352,6 +402,7 @@
   {
     "key": "org.scalastyle.scalariform.PackageObjectNamesChecker",
     "name": "Package object name",
+    "description": "The Scala style guide recommends that package object names conform to certain standards.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_PackageObjectNamesChecker"
@@ -359,6 +410,7 @@
   {
     "key": "org.scalastyle.scalariform.ParameterNumberChecker",
     "name": "Parameter number",
+    "description": "A method which has more than a certain number of parameters can be hard to understand.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ParameterNumberChecker"
@@ -366,6 +418,7 @@
   {
     "key": "org.scalastyle.scalariform.PatternMatchAlignChecker",
     "name": "Pattern match align",
+    "description": "Correct formatting can help readability.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_PatternMatchAlignChecker"
@@ -373,6 +426,7 @@
   {
     "key": "org.scalastyle.scalariform.ProcedureDeclarationChecker",
     "name": "Procedure declaration",
+    "description": "A procedure style declaration can cause confusion - the developer may have simply forgotten to add a \u0027\u003d\u0027, and now their method returns Unit rather than the inferred type: \u003cbr/\u003e\n \u003cbr/\u003e\n    def foo() { println(\u0026quot;hello\u0026quot;); 5 } \u003cbr/\u003e\n    def foo() \u003d { println(\u0026quot;hello\u0026quot;); 5 } \u003cbr/\u003e\n \u003cbr/\u003e\n  This checker raises a warning with the first line. To fix it, use an explicit return type, or add a \u0027\u003d\u0027 before the body.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ProcedureDeclarationChecker"
@@ -380,6 +434,7 @@
   {
     "key": "org.scalastyle.scalariform.PublicMethodsHaveTypeChecker",
     "name": "Public methods have type",
+    "description": "A public method declared on a type is effectively an API declaration. Explicitly declaring a return type means that other code which depends on that type won\u0027t break unexpectedly.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_PublicMethodsHaveTypeChecker"
@@ -387,6 +442,7 @@
   {
     "key": "org.scalastyle.scalariform.RedundantIfChecker",
     "name": "If redundant",
+    "description": "If expressions with boolean constants in both branches can be eliminated without affecting readability. Prefer simply `cond` to `if (cond) true else false` and `!cond` to `if (cond) false else true`.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_RedundantIfChecker"
@@ -394,6 +450,7 @@
   {
     "key": "org.scalastyle.scalariform.ReturnChecker",
     "name": "Return",
+    "description": "Use of return is not usually necessary in Scala. In fact, use of return can discourage a functional style of programming.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ReturnChecker"
@@ -401,6 +458,7 @@
   {
     "key": "org.scalastyle.scalariform.ScalaDocChecker",
     "name": "Scaladoc",
+    "description": "Scaladoc is generally considered a good thing. Within reason. \u003cbr/\u003e\nIgnore tokens is a comma separated string that may include the following : PatDefOrDcl (variables), TmplDef (classes, traits), TypeDefOrDcl (type definitions), FunDefOrDcl (functions) \u003cbr/\u003e\n Supported indentation styles are \u0026quot;scaladoc\u0026quot; (for ScalaDoc-style comments, with two spaces before the asterisk), \u0026quot;javadoc\u0026quot; (for JavaDoc-style comments, with a single space before the asterisk) or \u0026quot;anydoc\u0026quot; to support any style (any number of spaces before the asterisk). For backwards compatibility, if left empty, \u0026quot;anydoc\u0026quot; will be assumed.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_ScalaDocChecker"
@@ -408,6 +466,7 @@
   {
     "key": "org.scalastyle.scalariform.SimplifyBooleanExpressionChecker",
     "name": "Simplify boolean expression",
+    "description": "A boolean expression which can be simplified can make code easier to read.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_SimplifyBooleanExpressionChecker"
@@ -415,6 +474,7 @@
   {
     "key": "org.scalastyle.scalariform.SpaceAfterCommentStartChecker",
     "name": "Space after comment start",
+    "description": "To bring consistency with how comments should be formatted, leave a space right after the beginning of the comment. \u003cbr/\u003e\n \u003cbr/\u003e\n    package foobar \u003cbr/\u003e\n \u003cbr/\u003e\n    object Foobar { \u003cbr/\u003e\n    /**WRONG \u003cbr/\u003e\n    * \u003cbr/\u003e\n    */ \u003cbr/\u003e\n    /** Correct*/ \u003cbr/\u003e\n    val d \u003d 2 /*Wrong*/ //Wrong \u003cbr/\u003e\n    /** \u003cbr/\u003e\n    *Correct \u003cbr/\u003e\n    */ \u003cbr/\u003e\n    val e \u003d 3/** Correct*/ // Correct \u003cbr/\u003e\n    }",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_SpaceAfterCommentStartChecker"
@@ -422,6 +482,7 @@
   {
     "key": "org.scalastyle.scalariform.SpacesAfterPlusChecker",
     "name": "Spaces after plus",
+    "description": "An expression with spaces around + can be easier to read",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_SpacesAfterPlusChecker"
@@ -429,6 +490,7 @@
   {
     "key": "org.scalastyle.scalariform.SpacesBeforePlusChecker",
     "name": "Spaces before plus",
+    "description": "An expression with spaces around + can be easier to read",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_SpacesBeforePlusChecker"
@@ -436,6 +498,7 @@
   {
     "key": "org.scalastyle.scalariform.StructuralTypeChecker",
     "name": "Structural type",
+    "description": "Structural types in Scala can use reflection - this can have unexpected performance consequences. \u003cbr/\u003e\nWarning: This check can also wrongly pick up type lamdbas and other such constructs. This checker should be used with care. You always have the alternative of the scalac checking for structural types.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_StructuralTypeChecker"
@@ -443,6 +506,7 @@
   {
     "key": "org.scalastyle.scalariform.TodoCommentChecker",
     "name": "Todo comment",
+    "description": "Some projects may consider TODO or FIXME comments in a code bad style. They would rather you fix the problem.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_TodoCommentChecker"
@@ -450,6 +514,7 @@
   {
     "key": "org.scalastyle.scalariform.TokenChecker",
     "name": "Token",
+    "description": "Some checks can be carried by just the presence of a particular token.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_TokenChecker"
@@ -457,6 +522,7 @@
   {
     "key": "org.scalastyle.scalariform.UnderscoreImportChecker",
     "name": "Underscore import",
+    "description": "Importing all classes from a package or static members from a class leads to tight coupling between packages or classes and might lead to problems when a new version of a library introduces name clashes.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_UnderscoreImportChecker"
@@ -464,6 +530,7 @@
   {
     "key": "org.scalastyle.scalariform.UppercaseLChecker",
     "name": "Uppercase l",
+    "description": "A lowercase L (l) can look similar to a number 1 with some fonts.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_UppercaseLChecker"
@@ -471,6 +538,7 @@
   {
     "key": "org.scalastyle.scalariform.VarFieldChecker",
     "name": "Var field",
+    "description": "var (mutable fields) are deprecated if you\u0027re using a strict functional style",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_VarFieldChecker"
@@ -478,6 +546,7 @@
   {
     "key": "org.scalastyle.scalariform.VarLocalChecker",
     "name": "Var local",
+    "description": "vars (mutable local variables) loops are deprecated if you\u0027re using a strict functional style",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_VarLocalChecker"
@@ -485,6 +554,7 @@
   {
     "key": "org.scalastyle.scalariform.WhileBraceChecker",
     "name": "While brace",
+    "description": "While cannot be used in a pure-functional manner, that\u0027s why it\u0027s recommended to never omit braces according to Scala Style Guide.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_WhileBraceChecker"
@@ -492,6 +562,7 @@
   {
     "key": "org.scalastyle.scalariform.WhileChecker",
     "name": "While",
+    "description": "while loops are deprecated if you\u0027re using a strict functional style",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_WhileChecker"
@@ -499,6 +570,7 @@
   {
     "key": "org.scalastyle.scalariform.XmlLiteralChecker",
     "name": "Xml literal",
+    "description": "Some projects prefer not to have XML literals. They could use a templating engine instead.",
     "type": "CODE_SMELL",
     "severity": "MINOR",
     "url": "http://www.scalastyle.org/rules-1.0.0.html#org_scalastyle_scalariform_XmlLiteralChecker"
