@@ -38,7 +38,7 @@ class RuboCopRulesDefinitionTest {
     assertThat(repository.name()).isEqualTo("RuboCop");
     assertThat(repository.language()).isEqualTo("ruby");
     assertThat(repository.isExternal()).isTrue();
-    assertThat(repository.rules()).hasSize(500);
+    assertThat(repository.rules()).hasSize(542);
 
     RulesDefinition.Rule rule = repository.rule("Lint/MultipleComparison");
     assertThat(rule).isNotNull();

@@ -1,9 +1,21 @@
-# Available cops (500) + config for /slang-enterprise/utils/generate-rubocop-rules/src/main/resources: 
-# Department 'Bundler' (6):
+# Available cops (542) + config for /slang-enterprise/utils/generate-rubocop-rules/src/main/resources: 
+# Department 'Bundler' (7):
 Bundler/DuplicatedGem:
   Description: Checks for duplicate gem entries in Gemfile.
   Enabled: true
+  Severity: warning
   VersionAdded: '0.46'
+  VersionChanged: '1.40'
+  Include:
+  - "**/*.gemfile"
+  - "**/Gemfile"
+  - "**/gems.rb"
+
+Bundler/DuplicatedGroup:
+  Description: Checks for duplicate group entries in Gemfile.
+  Enabled: true
+  Severity: warning
+  VersionAdded: '1.56'
   Include:
   - "**/*.gemfile"
   - "**/Gemfile"
@@ -55,7 +67,9 @@ Bundler/InsecureProtocolSource:
     because HTTP requests are insecure. Please change your source to 'https://rubygems.org'
     if possible, or 'http://rubygems.org' if not.
   Enabled: true
+  Severity: warning
   VersionAdded: '0.50'
+  VersionChanged: '1.40'
   AllowHttpProtocol: true
   Include:
   - "**/*.gemfile"
@@ -76,15 +90,6 @@ Bundler/OrderedGems:
   - "**/gems.rb"
 
 # Department 'Gemspec' (8):
-# Supports --autocorrect
-Gemspec/DateAssignment:
-  Description: Checks that `date =` is not used in gemspec file, it is set automatically
-    when the gem is packaged.
-  Enabled: pending
-  VersionAdded: '1.10'
-  Include:
-  - "**/*.gemspec"
-
 Gemspec/DependencyVersion:
   Description: Requires or forbids specifying gem dependency versions.
   Enabled: false
@@ -102,15 +107,35 @@ Gemspec/DeprecatedAttributeAssignment:
   Description: Checks that deprecated attribute assignments are not set in a gemspec
     file.
   Enabled: pending
+  Severity: warning
   VersionAdded: '1.30'
+  VersionChanged: '1.40'
   Include:
   - "**/*.gemspec"
+
+Gemspec/DevelopmentDependencies:
+  Description: Checks that development dependencies are specified in Gemfile rather
+    than gemspec.
+  Enabled: pending
+  VersionAdded: '1.44'
+  EnforcedStyle: Gemfile
+  SupportedStyles:
+  - Gemfile
+  - gems.rb
+  - gemspec
+  AllowedGems: []
+  Include:
+  - "**/*.gemspec"
+  - "**/Gemfile"
+  - "**/gems.rb"
 
 Gemspec/DuplicatedAssignment:
   Description: An attribute assignment method calls should be listed only once in a
     gemspec.
   Enabled: true
+  Severity: warning
   VersionAdded: '0.52'
+  VersionChanged: '1.40'
   Include:
   - "**/*.gemspec"
 
@@ -129,7 +154,9 @@ Gemspec/RequireMFA:
   Description: Checks that the gemspec has metadata to require Multi-Factor Authentication
     from RubyGems.
   Enabled: pending
+  Severity: warning
   VersionAdded: '1.23'
+  VersionChanged: '1.40'
   Reference:
   - https://guides.rubygems.org/mfa-requirement-opt-in/
   Include:
@@ -139,8 +166,9 @@ Gemspec/RequiredRubyVersion:
   Description: Checks that `required_ruby_version` of gemspec is specified and equal
     to `TargetRubyVersion` of .rubocop.yml.
   Enabled: true
+  Severity: warning
   VersionAdded: '0.52'
-  VersionChanged: '1.22'
+  VersionChanged: '1.40'
   Include:
   - "**/*.gemspec"
 
@@ -148,11 +176,13 @@ Gemspec/RubyVersionGlobalsUsage:
   Description: Checks usage of RUBY_VERSION in gemspec.
   StyleGuide: "#no-ruby-version-in-the-gemspec"
   Enabled: true
+  Severity: warning
   VersionAdded: '0.72'
+  VersionChanged: '1.40'
   Include:
   - "**/*.gemspec"
 
-# Department 'Layout' (96):
+# Department 'Layout' (99):
 # Supports --autocorrect
 Layout/AccessModifierIndentation:
   Description: Check indentation of private/protected visibility modifiers.
@@ -163,7 +193,7 @@ Layout/AccessModifierIndentation:
   SupportedStyles:
   - outdent
   - indent
-  IndentationWidth: 
+  IndentationWidth:
 
 # Supports --autocorrect
 Layout/ArgumentAlignment:
@@ -176,7 +206,7 @@ Layout/ArgumentAlignment:
   SupportedStyles:
   - with_first_argument
   - with_fixed_indentation
-  IndentationWidth: 
+  IndentationWidth:
 
 # Supports --autocorrect
 Layout/ArrayAlignment:
@@ -189,7 +219,7 @@ Layout/ArrayAlignment:
   SupportedStyles:
   - with_first_element
   - with_fixed_indentation
-  IndentationWidth: 
+  IndentationWidth:
 
 # Supports --autocorrect
 Layout/AssignmentIndentation:
@@ -197,8 +227,8 @@ Layout/AssignmentIndentation:
     multi-line assignment.
   Enabled: true
   VersionAdded: '0.49'
-  VersionChanged: '0.77'
-  IndentationWidth: 
+  VersionChanged: '1.45'
+  IndentationWidth:
 
 # Supports --autocorrect
 Layout/BeginEndAlignment:
@@ -240,14 +270,16 @@ Layout/CaseIndentation:
   - case
   - end
   IndentOneStep: false
-  IndentationWidth: 
+  IndentationWidth:
 
 # Supports --autocorrect
 Layout/ClassStructure:
   Description: Enforces a configured order of definitions within a class body.
   StyleGuide: "#consistent-classes"
   Enabled: false
+  SafeAutoCorrect: false
   VersionAdded: '0.52'
+  VersionChanged: '1.53'
   Categories:
     module_inclusion:
     - include
@@ -358,6 +390,7 @@ Layout/EmptyLineBetweenDefs:
   EmptyLineBetweenMethodDefs: true
   EmptyLineBetweenClassDefs: true
   EmptyLineBetweenModuleDefs: true
+  DefLikeMacros: []
   AllowAdjacentOneLineDefs: true
   NumberOfEmptyLines: 1
 
@@ -506,7 +539,7 @@ Layout/FirstArgumentIndentation:
   - consistent_relative_to_receiver
   - special_for_inner_method_call
   - special_for_inner_method_call_in_parentheses
-  IndentationWidth: 
+  IndentationWidth:
 
 # Supports --autocorrect
 Layout/FirstArrayElementIndentation:
@@ -519,13 +552,14 @@ Layout/FirstArrayElementIndentation:
   - special_inside_parentheses
   - consistent
   - align_brackets
-  IndentationWidth: 
+  IndentationWidth:
 
 # Supports --autocorrect
 Layout/FirstArrayElementLineBreak:
   Description: Checks for a line break before the first element in a multi-line array.
   Enabled: false
   VersionAdded: '0.49'
+  AllowMultilineFinalElement: false
 
 # Supports --autocorrect
 Layout/FirstHashElementIndentation:
@@ -538,13 +572,14 @@ Layout/FirstHashElementIndentation:
   - special_inside_parentheses
   - consistent
   - align_braces
-  IndentationWidth: 
+  IndentationWidth:
 
 # Supports --autocorrect
 Layout/FirstHashElementLineBreak:
   Description: Checks for a line break before the first element in a multi-line hash.
   Enabled: false
   VersionAdded: '0.49'
+  AllowMultilineFinalElement: false
 
 # Supports --autocorrect
 Layout/FirstMethodArgumentLineBreak:
@@ -552,6 +587,7 @@ Layout/FirstMethodArgumentLineBreak:
     call.
   Enabled: false
   VersionAdded: '0.49'
+  AllowMultilineFinalElement: false
 
 # Supports --autocorrect
 Layout/FirstMethodParameterLineBreak:
@@ -559,6 +595,7 @@ Layout/FirstMethodParameterLineBreak:
     parameter definition.
   Enabled: false
   VersionAdded: '0.49'
+  AllowMultilineFinalElement: false
 
 # Supports --autocorrect
 Layout/FirstParameterIndentation:
@@ -570,7 +607,7 @@ Layout/FirstParameterIndentation:
   SupportedStyles:
   - consistent
   - align_parentheses
-  IndentationWidth: 
+  IndentationWidth:
 
 # Supports --autocorrect
 Layout/HashAlignment:
@@ -632,7 +669,7 @@ Layout/IndentationStyle:
   Enabled: true
   VersionAdded: '0.49'
   VersionChanged: '0.82'
-  IndentationWidth: 
+  IndentationWidth:
   EnforcedStyle: spaces
   SupportedStyles:
   - spaces
@@ -646,7 +683,6 @@ Layout/IndentationWidth:
   VersionAdded: '0.49'
   Width: 2
   AllowedPatterns: []
-  IgnoredPatterns: []
 
 # Supports --autocorrect
 Layout/InitialIndentation:
@@ -672,6 +708,28 @@ Layout/LeadingEmptyLines:
   VersionChanged: '0.77'
 
 # Supports --autocorrect
+Layout/LineContinuationLeadingSpace:
+  Description: Use trailing spaces instead of leading spaces in strings broken over
+    multiple lines (by a backslash).
+  Enabled: pending
+  VersionAdded: '1.31'
+  VersionChanged: '1.45'
+  EnforcedStyle: trailing
+  SupportedStyles:
+  - leading
+  - trailing
+
+# Supports --autocorrect
+Layout/LineContinuationSpacing:
+  Description: Checks the spacing in front of backslash in line continuations.
+  Enabled: pending
+  VersionAdded: '1.31'
+  EnforcedStyle: space
+  SupportedStyles:
+  - space
+  - no_space
+
+# Supports --autocorrect
 Layout/LineEndStringConcatenationIndentation:
   Description: Checks the indentation of the next line after a line that ends with a
     string literal and a backslash.
@@ -681,7 +739,7 @@ Layout/LineEndStringConcatenationIndentation:
   SupportedStyles:
   - aligned
   - indented
-  IndentationWidth: 
+  IndentationWidth:
 
 # Supports --autocorrect
 Layout/LineLength:
@@ -698,7 +756,6 @@ Layout/LineLength:
   - https
   IgnoreCopDirectives: true
   AllowedPatterns: []
-  IgnoredPatterns: []
 
 # Supports --autocorrect
 Layout/MultilineArrayBraceLayout:
@@ -718,6 +775,7 @@ Layout/MultilineArrayLineBreaks:
     line.
   Enabled: false
   VersionAdded: '0.67'
+  AllowMultilineFinalElement: false
 
 # Supports --autocorrect
 Layout/MultilineAssignmentLayout:
@@ -761,6 +819,7 @@ Layout/MultilineHashKeyLineBreaks:
     line.
   Enabled: false
   VersionAdded: '0.67'
+  AllowMultilineFinalElement: false
 
 # Supports --autocorrect
 Layout/MultilineMethodArgumentLineBreaks:
@@ -768,6 +827,7 @@ Layout/MultilineMethodArgumentLineBreaks:
     line.
   Enabled: false
   VersionAdded: '0.67'
+  AllowMultilineFinalElement: false
 
 # Supports --autocorrect
 Layout/MultilineMethodCallBraceLayout:
@@ -792,7 +852,7 @@ Layout/MultilineMethodCallIndentation:
   - aligned
   - indented
   - indented_relative_to_receiver
-  IndentationWidth: 
+  IndentationWidth:
 
 # Supports --autocorrect
 Layout/MultilineMethodDefinitionBraceLayout:
@@ -807,6 +867,14 @@ Layout/MultilineMethodDefinitionBraceLayout:
   - same_line
 
 # Supports --autocorrect
+Layout/MultilineMethodParameterLineBreaks:
+  Description: Checks that each parameter in a multi-line method definition starts on
+    a separate line.
+  Enabled: false
+  VersionAdded: '1.32'
+  AllowMultilineFinalElement: false
+
+# Supports --autocorrect
 Layout/MultilineOperationIndentation:
   Description: Checks indentation of binary operations that span more than one line.
   Enabled: true
@@ -815,7 +883,7 @@ Layout/MultilineOperationIndentation:
   SupportedStyles:
   - aligned
   - indented
-  IndentationWidth: 
+  IndentationWidth:
 
 # Supports --autocorrect
 Layout/ParameterAlignment:
@@ -829,7 +897,7 @@ Layout/ParameterAlignment:
   SupportedStyles:
   - with_first_parameter
   - with_fixed_indentation
-  IndentationWidth: 
+  IndentationWidth:
 
 # Supports --autocorrect
 Layout/RedundantLineBreak:
@@ -1117,20 +1185,21 @@ Layout/TrailingWhitespace:
   VersionChanged: '1.0'
   AllowInHeredoc: false
 
-# Department 'Lint' (126):
+# Department 'Lint' (135):
 Lint/AmbiguousAssignment:
   Description: Checks for mistyped shorthand assignments.
   Enabled: pending
   VersionAdded: '1.7'
 
+# Supports --autocorrect
 Lint/AmbiguousBlockAssociation:
   Description: Checks for ambiguous block association with method when param passed
     without parentheses.
-  StyleGuide: "#syntax"
   Enabled: true
   VersionAdded: '0.48'
   VersionChanged: '1.13'
-  IgnoredMethods: []
+  AllowedMethods: []
+  AllowedPatterns: []
 
 # Supports --autocorrect
 Lint/AmbiguousOperator:
@@ -1164,11 +1233,14 @@ Lint/AmbiguousRegexpLiteral:
   VersionAdded: '0.17'
   VersionChanged: '0.83'
 
+# Supports --autocorrect
 Lint/AssignmentInCondition:
   Description: Don't use assignment in conditions.
   StyleGuide: "#safe-assignment-in-condition"
   Enabled: true
+  SafeAutoCorrect: false
   VersionAdded: '0.9'
+  VersionChanged: '1.45'
   AllowSafeAssignment: true
 
 # Supports --autocorrect
@@ -1207,6 +1279,13 @@ Lint/ConstantDefinitionInBlock:
   AllowedMethods:
   - enums
 
+# Supports --autocorrect
+Lint/ConstantOverwrittenInRescue:
+  Description: Checks for overwriting an exception with an exception result by use `rescue
+    =>`.
+  Enabled: pending
+  VersionAdded: '1.31'
+
 Lint/ConstantResolution:
   Description: Check that constants are fully qualified with `::`.
   Enabled: false
@@ -1218,11 +1297,11 @@ Lint/Debugger:
   Description: Check for debugger calls.
   Enabled: true
   VersionAdded: '0.14'
-  VersionChanged: '1.10'
-  DebuggerReceivers: []
+  VersionChanged: '1.46'
   DebuggerMethods:
     Kernel:
     - binding.irb
+    - Kernel.binding.irb
     Byebug:
     - byebug
     - remote_byebug
@@ -1240,7 +1319,11 @@ Lint/Debugger:
     - binding.pry
     - binding.remote_pry
     - binding.pry_remote
+    - Kernel.binding.pry
+    - Kernel.binding.remote_pry
+    - Kernel.binding.pry_remote
     - Pry.rescue
+    - pry
     Rails:
     - debugger
     - Kernel.debugger
@@ -1260,7 +1343,7 @@ Lint/DeprecatedConstants:
   Description: Checks for deprecated constants.
   Enabled: pending
   VersionAdded: '1.8'
-  VersionChanged: '1.22'
+  VersionChanged: '1.40'
   DeprecatedConstants:
     NIL:
       Alternative: nil
@@ -1276,6 +1359,12 @@ Lint/DeprecatedConstants:
       DeprecatedVersion: '2.6'
     Random::DEFAULT:
       Alternative: Random.new
+      DeprecatedVersion: '3.0'
+    Struct::Group:
+      Alternative: Etc::Group
+      DeprecatedVersion: '3.0'
+    Struct::Passwd:
+      Alternative: Etc::Passwd
       DeprecatedVersion: '3.0'
 
 # Supports --autocorrect
@@ -1316,6 +1405,17 @@ Lint/DuplicateHashKey:
   Enabled: true
   VersionAdded: '0.34'
   VersionChanged: '0.77'
+
+# Supports --autocorrect
+Lint/DuplicateMagicComment:
+  Description: Check for duplicated magic comments.
+  Enabled: pending
+  VersionAdded: '1.37'
+
+Lint/DuplicateMatchPattern:
+  Description: Do not repeat patterns in `in` keywords.
+  Enabled: pending
+  VersionAdded: '1.50'
 
 Lint/DuplicateMethods:
   Description: Check for duplicate method definitions.
@@ -1367,12 +1467,15 @@ Lint/EmptyClass:
   VersionAdded: '1.3'
   AllowComments: false
 
+# Supports --autocorrect
 Lint/EmptyConditionalBody:
   Description: Checks for the presence of `if`, `elsif` and `unless` branches without
     a body.
   Enabled: true
+  SafeAutoCorrect: false
   AllowComments: true
   VersionAdded: '0.89'
+  VersionChanged: '1.34'
 
 # Supports --autocorrect
 Lint/EmptyEnsure:
@@ -1504,11 +1607,11 @@ Lint/InheritException:
 
 # Supports --autocorrect
 Lint/InterpolationCheck:
-  Description: Raise warning for interpolation in single q strs.
+  Description: Checks for interpolation in a single quoted string.
   Enabled: true
-  Safe: false
+  SafeAutoCorrect: false
   VersionAdded: '0.50'
-  VersionChanged: '0.87'
+  VersionChanged: '1.40'
 
 # Supports --autocorrect
 Lint/LambdaWithoutLiteralBlock:
@@ -1547,8 +1650,17 @@ Lint/MissingSuper:
   Description: Checks for the presence of constructors and lifecycle callbacks without
     calls to `super`.
   Enabled: true
+  AllowedParentClasses: []
   VersionAdded: '0.89'
   VersionChanged: '1.4'
+
+# Supports --autocorrect
+Lint/MixedCaseRange:
+  Description: Checks for mixed-case character ranges since they include likely unintended
+    characters.
+  Enabled: pending
+  SafeAutoCorrect: false
+  VersionAdded: '1.53'
 
 Lint/MixedRegexpCaptureTypes:
   Description: Do not mix named captures and numbered captures in a Regexp literal.
@@ -1566,6 +1678,8 @@ Lint/NestedMethodDefinition:
   Description: Do not use nested method definitions.
   StyleGuide: "#no-nested-methods"
   Enabled: true
+  AllowedMethods: []
+  AllowedPatterns: []
   VersionAdded: '0.32'
 
 Lint/NestedPercentLiteral:
@@ -1583,6 +1697,14 @@ Lint/NoReturnInBeginEndBlocks:
   Description: Do not `return` inside `begin..end` blocks in assignment contexts.
   Enabled: pending
   VersionAdded: '1.2'
+
+# Supports --autocorrect
+Lint/NonAtomicFileOperation:
+  Description: Checks for non-atomic file operations.
+  StyleGuide: "#atomic-file-operations"
+  Enabled: pending
+  VersionAdded: '1.31'
+  SafeAutoCorrect: false
 
 # Supports --autocorrect
 Lint/NonDeterministicRequireOrder:
@@ -1603,7 +1725,8 @@ Lint/NumberConversion:
   VersionAdded: '0.53'
   VersionChanged: '1.1'
   SafeAutoCorrect: false
-  IgnoredMethods: []
+  AllowedMethods: []
+  AllowedPatterns: []
   IgnoredClasses:
   - Time
   - DateTime
@@ -1625,7 +1748,9 @@ Lint/OrderedMagicComments:
   Description: Checks the proper ordering of magic comments and whether a magic comment
     is not placed before a shebang.
   Enabled: true
+  SafeAutoCorrect: false
   VersionAdded: '0.53'
+  VersionChanged: '1.37'
 
 Lint/OutOfRangeRegexpRef:
   Description: Checks for out of range reference for Regexp because it always returns
@@ -1695,6 +1820,12 @@ Lint/RedundantDirGlobSort:
   SafeAutoCorrect: false
 
 # Supports --autocorrect
+Lint/RedundantRegexpQuantifiers:
+  Description: Checks for redundant quantifiers in Regexps.
+  Enabled: pending
+  VersionAdded: '1.53'
+
+# Supports --autocorrect
 Lint/RedundantRequireStatement:
   Description: Checks for unnecessary `require` statement.
   Enabled: true
@@ -1762,6 +1893,12 @@ Lint/RequireParentheses:
   Enabled: true
   VersionAdded: '0.18'
 
+Lint/RequireRangeParentheses:
+  Description: Checks that a range literal is enclosed in parentheses when the end of
+    the range is at a line break.
+  Enabled: pending
+  VersionAdded: '1.32'
+
 # Supports --autocorrect
 Lint/RequireRelativeSelfPath:
   Description: Checks for uses a file requiring itself with `require_relative`.
@@ -1786,6 +1923,7 @@ Lint/ReturnInVoidContext:
   Enabled: true
   VersionAdded: '0.50'
 
+# Supports --autocorrect
 Lint/SafeNavigationChain:
   Description: Do not chain ordinary method call after safe navigation operator.
   Enabled: true
@@ -1898,10 +2036,13 @@ Lint/ToJSON:
   Enabled: true
   VersionAdded: '0.66'
 
+# Supports --autocorrect
 Lint/TopLevelReturnWithArgument:
   Description: Detects top level return statements with argument.
   Enabled: true
   VersionAdded: '0.89'
+  Exclude:
+  - "/slang-enterprise/utils/generate-rubocop-rules/src/main/resources/**/*.jb"
 
 # Supports --autocorrect
 Lint/TrailingCommaInAttributeDeclaration:
@@ -1963,7 +2104,6 @@ Lint/UnreachableLoop:
   VersionChanged: '1.7'
   AllowedPatterns:
   - !ruby/regexp /(exactly|at_least|at_most)\(\d+\)\.times/
-  IgnoredPatterns: []
 
 # Supports --autocorrect
 Lint/UnusedBlockArgument:
@@ -2010,11 +2150,20 @@ Lint/UselessAccessModifier:
   ContextCreatingMethods: []
   MethodCreatingMethods: []
 
+# Supports --autocorrect
 Lint/UselessAssignment:
   Description: Checks for useless assignment to a local variable.
   StyleGuide: "#underscore-unused-vars"
   Enabled: true
   VersionAdded: '0.11'
+  VersionChanged: '1.51'
+  SafeAutoCorrect: false
+
+Lint/UselessElseWithoutRescue:
+  Description: Checks for useless `else` in `begin..end` without `rescue`.
+  Enabled: true
+  VersionAdded: '0.17'
+  VersionChanged: '1.31'
 
 # Supports --autocorrect
 Lint/UselessMethodDefinition:
@@ -2023,6 +2172,11 @@ Lint/UselessMethodDefinition:
   VersionAdded: '0.90'
   VersionChanged: '0.91'
   Safe: false
+
+Lint/UselessRescue:
+  Description: Checks for useless `rescue`s.
+  Enabled: pending
+  VersionAdded: '1.43'
 
 Lint/UselessRuby2Keywords:
   Description: Finds unnecessary uses of `ruby2_keywords`.
@@ -2033,10 +2187,9 @@ Lint/UselessRuby2Keywords:
 Lint/UselessSetterCall:
   Description: Checks for useless setter call to a local variable.
   Enabled: true
-  SafeAutoCorrect: false
+  Safe: false
   VersionAdded: '0.13'
   VersionChanged: '1.2'
-  Safe: false
 
 # Supports --autocorrect
 Lint/UselessTimes:
@@ -2045,13 +2198,14 @@ Lint/UselessTimes:
   VersionAdded: '0.91'
   Safe: false
 
+# Supports --autocorrect
 Lint/Void:
   Description: Possible use of operator/literal/variable in void context.
   Enabled: true
   VersionAdded: '0.9'
   CheckForMethodsWithNoSideEffects: false
 
-# Department 'Metrics' (9):
+# Department 'Metrics' (10):
 Metrics/AbcSize:
   Description: A calculated magnitude based on number of assignments, branches, and
     conditions.
@@ -2061,7 +2215,8 @@ Metrics/AbcSize:
   Enabled: true
   VersionAdded: '0.27'
   VersionChanged: '1.5'
-  IgnoredMethods: []
+  AllowedMethods: []
+  AllowedPatterns: []
   CountRepeatedAttributes: true
   Max: 17
 
@@ -2073,9 +2228,9 @@ Metrics/BlockLength:
   CountComments: false
   Max: 25
   CountAsOne: []
-  ExcludedMethods: []
-  IgnoredMethods:
+  AllowedMethods:
   - refine
+  AllowedPatterns: []
   Exclude:
   - "/slang-enterprise/utils/generate-rubocop-rules/src/main/resources/**/*.gemspec"
 
@@ -2097,13 +2252,20 @@ Metrics/ClassLength:
   Max: 100
   CountAsOne: []
 
+Metrics/CollectionLiteralLength:
+  Description: Checks for `Array` or `Hash` literals with many entries.
+  Enabled: pending
+  VersionAdded: '1.47'
+  LengthThreshold: 250
+
 Metrics/CyclomaticComplexity:
   Description: A complexity metric that is strongly correlated to the number of test
     cases needed to validate a method.
   Enabled: true
   VersionAdded: '0.25'
   VersionChanged: '0.81'
-  IgnoredMethods: []
+  AllowedMethods: []
+  AllowedPatterns: []
   Max: 7
 
 Metrics/MethodLength:
@@ -2115,8 +2277,8 @@ Metrics/MethodLength:
   CountComments: false
   Max: 10
   CountAsOne: []
-  ExcludedMethods: []
-  IgnoredMethods: []
+  AllowedMethods: []
+  AllowedPatterns: []
 
 Metrics/ModuleLength:
   Description: Avoid modules longer than 100 lines of code.
@@ -2142,7 +2304,8 @@ Metrics/PerceivedComplexity:
   Enabled: true
   VersionAdded: '0.25'
   VersionChanged: '0.81'
-  IgnoredMethods: []
+  AllowedMethods: []
+  AllowedPatterns: []
   Max: 8
 
 # Department 'Migration' (1):
@@ -2228,7 +2391,7 @@ Naming/FileName:
   - spec
   - test
   - src
-  Regex: 
+  Regex:
   IgnoreExecutableScripts: true
   AllowedAcronyms:
   - CLI
@@ -2290,13 +2453,14 @@ Naming/HeredocDelimiterNaming:
   Enabled: true
   VersionAdded: '0.50'
   ForbiddenDelimiters:
-  - !ruby/regexp /(^|\s)(EO[A-Z]{1}|END)(\s|$)/
+  - !ruby/regexp /(^|\s)(EO[A-Z]{1}|END)(\s|$)/i
 
+# Supports --autocorrect
 Naming/InclusiveLanguage:
   Description: Recommend the use of inclusive language instead of problematic terms.
   Enabled: false
   VersionAdded: '1.18'
-  VersionChanged: '1.21'
+  VersionChanged: '1.49'
   CheckIdentifiers: true
   CheckConstants: true
   CheckVariables: true
@@ -2322,6 +2486,7 @@ Naming/InclusiveLanguage:
       - secondary
       - follower
 
+# Supports --autocorrect
 Naming/MemoizedInstanceVariableName:
   Description: Memoized method name should match memo instance variable name.
   Enabled: true
@@ -2344,7 +2509,6 @@ Naming/MethodName:
   - snake_case
   - camelCase
   AllowedPatterns: []
-  IgnoredPatterns: []
 
 Naming/MethodParameterName:
   Description: Checks for method parameter names that contain capital letters, end in
@@ -2355,10 +2519,13 @@ Naming/MethodParameterName:
   MinNameLength: 3
   AllowNamesEndingInNumbers: true
   AllowedNames:
+  - as
   - at
   - by
+  - cc
   - db
   - id
+  - if
   - in
   - io
   - ip
@@ -2432,6 +2599,7 @@ Naming/VariableNumber:
   - rfc822
   - rfc2822
   - rfc3339
+  - x86_64
   AllowedPatterns: []
 
 # Department 'Security' (7):
@@ -2439,7 +2607,9 @@ Security/CompoundHash:
   Description: When overwriting Object#hash to combine values, prefer delegating to
     Array#hash over writing a custom implementation.
   Enabled: pending
+  Safe: false
   VersionAdded: '1.28'
+  VersionChanged: '1.51'
 
 Security/Eval:
   Description: The use of eval represents a serious security risk.
@@ -2488,7 +2658,8 @@ Security/YAMLLoad:
   VersionAdded: '0.47'
   SafeAutoCorrect: false
 
-# Department 'Style' (229):
+# Department 'Style' (257):
+# Supports --autocorrect
 Style/AccessModifierDeclarations:
   Description: Checks style of how access modifiers are used.
   Enabled: true
@@ -2499,6 +2670,7 @@ Style/AccessModifierDeclarations:
   - inline
   - group
   AllowModifiersOnSymbols: true
+  SafeAutoCorrect: false
 
 # Supports --autocorrect
 Style/AccessorGrouping:
@@ -2541,6 +2713,7 @@ Style/ArgumentsForwarding:
   StyleGuide: "#arguments-forwarding"
   Enabled: pending
   AllowOnlyRestArgument: true
+  UseAnonymousForwarding: true
   VersionAdded: '1.1'
 
 # Supports --autocorrect
@@ -2551,6 +2724,13 @@ Style/ArrayCoercion:
   Safe: false
   Enabled: false
   VersionAdded: '0.88'
+
+# Supports --autocorrect
+Style/ArrayIntersect:
+  Description: Use `array1.intersect?(array2)` instead of `(array1 & array2).any?`.
+  Enabled: pending
+  Safe: false
+  VersionAdded: '1.40'
 
 # Supports --autocorrect
 Style/ArrayJoin:
@@ -2645,10 +2825,11 @@ Style/BlockDelimiters:
   - let!
   - subject
   - watch
-  IgnoredMethods:
+  AllowedMethods:
   - lambda
   - proc
   - it
+  AllowedPatterns: []
   AllowBracesOnProceduralOneLiners: false
   BracesRequiredMethods: []
 
@@ -2660,6 +2841,7 @@ Style/CaseEquality:
   VersionAdded: '0.9'
   VersionChanged: '0.89'
   AllowOnConstant: false
+  AllowOnSelfClass: false
 
 # Supports --autocorrect
 Style/CaseLikeIf:
@@ -2669,6 +2851,8 @@ Style/CaseLikeIf:
   Enabled: true
   Safe: false
   VersionAdded: '0.88'
+  VersionChanged: '1.48'
+  MinBranchesCount: 3
 
 # Supports --autocorrect
 Style/CharacterLiteral:
@@ -2707,10 +2891,11 @@ Style/ClassEqualityComparison:
   StyleGuide: "#instance-of-vs-class-comparison"
   Enabled: true
   VersionAdded: '0.93'
-  IgnoredMethods:
+  AllowedMethods:
   - "=="
   - equal?
   - eql?
+  AllowedPatterns: []
 
 # Supports --autocorrect
 Style/ClassMethods:
@@ -2746,6 +2931,7 @@ Style/CollectionCompact:
   Safe: false
   VersionAdded: '1.2'
   VersionChanged: '1.3'
+  AllowedReceivers: []
 
 # Supports --autocorrect
 Style/CollectionMethods:
@@ -2780,6 +2966,7 @@ Style/ColonMethodDefinition:
   Enabled: true
   VersionAdded: '0.52'
 
+# Supports --autocorrect
 Style/CombinableLoops:
   Description: Checks for places where multiple consecutive loops over the same data
     can be combined into a single loop.
@@ -2826,6 +3013,21 @@ Style/CommentedKeyword:
   VersionChanged: '1.19'
 
 # Supports --autocorrect
+Style/ComparableClamp:
+  Description: Enforces the use of `Comparable#clamp` instead of comparison by minimum
+    and maximum.
+  Enabled: pending
+  VersionAdded: '1.44'
+
+# Supports --autocorrect
+Style/ConcatArrayLiterals:
+  Description: Enforces the use of `Array#push(item)` instead of `Array#concat([item])`
+    to avoid redundant array literals.
+  Enabled: pending
+  Safe: false
+  VersionAdded: '1.41'
+
+# Supports --autocorrect
 Style/ConditionalAssignment:
   Description: Use the return value of `if` and `case` statements for assignment to
     a variable and variable comparison instead of assigning that variable inside of
@@ -2856,9 +3058,18 @@ Style/Copyright:
   AutocorrectNotice: ''
 
 # Supports --autocorrect
+Style/DataInheritance:
+  Description: Checks for inheritance from Data.define.
+  StyleGuide: "#no-extend-data-define"
+  Enabled: pending
+  SafeAutoCorrect: false
+  VersionAdded: '1.49'
+  VersionChanged: '1.51'
+
+# Supports --autocorrect
 Style/DateTime:
   Description: Use Time over DateTime.
-  StyleGuide: "#date--time"
+  StyleGuide: "#date-time"
   Enabled: false
   VersionAdded: '0.51'
   VersionChanged: '0.92'
@@ -2879,6 +3090,13 @@ Style/Dir:
     to the current file.
   Enabled: true
   VersionAdded: '0.50'
+
+# Supports --autocorrect
+Style/DirEmpty:
+  Description: Prefer to use `Dir.empty?('path/to/dir')` when checking if a directory
+    is empty.
+  Enabled: pending
+  VersionAdded: '1.48'
 
 # Supports --autocorrect
 Style/DisableCopsWithinSourceCodeDirective:
@@ -2970,6 +3188,13 @@ Style/EmptyElse:
   - empty
   - nil
   - both
+  AllowComments: false
+
+# Supports --autocorrect
+Style/EmptyHeredoc:
+  Description: Checks for using empty heredoc to reduce redundancy.
+  Enabled: pending
+  VersionAdded: '1.32'
 
 # Supports --autocorrect
 Style/EmptyLambdaParameter:
@@ -3047,6 +3272,12 @@ Style/EvenOdd:
   VersionChanged: '0.29'
 
 # Supports --autocorrect
+Style/ExactRegexpMatch:
+  Description: Checks for exact regexp match inside Regexp literals.
+  Enabled: pending
+  VersionAdded: '1.51'
+
+# Supports --autocorrect
 Style/ExpandPathArguments:
   Description: Use `expand_path(__dir__)` instead of `expand_path('..', __FILE__)`.
   Enabled: true
@@ -3081,6 +3312,14 @@ Style/FetchEnvVar:
   Enabled: pending
   VersionAdded: '1.28'
   AllowedVars: []
+
+# Supports --autocorrect
+Style/FileEmpty:
+  Description: Prefer to use `File.empty?('path/to/file')` when checking if a file is
+    empty.
+  Enabled: pending
+  Safe: false
+  VersionAdded: '1.48'
 
 # Supports --autocorrect
 Style/FileRead:
@@ -3138,6 +3377,7 @@ Style/FormatString:
   - sprintf
   - percent
 
+# Supports --autocorrect
 Style/FormatStringToken:
   Description: Use a consistent style for format string tokens.
   Enabled: true
@@ -3149,7 +3389,8 @@ Style/FormatStringToken:
   MaxUnannotatedPlaceholdersAllowed: 1
   VersionAdded: '0.49'
   VersionChanged: '1.0'
-  IgnoredMethods: []
+  AllowedMethods: []
+  AllowedPatterns: []
 
 # Supports --autocorrect
 Style/FrozenStringLiteralComment:
@@ -3181,12 +3422,13 @@ Style/GlobalVars:
   VersionAdded: '0.13'
   AllowedVariables: []
 
+# Supports --autocorrect
 Style/GuardClause:
   Description: Check for conditionals that can be replaced with guard clauses.
   StyleGuide: "#no-nested-conditionals"
   Enabled: true
   VersionAdded: '0.20'
-  VersionChanged: '1.28'
+  VersionChanged: '1.31'
   MinBodyLength: 1
   AllowConsecutiveConditionals: false
 
@@ -3207,8 +3449,9 @@ Style/HashConversion:
   Description: Avoid Hash[] in favor of ary.to_h or literal hashes.
   StyleGuide: "#avoid-hash-constructor"
   Enabled: pending
+  SafeAutoCorrect: false
   VersionAdded: '1.10'
-  VersionChanged: '1.11'
+  VersionChanged: '1.55'
   AllowSplatArgument: true
 
 # Supports --autocorrect
@@ -3219,14 +3462,17 @@ Style/HashEachMethods:
   Safe: false
   VersionAdded: '0.80'
   VersionChanged: '1.16'
-  AllowedReceivers: []
+  AllowedReceivers:
+  - Thread.current
 
 # Supports --autocorrect
 Style/HashExcept:
   Description: Checks for usages of `Hash#reject`, `Hash#select`, and `Hash#filter`
     methods that can be replaced with `Hash#except` method.
   Enabled: pending
+  Safe: false
   VersionAdded: '1.7'
+  VersionChanged: '1.39'
 
 Style/HashLikeCase:
   Description: Checks for places where `case-when` represents a simple 1:1 mapping and
@@ -3254,6 +3500,7 @@ Style/HashSyntax:
   - always
   - never
   - either
+  - consistent
   UseHashRocketsWithSymbolValues: false
   PreferHashRocketsForNonAlnumEndingSymbols: false
 
@@ -3368,6 +3615,27 @@ Style/InverseMethods:
     :select: :reject
     :select!: :reject!
 
+# Supports --autocorrect
+Style/InvertibleUnlessCondition:
+  Description: Favor `if` with inverted condition over `unless`.
+  Enabled: false
+  Safe: false
+  VersionAdded: '1.44'
+  VersionChanged: '1.50'
+  InverseMethods:
+    :!=: :==
+    :>: :<=
+    :<=: :>
+    :<: :>=
+    :>=: :<
+    :!~: :=~
+    :zero?: :nonzero?
+    :nonzero?: :zero?
+    :any?: :none?
+    :none?: :any?
+    :even?: :odd?
+    :odd?: :even?
+
 Style/IpAddresses:
   Description: Don't include literal IP addresses in code.
   Enabled: false
@@ -3424,6 +3692,21 @@ Style/LineEndConcatenation:
   VersionChanged: '0.64'
 
 # Supports --autocorrect
+Style/MagicCommentFormat:
+  Description: Use a consistent style for magic comments.
+  Enabled: pending
+  VersionAdded: '1.35'
+  EnforcedStyle: snake_case
+  SupportedStyles:
+  - snake_case
+  - kebab_case
+  DirectiveCapitalization: lowercase
+  ValueCapitalization:
+  SupportedCapitalizations:
+  - lowercase
+  - uppercase
+
+# Supports --autocorrect
 Style/MapCompactWithConditionalBlock:
   Description: Prefer `select` or `reject` over `map { ... }.compact`.
   Enabled: pending
@@ -3437,6 +3720,13 @@ Style/MapToHash:
   Safe: false
 
 # Supports --autocorrect
+Style/MapToSet:
+  Description: Prefer `to_set` with a block over `map.to_set`.
+  Enabled: pending
+  Safe: false
+  VersionAdded: '1.42'
+
+# Supports --autocorrect
 Style/MethodCallWithArgsParentheses:
   Description: Use parentheses for method calls with arguments.
   StyleGuide: "#method-invocation-parens"
@@ -3444,9 +3734,8 @@ Style/MethodCallWithArgsParentheses:
   VersionAdded: '0.47'
   VersionChanged: '1.7'
   IgnoreMacros: true
-  IgnoredMethods: []
+  AllowedMethods: []
   AllowedPatterns: []
-  IgnoredPatterns: []
   IncludedMacros: []
   AllowParenthesesInMultilineCall: false
   AllowParenthesesInChaining: false
@@ -3462,7 +3751,8 @@ Style/MethodCallWithoutArgsParentheses:
   Description: Do not use parentheses for method calls with no arguments.
   StyleGuide: "#method-invocation-parens"
   Enabled: true
-  IgnoredMethods: []
+  AllowedMethods: []
+  AllowedPatterns: []
   VersionAdded: '0.47'
   VersionChanged: '0.55'
 
@@ -3492,6 +3782,15 @@ Style/MinMax:
   Enabled: true
   VersionAdded: '0.50'
 
+# Supports --autocorrect
+Style/MinMaxComparison:
+  Description: Enforces the use of `max` or `min` instead of comparison for greater
+    or less.
+  Enabled: pending
+  Safe: false
+  VersionAdded: '1.42'
+
+# Supports --autocorrect
 Style/MissingElse:
   Description: Require if/case expressions to have an else branches. If enabled, it
     is recommended that Style/UnlessElse and Style/EmptyElse be enabled. This will conflict
@@ -3612,6 +3911,7 @@ Style/MultipleComparison:
   VersionAdded: '0.49'
   VersionChanged: '1.1'
   AllowMethodComparison: true
+  ComparisonsThreshold: 2
 
 # Supports --autocorrect
 Style/MutableConstant:
@@ -3796,13 +4096,13 @@ Style/NumericLiterals:
   MinDigits: 5
   Strict: false
   AllowedNumbers: []
+  AllowedPatterns: []
 
 # Supports --autocorrect
 Style/NumericPredicate:
   Description: Checks for the use of predicate- or comparison methods for numeric comparisons.
   StyleGuide: "#predicate-methods"
   Safe: false
-  SafeAutoCorrect: false
   Enabled: true
   VersionAdded: '0.42'
   VersionChanged: '0.59'
@@ -3810,7 +4110,8 @@ Style/NumericPredicate:
   SupportedStyles:
   - predicate
   - comparison
-  IgnoredMethods: []
+  AllowedMethods: []
+  AllowedPatterns: []
   Exclude:
   - "/slang-enterprise/utils/generate-rubocop-rules/src/main/resources/spec/**/*"
 
@@ -3841,7 +4142,16 @@ Style/OpenStructUse:
   Reference:
   - https://docs.ruby-lang.org/en/3.0.0/OpenStruct.html#class-OpenStruct-label-Caveats
   Enabled: pending
+  Safe: false
   VersionAdded: '1.23'
+  VersionChanged: '1.51'
+
+# Supports --autocorrect
+Style/OperatorMethodCall:
+  Description: Checks for redundant dot before operator method call.
+  StyleGuide: "#operator-method-call"
+  Enabled: pending
+  VersionAdded: '1.37'
 
 Style/OptionHash:
   Description: Don't use option hashes when you can use keyword arguments.
@@ -3990,12 +4300,21 @@ Style/RedundantArgument:
   Enabled: pending
   Safe: false
   VersionAdded: '1.4'
-  VersionChanged: '1.7'
+  VersionChanged: '1.55'
   Methods:
     join: ''
+    sum: 0
+    exit: true
+    exit!: false
     split: " "
     chomp: "\n"
     chomp!: "\n"
+
+# Supports --autocorrect
+Style/RedundantArrayConstructor:
+  Description: Checks for the instantiation of array using redundant `Array` constructor.
+  Enabled: pending
+  VersionAdded: '1.52'
 
 # Supports --autocorrect
 Style/RedundantAssignment:
@@ -4030,6 +4349,31 @@ Style/RedundantConditional:
   VersionAdded: '0.50'
 
 # Supports --autocorrect
+Style/RedundantConstantBase:
+  Description: Avoid redundant `::` prefix on constant.
+  Enabled: pending
+  VersionAdded: '1.40'
+
+# Supports --autocorrect
+Style/RedundantCurrentDirectoryInPath:
+  Description: Checks for uses a redundant current directory in path.
+  Enabled: pending
+  VersionAdded: '1.53'
+
+# Supports --autocorrect
+Style/RedundantDoubleSplatHashBraces:
+  Description: Checks for redundant uses of double splat hash braces.
+  Enabled: pending
+  VersionAdded: '1.41'
+
+# Supports --autocorrect
+Style/RedundantEach:
+  Description: Checks for redundant `each`.
+  Enabled: pending
+  Safe: false
+  VersionAdded: '1.38'
+
+# Supports --autocorrect
 Style/RedundantException:
   Description: Checks for an obsolete RuntimeException argument in raise/fail.
   StyleGuide: "#no-explicit-runtimeerror"
@@ -4057,11 +4401,25 @@ Style/RedundantFileExtensionInRequire:
   VersionAdded: '0.88'
 
 # Supports --autocorrect
+Style/RedundantFilterChain:
+  Description: Identifies usages of `any?`, `empty?`, `none?` or `one?` predicate methods
+    chained to `select`/`filter`/`find_all` and change them to use predicate method
+    instead.
+  Enabled: pending
+  VersionAdded: '1.52'
+
+# Supports --autocorrect
 Style/RedundantFreeze:
   Description: Checks usages of Object#freeze on immutable objects.
   Enabled: true
   VersionAdded: '0.34'
   VersionChanged: '0.66'
+
+# Supports --autocorrect
+Style/RedundantHeredocDelimiterQuotes:
+  Description: Checks for redundant heredoc delimiter quotes.
+  Enabled: pending
+  VersionAdded: '1.45'
 
 # Supports --autocorrect
 Style/RedundantInitialize:
@@ -4081,6 +4439,12 @@ Style/RedundantInterpolation:
   VersionChanged: '1.30'
 
 # Supports --autocorrect
+Style/RedundantLineContinuation:
+  Description: Check for redundant line continuation.
+  Enabled: pending
+  VersionAdded: '1.49'
+
+# Supports --autocorrect
 Style/RedundantParentheses:
   Description: Checks for parentheses that seem not to serve any purpose.
   Enabled: true
@@ -4094,10 +4458,24 @@ Style/RedundantPercentQ:
   VersionAdded: '0.76'
 
 # Supports --autocorrect
+Style/RedundantRegexpArgument:
+  Description: Identifies places where argument can be replaced from a deterministic
+    regexp to a string.
+  Enabled: pending
+  VersionAdded: '1.53'
+
+# Supports --autocorrect
 Style/RedundantRegexpCharacterClass:
   Description: Checks for unnecessary single-element Regexp character classes.
   Enabled: true
   VersionAdded: '0.85'
+
+# Supports --autocorrect
+Style/RedundantRegexpConstructor:
+  Description: Checks for the instantiation of regexp using redundant `Regexp.new` or
+    `Regexp.compile`.
+  Enabled: pending
+  VersionAdded: '1.52'
 
 # Supports --autocorrect
 Style/RedundantRegexpEscape:
@@ -4152,6 +4530,12 @@ Style/RedundantSortBy:
   VersionAdded: '0.36'
 
 # Supports --autocorrect
+Style/RedundantStringEscape:
+  Description: Checks for redundant escapes in string literals.
+  Enabled: pending
+  VersionAdded: '1.37'
+
+# Supports --autocorrect
 Style/RegexpLiteral:
   Description: Use / or %r around regular expressions.
   StyleGuide: "#percent-r"
@@ -4164,6 +4548,13 @@ Style/RegexpLiteral:
   - percent_r
   - mixed
   AllowInnerSlashes: false
+
+# Supports --autocorrect
+Style/RequireOrder:
+  Description: Sort `require` and `require_relative` in alphabetical order.
+  Enabled: false
+  SafeAutoCorrect: false
+  VersionAdded: '1.40'
 
 # Supports --autocorrect
 Style/RescueModifier:
@@ -4192,6 +4583,16 @@ Style/ReturnNil:
   - return
   - return_nil
   VersionAdded: '0.50'
+
+# Supports --autocorrect
+Style/ReturnNilInPredicateMethodDefinition:
+  Description: Checks if uses of `return` or `return nil` in predicate method definition.
+  StyleGuide: "#bool-methods-qmark"
+  Enabled: pending
+  SafeAutoCorrect: false
+  AllowedMethods: []
+  AllowedPatterns: []
+  VersionAdded: '1.53'
 
 # Supports --autocorrect
 Style/SafeNavigation:
@@ -4334,6 +4735,7 @@ Style/StabbyLambdaParentheses:
   - require_parentheses
   - require_no_parentheses
 
+# Supports --autocorrect
 Style/StaticClass:
   Description: Prefer modules to classes with only class methods.
   StyleGuide: "#modules-vs-classes"
@@ -4458,11 +4860,11 @@ Style/SymbolProc:
   Enabled: true
   Safe: false
   VersionAdded: '0.26'
-  VersionChanged: '1.28'
+  VersionChanged: '1.40'
   AllowMethodsWithArguments: false
-  IgnoredMethods:
-  - respond_to
+  AllowedMethods:
   - define_method
+  AllowedPatterns: []
   AllowComments: false
 
 # Supports --autocorrect
@@ -4657,6 +5059,13 @@ Style/WordArray:
   WordRegex: !ruby/regexp /\A(?:\p{Word}|\p{Word}-\p{Word}|\n|\t)+\z/
 
 # Supports --autocorrect
+Style/YAMLFileRead:
+  Description: Checks for the use of `YAML.load`, `YAML.safe_load`, and `YAML.parse`
+    with `File.read` argument.
+  Enabled: pending
+  VersionAdded: '1.53'
+
+# Supports --autocorrect
 Style/YodaCondition:
   Description: Forbid or enforce yoda conditions.
   Reference: https://en.wikipedia.org/wiki/Yoda_conditions
@@ -4670,6 +5079,20 @@ Style/YodaCondition:
   Safe: false
   VersionAdded: '0.49'
   VersionChanged: '0.75'
+
+# Supports --autocorrect
+Style/YodaExpression:
+  Description: Forbid the use of yoda expressions.
+  Enabled: false
+  Safe: false
+  VersionAdded: '1.42'
+  VersionChanged: '1.43'
+  SupportedOperators:
+  - "*"
+  - "+"
+  - "&"
+  - "|"
+  - "^"
 
 # Supports --autocorrect
 Style/ZeroLengthPredicate:
