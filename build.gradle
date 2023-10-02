@@ -30,12 +30,13 @@ allprojects {
 
     ext {
         buildNumber = System.getProperty("buildNumber")
-        analyzerCommonsVersion = '2.7.0.1482'
+        analyzerCommonsVersion = '2.8.0.1534'
         pluginApiVersion = '10.1.0.809'
+        // slf4j is provided by SQ, SC or SL, should be aligned with sonar-plugin-api
         slf4jApiVersion = '1.7.30'
-        sonarqubeVersion = '9.9.0.65466'
+        sonarqubeVersion = '10.0.0.68432'
         orchestratorVersion = '3.42.0.312'
-        sonarlintVersion = '8.15.0.65216'
+        sonarlintVersion = '9.0.0.74282'
         sonarLinksCi = 'https://travis-ci.org/SonarSource/slang'
         sonarLinksScm = 'https://github.com/SonarSource/slang'
 
@@ -74,21 +75,21 @@ subprojects {
             dependency "org.sonarsource.api.plugin:sonar-plugin-api-test-fixtures:${pluginApiVersion}"
             dependency "org.sonarsource.sonarqube:sonar-plugin-api-impl:${sonarqubeVersion}"
             dependency "org.slf4j:slf4j-api:${slf4jApiVersion}"
+            dependency "ch.qos.logback:logback-classic:1.2.9"
             dependency "org.sonarsource.sonarqube:sonar-ws:${sonarqubeVersion}"
-            dependency 'com.google.code.findbugs:jsr305:1.3.9'
+            dependency 'com.google.code.findbugs:jsr305:3.0.2'
             dependency 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
-            dependency "org.junit.jupiter:junit-jupiter-api:5.7.1"
-            dependency "org.junit.jupiter:junit-jupiter-engine:5.7.1"
-            dependency 'junit:junit:4.13.1'
-            dependency 'org.mockito:mockito-core:2.21.0'
-            dependency 'org.assertj:assertj-core:3.23.1'
-            dependency 'io.github.classgraph:classgraph:4.8.90'
+            dependency "org.junit.jupiter:junit-jupiter-api:5.10.0"
+            dependency "org.junit.jupiter:junit-jupiter-engine:5.10.0"
+            dependency 'junit:junit:4.13.2'
+            dependency 'org.mockito:mockito-core:5.5.0'
+            dependency 'org.assertj:assertj-core:3.24.2'
+            dependency 'io.github.classgraph:classgraph:4.8.162'
             dependency "org.sonarsource.analyzer-commons:sonar-analyzer-test-commons:${analyzerCommonsVersion}"
             dependency "org.sonarsource.analyzer-commons:sonar-analyzer-commons:${analyzerCommonsVersion}"
             dependency "org.sonarsource.analyzer-commons:sonar-xml-parsing:${analyzerCommonsVersion}"
             dependency "org.sonarsource.orchestrator:sonar-orchestrator:${orchestratorVersion}"
             dependency "org.sonarsource.sonarlint.core:sonarlint-core:${sonarlintVersion}"
-            dependency "ch.qos.logback:logback-classic:1.2.9"
             dependency "javax.annotation:javax.annotation-api:1.3.2"
         }
     }
