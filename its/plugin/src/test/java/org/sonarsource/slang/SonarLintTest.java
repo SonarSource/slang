@@ -139,7 +139,7 @@ public class SonarLintTest {
   public void test_go() throws Exception {
     ClientInputFile inputFile = prepareInputFile("foo.go",
       "package main\n"
-        + "func empty() {\n"        // skipped go:S1186 (empty function)
+        + "func empty() {\n"        // go:S1186 (empty function)
         + "}\n",
       false, "go");
 
