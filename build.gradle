@@ -37,7 +37,7 @@ allprojects {
         sonarqubeVersion = '10.0.0.68432'
         orchestratorVersion = '3.42.0.312'
         sonarlintVersion = '9.0.0.74282'
-        sonarLinksCi = 'https://travis-ci.org/SonarSource/slang'
+        sonarLinksCi = 'https://cirrus-ci.com/github/SonarSource/slang'
         sonarLinksScm = 'https://github.com/SonarSource/slang'
 
         artifactsToPublish = ''
