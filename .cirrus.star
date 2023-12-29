@@ -6,6 +6,7 @@ def main(ctx):
     if env.get("CIRRUS_REPO_FULL_NAME") == 'SonarSource/slang-enterprise':
         features = yaml.dumps(load_features(ctx, only_if=dict()))
         doc = fs.read("private/.cirrus.yml")
-        return features + doc
     else:
-        return fs.read(".cirrus-public.yml")
+        features = yaml.dumps(load_features(ctx, features=["build_number"]))
+        doc = fs.read(".cirrus/.cirrus.yml")
+    return features + doc

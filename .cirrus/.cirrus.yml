@@ -1,8 +1,10 @@
+only_if: $CIRRUS_TAG == "" && ($CIRRUS_PR != "" || $CIRRUS_BRANCH == $CIRRUS_DEFAULT_BRANCH || $CIRRUS_BRANCH =~ "branch-.*" || $CIRRUS_BUILD_SOURCE == 'api' )
+skip: $CIRRUS_BRANCH == "public_master"
+
 env:
   CIRRUS_SHELL: bash
 
 build_task:
-  skip: $CIRRUS_BRANCH == "public_master"
   container:
     dockerfile: .cirrus/Dockerfile
     cpu: 2
@@ -19,7 +21,7 @@ build_task:
   go_cache:
     folder: ${HOME}/go
   script:
-    - ./build.sh
+    - .cirrus/build.sh
   cleanup_gradle_script: |
     rm -rf "${GRADLE_USER_HOME}"/caches/7.*/
     rm -rf "${GRADLE_USER_HOME}"/daemon/
