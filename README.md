@@ -78,4 +78,4 @@ If you want to run ruling tests for a specific language, you can use `ruling-{la
 License headers are automatically updated by the spotless plugin but only for Java files. 
 Furthermore, there are files such as `package-info.java` and `module-info.java` that spotless ignores. Also, Scala and Go source files are not handled. For those files use a manual script like below to update the license. E.g., for Go files (on Mac):
 
-    `find . -type f -name "*.go" -exec sed -i '' 's/2018-2022/2018-2023/' "{}" \;`
+    `find . -type f -name "*.go" -exec sed -i '' 's/2018-2023/2018-2024/' "{}" \;`
