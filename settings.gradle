@@ -1,9 +1,20 @@
 pluginManagement {
     repositories {
-        maven {
-            url 'https://repox.jfrog.io/repox/plugins.gradle.org/'
-        }
+        mavenCentral()
         gradlePluginPortal()
+        maven {
+            name = "artifactory"
+            url = uri("https://repox.jfrog.io/repox/sonarsource")
+        }
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        maven {
+            url = uri("https://repox.jfrog.io/repox/sonarsource")
+        }
     }
 }
 
