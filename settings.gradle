@@ -2,7 +2,7 @@ pluginManagement {
     repositories {
         mavenCentral()
         gradlePluginPortal()
-        if (hasProperty('private')) {
+        if (new File(rootDir, 'private/build.gradle').exists()) {
             maven {
                 name = "artifactory"
                 url = uri("https://repox.jfrog.io/repox/sonarsource")
@@ -14,7 +14,7 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-        if (hasProperty('private')) {
+        if (new File(rootDir, 'private/build.gradle').exists()) {
             maven {
                 url = uri("https://repox.jfrog.io/repox/sonarsource")
             }
