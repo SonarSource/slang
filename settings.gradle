@@ -2,9 +2,11 @@ pluginManagement {
     repositories {
         mavenCentral()
         gradlePluginPortal()
-        maven {
-            name = "artifactory"
-            url = uri("https://repox.jfrog.io/repox/sonarsource")
+        if (hasProperty('private')) {
+            maven {
+                name = "artifactory"
+                url = uri("https://repox.jfrog.io/repox/sonarsource")
+            }
         }
     }
 }
@@ -12,8 +14,10 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-        maven {
-            url = uri("https://repox.jfrog.io/repox/sonarsource")
+        if (hasProperty('private')) {
+            maven {
+                url = uri("https://repox.jfrog.io/repox/sonarsource")
+            }
         }
     }
 }
