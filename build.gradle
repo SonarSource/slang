@@ -56,10 +56,13 @@ allprojects {
 
     repositories {
         mavenLocal()
-        def repository = project.hasProperty('qa') ? 'sonarsource-qa' : 'sonarsource'
-        maven {
-            url "https://repox.jfrog.io/repox/${repository}"
+        if (new File(rootDir, 'private/build.gradle').exists()) {
+            def repository = project.hasProperty('qa') ? 'sonarsource-qa' : 'sonarsource'
+            maven {
+                url "https://repox.jfrog.io/repox/${repository}"
+            }
         }
+        mavenCentral()
     }
 }
 

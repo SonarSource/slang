@@ -2,9 +2,11 @@ pluginManagement {
     repositories {
         mavenCentral()
         gradlePluginPortal()
-        maven {
-            name = "artifactory"
-            url = uri("https://repox.jfrog.io/repox/sonarsource")
+        if (new File(rootDir, 'private/build.gradle').exists()) {
+            maven {
+                name = "artifactory"
+                url = uri("https://repox.jfrog.io/repox/sonarsource")
+            }
         }
     }
 }
@@ -12,8 +14,10 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-        maven {
-            url = uri("https://repox.jfrog.io/repox/sonarsource")
+        if (new File(rootDir, 'private/build.gradle').exists()) {
+            maven {
+                url = uri("https://repox.jfrog.io/repox/sonarsource")
+            }
         }
     }
 }
@@ -39,4 +43,3 @@ File extraSettings = new File(rootDir, 'private/extraSettings.gradle')
 if (extraSettings.exists()) {
     apply from: extraSettings
 }
-
