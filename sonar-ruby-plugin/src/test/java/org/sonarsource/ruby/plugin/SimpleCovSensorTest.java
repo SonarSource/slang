@@ -135,9 +135,9 @@ class SimpleCovSensorTest {
 
     String file1Key = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(file1Key, 1)).isZero();
-    assertThat(context.lineHits(file1Key, 2)).isZero();
+    assertThat(context.lineHits(file1Key, 2)).isNull();
     assertThat(context.lineHits(file1Key, 3)).isEqualTo(1);
-    assertThat(context.lineHits(file1Key, 4)).isZero();
+    assertThat(context.lineHits(file1Key, 4)).isNull();
     assertThat(context.lineHits(file1Key, 5)).isNull();
     assertThat(context.lineHits(file1Key, 6)).isEqualTo(1);
     assertThat(context.lineHits(file1Key, 7)).isEqualTo(1);
@@ -155,9 +155,9 @@ class SimpleCovSensorTest {
 
     String file1Key = MODULE_KEY + ":file1.rb";
     assertThat(context.lineHits(file1Key, 1)).isZero();
-    assertThat(context.lineHits(file1Key, 2)).isZero();
+    assertThat(context.lineHits(file1Key, 2)).isNull();
     assertThat(context.lineHits(file1Key, 3)).isEqualTo(1);
-    assertThat(context.lineHits(file1Key, 4)).isZero();
+    assertThat(context.lineHits(file1Key, 4)).isNull();
     assertThat(context.lineHits(file1Key, 5)).isNull();
     assertThat(context.lineHits(file1Key, 6)).isEqualTo(1);
     assertThat(context.lineHits(file1Key, 7)).isEqualTo(1);

@@ -65,7 +65,7 @@ public class SimpleCovSensor implements Sensor {
       if (reports.isEmpty()) {
         return;
       }
-      
+
       JSONParser parser = new JSONParser();
       Map<String, Map<Integer, Integer>> mergedCoverages = new HashMap<>();
       reports.forEach((path, report) -> safeReadCoverageReport(parser, mergedCoverages, path, report));
@@ -107,7 +107,9 @@ public class SimpleCovSensor implements Sensor {
   private static void saveNewCoverage(SensorContext context, Map<Integer, Integer> hitsPerLines, InputFile inputFile) {
     NewCoverage newCoverage = context.newCoverage().onFile(inputFile);
     for (Entry<Integer, Integer> hitsPerLine : hitsPerLines.entrySet()) {
-      newCoverage.lineHits(hitsPerLine.getKey(), hitsPerLine.getValue());
+      if (hitsPerLine.getValue() != null) {
+        newCoverage.lineHits(hitsPerLine.getKey(), hitsPerLine.getValue());
+      }
     }
     newCoverage.save();
   }
@@ -141,12 +143,40 @@ public class SimpleCovSensor implements Sensor {
     for (int i = 0; i < hitsPerLine.size(); i++) {
       Object hits = hitsPerLine.get(i);
       // Hits can be a Long (coverage data available), null or "ignored".
-      if (hits instanceof Long) {
+      if (hits == null || hits instanceof Long) {
         int line = i + 1;
-        Integer currentHits = fileCoverage.getOrDefault(line, 0);
-        fileCoverage.put(line, currentHits + ((Long) hits).intValue());
+        Integer newHits;
+        if (fileCoverage.containsKey(line)) {
+          newHits = mergeHitForLine(hits, fileCoverage.get(line));
+        } else {
+          if (hits == null) {
+            newHits = null;
+          } else {
+            newHits = castToInt(hits);
+          }
+        }
+        fileCoverage.put(line, newHits);
       }
     }
+  }
+
+  @CheckForNull
+  private static Integer mergeHitForLine(@CheckForNull Object hits, @CheckForNull Integer existingHits) {
+    int hitsValue = castToInt(hits);
+    int existingHitsValue = castToInt(existingHits);
+    int newHitsValue = existingHitsValue + hitsValue;
+    if (newHitsValue == 0 && (hits == null || existingHits == null)) {
+        // null + 0 or 0 + null results in null
+        return null;
+    }
+    return newHitsValue;
+  }
+
+  private static int castToInt(@CheckForNull Object longOrNull) {
+    if (longOrNull instanceof Number) {
+      return ((Number) longOrNull).intValue();
+    }
+    return 0;
   }
 
   private static Map<Path, String> getReportFilesAndContents(SensorContext context) throws IOException {
