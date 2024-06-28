@@ -45,17 +45,17 @@ jobs:
           echo "Starting push"
           ../commit_sync_public_branch.sh slang master
       - name: Notify success on Slack
-        uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # tag=v1.23.0
+        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
         env:
           SLACK_BOT_TOKEN: ${{ fromJSON(steps.secrets.outputs.vault).SLACK_BOT_TOKEN }}
         with:
-          channel-id: team-lang-slang
+          channel-id: squad-jvm-notifs
           slack-message: "Nightly public sync successful, synchronized master branch of SonarSource/slang-enterprise with SonarSource/slang"
       - name: Notify failures on Slack
         if: failure()
-        uses: slackapi/slack-github-action@007b2c3c751a190b6f0f040e47ed024deaa72844 # tag=v1.23.0
+        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
         env:
           SLACK_BOT_TOKEN: ${{ fromJSON(steps.secrets.outputs.vault).SLACK_BOT_TOKEN }}
         with:
-          channel-id: team-lang-slang
+          channel-id: squad-jvm-notifs
           slack-message: "Nightly public sync failed, see the logs at https://github.com/SonarSource/slang-enterprise/actions/runs/${{ github.run_id }}"
