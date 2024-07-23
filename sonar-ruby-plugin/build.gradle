@@ -1,3 +1,22 @@
+buildscript{
+    // This block is added to work around dependency issues with the aging JRuby plugin.
+    repositories {
+        mavenLocal()
+        mavenCentral()
+
+        // The Apache Archiva is required to get the com.burgstaller:okhttp-digest:1.10
+        // dependency required by the JRuby plugin. The dependency is not on maven central.
+        maven {
+            url "https://archiva-repository.apache.org/archiva/repository/public"
+        }
+    }
+    dependencies {
+        // The JRuby plugin requires grolifant version 0.12. This has become unavailable,
+        // however, we can substitute it with version 0.12.1.
+        classpath('org.ysb33r.gradle:grolifant:0.12.1')
+    }
+}
+
 plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
     id 'com.github.jruby-gradle.jar' version '2.0.2'
