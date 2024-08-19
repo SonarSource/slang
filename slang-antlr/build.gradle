@@ -22,3 +22,14 @@ sourceSets {
         antlr.srcDirs = [ "$projectDir/src/main/antlr4" ]
     }
 }
+
+artifactoryPublish.skip = false
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}

@@ -13,3 +13,14 @@ dependencies {
     testImplementation 'org.assertj:assertj-core'
     testImplementation 'org.mockito:mockito-core'
 }
+
+artifactoryPublish.skip = false
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}

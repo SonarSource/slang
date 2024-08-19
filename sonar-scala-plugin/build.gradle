@@ -146,7 +146,6 @@ artifacts {
 }
 
 artifactoryPublish.skip = false
-
 publishing {
     publications {
         mavenJava(MavenPublication) {

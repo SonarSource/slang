@@ -9,3 +9,14 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
     testImplementation 'org.assertj:assertj-core'
 }
+
+artifactoryPublish.skip = false
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}

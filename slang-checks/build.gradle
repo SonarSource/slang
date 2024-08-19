@@ -11,3 +11,14 @@ dependencies {
     testImplementation 'org.sonarsource.analyzer-commons:sonar-analyzer-test-commons'
     testImplementation 'org.sonarsource.api.plugin:sonar-plugin-api-test-fixtures'
 }
+
+artifactoryPublish.skip = false
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}

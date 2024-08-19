@@ -8,3 +8,14 @@ dependencies {
     testImplementation "org.slf4j:slf4j-api"
     testImplementation "ch.qos.logback:logback-classic"
 }
+
+artifactoryPublish.skip = false
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
