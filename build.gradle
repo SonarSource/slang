@@ -187,6 +187,25 @@ subprojects {
                             name = 'SonarSource Team'
                         }
                     }
+                    // adding dependencies section for modules not using shadowJar (we didn't find a way to test if shadowJar is present)
+                    if (["checkstyle-import",
+                         "slang-antlr",
+                         "slang-api",
+                         "slang-checks",
+                         "slang-plugin",
+                         "slang-testing"]
+                      .contains(project.name)) {
+                        withXml {
+                            def dependenciesNode = asNode().appendNode('dependencies')
+                            // using runtimeClasspath and not compileClasspath because we don't want compileOnly dependencies (provided)
+                            configurations.runtimeClasspath.allDependencies.each { dep ->
+                                def dependencyNode = dependenciesNode.appendNode('dependency')
+                                dependencyNode.appendNode('groupId', dep.group)
+                                dependencyNode.appendNode('artifactId', dep.name)
+                                dependencyNode.appendNode('version', dep.version)
+                            }
+                        }
+                    }
                 }
             }
         }
