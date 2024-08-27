@@ -1,8 +1,0 @@
-{
-'scala-project:sources/scala/http4s/blaze-server/src/test/scala/org/http4s/server/blaze/Http1ServerStageSpec.scala':[
-80,
-],
-'scala-project:sources/scala/http4s/client/src/test/scala/org/http4s/client/middleware/FollowRedirectSpec.scala':[
-62,
-],
-}

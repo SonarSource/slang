@@ -1,3 +1,0 @@
-<statement
-        package="package.name" class="IfTestObject" class-type="Object" full-class-name="package.name.IfTestObject" source="/Absolute/Path/To/file2.scala" method="method" start="155" end="165" line="nine" branch="true" invocation-count="0" ignored="false">
-</statement>

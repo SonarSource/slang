@@ -1,7 +1,0 @@
-mode: set
-coverage.switch.go:3.34,4.12 1 1
-coverage.switch.go:5.14,6.17 1 1
-coverage.switch.go:7.14,8.17 1 0
-coverage.switch.go:9.14,10.17 1 0
-coverage.switch.go:11.14,12.17 1 0
-coverage.switch.go:14.3,14.12 1 0
