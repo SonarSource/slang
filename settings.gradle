@@ -12,12 +12,35 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-        if (new File(rootDir, 'private/build.gradle').exists()) {
-            maven {
-                url = uri("https://repox.jfrog.io/repox/sonarsource")
-            }
+    // slf4j is provided by SQ, SC or SL, should be aligned with sonar-plugin-api
+    def slf4jApiVersion = '1.7.30'
+    def pluginApiVersion = '10.10.0.2391'
+    def sonarqubeVersion = '10.6.0.92116'
+    def sonarlintVersion = '10.4.2.78884'
+    def analyzerCommonsVersion = '2.13.0.3004'
+
+    versionCatalogs {
+        libs {
+            library("sonar-plugin-api", "org.sonarsource.api.plugin", "sonar-plugin-api").version(pluginApiVersion)
+            library("sonar-analyzer-commons", "org.sonarsource.analyzer-commons", "sonar-analyzer-commons").version(analyzerCommonsVersion)
+            library("sonar-xml-parsing", "org.sonarsource.analyzer-commons", "sonar-xml-parsing").version(analyzerCommonsVersion)
+            library("sonarlint-core", "org.sonarsource.sonarlint.core", "sonarlint-core").version(sonarlintVersion)
+            library("slf4j-api", "org.slf4j", "slf4j-api").version(slf4jApiVersion)
+            library("logback-classic", "ch.qos.logback", "logback-classic").version("1.2.13")
+            library("jsr305", "com.google.code.findbugs", "jsr305").version("3.0.2")
+            library("minimal-json", "com.eclipsesource.minimal-json", "minimal-json").version("0.9.5")
+            library("antlr4", "org.antlr","antlr4").version("4.13.2")
+        }
+
+        testLibs {
+            library("sonar-analyzer-test-commons", "org.sonarsource.analyzer-commons", "sonar-analyzer-test-commons").version(analyzerCommonsVersion)
+            library("sonar-plugin-api-impl", "org.sonarsource.sonarqube", "sonar-plugin-api-impl").version(sonarqubeVersion)
+            library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").version("5.11.0")
+            library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").version("5.11.0")
+            library("junit", "junit", "junit").version("4.13.2")
+            library("mockito-core", "org.mockito", "mockito-core").version("5.13.0")
+            library("assertj-core", "org.assertj", "assertj-core").version("3.26.3")
+            library("classgraph", "io.github.classgraph", "classgraph").version("4.8.162")
         }
     }
 }

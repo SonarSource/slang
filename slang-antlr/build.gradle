@@ -1,15 +1,18 @@
 apply plugin: 'antlr'
 
 dependencies {
-    antlr ("org.antlr:antlr4:4.7.1") {
+    antlr (libs.antlr4) {
         exclude group: 'org.glassfish', module: 'javax.json'
     }
+
     implementation project(':slang-api')
-    implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
+    implementation libs.sonar.analyzer.commons
+
     testImplementation project(':slang-testing')
-    testImplementation "org.junit.jupiter:junit-jupiter-api"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
-    testImplementation 'org.assertj:assertj-core'
+    testImplementation testLibs.assertj.core
+    testImplementation testLibs.junit.jupiter.api
+
+    testRuntimeOnly testLibs.junit.jupiter.engine
 }
 
 generateGrammarSource {
@@ -23,7 +26,6 @@ sourceSets {
     }
 }
 
-artifactoryPublish.skip = false
 publishing {
     publications {
         mavenJava(MavenPublication) {

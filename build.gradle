@@ -30,13 +30,6 @@ allprojects {
 
     ext {
         buildNumber = System.getProperty("buildNumber")
-        analyzerCommonsVersion = '2.7.0.1482'
-        pluginApiVersion = '10.1.0.809'
-        // slf4j is provided by SQ, SC or SL, should be aligned with sonar-plugin-api
-        slf4jApiVersion = '1.7.30'
-        sonarqubeVersion = '10.0.0.68432'
-        orchestratorVersion = '3.42.0.312'
-        sonarlintVersion = '9.0.0.74282'
         sonarLinksCi = 'https://cirrus-ci.com/github/SonarSource/slang'
         sonarLinksScm = 'https://github.com/SonarSource/slang'
 
@@ -82,43 +75,27 @@ allprojects {
 }
 
 subprojects {
-    // do not publish to Artifactory by default
-    artifactoryPublish.skip = true
-
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'com.diffplug.spotless'
-    dependencyManagement {
-        dependencies {
-            dependency "org.sonarsource.api.plugin:sonar-plugin-api:${pluginApiVersion}"
-            dependency "org.sonarsource.api.plugin:sonar-plugin-api-test-fixtures:${pluginApiVersion}"
-            dependency "org.sonarsource.sonarqube:sonar-plugin-api-impl:${sonarqubeVersion}"
-            dependency "org.slf4j:slf4j-api:${slf4jApiVersion}"
-            dependency "ch.qos.logback:logback-classic:1.2.9"
-            dependency "org.sonarsource.sonarqube:sonar-ws:${sonarqubeVersion}"
-            dependency 'com.google.code.findbugs:jsr305:3.0.2'
-            dependency 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
-            dependency "org.junit.jupiter:junit-jupiter-api:5.10.0"
-            dependency "org.junit.jupiter:junit-jupiter-engine:5.10.0"
-            dependency 'junit:junit:4.13.2'
-            dependency 'org.mockito:mockito-core:5.5.0'
-            dependency 'org.assertj:assertj-core:3.24.2'
-            dependency 'io.github.classgraph:classgraph:4.8.162'
-            dependency "org.sonarsource.analyzer-commons:sonar-analyzer-test-commons:${analyzerCommonsVersion}"
-            dependency "org.sonarsource.analyzer-commons:sonar-analyzer-commons:${analyzerCommonsVersion}"
-            dependency "org.sonarsource.analyzer-commons:sonar-xml-parsing:${analyzerCommonsVersion}"
-            dependency "org.sonarsource.orchestrator:sonar-orchestrator:${orchestratorVersion}"
-            dependency "org.sonarsource.sonarlint.core:sonarlint-core:${sonarlintVersion}"
-            dependency "javax.annotation:javax.annotation-api:1.3.2"
-        }
-    }
 
     java {
-        sourceCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
         withSourcesJar()
         withJavadocJar()
     }
     jar {
         enabled=true
+        manifest {
+            attributes(
+              'Implementation-Build': 'git rev-parse HEAD'.execute().text.trim(),
+              'License': 'GNU LGPL 3',
+              'Organization': 'SonarSource',
+              'OrganizationUrl': 'http://www.sonarsource.com',
+              'SourcesUrl': 'https://github.com/SonarSource/slang',
+              'Version': "${project.version}",
+              'Jre-Min-Version': "${java.sourceCompatibility}"
+            )
+        }
     }
 
     tasks.withType(JavaCompile) {
@@ -250,8 +227,7 @@ subprojects {
     tasks.withType(Sign) {
         onlyIf {
             def branch = System.getenv()["CIRRUS_BRANCH"]
-            return !artifactoryPublish.skip &&
-                    (branch == 'master' || branch ==~ 'branch-[\\d.]+') &&
+            return (branch == 'master' || branch ==~ 'branch-[\\d.]+') &&
                     gradle.taskGraph.hasTask(":artifactoryPublish")
         }
     }

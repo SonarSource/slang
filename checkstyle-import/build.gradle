@@ -1,16 +1,17 @@
 dependencies {
-    implementation 'com.google.code.findbugs:jsr305'
-    compileOnly 'org.sonarsource.api.plugin:sonar-plugin-api'
-    testImplementation 'org.sonarsource.sonarqube:sonar-plugin-api-impl'
-    implementation 'org.sonarsource.analyzer-commons:sonar-analyzer-commons'
-    implementation 'org.sonarsource.analyzer-commons:sonar-xml-parsing'
+    compileOnly libs.sonar.plugin.api
+
+    implementation libs.sonar.xml.parsing
+
     testImplementation project(':slang-testing')
-    testImplementation "org.junit.jupiter:junit-jupiter-api"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
-    testImplementation 'org.assertj:assertj-core'
+    testImplementation libs.slf4j.api
+    testImplementation testLibs.assertj.core
+    testImplementation testLibs.junit.jupiter.api
+    testImplementation testLibs.sonar.plugin.api.impl
+
+    testRuntimeOnly testLibs.junit.jupiter.engine
 }
 
-artifactoryPublish.skip = false
 publishing {
     publications {
         mavenJava(MavenPublication) {

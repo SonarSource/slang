@@ -1,15 +1,16 @@
 dependencies {
-    implementation 'com.google.code.findbugs:jsr305'
-    implementation 'com.eclipsesource.minimal-json:minimal-json'
-    testImplementation "org.junit.jupiter:junit-jupiter-api"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
-    testImplementation 'org.assertj:assertj-core'
-    testImplementation 'org.mockito:mockito-core'
-    testImplementation "org.slf4j:slf4j-api"
-    testImplementation "ch.qos.logback:logback-classic"
+    implementation libs.jsr305
+    implementation libs.minimal.json
+
+    testImplementation libs.slf4j.api
+    testImplementation libs.logback.classic
+    testImplementation testLibs.assertj.core
+    testImplementation testLibs.mockito.core
+    testImplementation testLibs.junit.jupiter.api
+
+    testRuntimeOnly testLibs.junit.jupiter.engine
 }
 
-artifactoryPublish.skip = false
 publishing {
     publications {
         mavenJava(MavenPublication) {
