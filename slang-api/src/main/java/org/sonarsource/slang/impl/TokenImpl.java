@@ -19,6 +19,7 @@
  */
 package org.sonarsource.slang.impl;
 
+import java.util.Objects;
 import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 
@@ -47,5 +48,21 @@ public class TokenImpl implements Token {
   @Override
   public Type type() {
     return type;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o instanceof TokenImpl token) {
+      return Objects.equals(textRange, token.textRange) && Objects.equals(text, token.text) && type == token.type;
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(textRange, text, type);
   }
 }
