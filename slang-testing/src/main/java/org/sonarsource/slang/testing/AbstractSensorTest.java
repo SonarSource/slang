@@ -21,6 +21,7 @@ package org.sonarsource.slang.testing;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import javax.annotation.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
@@ -76,13 +77,20 @@ public abstract class AbstractSensorTest {
   }
 
   protected InputFile createInputFile(String relativePath, String content) {
-    return new TestInputFileBuilder("moduleKey", relativePath)
+    return createInputFile(relativePath, content, null);
+  }
+
+  protected InputFile createInputFile(String relativePath, String content, @Nullable InputFile.Status status) {
+    TestInputFileBuilder builder = new TestInputFileBuilder("moduleKey", relativePath)
       .setModuleBaseDir(baseDir.toPath())
       .setType(InputFile.Type.MAIN)
       .setLanguage(language().getKey())
       .setCharset(StandardCharsets.UTF_8)
-      .setContents(content)
-      .build();
+      .setContents(content);
+    if (status != null) {
+      builder.setStatus(status);
+    }
+    return builder.build();
   }
 
   protected abstract String repositoryKey();

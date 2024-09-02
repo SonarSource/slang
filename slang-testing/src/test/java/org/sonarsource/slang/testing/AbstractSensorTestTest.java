@@ -20,6 +20,7 @@
 package org.sonarsource.slang.testing;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,7 +76,7 @@ class AbstractSensorTestTest {
   }
 
   @Test
-  void createImputFile_returns_input_file_with_same_content() throws Exception {
+  void createInputFile_returns_input_file_with_same_content() throws Exception {
     String content = "class A { }";
     String filename = "yolo.dummy";
 
@@ -86,6 +87,21 @@ class AbstractSensorTestTest {
     assertThat(inputFile.language()).isEqualTo(LANGUAGE.getKey());
     assertThat(inputFile.type()).isEqualTo(InputFile.Type.MAIN);
     assertThat(inputFile.filename()).isEqualTo(filename);
+  }
+
+  @Test
+  void createInputFile_with_status_returns_an_input_file_with_the_expected_status() throws IOException {
+    String content = "class A { }";
+    String filename = "yolo.dummy";
+
+    InputFile inputFile = SENSOR.createInputFile(filename, content, InputFile.Status.ADDED);
+
+    assertThat(inputFile.contents()).isEqualTo(content);
+    assertThat(inputFile.charset()).isEqualTo(StandardCharsets.UTF_8);
+    assertThat(inputFile.language()).isEqualTo(LANGUAGE.getKey());
+    assertThat(inputFile.type()).isEqualTo(InputFile.Type.MAIN);
+    assertThat(inputFile.filename()).isEqualTo(filename);
+    assertThat(inputFile.status()).isEqualTo(InputFile.Status.ADDED);
   }
 
   private static class SensorTester extends AbstractSensorTest {

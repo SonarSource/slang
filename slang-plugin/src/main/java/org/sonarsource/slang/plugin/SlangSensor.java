@@ -20,9 +20,10 @@
 package org.sonarsource.slang.plugin;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -42,7 +43,6 @@ import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.resources.Language;
-import org.sonar.api.utils.Version;
 import org.sonarsource.analyzer.commons.ProgressReport;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.BlockTree;
@@ -86,20 +86,6 @@ public abstract class SlangSensor implements Sensor {
     descriptor
       .onlyOnLanguage(language.getKey())
       .name(language.getName() + " Sensor");
-    processesFilesIndependently(descriptor);
-  }
-
-  protected void processesFilesIndependently(SensorDescriptor descriptor) {
-    if ((sonarRuntime.getProduct() == SonarProduct.SONARLINT)
-      || !sonarRuntime.getApiVersion().isGreaterThanOrEqual(Version.create(9, 3))) {
-      return;
-    }
-    try {
-      Method method = descriptor.getClass().getMethod("processesFilesIndependently");
-      method.invoke(descriptor);
-    } catch (ReflectiveOperationException e) {
-      LOG.warn("Could not call SensorDescriptor.processesFilesIndependently() method", e);
-    }
   }
 
   protected abstract ASTConverter astConverter(SensorContext sensorContext);
@@ -118,6 +104,9 @@ public abstract class SlangSensor implements Sensor {
     ProgressReport progressReport,
     List<TreeVisitor<InputFileContext>> visitors,
     DurationStatistics statistics) {
+    if (sensorContext.canSkipUnchangedFiles()) {
+      LOG.info("The {} analyzer is running in a context where unchanged files can be skipped.", this.language);
+    }
 
     for (InputFile inputFile : inputFiles) {
       if (sensorContext.isCancelled()) {
@@ -135,11 +124,33 @@ public abstract class SlangSensor implements Sensor {
     return true;
   }
 
-  private static void analyseFile(ASTConverter converter,
+  // VisibleForTesting
+  static void analyseFile(ASTConverter converter,
                                   InputFileContext inputFileContext,
                                   InputFile inputFile,
                                   List<TreeVisitor<InputFileContext>> visitors,
                                   DurationStatistics statistics) {
+    List<TreeVisitor<InputFileContext>> canBeSkipped = new ArrayList<>();
+    if (inputFileContext.sensorContext.canSkipUnchangedFiles() && inputFile.status() == InputFile.Status.SAME) {
+      String fileKey = inputFile.key();
+      LOG.debug("Checking that previous results can be reused for input file {}.", fileKey);
+
+      Map<PullRequestAwareVisitor, Boolean> successfulCacheReuseByVisitor = visitors.stream()
+        .filter(PullRequestAwareVisitor.class::isInstance)
+        .map(PullRequestAwareVisitor.class::cast)
+        .collect(Collectors.toMap(visitor -> visitor, visitor -> reusePreviousResults(visitor, inputFileContext)));
+
+      boolean allVisitorsSuccessful = successfulCacheReuseByVisitor.values().stream().allMatch(Boolean.TRUE::equals);
+      if (allVisitorsSuccessful) {
+        LOG.debug("Skipping input file {} (status is unchanged).", fileKey);
+        return;
+      }
+      LOG.debug("Will convert input file {} for full analysis.", fileKey);
+      successfulCacheReuseByVisitor.entrySet().stream()
+        .filter(Map.Entry::getValue)
+        .map(Map.Entry::getKey)
+        .forEach(canBeSkipped::add);
+    }
     String content;
     String fileName;
     try {
@@ -162,6 +173,9 @@ public abstract class SlangSensor implements Sensor {
     });
     for (TreeVisitor<InputFileContext> visitor : visitors) {
       try {
+        if (canBeSkipped.contains(visitor)) {
+          continue;
+        }
         String visitorId = visitor.getClass().getSimpleName();
         statistics.time(visitorId, () -> visitor.scan(inputFileContext, tree));
       } catch (RuntimeException e) {
@@ -171,8 +185,22 @@ public abstract class SlangSensor implements Sensor {
     }
   }
 
+  private static boolean reusePreviousResults(PullRequestAwareVisitor visitor, InputFileContext inputFileContext) {
+    boolean success = visitor.reusePreviousResults(inputFileContext);
+    if (success) {
+      return true;
+    }
+    String message = String.format(
+      "Visitor %s failed to reuse previous results for input file %s.",
+      visitor.getClass().getSimpleName(),
+      inputFileContext.inputFile.key()
+    );
+    LOG.debug(message);
+    return false;
+  }
+
   private static ParseException toParseException(String action, InputFile inputFile, Exception cause) {
-    TextPointer position = cause instanceof ParseException ? ((ParseException) cause).getPosition() : null;
+    TextPointer position = cause instanceof ParseException actual ? actual.getPosition() : null;
     return new ParseException("Cannot " + action + " '" + inputFile + "': " + cause.getMessage(), position, cause);
   }
 
@@ -194,7 +222,7 @@ public abstract class SlangSensor implements Sensor {
       fileSystem.predicates().hasLanguage(language.getKey()),
       fileSystem.predicates().hasType(InputFile.Type.MAIN));
     Iterable<InputFile> inputFiles = fileSystem.inputFiles(mainFilePredicate);
-    List<String> filenames = StreamSupport.stream(inputFiles.spliterator(), false).map(InputFile::toString).collect(Collectors.toList());
+    List<String> filenames = StreamSupport.stream(inputFiles.spliterator(), false).map(InputFile::toString).toList();
     ProgressReport progressReport = new ProgressReport("Progress of the " + language.getName() + " analysis", TimeUnit.SECONDS.toMillis(10));
     progressReport.start(filenames);
     boolean success = false;

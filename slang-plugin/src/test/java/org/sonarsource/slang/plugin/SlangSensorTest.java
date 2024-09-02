@@ -22,6 +22,9 @@ package org.sonarsource.slang.plugin;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.event.Level;
 import org.sonar.api.SonarEdition;
@@ -32,7 +35,6 @@ import org.sonar.api.batch.fs.TextPointer;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.error.AnalysisError;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
@@ -47,6 +49,7 @@ import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.Version;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.TopLevelTree;
+import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.checks.CommentedCodeCheck;
 import org.sonarsource.slang.checks.IdenticalBinaryOperandCheck;
 import org.sonarsource.slang.checks.StringLiteralDuplicatedCheck;
@@ -56,9 +59,13 @@ import org.sonarsource.slang.parser.SlangCodeVerifier;
 import org.sonarsource.slang.testing.AbstractSensorTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.sonarsource.slang.plugin.SlangSensorTest.SlangLanguage.SLANG;
 import static org.sonarsource.slang.testing.TextRangeAssert.assertTextRange;
@@ -415,30 +422,164 @@ class SlangSensorTest extends AbstractSensorTest {
   }
 
   @Test
-  void test_sensor_descriptor_processes_files_independently() {
+  void test_sensor_descriptor_does_not_process_files_independently() {
     final SlangSensor sensor = sensor(
       SonarRuntimeImpl.forSonarQube(Version.create(9, 3), SonarQubeSide.SCANNER, SonarEdition.DEVELOPER),
       checkFactory());
-    final boolean[] called = {false};
-    SensorDescriptor descriptor = new DefaultSensorDescriptor() {
-      public SensorDescriptor processesFilesIndependently() {
-        called[0] = true;
-        return this;
-      }
-    };
+    DefaultSensorDescriptor descriptor = new DefaultSensorDescriptor();
     sensor.describe(descriptor);
-
-    assertTrue(called[0]);
+    assertThat(descriptor.isProcessesFilesIndependently()).isFalse();
   }
 
   @Test
-  void test_sensor_descriptor_processes_files_independently_no_reflection_failure() {
-    final SlangSensor sensor = sensor(
+  void test_sensor_logs_when_unchanged_files_can_be_skipped() {
+    // Enable PR context
+    SensorContextTester sensorContext = SensorContextTester.create(baseDir);
+    sensorContext.setCanSkipUnchangedFiles(true);
+    sensorContext.setCacheEnabled(true);
+    // Execute sensor
+    SlangSensor sensor = sensor(
       SonarRuntimeImpl.forSonarQube(Version.create(9, 3), SonarQubeSide.SCANNER, SonarEdition.DEVELOPER),
-      checkFactory());
-    sensor.describe(new DefaultSensorDescriptor());
-    assertThat(logTester.logs())
-      .doesNotContain("Could not call SensorDescriptor.processesFilesIndependently() method");
+      checkFactory()
+    );
+    sensor.execute(sensorContext);
+    assertThat(logTester.logs(Level.INFO)).contains(
+      "The SLANG analyzer is running in a context where unchanged files can be skipped."
+    );
+  }
+
+  @Nested
+  class PullRequestContext {
+    private SensorContextTester sensorContext;
+    private InputFile inputFile;
+    private InputFileContext inputFileContext;
+    private SLangConverter converter;
+    private PullRequestAwareVisitor visitor;
+
+    @BeforeEach
+    /**
+     * Set up for happy with PR context
+     */
+    void setup() {
+      // Enable PR context
+      sensorContext = SensorContextTester.create(baseDir);
+      sensorContext.setCanSkipUnchangedFiles(true);
+      sensorContext.setCacheEnabled(true);
+      // Add one unchanged file to analyze
+      inputFile = createInputFile(
+        "file1.slang",
+        "fun main() {\nprint (1 == 1);}",
+        InputFile.Status.SAME
+      );
+      sensorContext.fileSystem().add(inputFile);
+      inputFileContext = new InputFileContext(sensorContext, inputFile);
+      converter = spy(new SLangConverter());
+      visitor = spy(new SuccessfulReuseVisitor());
+    }
+    @Test
+    void skips_conversion_for_unchanged_file_with_cached_results() {
+      // Execute analyzeFile
+      SlangSensor.analyseFile(
+        converter,
+        inputFileContext,
+        inputFile,
+        List.of(visitor),
+        new DurationStatistics(sensorContext.config())
+      );
+      verify(visitor, times(1)).reusePreviousResults(inputFileContext);
+      verify(converter, never()).parse(any(String.class), any(String.class));
+      assertThat(logTester.logs(Level.DEBUG)).contains(
+        "Checking that previous results can be reused for input file moduleKey:file1.slang.",
+        "Skipping input file moduleKey:file1.slang (status is unchanged)."
+      );
+    }
+
+    @Test
+    void does_not_skip_conversion_for_unchanged_file_when_cached_results_cannot_be_reused() {
+      // Set the only pull request aware visitor to fail reusing previous results
+      visitor = spy(new FailingToReuseVisitor());
+      // Execute analyzeFile
+      SlangSensor.analyseFile(
+        converter,
+        inputFileContext,
+        inputFile,
+        List.of(visitor),
+        new DurationStatistics(sensorContext.config())
+      );
+      verify(visitor, times(1)).reusePreviousResults(inputFileContext);
+      verify(converter, times(1)).parse(any());
+      assertThat(logTester.logs(Level.DEBUG)).contains(
+        "Checking that previous results can be reused for input file moduleKey:file1.slang.",
+        "Visitor FailingToReuseVisitor failed to reuse previous results for input file moduleKey:file1.slang.",
+        "Will convert input file moduleKey:file1.slang for full analysis."
+      );
+    }
+
+    @Test
+    void does_not_skip_conversion_when_unchanged_files_cannot_be_skipped() {
+      // Disable the skipping of unchanged files
+      sensorContext.setCanSkipUnchangedFiles(false);
+      // Execute analyzeFile
+      SlangSensor.analyseFile(
+        converter,
+        inputFileContext,
+        inputFile,
+        List.of(visitor),
+        new DurationStatistics(sensorContext.config())
+      );
+      verify(visitor, never()).reusePreviousResults(inputFileContext);
+      verify(converter, times(1)).parse(any());
+      assertThat(logTester.logs(Level.DEBUG)).doesNotContain(
+        "Skipping input file moduleKey:file1.slang (status is unchanged)."
+      );
+    }
+
+    @Test
+    void does_not_skip_conversion_when_the_file_has_changed() {
+      sensorContext = SensorContextTester.create(baseDir);
+      sensorContext.setCanSkipUnchangedFiles(true);
+      sensorContext.setCacheEnabled(true);
+      // Create a changed file
+      InputFile changedFile = createInputFile(
+        "file1.slang",
+        "fun main() {\nprint (1 == 1);}",
+        InputFile.Status.CHANGED
+      );
+      sensorContext.fileSystem().add(changedFile);
+      // Execute analyzeFile
+      SlangSensor.analyseFile(
+        converter,
+        inputFileContext,
+        changedFile,
+        List.of(visitor),
+        new DurationStatistics(sensorContext.config())
+      );
+      verify(visitor, never()).reusePreviousResults(inputFileContext);
+      verify(converter, times(1)).parse(any());
+      assertThat(logTester.logs(Level.DEBUG)).doesNotContain(
+        "Skipping input file moduleKey:file1.slang (status is unchanged)."
+      );
+    }
+
+    @Test
+    void successful_visitor_is_not_called_to_visit_the_ast_after_conversion() {
+      FailingToReuseVisitor failing = spy(new FailingToReuseVisitor());
+      SlangSensor.analyseFile(
+        converter,
+        inputFileContext,
+        inputFile,
+        List.of(visitor, failing),
+        new DurationStatistics(sensorContext.config())
+      );
+      verify(visitor, times(1)).reusePreviousResults(inputFileContext);
+      verify(failing, times(1)).reusePreviousResults(inputFileContext);
+      verify(converter, times(1)).parse(any());
+      verify(visitor, never()).scan(eq(inputFileContext), any(Tree.class));
+      verify(failing, times(1)).scan(eq(inputFileContext), any(Tree.class));
+      assertThat(logTester.logs(Level.DEBUG)).doesNotContain(
+        "Skipping input file moduleKey:file1.slang (status is unchanged)."
+      );
+    }
   }
 
   @Override
@@ -498,4 +639,17 @@ class SlangSensorTest extends AbstractSensorTest {
     }
   }
 
+  static class SuccessfulReuseVisitor extends PullRequestAwareVisitor {
+    @Override
+    public boolean reusePreviousResults(InputFileContext unused) {
+      return true;
+    }
+  }
+
+  static class FailingToReuseVisitor extends PullRequestAwareVisitor {
+    @Override
+    public boolean reusePreviousResults(InputFileContext unused) {
+      return false;
+    }
+  }
 }
