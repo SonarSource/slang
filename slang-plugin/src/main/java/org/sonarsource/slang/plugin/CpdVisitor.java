@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import org.assertj.core.util.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.InputFile;
@@ -121,7 +120,7 @@ public class CpdVisitor extends PullRequestAwareVisitor {
   /**
    * Computes a unique key for a file that can be used to store its CPD tokens in a cache.
    */
-  @VisibleForTesting
+  // VisibleForTesting
   static String computeCacheKey(InputFile inputFile) {
     return "slang:cpd-tokens:%s".formatted(inputFile.key());
   }
@@ -130,7 +129,7 @@ public class CpdVisitor extends PullRequestAwareVisitor {
    * Transforms a list of tokens into a byte array for caching.
    * Must be reversible by {@link #deserialize(byte[])}.
    */
-  @VisibleForTesting
+  // VisibleForTesting
   static byte[] serialize(List<Token> tokens) {
     return tokens.stream()
       .map(CpdVisitor::serialize)
@@ -158,7 +157,7 @@ public class CpdVisitor extends PullRequestAwareVisitor {
    *
    * @throws IllegalArgumentException - when failing to deserialize (eg: unexpected format)
    */
-  @VisibleForTesting
+  // VisibleForTesting
   static List<Token> deserialize(byte[] serialized) {
     if (serialized.length == 0) {
       return Collections.emptyList();
