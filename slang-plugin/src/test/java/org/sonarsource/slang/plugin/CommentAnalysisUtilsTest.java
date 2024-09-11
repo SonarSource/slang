@@ -30,10 +30,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class CommentAnalysisUtilsTest {
 
-  private final static String CODE = "// NOSONAR \n" +
-    "def fun() { \n" +
-    "/* todo */ \n" +
-    "}";
+  private final static String CODE = """
+    // NOSONAR
+    def fun() {
+    /* todo */
+    }""";
   private static final TextRange CODE_TEXT_RANGE = new TextRangeImpl(1, 0, 4, 0);
 
   @Test

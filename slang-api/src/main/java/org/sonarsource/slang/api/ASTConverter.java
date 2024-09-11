@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 public interface ASTConverter {
 
   /**
+   * @deprecated
    * Use {@link ASTConverter#parse(String, String)} instead.
    * It provides improved logging when used with ASTConverterValidation.
    */

@@ -66,96 +66,97 @@ class MetricVisitorTest {
 
   @Test
   void linesOfCode() throws Exception {
-    scan("" +
-      "x + 1;\n" +
-      "// comment\n" +
-      "fun function1() { // comment\n" +
-      "x = true || false; }");
+    scan("""
+      x + 1;
+      // comment
+      fun function1() { // comment
+      x = true || false; }""");
     assertThat(visitor.linesOfCode()).containsExactly(1, 3, 4);
   }
 
   @Test
   void commentLines() throws Exception {
-    scan("" +
-      "x + 1;\n" +
-      "// comment\n" +
-      "fun function1() { // comment\n" +
-      "x = true || false; }");
+    scan("""
+      x + 1;
+      // comment
+      fun function1() { // comment
+      x = true || false; }""");
     assertThat(visitor.commentLines()).containsExactly(2, 3);
   }
 
   @Test
   void commentBeforeTheFirstTokenCorrespondToTheIgnoredHeader() throws Exception {
-    scan("" +
-      "// first line of the header\n" +
-      "// second line of the header\n" +
-      "/*\n" +
-      "  this is also part of the header\n" +
-      "*/\n" +
-      "package abc; // comment 1\n" +
-      "import x;\n" +
-      "\n" +
-      "fun function1() { // comment 2\n" +
-      "  //\n" +
-      "  /**/\n" +
-      "}\n");
+    scan("""
+      // first line of the header
+      // second line of the header
+      /*
+        this is also part of the header
+      */
+      package abc; // comment 1
+      import x;
+
+      fun function1() { // comment 2
+        //
+        /**/
+      }""");
     assertThat(visitor.commentLines()).containsExactly(6, 9);
   }
 
   @Test
   void commentsWithoutDeclarationsAreIgnored() throws Exception {
-    scan("" +
-      "// header 1\n" +
-      "/**\n" +
-      " * header 2\n" +
-      " */\n");
+    scan("""
+      // header 1
+      /**
+       * header 2
+       */
+       """);
     assertThat(visitor.commentLines()).isEmpty();
   }
 
   @Test
   void noSonarCommentsDoNotAccountForTheCommentMetrics() throws Exception {
-    scan("" +
-      "fun function1() {\n" +
-      "  // comment1\n" +
-      "  // NOSONAR comment2\n" +
-      "  // comment3\n" +
-      "}\n");
+    scan("""
+      fun function1() {
+        // comment1
+        // NOSONAR comment2
+        // comment3
+      }""");
     assertThat(visitor.commentLines()).containsExactly(2, 4);
   }
 
   @Test
   void emptyLinesDoNotAccountForTheCommentMetrics() throws Exception {
-    scan("" +
-      "package abc; // comment 1\n" +
-      "/*\n" +
-      "\n" +
-      "  comment 2\n" +
-      "  \n" +
-      "  comment 3\n" +
-      "\n" +
-      "*/\n" +
-      "\n" +
-      "fun function1() { // comment 4\n" +
-      "  /**\n" +
-      "   *\n"+
-      "   #\n"+
-      "   =\n"+
-      "   -\n"+
-      "   |\n"+
-      "   | comment 5\n"+
-      "   | どのように\n"+
-      "   |\n"+
-      "   */\n"+
-      "}\n");
+    scan("""
+      package abc; // comment 1
+      /*
+
+        comment 2
+
+        comment 3
+
+      */
+
+      fun function1() { // comment 4
+        /**
+         *
+         #
+         =
+         -
+         |
+         | comment 5
+         | どのように
+         |
+         */
+      }""");
     assertThat(visitor.commentLines()).containsExactlyInAnyOrder(1, 4, 6, 10, 17, 18);
   }
 
   @Test
   void multiLineComment() throws Exception {
-    scan("" +
-      "/*start\n" +
-      "x + 1\n" +
-      "end*/");
+    scan("""
+      /*start
+      x + 1
+      end*/""");
     assertThat(visitor.commentLines()).containsExactly(1, 2, 3);
     assertThat(visitor.linesOfCode()).isEmpty();
   }
@@ -166,12 +167,20 @@ class MetricVisitorTest {
       "x + 1;\n" +
       "x = true || false;");
     assertThat(visitor.numberOfFunctions()).isZero();
-    scan("" +
-      "x + 1;\n" +
-      "fun noBodyFunction();\n" + // Only functions with implementation bodies are considered for the metric
-      "fun() { x = 1; }\n" + // Anonymous functions are not considered for function metric computation
-      "fun function1() { // comment\n" +
-      "x = true || false; }");
+    scan("""
+      x + 1;
+      """ +
+      // Only functions with implementation bodies are considered for the metric
+      """
+      fun noBodyFunction();
+      """ +
+      // Anonymous functions are not considered for function metric computation
+      """
+      fun() { x = 1; }
+      """ +
+      """
+      fun function1() { // comment
+      x = true || false; }""");
     assertThat(visitor.numberOfFunctions()).isEqualTo(1);
   }
 
@@ -181,13 +190,13 @@ class MetricVisitorTest {
             "x + 1;\n" +
             "x = true || false;");
     assertThat(visitor.numberOfClasses()).isZero();
-    scan("" +
-            "class C {}\n" +
-            "fun function() {}\n" +
-            "class D { int val x = 0; }\n" +
-            "class E {\n" +
-            "  fun doSomething(int x) {}\n" +
-            "}");
+    scan("""
+      class C {}
+      fun function() {}
+      class D { int val x = 0; }
+      class E {
+        fun doSomething(int x) {}
+      }""");
     assertThat(visitor.numberOfClasses()).isEqualTo(3);
   }
 
@@ -216,18 +225,18 @@ class MetricVisitorTest {
 
   @Test
   void executable_lines() throws Exception {
-    scan("" +
-      "package abc;\n" +
-      "import x;\n" +
-      "class A {\n" +
-      "  fun foo() {\n" +
-      "    statementOnSeveralLines(a,\n" +
-      "      b);\n" +
-      "  };\n" +
-      "}\n" +
-      "{\n" +
-      "  x = 42;\n" +
-      "};");
+    scan("""
+      package abc;
+      import x;
+      class A {
+        fun foo() {
+          statementOnSeveralLines(a,
+            b);
+        }
+      }
+      {
+        x = 42
+      };""");
     assertThat(visitor.executableLines()).containsExactly(5, 10);
   }
 

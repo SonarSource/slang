@@ -417,10 +417,11 @@ class SLangConverterTest {
 
   @Test
   void function_with_local_annotations() {
-    FunctionDeclarationTree function = parseFunction("private int fun foo() {\n" +
-      "@MyAnnotation\n" +
-      "val i = 1;\n" +
-      "}");
+    FunctionDeclarationTree function = parseFunction("""
+      private int fun foo() {
+      @MyAnnotation
+      val i = 1;
+      }""");
     List<Annotation> localVariableAnnotations = function.body().statementOrExpressions().get(0).metaData().annotations();
     assertThat(localVariableAnnotations).hasSize(1);
     Annotation annotation = localVariableAnnotations.get(0);

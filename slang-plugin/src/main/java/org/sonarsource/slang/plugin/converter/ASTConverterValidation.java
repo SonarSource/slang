@@ -122,7 +122,7 @@ public class ASTConverterValidation implements ASTConverter {
   List<String> errors() {
     return firstErrorOfEachKind.entrySet().stream()
       .map(entry -> entry.getKey() + entry.getValue())
-      .collect(Collectors.toList());
+      .toList();
   }
 
   private void raiseError(String messageKey, String messageDetails, TextPointer position) {
@@ -211,13 +211,13 @@ public class ASTConverterValidation implements ASTConverter {
     if (tree instanceof IdentifierTree) {
       unexpectedTokens = tokens.stream()
         .filter(token -> token.type() == Token.Type.KEYWORD || token.type() == Token.Type.STRING_LITERAL)
-        .collect(Collectors.toList());
+        .toList();
     } else {
       unexpectedTokens = tokens.stream()
         .filter(token -> token.type() != Token.Type.KEYWORD)
         .filter(token -> !PUNCTUATOR_PATTERN.matcher(token.text()).matches())
         .filter(token -> !ALLOWED_MISPLACED_TOKENS_OUTSIDE_PARENT_RANGE.contains(token.text()))
-        .collect(Collectors.toList());
+        .toList();
     }
     if (!unexpectedTokens.isEmpty()) {
       String tokenList = unexpectedTokens.stream()

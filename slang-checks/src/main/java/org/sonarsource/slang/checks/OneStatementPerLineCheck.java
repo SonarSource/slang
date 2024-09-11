@@ -19,6 +19,9 @@
  */
 package org.sonarsource.slang.checks;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import org.sonar.check.Rule;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
@@ -26,9 +29,6 @@ import org.sonarsource.slang.checks.api.CheckContext;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SecondaryLocation;
 import org.sonarsource.slang.checks.api.SlangCheck;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.sonar.check.Rule;
 
 @Rule(key = "S122")
 public class OneStatementPerLineCheck implements SlangCheck {
@@ -59,7 +59,7 @@ public class OneStatementPerLineCheck implements SlangCheck {
     List<SecondaryLocation> secondaryLocations = statements.stream()
       .skip(2)
       .map(statement -> new SecondaryLocation(statement, null))
-      .collect(Collectors.toList());
+      .toList();
     ctx.reportIssue(
       statements.get(1),
       MESSAGE,

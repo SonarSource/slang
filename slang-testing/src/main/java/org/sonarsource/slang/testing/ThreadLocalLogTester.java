@@ -22,7 +22,6 @@ package org.sonarsource.slang.testing;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -64,7 +63,7 @@ public class ThreadLocalLogTester implements AfterEachCallback, BeforeEachCallba
   public List<String> logs() {
     return appender.list.stream()
       .map(ILoggingEvent::getFormattedMessage)
-      .collect(Collectors.toList());
+      .toList();
   }
 
   public List<String> logs(Level level) {
@@ -72,7 +71,7 @@ public class ThreadLocalLogTester implements AfterEachCallback, BeforeEachCallba
     return appender.list.stream()
       .filter(event -> event.getLevel().toInt() == logBackLevel.toInt())
       .map(ILoggingEvent::getFormattedMessage)
-      .collect(Collectors.toList());
+      .toList();
   }
 
   public ThreadLocalLogTester clear() {

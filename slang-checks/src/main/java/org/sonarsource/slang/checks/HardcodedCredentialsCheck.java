@@ -21,6 +21,13 @@ package org.sonarsource.slang.checks;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+import javax.annotation.Nullable;
+import org.sonar.check.Rule;
+import org.sonar.check.RuleProperty;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.StringLiteralTree;
 import org.sonarsource.slang.api.Tree;
@@ -28,16 +35,7 @@ import org.sonarsource.slang.api.VariableDeclarationTree;
 import org.sonarsource.slang.checks.api.CheckContext;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import org.sonar.check.Rule;
-import org.sonar.check.RuleProperty;
 import org.sonarsource.slang.checks.utils.ExpressionUtils;
-
-import javax.annotation.Nullable;
 
 @Rule(key = "S2068")
 public class HardcodedCredentialsCheck implements SlangCheck {
@@ -148,7 +146,7 @@ public class HardcodedCredentialsCheck implements SlangCheck {
     return Stream.of(credentialWords.split(","))
       .map(String::trim)
       .map(word -> Pattern.compile("(" + word + ")" + suffix, Pattern.CASE_INSENSITIVE))
-      .collect(Collectors.toList());
+      .toList();
   }
 
 }

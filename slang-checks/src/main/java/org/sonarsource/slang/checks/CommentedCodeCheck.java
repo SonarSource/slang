@@ -54,7 +54,7 @@ public class CommentedCodeCheck implements SlangCheck {
         if (codeVerifier.containsCode(content)) {
           List<TextRange> textRanges = comments.stream()
             .map(HasTextRange::textRange)
-            .collect(Collectors.toList());
+            .toList();
           ctx.reportIssue(TextRanges.merge(textRanges), MESSAGE);
         }
       });

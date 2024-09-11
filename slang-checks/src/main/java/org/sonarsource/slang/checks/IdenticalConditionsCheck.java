@@ -19,6 +19,10 @@
  */
 package org.sonarsource.slang.checks;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import org.sonar.check.Rule;
 import org.sonarsource.slang.api.IfTree;
 import org.sonarsource.slang.api.MatchCaseTree;
 import org.sonarsource.slang.api.MatchTree;
@@ -30,11 +34,6 @@ import org.sonarsource.slang.checks.api.SecondaryLocation;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.checks.utils.ExpressionUtils;
 import org.sonarsource.slang.utils.SyntacticEquivalence;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import org.sonar.check.Rule;
 
 import static org.sonarsource.slang.checks.utils.ExpressionUtils.skipParentheses;
 
@@ -56,7 +55,7 @@ public class IdenticalConditionsCheck implements SlangCheck {
       .map(MatchCaseTree::expression)
       .filter(Objects::nonNull)
       .map(ExpressionUtils::skipParentheses)
-      .collect(Collectors.toList());
+      .toList();
   }
 
   private static List<Tree> collectConditions(IfTree ifTree, List<Tree> list) {

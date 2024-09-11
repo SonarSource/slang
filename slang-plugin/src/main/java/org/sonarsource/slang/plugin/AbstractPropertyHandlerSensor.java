@@ -94,7 +94,7 @@ public abstract class AbstractPropertyHandlerSensor implements Sensor {
     List<String> missingFiles = reportFiles.stream()
       .filter(file -> !file.exists())
       .map(File::getPath)
-      .collect(Collectors.toList());
+      .toList();
 
     if (!missingFiles.isEmpty()) {
       String missingFilesAsString = missingFiles.stream().collect(Collectors.joining("\n- ", "\n- ", ""));

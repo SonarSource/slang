@@ -20,7 +20,6 @@
 package org.sonarsource.slang.checks;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
@@ -52,7 +51,7 @@ public class TooManyParametersCheck implements SlangCheck {
         List<SecondaryLocation> secondaryLocations = tree.formalParameters().stream()
           .skip(max)
           .map(SecondaryLocation::new)
-          .collect(Collectors.toList());
+          .toList();
 
         if (tree.name() == null) {
           ctx.reportIssue(tree, message, secondaryLocations);

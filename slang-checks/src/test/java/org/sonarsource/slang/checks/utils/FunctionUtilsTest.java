@@ -36,9 +36,9 @@ import org.sonarsource.slang.impl.MemberSelectTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.parser.SLangConverter;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonarsource.slang.checks.utils.FunctionUtils.hasFunctionCallFullNameIgnoreCase;
 import static org.sonarsource.slang.checks.utils.FunctionUtils.hasFunctionCallNameIgnoreCase;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class FunctionUtilsTest {
   private class TypeNativeKind implements NativeKind {}
@@ -110,10 +110,11 @@ class FunctionUtilsTest {
 
   @Test
   void test_get_strings_tokens_returns_tokens() {
-    String code = "void fun fooBar() {\n" +
-      "    val a = \"one,two,three\"; \n"+
-      "    foo(\"one,two$four\"); \n"+
-      "}";
+    String code = """
+      void fun fooBar() {
+          val a = "one,two,three";
+          foo("one,two$four");
+      }""";
 
     FunctionDeclarationTree root = (FunctionDeclarationTree)CONVERTER.parse(code, null).children().get(0);
 

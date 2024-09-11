@@ -19,7 +19,11 @@
  */
 package org.sonarsource.slang.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
@@ -27,11 +31,6 @@ import org.sonarsource.slang.api.TextRange;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.TreeMetaData;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nullable;
 
 public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements FunctionDeclarationTree {
 
@@ -131,7 +130,7 @@ public class FunctionDeclarationTreeImpl extends BaseTreeImpl implements Functio
     List<TextRange> tokenRangesBeforeBody = metaData().tokens().stream()
       .map(Token::textRange)
       .filter(t -> t.start().compareTo(bodyRange.start()) < 0)
-      .collect(Collectors.toList());
+      .toList();
     if (tokenRangesBeforeBody.isEmpty()) {
       return bodyRange;
     }

@@ -19,14 +19,12 @@
  */
 package org.sonarsource.slang.plugin.converter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.assertj.core.api.ListAssert;
 import org.junit.jupiter.api.Test;
@@ -75,10 +73,12 @@ class ASTConverterValidationTest {
     assertThat(validationConverter.parse("BOOM")).isSameAs(tree);
     validationConverter.terminate();
     assertThat(wrappedConverter.isTerminated).isTrue();
-    assertThat(validationConverter.errors()).containsExactly("Unexpected AST difference:\n" +
-      "      Actual   : code\n" +
-      "      Expected : BOOM\n" +
-      " (line: 1, column: 1)");
+    assertThat(validationConverter.errors()).containsExactly("""
+      Unexpected AST difference:
+            Actual   : code
+            Expected : BOOM
+       (line: 1, column: 1)"""
+    );
   }
 
   @Test
@@ -175,10 +175,12 @@ class ASTConverterValidationTest {
       Collections.emptyList());
     String code = "package /* comment */";
     assertValidationErrors(code, tree)
-      .containsExactly("Unexpected AST difference:\n" +
-        "      Actual   : package\n" +
-        "      Expected : package /* comment */\n" +
-        " (line: 1, column: 1)");
+      .containsExactly("""
+        Unexpected AST difference:
+              Actual   : package
+              Expected : package /* comment */
+         (line: 1, column: 1)"""
+      );
   }
 
   @Test
@@ -353,7 +355,7 @@ class ASTConverterValidationTest {
     List<TextRange> textRanges = Stream.of(tokens, comments)
       .flatMap(List::stream)
       .map(HasTextRange::textRange)
-      .collect(Collectors.toList());
+      .toList();
 
     TextPointer start = textRanges.stream().map(TextRange::start).min(Comparator.naturalOrder()).orElse(null);
     TextPointer end = textRanges.stream().map(TextRange::end).max(Comparator.naturalOrder()).orElse(null);

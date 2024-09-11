@@ -19,20 +19,19 @@
  */
 package org.sonarsource.slang.checks;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+import org.sonar.check.Rule;
+import org.sonar.check.RuleProperty;
 import org.sonarsource.slang.api.StringLiteralTree;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.checks.api.CheckContext;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SecondaryLocation;
 import org.sonarsource.slang.checks.api.SlangCheck;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import org.sonar.check.Rule;
-import org.sonar.check.RuleProperty;
 
 @Rule(key = "S1192")
 public class StringLiteralDuplicatedCheck implements SlangCheck {
@@ -70,7 +69,7 @@ public class StringLiteralDuplicatedCheck implements SlangCheck {
         List<SecondaryLocation> secondaryLocations = occurrences.stream()
           .skip(1)
           .map(stringLiteral -> new SecondaryLocation(stringLiteral.metaData().textRange(), "Duplication"))
-          .collect(Collectors.toList());
+          .toList();
         double gap = size - 1.0;
         ctx.reportIssue(first, message, secondaryLocations, gap);
       }

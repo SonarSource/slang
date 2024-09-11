@@ -23,7 +23,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,10 +55,10 @@ class LanguageTest {
     PropertyDefaultValues defaultValues = someString.getAnnotation(PropertyDefaultValues.class);
     assertThat(defaultValues.value()).hasSize(3);
 
-    assertThat(Arrays.stream(defaultValues.value()).map(PropertyDefaultValue::language).collect(Collectors.toList()))
+    assertThat(Arrays.stream(defaultValues.value()).map(PropertyDefaultValue::language).toList())
       .containsExactlyInAnyOrder(Language.GO, Language.RUBY, Language.SCALA);
     
-    assertThat(Arrays.stream(defaultValues.value()).map(PropertyDefaultValue::defaultValue).collect(Collectors.toList()))
+    assertThat(Arrays.stream(defaultValues.value()).map(PropertyDefaultValue::defaultValue).toList())
       .containsExactlyInAnyOrder("go", "ruby", "scala");
     
   }

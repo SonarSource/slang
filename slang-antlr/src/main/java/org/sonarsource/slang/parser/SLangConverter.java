@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -94,7 +93,6 @@ import org.sonarsource.slang.impl.VariableDeclarationTreeImpl;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.DOWHILE;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.FOR;
 import static org.sonarsource.slang.api.LoopTree.LoopKind.WHILE;
@@ -234,7 +232,7 @@ public class SLangConverter implements ASTConverter {
       List<String> argumentsText = new ArrayList<>();
       SLangParser.AnnotationParametersContext argument = ctx.annotationParameters();
       if (argument != null) {
-        argumentsText.addAll(argument.annotationParameter().stream().map(RuleContext::getText).collect(Collectors.toList()));
+        argumentsText.addAll(argument.annotationParameter().stream().map(RuleContext::getText).toList());
       }
 
       annotations.add(new AnnotationImpl(simpleName, argumentsText,
@@ -655,7 +653,7 @@ public class SLangConverter implements ASTConverter {
       return rawChildren
         .stream()
         .map(this::visit)
-        .collect(toList());
+        .toList();
     }
 
     private Tree binaryTree(List<? extends ParseTree> operands, List<? extends ParserRuleContext> operators) {

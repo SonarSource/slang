@@ -53,15 +53,16 @@ class TreePrinterTest {
     Tree assignExp = new AssignmentExpressionTreeImpl(null, AssignmentExpressionTree.Operator.EQUAL, x1, binaryExp);
     Tree modifier = new ModifierTreeImpl(null, ModifierTree.Kind.PRIVATE);
     Tree function = new FunctionDeclarationTreeImpl(null, singletonList(modifier), false, null, null, emptyList(), null, emptyList());
-    Assertions.assertThat(TreePrinter.tree2string(Arrays.asList(assignExp, function))).isEqualTo(
-      "AssignmentExpressionTreeImpl EQUAL\n" +
-        "  IdentifierTreeImpl x1\n" +
-        "  BinaryExpressionTreeImpl PLUS\n" +
-        "    IdentifierTreeImpl var1\n" +
-        "    LiteralTreeImpl 42\n" +
-        "\n" +
-        "FunctionDeclarationTreeImpl\n" +
-        "  ModifierTreeImpl PRIVATE\n");
+    Assertions.assertThat(TreePrinter.tree2string(Arrays.asList(assignExp, function))).isEqualTo("""
+      AssignmentExpressionTreeImpl EQUAL
+        IdentifierTreeImpl x1
+        BinaryExpressionTreeImpl PLUS
+          IdentifierTreeImpl var1
+          LiteralTreeImpl 42
+
+      FunctionDeclarationTreeImpl
+        ModifierTreeImpl PRIVATE
+      """);
   }
 
   @Test

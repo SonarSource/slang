@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import org.sonarsource.slang.api.Annotation;
 import org.sonarsource.slang.api.Comment;
 import org.sonarsource.slang.api.HasTextRange;
@@ -110,7 +109,7 @@ public class TreeMetaDataProvider {
   public Token keyword(TextRange textRange) {
     List<Token> keywordsInRange = getElementsInRange(sortedTokens, textRange).stream()
       .filter(t -> t.type() == Token.Type.KEYWORD)
-      .collect(Collectors.toList());
+      .toList();
     if (keywordsInRange.size() != 1) {
       throw new IllegalArgumentException("Cannot find single keyword in " + textRange);
     }

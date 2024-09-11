@@ -19,15 +19,14 @@
  */
 package org.sonarsource.slang.checks;
 
+import java.util.List;
+import org.sonar.check.Rule;
+import org.sonar.check.RuleProperty;
 import org.sonarsource.slang.api.MatchTree;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SecondaryLocation;
 import org.sonarsource.slang.checks.api.SlangCheck;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.sonar.check.Rule;
-import org.sonar.check.RuleProperty;
 
 @Rule(key = "S1479")
 public class TooManyCasesCheck implements SlangCheck {
@@ -53,7 +52,7 @@ public class TooManyCasesCheck implements SlangCheck {
           maximum);
         List<SecondaryLocation> secondaryLocations = tree.cases().stream()
           .map(matchCase -> new SecondaryLocation(matchCase.rangeToHighlight(), null))
-          .collect(Collectors.toList());
+          .toList();
         ctx.reportIssue(matchKeyword, message, secondaryLocations);
       }
     });

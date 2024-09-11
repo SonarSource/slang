@@ -28,11 +28,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class SecondaryLocationTest {
 
-  private static final Tree IDENTIFIER = JsonTree.fromJson("" +
-    "{\n" +
-    "  \"treeMetaData\": {\"tokens\": [{\"textRange\": \"1:0:1:3\", \"text\": \"foo\", \"type\": \"OTHER\"}]},\n" +
-    "  \"tree\": {\"@type\": \"Identifier\", \"metaData\": \"1:0:1:3\", \"name\": \"foo\"}\n" +
-    "}");
+  private static final Tree IDENTIFIER = JsonTree.fromJson("""
+    {
+      "treeMetaData": {"tokens": [{"textRange": "1:0:1:3", "text": "foo", "type": "OTHER"}]},
+      "tree": {"@type": "Identifier", "metaData": "1:0:1:3", "name": "foo"}
+    }""");
 
   @Test
   void constructor_with_tree() {

@@ -115,7 +115,7 @@ public class SyntacticEquivalence {
       .collect(Collectors.groupingBy(ComparableTree::new, LinkedHashMap::new, Collectors.toList()))
       .values().stream()
       .filter(group -> group.size() > 1)
-      .collect(Collectors.toList());
+      .toList();
   }
 
   static class ComparableTree {

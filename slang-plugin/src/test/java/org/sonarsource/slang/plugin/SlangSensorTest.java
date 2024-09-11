@@ -109,18 +109,18 @@ class SlangSensorTest extends AbstractSensorTest {
 
   @Test
   void test_commented_code() {
-    InputFile inputFile = createInputFile("file1.slang",
-      "fun main() {\n"
-        + "// fun foo() { if (true) {print(\"string literal\");}}\n"
-        + "print (1 == 1);\n"
-        + "print(b);\n"
-        + "// a b c ...\n"
-        + "foo();\n"
-        + "// Coefficients of polynomial\n"
-        + "val b = DoubleArray(n); // linear\n"
-        + "val c = DoubleArray(n + 1); // quadratic\n"
-        + "val d = DoubleArray(n); // cubic\n"
-        + "}");
+    InputFile inputFile = createInputFile("file1.slang","""
+        fun main() {
+        // fun foo() { if (true) {print("string literal");}}
+        print (1 == 1);
+        print(b);
+        // a b c ...
+        foo();
+        // Coefficients of polynomial
+        val b = DoubleArray(n); // linear
+        val c = DoubleArray(n + 1); // quadratic
+        val d = DoubleArray(n); // cubic
+        }""");
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("S125");
     sensor(checkFactory).execute(context);
@@ -135,18 +135,18 @@ class SlangSensorTest extends AbstractSensorTest {
 
   @Test
   void test_nosonar_commented_code() {
-    InputFile inputFile = createInputFile("file1.slang",
-        "fun main() {\n"
-        + "// fun foo() { if (true) {print(\"string literal\");}} NOSONAR\n"
-        + "print (1 == 1);\n"
-        + "print(b);\n"
-        + "// a b c ...\n"
-        + "foo();\n"
-        + "// Coefficients of polynomial\n"
-        + "val b = DoubleArray(n); // linear\n"
-        + "val c = DoubleArray(n + 1); // quadratic\n"
-        + "val d = DoubleArray(n); // cubic\n"
-        + "}");
+    InputFile inputFile = createInputFile("file1.slang", """
+        fun main() {
+        // fun foo() { if (true) {print("string literal");}} NOSONAR
+        print (1 == 1);
+        print(b);
+        // a b c ...
+        foo();
+        // Coefficients of polynomial
+        val b = DoubleArray(n); // linear
+        val c = DoubleArray(n + 1); // quadratic
+        val d = DoubleArray(n); // cubic
+        }""");
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("S125");
     sensor(checkFactory).execute(context);
@@ -176,9 +176,11 @@ class SlangSensorTest extends AbstractSensorTest {
 
   @Test
   void suppress_issues_in_class() {
-    InputFile inputFile = createInputFile("file1.slang",
-      "@Suppress(\"slang:S1764\")\n"
-        + "class { fun main() {\nprint (1 == 1);} }");
+    InputFile inputFile = createInputFile("file1.slang","""
+        @Suppress("slang:S1764")
+        class { fun main() {
+        print (1 == 1);} }"""
+    );
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("S1764");
     sensor(checkFactory).execute(context);
@@ -188,12 +190,17 @@ class SlangSensorTest extends AbstractSensorTest {
 
   @Test
   void suppress_issues_in_method() {
-    InputFile inputFile = createInputFile("file1.slang",
-      "class { "
-        + "@Suppress(\"slang:S1764\")\n"
-        + "fun suppressed() {\nprint (1 == 1);} "
-        + "fun notSuppressed() {\nprint (123 == 123);} "
-        + "}");
+    InputFile inputFile = createInputFile("file1.slang", """
+      class {
+        @Suppress("slang:S1764")
+        fun suppressed() {
+          print (1 == 1);
+        }
+        fun notSuppressed() {
+          print (123 == 123);
+        }
+      }"""
+    );
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("S1764");
     sensor(checkFactory).execute(context);
@@ -201,17 +208,19 @@ class SlangSensorTest extends AbstractSensorTest {
     assertThat(issues).hasSize(1);
     Issue issue = issues.iterator().next();
     IssueLocation location = issue.primaryLocation();
-    assertTextRange(location.textRange()).hasRange(4, 14, 4, 17);
+    assertTextRange(location.textRange()).hasRange(7, 18, 7, 21);
   }
 
   @Test
   void suppress_issues_in_var() {
-    InputFile inputFile = createInputFile("file1.slang",
-      "class A {void fun bar() {\n"
-        + "@Suppress(\"slang:S1764\")\n"
-        + "int val b = (1 == 1);\n"
-        + "int val c = (1 == 1);\n"
-        + "}}");
+    InputFile inputFile = createInputFile("file1.slang", """
+      class A {
+        void fun bar() {
+          @Suppress("slang:S1764")
+          int val b = (1 == 1);
+          int val c = (1 == 1);
+        }
+      }""");
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("S1764");
     sensor(checkFactory).execute(context);
@@ -219,7 +228,7 @@ class SlangSensorTest extends AbstractSensorTest {
     assertThat(issues).hasSize(1);
     Issue issue = issues.iterator().next();
     IssueLocation location = issue.primaryLocation();
-    assertTextRange(location.textRange()).hasRange(4, 18, 4, 19);
+    assertTextRange(location.textRange()).hasRange(5, 22, 5, 23);
   }
 
   @Test
@@ -238,16 +247,27 @@ class SlangSensorTest extends AbstractSensorTest {
 
   @Test
   void suppress_multiples_issues() {
-    InputFile inputFile = createInputFile("file1.slang",
-      "@Suppress(\"slang:S1764\", value=\"slang:S1192\")\n"
-      + "fun suppressed() {\nprint (1 == 1);print(\"string literal\"); print(\"string literal\"); print(\"string literal\"); } "
-      + "@Suppress(value={\"slang:S1764\",\"slang:S1192\"})\n"
-      + "fun suppressed() {\nprint (1 == 1);print(\"string literal\"); print(\"string literal\"); print(\"string literal\"); } "
-      + "@Suppress(\"slang:S1192\")\n"
-      + "@Suppress(\"slang:S1764\")\n"
-      + "fun suppressed() {\nprint (1 == 1);print(\"string literal\"); print(\"string literal\"); print(\"string literal\"); } "
-      + "@Suppress(value={\"slang:S1764\"})\n"
-      + "fun suppressed() {\nprint (1 == 1);}");
+    InputFile inputFile = createInputFile("file1.slang", """
+      @Suppress("slang:S1764", value="slang:S1192")
+      fun suppressed() {
+        print (1 == 1);print("string literal"); print("string literal"); print("string literal");
+      }
+
+      @Suppress(value={"slang:S1764","slang:S1192"})
+      fun suppressed() {
+        print (1 == 1);print("string literal"); print("string literal"); print("string literal");
+      }
+
+      @Suppress("slang:S1192")
+      @Suppress("slang:S1764")
+      fun suppressed() {
+        print (1 == 1);print("string literal"); print("string literal"); print("string literal");
+      }
+
+      @Suppress(value={"slang:S1764"})
+      fun suppressed() {
+        print (1 == 1);
+      }""");
     context.fileSystem().add(inputFile);
     CheckFactory checkFactory = checkFactory("S1764", "S1192");
     sensor(checkFactory).execute(context);

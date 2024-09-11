@@ -22,7 +22,6 @@ package org.sonarsource.slang.checks;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.sonar.check.Rule;
 import org.sonarsource.slang.api.FunctionDeclarationTree;
 import org.sonarsource.slang.api.IdentifierTree;
@@ -66,7 +65,7 @@ public class UnusedFunctionParameterCheck implements SlangCheck {
       .map(ParameterTree.class::cast)
       .filter(parameterTree -> parameterTree.modifiers().isEmpty() && functionDeclarationTree.descendants()
         .noneMatch(tree -> !tree.equals(parameterTree.identifier()) && areEquivalent(tree, parameterTree.identifier())))
-      .collect(Collectors.toList());
+      .toList();
   }
 
   protected void reportUnusedParameters(CheckContext ctx, List<ParameterTree> unusedParameters) {
@@ -78,7 +77,7 @@ public class UnusedFunctionParameterCheck implements SlangCheck {
         Objects.requireNonNull(identifier, "Identifier for an unused parameter is null");
         return new SecondaryLocation(identifier, "Remove this unused method parameter " + identifier.name() + "\".");
       })
-      .collect(Collectors.toList());
+      .toList();
 
     IdentifierTree firstUnused = unusedParameters.get(0).identifier();
     Objects.requireNonNull(firstUnused, "Identifier for an unused parameter is null");

@@ -6,16 +6,14 @@ ENV DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN set -o errexit -o nounset \
   && groupadd --system --gid 1000 sonarsource \
-  && useradd --system --gid sonarsource --uid 1000 --shell /bin/bash --create-home sonarsource
-
-RUN echo 'Acquire::AllowReleaseInfoChange::Suite "true";' > /etc/apt/apt.conf.d/allow_release_info_change.conf
-
-# hadolint ignore=DL3008
-RUN apt-get update \
+  && useradd --system --gid sonarsource --uid 1000 --shell /bin/bash --create-home sonarsource \
+  && echo 'Acquire::AllowReleaseInfoChange::Suite "true";' > /etc/apt/apt.conf.d/allow_release_info_change.conf \
+# hadolint ignore=DL3008 \
+  && apt-get update \
   && apt-get -y install --no-install-recommends \
-    lsb-release \
-    gnupg \
     git \
+    gnupg \
+    lsb-release \
     unzip \
     wget \
   && apt-get clean \

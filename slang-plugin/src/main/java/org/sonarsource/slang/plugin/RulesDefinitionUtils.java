@@ -22,7 +22,6 @@ package org.sonarsource.slang.plugin;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.utils.AnnotationUtils;
 import org.sonar.check.RuleProperty;
@@ -49,7 +48,7 @@ public class RulesDefinitionUtils {
 
         List<PropertyDefaultValue> valueForLanguage = Arrays.stream(defaultValues.value())
           .filter(defaultValue -> defaultValue.language() == language)
-          .collect(Collectors.toList());
+          .toList();
         if (valueForLanguage.size() != 1) {
           throw new IllegalStateException("Invalid @PropertyDefaultValue on " + check.getSimpleName() +
             " for language " + language);

@@ -22,7 +22,6 @@ package org.sonarsource.slang.testing;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.Assertions;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
@@ -60,7 +59,7 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
 
   public TreeAssert hasTokens(String... tokens) {
     isNotNull();
-    List<String> expected = actual.metaData().tokens().stream().map(Token::text).collect(Collectors.toList());
+    List<String> expected = actual.metaData().tokens().stream().map(Token::text).toList();
     Assertions.assertThat(Arrays.asList(tokens)).isEqualTo(expected);
     return this;
   }
@@ -80,7 +79,7 @@ public class TreeAssert extends AbstractAssert<TreeAssert, Tree> {
     List<ParameterTree> actualParameters = actualFunction.formalParameters().stream()
       .filter(ParameterTree.class::isInstance)
       .map(ParameterTree.class::cast)
-      .collect(Collectors.toList());
+      .toList();
     if (actualParameters.size() != names.length) {
       failWithMessage("Expected to have <%s> parameters but found <%s>", names.length, actualParameters.size());
     }

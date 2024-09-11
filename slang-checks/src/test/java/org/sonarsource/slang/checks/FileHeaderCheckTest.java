@@ -39,11 +39,12 @@ class FileHeaderCheckTest {
   }
   @Test
   void test_multiline() {
-    check.headerFormat = "/*\n" +
-      " * SonarSource SLang\n" +
-      " * Copyright (C) 1999-2001 SonarSource SA\n" +
-      " * mailto:info AT sonarsource DOT com\n" +
-      " */";
+    check.headerFormat = """
+      /*
+       * SonarSource SLang
+       * Copyright (C) 1999-2001 SonarSource SA
+       * mailto:info AT sonarsource DOT com
+       */""";
     Verifier.verifyNoIssue("fileheader/Multiline.slang", check);
   }
 

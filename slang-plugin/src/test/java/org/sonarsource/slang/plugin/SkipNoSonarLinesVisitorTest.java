@@ -57,10 +57,11 @@ class SkipNoSonarLinesVisitorTest {
 
   @Test
   void testSingleNosonarComment() throws Exception {
-    testNosonarCommentLines("import something; \n"
-        + "// NOSONAR comment\n"
-        + "fun function1() { // comment\n"
-        + "x = true || false; }",
+    testNosonarCommentLines("""
+        import something;
+        // NOSONAR comment
+        fun function1() { // comment
+        x = true || false; }""",
       Set.of(2));
   }
 
