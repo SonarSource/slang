@@ -19,7 +19,12 @@
  */
 package org.sonarsource.slang.plugin;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -56,11 +61,14 @@ import org.sonarsource.slang.checks.StringLiteralDuplicatedCheck;
 import org.sonarsource.slang.checks.api.SlangCheck;
 import org.sonarsource.slang.parser.SLangConverter;
 import org.sonarsource.slang.parser.SlangCodeVerifier;
+import org.sonarsource.slang.plugin.caching.DummyReadCache;
+import org.sonarsource.slang.plugin.caching.DummyWriteCache;
 import org.sonarsource.slang.testing.AbstractSensorTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -470,17 +478,26 @@ class SlangSensorTest extends AbstractSensorTest {
 
   @Nested
   class PullRequestContext {
+    private static final String ORIGINAL_FILE_CONTENT = """
+      fun main() {
+        print (1 == 1);
+      }
+      """;
+
     private SensorContextTester sensorContext;
+    private DummyWriteCache nextCache;
+    byte[] md5Hash;
     private InputFile inputFile;
     private InputFileContext inputFileContext;
     private SLangConverter converter;
     private PullRequestAwareVisitor visitor;
+    private String hashKey;
 
-    @BeforeEach
     /**
      * Set up for happy with PR context
      */
-    void setup() {
+    @BeforeEach
+    void setup() throws NoSuchAlgorithmException, IOException {
       // Enable PR context
       sensorContext = SensorContextTester.create(baseDir);
       sensorContext.setCanSkipUnchangedFiles(true);
@@ -488,14 +505,30 @@ class SlangSensorTest extends AbstractSensorTest {
       // Add one unchanged file to analyze
       inputFile = createInputFile(
         "file1.slang",
-        "fun main() {\nprint (1 == 1);}",
+        ORIGINAL_FILE_CONTENT,
         InputFile.Status.SAME
       );
       sensorContext.fileSystem().add(inputFile);
       inputFileContext = new InputFileContext(sensorContext, inputFile);
+      // Add the hash of the file to the cache
+      MessageDigest md5 = MessageDigest.getInstance("MD5");
+      try (InputStream in = new ByteArrayInputStream(ORIGINAL_FILE_CONTENT.getBytes(StandardCharsets.UTF_8))) {
+        md5Hash = md5.digest(in.readAllBytes());
+      }
+      DummyReadCache previousCache = new DummyReadCache();
+      hashKey = "slang:hash:" + inputFile.key();
+      previousCache.persisted.put(hashKey, md5Hash);
+      sensorContext.setPreviousCache(previousCache);
+
+      // Bind the next cache
+      nextCache = spy(new DummyWriteCache());
+      nextCache.bind(previousCache);
+      sensorContext.setNextCache(nextCache);
+
       converter = spy(new SLangConverter());
       visitor = spy(new SuccessfulReuseVisitor());
     }
+
     @Test
     void skips_conversion_for_unchanged_file_with_cached_results() {
       // Execute analyzeFile
@@ -512,6 +545,8 @@ class SlangSensorTest extends AbstractSensorTest {
         "Checking that previous results can be reused for input file moduleKey:file1.slang.",
         "Skipping input file moduleKey:file1.slang (status is unchanged)."
       );
+      assertThat(nextCache.persisted).containsKey(hashKey);
+      verify(nextCache, times(1)).copyFromPrevious(hashKey);
     }
 
     @Test
@@ -533,6 +568,9 @@ class SlangSensorTest extends AbstractSensorTest {
         "Visitor FailingToReuseVisitor failed to reuse previous results for input file moduleKey:file1.slang.",
         "Will convert input file moduleKey:file1.slang for full analysis."
       );
+      assertThat(nextCache.persisted).containsKey(hashKey);
+      verify(nextCache, never()).copyFromPrevious(hashKey);
+      verify(nextCache, times(1)).write(eq(hashKey), any(byte[].class));
     }
 
     @Test
@@ -552,19 +590,19 @@ class SlangSensorTest extends AbstractSensorTest {
       assertThat(logTester.logs(Level.DEBUG)).doesNotContain(
         "Skipping input file moduleKey:file1.slang (status is unchanged)."
       );
+      verify(nextCache, never()).copyFromPrevious(hashKey);
+      verify(nextCache, times(1)).write(eq(hashKey), any(byte[].class));
     }
 
     @Test
-    void does_not_skip_conversion_when_the_file_has_changed() {
-      sensorContext = SensorContextTester.create(baseDir);
-      sensorContext.setCanSkipUnchangedFiles(true);
-      sensorContext.setCacheEnabled(true);
+    void does_not_skip_conversion_when_the_file_has_same_contents_but_input_file_status_is_changed() {
       // Create a changed file
       InputFile changedFile = createInputFile(
         "file1.slang",
-        "fun main() {\nprint (1 == 1);}",
+        ORIGINAL_FILE_CONTENT,
         InputFile.Status.CHANGED
       );
+      inputFileContext = new InputFileContext(sensorContext, changedFile);
       sensorContext.fileSystem().add(changedFile);
       // Execute analyzeFile
       SlangSensor.analyseFile(
@@ -576,9 +614,113 @@ class SlangSensorTest extends AbstractSensorTest {
       );
       verify(visitor, never()).reusePreviousResults(inputFileContext);
       verify(converter, times(1)).parse(any());
-      assertThat(logTester.logs(Level.DEBUG)).doesNotContain(
-        "Skipping input file moduleKey:file1.slang (status is unchanged)."
+      assertThat(logTester.logs(Level.DEBUG))
+        .doesNotContain("Skipping input file moduleKey:file1.slang (status is unchanged).")
+        .contains("File moduleKey:file1.slang is considered changed: file status is CHANGED.");
+
+      verify(nextCache, never()).copyFromPrevious(hashKey);
+      verify(nextCache, times(1)).write(eq(hashKey), any(byte[].class));
+    }
+
+    @Test
+    void does_not_skip_conversion_when_the_file_content_has_changed_but_input_file_status_is_SAME() {
+      // Create a changed file
+      InputFile changedFile = createInputFile(
+        "file1.slang",
+        "// This is definitely not the same thing",
+        InputFile.Status.SAME
       );
+      sensorContext.fileSystem().add(changedFile);
+      inputFileContext = new InputFileContext(sensorContext, changedFile);
+      // Execute analyzeFile
+      SlangSensor.analyseFile(
+        converter,
+        inputFileContext,
+        changedFile,
+        List.of(visitor),
+        new DurationStatistics(sensorContext.config())
+      );
+      verify(visitor, never()).reusePreviousResults(inputFileContext);
+      verify(converter, times(1)).parse(any());
+      assertThat(logTester.logs(Level.DEBUG)).doesNotContain("Skipping input file moduleKey:file1.slang (status is unchanged).");
+
+      verify(nextCache, never()).copyFromPrevious(hashKey);
+      verify(nextCache, times(1)).write(eq(hashKey), any(byte[].class));
+    }
+
+    @Test
+    void does_not_skip_conversion_when_the_file_content_is_unchanged_but_cache_is_disabled() {
+      // Disable caching
+      sensorContext.setCacheEnabled(false);
+      // Execute analyzeFile
+      SlangSensor.analyseFile(
+        converter,
+        inputFileContext,
+        inputFile,
+        List.of(visitor),
+        new DurationStatistics(sensorContext.config())
+      );
+      verify(visitor, never()).reusePreviousResults(inputFileContext);
+      verify(converter, times(1)).parse(any());
+      assertThat(logTester.logs(Level.DEBUG))
+        .doesNotContain("Skipping input file moduleKey:file1.slang (status is unchanged).")
+        .contains("File moduleKey:file1.slang is considered changed: hash cache is disabled.");
+
+      verify(nextCache, never()).copyFromPrevious(hashKey);
+      verify(nextCache, never()).write(eq(hashKey), any(byte[].class));
+    }
+
+    @Test
+    void does_not_skip_conversion_when_the_file_content_is_unchanged_but_no_hash_in_cache() {
+      // Set an empty previous cache
+      sensorContext.setPreviousCache(new DummyReadCache());
+      // Execute analyzeFile
+      SlangSensor.analyseFile(
+        converter,
+        inputFileContext,
+        inputFile,
+        List.of(visitor),
+        new DurationStatistics(sensorContext.config())
+      );
+      verify(visitor, never()).reusePreviousResults(inputFileContext);
+      verify(converter, times(1)).parse(any());
+      assertThat(logTester.logs(Level.DEBUG))
+        .doesNotContain("Skipping input file moduleKey:file1.slang (status is unchanged).")
+        .contains("File moduleKey:file1.slang is considered changed: hash could not be found in the cache.");
+
+      verify(nextCache, never()).copyFromPrevious(hashKey);
+      verify(nextCache, times(1)).write(eq(hashKey), any(byte[].class));
+    }
+
+    @Test
+    void does_not_skip_conversion_when_the_file_content_is_unchanged_but_failing_to_read_the_cache() {
+      // Set a previous cache that contains a stream to a hash that will fail to close
+      DummyReadCache corruptedCache = spy(new DummyReadCache());
+      doReturn(true).when(corruptedCache).contains(hashKey);
+      InputStream failingToClose = new ByteArrayInputStream(ORIGINAL_FILE_CONTENT.getBytes(StandardCharsets.UTF_8)) {
+        @Override
+        public void close() throws IOException {
+          throw new IOException("BOOM!");
+        }
+      };
+      doReturn(failingToClose).when(corruptedCache).read(hashKey);
+      sensorContext.setPreviousCache(corruptedCache);
+      // Execute analyzeFile
+      SlangSensor.analyseFile(
+        converter,
+        inputFileContext,
+        inputFile,
+        List.of(visitor),
+        new DurationStatistics(sensorContext.config())
+      );
+      verify(visitor, never()).reusePreviousResults(inputFileContext);
+      verify(converter, times(1)).parse(any());
+      assertThat(logTester.logs(Level.DEBUG))
+        .doesNotContain("Skipping input file moduleKey:file1.slang (status is unchanged).")
+        .contains("File moduleKey:file1.slang is considered changed: failed to read hash from the cache.");
+
+      verify(nextCache, never()).copyFromPrevious(hashKey);
+      verify(nextCache, times(1)).write(eq(hashKey), any(byte[].class));
     }
 
     @Test

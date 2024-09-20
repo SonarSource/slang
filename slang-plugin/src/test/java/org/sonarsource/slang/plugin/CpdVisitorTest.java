@@ -46,6 +46,8 @@ import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.impl.TextRangeImpl;
 import org.sonarsource.slang.impl.TokenImpl;
 import org.sonarsource.slang.parser.SLangConverter;
+import org.sonarsource.slang.plugin.caching.DummyReadCache;
+import org.sonarsource.slang.plugin.caching.DummyWriteCache;
 import org.sonarsource.slang.testing.ThreadLocalLogTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -475,56 +477,5 @@ class CpdVisitorTest {
     assertThatThrownBy(() -> CpdVisitor.deserialize(unexpectedTokenType))
       .isInstanceOf(IllegalArgumentException.class)
       .hasMessageStartingWith("Could not deserialize cached CPD tokens:");
-  }
-
-  static class DummyReadCache implements ReadCache {
-    final Map<String, byte[]> persisted = new HashMap<>();
-
-    @Override
-    public InputStream read(String key) {
-      if (!persisted.containsKey(key)) {
-        throw new IllegalArgumentException(String.format("Cache does not contain key %s", key));
-      }
-      return new ByteArrayInputStream(persisted.get(key));
-    }
-
-    @Override
-    public boolean contains(String key) {
-      return persisted.containsKey(key);
-    }
-  }
-
-  static class DummyWriteCache implements WriteCache {
-    final Map<String, byte[]> persisted = new HashMap<>();
-    ReadCache previousCache;
-
-    @Override
-    public void write(String key, InputStream data) {
-      try {
-        write(key, data.readAllBytes());
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-    }
-
-    @Override
-    public void write(String key, byte[] data) {
-      if (persisted.containsKey(key)) {
-        throw new IllegalArgumentException(String.format("The cache already contains the key: %s", key));
-      }
-      persisted.put(key, data);
-    }
-
-    @Override
-    public void copyFromPrevious(String key) {
-      if (previousCache == null) {
-        throw new IllegalStateException("The write cache needs to be bound with a ReadCache!");
-      }
-      write(key, previousCache.read(key));
-    }
-
-    public void bind(DummyReadCache previousCache) {
-      this.previousCache = previousCache;
-    }
   }
 }

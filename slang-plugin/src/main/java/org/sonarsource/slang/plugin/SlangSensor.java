@@ -54,11 +54,12 @@ import org.sonarsource.slang.api.ParseException;
 import org.sonarsource.slang.api.TextPointer;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.checks.api.SlangCheck;
+import org.sonarsource.slang.plugin.caching.HashCacheUtils;
 import org.sonarsource.slang.plugin.converter.ASTConverterValidation;
 import org.sonarsource.slang.visitors.TreeVisitor;
 
 public abstract class SlangSensor implements Sensor {
-  // VisibleForTesting
+  @VisibleForTesting
   static final Predicate<Tree> EXECUTABLE_LINE_PREDICATE = t ->
     !(t instanceof PackageDeclarationTree)
     && !(t instanceof ImportDeclarationTree)
@@ -124,14 +125,14 @@ public abstract class SlangSensor implements Sensor {
     return true;
   }
 
-  // VisibleForTesting
+  @VisibleForTesting
   static void analyseFile(ASTConverter converter,
                                   InputFileContext inputFileContext,
                                   InputFile inputFile,
                                   List<TreeVisitor<InputFileContext>> visitors,
                                   DurationStatistics statistics) {
     List<TreeVisitor<InputFileContext>> canBeSkipped = new ArrayList<>();
-    if (inputFileContext.sensorContext.canSkipUnchangedFiles() && inputFile.status() == InputFile.Status.SAME) {
+    if (fileCanBeSkipped(inputFileContext)) {
       String fileKey = inputFile.key();
       LOG.debug("Checking that previous results can be reused for input file {}.", fileKey);
 
@@ -143,6 +144,7 @@ public abstract class SlangSensor implements Sensor {
       boolean allVisitorsSuccessful = successfulCacheReuseByVisitor.values().stream().allMatch(Boolean.TRUE::equals);
       if (allVisitorsSuccessful) {
         LOG.debug("Skipping input file {} (status is unchanged).", fileKey);
+        HashCacheUtils.copyFromPrevious(inputFileContext);
         return;
       }
       LOG.debug("Will convert input file {} for full analysis.", fileKey);
@@ -183,6 +185,19 @@ public abstract class SlangSensor implements Sensor {
         LOG.error("Cannot analyse '" + inputFile +"': " + e.getMessage(), e);
       }
     }
+    writeHashToCache(inputFileContext);
+  }
+
+  private static boolean fileCanBeSkipped(InputFileContext inputFileContext) {
+    SensorContext sensorContext = inputFileContext.sensorContext;
+    if (!sensorContext.canSkipUnchangedFiles()) {
+      return false;
+    }
+    return HashCacheUtils.hasSameHashCached(inputFileContext);
+  }
+
+  private static void writeHashToCache(InputFileContext inputFileContext) {
+    HashCacheUtils.writeHashForNextAnalysis(inputFileContext);
   }
 
   private static boolean reusePreviousResults(PullRequestAwareVisitor visitor, InputFileContext inputFileContext) {
