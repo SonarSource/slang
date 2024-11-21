@@ -88,7 +88,7 @@ subprojects {
         manifest {
             attributes(
               'Implementation-Build': 'git rev-parse HEAD'.execute().text.trim(),
-              'License': 'GNU LGPL 3',
+              'License': 'SONAR Source-Available License v1.0',
               'Organization': 'SonarSource',
               'OrganizationUrl': 'http://www.sonarsource.com',
               'SourcesUrl': 'https://github.com/SonarSource/slang',
@@ -171,8 +171,8 @@ subprojects {
                     }
                     licenses {
                         license {
-                            name = 'GNU LGPL 3'
-                            url = 'http://www.gnu.org/licenses/lgpl.txt'
+                            name = 'SONAR Source-Available License v1.0'
+                            url = 'https://www.sonarsource.com/license/ssal/'
                             distribution = 'repo'
                         }
                     }
