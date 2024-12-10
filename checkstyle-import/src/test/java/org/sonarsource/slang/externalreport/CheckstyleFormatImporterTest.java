@@ -28,13 +28,16 @@ import org.slf4j.event.Level;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.Severity;
+import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.ExternalIssue;
+import org.sonar.api.issue.impact.SoftwareQuality;
 import org.sonar.api.rules.RuleType;
 import org.sonarsource.slang.testing.ThreadLocalLogTester;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 
 class CheckstyleFormatImporterTest {
 
@@ -55,6 +58,7 @@ class CheckstyleFormatImporterTest {
     assertThat(first.ruleKey().rule()).isEqualTo("detekt.EmptyIfBlock");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MINOR);
+    assertThat(first.impacts()).isEmpty();
     assertThat(first.primaryLocation().message()).isEqualTo("This empty block of code can be removed.");
     assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(3);
 
@@ -63,6 +67,7 @@ class CheckstyleFormatImporterTest {
     assertThat(second.ruleKey().rule()).isEqualTo("detekt.MagicNumber");
     assertThat(second.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(second.severity()).isEqualTo(Severity.MAJOR);
+    assertThat(first.impacts()).isEmpty();
     assertThat(second.remediationEffort().longValue()).isEqualTo(5L);
     assertThat(second.primaryLocation().message()).isEqualTo("This expression contains a magic number. Consider defining it to a well named constant.");
     assertThat(second.primaryLocation().textRange().start().line()).isEqualTo(3);
@@ -72,6 +77,7 @@ class CheckstyleFormatImporterTest {
     assertThat(third.ruleKey().rule()).isEqualTo("detekt.EqualsWithHashCodeExist");
     assertThat(third.type()).isEqualTo(RuleType.BUG);
     assertThat(third.severity()).isEqualTo(Severity.MAJOR);
+    assertThat(first.impacts()).isEmpty();
     assertThat(third.primaryLocation().message()).isEqualTo("A class should always override hashCode when overriding equals and the other way around.");
     assertThat(third.primaryLocation().textRange().start().line()).isEqualTo(3);
 
@@ -80,7 +86,7 @@ class CheckstyleFormatImporterTest {
 
   @Test
   void import_golandci_lint_issues() throws IOException {
-    List<ExternalIssue> externalIssues = importIssues("golandci-lint-report.xml");
+    List<ExternalIssue> externalIssues = importIssuesTestImporter("golandci-lint-report.xml");
     assertThat(externalIssues).hasSize(1);
 
     ExternalIssue first = externalIssues.get(0);
@@ -88,6 +94,7 @@ class CheckstyleFormatImporterTest {
     assertThat(first.ruleKey().rule()).isEqualTo("deadcode");
     assertThat(first.type()).isEqualTo(RuleType.BUG);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
+    assertThat(first.impacts()).contains(entry(SoftwareQuality.SECURITY, org.sonar.api.issue.impact.Severity.MEDIUM));
     assertThat(first.primaryLocation().message()).isEqualTo("`three` is unused");
     assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(4);
 
@@ -131,6 +138,7 @@ class CheckstyleFormatImporterTest {
     assertThat(first.ruleKey().rule()).isEqualTo("detekt.UnknownRuleKey");
     assertThat(first.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
+    assertThat(first.impacts()).isEmpty();
     assertThat(first.primaryLocation().message()).isEqualTo("Error at file level with an unknown rule key.");
     assertThat(first.primaryLocation().textRange()).isNull();
 
@@ -144,6 +152,13 @@ class CheckstyleFormatImporterTest {
   private List<ExternalIssue> importIssues(String fileName) throws IOException {
     SensorContextTester context = createContext();
     CheckstyleFormatImporter importer = new CheckstyleFormatImporter(context, LINTER_KEY);
+    importer.importFile(PROJECT_DIR.resolve(fileName).toAbsolutePath().toFile());
+    return new ArrayList<>(context.allExternalIssues());
+  }
+
+  private List<ExternalIssue> importIssuesTestImporter(String fileName) throws IOException {
+    SensorContextTester context = createContext();
+    CheckstyleFormatImporter importer = new TestImporter(context, LINTER_KEY);
     importer.importFile(PROJECT_DIR.resolve(fileName).toAbsolutePath().toFile());
     return new ArrayList<>(context.allExternalIssues());
   }
@@ -175,4 +190,15 @@ class CheckstyleFormatImporterTest {
     return elements.get(0);
   }
 
+  static class TestImporter extends CheckstyleFormatImporter {
+
+    public TestImporter(SensorContext context, String linterKey) {
+      super(context, linterKey);
+    }
+
+    @Override
+    protected List<Impact> impacts(String severity, String source) {
+      return List.of(new Impact(SoftwareQuality.SECURITY, org.sonar.api.issue.impact.Severity.MEDIUM));
+    }
+  }
 }
