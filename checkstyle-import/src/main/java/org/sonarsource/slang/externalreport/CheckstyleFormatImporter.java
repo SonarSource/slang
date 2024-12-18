@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -36,7 +35,6 @@ import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
-import org.sonar.api.issue.impact.SoftwareQuality;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rules.RuleType;
 import org.sonarsource.analyzer.commons.xml.SafeStaxParserFactory;
@@ -69,7 +67,7 @@ public class CheckstyleFormatImporter {
   private InputFile inputFile = null;
 
   /**
-   * @param context,   the context where issues will be sent
+   * @param context, the context where issues will be sent
    * @param linterKey, used to specify the rule repository
    */
   public CheckstyleFormatImporter(SensorContext context, String linterKey) {
@@ -79,7 +77,6 @@ public class CheckstyleFormatImporter {
 
   /**
    * "importFile" parses the given report file and imports the content into SonarQube
-   *
    * @param reportPath, path of the xml file
    */
   public void importFile(File reportPath) {
@@ -144,15 +141,12 @@ public class CheckstyleFormatImporter {
 
     RuleKey ruleKey = createRuleKey(source, ruleType, ruleSeverity);
 
+    // Overriding impacts should not be done on NewExternalIssue, since it's not supported by SonarQube Cloud
+    // Support of CCT should be added at rule registration level (see SONARGO-76 for more information)
     NewExternalIssue newExternalIssue = context.newExternalIssue()
       .type(ruleType)
       .severity(ruleSeverity)
       .remediationEffortMinutes(effort(ruleKey.rule()));
-
-    var impacts = impacts(severity, source);
-    for (Impact impact : impacts) {
-      newExternalIssue.addImpact(impact.softwareQuality(), impact.severity());
-    }
 
     NewIssueLocation primaryLocation = newExternalIssue.newLocation()
       .message(message)
@@ -207,21 +201,9 @@ public class CheckstyleFormatImporter {
     return DEFAULT_CONSTANT_DEBT_MINUTES;
   }
 
-  /**
-   * Return list of {@link Impact}s. By default empty list is returned for backward compatibility.
-   * @param severity "severity" attribute's value of the report. Ex: "info", "error".
-   * @param source "source" attribute's value of the report. Ex: "gosec", "detekt.MagicNumber".
-   * @return list of {@link Impact}s defined by the given parameters.
-   */
-  protected List<Impact> impacts(String severity, String source) {
-    return List.of();
-  }
-
   private static String getAttributeValue(StartElement element, QName attributeName) {
     Attribute attribute = element.getAttributeByName(attributeName);
     return attribute != null ? attribute.getValue() : "";
   }
 
-  public record Impact(SoftwareQuality softwareQuality, org.sonar.api.issue.impact.Severity severity) {
-  }
 }
