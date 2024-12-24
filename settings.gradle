@@ -11,6 +11,26 @@ pluginManagement {
     }
 }
 
+plugins {
+    id 'com.gradle.develocity' version '3.18.2'
+}
+
+develocity {
+    server = 'https://develocity.sonar.build'
+}
+
+def isCI = System.getenv('CI') != null
+
+buildCache {
+    local {
+        enabled = !isCI
+    }
+    remote(develocity.buildCache) {
+        enabled = true
+        push = isCI
+    }
+}
+
 dependencyResolutionManagement {
     // slf4j is provided by SQ, SC or SL, should be aligned with sonar-plugin-api
     def slf4jApiVersion = '1.7.30'
