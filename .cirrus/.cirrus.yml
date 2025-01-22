@@ -3,8 +3,6 @@ skip: $CIRRUS_BRANCH == "public_master"
 
 env:
   CIRRUS_SHELL: bash
-  DEVELOCITY_TOKEN: VAULT[development/kv/data/develocity data.token]
-  DEVELOCITY_ACCESS_KEY: develocity.sonar.build=${DEVELOCITY_TOKEN}
 
 build_task:
   container:
@@ -23,7 +21,6 @@ build_task:
   go_cache:
     folder: ${HOME}/go
   script:
-    - echo "Develocity URL: https://develocity.sonar.build/scans?search.publicHostnames=cirrus-ci-task-${CIRRUS_TASK_ID}"
     - .cirrus/build.sh
   cleanup_gradle_script: |
     rm -rf "${GRADLE_USER_HOME}"/caches/7.*/
