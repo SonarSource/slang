@@ -186,7 +186,7 @@ class CpdVisitorTest {
      * - The previous cache contains an entry for the input file with properly serialized tokens
      * - The previous and next caches are bound together
      */
-    public void setup(@TempDir File tempFolder) throws IOException {
+    void setup(@TempDir File tempFolder) throws IOException {
       // Create file and set its status to something else than SAME
       File file = File.createTempFile("file", ".tmp", tempFolder);
       String content = "import hello;";

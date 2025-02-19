@@ -51,7 +51,6 @@ import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.api.UnaryExpressionTree;
 import org.sonarsource.slang.api.VariableDeclarationTree;
-import org.sonarsource.slang.impl.FunctionDeclarationTreeImpl;
 import org.sonarsource.slang.impl.ModifierTreeImpl;
 import org.sonarsource.slang.parser.SLangConverter;
 
@@ -349,7 +348,7 @@ class SLangConverterTest {
   }
 
   @Test
-  void function() {
+  void private_and_public_function() {
     FunctionDeclarationTree function = parseFunction("private int fun foo(x1, x2) { x1 + x2 }");
     assertThat(function.name().name()).isEqualTo("foo");
     assertThat(function.modifiers()).hasSize(1);
@@ -374,24 +373,36 @@ class SLangConverterTest {
     assertTree(privateModifier1).isEquivalentTo(privateModifier2);
     assertTree(privateModifier1).isEquivalentTo(new ModifierTreeImpl(null, PRIVATE));
     assertTree(publicModifier1).isEquivalentTo(new ModifierTreeImpl(null, PUBLIC));
+  }
 
+  @Test
+  void simple_function() {
     FunctionDeclarationTree simpleFunction = parseFunction("fun foo() {}");
     assertThat(simpleFunction.modifiers()).isEmpty();
     assertThat(simpleFunction.returnType()).isNull();
     assertThat(simpleFunction.body().statementOrExpressions()).isEmpty();
+  }
 
+  @Test
+  void overridden_function() {
     FunctionDeclarationTree overriddenFunction = parseFunction("override int fun foo();");
     assertThat(overriddenFunction.modifiers()).hasSize(1);
     ModifierTree modifier = (ModifierTree) overriddenFunction.modifiers().get(0);
     assertThat(modifier.kind()).isEqualTo(OVERRIDE);
+  }
 
+  @Test
+  void function_with_native_modifier() {
     FunctionDeclarationTree functWithNativeModifier = parseFunction("native [] {} int fun foo();");
     assertThat(functWithNativeModifier.modifiers()).hasSize(1);
     assertThat(functWithNativeModifier.modifiers().get(0)).isInstanceOf(NativeTree.class);
 
     FunctionDeclarationTree noNameFunction = parseFunction("fun() {}");
     assertThat(noNameFunction.name()).isNull();
+  }
 
+  @Test
+  void function_with_default_param() {
     FunctionDeclarationTree functionWithDefaultParam = parseFunction("fun foo(p1 = 1, p2, p3 = 1 + 3) {}");
     Tree p1 = functionWithDefaultParam.formalParameters().get(0);
     Tree p2 = functionWithDefaultParam.formalParameters().get(1);
@@ -402,7 +413,10 @@ class SLangConverterTest {
     assertTree(((ParameterTree) p1).defaultValue()).isLiteral("1");
     assertTree(((ParameterTree) p2).defaultValue()).isNull();
     assertTree(((ParameterTree) p3).defaultValue()).isBinaryExpression(Operator.PLUS);
+  }
 
+  @Test
+  void function_with_modifier() {
     FunctionDeclarationTree functionWithModifier = parseFunction("fun foo(p1, native [] {} p2) {}");
     assertTree(functionWithModifier).hasParameterNames("p1", "p2");
     Tree p1Mod = functionWithModifier.formalParameters().get(0);
