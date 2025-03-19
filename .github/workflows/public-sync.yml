@@ -9,7 +9,7 @@ jobs:
   sync_master:
     # prevent job to run on public repository SonarSource/slang
     if: github.repository == 'SonarSource/slang-enterprise'
-    runs-on: ubuntu-latest
+    runs-on: sonar-runner
     name: Sync master branch of SonarSource/slang-enterprise with SonarSource/slang
     permissions:
       id-token: write
