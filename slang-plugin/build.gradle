@@ -4,6 +4,7 @@ dependencies {
     implementation project(':slang-api')
     implementation project(':slang-checks')
     implementation libs.sonar.analyzer.commons
+    implementation libs.commons.codec
 
     testImplementation project(':slang-antlr')
     testImplementation project(':slang-testing')

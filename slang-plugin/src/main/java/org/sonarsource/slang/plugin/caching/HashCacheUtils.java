@@ -18,9 +18,8 @@ package org.sonarsource.slang.plugin.caching;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.InputFile;
@@ -34,7 +33,6 @@ import org.sonarsource.slang.plugin.InputFileContext;
  */
 public class HashCacheUtils {
   private static final Logger LOG = LoggerFactory.getLogger(HashCacheUtils.class);
-  private static final String BYTES_TO_HEX_FORMAT = "%032X";
 
   private HashCacheUtils() {
     /* Instances of this utility class should not be created. */
@@ -72,7 +70,7 @@ public class HashCacheUtils {
       LOG.debug("File {} is considered changed: failed to read hash from the cache.", fileKey);
       return false;
     }
-    String expected = md5sumBytesToHex(expectedHashAsBytes);
+    String expected = Hex.encodeHexString(expectedHashAsBytes);
     String actual = inputFile.md5Hash();
     return expected.equals(actual);
   }
@@ -107,9 +105,12 @@ public class HashCacheUtils {
     InputFile inputFile = inputFileContext.inputFile;
     WriteCache nextCache = inputFileContext.sensorContext.nextCache();
     try {
-      nextCache.write(computeKey(inputFileContext.inputFile), inputFile.md5Hash().getBytes(StandardCharsets.UTF_8));
+      nextCache.write(computeKey(inputFileContext.inputFile), Hex.decodeHex(inputFile.md5Hash()));
     } catch (IllegalArgumentException ignored) {
       LOG.warn("Failed to write hash for {} to cache.", inputFile.key());
+      return false;
+    } catch (DecoderException ignored) {
+      LOG.warn("Failed to convert hash from hexadecimal string to bytes for {}.", inputFile.key());
       return false;
     }
     return true;
@@ -117,10 +118,5 @@ public class HashCacheUtils {
 
   private static String computeKey(InputFile inputFile) {
     return "slang:hash:" + inputFile.key();
-  }
-
-  private static String md5sumBytesToHex(byte[] bytes) {
-    BigInteger bi = new BigInteger(1, bytes);
-    return BYTES_TO_HEX_FORMAT.formatted(bi).toLowerCase(Locale.getDefault());
   }
 }

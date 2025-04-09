@@ -50,6 +50,7 @@ dependencyResolutionManagement {
             library("jsr305", "com.google.code.findbugs", "jsr305").version("3.0.2")
             library("minimal-json", "com.eclipsesource.minimal-json", "minimal-json").version("0.9.5")
             library("antlr4", "org.antlr","antlr4").version("4.13.2")
+            library("commons-codec", "commons-codec", "commons-codec").version("1.18.0")
         }
 
         testLibs {

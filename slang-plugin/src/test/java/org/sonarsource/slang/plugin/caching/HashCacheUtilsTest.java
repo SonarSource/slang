@@ -18,6 +18,8 @@ package org.sonarsource.slang.plugin.caching;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -30,6 +32,8 @@ import org.sonarsource.slang.plugin.InputFileContext;
 import org.sonarsource.slang.testing.ThreadLocalLogTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 class HashCacheUtilsTest {
   private static final String CONTENTS = "// Hello, world!";
@@ -47,7 +51,7 @@ class HashCacheUtilsTest {
   private InputFileContext inputFileContext;
 
   @BeforeEach
-  void setup(@TempDir File tmpBaseDir) {
+  void setup(@TempDir File tmpBaseDir) throws DecoderException {
     sensorContext = SensorContextTester.create(tmpBaseDir);
     previousCache = new DummyReadCache();
     nextCache = new DummyWriteCache();
@@ -64,7 +68,7 @@ class HashCacheUtilsTest {
       .setCharset(StandardCharsets.UTF_8)
       .setContents(CONTENTS)
       .build();
-    previousCache.persisted.put(CACHE_KEY, EXPECTED_HASH.getBytes(StandardCharsets.UTF_8));
+    previousCache.persisted.put(CACHE_KEY, Hex.decodeHex(EXPECTED_HASH));
 
     sensorContext.fileSystem().add(inputFile);
     inputFileContext = new InputFileContext(sensorContext, inputFile);
@@ -120,8 +124,8 @@ class HashCacheUtilsTest {
     byte[] written = nextCache.persisted.get("slang:hash:moduleKey:file1.slang");
     assertThat(written)
       .as("Hash should be written in hexadecimal form.")
-      .hasSize(32);
-    String actual = new String(written, StandardCharsets.UTF_8);
+      .hasSize(16);
+    String actual = Hex.encodeHexString(written);
     assertThat(actual).isEqualTo(EXPECTED_HASH);
   }
 
@@ -145,5 +149,19 @@ class HashCacheUtilsTest {
 
     assertThat(HashCacheUtils.writeHashForNextAnalysis(inputFileContext)).isFalse();
     assertThat(nextCache.persisted).isEmpty();
+  }
+
+  @Test
+  void writeHashForNextAnalysis_fails_when_the_input_file_hash_is_not_valid() {
+    // Create an input file that returns a hash that is not a hexadecimal string
+    InputFile inputFileWithFaultyHash = spy(inputFileContext.inputFile);
+    when(inputFileWithFaultyHash.md5Hash()).thenReturn("gggggggggggggggggggggggggggggggg");
+    when(inputFileWithFaultyHash.status()).thenReturn(InputFile.Status.SAME);
+    inputFileContext = new InputFileContext(sensorContext, inputFileWithFaultyHash);
+
+    assertThat(HashCacheUtils.writeHashForNextAnalysis(inputFileContext)).isFalse();
+    assertThat(nextCache.persisted).isEmpty();
+    assertThat(logTester.logs(Level.WARN))
+      .contains("Failed to convert hash from hexadecimal string to bytes for moduleKey:file1.slang.");
   }
 }
