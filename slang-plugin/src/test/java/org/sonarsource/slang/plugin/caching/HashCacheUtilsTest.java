@@ -123,7 +123,7 @@ class HashCacheUtilsTest {
   @Test
   void hasSameHashCached_returns_true_when_the_input_file_hash_and_the_cached_hash_match() {
     assertThat(HashCacheUtils.hasSameHashCached(inputFileContext)).isTrue();
-    assertThat(logTester.logs(Level.DEBUG)).isEmpty();
+    assertThat(logTester.logs(Level.DEBUG)).containsOnly("File moduleKey:file1.slang is considered unchanged.");
     assertThat(logTester.logs(Level.WARN)).isEmpty();
   }
 
@@ -186,7 +186,7 @@ class HashCacheUtilsTest {
 
     assertThat(HashCacheUtils.hasSameHashCached(inputFileContext)).isFalse();
     assertThat(logTester.logs(Level.DEBUG)).containsOnly("File moduleKey:file1.slang is considered changed: failed to read hash from the cache.");
-    assertThat(logTester.logs(Level.WARN)).isEmpty();
+    assertThat(logTester.logs(Level.WARN)).containsOnly("This is expected!");
   }
 
   @Test
@@ -197,7 +197,9 @@ class HashCacheUtilsTest {
     sensorContext.setPreviousCache(previousCache);
 
     assertThat(HashCacheUtils.hasSameHashCached(inputFileContext)).isFalse();
-    assertThat(logTester.logs(Level.DEBUG)).isEmpty();
+    assertThat(logTester.logs(Level.DEBUG)).containsOnly(
+      "File moduleKey:file1.slang is considered changed: input file hash does not match cached hash (180dd7ee70f338197b90e0635cad1131 vs 30784445414442454546)."
+    );
     assertThat(logTester.logs(Level.WARN)).isEmpty();
   }
 

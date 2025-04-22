@@ -39,7 +39,7 @@ public class HashCacheUtils {
   }
 
   /**
-   * Checks that a file that matches it previous hash in the cache.
+   * Checks that a file matches its previous hash in the cache.
    *
    * @param inputFileContext The context joining both SensorContext and InputFile
    * @return True if the file has its status set to InputFile.Status.SAME and matches its MD5 hash in the cache.
@@ -66,13 +66,20 @@ public class HashCacheUtils {
     byte[] expectedHashAsBytes;
     try (InputStream in = previousCache.read(hashKey)) {
       expectedHashAsBytes = in.readAllBytes();
-    } catch (IOException e) {
+    } catch (IOException error) {
+      LOG.warn(error.getMessage(), error);
       LOG.debug("File {} is considered changed: failed to read hash from the cache.", fileKey);
       return false;
     }
     String expected = Hex.encodeHexString(expectedHashAsBytes);
     String actual = inputFile.md5Hash();
-    return expected.equals(actual);
+    boolean matchesWithCache = expected.equals(actual);
+    if (matchesWithCache) {
+      LOG.debug("File {} is considered unchanged.", fileKey);
+    } else {
+      LOG.debug("File {} is considered changed: input file hash does not match cached hash ({} vs {}).", fileKey, actual, expected);
+    }
+    return matchesWithCache;
   }
 
   /**
