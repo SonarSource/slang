@@ -17,6 +17,8 @@
 package org.sonarsource.slang.plugin.caching;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
@@ -48,6 +50,7 @@ class HashCacheUtilsTest {
   private SensorContextTester sensorContext;
   private DummyReadCache previousCache;
   private DummyWriteCache nextCache;
+  private InputFile inputFile;
   private InputFileContext inputFileContext;
 
   @BeforeEach
@@ -61,12 +64,13 @@ class HashCacheUtilsTest {
     sensorContext.setPreviousCache(previousCache);
     sensorContext.setNextCache(nextCache);
 
-    InputFile inputFile = new TestInputFileBuilder(MODULE_KEY, FILENAME)
+    inputFile = new TestInputFileBuilder(MODULE_KEY, FILENAME)
       .setModuleBaseDir(tmpBaseDir.toPath())
       .setType(InputFile.Type.MAIN)
       .setLanguage("slang")
       .setCharset(StandardCharsets.UTF_8)
       .setContents(CONTENTS)
+      .setStatus(InputFile.Status.SAME)
       .build();
     previousCache.persisted.put(CACHE_KEY, Hex.decodeHex(EXPECTED_HASH));
 
@@ -114,6 +118,87 @@ class HashCacheUtilsTest {
     // Try and fail to copy
     assertThat(HashCacheUtils.copyFromPrevious(inputFileContext)).isFalse();
     assertThat(nextCache.persisted).isEmpty();
+  }
+
+  @Test
+  void hasSameHashCached_returns_true_when_the_input_file_hash_and_the_cached_hash_match() {
+    assertThat(HashCacheUtils.hasSameHashCached(inputFileContext)).isTrue();
+    assertThat(logTester.logs(Level.DEBUG)).isEmpty();
+    assertThat(logTester.logs(Level.WARN)).isEmpty();
+  }
+
+  @Test
+  void hasSameHashCached_returns_false_when_input_file_status_is_added() {
+    // Set input file status to added
+    inputFile = spy(inputFile);
+    when(inputFile.status()).thenReturn(InputFile.Status.ADDED);
+    inputFileContext = new InputFileContext(sensorContext, inputFile);
+
+    assertThat(HashCacheUtils.hasSameHashCached(inputFileContext)).isFalse();
+    assertThat(logTester.logs(Level.DEBUG)).containsOnly("File moduleKey:file1.slang is considered changed: file status is ADDED.");
+    assertThat(logTester.logs(Level.WARN)).isEmpty();
+  }
+
+  @Test
+  void hasSameHashCached_returns_false_when_input_file_status_is_changed() {
+    // Set input file status to changed
+    inputFile = spy(inputFile);
+    when(inputFile.status()).thenReturn(InputFile.Status.CHANGED);
+    inputFileContext = new InputFileContext(sensorContext, inputFile);
+
+    assertThat(HashCacheUtils.hasSameHashCached(inputFileContext)).isFalse();
+    assertThat(logTester.logs(Level.DEBUG)).containsOnly("File moduleKey:file1.slang is considered changed: file status is CHANGED.");
+    assertThat(logTester.logs(Level.WARN)).isEmpty();
+  }
+
+  @Test
+  void hasSameHashCached_returns_false_when_the_cache_is_disabled() {
+    // Disable the cache
+    sensorContext.setCacheEnabled(false);
+
+    assertThat(HashCacheUtils.hasSameHashCached(inputFileContext)).isFalse();
+    assertThat(logTester.logs(Level.DEBUG)).containsOnly("File moduleKey:file1.slang is considered changed: hash cache is disabled.");
+    assertThat(logTester.logs(Level.WARN)).isEmpty();
+  }
+
+  @Test
+  void hasSameHashCached_returns_false_when_the_hash_is_missing_from_the_previous_cache() {
+    // Clear the previous cache
+    previousCache = new DummyReadCache();
+    sensorContext.setPreviousCache(previousCache);
+
+    assertThat(HashCacheUtils.hasSameHashCached(inputFileContext)).isFalse();
+    assertThat(logTester.logs(Level.DEBUG)).containsOnly("File moduleKey:file1.slang is considered changed: hash could not be found in the cache.");
+    assertThat(logTester.logs(Level.WARN)).isEmpty();
+  }
+
+  @Test
+  void hasSameHashCached_returns_false_when_the_hash_cannot_be_read_from_the_previous_cache() {
+    // return faulty input stream when reading from the cache
+    previousCache = spy(previousCache);
+    when(previousCache.read(CACHE_KEY)).thenReturn(new InputStream() {
+      @Override
+      public int read() throws IOException {
+        throw new IOException("This is expected!");
+      }
+    });
+    sensorContext.setPreviousCache(previousCache);
+
+    assertThat(HashCacheUtils.hasSameHashCached(inputFileContext)).isFalse();
+    assertThat(logTester.logs(Level.DEBUG)).containsOnly("File moduleKey:file1.slang is considered changed: failed to read hash from the cache.");
+    assertThat(logTester.logs(Level.WARN)).isEmpty();
+  }
+
+  @Test
+  void hasSameHashCached_returns_false_when_the_hash_in_the_previous_cache_does_not_match() {
+    // return a different entry from the cache
+    previousCache = new DummyReadCache();
+    previousCache.persisted.put(CACHE_KEY, "0xDEADBEEF".getBytes(StandardCharsets.UTF_8));
+    sensorContext.setPreviousCache(previousCache);
+
+    assertThat(HashCacheUtils.hasSameHashCached(inputFileContext)).isFalse();
+    assertThat(logTester.logs(Level.DEBUG)).isEmpty();
+    assertThat(logTester.logs(Level.WARN)).isEmpty();
   }
 
   @Test
