@@ -63,6 +63,7 @@ public class CheckList {
       ParsingErrorCheck.class,
       RedundantParenthesesCheck.class,
       SelfAssignmentCheck.class,
+      SliceEqualSimplificationCheck.class,
       StringLiteralDuplicatedCheck.class,
       TabsCheck.class,
       TodoCommentCheck.class,
