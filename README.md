@@ -1,6 +1,6 @@
 # SLang
 
-[![Build Status](https://api.cirrus-ci.com/github/SonarSource/slang.svg?branch=master)](https://cirrus-ci.com/github/SonarSource/slang)
+[![Build](https://github.com/SonarSource/slang-enterprise/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/SonarSource/slang-enterprise/actions/workflows/build.yml)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=org.sonarsource.slang%3Aslang&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.sonarsource.slang%3Aslang)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.sonarsource.slang%3Aslang&metric=coverage)](https://sonarcloud.io/component_measures/domain/Coverage?id=org.sonarsource.slang%3Aslang)
 

@@ -217,6 +217,7 @@ subprojects {
         def signingPassword = findProperty("signingPassword")
         useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
         required {
+            // TODO: switch to GitHub Actions or remove.
             def branch = System.getenv()["CIRRUS_BRANCH"]
             return (branch == 'master' || branch ==~ 'branch-[\\d.]+') &&
                     gradle.taskGraph.hasTask(":artifactoryPublish")
