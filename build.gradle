@@ -30,7 +30,7 @@ allprojects {
 
     ext {
         buildNumber = System.getProperty("buildNumber")
-        sonarLinksCi = 'https://cirrus-ci.com/github/SonarSource/slang'
+        sonarLinksCi = 'https://github.com/SonarSource/slang/actions/workflows/build.yml'
         sonarLinksScm = 'https://github.com/SonarSource/slang'
 
         artifactsToPublish = '' +
@@ -217,8 +217,7 @@ subprojects {
         def signingPassword = findProperty("signingPassword")
         useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
         required {
-            // TODO: switch to GitHub Actions or remove.
-            def branch = System.getenv()["CIRRUS_BRANCH"]
+            def branch = System.getenv()["GITHUB_REF_NAME"]
             return (branch == 'master' || branch ==~ 'branch-[\\d.]+') &&
                     gradle.taskGraph.hasTask(":artifactoryPublish")
         }
@@ -227,7 +226,7 @@ subprojects {
 
     tasks.withType(Sign) {
         onlyIf {
-            def branch = System.getenv()["CIRRUS_BRANCH"]
+            def branch = System.getenv()["GITHUB_REF_NAME"]
             return (branch == 'master' || branch ==~ 'branch-[\\d.]+') &&
                     gradle.taskGraph.hasTask(":artifactoryPublish")
         }
