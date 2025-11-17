@@ -37,7 +37,7 @@ dependencyResolutionManagement {
     def pluginApiVersion = '12.0.0.2960'
     def sonarqubeVersion = '10.6.0.92116'
     def sonarlintVersion = '10.4.2.78884'
-    def analyzerCommonsVersion = '2.16.0.3141'
+    def analyzerCommonsVersion = '2.19.0.3575'
 
     versionCatalogs {
         libs {
