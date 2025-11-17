@@ -34,7 +34,7 @@ buildCache {
 dependencyResolutionManagement {
     // slf4j is provided by SQ, SC or SL, should be aligned with sonar-plugin-api
     def slf4jApiVersion = '1.7.30'
-    def pluginApiVersion = '10.10.0.2391'
+    def pluginApiVersion = '12.0.0.2960'
     def sonarqubeVersion = '10.6.0.92116'
     def sonarlintVersion = '10.4.2.78884'
     def analyzerCommonsVersion = '2.16.0.3141'
