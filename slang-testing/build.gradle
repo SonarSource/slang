@@ -8,6 +8,7 @@ dependencies {
     implementation testLibs.junit.jupiter.engine
     implementation testLibs.sonar.plugin.api.impl
     implementation testLibs.sonar.analyzer.test.commons
+    testImplementation testLibs.junit.jupiter.api
 }
 
 publishing {

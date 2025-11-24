@@ -19,7 +19,7 @@ package org.sonarsource.slang.testing;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class PackageScannerTest {
 
