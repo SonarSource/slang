@@ -1,6 +1,6 @@
 /*
  * SonarSource SLang
- * Copyright (C) 2018-2026 SonarSource SA
+ * Copyright (C) 2018-2026 SonarSource Sàrl
  * mailto:info AT sonarsource DOT com
  *
  * This program is free software; you can redistribute it and/or
