@@ -1,0 +1,58 @@
+name: Automated Release
+on:
+  workflow_dispatch:
+    inputs:
+      short-description:
+        description: "Short description for the REL ticket"
+        required: true
+        type: string
+      branch:
+        description: "Branch from which to do the release"
+        required: true
+        default: "master"
+        type: string
+      new-version:
+        description: "New version to release (without -SNAPSHOT; if left empty, the current minor version will be auto-incremented)"
+        required: false
+        type: string
+      rule-props-changed:
+        description: >
+          "@RuleProperty" changed? See SC-4654
+        type: boolean
+        default: false
+      verbose:
+        description: "Enable verbose logging"
+        type: boolean
+        default: false
+      dry-run:
+        description: "Test mode: uses Jira sandbox and creates draft GitHub release"
+        type: boolean
+        default: true
+
+jobs:
+  release:
+    name: Release
+    uses: SonarSource/release-github-actions/.github/workflows/automated-release.yml@v1
+    permissions:
+      statuses: read
+      id-token: write
+      contents: write
+      actions: write
+      pull-requests: write
+    with:
+      project-name: "SonarSlang"
+      plugin-name: "slang"
+      jira-project-key: "SONARSLANG"
+      rule-props-changed: ${{ github.event.inputs.rule-props-changed }}
+      short-description: ${{ github.event.inputs.short-description }}
+      new-version: ${{ github.event.inputs.new-version }}
+      sqc-integration: false
+      sqs-integration: false
+      branch: ${{ github.event.inputs.branch }}
+      pm-email: "jean.jimbo@sonarsource.com"
+      slack-channel: "squad-jvm-notifs"
+      verbose: ${{ github.event.inputs.verbose == 'true' }}
+      use-jira-sandbox: ${{ github.event.inputs.dry-run == 'true' }}
+      is-draft-release: ${{ github.event.inputs.dry-run == 'true' }}
+      bump-version: true
+      issue-categories: "Feature,False Positive,False Negative,Bug,Security,Maintenance"
