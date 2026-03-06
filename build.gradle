@@ -240,6 +240,7 @@ sonar {
         property 'sonar.links.scm', "${sonarLinksScm}"
         property 'sonar.links.issue', 'https://jira.sonarsource.com/browse/SONARSLANG'
         property 'sonar.exclusions', '**/build/**/*'
+        property 'sonar.projectKey', 'org.sonarsource.slang:slang'
     }
 }
 
