@@ -26,9 +26,9 @@ jobs:
       - name: Run IRIS Sync
         uses: SonarSource/unified-dogfooding-actions/run-iris@v1
         with:
-          primary_project_key: "SonarSource_slang-enterprise"
+          primary_project_key: "org.sonarsource.slang:slang"
           primary_platform: "Next"
-          shadow1_project_key: "SonarSource_slang-enterprise"
+          shadow1_project_key: "org.sonarsource.slang:slang"
           shadow1_platform: "SQC-EU"
-          shadow2_project_key: "SonarSource_slang-enterprise"
+          shadow2_project_key: "org.sonarsource.slang:slang"
           shadow2_platform: "SQC-US"
