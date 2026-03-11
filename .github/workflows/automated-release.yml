@@ -15,17 +15,16 @@ on:
         description: "New version to release (without -SNAPSHOT; if left empty, the current minor version will be auto-incremented)"
         required: false
         type: string
-      rule-props-changed:
-        description: >
-          "@RuleProperty" changed? See SC-4654
-        type: boolean
-        default: false
       verbose:
         description: "Enable verbose logging"
         type: boolean
         default: false
       dry-run:
         description: "Test mode: uses Jira sandbox and creates draft GitHub release"
+        type: boolean
+        default: true
+      bump-version:
+        description: "Create PR to bump the next iteration version"
         type: boolean
         default: true
 
@@ -43,16 +42,17 @@ jobs:
       project-name: "SonarSlang"
       plugin-name: "slang"
       jira-project-key: "SONARSLANG"
-      rule-props-changed: ${{ github.event.inputs.rule-props-changed }}
+      rule-props-changed: false
       short-description: ${{ github.event.inputs.short-description }}
       new-version: ${{ github.event.inputs.new-version }}
       sqc-integration: false
       sqs-integration: false
       branch: ${{ github.event.inputs.branch }}
       pm-email: "jean.jimbo@sonarsource.com"
-      slack-channel: "squad-jvm-notifs"
+      slack-channel: "squad-jvm-releases"
       verbose: ${{ github.event.inputs.verbose == 'true' }}
       use-jira-sandbox: ${{ github.event.inputs.dry-run == 'true' }}
       is-draft-release: ${{ github.event.inputs.dry-run == 'true' }}
-      bump-version: true
       issue-categories: "Feature,False Positive,False Negative,Bug,Security,Maintenance"
+      bump-version: ${{ github.event.inputs.bump-version == 'true' }}
+      bump-version-normalize: true
