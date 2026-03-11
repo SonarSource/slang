@@ -50,6 +50,7 @@ import org.sonarsource.slang.plugin.converter.ASTConverterValidation.ValidationM
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.sonarsource.slang.plugin.converter.ASTConverterValidation.lines;
 
 class ASTConverterValidationTest {
 
@@ -320,6 +321,27 @@ class ASTConverterValidationTest {
     assertThat(validationConverter.parse(code, fileName)).isSameAs(tree);
     assertThat(validationConverter.errors())
       .containsExactly("IdentifierTreeImpl invalid range TextRange[0, 0, 1, 0] (line: 0, column: 1) in file: " + fileName);
+  }
+
+  @Test
+  void lines_splits_text() {
+    // Tabs are converted to spaces.
+    assertThat(lines("a\tbc\t\n\tdef\n")).containsExactly("a bc", " def");
+
+    // Splitting simple lines.
+    assertThat(lines("abc")).containsExactly("abc");
+    assertThat(lines("abc\ndef")).containsExactly("abc", "def");
+    assertThat(lines("abc\ndef\n")).containsExactly("abc", "def");
+
+    // Intermediate empty lines are preserved; trailing new lines are removed.
+    assertThat(lines("\nabc\ndef")).containsExactly("", "abc", "def");
+    assertThat(lines("\n\nabc\n\ndef")).containsExactly("", "", "abc", "", "def");
+    assertThat(lines("abc\n\ndef\n\n")).containsExactly("abc", "", "def");
+    assertThat(lines("abc\n \n\rdef\n \n\t\n \n \r \r\n")).containsExactly("abc", "", "", "def");
+
+    // Edge cases.
+    assertThat(lines("")).containsExactly("");
+    assertThat(lines("\n\n")).containsExactly("");
   }
 
   private ListAssert<String> assertValidationErrors(String code, Tree tree) {

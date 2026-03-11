@@ -43,6 +43,7 @@ import org.sonarsource.slang.impl.LiteralTreeImpl;
 import org.sonarsource.slang.impl.NativeTreeImpl;
 import org.sonarsource.slang.impl.PlaceHolderTreeImpl;
 import org.sonarsource.slang.impl.TextPointerImpl;
+import org.sonarsource.slang.plugin.VisibleForTesting;
 
 import static org.sonarsource.slang.utils.LogArg.lazyArg;
 
@@ -328,13 +329,27 @@ public class ASTConverterValidation implements ASTConverter {
           new TextPointerImpl(Math.min(actualLines.length, expectedLines.length), 0));
       }
     }
+  }
 
-    private String[] lines(String code) {
-      return code
-        .replace('\t', ' ')
-        .replaceFirst("[\r\n ]+$", "")
-        .split(" *(\r\n|\n|\r)", -1);
+  /**
+   * Splits the argument into lines with the following constraints:
+   * <ul>
+   *   <li>Intermediate empty lines are preserved.</li>
+   *   <li>Trailing empty lines are discarded.</li>
+   *   <li>Trailing whitespace on each line is discarded.</li>
+   *   <li>Tabs are converted to single spaces.</li>
+   * </ul>
+   */
+  @VisibleForTesting
+  static String[] lines(String code) {
+    String[] result = code
+      .replace('\t', ' ')
+      .stripTrailing()
+      .split("\\R", -1);
+    for (int i = 0; i < result.length; i++) {
+      result[i] = result[i].stripTrailing();
     }
+    return result;
   }
 
 }
