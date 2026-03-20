@@ -1,3 +1,12 @@
+plugins {
+  id "org.sonarsource.cloud-native.license-file-generator"
+}
+
+licenseGenerationConfig {
+  projectLicenseFile.set(file("../LICENSE.txt"))
+  dependencyLicenseOverrides.put("com.google.code.findbugs:jsr305", file("../build-logic/common/gradle-modules/src/main/resources/licenses/BSD-3.txt"))
+}
+
 dependencies {
     compileOnly libs.sonar.plugin.api
 
