@@ -14,9 +14,11 @@ To provide feedback (request a feature, report a bug, etc.) use the [SonarQube C
 
 ## Building
 
-### Setup
+You will need Java 17 installed.
 
-Install Java 17.
+### Initialize submodules
+
+    git submodule update --init --recursive
 
 ### Build
 Build and run Unit Tests:
