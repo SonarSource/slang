@@ -6,7 +6,7 @@ on:
 
 jobs:
   analyze:
-    runs-on: github-ubuntu-latest-m
+    runs-on: warp-custom-ubuntu-24-04
     name: Build and Analyze on all platforms
     permissions:
       id-token: write
