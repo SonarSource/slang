@@ -37,7 +37,6 @@ dependencyResolutionManagement {
     def slf4jApiVersion = '1.7.30'
     def pluginApiVersion = '12.0.0.2960'
     def sonarqubeVersion = '25.11.0.114957'
-    def sonarlintVersion = '10.36.0.83732'
     def analyzerCommonsVersion = '2.19.0.3575'
 
     versionCatalogs {
@@ -45,7 +44,6 @@ dependencyResolutionManagement {
             library("sonar-plugin-api", "org.sonarsource.api.plugin", "sonar-plugin-api").version(pluginApiVersion)
             library("sonar-analyzer-commons", "org.sonarsource.analyzer-commons", "sonar-analyzer-commons").version(analyzerCommonsVersion)
             library("sonar-xml-parsing", "org.sonarsource.analyzer-commons", "sonar-xml-parsing").version(analyzerCommonsVersion)
-            library("sonarlint-core", "org.sonarsource.sonarlint.core", "sonarlint-core").version(sonarlintVersion)
             library("slf4j-api", "org.slf4j", "slf4j-api").version(slf4jApiVersion)
             library("logback-classic", "ch.qos.logback", "logback-classic").version("1.2.13")
             library("jsr305", "com.google.code.findbugs", "jsr305").version("3.0.2")
