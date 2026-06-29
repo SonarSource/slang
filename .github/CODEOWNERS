@@ -1,1 +1,2 @@
-.github/CODEOWNERS @SonarSource/quality-jvm-squad
+# https://github.com/orgs/SonarSource/teams/code-quality-language-coverage-squad
+.github/CODEOWNERS @SonarSource/code-quality-language-coverage-squad
