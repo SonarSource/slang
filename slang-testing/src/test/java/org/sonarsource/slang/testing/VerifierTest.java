@@ -48,6 +48,13 @@ class VerifierTest {
   private static final SlangCheck ISSUE_ON_IDENTIFIER_TEXT_RANGE_CHECK = init ->
     init.register(IdentifierTree.class, (ctx, identifier) -> ctx.reportIssue(identifier.textRange(), "primary"));
 
+  private static final SlangCheck ISSUE_ON_IDENTIFIERS_UNLESS_TEST_FILE = init ->
+    init.register(IdentifierTree.class, (ctx, identifier) -> {
+      if (!ctx.isTestFile()) {
+        ctx.reportIssue(identifier, "primary");
+      }
+    });
+
   private static final SlangCheck ISSUE_WITH_SECONDARY_LOCATION_CHECK = init ->
     init.register(TopLevelTree.class, (ctx, top) ->
       ctx.reportIssue(
@@ -112,6 +119,18 @@ class VerifierTest {
     ComparisonFailure e = assertThrows(ComparisonFailure.class,
       () -> Verifier.verify(converter, path, NO_ISSUE_CHECK));
     assertThat(e).hasMessageStartingWith("ERROR: 'assertOneOrMoreIssues()' is called but there's no 'Noncompliant' comments. In file (no-issue.code:1)");
+  }
+
+  @Test
+  void verify_no_issue_on_test_file() throws IOException {
+    Path path = BASE_DIR.resolve("no-issue.code");
+    ASTConverter converter = createConverter(path);
+    // On a test file the check observes isTestFile() and stays silent.
+    Verifier.verifyNoIssueOnTestFile(converter, path, ISSUE_ON_IDENTIFIERS_UNLESS_TEST_FILE);
+
+    // The same check raises on a main file, proving the test-file flag is what suppresses the issue.
+    assertThrows(ComparisonFailure.class,
+      () -> Verifier.verifyNoIssue(converter, path, ISSUE_ON_IDENTIFIERS_UNLESS_TEST_FILE));
   }
 
   @Test

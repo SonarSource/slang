@@ -41,6 +41,7 @@ import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.resources.Language;
 import org.sonarsource.analyzer.commons.ProgressReport;
+import org.sonarsource.analyzer.commons.appsec.TestFileClassifier;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.BlockTree;
 import org.sonarsource.slang.api.ClassDeclarationTree;
@@ -106,11 +107,15 @@ public abstract class SlangSensor implements Sensor {
       LOG.info("The {} analyzer is running in a context where unchanged files can be skipped.", this.language);
     }
 
+    TestFileClassifier testFileClassifier = TestFileClassifier.of(sensorContext.config(), testFilePathPatterns());
+
     for (InputFile inputFile : inputFiles) {
       if (sensorContext.isCancelled()) {
         return false;
       }
-      InputFileContext inputFileContext = new InputFileContext(sensorContext, inputFile);
+      // The path heuristic is only a fallback when the scanner has not scoped the file as a test.
+      boolean isTestFile = inputFile.type() == InputFile.Type.TEST || testFileClassifier.looksLikeTestFile(inputFile);
+      InputFileContext inputFileContext = new InputFileContext(sensorContext, inputFile, isTestFile);
       try {
         analyseFile(converter, inputFileContext, inputFile, visitors, statistics);
       } catch (ParseException e) {
@@ -120,6 +125,14 @@ public abstract class SlangSensor implements Sensor {
       progressReport.nextFile();
     }
     return true;
+  }
+
+  /**
+   * Ant-style path globs used to recognise test files when the project does not configure test sources.
+   * Language sensors can override to add filename conventions (e.g. {@code **&#47;*Spec.scala}).
+   */
+  protected String[] testFilePathPatterns() {
+    return new String[] {"**/test/**", "**/tests/**"};
   }
 
   @VisibleForTesting

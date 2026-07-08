@@ -52,16 +52,25 @@ public class HardcodedCredentialsCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {
     init.register(AssignmentExpressionTree.class, (ctx, tree) -> {
+      if (ctx.isTestFile()) {
+        return;
+      }
       Tree leftHandSide = tree.leftHandSide();
       ExpressionUtils.getMemberSelectOrIdentifierName(leftHandSide)
           .ifPresent(variableName -> checkVariable(ctx, leftHandSide, variableName, tree.statementOrExpression()));
     });
 
-    init.register(VariableDeclarationTree.class, (ctx, tree) ->
-      checkVariable(ctx, tree.identifier(), tree.identifier().name(), tree.initializer())
-    );
+    init.register(VariableDeclarationTree.class, (ctx, tree) -> {
+      if (ctx.isTestFile()) {
+        return;
+      }
+      checkVariable(ctx, tree.identifier(), tree.identifier().name(), tree.initializer());
+    });
 
     init.register(StringLiteralTree.class, (ctx, tree) -> {
+      if (ctx.isTestFile()) {
+        return;
+      }
       String content = tree.content();
       if (isURIWithCredentials(content)) {
         ctx.reportIssue(tree, "Review this hard-coded URL, which may contain a credential.");

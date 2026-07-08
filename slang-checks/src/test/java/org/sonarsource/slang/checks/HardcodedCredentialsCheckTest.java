@@ -25,4 +25,9 @@ class HardcodedCredentialsCheckTest {
     Verifier.verify("HardcodedCredentials.slang", new HardcodedCredentialsCheck());
   }
 
+  @Test
+  void no_issues_on_test_files() {
+    Verifier.verifyNoIssueOnTestFile("HardcodedCredentialsOnTestFile.slang", new HardcodedCredentialsCheck());
+  }
+
 }

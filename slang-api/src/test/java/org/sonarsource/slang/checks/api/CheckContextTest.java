@@ -54,6 +54,11 @@ class CheckContextTest {
     assertThat(context.parent()).isNull();
   }
 
+  @Test
+  void is_test_file_defaults_to_false() {
+    assertThat(new CheckContextToTestDefaultMethod().isTestFile()).isFalse();
+  }
+
   private static class CheckContextToTestDefaultMethod extends TreeContext implements CheckContext {
 
     public String filename() {

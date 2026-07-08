@@ -35,4 +35,8 @@ public class Verifier {
     org.sonarsource.slang.testing.Verifier.verifyNoIssue(CONVERTER, BASE_DIR.resolve(fileName), check);
   }
 
+  public static void verifyNoIssueOnTestFile(String fileName, SlangCheck check) {
+    org.sonarsource.slang.testing.Verifier.verifyNoIssueOnTestFile(CONVERTER, BASE_DIR.resolve(fileName), check);
+  }
+
 }

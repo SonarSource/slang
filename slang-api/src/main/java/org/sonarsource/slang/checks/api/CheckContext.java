@@ -41,6 +41,10 @@ public interface CheckContext {
 
   String fileContent();
 
+  default boolean isTestFile() {
+    return false;
+  }
+
   void reportIssue(TextRange textRange, String message);
 
   void reportIssue(HasTextRange toHighlight, String message);

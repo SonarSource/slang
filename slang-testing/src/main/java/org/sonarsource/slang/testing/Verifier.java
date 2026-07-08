@@ -48,14 +48,18 @@ public final class Verifier {
   }
 
   public static void verify(ASTConverter converter, Path path, SlangCheck check) {
-    createVerifier(converter, path, check).assertOneOrMoreIssues();
+    createVerifier(converter, path, check, false).assertOneOrMoreIssues();
   }
 
   public static void verifyNoIssue(ASTConverter converter, Path path, SlangCheck check) {
-    createVerifier(converter, path, check).assertNoIssues();
+    createVerifier(converter, path, check, false).assertNoIssues();
   }
 
-  private static SingleFileVerifier createVerifier(ASTConverter converter, Path path, SlangCheck check) {
+  public static void verifyNoIssueOnTestFile(ASTConverter converter, Path path, SlangCheck check) {
+    createVerifier(converter, path, check, true).assertNoIssues();
+  }
+
+  private static SingleFileVerifier createVerifier(ASTConverter converter, Path path, SlangCheck check, boolean isTestFile) {
 
     SingleFileVerifier verifier = SingleFileVerifier.create(path, UTF_8);
 
@@ -68,7 +72,7 @@ public final class Verifier {
         verifier.addComment(start.line(), start.lineOffset()+1, comment.text(), 2, 0);
       });
     
-    TestContext ctx = new TestContext(verifier, path.getFileName().toString(), testFileContent);
+    TestContext ctx = new TestContext(verifier, path.getFileName().toString(), testFileContent, isTestFile);
     check.initialize(ctx);
     ctx.scan(root);
 
@@ -89,12 +93,19 @@ public final class Verifier {
     private final SingleFileVerifier verifier;
     private final String filename;
     private String testFileContent;
+    private final boolean isTestFile;
 
-    public TestContext(SingleFileVerifier verifier, String filename, String testFileContent) {
+    public TestContext(SingleFileVerifier verifier, String filename, String testFileContent, boolean isTestFile) {
       this.verifier = verifier;
       this.filename = filename;
       this.testFileContent = testFileContent;
+      this.isTestFile = isTestFile;
       visitor = new TreeVisitor<>();
+    }
+
+    @Override
+    public boolean isTestFile() {
+      return isTestFile;
     }
 
     public void scan(@Nullable Tree root) {

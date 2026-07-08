@@ -34,6 +34,7 @@ import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
+import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -52,7 +53,9 @@ import org.sonar.api.utils.Version;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
+import org.sonarsource.analyzer.commons.appsec.TestFileClassifier;
 import org.sonarsource.slang.checks.CommentedCodeCheck;
+import org.sonarsource.slang.checks.HardcodedCredentialsCheck;
 import org.sonarsource.slang.checks.IdenticalBinaryOperandCheck;
 import org.sonarsource.slang.checks.StringLiteralDuplicatedCheck;
 import org.sonarsource.slang.checks.api.SlangCheck;
@@ -473,6 +476,57 @@ class SlangSensorTest extends AbstractSensorTest {
     );
   }
 
+  // Content triggering S2068 through each of the three node types the check registers on:
+  // an assignment, a variable declaration, and a URL string literal carrying credentials.
+  // The values are realistic secrets so they are not dismissed as fake by the secret classifier.
+  private static final String CREDENTIALS_CONTENT = """
+    variableNameWithPasswordInIt = "9kZ7mQ2wR4tYbN";
+    var passwd = "3vH8nL5jD9xKpW";
+    var uri = "https://root:6qF2rM7bV4nXtZ@example.com/path";
+    """;
+
+  @Test
+  void hardcoded_credentials_are_reported_on_main_files() {
+    InputFile inputFile = createInputFile("src/main/Credentials.slang", CREDENTIALS_CONTENT);
+    context.fileSystem().add(inputFile);
+    hardcodedCredentialsSensor(checkFactory("S2068")).execute(context);
+    assertThat(context.allIssues()).hasSize(3);
+  }
+
+  @Test
+  void hardcoded_credentials_are_suppressed_on_test_files_detected_by_path() {
+    InputFile inputFile = createInputFile("src/test/Credentials.slang", CREDENTIALS_CONTENT);
+    context.fileSystem().add(inputFile);
+    hardcodedCredentialsSensor(checkFactory("S2068")).execute(context);
+    assertThat(context.allIssues()).isEmpty();
+  }
+
+  @Test
+  void hardcoded_credentials_are_suppressed_on_test_scoped_files_when_test_sources_are_configured() {
+    // When sonar.tests is set, files under it carry the TEST scope. The path heuristic steps aside,
+    // but such files must still have their credential findings suppressed.
+    context.settings().setProperty("sonar.tests", "src/test");
+    InputFile inputFile = new TestInputFileBuilder("moduleKey", "src/test/Credentials.slang")
+      .setModuleBaseDir(baseDir.toPath())
+      .setType(InputFile.Type.TEST)
+      .setLanguage(language().getKey())
+      .setCharset(StandardCharsets.UTF_8)
+      .setContents(CREDENTIALS_CONTENT)
+      .build();
+    context.fileSystem().add(inputFile);
+    hardcodedCredentialsSensor(checkFactory("S2068")).execute(context);
+    assertThat(context.allIssues()).isEmpty();
+  }
+
+  @Test
+  void hardcoded_credentials_are_reported_on_test_path_files_when_heuristic_is_disabled() {
+    context.settings().setProperty(TestFileClassifier.HEURISTIC_DISABLED_KEY, "true");
+    InputFile inputFile = createInputFile("src/test/Credentials.slang", CREDENTIALS_CONTENT);
+    context.fileSystem().add(inputFile);
+    hardcodedCredentialsSensor(checkFactory("S2068")).execute(context);
+    assertThat(context.allIssues()).hasSize(3);
+  }
+
   @Nested
   class PullRequestContext {
     private static final String ORIGINAL_FILE_CONTENT = """
@@ -769,6 +823,27 @@ class SlangSensorTest extends AbstractSensorTest {
           StringLiteralDuplicatedCheck.class,
           new CommentedCodeCheck(new SlangCodeVerifier()),
           IdenticalBinaryOperandCheck.class);
+        return checks;
+      }
+
+      @Override
+      protected String repositoryKey() {
+        return SlangSensorTest.this.repositoryKey();
+      }
+    };
+  }
+
+  private SlangSensor hardcodedCredentialsSensor(CheckFactory checkFactory) {
+    return new SlangSensor(SQ_LTS_RUNTIME, new DefaultNoSonarFilter(), fileLinesContextFactory, SLANG) {
+      @Override
+      protected ASTConverter astConverter(SensorContext sensorContext) {
+        return new SLangConverter();
+      }
+
+      @Override
+      protected Checks<SlangCheck> checks() {
+        Checks<SlangCheck> checks = checkFactory.create(repositoryKey());
+        checks.addAnnotatedChecks(new HardcodedCredentialsCheck());
         return checks;
       }
 

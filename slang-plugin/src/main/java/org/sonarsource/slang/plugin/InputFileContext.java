@@ -43,9 +43,20 @@ public class InputFileContext extends TreeContext {
 
   public final InputFile inputFile;
 
+  private final boolean isTestFile;
+
   public InputFileContext(SensorContext sensorContext, InputFile inputFile) {
+    this(sensorContext, inputFile, false);
+  }
+
+  public InputFileContext(SensorContext sensorContext, InputFile inputFile, boolean isTestFile) {
     this.sensorContext = sensorContext;
     this.inputFile = inputFile;
+    this.isTestFile = isTestFile;
+  }
+
+  public boolean isTestFile() {
+    return isTestFile;
   }
 
   public TextRange textRange(org.sonarsource.slang.api.TextRange textRange) {
