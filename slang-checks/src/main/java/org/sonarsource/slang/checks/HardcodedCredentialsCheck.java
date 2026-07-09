@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
+import org.sonarsource.analyzer.commons.appsec.SecretClassifier;
 import org.sonarsource.slang.api.AssignmentExpressionTree;
 import org.sonarsource.slang.api.StringLiteralTree;
 import org.sonarsource.slang.api.Tree;
@@ -78,8 +79,9 @@ public class HardcodedCredentialsCheck implements SlangCheck {
         literalPatterns()
           .map(pattern -> pattern.matcher(content))
           .filter(Matcher::find)
-          .map(matcher -> matcher.group(1))
-          .filter(match -> !isQuery(content, match))
+          .filter(matcher -> !SecretClassifier.isKnownNonSecret(matcher.group("value")))
+          .map(matcher -> matcher.group("word"))
+          .filter(word -> !isQuery(content, word))
           .forEach(credential -> report(ctx, tree, credential));
       }
     });
@@ -121,16 +123,17 @@ public class HardcodedCredentialsCheck implements SlangCheck {
 
   private void checkVariable(CheckContext ctx, Tree variable, String variableName, @Nullable Tree value) {
     if (isNotEmptyString(value)) {
+      String content = ((StringLiteralTree) value).content();
       variablePatterns()
         .map(pattern -> pattern.matcher(variableName))
         .filter(Matcher::find)
-        .forEach(matcher -> checkAssignedValue(ctx, matcher, variable, ((StringLiteralTree) value).value()));
+        .forEach(matcher -> checkAssignedValue(ctx, matcher, variable, content));
     }
   }
 
-  private static void checkAssignedValue(CheckContext ctx, Matcher matcher, Tree leftHand, String value) {
-    if (!matcher.pattern().matcher(value).find()) {
-      report(ctx, leftHand, matcher.group(1));
+  private static void checkAssignedValue(CheckContext ctx, Matcher matcher, Tree leftHand, String content) {
+    if (!matcher.pattern().matcher(content).find() && !SecretClassifier.isKnownNonSecret(content)) {
+      report(ctx, leftHand, matcher.group("word"));
     }
   }
 
@@ -143,7 +146,7 @@ public class HardcodedCredentialsCheck implements SlangCheck {
 
   private Stream<Pattern> literalPatterns() {
     if (literalPatterns == null) {
-      literalPatterns = toPatterns("=\\S");
+      literalPatterns = toPatterns("=(?<value>\\S+)");
     }
     return literalPatterns.stream();
   }
@@ -151,7 +154,7 @@ public class HardcodedCredentialsCheck implements SlangCheck {
   private List<Pattern> toPatterns(String suffix) {
     return Stream.of(credentialWords.split(","))
       .map(String::trim)
-      .map(word -> Pattern.compile("(" + word + ")" + suffix, Pattern.CASE_INSENSITIVE))
+      .map(word -> Pattern.compile("(?<word>" + word + ")" + suffix, Pattern.CASE_INSENSITIVE))
       .toList();
   }
 
