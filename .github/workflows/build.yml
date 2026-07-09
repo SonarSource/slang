@@ -53,3 +53,23 @@ jobs:
       - uses: SonarSource/ci-github-actions/promote@v1
         with:
           promote-pull-request: true
+
+  notify_slack:
+    needs:
+      - build
+    if: >-
+      !cancelled() && failure() &&
+      (github.ref_name == 'master' ||
+      startsWith(github.ref_name, 'branch-') ||
+      startsWith(github.ref_name, 'dogfood-'))
+    permissions:
+      id-token: write
+    runs-on: sonar-xs
+    steps:
+      # https://github.com/SonarSource/release-github-actions/tree/master/notify-slack
+      - uses: SonarSource/release-github-actions/notify-slack@v1
+        with:
+          project-name: "SLang-Enterprise"
+          icon: ":cyber-radish:"
+          slack-channel: "ops-language-coverage"
+          jobs: ${{ toJSON(needs) }}

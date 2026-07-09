@@ -49,7 +49,7 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ fromJSON(steps.secrets.outputs.vault).SLACK_BOT_TOKEN }}
         with:
-          channel-id: squad-jvm-notifs
+          channel-id: ops-language-coverage
           slack-message: "Nightly public sync successful, synchronized master branch of SonarSource/slang-enterprise with SonarSource/slang"
       - name: Notify failures on Slack
         if: failure()
@@ -57,5 +57,5 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ fromJSON(steps.secrets.outputs.vault).SLACK_BOT_TOKEN }}
         with:
-          channel-id: squad-jvm-notifs
+          channel-id: ops-language-coverage
           slack-message: "Nightly public sync failed, see the logs at https://github.com/SonarSource/slang-enterprise/actions/runs/${{ github.run_id }}"
