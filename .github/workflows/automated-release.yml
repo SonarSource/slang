@@ -48,7 +48,7 @@ jobs:
       sqc-integration: false
       sqs-integration: false
       branch: ${{ github.event.inputs.branch }}
-      pm-email: "jean.jimbo@sonarsource.com"
+      pm-email: "adam.wilson@sonarsource.com"
       slack-channel: "ops-language-coverage"
       verbose: ${{ github.event.inputs.verbose == 'true' }}
       use-jira-sandbox: ${{ github.event.inputs.dry-run == 'true' }}
