@@ -16,6 +16,10 @@
  */
 package org.sonarsource.slang.plugin;
 
+import com.sonarsource.scanner.engine.sensor.test.fixtures.SensorContextTester;
+import com.sonarsource.scanner.engine.sensor.test.fixtures.TestInputFileBuilder;
+import com.sonarsource.scanner.engine.sensor.test.fixtures.TestSensorDescriptor;
+import com.sonarsource.scanner.engine.sensor.test.fixtures.TestSensorDescriptorImpl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,26 +38,23 @@ import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextPointer;
-import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.error.AnalysisError;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
-import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
-import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.batch.sensor.issue.IssueLocation;
-import org.sonar.api.batch.sensor.issue.internal.DefaultNoSonarFilter;
 import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.resources.Language;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.Version;
+import org.sonar.scanner.plugin.api.impl.sensor.issue.DefaultNoSonarFilter;
+import org.sonarsource.analyzer.commons.appsec.TestFileClassifier;
 import org.sonarsource.slang.api.ASTConverter;
 import org.sonarsource.slang.api.TopLevelTree;
 import org.sonarsource.slang.api.Tree;
-import org.sonarsource.analyzer.commons.appsec.TestFileClassifier;
 import org.sonarsource.slang.checks.CommentedCodeCheck;
 import org.sonarsource.slang.checks.HardcodedCredentialsCheck;
 import org.sonarsource.slang.checks.IdenticalBinaryOperandCheck;
@@ -398,7 +399,7 @@ class SlangSensorTest extends AbstractSensorTest {
 
   @Test
   void test_descriptor() {
-    DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
+    TestSensorDescriptor sensorDescriptor = new TestSensorDescriptorImpl();
     SlangSensor sensor = sensor(mock(CheckFactory.class));
     sensor.describe(sensorDescriptor);
     assertThat(sensorDescriptor.languages()).hasSize(1);
@@ -408,7 +409,7 @@ class SlangSensorTest extends AbstractSensorTest {
 
   @Test
   void test_sonarlint_descriptor() {
-    DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
+    TestSensorDescriptor sensorDescriptor = new TestSensorDescriptorImpl();
     SlangSensor sensor = sensor(SonarRuntimeImpl.forSonarLint(Version.create(6, 5)), mock(CheckFactory.class));
     sensor.describe(sensorDescriptor);
     assertThat(sensorDescriptor.languages()).hasSize(1);
@@ -454,7 +455,7 @@ class SlangSensorTest extends AbstractSensorTest {
     final SlangSensor sensor = sensor(
       SonarRuntimeImpl.forSonarQube(Version.create(9, 3), SonarQubeSide.SCANNER, SonarEdition.DEVELOPER),
       checkFactory());
-    DefaultSensorDescriptor descriptor = new DefaultSensorDescriptor();
+    TestSensorDescriptor descriptor = new TestSensorDescriptorImpl();
     sensor.describe(descriptor);
     assertThat(descriptor.isProcessesFilesIndependently()).isFalse();
   }

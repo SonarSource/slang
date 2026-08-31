@@ -16,6 +16,10 @@
  */
 package org.sonarsource.slang.plugin;
 
+import com.sonarsource.scanner.engine.sensor.test.fixtures.SensorContextTester;
+import com.sonarsource.scanner.engine.sensor.test.fixtures.TestInputFileBuilder;
+import com.sonarsource.scanner.engine.sensor.test.fixtures.TestSensorDescriptor;
+import com.sonarsource.scanner.engine.sensor.test.fixtures.TestSensorDescriptorImpl;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,10 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.event.Level;
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
-import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonarsource.slang.testing.ThreadLocalLogTester;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -53,7 +54,7 @@ class AbstractPropertyHandlerSensorTest {
 
   @Test
   void test_descriptor() throws Exception {
-    DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
+    TestSensorDescriptor sensorDescriptor = new TestSensorDescriptorImpl();
     PropertyHandlerSensorTester sensor = new PropertyHandlerSensorTester();
     sensor.describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of propertyName issues");

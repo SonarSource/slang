@@ -34,9 +34,12 @@ buildCache {
 
 dependencyResolutionManagement {
     // slf4j is provided by SQ, SC or SL, should be aligned with sonar-plugin-api
-    def slf4jApiVersion = '1.7.30'
+    def slf4jApiVersion = '2.0.18'
     def pluginApiVersion = '12.0.0.2960'
-    def sonarqubeVersion = '25.11.0.114957'
+    def sonarqubeVersion = '26.8.0.126808'
+    // Sensor test fixtures moved out of sonar-plugin-api-impl into the scanner engine in SQ 26.x.
+    // Pinned to the last release built for Java 17; 13.7+ requires Java 21.
+    def scannerEngineVersion = '13.6.1.4395'
     def analyzerCommonsVersion = '2.27.0.5007'
 
     versionCatalogs {
@@ -45,7 +48,7 @@ dependencyResolutionManagement {
             library("sonar-analyzer-commons", "org.sonarsource.analyzer-commons", "sonar-analyzer-commons").version(analyzerCommonsVersion)
             library("sonar-xml-parsing", "org.sonarsource.analyzer-commons", "sonar-xml-parsing").version(analyzerCommonsVersion)
             library("slf4j-api", "org.slf4j", "slf4j-api").version(slf4jApiVersion)
-            library("logback-classic", "ch.qos.logback", "logback-classic").version("1.2.13")
+            library("logback-classic", "ch.qos.logback", "logback-classic").version("1.5.38")
             library("jsr305", "com.google.code.findbugs", "jsr305").version("3.0.2")
             library("minimal-json", "com.eclipsesource.minimal-json", "minimal-json").version("0.9.5")
             library("antlr4", "org.antlr","antlr4").version("4.13.2")
@@ -55,6 +58,7 @@ dependencyResolutionManagement {
         testLibs {
             library("sonar-analyzer-test-commons", "org.sonarsource.analyzer-commons", "sonar-analyzer-test-commons").version(analyzerCommonsVersion)
             library("sonar-plugin-api-impl", "org.sonarsource.sonarqube", "sonar-plugin-api-impl").version(sonarqubeVersion)
+            library("sensor-test-fixtures", "org.sonarsource.scanner.engine", "sensor-test-fixtures").version(scannerEngineVersion)
             library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").version("5.11.0")
             library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").version("5.11.0")
             library("junit-platform-launcher", "org.junit.platform", "junit-platform-launcher").version("1.11.0")

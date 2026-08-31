@@ -8,6 +8,7 @@ dependencies {
     testImplementation testLibs.assertj.core
     testImplementation testLibs.junit.jupiter.api
     testImplementation testLibs.sonar.plugin.api.impl
+    testImplementation testLibs.sensor.test.fixtures
 
     testRuntimeOnly testLibs.junit.jupiter.engine
 }

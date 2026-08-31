@@ -16,6 +16,9 @@
  */
 package org.sonarsource.slang.plugin;
 
+import com.sonarsource.scanner.engine.sensor.test.fixtures.SensorContextTester;
+import com.sonarsource.scanner.engine.sensor.test.fixtures.TestInputFile;
+import com.sonarsource.scanner.engine.sensor.test.fixtures.TestInputFileBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -30,12 +33,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.event.Level;
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.batch.fs.internal.DefaultInputFile;
-import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.cache.ReadCache;
 import org.sonar.api.batch.sensor.cache.WriteCache;
-import org.sonar.api.batch.sensor.cpd.internal.TokensLine;
-import org.sonar.api.batch.sensor.internal.SensorContextTester;
+import org.sonar.duplications.internal.pmd.TokensLine;
 import org.sonarsource.slang.api.Token;
 import org.sonarsource.slang.api.Tree;
 import org.sonarsource.slang.impl.TextRangeImpl;
@@ -67,7 +67,7 @@ class CpdVisitorTest {
     File file = File.createTempFile("file", ".tmp", tempFolder);
     String content = "import util; foo(x\n * 42 \n+ \"abc\");";
     SensorContextTester sensorContext = SensorContextTester.create(tempFolder);
-    DefaultInputFile inputFile = new TestInputFileBuilder("moduleKey", file.getName())
+    TestInputFile inputFile = new TestInputFileBuilder("moduleKey", file.getName())
       .setContents(content)
       .build();
     Tree root = new SLangConverter().parse(content);
@@ -102,7 +102,7 @@ class CpdVisitorTest {
     );
 
     private SensorContextTester sensorContext;
-    private DefaultInputFile inputFile;
+    private TestInputFile inputFile;
     private Tree root;
     private InputFileContext inputFileContext;
     private DummyWriteCache nextCache;
@@ -172,7 +172,7 @@ class CpdVisitorTest {
     );
 
     private String cacheKey;
-    private DefaultInputFile inputFile;
+    private TestInputFile inputFile;
     private SensorContextTester sensorContext;
     private InputFileContext inputFileContext;
     private DummyReadCache previousCache;
