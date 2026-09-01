@@ -38,7 +38,6 @@ dependencyResolutionManagement {
     def pluginApiVersion = '13.8.0.4399'
     def sonarqubeVersion = '26.8.0.126808'
     // Sensor test fixtures moved out of sonar-plugin-api-impl into the scanner engine in SQ 26.x.
-    // Pinned to the last release built for Java 17; 13.7+ requires Java 21.
     def scannerEngineVersion = '13.6.1.4395'
     def analyzerCommonsVersion = '2.30.0.5193'
 

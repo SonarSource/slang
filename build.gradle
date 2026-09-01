@@ -10,6 +10,8 @@ plugins {
     id 'com.diffplug.spotless' version '8.10.1'
 }
 
+def targetJavaVersion = 21
+
 allprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
@@ -79,7 +81,9 @@ subprojects {
     apply plugin: 'com.diffplug.spotless'
 
     java {
-        sourceCompatibility = JavaVersion.VERSION_17
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+        }
         withSourcesJar()
         withJavadocJar()
     }
@@ -93,14 +97,14 @@ subprojects {
               'OrganizationUrl': 'http://www.sonarsource.com',
               'SourcesUrl': 'https://github.com/SonarSource/slang',
               'Version': "${project.version}",
-              'Jre-Min-Version': "${java.sourceCompatibility}"
+              'Jre-Min-Version': targetJavaVersion.toString()
             )
         }
     }
 
-    tasks.withType(JavaCompile) {
+    tasks.withType(JavaCompile).configureEach {
         options.encoding = "UTF-8"
-        options.release = java.sourceCompatibility.majorVersion as int
+        options.release = targetJavaVersion
     }
 
     jacoco {
