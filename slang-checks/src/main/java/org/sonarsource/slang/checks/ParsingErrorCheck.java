@@ -17,10 +17,12 @@
 package org.sonarsource.slang.checks;
 
 import org.sonar.check.Rule;
+import org.sonarsource.analyzer.commons.annotations.DeprecatedRuleKey;
 import org.sonarsource.slang.checks.api.InitContext;
 import org.sonarsource.slang.checks.api.SlangCheck;
 
-@Rule(key = "ParsingError")
+@Rule(key = "S2260")
+@DeprecatedRuleKey(ruleKey = "ParsingError")
 public class ParsingErrorCheck implements SlangCheck {
   @Override
   public void initialize(InitContext init) {

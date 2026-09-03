@@ -36,7 +36,7 @@ import org.sonarsource.slang.visitors.TreeContext;
 
 public class InputFileContext extends TreeContext {
 
-  private static final String PARSING_ERROR_RULE_KEY = "ParsingError";
+  private static final String PARSING_ERROR_RULE_KEY = "S2260";
   private Map<String, Set<org.sonarsource.slang.api.TextRange>> filteredRules = new HashMap<>();
 
   public final SensorContext sensorContext;

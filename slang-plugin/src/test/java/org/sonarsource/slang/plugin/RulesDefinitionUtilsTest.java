@@ -23,6 +23,8 @@ import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinitionAnnotationLoader;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
+import org.sonarsource.analyzer.commons.annotations.DeprecatedRuleKey;
+import org.sonarsource.slang.checks.ParsingErrorCheck;
 import org.sonarsource.slang.checks.utils.Language;
 import org.sonarsource.slang.checks.utils.PropertyDefaultValue;
 
@@ -59,6 +61,13 @@ class RulesDefinitionUtilsTest {
     RulesDefinition.Rule check = repository.rule("check");
     RulesDefinition.Param param = check.param("param");
     assertThat(param.defaultValue()).isEqualTo("scala");
+  }
+
+  @Test
+  void parsing_error_rule_declares_its_previous_key() {
+    assertThat(ParsingErrorCheck.class.getAnnotation(Rule.class).key()).isEqualTo("S2260");
+    assertThat(ParsingErrorCheck.class.getAnnotation(DeprecatedRuleKey.class).ruleKey()).isEqualTo("ParsingError");
+    assertThat(ParsingErrorCheck.class.getAnnotation(DeprecatedRuleKey.class).repositoryKey()).isEmpty();
   }
 
   @Test

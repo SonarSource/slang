@@ -329,13 +329,13 @@ class SlangSensorTest extends AbstractSensorTest {
         + " fun x() {}\n"
         + " fun y() {}");
     context.fileSystem().add(inputFile);
-    CheckFactory checkFactory = checkFactory("ParsingError");
+    CheckFactory checkFactory = checkFactory("S2260");
     sensor(checkFactory).execute(context);
 
     Collection<Issue> issues = context.allIssues();
     assertThat(issues).hasSize(1);
     Issue issue = issues.iterator().next();
-    assertThat(issue.ruleKey().rule()).isEqualTo("ParsingError");
+    assertThat(issue.ruleKey().rule()).isEqualTo("S2260");
     IssueLocation location = issue.primaryLocation();
     assertThat(location.inputComponent()).isEqualTo(inputFile);
     assertThat(location.message()).isEqualTo("A parsing error occurred in this file.");
