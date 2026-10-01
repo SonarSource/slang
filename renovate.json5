@@ -1,4 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  extends: [ "github>SonarSource/renovate-config:quality-jvm-squad"],
+  extends: [ "github>SonarSource/renovate-config:languages-team"],
 }
