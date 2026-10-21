@@ -29,8 +29,8 @@ allprojects {
 
     ext {
         buildNumber = System.getProperty("buildNumber")
-        sonarLinksCi = 'https://github.com/SonarSource/slang/actions/workflows/build.yml'
-        sonarLinksScm = 'https://github.com/SonarSource/slang'
+        sonarLinksCi = 'https://github.com/SonarQubeCommunity/slang/actions/workflows/ci.yml'
+        sonarLinksScm = 'https://github.com/SonarQubeCommunity/slang'
     }
 
     // Replaces the version defined in sources, usually x.y-SNAPSHOT, by a version identifying the build.
@@ -69,7 +69,7 @@ subprojects {
               'License': 'SONAR Source-Available License v1.0',
               'Organization': 'SonarSource',
               'OrganizationUrl': 'http://www.sonarsource.com',
-              'SourcesUrl': 'https://github.com/SonarSource/slang',
+              'SourcesUrl': 'https://github.com/SonarQubeCommunity/slang',
               'Version': "${project.version}",
               'Jre-Min-Version': targetJavaVersion.toString()
             )
@@ -165,7 +165,7 @@ subprojects {
                         }
                     }
                     scm {
-                        url = 'https://github.com/SonarSource/slang'
+                        url = 'https://github.com/SonarQubeCommunity/slang'
                     }
                     developers {
                         developer {
@@ -206,9 +206,10 @@ sonar {
         property 'sonar.projectName', projectTitle
         property 'sonar.links.ci', "${sonarLinksCi}"
         property 'sonar.links.scm', "${sonarLinksScm}"
-        property 'sonar.links.issue', 'https://jira.sonarsource.com/browse/SONARSLANG'
+        property 'sonar.links.issue', 'https://github.com/SonarQubeCommunity/slang/issues'
         property 'sonar.exclusions', '**/build/**/*'
-        property 'sonar.projectKey', 'org.sonarsource.slang:slang'
+        property 'sonar.organization', 'sonarqubecommunity'
+        property 'sonar.projectKey', 'SonarQubeCommunity_slang'
     }
 }
 
