@@ -59,19 +59,6 @@ allprojects {
 
     repositories {
         mavenLocal()
-        def artifactoryBearerToken = System.getenv("ARTIFACTORY_PRIVATE_PASSWORD") ?: project.findProperty("artifactoryPassword")
-        if (artifactoryBearerToken) {
-            maven {
-                url "https://repox.jfrog.io/repox/sonarsource"
-                authentication {
-                    header(HttpHeaderAuthentication)
-                }
-                credentials(HttpHeaderCredentials) {
-                    name = "Authorization"
-                    value = "Bearer $artifactoryBearerToken"
-                }
-            }
-        }
         mavenCentral()
     }
 }
