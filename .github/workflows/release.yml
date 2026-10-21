@@ -1,0 +1,42 @@
+name: Release
+# Publishes the Slang artifacts as a Maven repository attached to the GitHub release.
+# Publish a GitHub release with a tag such as v1.24.0 to trigger it.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: Build and Attach to Release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: true
+      - uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+        with:
+          version: 2026.9.18
+      - name: Build and publish to the staging repository
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          VERSION="${TAG#v}"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          ./gradlew build publishAllPublicationsToStagingRepository -Pversion="$VERSION" --no-daemon --console=plain
+      - name: Attach the Maven repository and the JARs to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          cd build/staging-repo
+          ZIP="slang-$VERSION-maven-repository.zip"
+          zip -qr "../$ZIP" org
+          cd ..
+          sha256sum "$ZIP" > "$ZIP.sha256"
+          JARS=$(find staging-repo -name "*-$VERSION.jar")
+          gh release upload "$TAG" "$ZIP" "$ZIP.sha256" $JARS --repo "$GITHUB_REPOSITORY"
