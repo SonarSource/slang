@@ -3,32 +3,6 @@ pluginManagement {
     repositories {
         mavenCentral()
         gradlePluginPortal()
-        if (new File(rootDir, 'private/build.gradle').exists()) {
-            maven {
-                name = "artifactory"
-                url = uri("https://repox.jfrog.io/repox/sonarsource")
-            }
-        }
-    }
-}
-
-plugins {
-    id 'com.gradle.develocity' version '4.5.0'
-}
-
-develocity {
-    server = 'https://develocity.sonar.build'
-}
-
-def isCI = System.getenv('CI') != null
-
-buildCache {
-    local {
-        enabled = !isCI
-    }
-    remote(develocity.buildCache) {
-        enabled = true
-        push = isCI
     }
 }
 
