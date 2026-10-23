@@ -3,7 +3,6 @@ import java.util.jar.JarInputStream
 plugins {
     id 'java'
     id 'jacoco'
-    id 'com.jfrog.artifactory' version '6.0.4'
     id 'io.spring.dependency-management' version '1.1.7' apply false
     id 'org.sonarqube' version '7.4.0.8496'
     id 'de.thetaphi.forbiddenapis' version '3.10' apply false
@@ -16,9 +15,7 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
     apply plugin: 'io.spring.dependency-management'
-    apply plugin: 'com.jfrog.artifactory'
     apply plugin: 'maven-publish'
-    apply plugin: 'signing'
 
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile).configureEach {
@@ -34,16 +31,6 @@ allprojects {
         buildNumber = System.getProperty("buildNumber")
         sonarLinksCi = 'https://github.com/SonarSource/slang/actions/workflows/build.yml'
         sonarLinksScm = 'https://github.com/SonarSource/slang'
-
-        artifactsToPublish = '' +
-          'org.sonarsource.slang:slang-api:jar,' +
-          'org.sonarsource.slang:slang-plugin:jar,' +
-          'org.sonarsource.slang:slang-antlr:jar,' +
-          'org.sonarsource.slang:slang-testing:jar,' +
-          'org.sonarsource.slang:slang-checks:jar,' +
-          'org.sonarsource.slang:checkstyle-import:jar'
-
-        artifactsToDownload = ''
     }
 
     // Replaces the version defined in sources, usually x.y-SNAPSHOT, by a version identifying the build.
@@ -153,6 +140,13 @@ subprojects {
     }
 
     publishing {
+        repositories {
+            // The release workflow publishes here and attaches the result to the GitHub release.
+            maven {
+                name = 'staging'
+                url = rootProject.layout.buildDirectory.dir('staging-repo')
+            }
+        }
         publications {
             mavenJava(MavenPublication) {
                 pom {
@@ -205,26 +199,6 @@ subprojects {
         }
     }
 
-    signing {
-        def signingKeyId = findProperty("signingKeyId")
-        def signingKey = findProperty("signingKey")
-        def signingPassword = findProperty("signingPassword")
-        useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
-        required {
-            def branch = System.getenv()["GITHUB_REF_NAME"]
-            return (branch == 'master' || branch ==~ 'branch-[\\d.]+') &&
-                    gradle.taskGraph.hasTask(":artifactoryPublish")
-        }
-        sign publishing.publications
-    }
-
-    tasks.withType(Sign) {
-        onlyIf {
-            def branch = System.getenv()["GITHUB_REF_NAME"]
-            return (branch == 'master' || branch ==~ 'branch-[\\d.]+') &&
-                    gradle.taskGraph.hasTask(":artifactoryPublish")
-        }
-    }
 }
 
 sonar {
@@ -236,41 +210,6 @@ sonar {
         property 'sonar.exclusions', '**/build/**/*'
         property 'sonar.projectKey', 'org.sonarsource.slang:slang'
     }
-}
-
-artifactory {
-    clientConfig.setIncludeEnvVars(true)
-    clientConfig.setEnvVarsExcludePatterns('*password*,*PASSWORD*,*secret*,*MAVEN_CMD_LINE_ARGS*,sun.java.command,*token*,*TOKEN*,*LOGIN*,*login*,*key*,*KEY*,*PASSPHRASE*,*signing*')
-    contextUrl = System.getenv('ARTIFACTORY_URL')
-    publish {
-        repository {
-            repoKey = System.getenv('ARTIFACTORY_DEPLOY_REPO')
-            username = System.getenv('ARTIFACTORY_DEPLOY_USERNAME')
-            password = System.getenv('ARTIFACTORY_DEPLOY_PASSWORD')
-        }
-        defaults {
-            properties = [
-                'build.name': 'slang-enterprise',
-                'build.number': System.getenv('BUILD_NUMBER'),
-                'pr.branch.target': System.getenv('PULL_REQUEST_BRANCH_TARGET'),
-                'pr.number': System.getenv('PULL_REQUEST_NUMBER'),
-                'vcs.branch': System.getenv('GIT_BRANCH'),
-                'vcs.revision': System.getenv('GIT_COMMIT'),
-                'version': version
-            ]
-            publications('mavenJava')
-            publishPom = true
-            publishIvy = false
-        }
-    }
-
-    clientConfig.info.setBuildName('slang-enterprise')
-    clientConfig.info.setBuildNumber(System.getenv('BUILD_NUMBER'))
-    // Define the artifacts to be deployed to https://binaries.sonarsource.com on releases
-    clientConfig.info.addEnvironmentProperty('ARTIFACTS_TO_PUBLISH', artifactsToPublish)
-    clientConfig.info.addEnvironmentProperty('ARTIFACTS_TO_DOWNLOAD', artifactsToDownload)
-    // The name of this variable is important because it's used by the delivery process when extracting version from Artifactory build info.
-    clientConfig.info.addEnvironmentProperty('PROJECT_VERSION', "${version}")
 }
 
 void enforceJarSizeAndCheckContent(File file, long minSize, long maxSize) {
